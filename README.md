@@ -1,9 +1,10 @@
-<<<<<<< HEAD
+
 # JumpTake--API-Based-Job-Board
 =======
-# Updraft Project
 
-This project is an Updraft application that allows users to paste their resumes into a dropdown box on the frontend. The application consists of a client-side built with React and a server-side built with Node.js and Express.
+This web application features resume parsing using Gemini. For employers, it offers job posting, talent pool access, and candidate management. 
+The platform has a dual-portal system with separate interfaces for job seekers and employers. Built with React on the frontend and Node.js/Express on the backend, it includes features like company 
+profile creation (with Wikipedia integration).
 
 ## Project Structure
 

@@ -1,0 +1,25 @@
+{
+  "name": "jumptake-server",
+  "version": "1.0.0",
+  "description": "Backend server for the JumpTake application",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "axios": "^1.8.4",
+    "bcryptjs": "^3.0.2",
+    "body-parser": "^1.19.0",
+    "dotenv": "^16.5.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.15.0",
+    "mongoose": "^8.13.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  },
+  "author": "",
+  "license": "ISC"
+}

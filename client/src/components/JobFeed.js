@@ -52,6 +52,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
         if (jobSeekerData && jobSeekerData.skills && jobSeekerData.skills.length > 0) {
             fetchRecommendedJobs();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [jobSeekerData, jobs]);
 
     useEffect(() => {

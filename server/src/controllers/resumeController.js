@@ -72,7 +72,7 @@ const processResumeWithGemini = async (resumeText) => {
         `;
         
         const response = await axios.post(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`,
             {
                 contents: [{
                     parts: [{ text: prompt }]
@@ -128,16 +128,41 @@ const processResumeWithGemini = async (resumeText) => {
     } catch (error) {
         console.error('Gemini API error:', error.response?.data || error.message);
       
+        // Fallback: try to extract at least name and email using regex
+        const emailMatch = resumeText.match(/[a-zA-Z0-9._%+-]+@([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}/);
+        const email = emailMatch ? emailMatch[0] : "Could not parse";
+        
+        // Smarter name fallback: look for the first clear block of capitalized words
+        const lines = resumeText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        let name = "Could not parse";
+        
+        if (lines.length > 0) {
+            // Heuristic: The name is usually on the first few lines and consists of 2-4 capitalized words
+            for (let i = 0; i < Math.min(lines.length, 3); i++) {
+                const line = lines[i];
+                // Match names like "Raiyan Ibn Farid" or "John Doe"
+                const nameCandidate = line.match(/^([A-Z][a-z]+(\s+[A-Z][a-z]+)+)/);
+                if (nameCandidate) {
+                    name = nameCandidate[1];
+                    break;
+                }
+            }
+            // If still not found, just take the first few words of the first line
+            if (name === "Could not parse") {
+                name = lines[0].split(/\s+/).slice(0, 3).join(' ');
+            }
+        }
+
         return {
-            name: "Could not parse",
-            email: "Could not parse",
-            education: "Could not parse resume data. The AI response couldn't be processed correctly.",
-            degrees: "Could not parse",
-            experience: "Could not parse",
-            skills: "Could not parse",
-            achievements: "Could not parse",
-            interests: "Could not parse",
-            hobbies: "Could not parse"
+            name: name,
+            email: email,
+            education: "The automated parser hit a temporary limit. Please fill in your details manually below.",
+            degrees: "Manually entry required",
+            experience: [],
+            skills: [],
+            achievements: [],
+            interests: [],
+            hobbies: []
         };
     }
 };

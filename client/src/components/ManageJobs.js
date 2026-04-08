@@ -4,7 +4,6 @@ import EditJob from './EditJob';
 const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack }) => {
     const [editingJob, setEditingJob] = useState(null);
     const [message, setMessage] = useState('');
-    const [isSuccess, setIsSuccess] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     
     const handleEdit = (job) => {
@@ -33,7 +32,6 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack }) => {
             }
             
             setMessage('Job deleted successfully!');
-            setIsSuccess(true);
             
         
             if (onJobUpdated) {
@@ -48,7 +46,6 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack }) => {
         } catch (error) {
             console.error('Error deleting job:', error);
             setMessage(`Error: ${error.message}`);
-            setIsSuccess(false);
         } finally {
             setIsLoading(false);
         }

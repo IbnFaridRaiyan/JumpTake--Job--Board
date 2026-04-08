@@ -21,6 +21,7 @@ const UserProfile = ({ userId, onUpdate }) => {
         if (userId) {
             fetchProfileData();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userId]);
     
     const fetchProfileData = async () => {

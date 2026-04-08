@@ -1,9 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from 'mammoth';
-import { useNavigate } from 'react-router-dom';
-import CreateAccount from './CreateAccount'; 
-import Register from './Register';
 import SimplifiedRegisterForm from './SimplifiedRegisterForm';
 
 
@@ -17,17 +14,7 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [processedData, setProcessedData] = useState(null);
     const fileInputRef = useRef(null);
-    const [isMounted, setIsMounted] = useState(true);
-    const navigate = useNavigate();
-    const [showCreateAccount, setShowCreateAccount] = useState(false);
     const [jobSeekerId, setJobSeekerId] = useState(null);
-    
-    useEffect(() => {
-        return () => {
-            
-            setIsMounted(false);
-        };
-    }, []);
 
     const handleDragEnter = (e) => {
         e.preventDefault();
@@ -109,8 +96,8 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
                         for (let i = 1; i <= pdf.numPages; i++) {
                             const page = await pdf.getPage(i);
                             const textContent = await page.getTextContent();
-                            const pageText = textContent.items.map(item => item.str).join(' ');
-                            fullText += pageText + '\n';
+                            const pageText = textContent.items.map(item => item.str).join('\n');
+                            fullText += pageText + '\n\n';
                         }
                         resolve(fullText);
                     } catch (err) {
@@ -172,7 +159,6 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
             setProcessedData(data.data);
             setJobSeekerId(data.jobSeekerId);
             setMessage('Resume processed successfully!');
-            setShowCreateAccount(true);
             
         } catch (error) {
             console.error('Error submitting resume:', error);
@@ -185,10 +171,6 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
 
     const handleClick = () => {
         fileInputRef.current.click();
-    };
-
-    const handleCreateAccount = () => {
-        setShowCreateAccount(true);
     };
 
     return (
@@ -260,119 +242,21 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
             )}
             
             {processedData && (
-                <div className="processed-data">
-                    <h3>Resume Analysis Results:</h3>
-                    <div className="data-container">
-                        <div className="data-section">
-                            <h4>Personal Information</h4>
-                            <p><strong>Name:</strong> {processedData.name || 'Not found'}</p>
-                            <p><strong>Email:</strong> {processedData.email || 'Not found'}</p>
-                        </div>
-                        
-                        <div className="data-section">
-                            <h4>Education</h4>
-                            {Array.isArray(processedData.education) ? (
-                                <ul>
-                                    {processedData.education.map((edu, index) => (
-                                        <li key={index}>
-                                            {typeof edu === 'object' ? (
-                                                <div>
-                                                    {edu.institution && <p><strong>Institution:</strong> {edu.institution}</p>}
-                                                    {edu.dates && <p><strong>Dates:</strong> {edu.dates}</p>}
-                                                    {edu.location && <p><strong>Location:</strong> {edu.location}</p>}
-                                                    {edu.degree && <p><strong>Degree:</strong> {edu.degree}</p>}
-                                                </div>
-                                            ) : (
-                                                edu
-                                            )}
-                                        </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p>{typeof processedData.education === 'string' ? processedData.education : 'Not found'}</p>
-                            )}
-                            
-                            <p><strong>Degrees:</strong> {
-                                Array.isArray(processedData.degrees) 
-                                    ? processedData.degrees.join(', ') 
-                                    : (processedData.degrees || 'Not found')
-                            }</p>
-                        </div>
-                        
-                        <div className="data-section">
-                            <h4>Experience</h4>
-                            {Array.isArray(processedData.experience) ? (
-                                <ul>
-                                    {processedData.experience.map((exp, index) => (
-                                        <li key={index}>
-                                            {typeof exp === 'object' ? (
-                                                <div>
-                                                    {exp.company && <p><strong>Company:</strong> {exp.company}</p>}
-                                                    {exp.role && <p><strong>Role:</strong> {exp.role}</p>}
-                                                    {exp.dates && <p><strong>Dates:</strong> {exp.dates}</p>}
-                                                    {exp.responsibilities && <p><strong>Responsibilities:</strong> {exp.responsibilities}</p>}
-                                                </div>
-                                            ) : (
-                                                exp
-                                            )}
-                                        </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p>{typeof processedData.experience === 'string' ? processedData.experience : 'Not found'}</p>
-                            )}
-                        </div>
-                        
-                        <div className="data-section">
-                            <h4>Skills</h4>
-                            {Array.isArray(processedData.skills) ? (
-                                <ul>
-                                    {processedData.skills.map((skill, index) => (
-                                        <li key={index}>{skill}</li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p>{typeof processedData.skills === 'string' ? processedData.skills : 'Not found'}</p>
-                            )}
-                        </div>
-                        
-                        <div className="data-section">
-                            <h4>Other Information</h4>
-                            <p><strong>Achievements:</strong> {
-                                Array.isArray(processedData.achievements) 
-                                    ? processedData.achievements.join(', ') 
-                                    : (processedData.achievements || 'Not found')
-                            }</p>
-                            <p><strong>Interests:</strong> {
-                                Array.isArray(processedData.interests) 
-                                    ? processedData.interests.join(', ') 
-                                    : (processedData.interests || 'Not found')
-                            }</p>
-                            <p><strong>Hobbies:</strong> {
-                                Array.isArray(processedData.hobbies) 
-                                    ? processedData.hobbies.join(', ') 
-                                    : (processedData.hobbies || 'Not found')
-                            }</p>
-                        </div>
-                    </div>
+                <div className="simplified-registration">
+                    <h3>Create Your Account</h3>
+                    <p className="registration-info">
+                        Create an account using the information extracted from your resume. You only need to set a password.
+                    </p>
                     
-                    {/* Simplified Registration Form that appears directly below the resume data */}
-                    <div className="simplified-registration">
-                        <h3>Create Your Account</h3>
-                        <p className="registration-info">
-                            Create an account using the information extracted from your resume. You only need to set a password.
-                        </p>
-                        
-                        <SimplifiedRegisterForm 
-                            jobSeekerId={jobSeekerId}
-                            initialName={processedData.name || ''}
-                            initialEmail={processedData.email || ''}
-                            onSuccess={() => {
-                                
-                                window.location.href = '/home';
-                            }}
-                        />
-                    </div>
+                    <SimplifiedRegisterForm 
+                        jobSeekerId={jobSeekerId}
+                        initialName={processedData.name || ''}
+                        initialEmail={processedData.email || ''}
+                        onSuccess={() => {
+                            
+                            window.location.href = '/home';
+                        }}
+                    />
                 </div>
             )}
             

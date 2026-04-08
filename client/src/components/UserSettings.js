@@ -25,6 +25,7 @@ const UserSettings = ({ user, onLogout }) => {
         if (user && user.id) {
             fetchUserNotificationPreferences();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
     
     const fetchUserNotificationPreferences = async () => {

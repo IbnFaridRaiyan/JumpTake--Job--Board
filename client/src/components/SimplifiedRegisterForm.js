@@ -87,7 +87,7 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
                 }
             }
             
-            const registerData = await registerResponse.json();
+            await registerResponse.json();
             
            
             const loginResponse = await fetch('http://localhost:5000/api/login', {

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from './Header';
 import JobFeed from './JobFeed';
 import MyApplications from './MyApplications';
 import UserProfile from './UserProfile';
@@ -55,6 +54,7 @@ const HomePage = () => {
             console.log('No jobSeekerId found, profile data will not be available');
             setLoading(false);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [navigate]);
 
     const linkJobSeekerToUser = async (userId, jobSeekerId) => {

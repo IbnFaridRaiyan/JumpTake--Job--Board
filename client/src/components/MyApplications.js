@@ -9,6 +9,7 @@ const MyApplications = ({ userId, onRefresh, switchSection }) => {
     
     useEffect(() => {
         fetchApplications();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userId]);
     
     const fetchApplications = async () => {

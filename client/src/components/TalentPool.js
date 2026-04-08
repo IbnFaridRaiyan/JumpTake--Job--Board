@@ -6,10 +6,6 @@ const TalentPool = ({ onBack }) => {
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCandidate, setSelectedCandidate] = useState(null);
-    const [filters, setFilters] = useState({
-        skills: [],
-        experience: ''
-    });
 
     useEffect(() => {
         fetchCandidates();
@@ -60,15 +56,6 @@ const TalentPool = ({ onBack }) => {
             
         return matchesSearch;
     });
-
-    const formatSkills = (skills) => {
-        if (Array.isArray(skills)) {
-            return skills.join(', ');
-        } else if (typeof skills === 'string') {
-            return skills;
-        }
-        return 'Not specified';
-    };
 
     const formatDataForDisplay = (data) => {
         if (Array.isArray(data)) {

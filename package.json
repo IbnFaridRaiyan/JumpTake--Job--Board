@@ -7,7 +7,7 @@
     "start": "concurrently \"npm run start --prefix client\" \"npm run start --prefix server\"",
     "client": "npm start --prefix client",
     "server": "npm start --prefix server",
-    "build": "NODE_OPTIONS=--openssl-legacy-provider npm run build --prefix client"
+    "build": "npm run build --prefix client"
   },
   "dependencies": {
     "body-parser": "^2.2.0",

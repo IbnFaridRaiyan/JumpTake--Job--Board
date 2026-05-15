@@ -33,7 +33,7 @@ const EmployerDashboard = () => {
 
     const fetchCompanyData = async (companyId) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/companies/${companyId}`);
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/companies/${companyId}`);
             if (response.ok) {
                 const data = await response.json();
                 setCompanyData(data);
@@ -50,7 +50,7 @@ const EmployerDashboard = () => {
     const fetchCompanyJobs = async (companyId) => {
         try {
             const token = localStorage.getItem('employerToken');
-            const response = await fetch(`http://localhost:5000/api/companies/${companyId}/jobs`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/companies/${companyId}/jobs`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

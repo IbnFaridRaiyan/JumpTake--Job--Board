@@ -138,7 +138,7 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
         setMessage('Processing your resume...');
         
         try {
-            const response = await fetch('http://localhost:5000/api/resume/parse', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/resume/parse`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

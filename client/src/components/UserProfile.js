@@ -35,7 +35,7 @@ const UserProfile = ({ userId, onUpdate }) => {
             const jobSeekerId = userData.jobSeekerId || localStorage.getItem('jobSeekerId') || localStorage.getItem('tempJobSeekerId');
             
             if (jobSeekerId) {
-                const response = await fetch(`http://localhost:5000/api/job-seekers/${jobSeekerId}`, {
+                const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/job-seekers/${jobSeekerId}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -51,7 +51,7 @@ const UserProfile = ({ userId, onUpdate }) => {
             }
             
            
-            const analysisResponse = await fetch(`http://localhost:5000/api/resume/analysis/${userId}`, {
+            const analysisResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/resume/analysis/${userId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -182,7 +182,7 @@ const UserProfile = ({ userId, onUpdate }) => {
         
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:5000/api/job-seekers/${jobSeekerData._id}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/job-seekers/${jobSeekerData._id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

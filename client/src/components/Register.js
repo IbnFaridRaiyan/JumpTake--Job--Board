@@ -43,11 +43,7 @@ const Register = ({ jobSeekerId, initialName = '', initialEmail = '', onClose, o
         
         try {
           
-<<<<<<< HEAD
             const registerResponse = await fetch((process.env.REACT_APP_API_URL || '') + '/api/users/register', {
-=======
-            const registerResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/users/register`, {
->>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -67,11 +63,7 @@ const Register = ({ jobSeekerId, initialName = '', initialEmail = '', onClose, o
             }
             
             
-<<<<<<< HEAD
             const loginResponse = await fetch((process.env.REACT_APP_API_URL || '') + '/api/users/login', {
-=======
-            const loginResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/users/login`, {
->>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -97,11 +89,7 @@ const Register = ({ jobSeekerId, initialName = '', initialEmail = '', onClose, o
             }));
             
             if (jobSeekerId) {
-<<<<<<< HEAD
                 const linkResponse = await fetch((process.env.REACT_APP_API_URL || '') + '/api/resume/link', {
-=======
-                const linkResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/resume/link`, {
->>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

@@ -60,11 +60,7 @@ const HomePage = () => {
     const linkJobSeekerToUser = async (userId, jobSeekerId) => {
         try {
             const token = localStorage.getItem('token');
-<<<<<<< HEAD
             const response = await fetch((process.env.REACT_APP_API_URL || '') + '/api/resume/link', {
-=======
-            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/resume/link`, {
->>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -89,11 +85,7 @@ const HomePage = () => {
     const fetchJobs = async () => {
         try {
             const token = localStorage.getItem('token');
-<<<<<<< HEAD
             const response = await fetch((process.env.REACT_APP_API_URL || '') + '/api/jobs', {
-=======
-            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/jobs`, {
->>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -119,11 +111,7 @@ const HomePage = () => {
             console.log('Fetching job seeker data for ID:', jobSeekerId);
             
             const token = localStorage.getItem('token');
-<<<<<<< HEAD
             const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/job-seekers/${jobSeekerId}`, {
-=======
-            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/job-seekers/${jobSeekerId}`, {
->>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -139,11 +127,7 @@ const HomePage = () => {
             
            
             try {
-<<<<<<< HEAD
                 const analysisResponse = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/resume/analysis/${user.id}`, {
-=======
-                const analysisResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/resume/analysis/${user.id}`, {
->>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }

@@ -19,11 +19,7 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack }) => {
         
         try {
             const token = localStorage.getItem('employerToken');
-<<<<<<< HEAD
             const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/jobs/${jobId}`, {
-=======
-            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/jobs/${jobId}`, {
->>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`

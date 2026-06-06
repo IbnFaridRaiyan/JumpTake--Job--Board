@@ -32,7 +32,7 @@ filesToResolve.forEach(relPath => {
     let content = fs.readFileSync(absPath, 'utf8');
     
     // Pattern to match Git conflict markers
-    const conflictRegex = /<<<<<<< HEAD\r?\n([\s\S]*?)\r?\n=======\r?\n([\s\S]*?)\r?\n>>>>>>> .+/g;
+    const conflictRegex = /<<<<<<< HEAD\r?\n([\s\S]*?)\r?\n=======\r?\n([\s\S]*?)(?:\r?\n)?>>>>>>> .+/g;
     
     if (conflictRegex.test(content)) {
         // Reset regex index

@@ -79,7 +79,6 @@ const processResumeWithGemini = async (resumeText) => {
     } catch (listError) {
         console.warn(`[GEMINI] Failed to list models from v1beta registry:`, listError.response?.data?.error?.message || listError.message);
         
-<<<<<<< HEAD
         // Try v1 registry
         try {
             console.log(`[GEMINI] Querying available models from v1 registry...`);
@@ -190,24 +189,6 @@ const processResumeWithGemini = async (resumeText) => {
                 } catch (parseError) {
                     console.error(`[GEMINI] JSON parsing error for full text with model ${model} (${version}):`, parseError);
                     throw new Error(`Failed to parse Gemini response for model ${model} (${version})`);
-=======
-        Only respond with a valid JSON object containing these fields.
-        
-        Resume text:
-        ${resumeText}
-        `;
-        
-        const response = await axios.post(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`,
-            {
-                contents: [{
-                    parts: [{ text: prompt }]
-                }]
-            },
-            {
-                headers: {
-                    'Content-Type': 'application/json'
->>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 }
             }
             
@@ -227,78 +208,6 @@ const processResumeWithGemini = async (resumeText) => {
             });
             lastError = error;
         }
-<<<<<<< HEAD
-=======
-        
-       
-        const responseText = response.data.candidates[0].content.parts[0].text;
-        
-      
-       
-        const jsonMatch = responseText.match(/```json\n([\s\S]*?)\n```/) || 
-                         responseText.match(/```\n([\s\S]*?)\n```/) ||
-                         responseText.match(/\{[\s\S]*?\}/);
-                         
-        let parsedData;
-        if (jsonMatch) {
-            const jsonStr = jsonMatch[1] || jsonMatch[0];
-            try {
-                parsedData = JSON.parse(jsonStr.trim());
-            } catch (parseError) {
-                console.error('JSON parsing error:', parseError, 'for text:', jsonStr);
-                throw new Error('Failed to parse Gemini API response as JSON');
-            }
-        } else {
-           
-            try {
-                parsedData = JSON.parse(responseText);
-            } catch (parseError) {
-                console.error('JSON parsing error for full text:', parseError);
-                throw new Error('Failed to parse Gemini API response');
-            }
-        }
-        
-        return parsedData;
-    } catch (error) {
-        console.error('Gemini API error:', error.response?.data || error.message);
-      
-        // Fallback: try to extract at least name and email using regex
-        const emailMatch = resumeText.match(/[a-zA-Z0-9._%+-]+@([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}/);
-        const email = emailMatch ? emailMatch[0] : "Could not parse";
-        
-        // Smarter name fallback: look for the first clear block of capitalized words
-        const lines = resumeText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-        let name = "Could not parse";
-        
-        if (lines.length > 0) {
-            // Heuristic: The name is usually on the first few lines and consists of 2-4 capitalized words
-            for (let i = 0; i < Math.min(lines.length, 3); i++) {
-                const line = lines[i];
-                // Match names like "Raiyan Ibn Farid" or "John Doe"
-                const nameCandidate = line.match(/^([A-Z][a-z]+(\s+[A-Z][a-z]+)+)/);
-                if (nameCandidate) {
-                    name = nameCandidate[1];
-                    break;
-                }
-            }
-            // If still not found, just take the first few words of the first line
-            if (name === "Could not parse") {
-                name = lines[0].split(/\s+/).slice(0, 3).join(' ');
-            }
-        }
-
-        return {
-            name: name,
-            email: email,
-            education: "The automated parser hit a temporary limit. Please fill in your details manually below.",
-            degrees: "Manually entry required",
-            experience: [],
-            skills: [],
-            achievements: [],
-            interests: [],
-            hobbies: []
-        };
->>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
     }
     
     // If we reached here, all attempts failed

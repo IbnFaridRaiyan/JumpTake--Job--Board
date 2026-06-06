@@ -1,0 +1,16 @@
+John Doe
+Email: john.doe@example.com
+Education:
+University of Tech - BS in Computer Science (2020-2024)
+
+Experience:
+Software Engineer at TechCorp (2024-Present)
+- Developed web applications with Node.js and React.
+
+Skills: JavaScript, Node.js, React, HTML, CSS
+
+Achievements: Best Developer Award 2025
+
+Interests: AI, Open Source
+
+Hobbies: Reading, Cycling

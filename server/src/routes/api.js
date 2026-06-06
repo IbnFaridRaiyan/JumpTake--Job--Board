@@ -14,6 +14,7 @@ const applicationController = require('../controllers/applicationController');
 
 router.post('/upload', resumeController.handleResume);
 router.post('/resume/parse', resumeController.handleResume);
+router.post('/resume/link', resumeController.linkResumeToUser);
 router.get('/resume/analysis/:userId', resumeController.getResumeAnalysisByUserId);
 router.put('/resume/analysis/:jobSeekerId', resumeController.updateResumeAnalysis);
 
@@ -93,6 +94,7 @@ router.put('/job-seekers/:id', async (req, res) => {
 
 
 router.get('/jobs', jobController.getAllJobs);
+router.get('/jobs/recommendations/:jobSeekerId', jobController.getRecommendedJobs);
 router.get('/jobs/:id', jobController.getJobById);
 router.post('/jobs', jobController.createJob);
 router.put('/jobs/:id', jobController.updateJob);
@@ -112,5 +114,7 @@ router.put('/applications/:id', applicationController.updateApplication);
 router.put('/users/:userId/email', userController.updateEmail);
 router.put('/users/:userId/password', userController.updatePassword);
 router.delete('/users/:userId', userController.deleteUser);
+router.get('/users/:userId/notification-preferences', userController.getNotificationPreferences);
+router.put('/users/:userId/notification-preferences', userController.updateNotificationPreferences);
 
 module.exports = router;

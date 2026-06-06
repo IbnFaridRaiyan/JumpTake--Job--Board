@@ -2,6 +2,7 @@
   "name": "jumptake-client",
   "version": "1.0.0",
   "private": true,
+  "proxy": "http://localhost:5000",
   "dependencies": {
     "mammoth": "^1.9.0",
     "pdfjs-dist": "^5.1.91",

@@ -1,14 +1,14 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import homeVideo from './media/home.mp4';
-import employeeVideo from './media/employee.mp4';
+import candidateVideo from './media/employee.mp4';
 import employerVideo from './media/employer.mp4';
 import logo from './media/logo.png';
 
 const Landing = () => {
     const navigate = useNavigate();
     const aboutSectionRef = useRef(null);
-    const employeePortalRef = useRef(null);
+    const candidatePortalRef = useRef(null);
     const employerPortalRef = useRef(null);
 
     const goToJobSeeker = () => {
@@ -23,8 +23,8 @@ const Landing = () => {
         aboutSectionRef.current.scrollIntoView({ behavior: 'smooth' });
     };
     
-    const scrollToEmployeePortal = () => {
-        employeePortalRef.current.scrollIntoView({ behavior: 'smooth' });
+    const scrollToCandidatePortal = () => {
+        candidatePortalRef.current.scrollIntoView({ behavior: 'smooth' });
     };
     
     const scrollToEmployerPortal = () => {
@@ -55,7 +55,7 @@ const Landing = () => {
                             className="role-button job-seeker-button"
                             onClick={goToJobSeeker}
                         >
-                            Employee
+                            Candidate
                         </button>
                         
                         <div className="button-separator">or</div>
@@ -87,13 +87,13 @@ const Landing = () => {
                 <div className="about-container">
                     <h2>About JumpTake</h2>
                     <p className="about-intro">
-                        JumpTake is an innovative platform designed to connect talented employees with their perfect job opportunities, and help employers find the ideal candidates through AI-powered resume matching.
+                        JumpTake is an innovative platform designed to connect talented candidates with their perfect job opportunities, and help employers find the ideal candidates through AI-powered resume matching.
                     </p>
 
                     <div className="about-cards">
                         <div className="about-card">
                             <div className="about-card-icon">👤</div>
-                            <h3>For Employees</h3>
+                            <h3>For Candidates</h3>
                             <p>Upload your resume and let our AI match you with jobs that align perfectly with your skills and experience. Apply with a single click and track your applications.</p>
                         </div>
                         
@@ -110,7 +110,7 @@ const Landing = () => {
                         <div className="steps-container">
                             <div className="step">
                                 <div className="step-number">1</div>
-                                <h3>Surf as an Employee or Employer</h3>
+                                <h3>Surf as a Candidate or Employer</h3>
                                 <p>Candidate needs to upload their resume to create an account, Employers can search their industry to get started.</p>
                             </div>
                             
@@ -169,20 +169,20 @@ const Landing = () => {
             </div>
             
             
-            <div className="portal-preview-section employee-portal-section" ref={employeePortalRef}>
+            <div className="portal-preview-section candidate-portal-section" ref={candidatePortalRef}>
                 <div className="portal-preview-container">
                     <div className="portal-video-background">
                         <video autoPlay loop muted playsInline className="portal-video">
-                            <source src={employeeVideo} type="video/mp4" />
+                            <source src={candidateVideo} type="video/mp4" />
                             Your browser does not support the video tag.
                         </video>
                         <div className="portal-video-overlay"></div>
                     </div>
                     
                     <div className="portal-content">
-                        <h2>Employee Portal</h2>
+                        <h2>Candidate Portal</h2>
                         <p className="portal-description">
-                            Our Employee Portal is designed to help job seekers find their perfect position with minimal effort. Upload your resume, and let our AI do the rest.
+                            Our Candidate Portal is designed to help job seekers find their perfect position with minimal effort. Upload your resume, and let our AI do the rest.
                         </p>
                         
                         <div className="portal-features">
@@ -212,10 +212,10 @@ const Landing = () => {
                         </div>
                         
                         <button 
-                            className="portal-cta-button employee-cta"
+                            className="portal-cta-button candidate-cta"
                             onClick={goToJobSeeker}
                         >
-                            Enter Employee Portal
+                            Enter Candidate Portal
                         </button>
                     </div>
                 </div>

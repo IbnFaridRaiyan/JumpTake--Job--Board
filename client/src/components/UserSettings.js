@@ -30,7 +30,7 @@ const UserSettings = ({ user, onLogout }) => {
     const fetchUserNotificationPreferences = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:5000/api/users/${user.id}/notification-preferences`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/users/${user.id}/notification-preferences`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -74,7 +74,7 @@ const UserSettings = ({ user, onLogout }) => {
         
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:5000/api/users/${user.id}/password`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/users/${user.id}/password`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -118,7 +118,7 @@ const UserSettings = ({ user, onLogout }) => {
         
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:5000/api/users/${user.id}/email`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/users/${user.id}/email`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -163,7 +163,7 @@ const UserSettings = ({ user, onLogout }) => {
         
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:5000/api/users/${user.id}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/users/${user.id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -227,7 +227,7 @@ const UserSettings = ({ user, onLogout }) => {
         try {
             const token = localStorage.getItem('token');
             
-            const response = await fetch(`http://localhost:5000/api/users/${user.id}/notification-preferences`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/users/${user.id}/notification-preferences`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

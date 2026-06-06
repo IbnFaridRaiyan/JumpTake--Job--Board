@@ -43,7 +43,7 @@ const Register = ({ jobSeekerId, initialName = '', initialEmail = '', onClose, o
         
         try {
           
-            const registerResponse = await fetch('http://localhost:5000/api/users/register', {
+            const registerResponse = await fetch((process.env.REACT_APP_API_URL || '') + '/api/users/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -63,7 +63,7 @@ const Register = ({ jobSeekerId, initialName = '', initialEmail = '', onClose, o
             }
             
             
-            const loginResponse = await fetch('http://localhost:5000/api/users/login', {
+            const loginResponse = await fetch((process.env.REACT_APP_API_URL || '') + '/api/users/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -89,7 +89,7 @@ const Register = ({ jobSeekerId, initialName = '', initialEmail = '', onClose, o
             }));
             
             if (jobSeekerId) {
-                const linkResponse = await fetch('http://localhost:5000/api/resume/link', {
+                const linkResponse = await fetch((process.env.REACT_APP_API_URL || '') + '/api/resume/link', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

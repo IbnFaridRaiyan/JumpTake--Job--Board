@@ -63,7 +63,7 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
         
         try {
           
-            const registerResponse = await fetch('http://localhost:5000/api/create-account', {
+            const registerResponse = await fetch((process.env.REACT_APP_API_URL || '') + '/api/create-account', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -90,7 +90,7 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
             const registerData = await registerResponse.json();
             
            
-            const loginResponse = await fetch('http://localhost:5000/api/login', {
+            const loginResponse = await fetch((process.env.REACT_APP_API_URL || '') + '/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -128,7 +128,7 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
                 const jobSeekerIdToUse = jobSeekerId || localStorage.getItem('tempJobSeekerId');
                 
                 if (jobSeekerIdToUse) {
-                    const linkResponse = await fetch('http://localhost:5000/api/resume/link', {
+                    const linkResponse = await fetch((process.env.REACT_APP_API_URL || '') + '/api/resume/link', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

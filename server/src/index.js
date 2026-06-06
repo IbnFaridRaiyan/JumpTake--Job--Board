@@ -1,12 +1,14 @@
+const dotenv = require('dotenv');
+const path = require('path');
+
+// Load .env BEFORE any other require that reads process.env at module load time
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const apiRoutes = require('./routes/api');
-
-
-dotenv.config();
 
 
 connectDB();
@@ -30,6 +32,15 @@ app.use((err, req, res, next) => {
 });
 
 app.use('/api', apiRoutes);
+
+// Serve React production build
+const clientBuildPath = path.join(__dirname, '../../client/build');
+app.use(express.static(clientBuildPath));
+
+// Catch-all: serve React app for any non-API route (SPA routing)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(clientBuildPath, 'index.html'));
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

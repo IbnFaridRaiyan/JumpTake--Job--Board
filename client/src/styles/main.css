@@ -112,7 +112,7 @@ header.centered .header-subtitle {
 
 .submit-button, 
 .login-button, 
-.employee-login-button, 
+.candidate-login-button, 
 .role-button,
 .create-account-button {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
@@ -130,7 +130,7 @@ header.centered .header-subtitle {
 
 .submit-button:hover:not(:disabled),
 .login-button:hover:not(:disabled),
-.employee-login-button:hover:not(:disabled),
+.candidate-login-button:hover:not(:disabled),
 .role-button:hover:not(:disabled),
 .create-account-button:hover:not(:disabled) {
   background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
@@ -140,7 +140,7 @@ header.centered .header-subtitle {
 
 .submit-button:disabled,
 .login-button:disabled,
-.employee-login-button:disabled,
+.candidate-login-button:disabled,
 .role-button:disabled,
 .create-account-button:disabled {
   background-color: #bbc1d5;
@@ -538,7 +538,7 @@ header.centered .header-subtitle {
   max-width: 400px;
 }
 
-.employee-login-button,
+.candidate-login-button,
 .submit-button,
 .back-button {
   width: 100%;
@@ -1009,7 +1009,7 @@ textarea:focus {
 
 
 .search-button, 
-.employee-login-button, 
+.candidate-login-button, 
 .submit-button, 
 .back-button {
   margin: 8px auto;
@@ -2654,7 +2654,7 @@ textarea:focus {
 .employer-button,
 .submit-button, 
 .search-button,
-.employee-login-button,
+.candidate-login-button,
 .back-button,
 .secondary-button,
 .card-button,
@@ -2781,7 +2781,7 @@ textarea:focus {
 
 
 .employer-login-button,
-.employee-login-button {
+.candidate-login-button {
   margin: 8px auto;
   width: 100%;
   max-width: 250px;
@@ -2793,7 +2793,7 @@ textarea:focus {
 }
 
 .employer-login-button:hover,
-.employee-login-button:hover {
+.candidate-login-button:hover {
   background-color: var(--primary-dark);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
@@ -3867,7 +3867,7 @@ textarea:focus {
 
 
 .job-seeker-page .submit-button,
-.job-seeker-page .employee-login-button,
+.job-seeker-page .candidate-login-button,
 .job-seeker-page .back-button {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
   color: white;
@@ -3889,21 +3889,21 @@ textarea:focus {
 }
 
 .job-seeker-page .submit-button:hover,
-.job-seeker-page .employee-login-button:hover,
+.job-seeker-page .candidate-login-button:hover,
 .job-seeker-page .back-button:hover {
   transform: translateY(-3px);
   box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
 }
 
 .job-seeker-page .submit-button:active,
-.job-seeker-page .employee-login-button:active,
+.job-seeker-page .candidate-login-button:active,
 .job-seeker-page .back-button:active {
   transform: translateY(1px);
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
 }
 
 .job-seeker-page .submit-button::after,
-.job-seeker-page .employee-login-button::after,
+.job-seeker-page .candidate-login-button::after,
 .job-seeker-page .back-button::after {
   content: '';
   position: absolute;
@@ -3919,7 +3919,7 @@ textarea:focus {
 }
 
 .job-seeker-page .submit-button:focus:not(:active)::after,
-.job-seeker-page .employee-login-button:focus:not(:active)::after,
+.job-seeker-page .candidate-login-button:focus:not(:active)::after,
 .job-seeker-page .back-button:focus:not(:active)::after {
   animation: ripple 1s ease-out;
 }
@@ -4659,7 +4659,7 @@ textarea:focus {
   margin-right: 10px;
 }
 
-.employee-login-button {
+.candidate-login-button {
   background-color: white;
   color: white;
   border: 1px solid var(--primary-color);
@@ -4676,7 +4676,7 @@ textarea:focus {
   
 }
 
-.employee-login-button:hover {
+.candidate-login-button:hover {
   background-color: rgba(var(--primary-color-rgb), 0.05);
   transform: translateY(-2px);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
@@ -4963,7 +4963,7 @@ textarea:focus {
 }
 
 
-.employee-video-background {
+.candidate-video-background {
   position: absolute;
   top: 0;
   left: 0;
@@ -4973,7 +4973,7 @@ textarea:focus {
   z-index: 0;
 }
 
-.employee-video-background video {
+.candidate-video-background video {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -4985,7 +4985,7 @@ textarea:focus {
   object-fit: cover;
 }
 
-.employee-video-overlay {
+.candidate-video-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -5021,7 +5021,6 @@ textarea:focus {
 
 
 .landing-page-container {
-  scroll-snap-type: y mandatory;
   height: 100vh;
   overflow-y: scroll;
   scroll-behavior: smooth;
@@ -5033,7 +5032,6 @@ textarea:focus {
   justify-content: center;
   align-items: center;
   position: relative;
-  scroll-snap-align: start;
 }
 
 .about-button {
@@ -5071,7 +5069,6 @@ textarea:focus {
   justify-content: center;
   align-items: center;
   padding: 60px 20px;
-  scroll-snap-align: start;
 }
 
 .about-container {
@@ -5302,7 +5299,6 @@ textarea:focus {
 
 .portal-preview-section {
   min-height: 100vh;
-  scroll-snap-align: start;
   position: relative;
   display: flex;
   justify-content: center;
@@ -5439,7 +5435,7 @@ textarea:focus {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-.employee-cta {
+.candidate-cta {
   background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
   color: white;
 }
@@ -5454,7 +5450,7 @@ textarea:focus {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
-.employee-cta:hover {
+.candidate-cta:hover {
   background: linear-gradient(135deg, #3f44b5 0%, #7a80fa 100%);
 }
 

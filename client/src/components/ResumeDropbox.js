@@ -151,7 +151,7 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
         setMessage('Processing your resume...');
         
         try {
-            const response = await fetch('http://localhost:5000/api/resume/parse', {
+            const response = await fetch((process.env.REACT_APP_API_URL || '') + '/api/resume/parse', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -222,10 +222,10 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
             {/* Centered buttons container */}
             <div className="buttons-container">
                 <button 
-                    className="employee-login-button" 
+                    className="candidate-login-button" 
                     onClick={onLoginClick}
                 >
-                    Employee Login
+                    Candidate Login
                 </button>
                 
                 <div className="login-divider">OR</div>

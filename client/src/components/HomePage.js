@@ -60,7 +60,7 @@ const HomePage = () => {
     const linkJobSeekerToUser = async (userId, jobSeekerId) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:5000/api/resume/link', {
+            const response = await fetch((process.env.REACT_APP_API_URL || '') + '/api/resume/link', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ const HomePage = () => {
     const fetchJobs = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:5000/api/jobs', {
+            const response = await fetch((process.env.REACT_APP_API_URL || '') + '/api/jobs', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -111,7 +111,7 @@ const HomePage = () => {
             console.log('Fetching job seeker data for ID:', jobSeekerId);
             
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:5000/api/job-seekers/${jobSeekerId}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/job-seekers/${jobSeekerId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -127,7 +127,7 @@ const HomePage = () => {
             
            
             try {
-                const analysisResponse = await fetch(`http://localhost:5000/api/resume/analysis/${user.id}`, {
+                const analysisResponse = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/resume/analysis/${user.id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -212,7 +212,7 @@ const HomePage = () => {
             <div className="loading-container">
                 <div className="dashboard-header">
                     <div className="dashboard-title">
-                        <h1>Employee Dashboard</h1>
+                        <h1>Candidate Dashboard</h1>
                         <p>Welcome back, {user?.email.split('@')[0] || 'User'}</p>
                     </div>
                 </div>
@@ -225,7 +225,7 @@ const HomePage = () => {
         <div className="home-page">
             <div className="dashboard-header">
                 <div className="dashboard-title">
-                    <h1>Employee Dashboard</h1>
+                    <h1>Candidate Dashboard</h1>
                     <p>Welcome back, {user?.email.split('@')[0] || 'User'}</p>
                 </div>
                 <div className="header-actions">

@@ -22,7 +22,7 @@ const Login = ({ onClose }) => {
         setMessage('');
         
         try {
-            const response = await fetch('http://localhost:5000/api/login', {
+            const response = await fetch((process.env.REACT_APP_API_URL || '') + '/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ const Login = ({ onClose }) => {
         <div className="modal-overlay">
             <div className="login-modal">
                 <div className="login-header">
-                    <h2>Employee Login</h2>
+                    <h2>Candidate Login</h2>
                     <div className="modal-brand">JumpTake</div>
                     <button className="close-button" onClick={onClose}>×</button>
                 </div>

@@ -15,7 +15,7 @@ const MyApplications = ({ userId, onRefresh, switchSection }) => {
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:5000/api/applications/user/${userId}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/applications/user/${userId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -44,7 +44,7 @@ const MyApplications = ({ userId, onRefresh, switchSection }) => {
         
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:5000/api/applications/${applicationId}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/applications/${applicationId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

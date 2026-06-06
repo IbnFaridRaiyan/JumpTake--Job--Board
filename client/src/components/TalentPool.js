@@ -19,7 +19,7 @@ const TalentPool = ({ onBack }) => {
         try {
             setIsLoading(true);
             const token = localStorage.getItem('employerToken');
-            const response = await fetch('http://localhost:5000/api/job-seekers', {
+            const response = await fetch((process.env.REACT_APP_API_URL || '') + '/api/job-seekers', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

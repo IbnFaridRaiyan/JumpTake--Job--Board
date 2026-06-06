@@ -85,7 +85,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
         setIsLoadingRecommendations(true);
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:5000/api/jobs/recommendations/${jobSeekerData._id}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/jobs/recommendations/${jobSeekerData._id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -206,7 +206,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
         
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:5000/api/applications', {
+            const response = await fetch((process.env.REACT_APP_API_URL || '') + '/api/applications', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

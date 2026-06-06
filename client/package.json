@@ -4,6 +4,7 @@
   "private": true,
   "proxy": "http://localhost:5000",
   "dependencies": {
+    "cross-env": "^7.0.3",
     "mammoth": "^1.9.0",
     "pdfjs-dist": "^5.1.91",
     "react": "^17.0.2",
@@ -34,8 +35,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "cross-env": "^7.0.3"
   }
 }

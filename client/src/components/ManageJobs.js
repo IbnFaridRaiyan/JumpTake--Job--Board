@@ -4,7 +4,6 @@ import EditJob from './EditJob';
 const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack }) => {
     const [editingJob, setEditingJob] = useState(null);
     const [message, setMessage] = useState('');
-    const [isSuccess, setIsSuccess] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     
     const handleEdit = (job) => {
@@ -20,7 +19,11 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack }) => {
         
         try {
             const token = localStorage.getItem('employerToken');
+<<<<<<< HEAD
             const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/jobs/${jobId}`, {
+=======
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/jobs/${jobId}`, {
+>>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -33,7 +36,6 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack }) => {
             }
             
             setMessage('Job deleted successfully!');
-            setIsSuccess(true);
             
         
             if (onJobUpdated) {
@@ -48,7 +50,6 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack }) => {
         } catch (error) {
             console.error('Error deleting job:', error);
             setMessage(`Error: ${error.message}`);
-            setIsSuccess(false);
         } finally {
             setIsLoading(false);
         }

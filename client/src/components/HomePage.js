@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from './Header';
 import JobFeed from './JobFeed';
 import MyApplications from './MyApplications';
 import UserProfile from './UserProfile';
@@ -55,12 +54,17 @@ const HomePage = () => {
             console.log('No jobSeekerId found, profile data will not be available');
             setLoading(false);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [navigate]);
 
     const linkJobSeekerToUser = async (userId, jobSeekerId) => {
         try {
             const token = localStorage.getItem('token');
+<<<<<<< HEAD
             const response = await fetch((process.env.REACT_APP_API_URL || '') + '/api/resume/link', {
+=======
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/resume/link`, {
+>>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -85,7 +89,11 @@ const HomePage = () => {
     const fetchJobs = async () => {
         try {
             const token = localStorage.getItem('token');
+<<<<<<< HEAD
             const response = await fetch((process.env.REACT_APP_API_URL || '') + '/api/jobs', {
+=======
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/jobs`, {
+>>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -111,7 +119,11 @@ const HomePage = () => {
             console.log('Fetching job seeker data for ID:', jobSeekerId);
             
             const token = localStorage.getItem('token');
+<<<<<<< HEAD
             const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/job-seekers/${jobSeekerId}`, {
+=======
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/job-seekers/${jobSeekerId}`, {
+>>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -127,7 +139,11 @@ const HomePage = () => {
             
            
             try {
+<<<<<<< HEAD
                 const analysisResponse = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/resume/analysis/${user.id}`, {
+=======
+                const analysisResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/resume/analysis/${user.id}`, {
+>>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }

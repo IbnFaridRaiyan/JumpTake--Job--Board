@@ -22,6 +22,7 @@ const Landing = () => {
     const scrollToAbout = () => {
         aboutSectionRef.current.scrollIntoView({ behavior: 'smooth' });
     };
+<<<<<<< HEAD
     
     const scrollToCandidatePortal = () => {
         candidatePortalRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -30,6 +31,8 @@ const Landing = () => {
     const scrollToEmployerPortal = () => {
         employerPortalRef.current.scrollIntoView({ behavior: 'smooth' });
     };
+=======
+>>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
 
     return (
         <div className="landing-page-container">
@@ -58,7 +61,7 @@ const Landing = () => {
                             Candidate
                         </button>
                         
-                        <div className="button-separator">or</div>
+                        <div className="button-separator">or an</div>
                         
                         <button 
                             className="role-button company-button"

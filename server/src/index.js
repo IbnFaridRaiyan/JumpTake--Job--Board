@@ -9,8 +9,6 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const apiRoutes = require('./routes/api');
-
-
 connectDB();
 
 const app = express();

@@ -22,7 +22,11 @@ const EmployerLogin = ({ onClose }) => {
         setMessage('');
         
         try {
+<<<<<<< HEAD
             const response = await fetch((process.env.REACT_APP_API_URL || '') + '/api/employer/login', {
+=======
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/employer/login`, {
+>>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

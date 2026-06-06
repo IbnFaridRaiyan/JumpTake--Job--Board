@@ -38,7 +38,11 @@ const CreateAccount = ({ email, jobSeekerId, onCancel }) => {
         setMessage('Creating your account...');
         
         try {
+<<<<<<< HEAD
             const response = await fetch((process.env.REACT_APP_API_URL || '') + '/api/create-account', {
+=======
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/create-account`, {
+>>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

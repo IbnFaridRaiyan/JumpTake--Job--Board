@@ -52,7 +52,11 @@ const PostJob = ({ companyId, onJobPosted, onCancel }) => {
                 : [];
             
             const token = localStorage.getItem('employerToken');
+<<<<<<< HEAD
             const response = await fetch((process.env.REACT_APP_API_URL || '') + '/api/jobs', {
+=======
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/jobs`, {
+>>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

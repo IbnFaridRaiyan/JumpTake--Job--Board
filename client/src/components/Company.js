@@ -68,17 +68,17 @@ const Company = () => {
 
     const extractIndustry = (text) => {
         const industryPatterns = [
-            /operates\s+in\s+(?:the\s+)?([^\.]+?(?:industry|sector|market))/i,
-            /is\s+(?:a|an)\s+([^\.]+?)\s+company/i,
-            /(?:industry|sector)(?:\sis|\s+are|\s+include[s]?|:)\s+([^\.]{3,50}?)(?:\.|\band\b|,\s+(?:and|which|with|while))/i,
-            /(?:industry|sector|business)(?:\sis|\sin|:)?\s+([^\.]{3,100}?)(?:\.|\n|\r|$)/i
+            /operates\s+in\s+(?:the\s+)?([^.]+?(?:industry|sector|market))/i,
+            /is\s+(?:a|an)\s+([^.]+?)\s+company/i,
+            /(?:industry|sector)(?:\sis|\s+are|\s+includes?|:)\s+([^.]{3,50}?)(?:\.|\band\b|,\s+(?:and|which|with|while))/i,
+            /(?:industry|sector|business)(?:\sis|\sin|:)?\s+([^.]{3,100}?)(?:\.|\n|\r|$)/i
         ];
         
         for (const pattern of industryPatterns) {
             const match = text.match(pattern);
             if (match && match[1] && match[1].length > 3) {
                 return match[1].trim()
-                    .replace(/\s+(?:in|of|at|for|with|by|through)\s+[^,\.]+$/, '')
+                    .replace(/\s+(?:in|of|at|for|with|by|through)\s+[^,.]+$/, '')
                     .replace(/\s*\([^)]*\)/, '');
             }
         }
@@ -115,7 +115,7 @@ const Company = () => {
     };
 
     const extractHeadquarters = (text) => {
-        const hqRegex = /(?:headquartered|headquarters|based)(?:\sin|\sat|:)?\s([^\.]+)/i;
+        const hqRegex = /(?:headquartered|headquarters|based)(?:\sin|\sat|:)?\s([^.]+)/i;
         const match = text.match(hqRegex);
         return match ? match[1].trim() : '';
     };

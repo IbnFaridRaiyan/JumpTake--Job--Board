@@ -9,13 +9,18 @@ const MyApplications = ({ userId, onRefresh, switchSection }) => {
     
     useEffect(() => {
         fetchApplications();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userId]);
     
     const fetchApplications = async () => {
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
+<<<<<<< HEAD
             const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/applications/user/${userId}`, {
+=======
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/applications/user/${userId}`, {
+>>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -44,7 +49,11 @@ const MyApplications = ({ userId, onRefresh, switchSection }) => {
         
         try {
             const token = localStorage.getItem('token');
+<<<<<<< HEAD
             const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/applications/${applicationId}`, {
+=======
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/applications/${applicationId}`, {
+>>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

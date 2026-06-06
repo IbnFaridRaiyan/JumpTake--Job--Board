@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import ResumeDropbox from './ResumeDropbox';
-import Header from './Header';
 import Landing from './Landing';
 import Company from './Company';
 import Login from './Login';

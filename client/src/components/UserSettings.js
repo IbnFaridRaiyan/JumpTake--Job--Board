@@ -25,12 +25,17 @@ const UserSettings = ({ user, onLogout }) => {
         if (user && user.id) {
             fetchUserNotificationPreferences();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
     
     const fetchUserNotificationPreferences = async () => {
         try {
             const token = localStorage.getItem('token');
+<<<<<<< HEAD
             const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/users/${user.id}/notification-preferences`, {
+=======
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/users/${user.id}/notification-preferences`, {
+>>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -74,7 +79,11 @@ const UserSettings = ({ user, onLogout }) => {
         
         try {
             const token = localStorage.getItem('token');
+<<<<<<< HEAD
             const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/users/${user.id}/password`, {
+=======
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/users/${user.id}/password`, {
+>>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -118,7 +127,11 @@ const UserSettings = ({ user, onLogout }) => {
         
         try {
             const token = localStorage.getItem('token');
+<<<<<<< HEAD
             const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/users/${user.id}/email`, {
+=======
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/users/${user.id}/email`, {
+>>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -163,7 +176,11 @@ const UserSettings = ({ user, onLogout }) => {
         
         try {
             const token = localStorage.getItem('token');
+<<<<<<< HEAD
             const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/users/${user.id}`, {
+=======
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/users/${user.id}`, {
+>>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -227,7 +244,11 @@ const UserSettings = ({ user, onLogout }) => {
         try {
             const token = localStorage.getItem('token');
             
+<<<<<<< HEAD
             const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/users/${user.id}/notification-preferences`, {
+=======
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/users/${user.id}/notification-preferences`, {
+>>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

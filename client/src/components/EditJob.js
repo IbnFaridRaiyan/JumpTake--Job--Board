@@ -52,7 +52,11 @@ const EditJob = ({ job, onCancel, onJobUpdated }) => {
                 : [];
             
             const token = localStorage.getItem('employerToken');
+<<<<<<< HEAD
             const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/jobs/${job._id}`, {
+=======
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/jobs/${job._id}`, {
+>>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

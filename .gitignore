@@ -1,5 +1,13 @@
+node_modules/
 node_modules
 .env
+.env.local
 client/build
 error_log.txt
 test_gemini.js
+.DS_Store
+dist/
+build/
+*.log
+test-mongo2.js
+list-models.js

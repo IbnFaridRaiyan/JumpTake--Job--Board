@@ -52,6 +52,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
         if (jobSeekerData && jobSeekerData.skills && jobSeekerData.skills.length > 0) {
             fetchRecommendedJobs();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [jobSeekerData, jobs]);
 
     useEffect(() => {
@@ -85,7 +86,11 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
         setIsLoadingRecommendations(true);
         try {
             const token = localStorage.getItem('token');
+<<<<<<< HEAD
             const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/jobs/recommendations/${jobSeekerData._id}`, {
+=======
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/jobs/recommendations/${jobSeekerData._id}`, {
+>>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -206,7 +211,11 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
         
         try {
             const token = localStorage.getItem('token');
+<<<<<<< HEAD
             const response = await fetch((process.env.REACT_APP_API_URL || '') + '/api/applications', {
+=======
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/applications`, {
+>>>>>>> 9920dcbff587f002300c903230ebabae6a4586c3
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

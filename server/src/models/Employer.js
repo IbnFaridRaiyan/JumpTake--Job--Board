@@ -13,10 +13,35 @@ const EmployerSchema = new mongoose.Schema({
     required: [true, 'Password is required'],
     minlength: 6
   },
+  email: {
+    type: String,
+    trim: true,
+    lowercase: true,
+    unique: true,
+    sparse: true
+  },
+  phone: {
+    type: String,
+    trim: true
+  },
   companyId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Company',
     required: [true, 'Company ID is required']
+  },
+  notificationPreferences: {
+    newApplications: {
+      type: Boolean,
+      default: true
+    },
+    newCandidates: {
+      type: Boolean,
+      default: true
+    },
+    emailNotifications: {
+      type: Boolean,
+      default: true
+    }
   },
   createdAt: {
     type: Date,

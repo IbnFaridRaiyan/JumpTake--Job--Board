@@ -50,6 +50,8 @@ router.get('/companies/:id', async (req, res) => {
     }
 });
 
+router.put('/companies/:id', companyController.updateCompanyInfo);
+
 
 router.get('/job-seekers', async (req, res) => {
     try {
@@ -104,6 +106,10 @@ router.get('/companies/:companyId/jobs', jobController.getCompanyJobs);
 
 router.post('/employer/register', employerController.registerEmployer);
 router.post('/employer/login', employerController.loginEmployer);
+router.get('/employers/:id/settings', employerController.getEmployerSettings);
+router.put('/employers/:id/contact', employerController.updateEmployerContact);
+router.put('/employers/:id/password', employerController.updateEmployerPassword);
+router.put('/employers/:id/notification-preferences', employerController.updateEmployerNotificationPreferences);
 
 
 router.post('/applications', applicationController.createApplication);

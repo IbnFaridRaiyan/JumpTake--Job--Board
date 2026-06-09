@@ -12,12 +12,17 @@ const maskMongoUri = (uri) => {
 
 const connectDB = async () => {
   try {
-    const uri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/jumptake';
+    const uri = process.env.MONGO_URI;
+
+    if (!uri) {
+      isConnected = false;
+      console.error('[DB] MONGO_URI is not configured. Set it in your environment before starting the server.');
+      return null;
+    }
+
     console.log('[DB] Attempting to connect to MongoDB at:', maskMongoUri(uri));
     
     const conn = await mongoose.connect(uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       serverSelectionTimeoutMS: 5000, // Fail fast if MongoDB is down
     });
 

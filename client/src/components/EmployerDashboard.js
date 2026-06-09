@@ -4,7 +4,8 @@ import PostJob from './PostJob';
 import ManageJobs from './ManageJobs';
 import ManageApplications from './ManageApplications';
 import CompanyProfile from './CompanyProfile';
-import TalentPool from './TalentPool'; 
+import TalentPool from './TalentPool';
+import EmployerSettings from './EmployerSettings';
 
 const EmployerDashboard = () => {
     const [employer, setEmployer] = useState(null);
@@ -16,7 +17,6 @@ const EmployerDashboard = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        
         const employerData = localStorage.getItem('employer');
         if (!employerData || !localStorage.getItem('employerToken')) {
             navigate('/company');
@@ -25,11 +25,8 @@ const EmployerDashboard = () => {
 
         const parsedEmployer = JSON.parse(employerData);
         setEmployer(parsedEmployer);
-        
-        
+
         fetchCompanyData(parsedEmployer.companyId);
-        
-       
         fetchCompanyJobs(parsedEmployer.companyId);
         fetchApplicationCount(parsedEmployer.companyId);
     }, [navigate]);
@@ -95,9 +92,43 @@ const EmployerDashboard = () => {
         localStorage.removeItem('employer');
         navigate('/');
     };
-    
+
+    const handleCompanyUpdated = (updatedCompany) => {
+        setCompanyData(updatedCompany);
+
+        setEmployer((prevEmployer) => {
+            if (!prevEmployer) {
+                return prevEmployer;
+            }
+
+            const nextEmployer = {
+                ...prevEmployer,
+                companyName: updatedCompany.name || prevEmployer.companyName
+            };
+
+            localStorage.setItem('employer', JSON.stringify(nextEmployer));
+            return nextEmployer;
+        });
+    };
+
+    const handleEmployerUpdated = (updatedEmployer) => {
+        setEmployer((prevEmployer) => {
+            if (!prevEmployer) {
+                localStorage.setItem('employer', JSON.stringify(updatedEmployer));
+                return updatedEmployer;
+            }
+
+            const nextEmployer = {
+                ...prevEmployer,
+                ...updatedEmployer
+            };
+
+            localStorage.setItem('employer', JSON.stringify(nextEmployer));
+            return nextEmployer;
+        });
+    };
+
     const refreshJobs = () => {
-        
         if (employer) {
             fetchCompanyJobs(employer.companyId);
             fetchApplicationCount(employer.companyId);
@@ -105,16 +136,16 @@ const EmployerDashboard = () => {
     };
 
     const renderContent = () => {
-        switch(activeSection) {
+        switch (activeSection) {
             case 'post-job':
-                return <PostJob 
-                    companyId={employer?.companyId} 
+                return <PostJob
+                    companyId={employer?.companyId}
                     onJobPosted={refreshJobs}
                     onCancel={() => setActiveSection('dashboard')}
                 />;
             case 'manage-jobs':
-                return <ManageJobs 
-                    jobs={jobs} 
+                return <ManageJobs
+                    jobs={jobs}
                     companyId={employer?.companyId}
                     onJobUpdated={refreshJobs}
                     onBack={() => setActiveSection('dashboard')}
@@ -127,6 +158,12 @@ const EmployerDashboard = () => {
             case 'company-profile':
                 return <CompanyProfile
                     company={companyData}
+                    jobStats={{
+                        activeJobs: jobs.length,
+                        totalJobs: jobs.length,
+                        applicationsReceived: applicationCount
+                    }}
+                    onCompanyUpdated={handleCompanyUpdated}
                     onBack={() => setActiveSection('dashboard')}
                 />;
             case 'talent-pool':
@@ -134,12 +171,19 @@ const EmployerDashboard = () => {
                     jobs={jobs}
                     onBack={() => setActiveSection('dashboard')}
                 />;
+            case 'settings':
+                return <EmployerSettings
+                    employer={employer}
+                    switchSection={setActiveSection}
+                    onEmployerUpdated={handleEmployerUpdated}
+                    onLogout={handleLogout}
+                />;
             default:
                 return (
                     <div className="dashboard-content">
                         <h2>Welcome to your Employer Dashboard</h2>
                         <p>From here you can post new job listings and manage applications.</p>
-                        
+
                         <div className="dashboard-stats">
                             <div className="stat-card">
                                 <h3>{jobs.length}</h3>
@@ -150,24 +194,24 @@ const EmployerDashboard = () => {
                                 <p>New Applicants</p>
                             </div>
                         </div>
-                        
+
                         <div className="dashboard-cards">
                             <div className="dashboard-card">
                                 <h3>Post a New Job</h3>
                                 <p>Create a new job listing to attract candidates</p>
-                                <button 
-                                    className="card-button" 
+                                <button
+                                    className="card-button"
                                     onClick={() => setActiveSection('post-job')}
                                 >
                                     Post Job
                                 </button>
                             </div>
-                            
+
                             <div className="dashboard-card">
                                 <h3>Manage Job Listings</h3>
                                 <p>Edit or update your current job postings</p>
-                                <button 
-                                    className="card-button" 
+                                <button
+                                    className="card-button"
                                     onClick={() => setActiveSection('manage-jobs')}
                                 >
                                     Manage Jobs
@@ -177,34 +221,44 @@ const EmployerDashboard = () => {
                             <div className="dashboard-card">
                                 <h3>Manage Applications</h3>
                                 <p>Review candidate applications and profile details</p>
-                                <button 
-                                    className="card-button" 
+                                <button
+                                    className="card-button"
                                     onClick={() => setActiveSection('manage-applications')}
                                 >
                                     View Applications
                                 </button>
                             </div>
-                            
-                            {/* Add new card for Talent Pool */}
+
                             <div className="dashboard-card">
                                 <h3>Talent Pool</h3>
                                 <p>Browse and search potential candidates</p>
-                                <button 
-                                    className="card-button" 
+                                <button
+                                    className="card-button"
                                     onClick={() => setActiveSection('talent-pool')}
                                 >
                                     View Candidates
                                 </button>
                             </div>
-                            
+
                             <div className="dashboard-card">
                                 <h3>Company Profile</h3>
                                 <p>View and update your company information</p>
-                                <button 
+                                <button
                                     className="card-button"
                                     onClick={() => setActiveSection('company-profile')}
                                 >
                                     View Profile
+                                </button>
+                            </div>
+
+                            <div className="dashboard-card">
+                                <h3>Settings</h3>
+                                <p>Manage security, information shortcuts, and notifications</p>
+                                <button
+                                    className="card-button"
+                                    onClick={() => setActiveSection('settings')}
+                                >
+                                    Open Settings
                                 </button>
                             </div>
                         </div>
@@ -234,11 +288,6 @@ const EmployerDashboard = () => {
                     <h1>Employer Dashboard</h1>
                     <p>Welcome, {employer?.companyName || 'Employer'}</p>
                 </div>
-                <div className="header-actions">
-                    <button onClick={handleLogout} className="logout-button">
-                        <span className="logout-icon">⏻</span> Log Out
-                    </button>
-                </div>
             </div>
 
             <div className="dashboard-container">
@@ -254,42 +303,47 @@ const EmployerDashboard = () => {
                     </div>
                     <nav className="dashboard-nav">
                         <ul>
-                            <li 
+                            <li
                                 className={activeSection === 'dashboard' ? 'active' : ''}
                                 onClick={() => setActiveSection('dashboard')}
                             >
                                 Dashboard
                             </li>
-                            <li 
+                            <li
                                 className={activeSection === 'post-job' ? 'active' : ''}
                                 onClick={() => setActiveSection('post-job')}
                             >
                                 Post a Job
                             </li>
-                            <li 
+                            <li
                                 className={activeSection === 'manage-jobs' ? 'active' : ''}
                                 onClick={() => setActiveSection('manage-jobs')}
                             >
                                 Manage Jobs
                             </li>
-                            <li 
+                            <li
                                 className={activeSection === 'manage-applications' ? 'active' : ''}
                                 onClick={() => setActiveSection('manage-applications')}
                             >
                                 Manage Applications
                             </li>
-                            {/* Add new sidebar item for Talent Pool */}
-                            <li 
+                            <li
                                 className={activeSection === 'talent-pool' ? 'active' : ''}
                                 onClick={() => setActiveSection('talent-pool')}
                             >
                                 Talent Pool
                             </li>
-                            <li 
+                            <li
                                 className={activeSection === 'company-profile' ? 'active' : ''}
                                 onClick={() => setActiveSection('company-profile')}
                             >
                                 Company Profile
+                            </li>
+                            <li
+                                className={activeSection === 'settings' ? 'active' : ''}
+                                onClick={() => setActiveSection('settings')}
+                            >
+                                Settings
                             </li>
                         </ul>
                     </nav>

@@ -15,7 +15,6 @@ const HomePage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        
         const userData = localStorage.getItem('user');
         if (!userData || !localStorage.getItem('token')) {
             navigate('/job-seeker');
@@ -24,30 +23,24 @@ const HomePage = () => {
 
         const parsedUser = JSON.parse(userData);
         setUser(parsedUser);
-        
-       
+
         fetchJobs();
-        
-        
+
         let seekerId = parsedUser.jobSeekerId;
-        
-       
+
         if (!seekerId) {
             seekerId = localStorage.getItem('jobSeekerId') || localStorage.getItem('tempJobSeekerId');
-            
-            
+
             if (seekerId && !parsedUser.jobSeekerId) {
                 console.log('Found jobSeekerId in localStorage but not in user object, updating...');
                 parsedUser.jobSeekerId = seekerId;
                 localStorage.setItem('user', JSON.stringify(parsedUser));
                 setUser(parsedUser);
-                
-                
+
                 linkJobSeekerToUser(parsedUser.id, seekerId);
             }
         }
-        
-        
+
         if (seekerId) {
             fetchJobSeekerData(seekerId);
         } else {
@@ -71,7 +64,7 @@ const HomePage = () => {
                     jobSeekerId: jobSeekerId
                 })
             });
-            
+
             if (!response.ok) {
                 console.error('Failed to link job seeker data to user');
             } else {
@@ -104,12 +97,12 @@ const HomePage = () => {
             setLoading(false);
         }
     };
-    
+
     const fetchJobSeekerData = async (jobSeekerId) => {
         try {
             setLoading(true);
             console.log('Fetching job seeker data for ID:', jobSeekerId);
-            
+
             const token = localStorage.getItem('token');
             const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/job-seekers/${jobSeekerId}`, {
                 headers: {
@@ -124,20 +117,19 @@ const HomePage = () => {
             const data = await response.json();
             console.log('Job seeker data retrieved successfully');
             setJobSeekerData(data);
-            
-           
+
             try {
                 const analysisResponse = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/resume/analysis/${user.id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
-                
+
                 if (analysisResponse.ok) {
                     const analysisData = await analysisResponse.json();
-                    
+
                     if (analysisData && !data.skills && analysisData.skills) {
-                        setJobSeekerData({...data, ...analysisData});
+                        setJobSeekerData({ ...data, ...analysisData });
                     }
                 }
             } catch (analysisError) {
@@ -155,9 +147,8 @@ const HomePage = () => {
         localStorage.removeItem('user');
         navigate('/');
     };
-    
+
     const refreshData = () => {
-       
         fetchJobs();
         if (user?.jobSeekerId) {
             fetchJobSeekerData(user.jobSeekerId);
@@ -173,36 +164,36 @@ const HomePage = () => {
 
         switch (activeSection) {
             case 'job-feed':
-                return <JobFeed 
-                    jobs={jobs} 
-                    error={error} 
+                return <JobFeed
+                    jobs={jobs}
+                    error={error}
                     userId={user?.id}
                     onRefresh={refreshData}
                 />;
             case 'applications':
-                return <MyApplications 
+                return <MyApplications
                     userId={user?.id}
                     onRefresh={refreshData}
-                    switchSection={setActiveSection} 
+                    switchSection={setActiveSection}
                 />;
             case 'profile':
                 console.log('Rendering profile with userId:', user?.id);
-                return <UserProfile 
-                    userId={user?.id}  
+                return <UserProfile
+                    userId={user?.id}
                     onUpdate={refreshData}
                     switchSection={setActiveSection}
                 />;
             case 'settings':
-                return <UserSettings 
+                return <UserSettings
                     userId={user?.id}
-                    user={user}  
+                    user={user}
                     onLogout={handleLogout}
                     switchSection={setActiveSection}
                 />;
             default:
-                return <JobFeed 
-                    jobs={jobs} 
-                    error={error} 
+                return <JobFeed
+                    jobs={jobs}
+                    error={error}
                     userId={user?.id}
                     onRefresh={refreshData}
                 />;
@@ -230,11 +221,6 @@ const HomePage = () => {
                     <h1>Candidate Dashboard</h1>
                     <p>Welcome back, {user?.email.split('@')[0] || 'User'}</p>
                 </div>
-                <div className="header-actions">
-                    <button onClick={handleLogout} className="logout-button">
-                        <span className="logout-icon">⏻</span> Log Out
-                    </button>
-                </div>
             </div>
 
             <div className="dashboard-container">
@@ -250,25 +236,25 @@ const HomePage = () => {
                     </div>
                     <nav className="dashboard-nav">
                         <ul>
-                            <li 
+                            <li
                                 className={activeSection === 'job-feed' ? 'active' : ''}
                                 onClick={() => setActiveSection('job-feed')}
                             >
                                 Job Feed
                             </li>
-                            <li 
+                            <li
                                 className={activeSection === 'applications' ? 'active' : ''}
                                 onClick={() => setActiveSection('applications')}
                             >
                                 My Applications
                             </li>
-                            <li 
+                            <li
                                 className={activeSection === 'profile' ? 'active' : ''}
                                 onClick={() => setActiveSection('profile')}
                             >
                                 My Profile
                             </li>
-                            <li 
+                            <li
                                 className={activeSection === 'settings' ? 'active' : ''}
                                 onClick={() => setActiveSection('settings')}
                             >

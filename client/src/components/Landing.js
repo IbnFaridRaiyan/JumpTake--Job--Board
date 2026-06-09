@@ -48,7 +48,7 @@ const Landing = () => {
                         <img src={logo} alt="JumpTake Logo" className="landing-logo" />
                     </div>
                     
-                    <p className="landing-subtitle">Just couple of clicks to get started as an</p>
+                    <p className="landing-subtitle">Just couple of clicks to get started as a</p>
                     
                     <div className="button-container">
                         <button 

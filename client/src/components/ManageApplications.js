@@ -126,7 +126,7 @@ const ManageApplications = ({ companyId, onBack }) => {
                         <p className="empty-info">This application is linked to a user account, but no resume profile is available.</p>
 
                         <div className="section-footer-nav">
-                            <button className="back-button" onClick={onBack}>
+                            <button className="back-button responsive-back-button" onClick={onBack}>
                                 Back to Dashboard
                             </button>
                         </div>
@@ -215,7 +215,7 @@ const ManageApplications = ({ companyId, onBack }) => {
                     )}
 
                     <div className="section-footer-nav">
-                        <button className="back-button" onClick={onBack}>
+                        <button className="back-button responsive-back-button" onClick={onBack}>
                             Back to Dashboard
                         </button>
                     </div>
@@ -329,7 +329,7 @@ const ManageApplications = ({ companyId, onBack }) => {
                     </div>
 
                     <div className="section-footer-nav">
-                        <button className="back-button" onClick={onBack}>
+                        <button className="back-button responsive-back-button" onClick={onBack}>
                             Back to Dashboard
                         </button>
                     </div>
@@ -351,7 +351,7 @@ const ManageApplications = ({ companyId, onBack }) => {
             <div className="manage-jobs-header">
                 <h2>Manage Applications</h2>
                 <button
-                    className="back-button"
+                    className="back-button responsive-back-button"
                     onClick={onBack}
                 >
                     Back to Dashboard
@@ -441,7 +441,7 @@ const ManageApplications = ({ companyId, onBack }) => {
 
             <div className="section-footer-nav">
                 <button
-                    className="back-button"
+                    className="back-button responsive-back-button"
                     onClick={onBack}
                 >
                     Back to Dashboard

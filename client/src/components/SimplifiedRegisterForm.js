@@ -128,6 +128,24 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
                 const jobSeekerIdToUse = jobSeekerId || localStorage.getItem('tempJobSeekerId');
                 
                 if (jobSeekerIdToUse) {
+                    if (!String(jobSeekerIdToUse).startsWith('temp_')) {
+                        const updateProfileResponse = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/job-seekers/${jobSeekerIdToUse}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${loginData.token}`
+                            },
+                            body: JSON.stringify({
+                                name: formData.name,
+                                email: formData.email
+                            })
+                        });
+
+                        if (!updateProfileResponse.ok) {
+                            console.error('Warning: Failed to update resume profile with registration details');
+                        }
+                    }
+
                     const linkResponse = await fetch((process.env.REACT_APP_API_URL || '') + '/api/resume/link', {
                         method: 'POST',
                         headers: {
@@ -181,10 +199,8 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
                         value={formData.name}
                         onChange={handleChange}
                         required
-                        disabled={true}
-                        className="readonly-field"
                     />
-                    <div className="form-hint">Name extracted from your resume</div>
+                    <div className="form-hint">You can update your name if needed</div>
                 </div>
                 
                 <div className="form-group">

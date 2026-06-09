@@ -107,6 +107,7 @@ router.post('/employer/login', employerController.loginEmployer);
 
 
 router.post('/applications', applicationController.createApplication);
+router.get('/applications/company/:companyId', applicationController.getCompanyApplications);
 router.get('/applications/user/:userId', applicationController.getUserApplications);
 router.put('/applications/:id', applicationController.updateApplication);
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PostJob from './PostJob';
 import ManageJobs from './ManageJobs';
+import ManageApplications from './ManageApplications';
 import CompanyProfile from './CompanyProfile';
 import TalentPool from './TalentPool'; 
 
@@ -11,6 +12,7 @@ const EmployerDashboard = () => {
     const [activeSection, setActiveSection] = useState('dashboard');
     const [companyData, setCompanyData] = useState(null);
     const [jobs, setJobs] = useState([]);
+    const [applicationCount, setApplicationCount] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,6 +31,7 @@ const EmployerDashboard = () => {
         
        
         fetchCompanyJobs(parsedEmployer.companyId);
+        fetchApplicationCount(parsedEmployer.companyId);
     }, [navigate]);
 
     const fetchCompanyData = async (companyId) => {
@@ -67,6 +70,26 @@ const EmployerDashboard = () => {
         }
     };
 
+    const fetchApplicationCount = async (companyId) => {
+        try {
+            const token = localStorage.getItem('employerToken');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/applications/company/${companyId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setApplicationCount(data.length);
+            } else {
+                console.error('Failed to fetch application count');
+            }
+        } catch (error) {
+            console.error('Error fetching application count:', error);
+        }
+    };
+
     const handleLogout = () => {
         localStorage.removeItem('employerToken');
         localStorage.removeItem('employer');
@@ -77,6 +100,7 @@ const EmployerDashboard = () => {
         
         if (employer) {
             fetchCompanyJobs(employer.companyId);
+            fetchApplicationCount(employer.companyId);
         }
     };
 
@@ -95,6 +119,11 @@ const EmployerDashboard = () => {
                     onJobUpdated={refreshJobs}
                     onBack={() => setActiveSection('dashboard')}
                 />;
+            case 'manage-applications':
+                return <ManageApplications
+                    companyId={employer?.companyId}
+                    onBack={() => setActiveSection('dashboard')}
+                />;
             case 'company-profile':
                 return <CompanyProfile
                     company={companyData}
@@ -102,6 +131,7 @@ const EmployerDashboard = () => {
                 />;
             case 'talent-pool':
                 return <TalentPool
+                    jobs={jobs}
                     onBack={() => setActiveSection('dashboard')}
                 />;
             default:
@@ -116,7 +146,7 @@ const EmployerDashboard = () => {
                                 <p>Active Job Listings</p>
                             </div>
                             <div className="stat-card">
-                                <h3>0</h3>
+                                <h3>{applicationCount}</h3>
                                 <p>New Applicants</p>
                             </div>
                         </div>
@@ -141,6 +171,17 @@ const EmployerDashboard = () => {
                                     onClick={() => setActiveSection('manage-jobs')}
                                 >
                                     Manage Jobs
+                                </button>
+                            </div>
+
+                            <div className="dashboard-card">
+                                <h3>Manage Applications</h3>
+                                <p>Review candidate applications and profile details</p>
+                                <button 
+                                    className="card-button" 
+                                    onClick={() => setActiveSection('manage-applications')}
+                                >
+                                    View Applications
                                 </button>
                             </div>
                             
@@ -230,6 +271,12 @@ const EmployerDashboard = () => {
                                 onClick={() => setActiveSection('manage-jobs')}
                             >
                                 Manage Jobs
+                            </li>
+                            <li 
+                                className={activeSection === 'manage-applications' ? 'active' : ''}
+                                onClick={() => setActiveSection('manage-applications')}
+                            >
+                                Manage Applications
                             </li>
                             {/* Add new sidebar item for Talent Pool */}
                             <li 

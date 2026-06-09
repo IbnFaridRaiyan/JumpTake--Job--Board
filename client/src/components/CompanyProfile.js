@@ -33,6 +33,14 @@ const CompanyProfile = ({ company, onBack }) => {
                 <div className="loading-message">
                     Loading company profile...
                 </div>
+                <div className="section-footer-nav">
+                    <button 
+                        className="back-button"
+                        onClick={onBack}
+                    >
+                        Back to Dashboard
+                    </button>
+                </div>
             </div>
         );
     }
@@ -118,6 +126,15 @@ const CompanyProfile = ({ company, onBack }) => {
                             <div className="stat-number">{jobStats.applicationsReceived}</div>
                             <div className="stat-label">Applications</div>
                         </div>
+                    </div>
+
+                    <div className="section-footer-nav">
+                        <button 
+                            className="back-button"
+                            onClick={onBack}
+                        >
+                            Back to Dashboard
+                        </button>
                     </div>
                 </div>
             </div>

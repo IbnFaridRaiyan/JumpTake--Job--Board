@@ -388,6 +388,13 @@ header.centered .header-subtitle {
   margin-top: 20px;
 }
 
+.section-footer-nav {
+  display: flex;
+  justify-content: center;
+  margin-top: 28px;
+  padding-top: 10px;
+}
+
 
 .application-buttons {
   display: flex;
@@ -417,11 +424,29 @@ header.centered .header-subtitle {
   .landing-logo {
     max-width: 150px; 
   }
+
+  .logo-container {
+    transform: translateY(-12px);
+    margin-bottom: 12px;
+  }
+
+  .landing-subtitle {
+    margin-top: -25px;
+  }
 }
 
 @media screen and (max-width: 480px) {
   .landing-logo {
     max-width: 120px; 
+  }
+
+  .logo-container {
+    transform: translateY(-16px);
+    margin-bottom: 14px;
+  }
+
+  .landing-subtitle {
+    margin-top: -18px;
   }
 }
 
@@ -5665,6 +5690,24 @@ textarea:focus {
   color: white;
 }
 
+.view-profile-btn.secondary-action {
+  margin-right: 10px;
+}
+
+.application-detail-view {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 25px;
+}
+
+.status-detail-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 
 .no-candidates {
   text-align: center;
@@ -6076,6 +6119,44 @@ textarea:focus {
   margin-bottom: 25px;
 }
 
+.talent-pool-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.spotlight-button {
+  background-color: white;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.spotlight-button:hover,
+.spotlight-button.active {
+  background-color: var(--primary-color);
+  color: white;
+  box-shadow: 0 3px 8px rgba(var(--primary-color-rgb), 0.2);
+}
+
+.spotlight-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  background-color: rgba(var(--primary-color-rgb), 0.08);
+  border-left: 4px solid var(--primary-color);
+  border-radius: 6px;
+  color: var(--primary-dark);
+  margin-bottom: 18px;
+  padding: 12px 14px;
+}
+
 .talent-pool-controls {
   display: flex;
   justify-content: space-between;
@@ -6142,6 +6223,168 @@ textarea:focus {
 
 .candidate-card:hover .candidate-view-profile {
   opacity: 1;
+}
+
+.spotlight-match {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--primary-dark);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.spotlight-score {
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  width: 26px;
+}
+
+.spotlight-skills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.candidate-skill-tag.spotlight {
+  background-color: rgba(var(--primary-color-rgb), 0.15);
+  border: 1px solid rgba(var(--primary-color-rgb), 0.35);
+  color: var(--primary-dark);
+}
+
+.spotlight-jobs {
+  color: var(--text-muted);
+  margin-top: 12px;
+}
+
+@media screen and (max-width: 768px) {
+  .talent-pool-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .talent-pool-header-actions {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .spotlight-button,
+  .talent-pool-header-actions .back-button {
+    flex: 1;
+    min-width: 140px;
+  }
+}
+
+.manage-applications-container {
+  padding: 25px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.applications-list {
+  display: grid;
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.application-card {
+  background-color: var(--off-white-lightest);
+  border-left: 4px solid var(--primary-color);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+}
+
+.application-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.application-card-header h3 {
+  margin: 0 0 4px;
+  color: var(--text-dark);
+  font-size: 20px;
+}
+
+.application-card-header p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.application-job-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 16px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.application-job-summary strong {
+  color: var(--primary-dark);
+  font-size: 15px;
+}
+
+.application-message-preview {
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  padding: 14px;
+}
+
+.application-message-preview h4 {
+  color: var(--secondary-color);
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+
+.application-message-preview p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.status-badge.submitted,
+.status-badge.under-review {
+  background-color: rgba(var(--primary-color-rgb), 0.1);
+  color: var(--primary-dark);
+}
+
+.status-badge.accepted {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge.rejected,
+.status-badge.withdrawn {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+@media screen and (max-width: 768px) {
+  .application-card-header {
+    flex-direction: column;
+  }
+
+  .application-job-summary {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 .no-candidates {
@@ -6640,10 +6883,15 @@ textarea:focus {
   align-items: center;
 }
 
+.preview-action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.preview-company-button,
 .preview-apply-button {
   padding: 12px 28px;
-  background-color: var(--primary-color);
-  color: white;
   border: none;
   border-radius: 6px;
   font-size: 16px;
@@ -6652,8 +6900,29 @@ textarea:focus {
   transition: background-color 0.2s;
 }
 
+.preview-apply-button {
+  background-color: var(--primary-color);
+  color: white;
+}
+
 .preview-apply-button:hover {
   background-color: var(--primary-dark);
+}
+
+.preview-company-button {
+  background-color: white;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.preview-company-button:hover:not(:disabled) {
+  background-color: rgba(var(--primary-color-rgb), 0.08);
+}
+
+.preview-company-button:disabled,
+.preview-apply-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .preview-post-date {
@@ -6693,12 +6962,17 @@ textarea:focus {
     flex-direction: column;
     gap: 15px;
   }
+
+  .preview-action-buttons {
+    width: 100%;
+  }
   
   .preview-job-meta {
     flex-direction: column;
     gap: 8px;
   }
   
+  .preview-company-button,
   .preview-apply-button {
     width: 100%;
   }

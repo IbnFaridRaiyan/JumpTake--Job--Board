@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const UserProfile = ({ userId, onUpdate }) => {
+const UserProfile = ({ userId, onUpdate, switchSection }) => {
     const [jobSeekerData, setJobSeekerData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -240,6 +240,12 @@ const UserProfile = ({ userId, onUpdate }) => {
         
         return <p>{data || emptyMessage}</p>;
     };
+
+    const handleBackToJobFeed = () => {
+        if (switchSection) {
+            switchSection('job-feed');
+        }
+    };
     
     if (loading) {
         return (
@@ -250,6 +256,11 @@ const UserProfile = ({ userId, onUpdate }) => {
                 <div className="loading-container">
                     <div className="loading-spinner"></div>
                     <p>Loading your profile data...</p>
+                </div>
+                <div className="section-footer-nav">
+                    <button className="back-button" onClick={handleBackToJobFeed}>
+                        Back to Job Feed
+                    </button>
                 </div>
             </div>
         );
@@ -265,6 +276,11 @@ const UserProfile = ({ userId, onUpdate }) => {
                     <p>No profile information available. Please upload your resume in the Candidate Portal.</p>
                     <button className="submit-button" onClick={() => window.location.href = '/job-seeker'}>
                         Go to Resume Upload
+                    </button>
+                </div>
+                <div className="section-footer-nav">
+                    <button className="back-button" onClick={handleBackToJobFeed}>
+                        Back to Job Feed
                     </button>
                 </div>
             </div>
@@ -427,6 +443,12 @@ const UserProfile = ({ userId, onUpdate }) => {
                                 Cancel
                             </button>
                         </div>
+
+                        <div className="section-footer-nav">
+                            <button type="button" className="back-button" onClick={handleBackToJobFeed}>
+                                Back to Job Feed
+                            </button>
+                        </div>
                     </form>
                 ) : (
                     <div className="profile-display">
@@ -497,6 +519,12 @@ const UserProfile = ({ userId, onUpdate }) => {
                                     )}
                                 </span>
                             </div>
+                        </div>
+
+                        <div className="section-footer-nav">
+                            <button className="back-button" onClick={handleBackToJobFeed}>
+                                Back to Job Feed
+                            </button>
                         </div>
                     </div>
                 )}

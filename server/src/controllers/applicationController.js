@@ -78,6 +78,45 @@ const getUserApplications = async (req, res) => {
     }
 };
 
+const getCompanyApplications = async (req, res) => {
+    try {
+        const companyId = req.params.companyId;
+
+        const jobs = await Job.find({ company: companyId }).select('_id');
+        const jobIds = jobs.map(job => job._id);
+
+        if (jobIds.length === 0) {
+            return res.status(200).json([]);
+        }
+
+        const applications = await Application.find({ job: { $in: jobIds } })
+            .populate({
+                path: 'job',
+                select: 'title location jobType salary company createdAt',
+                populate: {
+                    path: 'company',
+                    select: 'name'
+                }
+            })
+            .populate({
+                path: 'user',
+                select: 'email jobSeekerId',
+                populate: {
+                    path: 'jobSeekerId',
+                    select: '-resumeText'
+                }
+            })
+            .sort({ createdAt: -1 });
+
+        return res.status(200).json(applications);
+    } catch (error) {
+        console.error('Error fetching company applications:', error.message);
+        return res.status(500).json({
+            error: 'Failed to fetch company applications',
+            message: error.message
+        });
+    }
+};
 
 const updateApplication = async (req, res) => {
     try {
@@ -115,5 +154,6 @@ const updateApplication = async (req, res) => {
 module.exports = {
     createApplication,
     getUserApplications,
+    getCompanyApplications,
     updateApplication
 };

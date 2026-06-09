@@ -1,72 +1,58 @@
+# JumpTake API-Based Job Board
 
-# JumpTake--API-Based-Job-Board
-=======
+JumpTake is a full-stack job board with separate candidate and employer portals. It includes resume parsing, employer job posting, talent pool browsing, candidate applications, and company profiles.
 
-This web application features resume parsing using Gemini. For employers, it offers job posting, talent pool access, and candidate management. 
-The platform has a dual-portal system with separate interfaces for job seekers and employers. Built with React on the frontend and Node.js/Express on the backend, it includes features like company 
-profile creation (with Wikipedia integration).
+## Stack
+
+- Frontend: React
+- Backend: Node.js + Express
+- Database: MongoDB / MongoDB Atlas
 
 ## Project Structure
 
-The project is organized into two main directories: `client` and `server`.
+- `client/` - React frontend
+- `server/` - Express API and static frontend hosting
 
-### Client
+## Local Development
 
-The `client` directory contains the frontend application built with React.
-
-- **public/index.html**: The main HTML file for the frontend application.
-- **public/favicon.ico**: The favicon for the application.
-- **src/components/App.js**: The main component that sets up the application structure.
-- **src/components/ResumeDropbox.js**: A component that contains a dropdown box for pasting resumes.
-- **src/components/Header.js**: A simple header component for the application.
-- **src/styles/main.css**: CSS styles for the frontend application.
-- **src/index.js**: The entry point for the React application.
-- **package.json**: Configuration file for the frontend application.
-
-### Server
-
-The `server` directory contains the backend application built with Node.js and Express.
-
-- **src/controllers/resumeController.js**: Handles incoming resume data and logs it to the console.
-- **src/routes/api.js**: Connects the frontend to the resumeController and defines the endpoint for receiving resume data.
-- **src/index.js**: The entry point for the backend application.
-- **package.json**: Configuration file for the backend application.
-
-## Getting Started
-
-To get started with the project, follow these steps:
-
-1. Clone the repository to your local machine.
-2. Navigate to the `client` directory and install the dependencies:
-   ```
-   cd client
+1. Install dependencies:
+   ```bash
    npm install
    ```
-3. Navigate to the `server` directory and install the dependencies:
+2. Start both apps in development mode:
+   ```bash
+   npm run dev
    ```
-   cd server
-   npm install
-   ```
-4. Start the backend server:
-   ```
-   cd server
-   npm start
-   ```
-5. In a new terminal, start the frontend application:
-   ```
-   cd client
-   npm start
-   ```
+3. Open:
+   - Frontend: `http://localhost:3000`
+   - API: `http://localhost:5000`
 
-## Usage
+## Production / Render
 
-Once both the frontend and backend servers are running, you can access the application in your web browser. You will be able to paste your resume into the dropdown box, and the data will be sent to the backend where it will be logged to the console.
+This repo is set up to run as a single Node web service in production:
 
-## Contributing
+- The React app is built into `client/build`
+- The Express server serves both the API and the built frontend
+- Client API calls use relative paths by default, so production does not depend on `localhost`
 
-Contributions are welcome! Please feel free to submit a pull request or open an issue for any enhancements or bug fixes.
+For Render setup details, see [DEPLOYMENT.md](./DEPLOYMENT.md).
 
-## License
+## Environment Variables
 
-This project is licensed under the MIT License.
->>>>>>> 5c4da76 (initial commit)
+Required for production:
+
+- `MONGO_URI`
+- `JWT_SECRET`
+- `GEMINI_API_KEY`
+
+Optional:
+
+- `PORT`
+- `CLIENT_URL` (only needed if you split frontend and backend onto different origins)
+
+## Scripts
+
+- `npm run dev` - run client and server locally
+- `npm start` - run the production server
+- `npm run build` - build the React app
+- `npm run render-build` - install app dependencies and build the frontend for Render

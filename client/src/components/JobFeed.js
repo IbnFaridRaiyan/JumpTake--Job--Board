@@ -24,6 +24,9 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
 
     
     const [previewJob, setPreviewJob] = useState(null);
+    const [selectedCompany, setSelectedCompany] = useState(null);
+    const [companyLoading, setCompanyLoading] = useState(false);
+    const [companyError, setCompanyError] = useState('');
     
     useEffect(() => {
         if (jobs && jobs.length > 0) {
@@ -57,17 +60,17 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
 
     useEffect(() => {
         function handleClickOutside(event) {
-            if (previewJob && event.target.classList.contains('job-preview-overlay')) {
-                setPreviewJob(null);
+            if ((previewJob || selectedCompany) && event.target.classList.contains('job-preview-overlay')) {
+                closePreview();
             }
         }
         
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [previewJob]);
+    }, [previewJob, selectedCompany]);
 
     useEffect(() => {
-        if (previewJob) {
+        if (previewJob || selectedCompany) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'auto';
@@ -76,7 +79,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
         return () => {
             document.body.style.overflow = 'auto';
         };
-    }, [previewJob]);
+    }, [previewJob, selectedCompany]);
 
     const fetchRecommendedJobs = async () => {
         if (!jobSeekerData || !jobSeekerData._id) {
@@ -246,6 +249,54 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
 
     const closePreview = () => {
         setPreviewJob(null);
+        setSelectedCompany(null);
+        setCompanyLoading(false);
+        setCompanyError('');
+    };
+
+    const formatFoundedDate = (founded) => {
+        if (!founded) {
+            return 'Not specified';
+        }
+
+        if (/^\d{4}$/.test(founded)) {
+            return `Founded in ${founded}`;
+        }
+
+        return founded;
+    };
+
+    const handleViewCompany = async () => {
+        const companyId = previewJob?.company?._id;
+
+        if (!companyId) {
+            setCompanyError('Company profile is not available for this job.');
+            return;
+        }
+
+        setCompanyLoading(true);
+        setCompanyError('');
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/companies/${companyId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch company profile');
+            }
+
+            const data = await response.json();
+            setSelectedCompany(data);
+        } catch (err) {
+            console.error('Error fetching company profile:', err);
+            setCompanyError('Failed to load company profile. Please try again later.');
+        } finally {
+            setCompanyLoading(false);
+        }
     };
 
     const getMatchScore = (job) => {
@@ -526,7 +577,62 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
                 </div>
             )}
 
-            {previewJob && (
+            {selectedCompany ? (
+                <div className="job-preview-overlay">
+                    <div className="job-preview-modal" onClick={(e) => e.stopPropagation()}>
+                        <div className="job-preview-header">
+                            <button className="preview-close-btn" onClick={closePreview}>Ã—</button>
+                            <h2>{selectedCompany.name}</h2>
+                            <div className="preview-company-info">
+                                <span className="preview-company-name">
+                                    {selectedCompany.industry || 'Industry not specified'}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="job-preview-content">
+                            <div className="preview-section">
+                                <h3>Company Details</h3>
+                                <p><strong>Founded:</strong> {formatFoundedDate(selectedCompany.founded)}</p>
+                                <p><strong>Headquarters:</strong> {selectedCompany.headquarters || 'Not specified'}</p>
+                                <p>
+                                    <strong>Website:</strong>{' '}
+                                    {selectedCompany.website ? (
+                                        <a
+                                            href={selectedCompany.website.startsWith('http')
+                                                ? selectedCompany.website
+                                                : `https://${selectedCompany.website}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="company-website-link"
+                                        >
+                                            {selectedCompany.website}
+                                        </a>
+                                    ) : (
+                                        'Not specified'
+                                    )}
+                                </p>
+                            </div>
+
+                            <div className="preview-section">
+                                <h3>About the Company</h3>
+                                <p>{selectedCompany.description || 'No company description available.'}</p>
+                            </div>
+                        </div>
+
+                        <div className="job-preview-actions">
+                            <div className="preview-action-buttons">
+                                <button
+                                    className="preview-company-button"
+                                    onClick={() => setSelectedCompany(null)}
+                                >
+                                    Back to Job
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ) : previewJob && (
                 <div className="job-preview-overlay">
                     <div className="job-preview-modal" onClick={(e) => e.stopPropagation()}>
                         <div className="job-preview-header">
@@ -623,15 +729,25 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
                                     </p>
                                 )}
                             </div>
+                            {companyError && <div className="error-message">{companyError}</div>}
                         </div>
                         
                         <div className="job-preview-actions">
-                            <button 
-                                className="preview-apply-button" 
-                                onClick={(e) => handleApplyClick(previewJob._id, e)}
-                            >
-                                Apply for this Job
-                            </button>
+                            <div className="preview-action-buttons">
+                                <button
+                                    className="preview-company-button"
+                                    onClick={handleViewCompany}
+                                    disabled={companyLoading}
+                                >
+                                    {companyLoading ? 'Opening...' : 'View Company'}
+                                </button>
+                                <button 
+                                    className="preview-apply-button" 
+                                    onClick={(e) => handleApplyClick(previewJob._id, e)}
+                                >
+                                    Apply for this Job
+                                </button>
+                            </div>
                             <div className="preview-post-date">
                                 Posted: {new Date(previewJob.createdAt).toLocaleDateString()}
                             </div>

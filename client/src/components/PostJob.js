@@ -284,6 +284,17 @@ const PostJob = ({ companyId, onJobPosted, onCancel }) => {
                             Cancel
                         </button>
                     </div>
+
+                    <div className="section-footer-nav">
+                        <button
+                            type="button"
+                            className="back-button"
+                            onClick={onCancel}
+                            disabled={isLoading}
+                        >
+                            Back to Dashboard
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

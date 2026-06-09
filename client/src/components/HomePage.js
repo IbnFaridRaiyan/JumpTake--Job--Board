@@ -190,12 +190,14 @@ const HomePage = () => {
                 return <UserProfile 
                     userId={user?.id}  
                     onUpdate={refreshData}
+                    switchSection={setActiveSection}
                 />;
             case 'settings':
                 return <UserSettings 
                     userId={user?.id}
                     user={user}  
                     onLogout={handleLogout}
+                    switchSection={setActiveSection}
                 />;
             default:
                 return <JobFeed 

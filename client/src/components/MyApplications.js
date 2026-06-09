@@ -6,6 +6,10 @@ const MyApplications = ({ userId, onRefresh, switchSection }) => {
     const [error, setError] = useState(null);
     const [withdrawingId, setWithdrawingId] = useState(null);
     const [message, setMessage] = useState('');
+    const [selectedApplication, setSelectedApplication] = useState(null);
+    const [selectedCompany, setSelectedCompany] = useState(null);
+    const [companyLoading, setCompanyLoading] = useState(false);
+    const [companyError, setCompanyError] = useState('');
     
     useEffect(() => {
         fetchApplications();
@@ -86,11 +90,33 @@ const MyApplications = ({ userId, onRefresh, switchSection }) => {
             switchSection('job-feed');
         }
     };
+
+    const getJobTitle = (application) => {
+        return application?.job?.title || 'Job no longer available';
+    };
+
+    const getCompanyName = (application) => {
+        return application?.job?.company?.name || 'Company unavailable';
+    };
+
+    const formatFoundedDate = (founded) => {
+        if (!founded) {
+            return 'Not specified';
+        }
+
+        if (/^\d{4}$/.test(founded)) {
+            return `Founded in ${founded}`;
+        }
+
+        return founded;
+    };
     
     const getStatusBadgeClass = (status) => {
         switch (status) {
             case 'Submitted':
                 return 'status-badge-submitted';
+            case 'Reviewed':
+                return 'status-badge-review';
             case 'Under Review':
                 return 'status-badge-review';
             case 'Accepted':
@@ -103,6 +129,39 @@ const MyApplications = ({ userId, onRefresh, switchSection }) => {
                 return 'status-badge-submitted';
         }
     };
+
+    const handleViewCompany = async () => {
+        const companyId = selectedApplication?.job?.company?._id;
+
+        if (!companyId) {
+            setCompanyError('Company profile is not available for this application.');
+            return;
+        }
+
+        setCompanyLoading(true);
+        setCompanyError('');
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/companies/${companyId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch company profile');
+            }
+
+            const data = await response.json();
+            setSelectedCompany(data);
+        } catch (err) {
+            console.error('Error fetching company profile:', err);
+            setCompanyError('Failed to load company profile. Please try again later.');
+        } finally {
+            setCompanyLoading(false);
+        }
+    };
     
     if (loading) {
         return (
@@ -113,6 +172,100 @@ const MyApplications = ({ userId, onRefresh, switchSection }) => {
                 <div className="loading-container">
                     <div className="loading-spinner"></div>
                     <p>Loading your applications...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (selectedCompany) {
+        return (
+            <div className="applications-container">
+                <div className="section-header">
+                    <h2>Company Profile</h2>
+                    <div className="section-actions">
+                        <button className="back-button" onClick={() => setSelectedCompany(null)}>
+                            Back to Application
+                        </button>
+                    </div>
+                </div>
+
+                <div className="application-detail-view">
+                    <div className="profile-section">
+                        <h3>{selectedCompany.name}</h3>
+                        <p>{selectedCompany.industry || 'Industry not specified'}</p>
+                    </div>
+
+                    <div className="profile-section">
+                        <h3>Company Details</h3>
+                        <p><strong>Founded:</strong> {formatFoundedDate(selectedCompany.founded)}</p>
+                        <p><strong>Headquarters:</strong> {selectedCompany.headquarters || 'Not specified'}</p>
+                        <p><strong>Website:</strong> {selectedCompany.website || 'Not specified'}</p>
+                    </div>
+
+                    <div className="profile-section">
+                        <h3>About</h3>
+                        <p>{selectedCompany.description || 'No company description available.'}</p>
+                    </div>
+
+                    <div className="section-footer-nav">
+                        <button className="back-button" onClick={handleBrowseJobs}>
+                            Back to Job Feed
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (selectedApplication) {
+        return (
+            <div className="applications-container">
+                <div className="section-header">
+                    <h2>Application Details</h2>
+                    <div className="section-actions">
+                        <button className="back-button" onClick={() => setSelectedApplication(null)}>
+                            Back to Applications
+                        </button>
+                    </div>
+                </div>
+
+                <div className="application-detail-view">
+                    <div className="profile-section">
+                        <h3>Status</h3>
+                        <div className="status-detail-row">
+                            <span className={`status-badge ${getStatusBadgeClass(selectedApplication.status)}`}>
+                                {selectedApplication.status}
+                            </span>
+                            <button
+                                className="view-button"
+                                onClick={handleViewCompany}
+                                disabled={companyLoading}
+                            >
+                                {companyLoading ? 'Opening...' : 'View Company'}
+                            </button>
+                        </div>
+                        {companyError && <div className="error-message">{companyError}</div>}
+                    </div>
+
+                    <div className="profile-section">
+                        <h3>Job Information</h3>
+                        <p><strong>Job Title:</strong> {getJobTitle(selectedApplication)}</p>
+                        <p><strong>Company:</strong> {getCompanyName(selectedApplication)}</p>
+                        <p><strong>Applied On:</strong> {new Date(selectedApplication.createdAt).toLocaleDateString()}</p>
+                    </div>
+
+                    <div className="profile-section">
+                        <h3>Application Message</h3>
+                        <div className="application-message-preview">
+                            <p>{selectedApplication.message || 'No message included.'}</p>
+                        </div>
+                    </div>
+
+                    <div className="section-footer-nav">
+                        <button className="back-button" onClick={handleBrowseJobs}>
+                            Back to Job Feed
+                        </button>
+                    </div>
                 </div>
             </div>
         );
@@ -163,8 +316,8 @@ const MyApplications = ({ userId, onRefresh, switchSection }) => {
                         <tbody>
                             {applications.map(app => (
                                 <tr key={app._id}>
-                                    <td>{app.job.title}</td>
-                                    <td>{app.job.company.name}</td>
+                                    <td>{getJobTitle(app)}</td>
+                                    <td>{getCompanyName(app)}</td>
                                     <td>{new Date(app.createdAt).toLocaleDateString()}</td>
                                     <td>
                                         <span className={`status-badge ${getStatusBadgeClass(app.status)}`}>
@@ -182,7 +335,9 @@ const MyApplications = ({ userId, onRefresh, switchSection }) => {
                                                     {withdrawingId === app._id ? 'Withdrawing...' : 'Withdraw'}
                                                 </button>
                                             )}
-                                            <button className="view-button">View Details</button>
+                                            <button className="view-button" onClick={() => setSelectedApplication(app)}>
+                                                View Details
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -191,6 +346,15 @@ const MyApplications = ({ userId, onRefresh, switchSection }) => {
                     </table>
                 </div>
             )}
+
+            <div className="section-footer-nav">
+                <button 
+                    className="back-button"
+                    onClick={handleBrowseJobs}
+                >
+                    Back to Job Feed
+                </button>
+            </div>
         </div>
     );
 };

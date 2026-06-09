@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from 'mammoth';
 import SimplifiedRegisterForm from './SimplifiedRegisterForm';
+import demoCvPdf from '../cv-template.pdf';
 
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -128,12 +129,7 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
         });
     };
 
-    const handleSubmit = async () => {
-        if (!resume) {
-            setMessage('Please upload a resume first');
-            return;
-        }
-        
+    const submitResumeText = async (resumeText) => {
         setIsLoading(true);
         setMessage('Processing your resume...');
         
@@ -143,7 +139,7 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ resumeText: resume }),
+                body: JSON.stringify({ resumeText }),
             });
             
             if (!response.ok) {
@@ -163,6 +159,42 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
         } catch (error) {
             console.error('Error submitting resume:', error);
             setMessage(`Error processing resume: ${error.message}`);
+            setProcessedData(null);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleSubmit = async () => {
+        if (!resume) {
+            setMessage('Please upload a resume first');
+            return;
+        }
+        
+        await submitResumeText(resume);
+    };
+
+    const handleDemoCv = async () => {
+        setIsLoading(true);
+        setProcessedData(null);
+        setJobSeekerId(null);
+        setMessage('Loading demo CV...');
+
+        try {
+            const response = await fetch(demoCvPdf);
+            if (!response.ok) {
+                throw new Error(`Could not load demo CV: ${response.status}`);
+            }
+
+            const blob = await response.blob();
+            const demoFile = new File([blob], 'cv-template.pdf', { type: 'application/pdf' });
+            const text = await parseFileToText(demoFile);
+
+            setResume(text);
+            await submitResumeText(text);
+        } catch (error) {
+            console.error('Error running demo CV:', error);
+            setMessage(`Error processing demo CV: ${error.message}`);
             setProcessedData(null);
         } finally {
             setIsLoading(false);
@@ -206,8 +238,17 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
                 <button 
                     className="candidate-login-button" 
                     onClick={onLoginClick}
+                    disabled={isLoading}
                 >
                     Candidate Login
+                </button>
+
+                <button
+                    className="submit-button demo-cv-button"
+                    onClick={handleDemoCv}
+                    disabled={isLoading}
+                >
+                    {isLoading ? 'Processing...' : 'Run demo using pre made CV'}
                 </button>
                 
                 <div className="login-divider">OR</div>

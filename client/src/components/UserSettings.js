@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const UserSettings = ({ user, onLogout }) => {
+const UserSettings = ({ user, onLogout, switchSection }) => {
     const [activeTab, setActiveTab] = useState('account');
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -553,6 +553,12 @@ const UserSettings = ({ user, onLogout }) => {
             </div>
         </div>
     );
+
+    const handleBackToJobFeed = () => {
+        if (switchSection) {
+            switchSection('job-feed');
+        }
+    };
     
     return (
         <div className="settings-container">
@@ -596,6 +602,12 @@ const UserSettings = ({ user, onLogout }) => {
                     {activeTab === 'security' && renderSecurityTab()}
                     {activeTab === 'notifications' && renderNotificationsTab()}
                 </div>
+            </div>
+
+            <div className="section-footer-nav">
+                <button className="back-button" onClick={handleBackToJobFeed}>
+                    Back to Job Feed
+                </button>
             </div>
         </div>
     );

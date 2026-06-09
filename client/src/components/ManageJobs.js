@@ -127,53 +127,64 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack }) => {
                     </button>
                 </div>
             ) : (
-                <div className="job-list-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Job Title</th>
-                                <th>Location</th>
-                                <th>Type</th>
-                                <th>Posted Date</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {jobs.map(job => (
-                                <tr key={job._id}>
-                                    <td>
-                                        <div className="job-title-cell" onClick={() => handleEdit(job)}>
-                                            {job.title}
-                                        </div>
-                                    </td>
-                                    <td className="location-cell">{job.location}</td>
-                                    <td className="job-type-cell">{job.jobType}</td>
-                                    <td className="date-cell">{formatDate(job.createdAt)}</td>
-                                    <td>
-                                        <span className={`status-badge ${job.active ? 'active' : 'inactive'}`}>
-                                            {job.active ? 'Active' : 'Inactive'}
-                                        </span>
-                                    </td>
-                                    <td className="actions-cell">
-                                        <button 
-                                            className="action-button edit"
-                                            onClick={() => handleEdit(job)}
-                                        >
-                                            Edit
-                                        </button>
-                                        <button 
-                                            className="action-button delete"
-                                            onClick={() => handleDelete(job._id)}
-                                            disabled={isLoading}
-                                        >
-                                            {isLoading ? 'Deleting...' : 'Delete'}
-                                        </button>
-                                    </td>
+                <div>
+                    <div className="job-list-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Job Title</th>
+                                    <th>Location</th>
+                                    <th>Type</th>
+                                    <th>Posted Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {jobs.map(job => (
+                                    <tr key={job._id}>
+                                        <td>
+                                            <div className="job-title-cell" onClick={() => handleEdit(job)}>
+                                                {job.title}
+                                            </div>
+                                        </td>
+                                        <td className="location-cell">{job.location}</td>
+                                        <td className="job-type-cell">{job.jobType}</td>
+                                        <td className="date-cell">{formatDate(job.createdAt)}</td>
+                                        <td>
+                                            <span className={`status-badge ${job.active ? 'active' : 'inactive'}`}>
+                                                {job.active ? 'Active' : 'Inactive'}
+                                            </span>
+                                        </td>
+                                        <td className="actions-cell">
+                                            <button 
+                                                className="action-button edit"
+                                                onClick={() => handleEdit(job)}
+                                            >
+                                                Edit
+                                            </button>
+                                            <button 
+                                                className="action-button delete"
+                                                onClick={() => handleDelete(job._id)}
+                                                disabled={isLoading}
+                                            >
+                                                {isLoading ? 'Deleting...' : 'Delete'}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className="section-footer-nav">
+                        <button
+                            className="back-button"
+                            onClick={onBack}
+                        >
+                            Back to Dashboard
+                        </button>
+                    </div>
                 </div>
             )}
         </div>

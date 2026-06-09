@@ -2,10 +2,18 @@ const mongoose = require('mongoose');
 
 let isConnected = false;
 
+const maskMongoUri = (uri) => {
+  if (!uri) {
+    return 'missing';
+  }
+
+  return uri.replace(/\/\/([^:]+):([^@]+)@/, '//***:***@');
+};
+
 const connectDB = async () => {
   try {
     const uri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/jumptake';
-    console.log('[DB] Attempting to connect to MongoDB at:', uri);
+    console.log('[DB] Attempting to connect to MongoDB at:', maskMongoUri(uri));
     
     const conn = await mongoose.connect(uri, {
       useNewUrlParser: true,
@@ -27,4 +35,4 @@ const connectDB = async () => {
 const getIsConnected = () => isConnected || mongoose.connection.readyState === 1;
 
 module.exports = connectDB;
-module.exports.getIsConnected = getIsConnected;
+module.exports.getIsConnected = getIsConnected;

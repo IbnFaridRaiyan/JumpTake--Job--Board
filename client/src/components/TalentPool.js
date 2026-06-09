@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 
-const TalentPool = ({ onBack }) => {
+const TalentPool = ({ jobs = [], onBack }) => {
     const [candidates, setCandidates] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCandidate, setSelectedCandidate] = useState(null);
+    const [spotlightActive, setSpotlightActive] = useState(false);
 
     useEffect(() => {
         fetchCandidates();
@@ -43,14 +44,92 @@ const TalentPool = ({ onBack }) => {
         setSelectedCandidate(null);
     };
 
-    const filteredCandidates = candidates.filter(candidate => {
+    const normalizeSkill = (skill) => String(skill || '').trim().toLowerCase();
+
+    const getSkillList = (skills) => {
+        if (Array.isArray(skills)) {
+            return skills.map(skill => String(skill).trim()).filter(Boolean);
+        }
+
+        if (typeof skills === 'string') {
+            return skills.split(',').map(skill => skill.trim()).filter(Boolean);
+        }
+
+        return [];
+    };
+
+    const jobSkillMap = useMemo(() => {
+        const skillMap = new Map();
+
+        jobs.forEach(job => {
+            getSkillList(job.skills).forEach(skill => {
+                const normalized = normalizeSkill(skill);
+                if (!normalized) {
+                    return;
+                }
+
+                const existing = skillMap.get(normalized) || {
+                    name: skill,
+                    jobTitles: new Set()
+                };
+
+                existing.jobTitles.add(job.title || 'Untitled Job');
+                skillMap.set(normalized, existing);
+            });
+        });
+
+        return skillMap;
+    }, [jobs]);
+
+    const getSpotlightMatch = (candidate) => {
+        const candidateSkills = getSkillList(candidate.skills);
+        const candidateSkillSet = new Set(candidateSkills.map(normalizeSkill));
+        const matchedSkills = [];
+        const matchedJobs = new Set();
+
+        jobSkillMap.forEach((skillInfo, normalizedSkill) => {
+            if (candidateSkillSet.has(normalizedSkill)) {
+                matchedSkills.push(skillInfo.name);
+                skillInfo.jobTitles.forEach(title => matchedJobs.add(title));
+            }
+        });
+
+        return {
+            score: matchedSkills.length,
+            matchedSkills,
+            matchedJobs: Array.from(matchedJobs)
+        };
+    };
+
+    const candidateRows = candidates
+        .map(candidate => ({
+            candidate,
+            spotlight: getSpotlightMatch(candidate)
+        }))
+        .filter(row => !spotlightActive || row.spotlight.score > 0)
+        .sort((a, b) => {
+            if (!spotlightActive) {
+                return 0;
+            }
+
+            if (b.spotlight.score !== a.spotlight.score) {
+                return b.spotlight.score - a.spotlight.score;
+            }
+
+            return (a.candidate.name || '').localeCompare(b.candidate.name || '');
+        });
+
+    const filteredCandidateRows = candidateRows.filter(({ candidate, spotlight }) => {
         const searchLower = searchTerm.toLowerCase();
         
        
         const matchesSearch = 
             (candidate.name && candidate.name.toLowerCase().includes(searchLower)) ||
             (candidate.email && candidate.email.toLowerCase().includes(searchLower)) ||
-            (Array.isArray(candidate.skills) && candidate.skills.some(skill => 
+            (getSkillList(candidate.skills).some(skill => 
+                skill.toLowerCase().includes(searchLower)
+            )) ||
+            (spotlightActive && spotlight.matchedSkills.some(skill =>
                 skill.toLowerCase().includes(searchLower)
             ));
             
@@ -94,15 +173,32 @@ const TalentPool = ({ onBack }) => {
         <div className="talent-pool-container">
             <div className="talent-pool-header">
                 <h2>Talent Pool</h2>
-                <button 
-                    className="back-button"
-                    onClick={onBack}
-                >
-                    Back to Dashboard
-                </button>
+                <div className="talent-pool-header-actions">
+                    <button
+                        className={`spotlight-button ${spotlightActive ? 'active' : ''}`}
+                        onClick={() => setSpotlightActive(!spotlightActive)}
+                    >
+                        Spotlight
+                    </button>
+                    <button 
+                        className="back-button"
+                        onClick={onBack}
+                    >
+                        Back to Dashboard
+                    </button>
+                </div>
             </div>
 
             {error && <div className="error-message">{error}</div>}
+
+            {spotlightActive && (
+                <div className="spotlight-summary">
+                    <strong>Spotlight mode</strong>
+                    <span>
+                        Showing candidates whose skills match your posted job skills.
+                    </span>
+                </div>
+            )}
 
             <div className="talent-pool-controls">
                 <div className="search-container">
@@ -119,7 +215,7 @@ const TalentPool = ({ onBack }) => {
             {isLoading ? (
                 <div className="loading-container">
                     <div className="loading-spinner"></div>
-                    <p>Loading candidates...</p>
+                            <p>Loading candidates...</p>
                 </div>
             ) : selectedCandidate ? (
                 <div className="candidate-profile">
@@ -144,8 +240,8 @@ const TalentPool = ({ onBack }) => {
                         <div className="profile-section">
                             <h3>Skills</h3>
                             <div className="skills-container">
-                                {Array.isArray(selectedCandidate.skills) && selectedCandidate.skills.length > 0 ? (
-                                    selectedCandidate.skills.map((skill, index) => (
+                                {getSkillList(selectedCandidate.skills).length > 0 ? (
+                                    getSkillList(selectedCandidate.skills).map((skill, index) => (
                                         <span key={index} className="skill-tag">{skill}</span>
                                     ))
                                 ) : (
@@ -153,6 +249,20 @@ const TalentPool = ({ onBack }) => {
                                 )}
                             </div>
                         </div>
+
+                        {spotlightActive && getSpotlightMatch(selectedCandidate).score > 0 && (
+                            <div className="profile-section">
+                                <h3>Spotlight Matches</h3>
+                                <div className="skills-container">
+                                    {getSpotlightMatch(selectedCandidate).matchedSkills.map((skill, index) => (
+                                        <span key={index} className="skill-tag skill-match">{skill}</span>
+                                    ))}
+                                </div>
+                                <p className="spotlight-jobs">
+                                    Matching job{getSpotlightMatch(selectedCandidate).matchedJobs.length !== 1 ? 's' : ''}: {getSpotlightMatch(selectedCandidate).matchedJobs.join(', ')}
+                                </p>
+                            </div>
+                        )}
 
                         <div className="profile-section">
                             <h3>Education</h3>
@@ -171,9 +281,9 @@ const TalentPool = ({ onBack }) => {
                             </div>
                         )}
 
-                        {(selectedCandidate.interests || selectedCandidate.hobbies) && (
-                            <div className="profile-section">
-                                <h3>Interests & Hobbies</h3>
+                    {(selectedCandidate.interests || selectedCandidate.hobbies) && (
+                        <div className="profile-section">
+                            <h3>Interests & Hobbies</h3>
                                 {selectedCandidate.interests && (
                                     <div className="profile-subsection">
                                         <h4>Interests</h4>
@@ -188,11 +298,17 @@ const TalentPool = ({ onBack }) => {
                                 )}
                             </div>
                         )}
+
+                        <div className="section-footer-nav">
+                            <button className="back-button" onClick={onBack}>
+                                Back to Dashboard
+                            </button>
+                        </div>
                     </div>
                 </div>
             ) : (
                 <>
-                    {filteredCandidates.length === 0 ? (
+                    {filteredCandidateRows.length === 0 ? (
                         <div className="no-candidates">
                             <div className="empty-state-image">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
@@ -202,12 +318,16 @@ const TalentPool = ({ onBack }) => {
                                     <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                                 </svg>
                             </div>
-                            <h3>No candidates found</h3>
-                            <p>{searchTerm ? 'Try adjusting your search criteria' : 'No candidates are available in the talent pool yet'}</p>
+                            <h3>{spotlightActive ? 'No spotlight matches found' : 'No candidates found'}</h3>
+                            <p>
+                                {spotlightActive
+                                    ? 'Post jobs with skills that match candidate profiles, or turn off Spotlight to view all candidates.'
+                                    : searchTerm ? 'Try adjusting your search criteria' : 'No candidates are available in the talent pool yet'}
+                            </p>
                         </div>
                     ) : (
                         <div className="candidates-grid">
-                            {filteredCandidates.map(candidate => (
+                            {filteredCandidateRows.map(({ candidate, spotlight }) => (
                                 <div key={candidate._id} className="candidate-card" onClick={() => handleViewProfile(candidate)}>
                                     <div className="candidate-avatar">
                                         {candidate.name ? candidate.name.charAt(0).toUpperCase() : 'C'}
@@ -217,13 +337,28 @@ const TalentPool = ({ onBack }) => {
                                         <p className="candidate-email">{candidate.email || 'Email not available'}</p>
                                         
                                         <div className="candidate-skills">
-                                            {Array.isArray(candidate.skills) && candidate.skills.slice(0, 3).map((skill, index) => (
+                                            {getSkillList(candidate.skills).slice(0, 3).map((skill, index) => (
                                                 <span key={index} className="candidate-skill-tag">{skill}</span>
                                             ))}
-                                            {Array.isArray(candidate.skills) && candidate.skills.length > 3 && (
-                                                <span className="candidate-skill-tag more">+{candidate.skills.length - 3}</span>
+                                            {getSkillList(candidate.skills).length > 3 && (
+                                                <span className="candidate-skill-tag more">+{getSkillList(candidate.skills).length - 3}</span>
                                             )}
                                         </div>
+
+                                        {spotlightActive && (
+                                            <div className="spotlight-match">
+                                                <span className="spotlight-score">{spotlight.score}</span>
+                                                <span>{spotlight.score === 1 ? 'skill match' : 'skill matches'}</span>
+                                            </div>
+                                        )}
+
+                                        {spotlightActive && spotlight.matchedSkills.length > 0 && (
+                                            <div className="spotlight-skills">
+                                                {spotlight.matchedSkills.slice(0, 4).map((skill, index) => (
+                                                    <span key={index} className="candidate-skill-tag spotlight">{skill}</span>
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="candidate-view-profile">View Profile</div>
                                 </div>
@@ -231,6 +366,17 @@ const TalentPool = ({ onBack }) => {
                         </div>
                     )}
                 </>
+            )}
+
+            {!isLoading && !selectedCandidate && (
+                <div className="section-footer-nav">
+                    <button 
+                        className="back-button"
+                        onClick={onBack}
+                    >
+                        Back to Dashboard
+                    </button>
+                </div>
             )}
         </div>
     );

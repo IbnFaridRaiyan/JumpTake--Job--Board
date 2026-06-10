@@ -400,7 +400,10 @@ const EmployerSettings = ({ employer, switchSection, onEmployerUpdated, onLogout
                 </div>
             </div>
 
-            <div className="section-footer-nav">
+            <div className="page-footer-actions">
+                <button className="back-button responsive-back-button" onClick={handleBackToDashboard}>
+                    Back to Dashboard
+                </button>
                 <button className="back-button responsive-back-button" onClick={onFooterBack || handleBackToDashboard}>
                     Back
                 </button>

@@ -257,14 +257,12 @@ const UserProfile = ({ userId, onUpdate, switchSection, onFooterBack }) => {
                     <div className="loading-spinner"></div>
                     <p>Loading your profile data...</p>
                 </div>
-                <div className="section-footer-nav">
-                    <button className="back-button" onClick={handleBackToJobFeed}>
-                        Back to Job Feed
-                    </button>
-                </div>
-                <div className="section-footer-nav">
+                <div className="page-footer-actions">
                     <button className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
                         Back
+                    </button>
+                    <button className="back-button profile-job-feed-button" onClick={handleBackToJobFeed}>
+                        Back to Job Feed
                     </button>
                 </div>
             </div>
@@ -283,14 +281,12 @@ const UserProfile = ({ userId, onUpdate, switchSection, onFooterBack }) => {
                         Go to Resume Upload
                     </button>
                 </div>
-                <div className="section-footer-nav">
-                    <button className="back-button" onClick={handleBackToJobFeed}>
-                        Back to Job Feed
-                    </button>
-                </div>
-                <div className="section-footer-nav">
+                <div className="page-footer-actions">
                     <button className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
                         Back
+                    </button>
+                    <button className="back-button profile-job-feed-button" onClick={handleBackToJobFeed}>
+                        Back to Job Feed
                     </button>
                 </div>
             </div>
@@ -454,14 +450,12 @@ const UserProfile = ({ userId, onUpdate, switchSection, onFooterBack }) => {
                             </button>
                         </div>
 
-                        <div className="section-footer-nav">
-                            <button type="button" className="back-button" onClick={handleBackToJobFeed}>
-                                Back to Job Feed
-                            </button>
-                        </div>
-                        <div className="section-footer-nav">
+                        <div className="page-footer-actions">
                             <button type="button" className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
                                 Back
+                            </button>
+                            <button type="button" className="back-button profile-job-feed-button" onClick={handleBackToJobFeed}>
+                                Back to Job Feed
                             </button>
                         </div>
                     </form>
@@ -536,14 +530,12 @@ const UserProfile = ({ userId, onUpdate, switchSection, onFooterBack }) => {
                             </div>
                         </div>
 
-                        <div className="section-footer-nav">
-                            <button className="back-button" onClick={handleBackToJobFeed}>
-                                Back to Job Feed
-                            </button>
-                        </div>
-                        <div className="section-footer-nav">
+                        <div className="page-footer-actions">
                             <button className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
                                 Back
+                            </button>
+                            <button className="back-button profile-job-feed-button" onClick={handleBackToJobFeed}>
+                                Back to Job Feed
                             </button>
                         </div>
                     </div>

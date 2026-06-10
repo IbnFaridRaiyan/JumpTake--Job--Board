@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
     const [applications, setApplications] = useState([]);
+    const [bookmarkedApplicationIds, setBookmarkedApplicationIds] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
     const [selectedApplication, setSelectedApplication] = useState(null);
@@ -9,6 +10,7 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
 
     useEffect(() => {
         fetchApplications();
+        fetchBookmarkedApplications();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [companyId]);
 
@@ -44,8 +46,49 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
         }
     };
 
+    const fetchBookmarkedApplications = async () => {
+        if (!companyId) {
+            setBookmarkedApplicationIds([]);
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('employerToken');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/application-bookmarks/company/${companyId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch bookmarked applications');
+            }
+
+            const data = await response.json();
+            const bookmarkedIds = (Array.isArray(data) ? data : [])
+                .map((bookmark) => bookmark?.application?._id || bookmark?.application)
+                .filter(Boolean)
+                .map((applicationId) => String(applicationId));
+
+            setBookmarkedApplicationIds(bookmarkedIds);
+        } catch (bookmarkError) {
+            console.error('Error fetching bookmarked applications:', bookmarkError);
+        }
+    };
+
     const getCandidateProfile = (application) => {
-        return application?.user?.jobSeekerId || null;
+        const submittedProfile = application?.profileSnapshot;
+        const liveProfile = application?.user?.jobSeekerId;
+
+        if (!submittedProfile && !liveProfile) {
+            return null;
+        }
+
+        return {
+            ...(liveProfile || {}),
+            ...(submittedProfile || {}),
+            email: submittedProfile?.email || liveProfile?.email || application?.user?.email || ''
+        };
     };
 
     const getCandidateNumber = (application) => {
@@ -104,6 +147,14 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
         }
 
         return <p>{items}</p>;
+    };
+
+    const renderRichTextPreview = (html, emptyMessage) => {
+        if (!html) {
+            return <p className="empty-info">{emptyMessage}</p>;
+        }
+
+        return <div className="cover-letter-preview" dangerouslySetInnerHTML={{ __html: html }} />;
     };
 
     const renderCandidateProfile = () => {
@@ -165,6 +216,11 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
                 </div>
 
                 <div className="candidate-profile-body">
+                    <div className="profile-section">
+                        <h3>Submitted Cover Letter</h3>
+                        {renderRichTextPreview(selectedApplication.coverLetterHtml, 'No cover letter included.')}
+                    </div>
+
                     <div className="profile-section">
                         <h3>Application Message</h3>
                         <p>{selectedApplication.message || 'No message included.'}</p>
@@ -294,6 +350,56 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
         setSelectedView('application');
     };
 
+    const toggleApplicationBookmark = async (application, event) => {
+        if (event) {
+            event.stopPropagation();
+        }
+
+        if (!application?._id) {
+            return;
+        }
+
+        const isBookmarked = bookmarkedApplicationIds.includes(String(application._id));
+        const token = localStorage.getItem('employerToken');
+
+        try {
+            if (isBookmarked) {
+                const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/application-bookmarks/company/${companyId}/application/${application._id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to remove application bookmark');
+                }
+
+                setBookmarkedApplicationIds((prevState) => prevState.filter((applicationId) => applicationId !== String(application._id)));
+            } else {
+                const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/application-bookmarks`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        companyId,
+                        applicationId: application._id
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to bookmark application');
+                }
+
+                setBookmarkedApplicationIds((prevState) => [...new Set([...prevState, String(application._id)])]);
+            }
+        } catch (bookmarkError) {
+            console.error('Error toggling application bookmark:', bookmarkError);
+        }
+    };
+
     const renderApplicationDetails = () => {
         const candidate = getCandidateProfile(selectedApplication);
 
@@ -344,6 +450,11 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
                         </div>
                     </div>
 
+                    <div className="profile-section">
+                        <h3>Submitted Cover Letter</h3>
+                        {renderRichTextPreview(selectedApplication.coverLetterHtml, 'No cover letter included.')}
+                    </div>
+
                     <div className="section-footer-nav">
                         <button
                             className="back-button responsive-back-button"
@@ -369,12 +480,6 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
         <div className="manage-applications-container">
             <div className="manage-jobs-header">
                 <h2>Manage Applications</h2>
-                <button
-                    className="back-button responsive-back-button"
-                    onClick={onBack}
-                >
-                    Back to Dashboard
-                </button>
             </div>
 
             {error && <div className="error-message">{error}</div>}
@@ -404,6 +509,7 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
                 <div className="applications-list">
                     {applications.map(application => {
                         const candidate = getCandidateProfile(application);
+                        const isBookmarked = bookmarkedApplicationIds.includes(String(application._id));
 
                         return (
                             <div className="application-card" key={application._id}>
@@ -415,9 +521,19 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
                                         </h3>
                                         <p>{candidate?.email || application.user?.email || 'Email not available'}</p>
                                     </div>
-                                    <span className={`status-badge ${getStatusClassName(application.status)}`}>
-                                        {application.status || 'Submitted'}
-                                    </span>
+                                    <div className="application-card-header-actions">
+                                        <button
+                                            type="button"
+                                            className={`bookmark-star-button ${isBookmarked ? 'active' : ''}`}
+                                            onClick={(event) => toggleApplicationBookmark(application, event)}
+                                            aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark application'}
+                                        >
+                                            {isBookmarked ? '★' : '☆'}
+                                        </button>
+                                        <span className={`status-badge ${getStatusClassName(application.status)}`}>
+                                            {application.status || 'Submitted'}
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <div className="application-job-summary">
@@ -461,7 +577,13 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
                 </div>
             )}
 
-            <div className="section-footer-nav">
+            <div className="page-footer-actions">
+                <button
+                    className="back-button responsive-back-button"
+                    onClick={onBack}
+                >
+                    Back to Dashboard
+                </button>
                 <button
                     className="back-button responsive-back-button"
                     onClick={onFooterBack || onBack}

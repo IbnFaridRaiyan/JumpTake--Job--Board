@@ -604,12 +604,10 @@ const UserSettings = ({ user, onLogout, switchSection, onFooterBack }) => {
                 </div>
             </div>
 
-            <div className="section-footer-nav">
+            <div className="page-footer-actions">
                 <button className="back-button" onClick={handleBackToJobFeed}>
                     Back to Job Feed
                 </button>
-            </div>
-            <div className="section-footer-nav">
                 <button className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
                     Back
                 </button>

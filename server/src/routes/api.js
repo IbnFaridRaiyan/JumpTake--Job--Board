@@ -9,6 +9,7 @@ const Company = require('../models/Company');
 const JobSeeker = require('../models/JobSeeker');
 const applicationController = require('../controllers/applicationController');
 const assessmentController = require('../controllers/assessmentController');
+const engagementController = require('../controllers/engagementController');
 const passwordResetController = require('../controllers/passwordResetController');
 
 
@@ -121,6 +122,18 @@ router.post('/applications', applicationController.createApplication);
 router.get('/applications/company/:companyId', applicationController.getCompanyApplications);
 router.get('/applications/user/:userId', applicationController.getUserApplications);
 router.put('/applications/:id', applicationController.updateApplication);
+router.post('/draft-applications', engagementController.createOrUpdateDraftApplication);
+router.get('/draft-applications/user/:userId', engagementController.getUserDraftApplications);
+router.delete('/draft-applications/:id', engagementController.deleteDraftApplication);
+router.post('/job-bookmarks', engagementController.createJobBookmark);
+router.get('/job-bookmarks/user/:userId', engagementController.getUserJobBookmarks);
+router.delete('/job-bookmarks/user/:userId/job/:jobId', engagementController.deleteJobBookmark);
+router.post('/application-bookmarks', engagementController.createApplicationBookmark);
+router.get('/application-bookmarks/company/:companyId', engagementController.getCompanyApplicationBookmarks);
+router.delete('/application-bookmarks/company/:companyId/application/:applicationId', engagementController.deleteApplicationBookmark);
+router.post('/talent-bookmarks', engagementController.createTalentBookmark);
+router.get('/talent-bookmarks/company/:companyId', engagementController.getCompanyTalentBookmarks);
+router.delete('/talent-bookmarks/company/:companyId/candidate/:candidateId', engagementController.deleteTalentBookmark);
 
 router.get('/assessments/company/:companyId', assessmentController.getCompanyAssessments);
 router.get('/assessments/company/:companyId/assignments', assessmentController.getCompanyAssessmentAssignments);

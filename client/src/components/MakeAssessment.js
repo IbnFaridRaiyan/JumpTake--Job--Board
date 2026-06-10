@@ -1019,9 +1019,6 @@ const MakeAssessment = ({ companyId, onBack, onFooterBack }) => {
                     <button className="settings-button primary" onClick={handleStartCreate} disabled={applications.length === 0}>
                         Create Assessment
                     </button>
-                    <button className="back-button responsive-back-button" onClick={onBack}>
-                        Back to Dashboard
-                    </button>
                 </div>
             </div>
 
@@ -1248,7 +1245,13 @@ const MakeAssessment = ({ companyId, onBack, onFooterBack }) => {
                 )}
             </div>
 
-            <div className="section-footer-nav">
+            <div className="page-footer-actions">
+                <button
+                    className="back-button responsive-back-button"
+                    onClick={onBack}
+                >
+                    Back to Dashboard
+                </button>
                 <button
                     className="back-button responsive-back-button"
                     onClick={onFooterBack || onBack}

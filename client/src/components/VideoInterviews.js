@@ -210,12 +210,10 @@ const VideoInterviews = ({ userId, switchSection, onFooterBack }) => {
                         </div>
                     )}
 
-                    <div className="section-footer-nav">
+                    <div className="page-footer-actions">
                         <button className="back-button responsive-back-button" onClick={handleBackToFeed}>
                             Back to Job Feed
                         </button>
-                    </div>
-                    <div className="section-footer-nav">
                         <button
                             className="back-button responsive-back-button"
                             onClick={() => {
@@ -277,12 +275,10 @@ const VideoInterviews = ({ userId, switchSection, onFooterBack }) => {
                 </div>
             )}
 
-            <div className="section-footer-nav">
+            <div className="page-footer-actions">
                 <button className="back-button responsive-back-button" onClick={handleBackToFeed}>
                     Back to Job Feed
                 </button>
-            </div>
-            <div className="section-footer-nav">
                 <button
                     className="back-button responsive-back-button"
                     onClick={onFooterBack || handleBackToFeed}

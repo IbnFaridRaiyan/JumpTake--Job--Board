@@ -1,14 +1,159 @@
 const Application = require('../models/Application');
 const Job = require('../models/Job');
 const User = require('../models/User');
+const JobSeeker = require('../models/JobSeeker');
+const DraftApplication = require('../models/DraftApplication');
 const {
     ensureReferenceNumbers,
     generateUniqueReferenceNumber
 } = require('../utils/referenceNumbers');
 
+const normalizeString = (value) => {
+    if (typeof value !== 'string') {
+        return '';
+    }
+
+    return value.trim();
+};
+
+const normalizeListValue = (value) => {
+    if (Array.isArray(value)) {
+        return value
+            .map((item) => (typeof item === 'string' ? item.trim() : item))
+            .filter((item) => {
+                if (typeof item === 'string') {
+                    return Boolean(item);
+                }
+
+                return item !== null && item !== undefined;
+            });
+    }
+
+    if (typeof value === 'string') {
+        const trimmedValue = value.trim();
+        return trimmedValue ? trimmedValue : '';
+    }
+
+    return value ?? '';
+};
+
+const sanitizeStyleAttribute = (styleValue = '') => {
+    const allowedProperties = new Set([
+        'font-family',
+        'font-weight',
+        'font-style',
+        'text-decoration',
+        'text-align'
+    ]);
+
+    return styleValue
+        .split(';')
+        .map((rule) => rule.trim())
+        .filter(Boolean)
+        .map((rule) => {
+            const [property, ...rest] = rule.split(':');
+            if (!property || rest.length === 0) {
+                return null;
+            }
+
+            const normalizedProperty = property.trim().toLowerCase();
+            if (!allowedProperties.has(normalizedProperty)) {
+                return null;
+            }
+
+            const rawValue = rest.join(':').trim();
+            const sanitizedValue = rawValue.replace(/[^a-zA-Z0-9,\-"'()\s]/g, '');
+
+            if (!sanitizedValue) {
+                return null;
+            }
+
+            return `${normalizedProperty}: ${sanitizedValue}`;
+        })
+        .filter(Boolean)
+        .join('; ');
+};
+
+const sanitizeCoverLetterHtml = (html = '') => {
+    if (typeof html !== 'string') {
+        return '';
+    }
+
+    const allowedTags = new Set([
+        'p',
+        'br',
+        'strong',
+        'b',
+        'em',
+        'i',
+        'u',
+        'ul',
+        'ol',
+        'li',
+        'div',
+        'span',
+        'h3'
+    ]);
+
+    return html
+        .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
+        .replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, '')
+        .replace(/\son[a-z]+\s*=\s*(['"]).*?\1/gi, '')
+        .replace(/\shref\s*=\s*(['"])javascript:.*?\1/gi, '')
+        .replace(/<([^>]+)>/g, (match, tagContent) => {
+            const trimmedTag = tagContent.trim();
+            const isClosingTag = trimmedTag.startsWith('/');
+            const normalizedTag = trimmedTag
+                .replace(/^\//, '')
+                .split(/\s+/)[0]
+                .toLowerCase();
+
+            if (!allowedTags.has(normalizedTag)) {
+                return '';
+            }
+
+            if (isClosingTag) {
+                return `</${normalizedTag}>`;
+            }
+
+            const styleMatch = trimmedTag.match(/style\s*=\s*(['"])(.*?)\1/i);
+            const sanitizedStyle = styleMatch ? sanitizeStyleAttribute(styleMatch[2]) : '';
+            const styleAttribute = sanitizedStyle ? ` style="${sanitizedStyle}"` : '';
+
+            return `<${normalizedTag}${styleAttribute}>`;
+        })
+        .trim();
+};
+
+const stripHtml = (html = '') => (
+    html
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/(p|div|li|h3)>/gi, '\n')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\n{3,}/g, '\n\n')
+        .replace(/[ \t]{2,}/g, ' ')
+        .trim()
+);
+
+const buildProfileSnapshot = (profileInput = {}, user = null, fallbackProfile = null) => {
+    const source = profileInput && typeof profileInput === 'object' ? profileInput : {};
+    const baseProfile = fallbackProfile && typeof fallbackProfile === 'object' ? fallbackProfile : {};
+
+    return {
+        name: normalizeString(source.name || baseProfile.name || ''),
+        email: normalizeString(source.email || baseProfile.email || user?.email || ''),
+        skills: normalizeListValue(source.skills ?? baseProfile.skills ?? []),
+        interests: normalizeListValue(source.interests ?? baseProfile.interests ?? []),
+        hobbies: normalizeListValue(source.hobbies ?? baseProfile.hobbies ?? []),
+        education: normalizeListValue(source.education ?? baseProfile.education ?? []),
+        experience: normalizeListValue(source.experience ?? baseProfile.experience ?? []),
+        achievements: normalizeListValue(source.achievements ?? baseProfile.achievements ?? [])
+    };
+};
+
 const createApplication = async (req, res) => {
     try {
-        const { jobId, userId, message } = req.body;
+        const { jobId, userId, message, coverLetterHtml, profileSnapshot, draftId } = req.body;
         
         
         if (!jobId || !userId) {
@@ -26,6 +171,10 @@ const createApplication = async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
+
+        const baseProfile = user.jobSeekerId
+            ? await JobSeeker.findById(user.jobSeekerId).lean()
+            : null;
         
      
         const existingApplication = await Application.findOne({
@@ -43,10 +192,17 @@ const createApplication = async (req, res) => {
             job: jobId,
             user: userId,
             message: message || '',
+            coverLetterHtml: sanitizeCoverLetterHtml(coverLetterHtml || ''),
+            coverLetterText: stripHtml(coverLetterHtml || ''),
+            profileSnapshot: buildProfileSnapshot(profileSnapshot, user, baseProfile),
             status: 'Submitted'
         });
         
         await application.save();
+
+        if (draftId) {
+            await DraftApplication.findOneAndDelete({ _id: draftId, user: userId });
+        }
         
         return res.status(201).json({
             message: 'Application submitted successfully',

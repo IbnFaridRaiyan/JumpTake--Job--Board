@@ -32,17 +32,17 @@ const CompanyProfile = ({ company, jobStats, onBack, onCompanyUpdated, onFooterB
             <div className="company-profile-container">
                 <div className="company-profile-header">
                     <h2>Company Profile</h2>
+                </div>
+                <div className="loading-message">
+                    Loading company profile...
+                </div>
+                <div className="page-footer-actions">
                     <button
                         className="back-button"
                         onClick={onBack}
                     >
                         Back to Dashboard
                     </button>
-                </div>
-                <div className="loading-message">
-                    Loading company profile...
-                </div>
-                <div className="section-footer-nav">
                     <button
                         className="back-button"
                         onClick={onFooterBack || onBack}
@@ -156,12 +156,6 @@ const CompanyProfile = ({ company, jobStats, onBack, onCompanyUpdated, onFooterB
         <div className="company-profile-container">
             <div className="company-profile-header">
                 <h2>Company Profile</h2>
-                <button
-                    className="back-button"
-                    onClick={onBack}
-                >
-                    Back to Dashboard
-                </button>
             </div>
 
             <div className="company-profile-content">
@@ -333,7 +327,13 @@ const CompanyProfile = ({ company, jobStats, onBack, onCompanyUpdated, onFooterB
                         </div>
                     </div>
 
-                    <div className="section-footer-nav">
+                    <div className="page-footer-actions">
+                        <button
+                            className="back-button"
+                            onClick={onBack}
+                        >
+                            Back to Dashboard
+                        </button>
                         <button
                             className="back-button"
                             onClick={onFooterBack || onBack}

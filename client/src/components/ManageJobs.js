@@ -129,12 +129,6 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => 
         <div className="manage-jobs-container">
             <div className="manage-jobs-header">
                 <h2>Manage Job Listings</h2>
-                <button 
-                    className="back-button"
-                    onClick={onBack}
-                >
-                    Back to Dashboard
-                </button>
             </div>
             
             {message && (
@@ -231,7 +225,13 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => 
                         </table>
                     </div>
 
-                    <div className="section-footer-nav">
+                    <div className="page-footer-actions">
+                        <button
+                            className="back-button"
+                            onClick={onBack}
+                        >
+                            Back to Dashboard
+                        </button>
                         <button
                             className="back-button"
                             onClick={onFooterBack || onBack}

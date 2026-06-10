@@ -4,8 +4,10 @@ import PostJob from './PostJob';
 import ManageJobs from './ManageJobs';
 import ManageApplications from './ManageApplications';
 import MakeAssessment from './MakeAssessment';
+import BookmarkedApplications from './BookmarkedApplications';
 import CompanyProfile from './CompanyProfile';
 import TalentPool from './TalentPool';
+import BookmarkedTalents from './BookmarkedTalents';
 import EmployerSettings from './EmployerSettings';
 import logo from './media/logo.png';
 
@@ -147,6 +149,11 @@ const EmployerDashboard = () => {
         setActiveSection(nextSection);
     };
 
+    const handleLogoClick = () => {
+        setSectionHistory([]);
+        setActiveSection('dashboard');
+    };
+
     const goToPreviousSection = () => {
         let previousSection = null;
 
@@ -191,6 +198,12 @@ const EmployerDashboard = () => {
                     onBack={() => setActiveSection('dashboard')}
                     onFooterBack={goToPreviousSection}
                 />;
+            case 'bookmarked-applications':
+                return <BookmarkedApplications
+                    companyId={employer?.companyId}
+                    onBack={() => setActiveSection('dashboard')}
+                    onFooterBack={goToPreviousSection}
+                />;
             case 'company-profile':
                 return <CompanyProfile
                     company={companyData}
@@ -206,6 +219,13 @@ const EmployerDashboard = () => {
             case 'talent-pool':
                 return <TalentPool
                     jobs={jobs}
+                    companyId={employer?.companyId}
+                    onBack={() => setActiveSection('dashboard')}
+                    onFooterBack={goToPreviousSection}
+                />;
+            case 'bookmarked-talents':
+                return <BookmarkedTalents
+                    companyId={employer?.companyId}
                     onBack={() => setActiveSection('dashboard')}
                     onFooterBack={goToPreviousSection}
                 />;
@@ -322,7 +342,14 @@ const EmployerDashboard = () => {
             <div className="loading-container">
                 <div className="dashboard-header employer-dashboard-header">
                     <div className="employer-dashboard-brand">
-                        <img src={logo} alt="JumpTake" className="employer-dashboard-logo" />
+                        <button
+                            type="button"
+                            className="dashboard-logo-button"
+                            onClick={handleLogoClick}
+                            aria-label="Go to Dashboard"
+                        >
+                            <img src={logo} alt="JumpTake" className="employer-dashboard-logo" />
+                        </button>
                     </div>
                     <div className="dashboard-title employer-dashboard-title">
                         <h1>Employer Dashboard</h1>
@@ -338,7 +365,14 @@ const EmployerDashboard = () => {
         <div className="home-page">
             <div className="dashboard-header employer-dashboard-header">
                 <div className="employer-dashboard-brand">
-                    <img src={logo} alt="JumpTake" className="employer-dashboard-logo" />
+                    <button
+                        type="button"
+                        className="dashboard-logo-button"
+                        onClick={handleLogoClick}
+                        aria-label="Go to Dashboard"
+                    >
+                        <img src={logo} alt="JumpTake" className="employer-dashboard-logo" />
+                    </button>
                 </div>
                 <div className="dashboard-title employer-dashboard-title">
                     <h1>Employer Dashboard</h1>
@@ -390,10 +424,22 @@ const EmployerDashboard = () => {
                                 Make an Assessment
                             </li>
                             <li
+                                className={activeSection === 'bookmarked-applications' ? 'active' : ''}
+                                onClick={() => switchSection('bookmarked-applications')}
+                            >
+                                Bookmarked Applications
+                            </li>
+                            <li
                                 className={activeSection === 'talent-pool' ? 'active' : ''}
                                 onClick={() => switchSection('talent-pool')}
                             >
                                 Talent Pool
+                            </li>
+                            <li
+                                className={activeSection === 'bookmarked-talents' ? 'active' : ''}
+                                onClick={() => switchSection('bookmarked-talents')}
+                            >
+                                Bookmarked Talents
                             </li>
                             <li
                                 className={activeSection === 'company-profile' ? 'active' : ''}

@@ -4,6 +4,8 @@ import JobFeed from './JobFeed';
 import MyApplications from './MyApplications';
 import MyAssessments from './MyAssessments';
 import VideoInterviews from './VideoInterviews';
+import DraftApplications from './DraftApplications';
+import BookmarkedJobs from './BookmarkedJobs';
 import UserProfile from './UserProfile';
 import UserSettings from './UserSettings';
 import logo from './media/logo.png';
@@ -206,6 +208,11 @@ const HomePage = () => {
         setActiveSection(nextSection);
     };
 
+    const handleLogoClick = () => {
+        setSectionHistory([]);
+        setActiveSection('job-feed');
+    };
+
     const goToPreviousSection = () => {
         let previousSection = null;
 
@@ -235,6 +242,8 @@ const HomePage = () => {
                     error={error}
                     userId={user?.id}
                     onRefresh={refreshData}
+                    jobSeekerData={jobSeekerData}
+                    currentUser={user}
                 />;
             case 'applications':
                 return <MyApplications
@@ -253,6 +262,18 @@ const HomePage = () => {
                 />;
             case 'video-interviews':
                 return <VideoInterviews
+                    userId={user?.id}
+                    switchSection={switchSection}
+                    onFooterBack={goToPreviousSection}
+                />;
+            case 'draft-applications':
+                return <DraftApplications
+                    userId={user?.id}
+                    switchSection={switchSection}
+                    onFooterBack={goToPreviousSection}
+                />;
+            case 'bookmarked-jobs':
+                return <BookmarkedJobs
                     userId={user?.id}
                     switchSection={switchSection}
                     onFooterBack={goToPreviousSection}
@@ -279,6 +300,8 @@ const HomePage = () => {
                     error={error}
                     userId={user?.id}
                     onRefresh={refreshData}
+                    jobSeekerData={jobSeekerData}
+                    currentUser={user}
                 />;
         }
     };
@@ -288,7 +311,14 @@ const HomePage = () => {
             <div className="loading-container">
                 <div className="dashboard-header candidate-dashboard-header">
                     <div className="candidate-dashboard-brand">
-                        <img src={logo} alt="JumpTake Logo" className="candidate-dashboard-logo" />
+                        <button
+                            type="button"
+                            className="dashboard-logo-button"
+                            onClick={handleLogoClick}
+                            aria-label="Go to Job Feed"
+                        >
+                            <img src={logo} alt="JumpTake Logo" className="candidate-dashboard-logo" />
+                        </button>
                     </div>
                     <div className="dashboard-title candidate-dashboard-title">
                         <h1>Candidate Dashboard</h1>
@@ -304,7 +334,14 @@ const HomePage = () => {
         <div className="home-page">
             <div className="dashboard-header candidate-dashboard-header">
                 <div className="candidate-dashboard-brand">
-                    <img src={logo} alt="JumpTake Logo" className="candidate-dashboard-logo" />
+                    <button
+                        type="button"
+                        className="dashboard-logo-button"
+                        onClick={handleLogoClick}
+                        aria-label="Go to Job Feed"
+                    >
+                        <img src={logo} alt="JumpTake Logo" className="candidate-dashboard-logo" />
+                    </button>
                 </div>
                 <div className="dashboard-title candidate-dashboard-title">
                     <h1>Candidate Dashboard</h1>
@@ -350,6 +387,18 @@ const HomePage = () => {
                             >
                                 <span className="dashboard-nav-label">Video Interviews</span>
                                 {pendingVideoInterviewCount > 0 && <span className="nav-notification-dot"></span>}
+                            </li>
+                            <li
+                                className={activeSection === 'draft-applications' ? 'active' : ''}
+                                onClick={() => switchSection('draft-applications')}
+                            >
+                                Draft Applications
+                            </li>
+                            <li
+                                className={activeSection === 'bookmarked-jobs' ? 'active' : ''}
+                                onClick={() => switchSection('bookmarked-jobs')}
+                            >
+                                Bookmarked Jobs
                             </li>
                             <li
                                 className={activeSection === 'profile' ? 'active' : ''}

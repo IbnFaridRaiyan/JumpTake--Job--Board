@@ -430,6 +430,20 @@ header.centered .header-subtitle {
   padding-top: 10px;
 }
 
+.page-footer-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 28px;
+  padding-top: 10px;
+}
+
+.page-footer-actions .back-button,
+.page-footer-actions .responsive-back-button {
+  justify-content: center;
+}
+
 
 .application-buttons {
   display: flex;
@@ -1315,6 +1329,22 @@ textarea:focus {
   flex: 0 0 auto;
 }
 
+.dashboard-logo-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.dashboard-logo-button:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
 .candidate-dashboard-logo {
   width: 108px;
   height: auto;
@@ -1693,7 +1723,8 @@ textarea:focus {
   }
 
   .manage-jobs-header .responsive-back-button,
-  .section-footer-nav .responsive-back-button {
+  .section-footer-nav .responsive-back-button,
+  .page-footer-actions .responsive-back-button {
     justify-content: center;
     width: 100%;
   }
@@ -2637,6 +2668,15 @@ textarea:focus {
   border-bottom: 1px solid #eaeef3;
 }
 
+.application-form-section + .application-form-section {
+  margin-top: 20px;
+}
+
+.application-form-section h4 {
+  margin: 0 0 12px;
+  font-size: 15px;
+}
+
 .application-message {
   width: 100%;
   padding: 12px 15px;
@@ -2658,6 +2698,229 @@ textarea:focus {
   display: flex;
   gap: 10px;
   margin-top: 16px;
+}
+
+.application-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.application-card-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.application-profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.application-profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.application-profile-field-full {
+  grid-column: 1 / -1;
+}
+
+.application-profile-field span {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.application-profile-field input,
+.application-profile-field textarea {
+  width: 100%;
+}
+
+.rich-text-editor-shell {
+  border: 1px solid #262626;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.rich-text-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px;
+  border-bottom: 1px solid #262626;
+}
+
+.rich-text-select,
+.rich-text-tool-button {
+  min-height: 36px;
+  border-radius: 8px;
+  border: 1px solid #262626;
+}
+
+.rich-text-select {
+  padding: 0 10px;
+}
+
+.rich-text-tool-button {
+  padding: 0 12px;
+  background: #111111;
+  color: #ffffff;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.rich-text-tool-button:hover {
+  background: #1f1f1f;
+}
+
+.rich-text-surface {
+  min-height: 220px;
+  padding: 14px 16px;
+}
+
+.rich-text-editor {
+  min-height: 190px;
+  outline: none;
+  line-height: 1.6;
+}
+
+.rich-text-editor.is-empty:before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+}
+
+.rich-text-editor p,
+.cover-letter-preview p {
+  margin: 0 0 12px;
+}
+
+.rich-text-editor ul,
+.rich-text-editor ol,
+.cover-letter-preview ul,
+.cover-letter-preview ol {
+  margin: 0 0 12px 20px;
+}
+
+.cover-letter-preview {
+  line-height: 1.6;
+}
+
+.application-workspace-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 1200;
+}
+
+.application-workspace-modal {
+  width: min(960px, 100%);
+  max-height: min(90vh, 920px);
+  display: flex;
+  flex-direction: column;
+  background: #000000;
+  border: 1px solid #262626;
+  border-radius: 16px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+.application-workspace-header,
+.application-workspace-actions {
+  padding: 18px 22px;
+  border-color: #262626;
+}
+
+.application-workspace-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid #262626;
+}
+
+.application-workspace-header h3,
+.application-workspace-header p {
+  margin: 0;
+}
+
+.application-workspace-header p {
+  margin-top: 6px;
+}
+
+.application-workspace-body {
+  padding: 22px;
+  overflow-y: auto;
+}
+
+.application-workspace-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  border-top: 1px solid #262626;
+}
+
+.bookmark-star-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  min-height: 28px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #22d3ee;
+  cursor: pointer;
+  font-size: 24px;
+  line-height: 1;
+  transition: color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+}
+
+.bookmark-star-button:hover,
+.bookmark-star-button.active {
+  color: #22d3ee;
+  transform: scale(1.05);
+}
+
+.bookmark-star-button:hover {
+  opacity: 0.9;
+}
+
+.job-card-header .bookmark-star-button {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+}
+
+.preview-bookmark-button {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border: 1px solid #262626 !important;
+}
+
+.preview-bookmark-button.active {
+  background: #facc15 !important;
+  color: #000000 !important;
+  border-color: #facc15 !important;
+}
+
+.candidate-card {
+  position: relative;
+}
+
+.talent-bookmark-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
 }
 
 
@@ -3862,7 +4125,8 @@ textarea:focus {
     padding: 20px;
   }
 
-  .section-footer-nav .back-button {
+  .section-footer-nav .back-button,
+  .page-footer-actions .back-button {
     width: 100%;
     justify-content: center;
   }
@@ -7767,7 +8031,6 @@ header,
 footer {
   background: #000000 !important;
   color: #ffffff !important;
-  overflow-x: hidden;
 }
 
 .dashboard-container,
@@ -8182,6 +8445,11 @@ td,
   color: #000000 !important;
 }
 
+.assessment-builder-container .page-footer-actions .back-button,
+.assessment-builder-container .page-footer-actions .back-button:before {
+  color: #ffffff !important;
+}
+
 .candidate-profile,
 .candidate-profile-body,
 .talent-pool-container,
@@ -8341,25 +8609,16 @@ td,
   margin-bottom: 8px;
 }
 
-@media screen and (max-width: 768px) {
-  .job-list {
-    padding-inline: 14px;
-  }
+.home-page .dashboard-container {
+  max-width: 1400px;
+  width: calc(100% - 40px);
+  margin: 20px auto;
+}
 
-  .job-card-header h3,
-  .job-card-header .company-name,
-  .job-number,
-  .job-location,
-  .job-type,
-  .job-salary,
-  .posted-date {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .job-card-body {
-    gap: 8px 10px;
+@media screen and (max-width: 992px) {
+  .home-page .dashboard-container {
+    width: calc(100% - 24px);
+    margin: 12px auto;
   }
 }
 
@@ -8425,6 +8684,136 @@ td,
   background: #000000 !important;
   border-color: #000000 !important;
   color: #ffffff !important;
+}
+
+.profile-job-feed-button {
+  width: auto !important;
+  max-width: 180px !important;
+  padding: 8px 12px !important;
+  font-size: 13px !important;
+  align-self: center;
+}
+
+.job-feed-container .application-form .secondary-button {
+  color: #000000 !important;
+}
+
+@media screen and (max-width: 768px) {
+  .job-feed-container {
+    margin-inline: -6px;
+  }
+
+  .job-feed-container .job-list {
+    padding-inline: 10px;
+    padding-top: 16px;
+    padding-bottom: 20px;
+  }
+
+  .job-feed-container .job-card {
+    border-radius: 14px;
+    margin-bottom: 18px;
+  }
+
+  .job-feed-container .job-card-header {
+    padding: 18px 18px 12px;
+  }
+
+  .job-feed-container .job-card-header h3 {
+    font-size: 17px;
+    line-height: 1.25;
+  }
+
+  .job-feed-container .job-card-header .company-name {
+    display: block;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .job-feed-container .job-card-body {
+    padding: 14px 18px 18px;
+    gap: 10px 12px;
+  }
+
+  .job-feed-container .job-number,
+  .job-feed-container .job-location,
+  .job-feed-container .job-type,
+  .job-feed-container .job-salary {
+    font-size: 13.5px;
+    font-weight: 500;
+  }
+
+  .job-feed-container .job-description {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-top: 6px;
+    margin-bottom: 10px;
+  }
+
+  .job-feed-container .job-card-footer {
+    padding: 14px 18px;
+  }
+
+  .job-feed-container .posted-date {
+    font-size: 13px;
+  }
+
+  .job-feed-container .application-form {
+    padding: 18px 16px;
+    overflow: hidden;
+  }
+
+  .job-feed-container .application-profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .job-feed-container .rich-text-toolbar {
+    gap: 6px;
+  }
+
+  .job-feed-container .rich-text-select,
+  .job-feed-container .rich-text-tool-button {
+    flex: 1 1 110px;
+  }
+
+  .job-feed-container .application-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .job-feed-container .application-buttons .submit-application-button,
+  .job-feed-container .application-buttons .secondary-button {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .application-workspace-overlay {
+    padding: 12px;
+  }
+
+  .application-workspace-modal {
+    max-height: 92vh;
+    border-radius: 14px;
+  }
+
+  .application-workspace-header,
+  .application-workspace-body,
+  .application-workspace-actions {
+    padding: 16px;
+  }
+
+  .application-workspace-actions .submit-application-button,
+  .application-workspace-actions .secondary-button {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .application-card-actions {
+    flex-direction: column;
+  }
 }
 
 .logout-button {

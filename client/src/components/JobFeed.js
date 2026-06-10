@@ -1,10 +1,239 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
-const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
+const FONT_OPTIONS = [
+    { label: 'Share Tech', value: 'Share Tech' },
+    { label: 'Lexend', value: 'Lexend' },
+    { label: 'Arial', value: 'Arial' },
+    { label: 'Georgia', value: 'Georgia' },
+    { label: 'Times New Roman', value: 'Times New Roman' }
+];
+
+const BLOCK_OPTIONS = [
+    { label: 'Paragraph', value: '<p>' },
+    { label: 'Heading', value: '<h3>' }
+];
+
+const escapeHtml = (value = '') => (
+    String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+);
+
+const formatCommaSeparatedValue = (value) => {
+    if (Array.isArray(value)) {
+        return value.join(', ');
+    }
+
+    return typeof value === 'string' ? value : '';
+};
+
+const formatMultilineValue = (value) => {
+    if (Array.isArray(value)) {
+        return value
+            .map((item) => {
+                if (typeof item === 'object' && item !== null) {
+                    return Object.values(item).filter(Boolean).join(' - ');
+                }
+
+                return item;
+            })
+            .join('\n');
+    }
+
+    return typeof value === 'string' ? value : '';
+};
+
+const splitCommaSeparatedValue = (value = '') => (
+    value
+        .split(',')
+        .map((item) => item.trim())
+        .filter(Boolean)
+);
+
+const splitMultilineValue = (value = '') => (
+    value
+        .split('\n')
+        .map((item) => item.trim())
+        .filter(Boolean)
+);
+
+const createApplicationProfileDraft = (profileData, userData = {}) => ({
+    name: profileData?.name || '',
+    email: profileData?.email || userData?.email || '',
+    skills: formatCommaSeparatedValue(profileData?.skills),
+    interests: formatCommaSeparatedValue(profileData?.interests),
+    hobbies: formatCommaSeparatedValue(profileData?.hobbies),
+    education: formatMultilineValue(profileData?.education),
+    experience: formatMultilineValue(profileData?.experience),
+    achievements: formatMultilineValue(profileData?.achievements)
+});
+
+const prepareApplicationProfileSnapshot = (profileDraft) => ({
+    name: profileDraft.name.trim(),
+    email: profileDraft.email.trim(),
+    skills: splitCommaSeparatedValue(profileDraft.skills),
+    interests: splitCommaSeparatedValue(profileDraft.interests),
+    hobbies: splitCommaSeparatedValue(profileDraft.hobbies),
+    education: splitMultilineValue(profileDraft.education),
+    experience: splitMultilineValue(profileDraft.experience),
+    achievements: splitMultilineValue(profileDraft.achievements)
+});
+
+const createCoverLetterTemplate = (profileData, job, userData = {}) => {
+    const applicantName = profileData?.name || userData?.email?.split('@')[0] || 'Candidate';
+    const jobTitle = job?.title || 'this role';
+    const companyName = job?.company?.name || 'your team';
+
+    return [
+        `<p>Dear Hiring Team,</p>`,
+        `<p>I am excited to apply for the ${escapeHtml(jobTitle)} role at ${escapeHtml(companyName)}. My experience and skills align well with the opportunity, and I would love to contribute to your team.</p>`,
+        `<p>Thank you for your time and consideration.</p>`,
+        `<p>Sincerely,</p>`,
+        `<p>${escapeHtml(applicantName)}</p>`
+    ].join('');
+};
+
+const stripRichText = (html = '') => (
+    html
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/(p|div|li|h3)>/gi, '\n')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+);
+
+const RichTextEditor = ({ value, onChange, disabled = false }) => {
+    const editorRef = useRef(null);
+    const selectionRef = useRef(null);
+
+    useEffect(() => {
+        if (!editorRef.current) {
+            return;
+        }
+
+        if (editorRef.current.innerHTML !== value) {
+            editorRef.current.innerHTML = value || '';
+        }
+    }, [value]);
+
+    const saveSelection = () => {
+        const selection = window.getSelection();
+
+        if (!selection || selection.rangeCount === 0 || !editorRef.current) {
+            return;
+        }
+
+        if (!editorRef.current.contains(selection.anchorNode)) {
+            return;
+        }
+
+        selectionRef.current = selection.getRangeAt(0);
+    };
+
+    const restoreSelection = () => {
+        if (!editorRef.current) {
+            return;
+        }
+
+        editorRef.current.focus();
+
+        if (!selectionRef.current) {
+            return;
+        }
+
+        const selection = window.getSelection();
+        if (!selection) {
+            return;
+        }
+
+        selection.removeAllRanges();
+        selection.addRange(selectionRef.current);
+    };
+
+    const syncEditorValue = () => {
+        if (!editorRef.current) {
+            return;
+        }
+
+        onChange(editorRef.current.innerHTML);
+        saveSelection();
+    };
+
+    const runCommand = (command, commandValue = null) => {
+        if (disabled || typeof document.execCommand !== 'function') {
+            return;
+        }
+
+        restoreSelection();
+        document.execCommand(command, false, commandValue);
+        syncEditorValue();
+    };
+
+    return (
+        <div className="rich-text-editor-shell">
+            <div className="rich-text-toolbar">
+                <select
+                    className="rich-text-select"
+                    defaultValue="Share Tech"
+                    onChange={(event) => runCommand('fontName', event.target.value)}
+                    disabled={disabled}
+                >
+                    {FONT_OPTIONS.map((fontOption) => (
+                        <option key={fontOption.value} value={fontOption.value}>
+                            {fontOption.label}
+                        </option>
+                    ))}
+                </select>
+                <select
+                    className="rich-text-select"
+                    defaultValue="<p>"
+                    onChange={(event) => runCommand('formatBlock', event.target.value)}
+                    disabled={disabled}
+                >
+                    {BLOCK_OPTIONS.map((blockOption) => (
+                        <option key={blockOption.value} value={blockOption.value}>
+                            {blockOption.label}
+                        </option>
+                    ))}
+                </select>
+                <button type="button" className="rich-text-tool-button" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand('bold')} disabled={disabled}>B</button>
+                <button type="button" className="rich-text-tool-button" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand('italic')} disabled={disabled}>I</button>
+                <button type="button" className="rich-text-tool-button" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand('underline')} disabled={disabled}>U</button>
+                <button type="button" className="rich-text-tool-button" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand('justifyLeft')} disabled={disabled}>L</button>
+                <button type="button" className="rich-text-tool-button" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand('justifyCenter')} disabled={disabled}>C</button>
+                <button type="button" className="rich-text-tool-button" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand('justifyRight')} disabled={disabled}>R</button>
+                <button type="button" className="rich-text-tool-button" onMouseDown={(event) => event.preventDefault()} onClick={() => runCommand('insertUnorderedList')} disabled={disabled}>List</button>
+            </div>
+            <div className="rich-text-surface">
+                <div
+                    ref={editorRef}
+                    className={`rich-text-editor ${!stripRichText(value) ? 'is-empty' : ''}`}
+                    contentEditable={!disabled}
+                    suppressContentEditableWarning
+                    data-placeholder="Write your cover letter..."
+                    onInput={syncEditorValue}
+                    onBlur={saveSelection}
+                    onKeyUp={saveSelection}
+                    onMouseUp={saveSelection}
+                />
+            </div>
+        </div>
+    );
+};
+
+const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [applyingToJobId, setApplyingToJobId] = useState(null);
+    const [applicationJob, setApplicationJob] = useState(null);
     const [appliedJobIds, setAppliedJobIds] = useState([]);
+    const [bookmarkedJobIds, setBookmarkedJobIds] = useState([]);
     const [applicationMessage, setApplicationMessage] = useState('');
+    const [coverLetterHtml, setCoverLetterHtml] = useState('');
+    const [applicationProfile, setApplicationProfile] = useState(() => createApplicationProfileDraft(jobSeekerData, currentUser));
+    const [activeDraftId, setActiveDraftId] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState('');
     const [recommendedJobs, setRecommendedJobs] = useState([]);
@@ -28,6 +257,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
     const [selectedCompany, setSelectedCompany] = useState(null);
     const [companyLoading, setCompanyLoading] = useState(false);
     const [companyError, setCompanyError] = useState('');
+    const resolvedUser = currentUser || JSON.parse(localStorage.getItem('user') || '{}');
     
     useEffect(() => {
         if (jobs && jobs.length > 0) {
@@ -62,10 +292,43 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
     useEffect(() => {
         if (!userId) {
             setAppliedJobIds([]);
+            setBookmarkedJobIds([]);
             return;
         }
 
         fetchAppliedJobs();
+        fetchJobBookmarks();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [userId, jobs]);
+
+    useEffect(() => {
+        if (!userId || jobs.length === 0) {
+            return;
+        }
+
+        const activeDraftStorageId = localStorage.getItem('jumptakeActiveDraftId');
+        const activeJobId = localStorage.getItem('jumptakeActiveJobId');
+        const activeJobAction = localStorage.getItem('jumptakeActiveJobAction') || 'preview';
+
+        if (activeDraftStorageId) {
+            openDraftFromStorage(activeDraftStorageId);
+            localStorage.removeItem('jumptakeActiveDraftId');
+            return;
+        }
+
+        if (activeJobId) {
+            const matchingJob = jobs.find((job) => String(job._id) === String(activeJobId));
+            if (matchingJob) {
+                if (activeJobAction === 'apply') {
+                    handleApplyClick(matchingJob);
+                } else {
+                    setPreviewJob(matchingJob);
+                }
+            }
+
+            localStorage.removeItem('jumptakeActiveJobId');
+            localStorage.removeItem('jumptakeActiveJobAction');
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userId, jobs]);
 
@@ -81,7 +344,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
     }, [previewJob, selectedCompany]);
 
     useEffect(() => {
-        if (previewJob || selectedCompany) {
+        if (previewJob || selectedCompany || applicationJob) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'auto';
@@ -90,7 +353,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
         return () => {
             document.body.style.overflow = 'auto';
         };
-    }, [previewJob, selectedCompany]);
+    }, [previewJob, selectedCompany, applicationJob]);
 
     const fetchRecommendedJobs = async () => {
         if (!jobSeekerData || !jobSeekerData._id) {
@@ -144,6 +407,31 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
             setAppliedJobIds(uniqueAppliedJobIds);
         } catch (err) {
             console.error('Error fetching applied jobs:', err);
+        }
+    };
+
+    const fetchJobBookmarks = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/job-bookmarks/user/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch bookmarked jobs');
+            }
+
+            const data = await response.json();
+            const bookmarkedIds = (Array.isArray(data) ? data : [])
+                .map((bookmark) => bookmark?.job?._id || bookmark?.job)
+                .filter(Boolean)
+                .map((jobId) => String(jobId));
+
+            setBookmarkedJobIds(bookmarkedIds);
+        } catch (bookmarkError) {
+            console.error('Error fetching job bookmarks:', bookmarkError);
         }
     };
 
@@ -225,23 +513,115 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
         setPreviewJob(job);
     };
     
-    const handleApplyClick = (jobId, event) => {
+    const handleApplyClick = (job, event) => {
         if (event) {
             event.stopPropagation(); 
         }
 
-        if (appliedJobIds.includes(String(jobId))) {
+        if (!job || appliedJobIds.includes(String(job._id))) {
             return;
         }
 
-        setApplyingToJobId(jobId);
+        setApplyingToJobId(job._id);
+        setApplicationJob(job);
+        setActiveDraftId(null);
         setApplicationMessage('');
+        setCoverLetterHtml(createCoverLetterTemplate(jobSeekerData, job, resolvedUser));
+        setApplicationProfile(createApplicationProfileDraft(jobSeekerData, resolvedUser));
         setPreviewJob(null); 
     };
     
     const handleCancelApplication = () => {
         setApplyingToJobId(null);
+        setApplicationJob(null);
         setApplicationMessage('');
+        setCoverLetterHtml('');
+        setActiveDraftId(null);
+        setApplicationProfile(createApplicationProfileDraft(jobSeekerData, resolvedUser));
+    };
+
+    const openDraftFromStorage = async (draftId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/draft-applications/user/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch draft applications');
+            }
+
+            const drafts = await response.json();
+            const selectedDraft = (Array.isArray(drafts) ? drafts : []).find((draft) => String(draft._id) === String(draftId));
+            if (!selectedDraft?.job) {
+                return;
+            }
+
+            setApplyingToJobId(selectedDraft.job._id);
+            setApplicationJob(selectedDraft.job);
+            setActiveDraftId(selectedDraft._id);
+            setApplicationMessage(selectedDraft.message || '');
+            setCoverLetterHtml(selectedDraft.coverLetterHtml || createCoverLetterTemplate(jobSeekerData, selectedDraft.job, resolvedUser));
+            setApplicationProfile(createApplicationProfileDraft(selectedDraft.profileSnapshot || jobSeekerData, resolvedUser));
+            setPreviewJob(null);
+        } catch (draftError) {
+            console.error('Error opening draft application:', draftError);
+        }
+    };
+
+    const handleApplicationProfileChange = (event) => {
+        const { name, value } = event.target;
+
+        setApplicationProfile((prevState) => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+
+    const handleSaveDraft = async () => {
+        if (!applicationJob?._id) {
+            return;
+        }
+
+        try {
+            setIsSubmitting(true);
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/draft-applications`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    draftId: activeDraftId,
+                    jobId: applicationJob._id,
+                    userId,
+                    message: applicationMessage,
+                    coverLetterHtml,
+                    profileSnapshot: prepareApplicationProfileSnapshot(applicationProfile)
+                })
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to save draft application');
+            }
+
+            setActiveDraftId(data._id);
+            setMessage('Draft application saved successfully!');
+            handleCancelApplication();
+
+            setTimeout(() => {
+                setMessage('');
+            }, 3000);
+        } catch (draftError) {
+            console.error('Error saving draft application:', draftError);
+            setMessage(`Error: ${draftError.message}`);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
     
     const handleApplySubmit = async (jobId) => {
@@ -263,7 +643,10 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
                 body: JSON.stringify({
                     jobId,
                     userId,
-                    message: applicationMessage
+                    message: applicationMessage,
+                    coverLetterHtml,
+                    profileSnapshot: prepareApplicationProfileSnapshot(applicationProfile),
+                    draftId: activeDraftId
                 })
             });
             
@@ -278,7 +661,11 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
                 prev.includes(String(jobId)) ? prev : [...prev, String(jobId)]
             ));
             setApplyingToJobId(null);
+            setApplicationJob(null);
             setApplicationMessage('');
+            setCoverLetterHtml('');
+            setActiveDraftId(null);
+            setApplicationProfile(createApplicationProfileDraft(jobSeekerData, resolvedUser));
             
             if (onRefresh) onRefresh();
             
@@ -343,6 +730,56 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
             setCompanyError('Failed to load company profile. Please try again later.');
         } finally {
             setCompanyLoading(false);
+        }
+    };
+
+    const handleToggleBookmark = async (job, event) => {
+        if (event) {
+            event.stopPropagation();
+        }
+
+        if (!job?._id || !userId) {
+            return;
+        }
+
+        const isBookmarked = bookmarkedJobIds.includes(String(job._id));
+        const token = localStorage.getItem('token');
+
+        try {
+            if (isBookmarked) {
+                const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/job-bookmarks/user/${userId}/job/${job._id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to remove bookmark');
+                }
+
+                setBookmarkedJobIds((prevState) => prevState.filter((jobId) => jobId !== String(job._id)));
+            } else {
+                const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/job-bookmarks`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        userId,
+                        jobId: job._id
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to bookmark job');
+                }
+
+                setBookmarkedJobIds((prevState) => [...new Set([...prevState, String(job._id)])]);
+            }
+        } catch (bookmarkError) {
+            console.error('Error toggling bookmark:', bookmarkError);
         }
     };
 
@@ -525,6 +962,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
                             const matchScore = getMatchScore(job);
                             const hasMatchScore = activeTab === 'all' && matchScore > 0 && jobSeekerData && jobSeekerData.skills;
                             const hasApplied = appliedJobIds.includes(String(job._id));
+                            const isBookmarked = bookmarkedJobIds.includes(String(job._id));
                             
                             return (
                                 <div 
@@ -532,89 +970,66 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
                                     key={job._id}
                                     onClick={() => handleJobClick(job)}
                                 >
-                                    {applyingToJobId === job._id ? (
-                                        <div className="application-form" onClick={e => e.stopPropagation()}>
-                                            <h3>Apply to: {job.title}</h3>
-                                            <textarea
-                                                value={applicationMessage}
-                                                onChange={(e) => setApplicationMessage(e.target.value)}
-                                                placeholder="Include a message with your application..."
-                                                className="application-message"
-                                                rows="5"
-                                            />
-                                            <div className="application-buttons">
-                                                <button 
-                                                    className="submit-application-button"
-                                                    onClick={() => handleApplySubmit(job._id)}
-                                                    disabled={isSubmitting}
-                                                >
-                                                    {isSubmitting ? 'Submitting...' : 'Submit Application'}
-                                                </button>
-                                                <button 
-                                                    className="secondary-button"
-                                                    onClick={handleCancelApplication}
-                                                    disabled={isSubmitting}
-                                                >
-                                                    Cancel
-                                                </button>
+                                    <div className="job-card-header">
+                                        <button
+                                            type="button"
+                                            className={`bookmark-star-button ${isBookmarked ? 'active' : ''}`}
+                                            onClick={(event) => handleToggleBookmark(job, event)}
+                                            aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark job'}
+                                        >
+                                            {isBookmarked ? '★' : '☆'}
+                                        </button>
+                                        <h3>{job.title}</h3>
+                                        <span className="company-name">{job.company.name}</span>
+                                        {hasMatchScore && (
+                                            <div className="job-match">
+                                                <span className="match-label">Skills Match</span>
+                                                <span className="match-score">{matchScore}</span>
                                             </div>
-                                        </div>
-                                    ) : (
-                                        <>
-                                            <div className="job-card-header">
-                                                <h3>{job.title}</h3>
-                                                <span className="company-name">{job.company.name}</span>
-                                                {hasMatchScore && (
-                                                    <div className="job-match">
-                                                        <span className="match-label">Skills Match</span>
-                                                        <span className="match-score">{matchScore}</span>
-                                                    </div>
-                                                )}
+                                        )}
+                                    </div>
+                                    <div className="job-card-body">
+                                        <p className="job-number">Job Number: {job.jobNumber || 'Generating...'}</p>
+                                        <p className="job-location">{job.location}</p>
+                                        <p className="job-type">{job.jobType}</p>
+                                        {job.salary && <p className="job-salary">{job.salary}</p>}
+                                        <p className="job-description">{job.description.substring(0, 150)}...</p>
+                                        
+                                        {job.skills && job.skills.length > 0 && (
+                                            <div className="job-skills">
+                                                <strong>Skills:</strong> 
+                                                <div className="skill-tags">
+                                                    {job.skills.map((skill, index) => {
+                                                        const isMatch = jobSeekerData && 
+                                                            Array.isArray(jobSeekerData.skills) && 
+                                                            jobSeekerData.skills.some(s => 
+                                                                s.toLowerCase() === skill.toLowerCase()
+                                                            );
+                                                        
+                                                        return (
+                                                            <span 
+                                                                key={index} 
+                                                                className={`skill-tag ${isMatch ? 'skill-match' : ''}`}
+                                                            >
+                                                                {skill}
+                                                                {isMatch && <span className="match-icon">✓</span>}
+                                                            </span>
+                                                        );
+                                                    })}
+                                                </div>
                                             </div>
-                                            <div className="job-card-body">
-                                                <p className="job-number">Job Number: {job.jobNumber || 'Generating...'}</p>
-                                                <p className="job-location">{job.location}</p>
-                                                <p className="job-type">{job.jobType}</p>
-                                                {job.salary && <p className="job-salary">{job.salary}</p>}
-                                                <p className="job-description">{job.description.substring(0, 150)}...</p>
-                                                
-                                                {job.skills && job.skills.length > 0 && (
-                                                    <div className="job-skills">
-                                                        <strong>Skills:</strong> 
-                                                        <div className="skill-tags">
-                                                            {job.skills.map((skill, index) => {
-                                                                const isMatch = jobSeekerData && 
-                                                                    Array.isArray(jobSeekerData.skills) && 
-                                                                    jobSeekerData.skills.some(s => 
-                                                                        s.toLowerCase() === skill.toLowerCase()
-                                                                    );
-                                                                
-                                                                return (
-                                                                    <span 
-                                                                        key={index} 
-                                                                        className={`skill-tag ${isMatch ? 'skill-match' : ''}`}
-                                                                    >
-                                                                        {skill}
-                                                                        {isMatch && <span className="match-icon">✓</span>}
-                                                                    </span>
-                                                                );
-                                                            })}
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <div className="job-card-footer">
-                                                <span className="posted-date">Posted: {new Date(job.createdAt).toLocaleDateString()}</span>
-                                                <button 
-                                                    className="apply-button"
-                                                    onClick={(e) => handleApplyClick(job._id, e)}
-                                                    disabled={hasApplied}
-                                                >
-                                                    {hasApplied ? 'Applied' : 'Apply Now'}
-                                                </button>
-                                            </div>
-                                        </>
-                                    )}
+                                        )}
+                                    </div>
+                                    <div className="job-card-footer">
+                                        <span className="posted-date">Posted: {new Date(job.createdAt).toLocaleDateString()}</span>
+                                        <button 
+                                            className="apply-button"
+                                            onClick={(e) => handleApplyClick(job, e)}
+                                            disabled={hasApplied}
+                                        >
+                                            {hasApplied ? 'Applied' : 'Apply Now'}
+                                        </button>
+                                    </div>
                                 </div>
                             );
                         })
@@ -796,15 +1211,102 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
                                 </button>
                                 <button 
                                     className="preview-apply-button" 
-                                    onClick={(e) => handleApplyClick(previewJob._id, e)}
+                                    onClick={(e) => handleApplyClick(previewJob, e)}
                                     disabled={appliedJobIds.includes(String(previewJob._id))}
                                 >
                                     {appliedJobIds.includes(String(previewJob._id)) ? 'Applied' : 'Apply for this Job'}
+                                </button>
+                                <button
+                                    className={`preview-bookmark-button ${bookmarkedJobIds.includes(String(previewJob._id)) ? 'active' : ''}`}
+                                    onClick={(e) => handleToggleBookmark(previewJob, e)}
+                                >
+                                    {bookmarkedJobIds.includes(String(previewJob._id)) ? 'Bookmarked' : 'Bookmark Job'}
                                 </button>
                             </div>
                             <div className="preview-post-date">
                                 Posted: {new Date(previewJob.createdAt).toLocaleDateString()}
                             </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {applicationJob && (
+                <div className="application-workspace-overlay" onClick={handleCancelApplication}>
+                    <div className="application-workspace-modal" onClick={(event) => event.stopPropagation()}>
+                        <div className="application-workspace-header">
+                            <div>
+                                <h3>Apply to: {applicationJob.title}</h3>
+                                <p>{applicationJob.company?.name || 'Company unavailable'}</p>
+                            </div>
+                            <button type="button" className="preview-close-btn" onClick={handleCancelApplication}>×</button>
+                        </div>
+                        <div className="application-workspace-body">
+                            <div className="application-form-section">
+                                <h4>Cover Letter</h4>
+                                <RichTextEditor
+                                    value={coverLetterHtml}
+                                    onChange={setCoverLetterHtml}
+                                    disabled={isSubmitting}
+                                />
+                            </div>
+                            <div className="application-form-section">
+                                <h4>Message</h4>
+                                <textarea
+                                    value={applicationMessage}
+                                    onChange={(e) => setApplicationMessage(e.target.value)}
+                                    placeholder="Include a message with your application..."
+                                    className="application-message"
+                                    rows="5"
+                                />
+                            </div>
+                            <div className="application-form-section">
+                                <h4>Profile Snapshot</h4>
+                                <div className="application-profile-grid">
+                                    <label className="application-profile-field">
+                                        <span>Full Name</span>
+                                        <input type="text" name="name" value={applicationProfile.name} onChange={handleApplicationProfileChange} disabled={isSubmitting} />
+                                    </label>
+                                    <label className="application-profile-field">
+                                        <span>Email</span>
+                                        <input type="email" name="email" value={applicationProfile.email} onChange={handleApplicationProfileChange} disabled={isSubmitting} />
+                                    </label>
+                                    <label className="application-profile-field application-profile-field-full">
+                                        <span>Skills</span>
+                                        <input type="text" name="skills" value={applicationProfile.skills} onChange={handleApplicationProfileChange} disabled={isSubmitting} />
+                                    </label>
+                                    <label className="application-profile-field">
+                                        <span>Interests</span>
+                                        <input type="text" name="interests" value={applicationProfile.interests} onChange={handleApplicationProfileChange} disabled={isSubmitting} />
+                                    </label>
+                                    <label className="application-profile-field">
+                                        <span>Hobbies</span>
+                                        <input type="text" name="hobbies" value={applicationProfile.hobbies} onChange={handleApplicationProfileChange} disabled={isSubmitting} />
+                                    </label>
+                                    <label className="application-profile-field application-profile-field-full">
+                                        <span>Education</span>
+                                        <textarea name="education" value={applicationProfile.education} onChange={handleApplicationProfileChange} rows="4" disabled={isSubmitting} />
+                                    </label>
+                                    <label className="application-profile-field application-profile-field-full">
+                                        <span>Experience</span>
+                                        <textarea name="experience" value={applicationProfile.experience} onChange={handleApplicationProfileChange} rows="5" disabled={isSubmitting} />
+                                    </label>
+                                    <label className="application-profile-field application-profile-field-full">
+                                        <span>Achievements</span>
+                                        <textarea name="achievements" value={applicationProfile.achievements} onChange={handleApplicationProfileChange} rows="4" disabled={isSubmitting} />
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="application-workspace-actions">
+                            <button className="submit-application-button" onClick={() => handleApplySubmit(applicationJob._id)} disabled={isSubmitting}>
+                                {isSubmitting ? 'Submitting...' : 'Submit Application'}
+                            </button>
+                            <button className="secondary-button" onClick={handleSaveDraft} disabled={isSubmitting}>
+                                {activeDraftId ? 'Update Draft' : 'Save Draft'}
+                            </button>
+                            <button className="secondary-button" onClick={handleCancelApplication} disabled={isSubmitting}>
+                                Cancel
+                            </button>
                         </div>
                     </div>
                 </div>

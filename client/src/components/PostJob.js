@@ -112,12 +112,6 @@ const PostJob = ({ companyId, onJobPosted, onCancel, onFooterBack }) => {
         <div className="post-job-container">
             <div className="post-job-header">
                 <h2>Post a New Job</h2>
-                <button 
-                    className="back-button"
-                    onClick={onCancel}
-                >
-                    Back to Dashboard
-                </button>
             </div>
             
             <div className="post-job-content">
@@ -285,7 +279,15 @@ const PostJob = ({ companyId, onJobPosted, onCancel, onFooterBack }) => {
                         </button>
                     </div>
 
-                    <div className="section-footer-nav">
+                    <div className="page-footer-actions">
+                        <button
+                            type="button"
+                            className="back-button"
+                            onClick={onCancel}
+                            disabled={isLoading}
+                        >
+                            Back to Dashboard
+                        </button>
                         <button
                             type="button"
                             className="back-button"

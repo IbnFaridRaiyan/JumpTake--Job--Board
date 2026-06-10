@@ -103,6 +103,10 @@ const MyApplications = ({ userId, onRefresh, switchSection, onFooterBack }) => {
         return application?.job?.jobNumber || 'Generating...';
     };
 
+    const getSubmittedProfile = (application) => {
+        return application?.profileSnapshot || null;
+    };
+
     const formatFoundedDate = (founded) => {
         if (!founded) {
             return 'Not specified';
@@ -113,6 +117,32 @@ const MyApplications = ({ userId, onRefresh, switchSection, onFooterBack }) => {
         }
 
         return founded;
+    };
+
+    const renderList = (items, emptyMessage) => {
+        if (!items || (Array.isArray(items) && items.length === 0)) {
+            return <p>{emptyMessage}</p>;
+        }
+
+        if (Array.isArray(items)) {
+            return (
+                <ul className="profile-list">
+                    {items.map((item, index) => (
+                        <li key={index}>{item}</li>
+                    ))}
+                </ul>
+            );
+        }
+
+        return <p>{items}</p>;
+    };
+
+    const renderRichTextPreview = (html, emptyMessage) => {
+        if (!html) {
+            return <p>{emptyMessage}</p>;
+        }
+
+        return <div className="cover-letter-preview" dangerouslySetInnerHTML={{ __html: html }} />;
     };
     
     const getStatusBadgeClass = (status) => {
@@ -226,6 +256,8 @@ const MyApplications = ({ userId, onRefresh, switchSection, onFooterBack }) => {
     }
 
     if (selectedApplication) {
+        const submittedProfile = getSubmittedProfile(selectedApplication);
+
         return (
             <div className="applications-container">
                 <div className="section-header">
@@ -269,6 +301,35 @@ const MyApplications = ({ userId, onRefresh, switchSection, onFooterBack }) => {
                             <p>{selectedApplication.message || 'No message included.'}</p>
                         </div>
                     </div>
+
+                    <div className="profile-section">
+                        <h3>Submitted Cover Letter</h3>
+                        {renderRichTextPreview(selectedApplication.coverLetterHtml, 'No cover letter included.')}
+                    </div>
+
+                    {submittedProfile && (
+                        <div className="profile-section">
+                            <h3>Submitted Profile Snapshot</h3>
+                            <p><strong>Full Name:</strong> {submittedProfile.name || 'Not specified'}</p>
+                            <p><strong>Email:</strong> {submittedProfile.email || 'Not specified'}</p>
+                            <div className="profile-subsection">
+                                <h4>Skills</h4>
+                                {renderList(submittedProfile.skills, 'No skills included.')}
+                            </div>
+                            <div className="profile-subsection">
+                                <h4>Education</h4>
+                                {renderList(submittedProfile.education, 'No education included.')}
+                            </div>
+                            <div className="profile-subsection">
+                                <h4>Experience</h4>
+                                {renderList(submittedProfile.experience, 'No experience included.')}
+                            </div>
+                            <div className="profile-subsection">
+                                <h4>Achievements</h4>
+                                {renderList(submittedProfile.achievements, 'No achievements included.')}
+                            </div>
+                        </div>
+                    )}
 
                     <div className="section-footer-nav">
                         <button className="back-button" onClick={handleBrowseJobs}>
@@ -358,15 +419,13 @@ const MyApplications = ({ userId, onRefresh, switchSection, onFooterBack }) => {
                 </div>
             )}
 
-            <div className="section-footer-nav">
+            <div className="page-footer-actions">
                 <button 
                     className="back-button"
                     onClick={handleBrowseJobs}
                 >
                     Back to Job Feed
                 </button>
-            </div>
-            <div className="section-footer-nav">
                 <button
                     className="back-button"
                     onClick={onFooterBack || handleBrowseJobs}

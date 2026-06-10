@@ -26,6 +26,18 @@ const ApplicationSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  coverLetterHtml: {
+    type: String,
+    default: ''
+  },
+  coverLetterText: {
+    type: String,
+    default: ''
+  },
+  profileSnapshot: {
+    type: mongoose.Schema.Types.Mixed,
+    default: null
+  },
   createdAt: {
     type: Date,
     default: Date.now

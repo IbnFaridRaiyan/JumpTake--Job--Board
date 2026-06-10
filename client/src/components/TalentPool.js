@@ -1,7 +1,8 @@
 import React, { useMemo, useState, useEffect } from 'react';
 
-const TalentPool = ({ jobs = [], onBack, onFooterBack }) => {
+const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack }) => {
     const [candidates, setCandidates] = useState([]);
+    const [bookmarkedTalentIds, setBookmarkedTalentIds] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -10,7 +11,9 @@ const TalentPool = ({ jobs = [], onBack, onFooterBack }) => {
 
     useEffect(() => {
         fetchCandidates();
-    }, []);
+        fetchBookmarkedTalents();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [companyId]);
 
     const fetchCandidates = async () => {
         try {
@@ -36,12 +39,92 @@ const TalentPool = ({ jobs = [], onBack, onFooterBack }) => {
         }
     };
 
+    const fetchBookmarkedTalents = async () => {
+        if (!companyId) {
+            setBookmarkedTalentIds([]);
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('employerToken');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/talent-bookmarks/company/${companyId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch bookmarked talents');
+            }
+
+            const data = await response.json();
+            const bookmarkedIds = (Array.isArray(data) ? data : [])
+                .map((bookmark) => bookmark?.candidate?._id || bookmark?.candidate)
+                .filter(Boolean)
+                .map((candidateId) => String(candidateId));
+
+            setBookmarkedTalentIds(bookmarkedIds);
+        } catch (bookmarkError) {
+            console.error('Error fetching bookmarked talents:', bookmarkError);
+        }
+    };
+
     const handleViewProfile = (candidate) => {
         setSelectedCandidate(candidate);
     };
 
     const handleCloseProfile = () => {
         setSelectedCandidate(null);
+    };
+
+    const toggleTalentBookmark = async (candidate, event) => {
+        if (event) {
+            event.stopPropagation();
+        }
+
+        if (!candidate?._id || !companyId) {
+            return;
+        }
+
+        const isBookmarked = bookmarkedTalentIds.includes(String(candidate._id));
+        const token = localStorage.getItem('employerToken');
+
+        try {
+            if (isBookmarked) {
+                const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/talent-bookmarks/company/${companyId}/candidate/${candidate._id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to remove talent bookmark');
+                }
+
+                setBookmarkedTalentIds((prevState) => prevState.filter((candidateId) => candidateId !== String(candidate._id)));
+            } else {
+                const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/talent-bookmarks`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        companyId,
+                        candidateId: candidate._id
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to bookmark talent');
+                }
+
+                setBookmarkedTalentIds((prevState) => [...new Set([...prevState, String(candidate._id)])]);
+            }
+        } catch (bookmarkError) {
+            console.error('Error toggling talent bookmark:', bookmarkError);
+        }
     };
 
     const normalizeSkill = (skill) => String(skill || '').trim().toLowerCase();
@@ -179,12 +262,6 @@ const TalentPool = ({ jobs = [], onBack, onFooterBack }) => {
                         onClick={() => setSpotlightActive(!spotlightActive)}
                     >
                         Spotlight
-                    </button>
-                    <button 
-                        className="back-button"
-                        onClick={onBack}
-                    >
-                        Back to Dashboard
                     </button>
                 </div>
             </div>
@@ -329,6 +406,14 @@ const TalentPool = ({ jobs = [], onBack, onFooterBack }) => {
                         <div className="candidates-grid">
                             {filteredCandidateRows.map(({ candidate, spotlight }) => (
                                 <div key={candidate._id} className="candidate-card" onClick={() => handleViewProfile(candidate)}>
+                                    <button
+                                        type="button"
+                                        className={`bookmark-star-button talent-bookmark-button ${bookmarkedTalentIds.includes(String(candidate._id)) ? 'active' : ''}`}
+                                        onClick={(event) => toggleTalentBookmark(candidate, event)}
+                                        aria-label={bookmarkedTalentIds.includes(String(candidate._id)) ? 'Remove bookmark' : 'Bookmark talent'}
+                                    >
+                                        {bookmarkedTalentIds.includes(String(candidate._id)) ? '★' : '☆'}
+                                    </button>
                                     <div className="candidate-avatar">
                                         {candidate.name ? candidate.name.charAt(0).toUpperCase() : 'C'}
                                     </div>
@@ -369,7 +454,13 @@ const TalentPool = ({ jobs = [], onBack, onFooterBack }) => {
             )}
 
             {!isLoading && !selectedCandidate && (
-                <div className="section-footer-nav">
+                <div className="page-footer-actions">
+                    <button 
+                        className="back-button"
+                        onClick={onBack}
+                    >
+                        Back to Dashboard
+                    </button>
                     <button 
                         className="back-button"
                         onClick={onFooterBack || onBack}

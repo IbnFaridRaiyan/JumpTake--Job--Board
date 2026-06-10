@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const VideoInterviews = ({ userId, switchSection }) => {
+const VideoInterviews = ({ userId, switchSection, onFooterBack }) => {
     const [interviews, setInterviews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -215,6 +215,19 @@ const VideoInterviews = ({ userId, switchSection }) => {
                             Back to Job Feed
                         </button>
                     </div>
+                    <div className="section-footer-nav">
+                        <button
+                            className="back-button responsive-back-button"
+                            onClick={() => {
+                                setSelectedInterview(null);
+                                setSelectedDate('');
+                                setMessage('');
+                                setError('');
+                            }}
+                        >
+                            Back
+                        </button>
+                    </div>
                 </div>
             </div>
         );
@@ -267,6 +280,14 @@ const VideoInterviews = ({ userId, switchSection }) => {
             <div className="section-footer-nav">
                 <button className="back-button responsive-back-button" onClick={handleBackToFeed}>
                     Back to Job Feed
+                </button>
+            </div>
+            <div className="section-footer-nav">
+                <button
+                    className="back-button responsive-back-button"
+                    onClick={onFooterBack || handleBackToFeed}
+                >
+                    Back
                 </button>
             </div>
         </div>

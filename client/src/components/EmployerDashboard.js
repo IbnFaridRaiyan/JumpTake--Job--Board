@@ -12,6 +12,7 @@ const EmployerDashboard = () => {
     const [employer, setEmployer] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeSection, setActiveSection] = useState('dashboard');
+    const [, setSectionHistory] = useState([]);
     const [companyData, setCompanyData] = useState(null);
     const [jobs, setJobs] = useState([]);
     const [applicationCount, setApplicationCount] = useState(0);
@@ -136,6 +137,30 @@ const EmployerDashboard = () => {
         }
     };
 
+    const switchSection = (nextSection) => {
+        if (!nextSection || nextSection === activeSection) {
+            return;
+        }
+
+        setSectionHistory((prev) => [...prev, activeSection]);
+        setActiveSection(nextSection);
+    };
+
+    const goToPreviousSection = () => {
+        let previousSection = null;
+
+        setSectionHistory((prev) => {
+            if (!prev.length) {
+                return prev;
+            }
+
+            previousSection = prev[prev.length - 1];
+            return prev.slice(0, -1);
+        });
+
+        setActiveSection(previousSection || 'dashboard');
+    };
+
     const renderContent = () => {
         switch (activeSection) {
             case 'post-job':
@@ -143,6 +168,7 @@ const EmployerDashboard = () => {
                     companyId={employer?.companyId}
                     onJobPosted={refreshJobs}
                     onCancel={() => setActiveSection('dashboard')}
+                    onFooterBack={goToPreviousSection}
                 />;
             case 'manage-jobs':
                 return <ManageJobs
@@ -150,16 +176,19 @@ const EmployerDashboard = () => {
                     companyId={employer?.companyId}
                     onJobUpdated={refreshJobs}
                     onBack={() => setActiveSection('dashboard')}
+                    onFooterBack={goToPreviousSection}
                 />;
             case 'manage-applications':
                 return <ManageApplications
                     companyId={employer?.companyId}
                     onBack={() => setActiveSection('dashboard')}
+                    onFooterBack={goToPreviousSection}
                 />;
             case 'make-assessment':
                 return <MakeAssessment
                     companyId={employer?.companyId}
                     onBack={() => setActiveSection('dashboard')}
+                    onFooterBack={goToPreviousSection}
                 />;
             case 'company-profile':
                 return <CompanyProfile
@@ -171,18 +200,21 @@ const EmployerDashboard = () => {
                     }}
                     onCompanyUpdated={handleCompanyUpdated}
                     onBack={() => setActiveSection('dashboard')}
+                    onFooterBack={goToPreviousSection}
                 />;
             case 'talent-pool':
                 return <TalentPool
                     jobs={jobs}
                     onBack={() => setActiveSection('dashboard')}
+                    onFooterBack={goToPreviousSection}
                 />;
             case 'settings':
                 return <EmployerSettings
                     employer={employer}
-                    switchSection={setActiveSection}
+                    switchSection={switchSection}
                     onEmployerUpdated={handleEmployerUpdated}
                     onLogout={handleLogout}
+                    onFooterBack={goToPreviousSection}
                 />;
             default:
                 return (
@@ -207,7 +239,7 @@ const EmployerDashboard = () => {
                                 <p>Create a new job listing to attract candidates</p>
                                 <button
                                     className="card-button"
-                                    onClick={() => setActiveSection('post-job')}
+                                    onClick={() => switchSection('post-job')}
                                 >
                                     Post Job
                                 </button>
@@ -218,7 +250,7 @@ const EmployerDashboard = () => {
                                 <p>Edit or update your current job postings</p>
                                 <button
                                     className="card-button"
-                                    onClick={() => setActiveSection('manage-jobs')}
+                                    onClick={() => switchSection('manage-jobs')}
                                 >
                                     Manage Jobs
                                 </button>
@@ -229,7 +261,7 @@ const EmployerDashboard = () => {
                                 <p>Review candidate applications and profile details</p>
                                 <button
                                     className="card-button"
-                                    onClick={() => setActiveSection('manage-applications')}
+                                    onClick={() => switchSection('manage-applications')}
                                 >
                                     View Applications
                                 </button>
@@ -240,7 +272,7 @@ const EmployerDashboard = () => {
                                 <p>Create question sets for candidates with options or written responses</p>
                                 <button
                                     className="card-button"
-                                    onClick={() => setActiveSection('make-assessment')}
+                                    onClick={() => switchSection('make-assessment')}
                                 >
                                     Open Builder
                                 </button>
@@ -251,7 +283,7 @@ const EmployerDashboard = () => {
                                 <p>Browse and search potential candidates</p>
                                 <button
                                     className="card-button"
-                                    onClick={() => setActiveSection('talent-pool')}
+                                    onClick={() => switchSection('talent-pool')}
                                 >
                                     View Candidates
                                 </button>
@@ -262,7 +294,7 @@ const EmployerDashboard = () => {
                                 <p>View and update your company information</p>
                                 <button
                                     className="card-button"
-                                    onClick={() => setActiveSection('company-profile')}
+                                    onClick={() => switchSection('company-profile')}
                                 >
                                     View Profile
                                 </button>
@@ -273,7 +305,7 @@ const EmployerDashboard = () => {
                                 <p>Manage security, information shortcuts, and notifications</p>
                                 <button
                                     className="card-button"
-                                    onClick={() => setActiveSection('settings')}
+                                    onClick={() => switchSection('settings')}
                                 >
                                     Open Settings
                                 </button>
@@ -328,43 +360,43 @@ const EmployerDashboard = () => {
                             </li>
                             <li
                                 className={activeSection === 'post-job' ? 'active' : ''}
-                                onClick={() => setActiveSection('post-job')}
+                                onClick={() => switchSection('post-job')}
                             >
                                 Post a Job
                             </li>
                             <li
                                 className={activeSection === 'manage-jobs' ? 'active' : ''}
-                                onClick={() => setActiveSection('manage-jobs')}
+                                onClick={() => switchSection('manage-jobs')}
                             >
                                 Manage Jobs
                             </li>
                             <li
                                 className={activeSection === 'manage-applications' ? 'active' : ''}
-                                onClick={() => setActiveSection('manage-applications')}
+                                onClick={() => switchSection('manage-applications')}
                             >
                                 Manage Applications
                             </li>
                             <li
                                 className={activeSection === 'make-assessment' ? 'active' : ''}
-                                onClick={() => setActiveSection('make-assessment')}
+                                onClick={() => switchSection('make-assessment')}
                             >
                                 Make an Assessment
                             </li>
                             <li
                                 className={activeSection === 'talent-pool' ? 'active' : ''}
-                                onClick={() => setActiveSection('talent-pool')}
+                                onClick={() => switchSection('talent-pool')}
                             >
                                 Talent Pool
                             </li>
                             <li
                                 className={activeSection === 'company-profile' ? 'active' : ''}
-                                onClick={() => setActiveSection('company-profile')}
+                                onClick={() => switchSection('company-profile')}
                             >
                                 Company Profile
                             </li>
                             <li
                                 className={activeSection === 'settings' ? 'active' : ''}
-                                onClick={() => setActiveSection('settings')}
+                                onClick={() => switchSection('settings')}
                             >
                                 Settings
                             </li>

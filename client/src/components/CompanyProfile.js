@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const CompanyProfile = ({ company, jobStats, onBack, onCompanyUpdated }) => {
+const CompanyProfile = ({ company, jobStats, onBack, onCompanyUpdated, onFooterBack }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState('');
@@ -45,9 +45,9 @@ const CompanyProfile = ({ company, jobStats, onBack, onCompanyUpdated }) => {
                 <div className="section-footer-nav">
                     <button
                         className="back-button"
-                        onClick={onBack}
+                        onClick={onFooterBack || onBack}
                     >
-                        Back to Dashboard
+                        Back
                     </button>
                 </div>
             </div>
@@ -336,9 +336,9 @@ const CompanyProfile = ({ company, jobStats, onBack, onCompanyUpdated }) => {
                     <div className="section-footer-nav">
                         <button
                             className="back-button"
-                            onClick={onBack}
+                            onClick={onFooterBack || onBack}
                         >
-                            Back to Dashboard
+                            Back
                         </button>
                     </div>
                 </div>

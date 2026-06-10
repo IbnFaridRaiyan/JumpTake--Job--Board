@@ -17,7 +17,7 @@ const createEmptyAssessment = (applicationId = '') => ({
 
 const createInterviewDates = (dates = []) => Array.from({ length: 5 }, (_, index) => dates[index] || '');
 
-const MakeAssessment = ({ companyId, onBack }) => {
+const MakeAssessment = ({ companyId, onBack, onFooterBack }) => {
     const [applications, setApplications] = useState([]);
     const [assessments, setAssessments] = useState([]);
     const [assignments, setAssignments] = useState([]);
@@ -743,8 +743,18 @@ const MakeAssessment = ({ companyId, onBack }) => {
                 )}
 
                 <div className="section-footer-nav">
-                    <button className="back-button responsive-back-button" onClick={onBack}>
-                        Back to Dashboard
+                    <button
+                        className="back-button responsive-back-button"
+                        onClick={() => {
+                            setSelectedSubmission(null);
+                            setSelectedSubmissionView('submitted');
+                            setIsInterviewFormOpen(false);
+                            setIsCompletedInterviewOpen(false);
+                            setMessage('');
+                            setError('');
+                        }}
+                    >
+                        Back
                     </button>
                 </div>
             </div>
@@ -820,8 +830,11 @@ const MakeAssessment = ({ companyId, onBack }) => {
                 </div>
 
                 <div className="section-footer-nav">
-                    <button className="back-button responsive-back-button" onClick={onBack}>
-                        Back to Dashboard
+                    <button
+                        className="back-button responsive-back-button"
+                        onClick={() => setSelectedAssessment(null)}
+                    >
+                        Back
                     </button>
                 </div>
             </div>
@@ -1236,8 +1249,11 @@ const MakeAssessment = ({ companyId, onBack }) => {
             </div>
 
             <div className="section-footer-nav">
-                <button className="back-button responsive-back-button" onClick={onBack}>
-                    Back to Dashboard
+                <button
+                    className="back-button responsive-back-button"
+                    onClick={onFooterBack || onBack}
+                >
+                    Back
                 </button>
             </div>
         </div>

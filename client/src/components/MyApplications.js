@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const MyApplications = ({ userId, onRefresh, switchSection }) => {
+const MyApplications = ({ userId, onRefresh, switchSection, onFooterBack }) => {
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -220,6 +220,11 @@ const MyApplications = ({ userId, onRefresh, switchSection }) => {
                             Back to Job Feed
                         </button>
                     </div>
+                    <div className="section-footer-nav">
+                        <button className="back-button" onClick={() => setSelectedCompany(null)}>
+                            Back
+                        </button>
+                    </div>
                 </div>
             </div>
         );
@@ -273,6 +278,11 @@ const MyApplications = ({ userId, onRefresh, switchSection }) => {
                     <div className="section-footer-nav">
                         <button className="back-button" onClick={handleBrowseJobs}>
                             Back to Job Feed
+                        </button>
+                    </div>
+                    <div className="section-footer-nav">
+                        <button className="back-button" onClick={() => setSelectedApplication(null)}>
+                            Back
                         </button>
                     </div>
                 </div>
@@ -364,6 +374,14 @@ const MyApplications = ({ userId, onRefresh, switchSection }) => {
                     onClick={handleBrowseJobs}
                 >
                     Back to Job Feed
+                </button>
+            </div>
+            <div className="section-footer-nav">
+                <button
+                    className="back-button"
+                    onClick={onFooterBack || handleBrowseJobs}
+                >
+                    Back
                 </button>
             </div>
         </div>

@@ -1,12 +1,89 @@
 import React, { useState } from 'react';
+import EmailVerificationFields from './EmailVerificationFields';
+import {
+    generateVerificationCode,
+    getEmailVerificationExpiryMs,
+    sendVerificationCodeEmail,
+    validateEmailAddress
+} from '../utils/emailVerification';
 
 const CreateAccount = ({ email, jobSeekerId, onCancel }) => {
     const [userEmail, setUserEmail] = useState(email || '');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [verificationCode, setVerificationCode] = useState('');
+    const [sentVerificationCode, setSentVerificationCode] = useState('');
+    const [verificationTargetEmail, setVerificationTargetEmail] = useState('');
+    const [verificationExpiresAt, setVerificationExpiresAt] = useState(null);
+    const [isEmailVerified, setIsEmailVerified] = useState(false);
+    const [isSendingVerificationCode, setIsSendingVerificationCode] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [accountCreated, setAccountCreated] = useState(false);
+
+    const resetVerificationState = () => {
+        setVerificationCode('');
+        setSentVerificationCode('');
+        setVerificationTargetEmail('');
+        setVerificationExpiresAt(null);
+        setIsEmailVerified(false);
+    };
+
+    const verifyCode = () => {
+        if (!verificationTargetEmail || !sentVerificationCode) {
+            setMessage('Please send a verification code to your email first.');
+            return false;
+        }
+
+        if (Date.now() > verificationExpiresAt) {
+            setMessage('Your verification code expired. Please request a new one.');
+            setIsEmailVerified(false);
+            return false;
+        }
+
+        if (verificationCode.trim() !== sentVerificationCode) {
+            setMessage('The verification code you entered is incorrect.');
+            setIsEmailVerified(false);
+            return false;
+        }
+
+        setIsEmailVerified(true);
+        return true;
+    };
+
+    const handleSendVerificationCode = async () => {
+        const normalizedEmail = userEmail.trim().toLowerCase();
+
+        if (!validateEmailAddress(normalizedEmail)) {
+            setMessage('Please enter a valid email address before sending a verification code.');
+            return;
+        }
+
+        setIsSendingVerificationCode(true);
+        setMessage('Sending a verification code to your email...');
+
+        try {
+            const code = generateVerificationCode();
+            await sendVerificationCodeEmail({
+                email: normalizedEmail,
+                recipientName: 'Candidate',
+                verificationCode: code,
+                accountType: 'candidate'
+            });
+
+            setSentVerificationCode(code);
+            setVerificationTargetEmail(normalizedEmail);
+            setVerificationExpiresAt(Date.now() + getEmailVerificationExpiryMs());
+            setVerificationCode('');
+            setIsEmailVerified(false);
+            setMessage(`A 6 digit verification code was sent to ${normalizedEmail}.`);
+        } catch (error) {
+            console.error('Error sending verification code:', error);
+            setMessage(`Error: ${error.message}`);
+        } finally {
+            setIsSendingVerificationCode(false);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -18,11 +95,12 @@ const CreateAccount = ({ email, jobSeekerId, onCancel }) => {
         }
         
        
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(userEmail)) {
+        if (!validateEmailAddress(userEmail)) {
             setMessage('Please enter a valid email address');
             return;
         }
+
+        const normalizedEmail = userEmail.trim().toLowerCase();
         
         if (password.length < 6) {
             setMessage('Password must be at least 6 characters');
@@ -31,6 +109,15 @@ const CreateAccount = ({ email, jobSeekerId, onCancel }) => {
         
         if (password !== confirmPassword) {
             setMessage('Passwords do not match');
+            return;
+        }
+
+        if (verificationTargetEmail !== normalizedEmail) {
+            setMessage('Please send a verification code to your current email address first.');
+            return;
+        }
+
+        if (!isEmailVerified && !verifyCode()) {
             return;
         }
         
@@ -44,7 +131,7 @@ const CreateAccount = ({ email, jobSeekerId, onCancel }) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    email: userEmail, // Use the potentially modified email
+                    email: normalizedEmail,
                     password,
                     jobSeekerId
                 }),
@@ -78,12 +165,28 @@ const CreateAccount = ({ email, jobSeekerId, onCancel }) => {
                             type="email"
                             id="email"
                             value={userEmail}
-                            onChange={(e) => setUserEmail(e.target.value)}
+                            onChange={(e) => {
+                                setUserEmail(e.target.value);
+                                if (verificationTargetEmail && verificationTargetEmail !== e.target.value.trim().toLowerCase()) {
+                                    resetVerificationState();
+                                }
+                            }}
                             className="account-input"
                             required
                         />
                         <p className="input-hint">You can modify your email if needed</p>
                     </div>
+
+                    <EmailVerificationFields
+                        verificationCode={verificationCode}
+                        onVerificationCodeChange={setVerificationCode}
+                        onSendCode={handleSendVerificationCode}
+                        onResetVerification={resetVerificationState}
+                        verificationTargetEmail={verificationTargetEmail}
+                        isVerified={isEmailVerified}
+                        isSendingCode={isSendingVerificationCode}
+                        isDisabled={isLoading}
+                    />
                     
                     <div className="form-group">
                         <label htmlFor="password">Password</label>
@@ -115,7 +218,7 @@ const CreateAccount = ({ email, jobSeekerId, onCancel }) => {
                         <button 
                             type="submit" 
                             className="submit-button"
-                            disabled={isLoading}
+                            disabled={isLoading || isSendingVerificationCode}
                         >
                             {isLoading ? 'Creating Account...' : 'Create Account'}
                         </button>

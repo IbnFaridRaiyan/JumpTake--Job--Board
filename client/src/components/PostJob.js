@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const PostJob = ({ companyId, onJobPosted, onCancel }) => {
+const PostJob = ({ companyId, onJobPosted, onCancel, onFooterBack }) => {
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -289,10 +289,10 @@ const PostJob = ({ companyId, onJobPosted, onCancel }) => {
                         <button
                             type="button"
                             className="back-button"
-                            onClick={onCancel}
+                            onClick={onFooterBack || onCancel}
                             disabled={isLoading}
                         >
-                            Back to Dashboard
+                            Back
                         </button>
                     </div>
                 </form>

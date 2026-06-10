@@ -9,6 +9,7 @@ const Company = () => {
     const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [companyInfo, setCompanyInfo] = useState(null);
+    const [searchResults, setSearchResults] = useState([]);
     const [manualInputMode, setManualInputMode] = useState(false);
     const [showLogin, setShowLogin] = useState(false);
     const [showRegistration, setShowRegistration] = useState(false);
@@ -30,18 +31,126 @@ const Company = () => {
         });
     };
 
-    const fetchWikipediaInfo = async (companyName) => {
-        try {
-            const searchUrl = `https://en.wikipedia.org/w/api.php?origin=*&action=query&list=search&srsearch=${encodeURIComponent(companyName)}&format=json`;
+    const cleanSnippet = (snippet = '') => snippet
+        .replace(/<[^>]+>/g, '')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, '\'')
+        .replace(/&amp;/g, '&')
+        .trim();
+
+    const normalizeSearchText = (value = '') => value
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+    const companySignals = [
+        'company', 'corporation', 'business', 'retailer', 'manufacturer',
+        'technology', 'multinational', 'brand', 'subsidiary', 'firm',
+        'enterprise', 'e-commerce', 'bank', 'airline', 'group', 'holdings',
+        'limited', 'ltd', 'inc', 'llc', 'plc', 'stores'
+    ];
+
+    const blockedKeywords = [
+        'river', 'mountain', 'lake', 'village', 'city', 'district',
+        'film', 'album', 'song', 'novel', 'book', 'character', 'mythology',
+        'species', 'genus', 'festival', 'television series', 'episode'
+    ];
+
+    const calculateCompanyMatchScore = (result, searchTerm) => {
+        const normalizedTitle = normalizeSearchText(result?.title || '');
+        const normalizedSnippet = normalizeSearchText(cleanSnippet(result?.snippet || ''));
+        const normalizedSearch = normalizeSearchText(searchTerm);
+        const searchWords = normalizedSearch.split(' ').filter(Boolean);
+        const titleWords = normalizedTitle.split(' ').filter(Boolean);
+        let score = 0;
+
+        if (!normalizedSearch || !normalizedTitle.includes(normalizedSearch)) {
+            return Number.NEGATIVE_INFINITY;
+        }
+
+        const exactTitleMatch = normalizedTitle === normalizedSearch;
+        const titleStartsWithSearch = normalizedTitle.startsWith(`${normalizedSearch} `);
+        const hasAllSearchWordsInTitle = searchWords.every((word) => titleWords.includes(word));
+        const hasCompanySignalInTitle = companySignals.some((keyword) => normalizedTitle.includes(keyword));
+        const hasCompanySignalInSnippet = companySignals.some((keyword) => normalizedSnippet.includes(keyword));
+        const hasBlockedKeyword = blockedKeywords.some((keyword) => (
+            normalizedTitle.includes(keyword) || normalizedSnippet.includes(keyword)
+        ));
+        const hasStoryStyleSuffix = /\b(story|history|timeline|overview)\b/.test(normalizedTitle);
+
+        if (exactTitleMatch) {
+            score += 120;
+        }
+
+        if (titleStartsWithSearch) {
+            score += 90;
+        }
+
+        if (hasAllSearchWordsInTitle) {
+            score += 60;
+        }
+
+        if (hasCompanySignalInTitle) {
+            score += 60;
+        }
+
+        if (hasCompanySignalInSnippet) {
+            score += 35;
+        }
+
+        if (titleWords.length <= searchWords.length + 3) {
+            score += 15;
+        }
+
+        if (hasBlockedKeyword) {
+            score -= 120;
+        }
+
+        if (hasStoryStyleSuffix && !hasCompanySignalInTitle) {
+            score -= 90;
+        }
+
+        return score;
+    };
+
+    const searchCompanyMatches = async (name) => {
+        const searchQueries = [
+            name,
+            `intitle:${name}`,
+            `${name} company`,
+            `${name} limited`
+        ];
+
+        const resultsByPageId = new Map();
+
+        for (const query of searchQueries) {
+            const searchUrl = `https://en.wikipedia.org/w/api.php?origin=*&action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&srlimit=8`;
             const searchResponse = await fetch(searchUrl);
             const searchData = await searchResponse.json();
-            
-            if (!searchData.query.search.length) {
-                return null;
-            }
-            
-            const pageId = searchData.query.search[0].pageid;
-            
+            const rawResults = searchData?.query?.search || [];
+
+            rawResults.forEach((result) => {
+                if (!resultsByPageId.has(result.pageid)) {
+                    resultsByPageId.set(result.pageid, result);
+                }
+            });
+        }
+
+        return Array.from(resultsByPageId.values())
+            .map((result) => ({
+                pageId: result.pageid,
+                title: result.title,
+                snippet: cleanSnippet(result.snippet),
+                matchScore: calculateCompanyMatchScore(result, name)
+            }))
+            .filter((result) => result.matchScore >= 40)
+            .sort((a, b) => b.matchScore - a.matchScore)
+            .slice(0, 6);
+    };
+
+    const fetchWikipediaInfo = async (pageId) => {
+        try {
             const contentUrl = `https://en.wikipedia.org/w/api.php?origin=*&action=query&prop=extracts&exintro&explaintext&pageids=${pageId}&format=json`;
             const contentResponse = await fetch(contentUrl);
             const contentData = await contentResponse.json();
@@ -132,28 +241,50 @@ const Company = () => {
         setMessage(`Searching for information about ${companyName}...`);
         
         try {
-            const wikiInfo = await fetchWikipediaInfo(companyName);
-            
-            if (wikiInfo) {
-                setCompanyInfo(wikiInfo);
-                setFormData({
-                    industry: wikiInfo.industry || '',
-                    founded: wikiInfo.founded || '',
-                    headquarters: wikiInfo.headquarters || '',
-                    description: wikiInfo.description || '',
-                    website: ''
-                });
-                setMessage(`Found information about ${wikiInfo.title}. Please review and complete any missing details.`);
-                setManualInputMode(true);
+            const matchedCompanies = await searchCompanyMatches(companyName);
+
+            if (matchedCompanies.length > 0) {
+                setSearchResults(matchedCompanies);
+                setMessage('Choose your company from the matched list below.');
             } else {
-                setCompanyInfo(null);
-                setMessage(`Couldn't find information about "${companyName}". Please enter the details manually.`);
-                setManualInputMode(true);
+                setSearchResults([]);
+                setMessage(`Couldn't find a company match for "${companyName}". Please use the manual registration form.`);
             }
         } catch (error) {
             console.error('Error:', error);
-            setMessage(`Error searching for company information. Please enter details manually.`);
+            setSearchResults([]);
+            setMessage('Error searching for company information. Please use the manual registration form.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleSelectCompany = async (result) => {
+        setIsLoading(true);
+        setMessage(`Loading details for ${result.title}...`);
+
+        try {
+            const wikiInfo = await fetchWikipediaInfo(result.pageId);
+
+            if (!wikiInfo) {
+                throw new Error('No company details found');
+            }
+
+            setCompanyName(result.title);
+            setCompanyInfo(wikiInfo);
+            setFormData({
+                industry: wikiInfo.industry || '',
+                founded: wikiInfo.founded || '',
+                headquarters: wikiInfo.headquarters || '',
+                description: wikiInfo.description || '',
+                website: ''
+            });
+            setSearchResults([]);
+            setMessage(`Found information about ${wikiInfo.title}. Please review and complete any missing details.`);
             setManualInputMode(true);
+        } catch (error) {
+            console.error('Error loading selected company details:', error);
+            setMessage(`We couldn't load details for "${result.title}". Please use manual registration.`);
         } finally {
             setIsLoading(false);
         }
@@ -163,11 +294,25 @@ const Company = () => {
         setShowLogin(true);
     };
 
+    const handleManualRegistrationClick = () => {
+        setCompanyInfo(null);
+        setSearchResults([]);
+        setShowRegistration(false);
+        setCompanyId(null);
+        setManualInputMode(true);
+        setMessage('Enter your company details manually to create an employer account.');
+    };
+
     const handleCloseLogin = () => {
         setShowLogin(false);
     };
 
     const submitCompanyInfo = async () => {
+        if (!companyName.trim()) {
+            setMessage('Please enter your company name.');
+            return;
+        }
+
         setIsLoading(true);
         setMessage('Submitting company information...');
         
@@ -207,6 +352,11 @@ const Company = () => {
         navigate('/');
     };
 
+    const handleBackToSearchCompanies = () => {
+        setSearchResults([]);
+        setMessage('Search for another company.');
+    };
+
     return (
         <div className="company-page">
             <div className="company-video-background">
@@ -222,7 +372,11 @@ const Company = () => {
             <div className="company-container">
                 <div className="container-header">
                     <h1 className="container-title">Employer Portal</h1>
-                    <p className="container-subtitle">Employer access to posting jobs and managing applications</p>
+                    <p className="container-subtitle">
+                        Employer access to posting jobs and managing applications
+                        <br />
+                        In case your company is not listed, please use the manual Registration form
+                    </p>
                 </div>
                 
                 {!manualInputMode ? (
@@ -233,7 +387,10 @@ const Company = () => {
                                     type="text"
                                     id="companyName"
                                     value={companyName}
-                                    onChange={(e) => setCompanyName(e.target.value)}
+                                    onChange={(e) => {
+                                        setCompanyName(e.target.value);
+                                        setSearchResults([]);
+                                    }}
                                     placeholder="Enter your company name"
                                     className="company-input"
                                     disabled={isLoading}
@@ -253,13 +410,23 @@ const Company = () => {
                                 </button>
                                 
                                 <button
+                                    type="button"
                                     onClick={handleLoginClick}
                                     className="candidate-login-button"
                                 >
                                     Employer Login
                                 </button>
+
+                                <button
+                                    type="button"
+                                    onClick={handleManualRegistrationClick}
+                                    className="candidate-login-button"
+                                >
+                                    Manual Registration
+                                </button>
                                 
                                 <button
+                                    type="button"
                                     onClick={goBack}
                                     className="back-button"
                                 >
@@ -267,13 +434,62 @@ const Company = () => {
                                 </button>
                             </div>
                         </form>
+
+                        {searchResults.length > 0 && (
+                            <div className="company-search-results">
+                                <h3>Matched Companies</h3>
+                                <div className="assessment-card-grid">
+                                    {searchResults.map((result) => (
+                                        <div className="assessment-card" key={result.pageId}>
+                                            <div className="assessment-card-top">
+                                                <div>
+                                                    <h3>{result.title}</h3>
+                                                    <p>{result.snippet || 'Company match found on Wikipedia.'}</p>
+                                                </div>
+                                            </div>
+                                            <div className="assessment-card-actions">
+                                                <button
+                                                    type="button"
+                                                    className="view-button"
+                                                    onClick={() => handleSelectCompany(result)}
+                                                    disabled={isLoading}
+                                                >
+                                                    Choose Company
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="button-group">
+                                    <button
+                                        type="button"
+                                        onClick={handleBackToSearchCompanies}
+                                        className="back-button"
+                                    >
+                                        Back to Search Companies
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <div className="company-details-form">
                         <h2>Company Details</h2>
-                        <h3 className="company-name-heading">{companyName}</h3>
+                        <h3 className="company-name-heading">{companyName || 'Enter your company details'}</h3>
                         
                         <div className="form-grid">
+                            <div className="form-group">
+                                <label htmlFor="manual-company-name">Company Name</label>
+                                <input
+                                    type="text"
+                                    id="manual-company-name"
+                                    value={companyName}
+                                    onChange={(e) => setCompanyName(e.target.value)}
+                                    placeholder="Enter your company name"
+                                    className="form-input"
+                                />
+                            </div>
+
                             <div className="form-group">
                                 <label htmlFor="industry">Industry</label>
                                 <input

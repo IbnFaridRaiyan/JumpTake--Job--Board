@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 const countWords = (text = '') => text.trim().split(/\s+/).filter(Boolean).length;
 
-const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection }) => {
+const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection, onFooterBack }) => {
     const [assessments, setAssessments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -255,6 +255,11 @@ const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection 
                         Back to Job Feed
                     </button>
                 </div>
+                <div className="section-footer-nav">
+                    <button className="back-button responsive-back-button" onClick={() => setSelectedAssessment(null)}>
+                        Back
+                    </button>
+                </div>
             </div>
         );
     };
@@ -330,6 +335,14 @@ const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection 
             <div className="section-footer-nav">
                 <button className="back-button responsive-back-button" onClick={handleBackToFeed}>
                     Back to Job Feed
+                </button>
+            </div>
+            <div className="section-footer-nav">
+                <button
+                    className="back-button responsive-back-button"
+                    onClick={onFooterBack || handleBackToFeed}
+                >
+                    Back
                 </button>
             </div>
         </div>

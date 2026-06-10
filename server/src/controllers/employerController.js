@@ -8,17 +8,23 @@ const JWT_SECRET = process.env.JWT_SECRET || 'jumptake-jwt-secret';
 
 const registerEmployer = async (req, res) => {
     try {
-        const { username, password, companyId } = req.body;
+        const { username, email, password, companyId } = req.body;
         
         
-        if (!username || !password || !companyId) {
-            return res.status(400).json({ error: 'Username, password, and company ID are required' });
+        if (!username || !email || !password || !companyId) {
+            return res.status(400).json({ error: 'Username, email, password, and company ID are required' });
         }
         
        
         const existingEmployer = await Employer.findOne({ username });
         if (existingEmployer) {
             return res.status(400).json({ error: 'Username already exists' });
+        }
+
+        const normalizedEmail = email.toLowerCase();
+        const existingEmployerEmail = await Employer.findOne({ email: normalizedEmail });
+        if (existingEmployerEmail) {
+            return res.status(400).json({ error: 'Email already exists' });
         }
         
         
@@ -30,6 +36,7 @@ const registerEmployer = async (req, res) => {
        
         const employer = new Employer({
             username,
+            email: normalizedEmail,
             password,
             companyId
         });
@@ -42,7 +49,8 @@ const registerEmployer = async (req, res) => {
             employer: {
                 id: employer._id,
                 username: employer.username,
-                companyId: employer.companyId
+                companyId: employer.companyId,
+                email: employer.email
             }
         });
     } catch (error) {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const EmployerSettings = ({ employer, switchSection, onEmployerUpdated, onLogout }) => {
+const EmployerSettings = ({ employer, switchSection, onEmployerUpdated, onLogout, onFooterBack }) => {
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -401,8 +401,8 @@ const EmployerSettings = ({ employer, switchSection, onEmployerUpdated, onLogout
             </div>
 
             <div className="section-footer-nav">
-                <button className="back-button responsive-back-button" onClick={handleBackToDashboard}>
-                    Back to Dashboard
+                <button className="back-button responsive-back-button" onClick={onFooterBack || handleBackToDashboard}>
+                    Back
                 </button>
             </div>
 

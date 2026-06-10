@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const UserSettings = ({ user, onLogout, switchSection }) => {
+const UserSettings = ({ user, onLogout, switchSection, onFooterBack }) => {
     const [activeTab, setActiveTab] = useState('account');
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -607,6 +607,11 @@ const UserSettings = ({ user, onLogout, switchSection }) => {
             <div className="section-footer-nav">
                 <button className="back-button" onClick={handleBackToJobFeed}>
                     Back to Job Feed
+                </button>
+            </div>
+            <div className="section-footer-nav">
+                <button className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
+                    Back
                 </button>
             </div>
 

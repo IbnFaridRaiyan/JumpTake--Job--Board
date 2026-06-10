@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 
-const TalentPool = ({ jobs = [], onBack }) => {
+const TalentPool = ({ jobs = [], onBack, onFooterBack }) => {
     const [candidates, setCandidates] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -300,8 +300,8 @@ const TalentPool = ({ jobs = [], onBack }) => {
                         )}
 
                         <div className="section-footer-nav">
-                            <button className="back-button" onClick={onBack}>
-                                Back to Dashboard
+                            <button className="back-button" onClick={handleCloseProfile}>
+                                Back
                             </button>
                         </div>
                     </div>
@@ -372,9 +372,9 @@ const TalentPool = ({ jobs = [], onBack }) => {
                 <div className="section-footer-nav">
                     <button 
                         className="back-button"
-                        onClick={onBack}
+                        onClick={onFooterBack || onBack}
                     >
-                        Back to Dashboard
+                        Back
                     </button>
                 </div>
             )}

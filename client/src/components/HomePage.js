@@ -9,6 +9,7 @@ import UserSettings from './UserSettings';
 
 const HomePage = () => {
     const [activeSection, setActiveSection] = useState('job-feed');
+    const [, setSectionHistory] = useState([]);
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -195,6 +196,30 @@ const HomePage = () => {
         }
     };
 
+    const switchSection = (nextSection) => {
+        if (!nextSection || nextSection === activeSection) {
+            return;
+        }
+
+        setSectionHistory((prev) => [...prev, activeSection]);
+        setActiveSection(nextSection);
+    };
+
+    const goToPreviousSection = () => {
+        let previousSection = null;
+
+        setSectionHistory((prev) => {
+            if (!prev.length) {
+                return prev;
+            }
+
+            previousSection = prev[prev.length - 1];
+            return prev.slice(0, -1);
+        });
+
+        setActiveSection(previousSection || 'job-feed');
+    };
+
     const renderContent = () => {
         if (loading && activeSection === 'job-feed') {
             return (
@@ -214,33 +239,38 @@ const HomePage = () => {
                 return <MyApplications
                     userId={user?.id}
                     onRefresh={refreshData}
-                    switchSection={setActiveSection}
+                    switchSection={switchSection}
+                    onFooterBack={goToPreviousSection}
                 />;
             case 'assessments':
                 return <MyAssessments
                     userId={user?.id}
                     onRefresh={refreshData}
                     onPendingCountChange={setPendingAssessmentCount}
-                    switchSection={setActiveSection}
+                    switchSection={switchSection}
+                    onFooterBack={goToPreviousSection}
                 />;
             case 'video-interviews':
                 return <VideoInterviews
                     userId={user?.id}
-                    switchSection={setActiveSection}
+                    switchSection={switchSection}
+                    onFooterBack={goToPreviousSection}
                 />;
             case 'profile':
                 console.log('Rendering profile with userId:', user?.id);
                 return <UserProfile
                     userId={user?.id}
                     onUpdate={refreshData}
-                    switchSection={setActiveSection}
+                    switchSection={switchSection}
+                    onFooterBack={goToPreviousSection}
                 />;
             case 'settings':
                 return <UserSettings
                     userId={user?.id}
                     user={user}
                     onLogout={handleLogout}
-                    switchSection={setActiveSection}
+                    switchSection={switchSection}
+                    onFooterBack={goToPreviousSection}
                 />;
             default:
                 return <JobFeed
@@ -296,33 +326,33 @@ const HomePage = () => {
                             </li>
                             <li
                                 className={activeSection === 'applications' ? 'active' : ''}
-                                onClick={() => setActiveSection('applications')}
+                                onClick={() => switchSection('applications')}
                             >
                                 My Applications
                             </li>
                             <li
                                 className={activeSection === 'assessments' ? 'active' : ''}
-                                onClick={() => setActiveSection('assessments')}
+                                onClick={() => switchSection('assessments')}
                             >
                                 <span className="dashboard-nav-label">My Assessments</span>
                                 {pendingAssessmentCount > 0 && <span className="nav-notification-dot"></span>}
                             </li>
                             <li
                                 className={activeSection === 'video-interviews' ? 'active' : ''}
-                                onClick={() => setActiveSection('video-interviews')}
+                                onClick={() => switchSection('video-interviews')}
                             >
                                 <span className="dashboard-nav-label">Video Interviews</span>
                                 {pendingVideoInterviewCount > 0 && <span className="nav-notification-dot"></span>}
                             </li>
                             <li
                                 className={activeSection === 'profile' ? 'active' : ''}
-                                onClick={() => setActiveSection('profile')}
+                                onClick={() => switchSection('profile')}
                             >
                                 My Profile
                             </li>
                             <li
                                 className={activeSection === 'settings' ? 'active' : ''}
-                                onClick={() => setActiveSection('settings')}
+                                onClick={() => switchSection('settings')}
                             >
                                 Settings
                             </li>

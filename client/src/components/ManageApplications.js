@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const ManageApplications = ({ companyId, onBack }) => {
+const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
     const [applications, setApplications] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
@@ -130,8 +130,14 @@ const ManageApplications = ({ companyId, onBack }) => {
                         <p className="empty-info">This application is linked to a user account, but no resume profile is available.</p>
 
                         <div className="section-footer-nav">
-                            <button className="back-button responsive-back-button" onClick={onBack}>
-                                Back to Dashboard
+                            <button
+                                className="back-button responsive-back-button"
+                                onClick={() => {
+                                    setSelectedApplication(null);
+                                    setSelectedView(null);
+                                }}
+                            >
+                                Back
                             </button>
                         </div>
                     </div>
@@ -219,8 +225,14 @@ const ManageApplications = ({ companyId, onBack }) => {
                     )}
 
                     <div className="section-footer-nav">
-                        <button className="back-button responsive-back-button" onClick={onBack}>
-                            Back to Dashboard
+                        <button
+                            className="back-button responsive-back-button"
+                            onClick={() => {
+                                setSelectedApplication(null);
+                                setSelectedView(null);
+                            }}
+                        >
+                            Back
                         </button>
                     </div>
                 </div>
@@ -333,8 +345,11 @@ const ManageApplications = ({ companyId, onBack }) => {
                     </div>
 
                     <div className="section-footer-nav">
-                        <button className="back-button responsive-back-button" onClick={onBack}>
-                            Back to Dashboard
+                        <button
+                            className="back-button responsive-back-button"
+                            onClick={handleCloseApplicationView}
+                        >
+                            Back
                         </button>
                     </div>
                 </div>
@@ -449,9 +464,9 @@ const ManageApplications = ({ companyId, onBack }) => {
             <div className="section-footer-nav">
                 <button
                     className="back-button responsive-back-button"
-                    onClick={onBack}
+                    onClick={onFooterBack || onBack}
                 >
-                    Back to Dashboard
+                    Back
                 </button>
             </div>
         </div>

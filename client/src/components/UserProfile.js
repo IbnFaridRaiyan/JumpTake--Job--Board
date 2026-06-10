@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const UserProfile = ({ userId, onUpdate, switchSection }) => {
+const UserProfile = ({ userId, onUpdate, switchSection, onFooterBack }) => {
     const [jobSeekerData, setJobSeekerData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -262,6 +262,11 @@ const UserProfile = ({ userId, onUpdate, switchSection }) => {
                         Back to Job Feed
                     </button>
                 </div>
+                <div className="section-footer-nav">
+                    <button className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
+                        Back
+                    </button>
+                </div>
             </div>
         );
     }
@@ -281,6 +286,11 @@ const UserProfile = ({ userId, onUpdate, switchSection }) => {
                 <div className="section-footer-nav">
                     <button className="back-button" onClick={handleBackToJobFeed}>
                         Back to Job Feed
+                    </button>
+                </div>
+                <div className="section-footer-nav">
+                    <button className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
+                        Back
                     </button>
                 </div>
             </div>
@@ -449,6 +459,11 @@ const UserProfile = ({ userId, onUpdate, switchSection }) => {
                                 Back to Job Feed
                             </button>
                         </div>
+                        <div className="section-footer-nav">
+                            <button type="button" className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
+                                Back
+                            </button>
+                        </div>
                     </form>
                 ) : (
                     <div className="profile-display">
@@ -524,6 +539,11 @@ const UserProfile = ({ userId, onUpdate, switchSection }) => {
                         <div className="section-footer-nav">
                             <button className="back-button" onClick={handleBackToJobFeed}>
                                 Back to Job Feed
+                            </button>
+                        </div>
+                        <div className="section-footer-nav">
+                            <button className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
+                                Back
                             </button>
                         </div>
                     </div>

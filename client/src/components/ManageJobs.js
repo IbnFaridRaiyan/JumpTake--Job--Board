@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import EditJob from './EditJob';
 
-const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack }) => {
+const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => {
     const [editingJob, setEditingJob] = useState(null);
     const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -182,9 +182,9 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack }) => {
                     <div className="section-footer-nav">
                         <button
                             className="back-button"
-                            onClick={onBack}
+                            onClick={onFooterBack || onBack}
                         >
-                            Back to Dashboard
+                            Back
                         </button>
                     </div>
                 </div>

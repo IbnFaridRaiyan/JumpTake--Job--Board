@@ -1,4 +1,11 @@
 import React, { useState } from 'react';
+import EmailVerificationFields from './EmailVerificationFields';
+import {
+    generateVerificationCode,
+    getEmailVerificationExpiryMs,
+    sendVerificationCodeEmail,
+    validateEmailAddress
+} from '../utils/emailVerification';
 
 
 const Register = ({ jobSeekerId, initialName = '', initialEmail = '', onClose, onSuccess }) => {
@@ -10,6 +17,20 @@ const Register = ({ jobSeekerId, initialName = '', initialEmail = '', onClose, o
     });
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [verificationCode, setVerificationCode] = useState('');
+    const [sentVerificationCode, setSentVerificationCode] = useState('');
+    const [verificationTargetEmail, setVerificationTargetEmail] = useState('');
+    const [verificationExpiresAt, setVerificationExpiresAt] = useState(null);
+    const [isEmailVerified, setIsEmailVerified] = useState(false);
+    const [isSendingVerificationCode, setIsSendingVerificationCode] = useState(false);
+
+    const resetVerificationState = () => {
+        setVerificationCode('');
+        setSentVerificationCode('');
+        setVerificationTargetEmail('');
+        setVerificationExpiresAt(null);
+        setIsEmailVerified(false);
+    };
     
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -17,6 +38,71 @@ const Register = ({ jobSeekerId, initialName = '', initialEmail = '', onClose, o
             ...formData,
             [name]: value
         });
+
+        if (name === 'email' && verificationTargetEmail && verificationTargetEmail !== value.trim().toLowerCase()) {
+            resetVerificationState();
+        }
+    };
+
+    const verifyCode = () => {
+        if (!verificationTargetEmail || !sentVerificationCode) {
+            setError('Please send a verification code to your email first.');
+            return false;
+        }
+
+        if (Date.now() > verificationExpiresAt) {
+            setError('Your verification code expired. Please request a new one.');
+            setIsEmailVerified(false);
+            return false;
+        }
+
+        if (verificationCode.trim() !== sentVerificationCode) {
+            setError('The verification code you entered is incorrect.');
+            setIsEmailVerified(false);
+            return false;
+        }
+
+        setIsEmailVerified(true);
+        setError('');
+        return true;
+    };
+
+    const handleSendVerificationCode = async () => {
+        const normalizedEmail = formData.email.trim().toLowerCase();
+
+        if (!formData.name.trim()) {
+            setError('Full name is required before sending a verification code.');
+            return;
+        }
+
+        if (!validateEmailAddress(normalizedEmail)) {
+            setError('Please enter a valid email address before sending a verification code.');
+            return;
+        }
+
+        setError('');
+        setIsSendingVerificationCode(true);
+
+        try {
+            const code = generateVerificationCode();
+            await sendVerificationCodeEmail({
+                email: normalizedEmail,
+                recipientName: formData.name.trim(),
+                verificationCode: code,
+                accountType: 'candidate'
+            });
+
+            setSentVerificationCode(code);
+            setVerificationTargetEmail(normalizedEmail);
+            setVerificationExpiresAt(Date.now() + getEmailVerificationExpiryMs());
+            setVerificationCode('');
+            setIsEmailVerified(false);
+        } catch (sendError) {
+            console.error('Error sending candidate verification code:', sendError);
+            setError(sendError.message || 'Failed to send verification code');
+        } finally {
+            setIsSendingVerificationCode(false);
+        }
     };
     
     const handleSubmit = async (e) => {
@@ -38,6 +124,22 @@ const Register = ({ jobSeekerId, initialName = '', initialEmail = '', onClose, o
             setError('Password must be at least 6 characters');
             return;
         }
+
+        const normalizedEmail = formData.email.trim().toLowerCase();
+
+        if (!validateEmailAddress(normalizedEmail)) {
+            setError('Please enter a valid email address');
+            return;
+        }
+
+        if (verificationTargetEmail !== normalizedEmail) {
+            setError('Please send a verification code to your current email address first.');
+            return;
+        }
+
+        if (!isEmailVerified && !verifyCode()) {
+            return;
+        }
         
         setIsLoading(true);
         
@@ -50,7 +152,7 @@ const Register = ({ jobSeekerId, initialName = '', initialEmail = '', onClose, o
                 },
                 body: JSON.stringify({
                     name: formData.name,
-                    email: formData.email,
+                    email: normalizedEmail,
                     password: formData.password,
                     jobSeekerId: jobSeekerId
                 })
@@ -69,7 +171,7 @@ const Register = ({ jobSeekerId, initialName = '', initialEmail = '', onClose, o
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    email: formData.email,
+                    email: normalizedEmail,
                     password: formData.password
                 })
             });
@@ -156,6 +258,17 @@ const Register = ({ jobSeekerId, initialName = '', initialEmail = '', onClose, o
                                 required
                             />
                         </div>
+
+                        <EmailVerificationFields
+                            verificationCode={verificationCode}
+                            onVerificationCodeChange={setVerificationCode}
+                            onSendCode={handleSendVerificationCode}
+                            onResetVerification={resetVerificationState}
+                            verificationTargetEmail={verificationTargetEmail}
+                            isVerified={isEmailVerified}
+                            isSendingCode={isSendingVerificationCode}
+                            isDisabled={isLoading}
+                        />
                         
                         <div className="form-group">
                             <label htmlFor="password">Password</label>
@@ -185,7 +298,7 @@ const Register = ({ jobSeekerId, initialName = '', initialEmail = '', onClose, o
                         <button 
                             type="submit" 
                             className="submit-button"
-                            disabled={isLoading}
+                            disabled={isLoading || isSendingVerificationCode}
                         >
                             {isLoading ? 'Creating Account...' : 'Create Account'}
                         </button>

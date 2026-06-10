@@ -1,12 +1,96 @@
 import React, { useState } from 'react';
+import EmailVerificationFields from './EmailVerificationFields';
+import {
+    generateVerificationCode,
+    getEmailVerificationExpiryMs,
+    sendVerificationCodeEmail,
+    validateEmailAddress
+} from '../utils/emailVerification';
 
 const EmployerRegistration = ({ companyId, companyName, onComplete }) => {
     const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [verificationCode, setVerificationCode] = useState('');
+    const [sentVerificationCode, setSentVerificationCode] = useState('');
+    const [verificationTargetEmail, setVerificationTargetEmail] = useState('');
+    const [verificationExpiresAt, setVerificationExpiresAt] = useState(null);
+    const [isEmailVerified, setIsEmailVerified] = useState(false);
+    const [isSendingVerificationCode, setIsSendingVerificationCode] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [registrationComplete, setRegistrationComplete] = useState(false);
+
+    const resetVerificationState = () => {
+        setVerificationCode('');
+        setSentVerificationCode('');
+        setVerificationTargetEmail('');
+        setVerificationExpiresAt(null);
+        setIsEmailVerified(false);
+    };
+
+    const verifyCode = () => {
+        if (!verificationTargetEmail || !sentVerificationCode) {
+            setMessage('Please send a verification code to your email first.');
+            return false;
+        }
+
+        if (Date.now() > verificationExpiresAt) {
+            setMessage('Your verification code expired. Please request a new one.');
+            setIsEmailVerified(false);
+            return false;
+        }
+
+        if (verificationCode.trim() !== sentVerificationCode) {
+            setMessage('The verification code you entered is incorrect.');
+            setIsEmailVerified(false);
+            return false;
+        }
+
+        setIsEmailVerified(true);
+        setMessage('Email verified successfully. Creating your employer account...');
+        return true;
+    };
+
+    const handleSendVerificationCode = async () => {
+        const normalizedEmail = email.trim().toLowerCase();
+
+        if (!username.trim()) {
+            setMessage('Username is required before sending a verification code.');
+            return;
+        }
+
+        if (!validateEmailAddress(normalizedEmail)) {
+            setMessage('Please enter a valid email address before sending a verification code.');
+            return;
+        }
+
+        setIsSendingVerificationCode(true);
+        setMessage('Sending a verification code to your email...');
+
+        try {
+            const code = generateVerificationCode();
+            await sendVerificationCodeEmail({
+                email: normalizedEmail,
+                recipientName: username.trim(),
+                verificationCode: code,
+                accountType: 'employer'
+            });
+
+            setSentVerificationCode(code);
+            setVerificationTargetEmail(normalizedEmail);
+            setVerificationExpiresAt(Date.now() + getEmailVerificationExpiryMs());
+            setVerificationCode('');
+            setIsEmailVerified(false);
+            setMessage(`A 6 digit verification code was sent to ${normalizedEmail}.`);
+        } catch (error) {
+            console.error('Error sending employer verification code:', error);
+            setMessage(`Error: ${error.message}`);
+        } finally {
+            setIsSendingVerificationCode(false);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -14,6 +98,16 @@ const EmployerRegistration = ({ companyId, companyName, onComplete }) => {
        
         if (!username) {
             setMessage('Username is required');
+            return;
+        }
+
+        if (!email.trim()) {
+            setMessage('Email is required');
+            return;
+        }
+
+        if (!validateEmailAddress(email)) {
+            setMessage('Please enter a valid email address');
             return;
         }
         
@@ -24,6 +118,17 @@ const EmployerRegistration = ({ companyId, companyName, onComplete }) => {
         
         if (password !== confirmPassword) {
             setMessage('Passwords do not match');
+            return;
+        }
+
+        const normalizedEmail = email.trim().toLowerCase();
+
+        if (verificationTargetEmail !== normalizedEmail) {
+            setMessage('Please send a verification code to your current email address first.');
+            return;
+        }
+
+        if (!isEmailVerified && !verifyCode()) {
             return;
         }
         
@@ -38,6 +143,7 @@ const EmployerRegistration = ({ companyId, companyName, onComplete }) => {
                 },
                 body: JSON.stringify({
                     username,
+                    email: normalizedEmail,
                     password,
                     companyId
                 }),
@@ -85,6 +191,24 @@ const EmployerRegistration = ({ companyId, companyName, onComplete }) => {
                     </div>
                     
                     <div className="form-group">
+                        <label htmlFor="email">Email</label>
+                        <input
+                            type="email"
+                            id="email"
+                            value={email}
+                            onChange={(e) => {
+                                setEmail(e.target.value);
+                                if (verificationTargetEmail && verificationTargetEmail !== e.target.value.trim().toLowerCase()) {
+                                    resetVerificationState();
+                                }
+                            }}
+                            className="registration-input"
+                            required
+                        />
+                        <p className="input-hint">This email will be used for verification and employer notifications</p>
+                    </div>
+
+                    <div className="form-group">
                         <label htmlFor="password">Password</label>
                         <input
                             type="password"
@@ -109,11 +233,22 @@ const EmployerRegistration = ({ companyId, companyName, onComplete }) => {
                             required
                         />
                     </div>
+
+                    <EmailVerificationFields
+                        verificationCode={verificationCode}
+                        onVerificationCodeChange={setVerificationCode}
+                        onSendCode={handleSendVerificationCode}
+                        onResetVerification={resetVerificationState}
+                        verificationTargetEmail={verificationTargetEmail}
+                        isVerified={isEmailVerified}
+                        isSendingCode={isSendingVerificationCode}
+                        isDisabled={isLoading}
+                    />
                     
                     <button 
                         type="submit" 
                         className="submit-button"
-                        disabled={isLoading}
+                        disabled={isLoading || isSendingVerificationCode}
                     >
                         {isLoading ? 'Creating Account...' : 'Create Employer Account'}
                     </button>

@@ -7,7 +7,7 @@ import MakeAssessment from './MakeAssessment';
 import CompanyProfile from './CompanyProfile';
 import TalentPool from './TalentPool';
 import EmployerSettings from './EmployerSettings';
-import logo from './media/logo.PNG';
+import logo from './media/logo.png';
 
 const EmployerDashboard = () => {
     const [employer, setEmployer] = useState(null);

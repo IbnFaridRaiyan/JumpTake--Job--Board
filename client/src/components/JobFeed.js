@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [applyingToJobId, setApplyingToJobId] = useState(null);
+    const [appliedJobIds, setAppliedJobIds] = useState([]);
     const [applicationMessage, setApplicationMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState('');
@@ -59,6 +60,16 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
     }, [jobSeekerData, jobs]);
 
     useEffect(() => {
+        if (!userId) {
+            setAppliedJobIds([]);
+            return;
+        }
+
+        fetchAppliedJobs();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [userId]);
+
+    useEffect(() => {
         function handleClickOutside(event) {
             if ((previewJob || selectedCompany) && event.target.classList.contains('job-preview-overlay')) {
                 closePreview();
@@ -105,6 +116,34 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
             console.error('Error fetching job recommendations:', err);
         } finally {
             setIsLoadingRecommendations(false);
+        }
+    };
+
+    const fetchAppliedJobs = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/applications/user/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch applied jobs');
+            }
+
+            const data = await response.json();
+            const uniqueAppliedJobIds = [...new Set(
+                (Array.isArray(data) ? data : [])
+                    .filter((application) => application?.status !== 'Withdrawn')
+                    .map((application) => application?.job?._id || application?.job)
+                    .filter(Boolean)
+                    .map((jobId) => String(jobId))
+            )];
+
+            setAppliedJobIds(uniqueAppliedJobIds);
+        } catch (err) {
+            console.error('Error fetching applied jobs:', err);
         }
     };
 
@@ -190,6 +229,11 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
         if (event) {
             event.stopPropagation(); 
         }
+
+        if (appliedJobIds.includes(String(jobId))) {
+            return;
+        }
+
         setApplyingToJobId(jobId);
         setApplicationMessage('');
         setPreviewJob(null); 
@@ -230,6 +274,9 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
             }
             
             setMessage('Application submitted successfully!');
+            setAppliedJobIds((prev) => (
+                prev.includes(String(jobId)) ? prev : [...prev, String(jobId)]
+            ));
             setApplyingToJobId(null);
             setApplicationMessage('');
             
@@ -477,6 +524,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
                         displayedJobs.map(job => {
                             const matchScore = getMatchScore(job);
                             const hasMatchScore = activeTab === 'all' && matchScore > 0 && jobSeekerData && jobSeekerData.skills;
+                            const hasApplied = appliedJobIds.includes(String(job._id));
                             
                             return (
                                 <div 
@@ -560,8 +608,9 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
                                                 <button 
                                                     className="apply-button"
                                                     onClick={(e) => handleApplyClick(job._id, e)}
+                                                    disabled={hasApplied}
                                                 >
-                                                    Apply Now
+                                                    {hasApplied ? 'Applied' : 'Apply Now'}
                                                 </button>
                                             </div>
                                         </>
@@ -748,8 +797,9 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
                                 <button 
                                     className="preview-apply-button" 
                                     onClick={(e) => handleApplyClick(previewJob._id, e)}
+                                    disabled={appliedJobIds.includes(String(previewJob._id))}
                                 >
-                                    Apply for this Job
+                                    {appliedJobIds.includes(String(previewJob._id)) ? 'Applied' : 'Apply for this Job'}
                                 </button>
                             </div>
                             <div className="preview-post-date">

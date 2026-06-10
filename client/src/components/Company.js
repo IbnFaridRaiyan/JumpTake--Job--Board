@@ -450,7 +450,7 @@ const Company = () => {
                                             <div className="assessment-card-actions">
                                                 <button
                                                     type="button"
-                                                    className="view-button"
+                                                    className="view-button no-icon-button"
                                                     onClick={() => handleSelectCompany(result)}
                                                     disabled={isLoading}
                                                 >

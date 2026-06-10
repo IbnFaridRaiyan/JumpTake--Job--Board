@@ -1667,6 +1667,11 @@ textarea:focus {
   font-size: 14px;
 }
 
+.view-button.no-icon-button:before {
+  content: none;
+  margin-right: 0;
+}
+
 
 .secondary-button {
   background-color: #f8f9fa;

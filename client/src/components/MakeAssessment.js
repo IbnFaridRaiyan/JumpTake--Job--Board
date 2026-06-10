@@ -960,7 +960,7 @@ const MakeAssessment = ({ companyId, onBack, onFooterBack }) => {
                                             </button>
                                         </div>
                                     ))}
-                                    <button className="view-button" onClick={() => addOption(question.clientId)}>
+                                    <button className="view-button no-icon-button" onClick={() => addOption(question.clientId)}>
                                         Add Option
                                     </button>
                                 </div>

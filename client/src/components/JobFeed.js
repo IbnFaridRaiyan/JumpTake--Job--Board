@@ -67,7 +67,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
 
         fetchAppliedJobs();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [userId]);
+    }, [userId, jobs]);
 
     useEffect(() => {
         function handleClickOutside(event) {

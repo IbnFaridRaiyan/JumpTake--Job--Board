@@ -28,7 +28,11 @@ const createApplication = async (req, res) => {
         }
         
      
-        const existingApplication = await Application.findOne({ job: jobId, user: userId });
+        const existingApplication = await Application.findOne({
+            job: jobId,
+            user: userId,
+            status: { $ne: 'Withdrawn' }
+        });
         if (existingApplication) {
             return res.status(400).json({ error: 'You have already applied to this job' });
         }

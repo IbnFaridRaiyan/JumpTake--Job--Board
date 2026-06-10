@@ -5263,7 +5263,14 @@ textarea:focus {
 }
 
 .company-page .search-different-company-button {
-  color: var(--primary-color);
+  color: #000000 !important;
+  font-size: 14px;
+  padding: 10px 16px;
+}
+
+.company-page .search-different-company-button .icon,
+.company-search-results .assessment-card-actions .view-button {
+  color: #000000 !important;
 }
 
 .secondary-button .icon {
@@ -7760,6 +7767,7 @@ header,
 footer {
   background: #000000 !important;
   color: #ffffff !important;
+  overflow-x: hidden;
 }
 
 .dashboard-container,
@@ -8279,6 +8287,80 @@ td,
 .company-page .back-button,
 .company-page .back-button:before {
   color: #ffffff !important;
+}
+
+.app-container,
+.home-page,
+.dashboard-container,
+.main-content,
+.job-feed-container,
+.job-list,
+.job-card,
+.job-preview-modal,
+.job-preview-content {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.job-list {
+  padding-inline: 20px;
+}
+
+.job-card-header h3,
+.job-card-header .company-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.job-card-body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  align-items: center;
+}
+
+.job-number,
+.job-location,
+.job-type,
+.job-salary {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.job-description,
+.job-skills {
+  width: 100%;
+}
+
+.job-description {
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+@media screen and (max-width: 768px) {
+  .job-list {
+    padding-inline: 14px;
+  }
+
+  .job-card-header h3,
+  .job-card-header .company-name,
+  .job-number,
+  .job-location,
+  .job-type,
+  .job-salary,
+  .posted-date {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .job-card-body {
+    gap: 8px 10px;
+  }
 }
 
 .profile-container,

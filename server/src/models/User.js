@@ -18,6 +18,14 @@ const UserSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'JobSeeker'
   },
+  passwordResetToken: {
+    type: String,
+    default: null
+  },
+  passwordResetExpiresAt: {
+    type: Date,
+    default: null
+  },
   createdAt: {
     type: Date,
     default: Date.now

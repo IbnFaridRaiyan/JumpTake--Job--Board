@@ -5,6 +5,7 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => 
     const [editingJob, setEditingJob] = useState(null);
     const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [togglingJobId, setTogglingJobId] = useState(null);
     
     const handleEdit = (job) => {
         setEditingJob(job);
@@ -48,6 +49,50 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => 
             setMessage(`Error: ${error.message}`);
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleToggleStatus = async (job) => {
+        setTogglingJobId(job._id);
+        setMessage('');
+
+        try {
+            const token = localStorage.getItem('employerToken');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/jobs/${job._id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    active: !job.active
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to update job status');
+            }
+
+            setMessage(
+                !job.active
+                    ? 'Job marked as active and shown in the candidate job feed.'
+                    : 'Job marked as inactive and hidden from the candidate job feed.'
+            );
+
+            if (onJobUpdated) {
+                onJobUpdated();
+            }
+
+            setTimeout(() => {
+                setMessage('');
+            }, 3000);
+        } catch (error) {
+            console.error('Error updating job status:', error);
+            setMessage(`Error: ${error.message}`);
+        } finally {
+            setTogglingJobId(null);
         }
     };
     
@@ -154,9 +199,16 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => 
                                         <td className="job-type-cell">{job.jobType}</td>
                                         <td className="date-cell">{formatDate(job.createdAt)}</td>
                                         <td>
-                                            <span className={`status-badge ${job.active ? 'active' : 'inactive'}`}>
-                                                {job.active ? 'Active' : 'Inactive'}
-                                            </span>
+                                            <button
+                                                type="button"
+                                                className={`status-badge status-toggle-button ${job.active ? 'active' : 'inactive'}`}
+                                                onClick={() => handleToggleStatus(job)}
+                                                disabled={isLoading || togglingJobId === job._id}
+                                            >
+                                                {togglingJobId === job._id
+                                                    ? 'Updating...'
+                                                    : job.active ? 'Active' : 'Inactive'}
+                                            </button>
                                         </td>
                                         <td className="actions-cell">
                                             <button 

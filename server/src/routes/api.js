@@ -9,6 +9,7 @@ const Company = require('../models/Company');
 const JobSeeker = require('../models/JobSeeker');
 const applicationController = require('../controllers/applicationController');
 const assessmentController = require('../controllers/assessmentController');
+const passwordResetController = require('../controllers/passwordResetController');
 
 
 
@@ -27,6 +28,9 @@ router.post('/login', userController.login);
 
 router.post('/users/register', userController.createAccount);
 router.post('/users/login', userController.login);
+router.post('/password-reset/request', passwordResetController.requestPasswordReset);
+router.get('/password-reset/validate', passwordResetController.validatePasswordResetToken);
+router.post('/password-reset/confirm', passwordResetController.confirmPasswordReset);
 
 
 router.get('/companies', async (req, res) => {

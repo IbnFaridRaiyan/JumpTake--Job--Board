@@ -7,6 +7,7 @@ import MakeAssessment from './MakeAssessment';
 import CompanyProfile from './CompanyProfile';
 import TalentPool from './TalentPool';
 import EmployerSettings from './EmployerSettings';
+import logo from './media/logo.PNG';
 
 const EmployerDashboard = () => {
     const [employer, setEmployer] = useState(null);
@@ -319,8 +320,11 @@ const EmployerDashboard = () => {
     if (loading) {
         return (
             <div className="loading-container">
-                <div className="dashboard-header">
-                    <div className="dashboard-title">
+                <div className="dashboard-header employer-dashboard-header">
+                    <div className="employer-dashboard-brand">
+                        <img src={logo} alt="JumpTake" className="employer-dashboard-logo" />
+                    </div>
+                    <div className="dashboard-title employer-dashboard-title">
                         <h1>Employer Dashboard</h1>
                         <p>Welcome, {employer?.companyName || 'Employer'}</p>
                     </div>
@@ -332,8 +336,11 @@ const EmployerDashboard = () => {
 
     return (
         <div className="home-page">
-            <div className="dashboard-header">
-                <div className="dashboard-title">
+            <div className="dashboard-header employer-dashboard-header">
+                <div className="employer-dashboard-brand">
+                    <img src={logo} alt="JumpTake" className="employer-dashboard-logo" />
+                </div>
+                <div className="dashboard-title employer-dashboard-title">
                     <h1>Employer Dashboard</h1>
                     <p>Welcome, {employer?.companyName || 'Employer'}</p>
                 </div>

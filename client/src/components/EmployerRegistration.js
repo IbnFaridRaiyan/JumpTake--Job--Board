@@ -32,7 +32,7 @@ const EmployerRegistration = ({ companyId, companyName, onComplete }) => {
 
     const verifyCode = () => {
         if (!verificationTargetEmail || !sentVerificationCode) {
-            setMessage('Please send a verification code to your email first.');
+            setMessage('Click Create Employer Account to send a verification code to your email first.');
             return false;
         }
 
@@ -83,10 +83,12 @@ const EmployerRegistration = ({ companyId, companyName, onComplete }) => {
             setVerificationExpiresAt(Date.now() + getEmailVerificationExpiryMs());
             setVerificationCode('');
             setIsEmailVerified(false);
-            setMessage(`A 6 digit verification code was sent to ${normalizedEmail}.`);
+            setMessage(`A 6 digit verification code was sent to ${normalizedEmail}. Enter it below, then click Create Employer Account again to complete sign up.`);
+            return true;
         } catch (error) {
             console.error('Error sending employer verification code:', error);
             setMessage(`Error: ${error.message}`);
+            return false;
         } finally {
             setIsSendingVerificationCode(false);
         }
@@ -123,8 +125,8 @@ const EmployerRegistration = ({ companyId, companyName, onComplete }) => {
 
         const normalizedEmail = email.trim().toLowerCase();
 
-        if (verificationTargetEmail !== normalizedEmail) {
-            setMessage('Please send a verification code to your current email address first.');
+        if (verificationTargetEmail !== normalizedEmail || !sentVerificationCode) {
+            await handleSendVerificationCode();
             return;
         }
 
@@ -243,14 +245,19 @@ const EmployerRegistration = ({ companyId, companyName, onComplete }) => {
                         isVerified={isEmailVerified}
                         isSendingCode={isSendingVerificationCode}
                         isDisabled={isLoading}
+                        showSendButton={false}
                     />
-                    
+
                     <button 
                         type="submit" 
                         className="submit-button"
                         disabled={isLoading || isSendingVerificationCode}
                     >
-                        {isLoading ? 'Creating Account...' : 'Create Employer Account'}
+                        {isLoading
+                            ? 'Creating Account...'
+                            : verificationTargetEmail && !isEmailVerified
+                                ? 'Verify Code & Create Employer Account'
+                                : 'Create Employer Account'}
                     </button>
                 </form>
             ) : (

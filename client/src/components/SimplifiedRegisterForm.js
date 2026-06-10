@@ -16,6 +16,7 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
         confirmPassword: ''
     });
     const [error, setError] = useState('');
+    const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [verificationCode, setVerificationCode] = useState('');
     const [sentVerificationCode, setSentVerificationCode] = useState('');
@@ -31,6 +32,7 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
         setVerificationTargetEmail('');
         setVerificationExpiresAt(null);
         setIsEmailVerified(false);
+        setMessage('');
     };
     
     const handleChange = (e) => {
@@ -66,24 +68,28 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
 
     const verifyCode = () => {
         if (!verificationTargetEmail || !sentVerificationCode) {
-            setError('Please send a verification code to your email first.');
+            setError('Click Create Account to send a verification code to your email first.');
+            setMessage('');
             return false;
         }
 
         if (Date.now() > verificationExpiresAt) {
             setError('Your verification code expired. Please request a new one.');
             setIsEmailVerified(false);
+            setMessage('');
             return false;
         }
 
         if (verificationCode.trim() !== sentVerificationCode) {
             setError('The verification code you entered is incorrect.');
             setIsEmailVerified(false);
+            setMessage('');
             return false;
         }
 
         setIsEmailVerified(true);
         setError('');
+        setMessage('Email verified successfully. Creating your account...');
         return true;
     };
 
@@ -92,15 +98,18 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
 
         if (!formData.name.trim()) {
             setError('Full name is required before sending a verification code.');
+            setMessage('');
             return;
         }
 
         if (!validateEmailAddress(normalizedEmail)) {
             setError('Please enter a valid email address before sending a verification code.');
+            setMessage('');
             return;
         }
 
         setError('');
+        setMessage('Sending a verification code to your email...');
         setIsSendingVerificationCode(true);
 
         try {
@@ -117,9 +126,13 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
             setVerificationExpiresAt(Date.now() + getEmailVerificationExpiryMs());
             setVerificationCode('');
             setIsEmailVerified(false);
+            setMessage(`A 6 digit verification code was sent to ${normalizedEmail}. Enter it below, then click Create Account again to complete sign up.`);
+            return true;
         } catch (sendError) {
             console.error('Error sending candidate verification code:', sendError);
             setError(sendError.message || 'Failed to send verification code');
+            setMessage('');
+            return false;
         } finally {
             setIsSendingVerificationCode(false);
         }
@@ -128,6 +141,7 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        setMessage('');
         
       
         if (!formData.name || !formData.email || !formData.password) {
@@ -152,8 +166,8 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
             return;
         }
 
-        if (verificationTargetEmail !== normalizedEmail) {
-            setError('Please send a verification code to your current email address first.');
+        if (verificationTargetEmail !== normalizedEmail || !sentVerificationCode) {
+            await handleSendVerificationCode();
             return;
         }
 
@@ -290,6 +304,7 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
     return (
         <div className="simplified-register-form">
             {error && <div className="error-message">{error}</div>}
+            {message && <div className="success-message">{message}</div>}
             
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
@@ -318,17 +333,6 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
                     <div className="form-hint">You can update your email if needed</div>
                 </div>
 
-                <EmailVerificationFields
-                    verificationCode={verificationCode}
-                    onVerificationCodeChange={setVerificationCode}
-                    onSendCode={handleSendVerificationCode}
-                    onResetVerification={resetVerificationState}
-                    verificationTargetEmail={verificationTargetEmail}
-                    isVerified={isEmailVerified}
-                    isSendingCode={isSendingVerificationCode}
-                    isDisabled={isLoading}
-                />
-                
                 <div className="form-group">
                     <label htmlFor="password">Create Password</label>
                     <input
@@ -354,13 +358,29 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
                         required
                     />
                 </div>
+
+                <EmailVerificationFields
+                    verificationCode={verificationCode}
+                    onVerificationCodeChange={setVerificationCode}
+                    onSendCode={handleSendVerificationCode}
+                    onResetVerification={resetVerificationState}
+                    verificationTargetEmail={verificationTargetEmail}
+                    isVerified={isEmailVerified}
+                    isSendingCode={isSendingVerificationCode}
+                    isDisabled={isLoading}
+                    showSendButton={false}
+                />
                 
                 <button 
                     type="submit" 
                     className="create-account-button"
                     disabled={isLoading || isSendingVerificationCode}
                 >
-                    {isLoading ? 'Creating Account...' : 'Create Account'}
+                    {isLoading
+                        ? 'Creating Account...'
+                        : verificationTargetEmail && !isEmailVerified
+                            ? 'Verify Code & Create Account'
+                            : 'Create Account'}
                 </button>
             </form>
         </div>

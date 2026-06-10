@@ -570,7 +570,7 @@ const Company = () => {
                             
                             <button 
                                 onClick={() => setManualInputMode(false)} 
-                                className="secondary-button"
+                                className="secondary-button search-different-company-button"
                                 disabled={isLoading}
                             >
                                 <span className="icon">←</span> Search Different Company

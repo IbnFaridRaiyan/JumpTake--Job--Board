@@ -6,6 +6,7 @@ import Login from './Login';
 import HomePage from './HomePage';
 import EmployerDashboard from './EmployerDashboard';
 import JobSeeker from './JobSeeker'; 
+import ResetPasswordPage from './ResetPasswordPage';
 
 function App() {
   const [showLogin, setShowLogin] = useState(false);
@@ -29,6 +30,7 @@ function App() {
           <Route path="/company" element={<Company />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/employer-dashboard" element={<EmployerDashboard />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
         </Routes>
       </div>
     </BrowserRouter>

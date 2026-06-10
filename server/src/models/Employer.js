@@ -29,6 +29,14 @@ const EmployerSchema = new mongoose.Schema({
     ref: 'Company',
     required: [true, 'Company ID is required']
   },
+  passwordResetToken: {
+    type: String,
+    default: null
+  },
+  passwordResetExpiresAt: {
+    type: Date,
+    default: null
+  },
   notificationPreferences: {
     newApplications: {
       type: Boolean,

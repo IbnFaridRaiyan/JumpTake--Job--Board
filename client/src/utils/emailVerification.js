@@ -62,3 +62,48 @@ export const sendVerificationCodeEmail = async ({
         throw new Error(combinedMessage || 'EmailJS could not send the verification code.');
     }
 };
+
+export const sendPasswordResetEmail = async ({
+    email,
+    recipientName,
+    resetUrl,
+    accountType
+}) => {
+    const serviceId = process.env.REACT_APP_EMAILJS_PASSWORD_RESET_SERVICE_ID || process.env.REACT_APP_EMAILJS_SERVICE_ID;
+    const templateId = process.env.REACT_APP_EMAILJS_PASSWORD_RESET_TEMPLATE_ID;
+    const publicKey = process.env.REACT_APP_EMAILJS_PASSWORD_RESET_PUBLIC_KEY || process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
+
+    if (!serviceId || !templateId || !publicKey) {
+        throw new Error('Password reset email is not configured yet. Add the EmailJS reset settings to continue.');
+    }
+
+    try {
+        return await emailjs.send(
+            serviceId,
+            templateId,
+            {
+                to_email: email,
+                email,
+                user_email: email,
+                recipient_email: email,
+                to_name: recipientName || 'there',
+                name: recipientName || 'there',
+                user_name: recipientName || 'there',
+                recipient_name: recipientName || 'there',
+                reset_link: resetUrl,
+                reset_url: resetUrl,
+                password_reset_link: resetUrl,
+                app_name: process.env.REACT_APP_EMAILJS_APP_NAME || 'JumpTake',
+                account_type: accountType || 'account',
+                reply_to: process.env.REACT_APP_EMAILJS_REPLY_TO || 'no-reply@jumptake.com'
+            },
+            publicKey
+        );
+    } catch (error) {
+        const statusText = error?.status ? `Status ${error.status}` : '';
+        const detailText = error?.text || error?.message || '';
+        const combinedMessage = [statusText, detailText].filter(Boolean).join(': ');
+
+        throw new Error(combinedMessage || 'EmailJS could not send the password reset email.');
+    }
+};

@@ -216,11 +216,6 @@ const MyApplications = ({ userId, onRefresh, switchSection, onFooterBack }) => {
                     </div>
 
                     <div className="section-footer-nav">
-                        <button className="back-button" onClick={handleBrowseJobs}>
-                            Back to Job Feed
-                        </button>
-                    </div>
-                    <div className="section-footer-nav">
                         <button className="back-button" onClick={() => setSelectedCompany(null)}>
                             Back
                         </button>
@@ -278,11 +273,6 @@ const MyApplications = ({ userId, onRefresh, switchSection, onFooterBack }) => {
                     <div className="section-footer-nav">
                         <button className="back-button" onClick={handleBrowseJobs}>
                             Back to Job Feed
-                        </button>
-                    </div>
-                    <div className="section-footer-nav">
-                        <button className="back-button" onClick={() => setSelectedApplication(null)}>
-                            Back
                         </button>
                     </div>
                 </div>

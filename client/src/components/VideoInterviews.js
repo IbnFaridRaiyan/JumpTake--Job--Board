@@ -108,7 +108,7 @@ const VideoInterviews = ({ userId, switchSection, onFooterBack }) => {
 
     if (loading) {
         return (
-            <div className="applications-container">
+            <div className="applications-container video-interviews-container">
                 <div className="section-header">
                     <h2>Video Interviews</h2>
                 </div>
@@ -124,7 +124,7 @@ const VideoInterviews = ({ userId, switchSection, onFooterBack }) => {
         const selectionStatus = selectedInterview?.videoInterview?.candidateSelection?.status || 'Pending';
 
         return (
-            <div className="applications-container">
+            <div className="applications-container video-interviews-container">
                 <div className="section-header">
                     <h2>Video Interview Details</h2>
                     <div className="section-actions">
@@ -234,7 +234,7 @@ const VideoInterviews = ({ userId, switchSection, onFooterBack }) => {
     }
 
     return (
-        <div className="applications-container">
+        <div className="applications-container video-interviews-container">
             <div className="section-header">
                 <h2>Video Interviews</h2>
                 <div className="section-actions">

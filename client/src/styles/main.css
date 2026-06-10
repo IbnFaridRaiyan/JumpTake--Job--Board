@@ -489,9 +489,10 @@ header.centered .header-subtitle {
   text-align: center;
   max-width: 600px;
   padding: 40px;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: #000000;
+  border: 1px solid #000000;
   border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
   position: relative;
   z-index: 1;
   animation: fadeIn 0.6s ease;
@@ -1301,6 +1302,30 @@ textarea:focus {
   font-size: 14px;
 }
 
+.candidate-dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.candidate-dashboard-brand {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.candidate-dashboard-logo {
+  width: 108px;
+  height: auto;
+  display: block;
+}
+
+.candidate-dashboard-title {
+  margin-left: auto;
+  text-align: right;
+}
+
 .header-actions {
   display: flex;
   align-items: center;
@@ -1582,6 +1607,28 @@ textarea:focus {
     flex-direction: column;
     text-align: center;
     padding: 15px;
+  }
+
+  .candidate-dashboard-header {
+    flex-direction: row;
+    text-align: left;
+    align-items: center;
+  }
+
+  .candidate-dashboard-logo {
+    width: 78px;
+  }
+
+  .candidate-dashboard-title {
+    text-align: right;
+  }
+
+  .candidate-dashboard-title h1 {
+    font-size: 18px;
+  }
+
+  .candidate-dashboard-title p {
+    font-size: 12px;
   }
   
   .header-actions {
@@ -4089,7 +4136,7 @@ textarea:focus {
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  background-color: #f9fafb;
+  background-color: #000000;
   margin-bottom: 30px;
   animation: pulse 2s infinite;
 }
@@ -4257,12 +4304,12 @@ textarea:focus {
 
 
 .job-seeker-page .message {
-  background-color: #f8f9fa;
+  background-color: #3a3a3a;
   border-left: 4px solid var(--primary-color);
   padding: 15px 20px;
   border-radius: 6px;
   margin: 20px 0;
-  color: var(--text-dark);
+  color: #ffffff;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
   animation: fadeIn 0.3s ease-out;
 }
@@ -5247,7 +5294,7 @@ textarea:focus {
 .job-seeker-container {
   position: absolute;
   z-index: 10;
-  background-color: rgba(255, 255, 255, 0.95); 
+  background-color: #000000;
   backdrop-filter: blur(5px); 
  
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
@@ -5286,7 +5333,7 @@ textarea:focus {
 .about-button {
   background: transparent;
   border: 2px solid rgba(0, 100, 79, 0.6);
-  color: rgb(0, 0, 0);
+  color: #ffffff;
   padding: 10px 16px;
   border-radius: 30px;
   margin-top: 30px;
@@ -7536,6 +7583,460 @@ textarea:focus {
     top: 10px;
     right: 10px;
   }
+}
+
+/* Black background + white text site-wide, excluding button styling */
+:root {
+  --off-white: #000000;
+  --off-white-darker: #000000;
+  --off-white-lightest: #000000;
+  --secondary-color: #000000;
+  --secondary-light: #000000;
+  --secondary-dark: #000000;
+  --text-dark: #ffffff;
+  --text-light: #ffffff;
+  --text-muted: #f1f1f1;
+  --border-color: #262626;
+}
+
+html,
+body,
+#root,
+.App,
+main,
+section,
+article,
+aside,
+nav,
+header,
+footer {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
+.dashboard-container,
+.main-content,
+.dashboard-content,
+.dashboard-main,
+.dashboard-nav,
+.job-feed-container,
+.my-applications-container,
+.my-assessments-container,
+.video-interviews-container,
+.company-page,
+.company-container,
+.company-details-form,
+.company-search-results,
+.company-details,
+.company-overview-card,
+.company-info-card,
+.job-card,
+.application-form,
+.application-details,
+.profile-section,
+.settings-section,
+.notification-card,
+.assessment-card,
+.assessment-builder-container,
+.assessment-question-card,
+.assessment-summary-card,
+.assessment-answer-block,
+.assessment-send-panel,
+.submitted-assessments-section,
+.candidate-profile-card,
+.candidate-card,
+.search-container,
+.upload-container,
+.login-form,
+.modern-login-container,
+.job-preview-modal,
+.job-preview-content,
+.job-preview-sidebar,
+.job-preview-main,
+.filter-panel,
+.table-responsive,
+.no-jobs-message,
+.no-applications-message,
+.no-candidates,
+.no-recommendations,
+.loading-container,
+.application-message-preview,
+.interview-dates-grid,
+.assessment-instructions,
+.status-panel,
+.about-card,
+.step,
+.portal-feature,
+.portal-content,
+.terms-content,
+.candidate-profile-body,
+.profile-grid > *,
+.settings-grid > * {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #262626 !important;
+  box-shadow: none !important;
+}
+
+.job-preview-overlay,
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.92) !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+label,
+small,
+li,
+td,
+th,
+span,
+strong,
+em,
+.header-subtitle,
+.landing-subtitle,
+.drop-message,
+.section-description,
+.notification-title,
+.notification-description,
+.company-description,
+.detail-value,
+.info-label,
+.info-value,
+.portal-description,
+.about-intro,
+.terms-content p,
+.portal-feature p,
+.about-card p,
+.step p,
+.job-description,
+.job-description-full,
+.job-salary,
+.candidate-email,
+.candidate-name,
+.preview-company-name,
+.preview-company-industry,
+.application-card-header p,
+.assessment-question-prompt,
+.spotlight-jobs {
+  color: #ffffff !important;
+}
+
+input,
+textarea,
+select,
+.form-control,
+.form-input,
+.form-textarea,
+.login-input,
+.modern-login-input,
+.search-input,
+.application-message,
+.company-input {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #262626 !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #d0d0d0 !important;
+}
+
+table,
+thead,
+tbody,
+tr,
+th,
+td,
+.applications-table,
+.job-list-table {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #262626 !important;
+}
+
+.about-section,
+.portal-preview-section {
+  background: #bdbdbd !important;
+}
+
+.about-container,
+.terms-content {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #262626 !important;
+  box-shadow: none !important;
+}
+
+.login-modal,
+.modern-login-modal {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
+.login-modal h2,
+.modern-login-modal h2,
+.login-modal label,
+.modern-login-modal label,
+.login-modal p,
+.modern-login-modal p {
+  color: #ffffff !important;
+}
+
+.about-button,
+.about-button span,
+.terms-content h3,
+.about-container h2 {
+  color: #ffffff !important;
+}
+
+/* Keep login/search inputs dark even on focus */
+.login-input,
+.login-input:focus,
+.modern-login-input,
+.modern-login-input:focus,
+.company-input,
+.company-input:focus {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #262626 !important;
+}
+
+.login-input::placeholder,
+.modern-login-input::placeholder,
+.company-input::placeholder {
+  color: #d0d0d0 !important;
+}
+
+/* Job feed dark surfaces */
+.job-feed-header,
+.advanced-filters,
+.job-card-footer,
+.job-preview-actions,
+.preview-action-buttons {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #262626 !important;
+}
+
+.job-feed-header h2,
+.filter-toggle-button,
+.posted-date,
+.preview-post-date {
+  color: #ffffff !important;
+}
+
+.filter-toggle-button {
+  background: #000000 !important;
+  border-color: #262626 !important;
+}
+
+.filter-toggle-button:hover {
+  background: #111111 !important;
+}
+
+.clear-filters-button {
+  color: #ffffff !important;
+}
+
+.clear-filters-button:hover {
+  color: #ffffff !important;
+}
+
+.skill-checkbox-container,
+.skill-checkbox {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #262626 !important;
+}
+
+/* Application status badges */
+.status-badge,
+.status-badge-submitted,
+.status-badge-review,
+.status-badge-accepted,
+.status-badge-rejected,
+.status-badge-withdrawn,
+.status-badge.submitted,
+.status-badge.under-review,
+.status-badge.accepted,
+.status-badge.rejected,
+.status-badge.unsuccessful,
+.status-badge.withdrawn,
+.status-badge.on-hold {
+  color: #ffffff !important;
+  border: 1px solid transparent !important;
+}
+
+.status-badge-submitted,
+.status-badge.submitted {
+  background: #90ee90 !important;
+  border-color: #90ee90 !important;
+}
+
+.status-badge-review,
+.status-badge.under-review {
+  background: #ffd54f !important;
+  border-color: #ffd54f !important;
+}
+
+.status-badge-accepted,
+.status-badge.accepted {
+  background: #22c55e !important;
+  border-color: #22c55e !important;
+}
+
+.status-badge-withdrawn,
+.status-badge.withdrawn {
+  background: #fb923c !important;
+  border-color: #fb923c !important;
+}
+
+.status-badge-rejected,
+.status-badge.unsuccessful {
+  background: #ef4444 !important;
+  border-color: #ef4444 !important;
+}
+
+.status-badge.on-hold {
+  background: #facc15 !important;
+  border-color: #facc15 !important;
+}
+
+.application-actions .withdraw-button,
+.application-actions .view-button {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #262626 !important;
+}
+
+.application-actions .withdraw-button:hover,
+.application-actions .view-button:hover {
+  background: #111111 !important;
+  color: #ffffff !important;
+  border-color: #3a3a3a !important;
+}
+
+.application-actions .withdraw-button {
+  color: #ffffff !important;
+}
+
+.application-actions .withdraw-button:before {
+  color: #ef4444 !important;
+}
+
+.application-actions .withdraw-button:hover {
+  background: #7f1d1d !important;
+  border-color: #7f1d1d !important;
+  color: #ffffff !important;
+}
+
+.status-badge-submitted,
+.status-badge-review,
+.status-badge-accepted,
+.status-badge-withdrawn,
+.status-badge-rejected,
+.status-badge.submitted,
+.status-badge.under-review,
+.status-badge.accepted,
+.status-badge.withdrawn,
+.status-badge.unsuccessful,
+.status-badge.on-hold {
+  color: #000000 !important;
+}
+
+.application-detail-view {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #262626 !important;
+}
+
+.video-interviews-container .view-button,
+.video-interviews-container .video-link-button,
+.my-assessments-container .assessment-card-actions .view-button {
+  color: #000000 !important;
+}
+
+.profile-container,
+.profile-card,
+.profile-form,
+.form-section,
+.profile-message {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #262626 !important;
+  box-shadow: none !important;
+}
+
+.profile-form .secondary-button {
+  color: #000000 !important;
+}
+
+.profile-header {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #262626 !important;
+}
+
+.profile-header h2 {
+  color: #ffffff !important;
+}
+
+.profile-form .cancel-edit-button {
+  color: #000000 !important;
+}
+
+.frequency-option,
+.frequency-option:hover,
+.frequency-option.selected {
+  color: #000000 !important;
+}
+
+.candidate-assessment-open-button {
+  color: #000000 !important;
+}
+
+.candidate-assessment-detail .candidate-assessment-header {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #262626 !important;
+}
+
+.candidate-assessment-detail .candidate-assessment-header h2,
+.candidate-assessment-detail .candidate-assessment-header .back-button {
+  color: #ffffff !important;
+}
+
+.candidate-assessment-detail .assessment-response-option-text {
+  color: #000000 !important;
+}
+
+.back-button {
+  border-color: #000000 !important;
+}
+
+.back-button:hover {
+  background: #000000 !important;
+  border-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+.logout-button {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  border-color: #dc2626 !important;
+}
+
+.logout-button:hover {
+  background: #7f1d1d !important;
+  border-color: #7f1d1d !important;
+  color: #ffffff !important;
 }
 
 

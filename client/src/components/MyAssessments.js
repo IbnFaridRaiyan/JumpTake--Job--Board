@@ -155,8 +155,8 @@ const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection,
         const isSubmitted = selectedAssessment.status === 'Submitted';
 
         return (
-            <div className="assessment-builder-container">
-                <div className="manage-jobs-header">
+            <div className="assessment-builder-container candidate-assessment-detail">
+                <div className="manage-jobs-header candidate-assessment-header">
                     <h2>{selectedAssessment.title}</h2>
                     <button className="back-button responsive-back-button" onClick={() => setSelectedAssessment(null)}>
                         Back to My Assessments
@@ -207,7 +207,7 @@ const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection,
                                                         disabled={isSubmitted}
                                                         onChange={(event) => handleAnswerChange(index, event.target.value)}
                                                     />
-                                                    <span>{option}</span>
+                                                    <span className="assessment-response-option-text">{option}</span>
                                                 </label>
                                             ))}
                                         </div>
@@ -245,19 +245,11 @@ const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection,
                             {submitting ? 'Submitting...' : 'Submit Assessment'}
                         </button>
                     )}
-                    <button className="secondary-button" onClick={() => setSelectedAssessment(null)} disabled={submitting}>
-                        Back
-                    </button>
                 </div>
 
                 <div className="section-footer-nav">
                     <button className="back-button responsive-back-button" onClick={handleBackToFeed}>
                         Back to Job Feed
-                    </button>
-                </div>
-                <div className="section-footer-nav">
-                    <button className="back-button responsive-back-button" onClick={() => setSelectedAssessment(null)}>
-                        Back
                     </button>
                 </div>
             </div>
@@ -322,7 +314,7 @@ const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection,
                             </p>
                             {assessment.status !== 'Submitted' && (
                                 <div className="assessment-card-actions">
-                                    <button className="view-button" onClick={() => handleOpenAssessment(assessment)}>
+                                    <button className="view-button candidate-assessment-open-button" onClick={() => handleOpenAssessment(assessment)}>
                                         Open Assessment
                                     </button>
                                 </div>

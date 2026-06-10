@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import homeVideo from './media/home.mp4';
 import candidateVideo from './media/employee.mp4';
 import employerVideo from './media/employer.mp4';
-import logo from './media/logo.png';
+import logo from './media/logo3.png';
 
 const Landing = () => {
     const navigate = useNavigate();

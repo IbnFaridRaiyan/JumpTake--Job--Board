@@ -6,6 +6,7 @@ import MyAssessments from './MyAssessments';
 import VideoInterviews from './VideoInterviews';
 import UserProfile from './UserProfile';
 import UserSettings from './UserSettings';
+import logo from './media/logo.PNG';
 
 const HomePage = () => {
     const [activeSection, setActiveSection] = useState('job-feed');
@@ -285,8 +286,11 @@ const HomePage = () => {
     if (loading && !jobSeekerData) {
         return (
             <div className="loading-container">
-                <div className="dashboard-header">
-                    <div className="dashboard-title">
+                <div className="dashboard-header candidate-dashboard-header">
+                    <div className="candidate-dashboard-brand">
+                        <img src={logo} alt="JumpTake Logo" className="candidate-dashboard-logo" />
+                    </div>
+                    <div className="dashboard-title candidate-dashboard-title">
                         <h1>Candidate Dashboard</h1>
                         <p>Welcome back, {user?.email.split('@')[0] || 'User'}</p>
                     </div>
@@ -298,8 +302,11 @@ const HomePage = () => {
 
     return (
         <div className="home-page">
-            <div className="dashboard-header">
-                <div className="dashboard-title">
+            <div className="dashboard-header candidate-dashboard-header">
+                <div className="candidate-dashboard-brand">
+                    <img src={logo} alt="JumpTake Logo" className="candidate-dashboard-logo" />
+                </div>
+                <div className="dashboard-title candidate-dashboard-title">
                     <h1>Candidate Dashboard</h1>
                     <p>Welcome back, {user?.email.split('@')[0] || 'User'}</p>
                 </div>

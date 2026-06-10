@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 
 const ApplicationSchema = new mongoose.Schema({
+  candidateNumber: {
+    type: String,
+    trim: true,
+    unique: true,
+    sparse: true
+  },
   job: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Job',
@@ -13,7 +19,7 @@ const ApplicationSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Submitted', 'Reviewed', 'Under Review', 'Accepted', 'Rejected', 'Withdrawn'],
+    enum: ['Submitted', 'Reviewed', 'Under Review', 'Accepted', 'Rejected', 'Withdrawn', 'On Hold', 'Unsuccessful'],
     default: 'Submitted'
   },
   message: {

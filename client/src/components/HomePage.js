@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import JobFeed from './JobFeed';
 import MyApplications from './MyApplications';
+import MyAssessments from './MyAssessments';
+import VideoInterviews from './VideoInterviews';
 import UserProfile from './UserProfile';
 import UserSettings from './UserSettings';
 
@@ -12,6 +14,8 @@ const HomePage = () => {
     const [error, setError] = useState(null);
     const [user, setUser] = useState(null);
     const [jobSeekerData, setJobSeekerData] = useState(null);
+    const [pendingAssessmentCount, setPendingAssessmentCount] = useState(0);
+    const [pendingVideoInterviewCount, setPendingVideoInterviewCount] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -25,6 +29,7 @@ const HomePage = () => {
         setUser(parsedUser);
 
         fetchJobs();
+        fetchCandidateNotifications(parsedUser.id);
 
         let seekerId = parsedUser.jobSeekerId;
 
@@ -49,6 +54,38 @@ const HomePage = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [navigate]);
+
+    const fetchCandidateNotifications = async (userId) => {
+        if (!userId) {
+            setPendingAssessmentCount(0);
+            setPendingVideoInterviewCount(0);
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/assessments/user/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch candidate notifications');
+            }
+
+            const data = await response.json();
+            setPendingAssessmentCount(data.filter((assessment) => assessment.status === 'Sent').length);
+            setPendingVideoInterviewCount(data.filter((assessment) => (
+                assessment?.videoInterview?.link &&
+                (assessment?.videoInterview?.candidateSelection?.status || 'Pending') === 'Pending'
+            )).length);
+        } catch (notificationError) {
+            console.error('Error fetching candidate notifications:', notificationError);
+            setPendingAssessmentCount(0);
+            setPendingVideoInterviewCount(0);
+        }
+    };
 
     const linkJobSeekerToUser = async (userId, jobSeekerId) => {
         try {
@@ -150,6 +187,9 @@ const HomePage = () => {
 
     const refreshData = () => {
         fetchJobs();
+        if (user?.id) {
+            fetchCandidateNotifications(user.id);
+        }
         if (user?.jobSeekerId) {
             fetchJobSeekerData(user.jobSeekerId);
         }
@@ -174,6 +214,18 @@ const HomePage = () => {
                 return <MyApplications
                     userId={user?.id}
                     onRefresh={refreshData}
+                    switchSection={setActiveSection}
+                />;
+            case 'assessments':
+                return <MyAssessments
+                    userId={user?.id}
+                    onRefresh={refreshData}
+                    onPendingCountChange={setPendingAssessmentCount}
+                    switchSection={setActiveSection}
+                />;
+            case 'video-interviews':
+                return <VideoInterviews
+                    userId={user?.id}
                     switchSection={setActiveSection}
                 />;
             case 'profile':
@@ -247,6 +299,20 @@ const HomePage = () => {
                                 onClick={() => setActiveSection('applications')}
                             >
                                 My Applications
+                            </li>
+                            <li
+                                className={activeSection === 'assessments' ? 'active' : ''}
+                                onClick={() => setActiveSection('assessments')}
+                            >
+                                <span className="dashboard-nav-label">My Assessments</span>
+                                {pendingAssessmentCount > 0 && <span className="nav-notification-dot"></span>}
+                            </li>
+                            <li
+                                className={activeSection === 'video-interviews' ? 'active' : ''}
+                                onClick={() => setActiveSection('video-interviews')}
+                            >
+                                <span className="dashboard-nav-label">Video Interviews</span>
+                                {pendingVideoInterviewCount > 0 && <span className="nav-notification-dot"></span>}
                             </li>
                             <li
                                 className={activeSection === 'profile' ? 'active' : ''}

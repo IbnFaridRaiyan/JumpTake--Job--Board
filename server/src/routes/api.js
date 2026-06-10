@@ -8,6 +8,7 @@ const employerController = require('../controllers/employerController');
 const Company = require('../models/Company');
 const JobSeeker = require('../models/JobSeeker');
 const applicationController = require('../controllers/applicationController');
+const assessmentController = require('../controllers/assessmentController');
 
 
 
@@ -116,6 +117,20 @@ router.post('/applications', applicationController.createApplication);
 router.get('/applications/company/:companyId', applicationController.getCompanyApplications);
 router.get('/applications/user/:userId', applicationController.getUserApplications);
 router.put('/applications/:id', applicationController.updateApplication);
+
+router.get('/assessments/company/:companyId', assessmentController.getCompanyAssessments);
+router.get('/assessments/company/:companyId/assignments', assessmentController.getCompanyAssessmentAssignments);
+router.get('/assessments/user/:userId', assessmentController.getUserAssessmentAssignments);
+router.post('/assessments', assessmentController.createAssessment);
+router.post('/assessments/:id/send', assessmentController.sendAssessment);
+router.put('/assessments/:id', assessmentController.updateAssessment);
+router.delete('/assessments/:id', assessmentController.deleteAssessment);
+router.put('/assessment-assignments/:assignmentId/submit', assessmentController.submitAssessmentAssignment);
+router.put('/assessment-assignments/:assignmentId/video-interview', assessmentController.sendVideoInterviewInvitation);
+router.put('/assessment-assignments/:assignmentId/video-interview/respond', assessmentController.respondToVideoInterviewInvitation);
+router.put('/assessment-assignments/:assignmentId/hire', assessmentController.hireCandidateFromAssessment);
+router.put('/assessment-assignments/:assignmentId/reject', assessmentController.rejectCandidateFromAssessment);
+router.put('/assessment-assignments/:assignmentId/complete-interview', assessmentController.finalizeScheduledInterviewDecision);
 
 
 router.put('/users/:userId/email', userController.updateEmail);

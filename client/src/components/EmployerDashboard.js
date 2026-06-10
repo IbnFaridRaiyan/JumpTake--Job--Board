@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import PostJob from './PostJob';
 import ManageJobs from './ManageJobs';
 import ManageApplications from './ManageApplications';
+import MakeAssessment from './MakeAssessment';
 import CompanyProfile from './CompanyProfile';
 import TalentPool from './TalentPool';
 import EmployerSettings from './EmployerSettings';
@@ -155,6 +156,11 @@ const EmployerDashboard = () => {
                     companyId={employer?.companyId}
                     onBack={() => setActiveSection('dashboard')}
                 />;
+            case 'make-assessment':
+                return <MakeAssessment
+                    companyId={employer?.companyId}
+                    onBack={() => setActiveSection('dashboard')}
+                />;
             case 'company-profile':
                 return <CompanyProfile
                     company={companyData}
@@ -226,6 +232,17 @@ const EmployerDashboard = () => {
                                     onClick={() => setActiveSection('manage-applications')}
                                 >
                                     View Applications
+                                </button>
+                            </div>
+
+                            <div className="dashboard-card">
+                                <h3>Make an Assessment</h3>
+                                <p>Create question sets for candidates with options or written responses</p>
+                                <button
+                                    className="card-button"
+                                    onClick={() => setActiveSection('make-assessment')}
+                                >
+                                    Open Builder
                                 </button>
                             </div>
 
@@ -326,6 +343,12 @@ const EmployerDashboard = () => {
                                 onClick={() => setActiveSection('manage-applications')}
                             >
                                 Manage Applications
+                            </li>
+                            <li
+                                className={activeSection === 'make-assessment' ? 'active' : ''}
+                                onClick={() => setActiveSection('make-assessment')}
+                            >
+                                Make an Assessment
                             </li>
                             <li
                                 className={activeSection === 'talent-pool' ? 'active' : ''}

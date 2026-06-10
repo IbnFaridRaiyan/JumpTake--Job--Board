@@ -99,6 +99,10 @@ const MyApplications = ({ userId, onRefresh, switchSection }) => {
         return application?.job?.company?.name || 'Company unavailable';
     };
 
+    const getJobNumber = (application) => {
+        return application?.job?.jobNumber || 'Generating...';
+    };
+
     const formatFoundedDate = (founded) => {
         if (!founded) {
             return 'Not specified';
@@ -121,7 +125,11 @@ const MyApplications = ({ userId, onRefresh, switchSection }) => {
                 return 'status-badge-review';
             case 'Accepted':
                 return 'status-badge-accepted';
+            case 'On Hold':
+                return 'status-badge-review';
             case 'Rejected':
+                return 'status-badge-rejected';
+            case 'Unsuccessful':
                 return 'status-badge-rejected';
             case 'Withdrawn':
                 return 'status-badge-withdrawn';
@@ -250,6 +258,7 @@ const MyApplications = ({ userId, onRefresh, switchSection }) => {
                     <div className="profile-section">
                         <h3>Job Information</h3>
                         <p><strong>Job Title:</strong> {getJobTitle(selectedApplication)}</p>
+                        <p><strong>Job Number:</strong> {getJobNumber(selectedApplication)}</p>
                         <p><strong>Company:</strong> {getCompanyName(selectedApplication)}</p>
                         <p><strong>Applied On:</strong> {new Date(selectedApplication.createdAt).toLocaleDateString()}</p>
                     </div>
@@ -307,6 +316,7 @@ const MyApplications = ({ userId, onRefresh, switchSection }) => {
                         <thead>
                             <tr>
                                 <th>Job Title</th>
+                                <th>Job Number</th>
                                 <th>Company</th>
                                 <th>Applied On</th>
                                 <th>Status</th>
@@ -317,6 +327,7 @@ const MyApplications = ({ userId, onRefresh, switchSection }) => {
                             {applications.map(app => (
                                 <tr key={app._id}>
                                     <td>{getJobTitle(app)}</td>
+                                    <td>{getJobNumber(app)}</td>
                                     <td>{getCompanyName(app)}</td>
                                     <td>{new Date(app.createdAt).toLocaleDateString()}</td>
                                     <td>
@@ -326,7 +337,7 @@ const MyApplications = ({ userId, onRefresh, switchSection }) => {
                                     </td>
                                     <td>
                                         <div className="application-actions">
-                                            {app.status !== 'Withdrawn' && app.status !== 'Rejected' && (
+                                            {app.status !== 'Withdrawn' && app.status !== 'Rejected' && app.status !== 'Unsuccessful' && (
                                                 <button
                                                     className="withdraw-button"
                                                     onClick={() => handleWithdraw(app._id)}

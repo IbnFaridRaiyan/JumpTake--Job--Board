@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 
 const JobSchema = new mongoose.Schema({
+  jobNumber: {
+    type: String,
+    trim: true,
+    unique: true,
+    sparse: true
+  },
   title: {
     type: String,
     required: [true, 'Job title is required'],

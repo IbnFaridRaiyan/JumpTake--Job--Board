@@ -1,6 +1,10 @@
 const Application = require('../models/Application');
 const Job = require('../models/Job');
 const User = require('../models/User');
+const {
+    ensureReferenceNumbers,
+    generateUniqueReferenceNumber
+} = require('../utils/referenceNumbers');
 
 const createApplication = async (req, res) => {
     try {
@@ -31,6 +35,7 @@ const createApplication = async (req, res) => {
         
       
         const application = new Application({
+            candidateNumber: await generateUniqueReferenceNumber(Application, 'candidateNumber', 'CAN'),
             job: jobId,
             user: userId,
             message: message || '',
@@ -41,7 +46,8 @@ const createApplication = async (req, res) => {
         
         return res.status(201).json({
             message: 'Application submitted successfully',
-            applicationId: application._id
+            applicationId: application._id,
+            candidateNumber: application.candidateNumber
         });
     } catch (error) {
         console.error('Error creating application:', error.message);
@@ -67,6 +73,8 @@ const getUserApplications = async (req, res) => {
                 }
             })
             .sort({ createdAt: -1 });
+
+        await ensureReferenceNumbers(applications, Application, 'candidateNumber', 'CAN');
             
         return res.status(200).json(applications);
     } catch (error) {
@@ -107,6 +115,8 @@ const getCompanyApplications = async (req, res) => {
                 }
             })
             .sort({ createdAt: -1 });
+
+        await ensureReferenceNumbers(applications, Application, 'candidateNumber', 'CAN');
 
         return res.status(200).json(applications);
     } catch (error) {

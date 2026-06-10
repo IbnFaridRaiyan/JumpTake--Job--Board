@@ -524,6 +524,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
                                                 )}
                                             </div>
                                             <div className="job-card-body">
+                                                <p className="job-number">Job Number: {job.jobNumber || 'Generating...'}</p>
                                                 <p className="job-location">{job.location}</p>
                                                 <p className="job-type">{job.jobType}</p>
                                                 {job.salary && <p className="job-salary">{job.salary}</p>}
@@ -645,6 +646,9 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData }) => {
                                 )}
                             </div>
                             <div className="preview-job-meta">
+                                <span className="preview-job-number">
+                                    <i className="type-icon">#</i> {previewJob.jobNumber || 'Generating...'}
+                                </span>
                                 <span className="preview-job-location">
                                     <i className="location-icon">📍</i> {previewJob.location}
                                 </span>

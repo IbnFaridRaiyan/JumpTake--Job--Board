@@ -48,6 +48,10 @@ const ManageApplications = ({ companyId, onBack }) => {
         return application?.user?.jobSeekerId || null;
     };
 
+    const getCandidateNumber = (application) => {
+        return application?.candidateNumber || 'Not assigned';
+    };
+
     const getStatusClassName = (status) => {
         return status ? status.toLowerCase().replace(/\s+/g, '-') : 'submitted';
     };
@@ -390,7 +394,10 @@ const ManageApplications = ({ companyId, onBack }) => {
                             <div className="application-card" key={application._id}>
                                 <div className="application-card-header">
                                     <div>
-                                        <h3>{candidate?.name || 'Unnamed Candidate'}</h3>
+                                        <h3>
+                                            {candidate?.name || 'Unnamed Candidate'} {' '}
+                                            <span className="candidate-reference-number">({getCandidateNumber(application)})</span>
+                                        </h3>
                                         <p>{candidate?.email || application.user?.email || 'Email not available'}</p>
                                     </div>
                                     <span className={`status-badge ${getStatusClassName(application.status)}`}>

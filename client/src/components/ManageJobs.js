@@ -132,6 +132,7 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack }) => {
                         <table>
                             <thead>
                                 <tr>
+                                    <th>Job Number</th>
                                     <th>Job Title</th>
                                     <th>Location</th>
                                     <th>Type</th>
@@ -143,6 +144,7 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack }) => {
                             <tbody>
                                 {jobs.map(job => (
                                     <tr key={job._id}>
+                                        <td className="date-cell">{job.jobNumber || 'Generating...'}</td>
                                         <td>
                                             <div className="job-title-cell" onClick={() => handleEdit(job)}>
                                                 {job.title}

@@ -1,6 +1,11 @@
 const Job = require('../models/Job');
 const Company = require('../models/Company');
 const JobSeeker = require('../models/JobSeeker');
+const {
+    ensureReferenceNumber,
+    ensureReferenceNumbers,
+    generateUniqueReferenceNumber
+} = require('../utils/referenceNumbers');
 
 const getAllJobs = async (req, res) => {
     try {
@@ -8,6 +13,8 @@ const getAllJobs = async (req, res) => {
         const jobs = await Job.find({ active: true })
             .populate('company', 'name industry headquarters')
             .sort({ createdAt: -1 });
+
+        await ensureReferenceNumbers(jobs, Job, 'jobNumber', 'JOB');
             
         return res.status(200).json(jobs);
     } catch (error) {
@@ -28,6 +35,8 @@ const getJobById = async (req, res) => {
         if (!job) {
             return res.status(404).json({ error: 'Job not found' });
         }
+
+        await ensureReferenceNumber(job, Job, 'jobNumber', 'JOB');
         
         return res.status(200).json(job);
     } catch (error) {
@@ -70,6 +79,7 @@ const createJob = async (req, res) => {
         
         
         const job = new Job({
+            jobNumber: await generateUniqueReferenceNumber(Job, 'jobNumber', 'JOB'),
             title,
             description,
             company: companyId,
@@ -87,7 +97,8 @@ const createJob = async (req, res) => {
             message: 'Job created successfully',
             job: {
                 id: job._id,
-                title: job.title
+                title: job.title,
+                jobNumber: job.jobNumber
             }
         });
     } catch (error) {
@@ -183,6 +194,8 @@ const getCompanyJobs = async (req, res) => {
         // Find all jobs for this company
         const jobs = await Job.find({ company: companyId })
             .sort({ createdAt: -1 });
+
+        await ensureReferenceNumbers(jobs, Job, 'jobNumber', 'JOB');
             
         return res.status(200).json(jobs);
     } catch (error) {
@@ -224,6 +237,8 @@ const getRecommendedJobs = async (req, res) => {
         const jobs = await Job.find({ active: true })
             .populate('company', 'name industry headquarters')
             .sort({ createdAt: -1 });
+
+        await ensureReferenceNumbers(jobs, Job, 'jobNumber', 'JOB');
         
         // Calculate match scores for all jobs
         const scoredJobs = jobs.map(job => {

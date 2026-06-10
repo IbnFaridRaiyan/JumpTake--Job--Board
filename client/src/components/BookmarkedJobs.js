@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 
 const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
     const [bookmarks, setBookmarks] = useState([]);
+    const [appliedJobIds, setAppliedJobIds] = useState([]);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
 
     useEffect(() => {
         fetchBookmarks();
+        fetchAppliedJobs();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userId]);
 
@@ -67,6 +69,39 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
         }
     };
 
+    const fetchAppliedJobs = async () => {
+        if (!userId) {
+            setAppliedJobIds([]);
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/applications/user/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch applied jobs');
+            }
+
+            const data = await response.json();
+            const uniqueAppliedJobIds = [...new Set(
+                (Array.isArray(data) ? data : [])
+                    .filter((application) => application?.status !== 'Withdrawn')
+                    .map((application) => application?.job?._id || application?.job)
+                    .filter(Boolean)
+                    .map((jobId) => String(jobId))
+            )];
+
+            setAppliedJobIds(uniqueAppliedJobIds);
+        } catch (appliedJobsError) {
+            console.error('Error fetching applied jobs for bookmarked jobs:', appliedJobsError);
+        }
+    };
+
     return (
         <div className="applications-container">
             <div className="section-header">
@@ -98,6 +133,8 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
                 <div className="applications-list">
                     {bookmarks.map((bookmark) => {
                         const job = bookmark.job;
+                        const hasApplied = appliedJobIds.includes(String(job?._id));
+
                         return (
                             <div className="application-card" key={bookmark._id}>
                                 <div className="application-card-header">
@@ -119,8 +156,8 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
                                     <button className="view-profile-btn secondary-action" onClick={() => openJob(job?._id, 'preview')}>
                                         Open Job
                                     </button>
-                                    <button className="view-profile-btn" onClick={() => openJob(job?._id, 'apply')}>
-                                        Apply Now
+                                    <button className="view-profile-btn" onClick={() => openJob(job?._id, 'apply')} disabled={hasApplied}>
+                                        {hasApplied ? 'Applied' : 'Apply Now'}
                                     </button>
                                 </div>
                             </div>

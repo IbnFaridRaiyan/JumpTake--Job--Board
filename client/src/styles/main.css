@@ -2355,7 +2355,7 @@ textarea:focus {
 .job-feed-header {
   display: flex;
   flex-direction: column;
-  padding: 24px 30px;
+  padding: 24px 20px;
   background: linear-gradient(120deg, #f9fafb 0%, #ffffff 100%);
   border-bottom: 1px solid #f0f0f0;
 }
@@ -2417,7 +2417,7 @@ textarea:focus {
 }
 
 .job-list {
-  padding: 20px 30px;
+  padding: 20px 20px;
   overflow-y: auto;
   flex: 1;
 }
@@ -2429,7 +2429,7 @@ textarea:focus {
 }
 
 .job-card-header {
-  padding: 20px 25px 15px;
+  padding: 20px 18px 15px;
   border-bottom: 1px solid #f5f5f5;
   position: relative;
 }
@@ -2866,6 +2866,10 @@ textarea:focus {
   flex-wrap: wrap;
   gap: 10px;
   border-top: 1px solid #262626;
+}
+
+.application-workspace-actions .secondary-button {
+  color: #000000 !important;
 }
 
 .bookmark-star-button {
@@ -8571,7 +8575,7 @@ td,
 }
 
 .job-list {
-  padding-inline: 20px;
+  padding-inline: 14px;
 }
 
 .job-card-header h3,
@@ -8704,7 +8708,7 @@ td,
   }
 
   .job-feed-container .job-list {
-    padding-inline: 10px;
+    padding-inline: 8px;
     padding-top: 16px;
     padding-bottom: 20px;
   }
@@ -8715,7 +8719,7 @@ td,
   }
 
   .job-feed-container .job-card-header {
-    padding: 18px 18px 12px;
+    padding: 16px 14px 12px;
   }
 
   .job-feed-container .job-card-header h3 {
@@ -8730,7 +8734,7 @@ td,
   }
 
   .job-feed-container .job-card-body {
-    padding: 14px 18px 18px;
+    padding: 14px 14px 18px;
     gap: 10px 12px;
   }
 
@@ -8750,7 +8754,7 @@ td,
   }
 
   .job-feed-container .job-card-footer {
-    padding: 14px 18px;
+    padding: 14px;
   }
 
   .job-feed-container .posted-date {

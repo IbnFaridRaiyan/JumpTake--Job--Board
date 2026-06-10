@@ -6,7 +6,7 @@ import MyAssessments from './MyAssessments';
 import VideoInterviews from './VideoInterviews';
 import UserProfile from './UserProfile';
 import UserSettings from './UserSettings';
-import logo from './media/logo.PNG';
+import logo from './media/logo.png';
 
 const HomePage = () => {
     const [activeSection, setActiveSection] = useState('job-feed');

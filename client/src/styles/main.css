@@ -1,4 +1,6 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Share+Tech&display=swap');
+
 :root {
   
   --primary-color: #42a49b;
@@ -36,11 +38,44 @@
 }
 
 body {
-  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'Share Tech', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   background-color: var(--off-white-darker);
   color: var(--text-dark);
   line-height: 1.6;
   font-size: 16px;
+}
+
+button,
+.submit-button,
+.login-button,
+.candidate-login-button,
+.role-button,
+.create-account-button,
+.search-button,
+.apply-button,
+.preview-apply-button,
+.submit-application-button,
+.modern-login-submit,
+.action-button,
+.card-button,
+.settings-button,
+.secondary-button,
+.back-button,
+.view-button,
+.refresh-button,
+.preview-company-button,
+.logout-button,
+.withdraw-button,
+.confirm-delete-button,
+.cancel-edit-button,
+.employer-button,
+.employer-login-button,
+.spotlight-button,
+.save-profile-button,
+.cancel-edit-button,
+.delete-account-button,
+.open-application-button {
+  font-family: 'Lexend', 'Share Tech', 'Segoe UI', sans-serif;
 }
 
 
@@ -625,7 +660,7 @@ header.centered .header-subtitle {
   background-color: var(--off-white-lightest);
   border: 1px solid var(--border-color);
   border-radius: 4px;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Share Tech', 'Segoe UI', sans-serif;
   font-size: 14px;
   line-height: 1.6;
 }
@@ -868,10 +903,11 @@ textarea:focus {
   
   .button-container {
     flex-direction: column;
+    align-items: center;
   }
   
   .role-button {
-    width: 100%;
+    width: min(100%, 280px);
   }
   
   .header-content {
@@ -5476,6 +5512,12 @@ textarea:focus {
   
   .about-intro {
     font-size: 16px;
+  }
+
+  .about-button {
+    white-space: nowrap;
+    font-size: 12px;
+    padding: 10px 12px;
   }
 }
 

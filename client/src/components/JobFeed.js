@@ -1116,6 +1116,14 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser })
                         </div>
 
                         <div className="job-preview-content">
+                            <div className="candidate-job-preview-scroll-area">
+                                <div className="candidate-job-preview-mobile-meta">
+                                    <span><strong>Job Number:</strong> {previewJob.jobNumber || 'Generating...'}</span>
+                                    <span><strong>Company:</strong> {previewJob.company.name}</span>
+                                    <span><strong>Location:</strong> {previewJob.location || 'Not specified'}</span>
+                                    <span><strong>Type:</strong> {previewJob.jobType || 'Not specified'}</span>
+                                    {previewJob.salary && <span><strong>Salary:</strong> {previewJob.salary}</span>}
+                                </div>
                             <div className="preview-section">
                                 <h3>Company Details</h3>
                                 <p><strong>Founded:</strong> {formatFoundedDate(selectedCompany.founded)}</p>
@@ -1158,8 +1166,8 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser })
                     </div>
                 </div>
             ) : previewJob && (
-                <div className="job-preview-overlay">
-                    <div className="job-preview-modal" onClick={(e) => e.stopPropagation()}>
+                <div className="job-preview-overlay candidate-job-preview-overlay">
+                    <div className="job-preview-modal candidate-job-preview-modal" onClick={(e) => e.stopPropagation()}>
                         <div className="mobile-job-preview-topbar">
                             <h2>{previewJob.title}</h2>
                             <button
@@ -1268,8 +1276,9 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser })
                                     </p>
                                 )}
                             </div>
+                            </div>
                             {companyError && <div className="error-message">{companyError}</div>}
-                            <div className="job-preview-actions job-preview-actions-inline">
+                            <div className="job-preview-actions job-preview-actions-inline candidate-job-preview-actions">
                                 <div className="preview-action-buttons">
                                     <button
                                         className="preview-company-button"

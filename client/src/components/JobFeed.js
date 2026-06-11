@@ -1161,8 +1161,15 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser })
                 <div className="job-preview-overlay">
                     <div className="job-preview-modal" onClick={(e) => e.stopPropagation()}>
                         <div className="mobile-job-preview-topbar">
-                            <button className="back-button" onClick={closePreview}>Back</button>
                             <h2>{previewJob.title}</h2>
+                            <button
+                                type="button"
+                                className="mobile-job-preview-close"
+                                onClick={closePreview}
+                                aria-label="Close job preview"
+                            >
+                                ×
+                            </button>
                         </div>
                         <div className="job-preview-header">
                             <button className="preview-close-btn" onClick={closePreview}>×</button>
@@ -1262,33 +1269,32 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser })
                                 )}
                             </div>
                             {companyError && <div className="error-message">{companyError}</div>}
-                        </div>
-                        
-                        <div className="job-preview-actions">
-                            <div className="preview-action-buttons">
-                                <button
-                                    className="preview-company-button"
-                                    onClick={handleViewCompany}
-                                    disabled={companyLoading}
-                                >
-                                    {companyLoading ? 'Opening...' : 'View Company'}
-                                </button>
-                                <button 
-                                    className="preview-apply-button" 
-                                    onClick={(e) => handleApplyClick(previewJob, e)}
-                                    disabled={appliedJobIds.includes(String(previewJob._id))}
-                                >
-                                    {appliedJobIds.includes(String(previewJob._id)) ? 'Applied' : 'Apply for this Job'}
-                                </button>
-                                <button
-                                    className={`preview-bookmark-button ${bookmarkedJobIds.includes(String(previewJob._id)) ? 'active' : ''}`}
-                                    onClick={(e) => handleToggleBookmark(previewJob, e)}
-                                >
-                                    {bookmarkedJobIds.includes(String(previewJob._id)) ? 'Bookmarked' : 'Bookmark Job'}
-                                </button>
-                            </div>
-                            <div className="preview-post-date">
-                                Posted: {new Date(previewJob.createdAt).toLocaleDateString()}
+                            <div className="job-preview-actions job-preview-actions-inline">
+                                <div className="preview-action-buttons">
+                                    <button
+                                        className="preview-company-button"
+                                        onClick={handleViewCompany}
+                                        disabled={companyLoading}
+                                    >
+                                        {companyLoading ? 'Opening...' : 'View Company'}
+                                    </button>
+                                    <button
+                                        className="preview-apply-button"
+                                        onClick={(e) => handleApplyClick(previewJob, e)}
+                                        disabled={appliedJobIds.includes(String(previewJob._id))}
+                                    >
+                                        {appliedJobIds.includes(String(previewJob._id)) ? 'Applied' : 'Apply for this Job'}
+                                    </button>
+                                    <button
+                                        className={`preview-bookmark-button ${bookmarkedJobIds.includes(String(previewJob._id)) ? 'active' : ''}`}
+                                        onClick={(e) => handleToggleBookmark(previewJob, e)}
+                                    >
+                                        {bookmarkedJobIds.includes(String(previewJob._id)) ? 'Bookmarked' : 'Bookmark Job'}
+                                    </button>
+                                </div>
+                                <div className="preview-post-date">
+                                    Posted: {new Date(previewJob.createdAt).toLocaleDateString()}
+                                </div>
                             </div>
                         </div>
                     </div>

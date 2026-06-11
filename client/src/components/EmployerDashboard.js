@@ -12,6 +12,7 @@ import Inbox from './Inbox';
 import AboutJumpTake from './AboutJumpTake';
 import DashboardSearch from './DashboardSearch';
 import PerformanceAnalytics from './PerformanceAnalytics';
+import PortalSpaceAnimation from './PortalSpaceAnimation';
 import logo from './media/logo3.png';
 
 const EMPLOYER_SECTION_IDS = new Set([
@@ -694,6 +695,7 @@ const EmployerDashboard = () => {
                             >
                                 Log Out
                             </li>
+                            <PortalSpaceAnimation />
                         </ul>
                     </nav>
                 </div>

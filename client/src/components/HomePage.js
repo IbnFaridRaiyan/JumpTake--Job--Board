@@ -15,6 +15,7 @@ import InterestedJobSuggestion from './InterestedJobSuggestion';
 import AboutJumpTake from './AboutJumpTake';
 import DashboardSearch from './DashboardSearch';
 import PerformanceAnalytics from './PerformanceAnalytics';
+import PortalSpaceAnimation from './PortalSpaceAnimation';
 import logo from './media/logo3.png';
 
 const JOB_INTEREST_OPTIONS = [
@@ -825,6 +826,7 @@ const HomePage = () => {
                             >
                                 Log Out
                             </li>
+                            <PortalSpaceAnimation />
                         </ul>
                     </nav>
                 </div>

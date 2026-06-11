@@ -8949,6 +8949,88 @@ td,
   }
 }
 
+/* Final emoji picker fixes: pop out of the composer and keep emoji-only messages usable */
+.messenger-compose-card,
+.contact-candidate-panel,
+.rich-message-editor-messagebox,
+.rich-message-editor-messagebox .rich-message-toolbar,
+.messageBox,
+.fileUploadWrapper,
+.emojiUploadWrapper {
+  overflow: visible !important;
+}
+
+.emojiUploadWrapper {
+  position: relative !important;
+  z-index: 20 !important;
+}
+
+.emoji-picker-popover {
+  position: absolute !important;
+  left: 0 !important;
+  bottom: calc(100% + 18px) !important;
+  z-index: 5000 !important;
+  display: grid !important;
+  grid-template-columns: repeat(7, 42px) !important;
+  gap: 8px !important;
+  width: max-content !important;
+  max-width: min(360px, 82vw) !important;
+  max-height: none !important;
+  padding: 12px !important;
+  overflow: visible !important;
+  background: #fff !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.34) !important;
+}
+
+.emoji-picker-option {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.emoji-picker-option img {
+  width: 32px !important;
+  height: 32px !important;
+  object-fit: contain !important;
+  image-rendering: auto !important;
+}
+
+@media (max-width: 768px) {
+  .emoji-picker-popover {
+    left: -0.35rem !important;
+    bottom: calc(100% + 16px) !important;
+    display: flex !important;
+    grid-template-columns: none !important;
+    width: min(310px, 82vw) !important;
+    max-width: min(310px, 82vw) !important;
+    gap: 10px !important;
+    padding: 12px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: thin !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .emoji-picker-option {
+    flex: 0 0 50px !important;
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
+  }
+
+  .emoji-picker-option img {
+    width: 40px !important;
+    height: 40px !important;
+  }
+}
+
 /* Loading animations should run without companion text */
 .loading-container p,
 .job-list-loading p,
@@ -8998,6 +9080,550 @@ button .loading-spinner {
     font-size: 1.7rem !important;
     line-height: 1 !important;
     z-index: 30 !important;
+  }
+}
+
+/* Final requested color fixes */
+.terms-content {
+  background: #000 !important;
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+.rich-message-toolbar button,
+.messenger-compose-card .rich-message-toolbar button,
+.contact-candidate-panel .rich-message-toolbar button,
+.candidate-dashboard-header ~ .dashboard-container .rich-message-toolbar button {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+/* Uiverse-style chat message input with emoji picker */
+.rich-message-editor-messagebox {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.75rem !important;
+}
+
+.messageBox {
+  width: 100% !important;
+  min-height: 44px !important;
+  height: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: #2d2d2d !important;
+  padding: 0 15px !important;
+  border-radius: 10px !important;
+  border: 1px solid rgb(63, 63, 63) !important;
+  position: relative !important;
+}
+
+.messageBox:focus-within {
+  border: 1px solid rgb(110, 110, 110) !important;
+}
+
+.fileUploadWrapper {
+  width: fit-content !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-family: Arial, Helvetica, sans-serif !important;
+  position: relative !important;
+}
+
+.emoji-trigger-button {
+  cursor: pointer !important;
+  width: fit-content !important;
+  height: fit-content !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: #9f9f9f !important;
+  padding: 0 !important;
+}
+
+.emoji-trigger-button svg {
+  height: 18px !important;
+  width: 18px !important;
+}
+
+.emoji-trigger-button svg path,
+.emoji-trigger-button svg circle {
+  transition: all 0.3s !important;
+}
+
+.emoji-trigger-button:hover svg path,
+.emoji-trigger-button:hover svg circle {
+  stroke: #fff !important;
+  fill: #3c3c3c !important;
+}
+
+.emoji-trigger-button:hover .tooltip {
+  display: block !important;
+  opacity: 1 !important;
+}
+
+.tooltip {
+  position: absolute !important;
+  top: -40px !important;
+  display: none !important;
+  opacity: 0 !important;
+  color: white !important;
+  font-size: 10px !important;
+  text-wrap: nowrap !important;
+  background-color: #000 !important;
+  padding: 6px 10px !important;
+  border: 1px solid #3c3c3c !important;
+  border-radius: 5px !important;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.596) !important;
+  transition: all 0.3s !important;
+}
+
+.messageInput,
+.rich-message-editor-messagebox .rich-message-input {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  min-height: 40px !important;
+  height: auto !important;
+  max-height: 120px !important;
+  overflow-y: auto !important;
+  background-color: transparent !important;
+  outline: none !important;
+  border: none !important;
+  padding: 10px 10px !important;
+  color: white !important;
+}
+
+.sendButton {
+  width: fit-content !important;
+  height: 100% !important;
+  background-color: transparent !important;
+  outline: none !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.3s !important;
+  color: #9f9f9f !important;
+  padding: 0 0 0 8px !important;
+}
+
+.sendButton svg {
+  height: 18px !important;
+  width: 18px !important;
+  transition: all 0.3s !important;
+}
+
+.sendButton svg path {
+  transition: all 0.3s !important;
+}
+
+.messageInput:focus ~ .sendButton svg path,
+.messageInput:valid ~ .sendButton svg path,
+.sendButton:hover svg path {
+  fill: #3c3c3c !important;
+  stroke: white !important;
+}
+
+.emoji-picker-popover {
+  position: absolute !important;
+  left: 0 !important;
+  bottom: calc(100% + 12px) !important;
+  z-index: 50 !important;
+  display: grid !important;
+  grid-template-columns: repeat(7, 32px) !important;
+  gap: 6px !important;
+  width: max-content !important;
+  max-width: min(260px, 78vw) !important;
+  padding: 10px !important;
+  background: #fff !important;
+  border: 1px solid rgba(0, 0, 0, 0.18) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.35) !important;
+}
+
+.emoji-picker-option {
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  padding: 3px !important;
+  cursor: pointer !important;
+}
+
+.emoji-picker-option:hover {
+  background: #eeeeee !important;
+}
+
+.emoji-picker-option img,
+.chat-emoji-inline {
+  width: 24px !important;
+  height: 24px !important;
+  object-fit: contain !important;
+  vertical-align: middle !important;
+}
+
+@media (max-width: 768px) {
+  .emoji-picker-popover {
+    grid-template-columns: repeat(5, 30px) !important;
+    max-width: 220px !important;
+  }
+}
+
+/* Portal astronaut animation below logout */
+@keyframes portal-snow {
+  0% {
+    opacity: 0;
+    transform: translateY(0px);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(650px);
+  }
+}
+
+@keyframes portal-astronaut {
+  0% {
+    transform: rotate(0deg) scale(0.42);
+  }
+
+  100% {
+    transform: rotate(360deg) scale(0.42);
+  }
+}
+
+.dashboard-nav .portal-space-animation {
+  position: relative;
+  display: block;
+  height: 220px;
+  margin: 0.9rem 0 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background: radial-gradient(circle at 50% 45%, rgba(99, 192, 184, 0.16), transparent 42%), rgba(0, 0, 0, 0.22);
+  pointer-events: none;
+}
+
+.portal-space-animation .box-of-star1,
+.portal-space-animation .box-of-star2,
+.portal-space-animation .box-of-star3,
+.portal-space-animation .box-of-star4 {
+  width: 100%;
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  top: -420px;
+  transform: translateY(0px);
+  height: 700px;
+}
+
+.portal-space-animation .box-of-star1 {
+  animation: portal-snow 5s linear infinite;
+}
+
+.portal-space-animation .box-of-star2 {
+  animation: portal-snow 5s -1.64s linear infinite;
+}
+
+.portal-space-animation .box-of-star3 {
+  animation: portal-snow 5s -2.30s linear infinite;
+}
+
+.portal-space-animation .box-of-star4 {
+  animation: portal-snow 5s -3.30s linear infinite;
+}
+
+.portal-space-animation .star {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background-color: #fff;
+  position: absolute;
+  z-index: 10;
+  opacity: 0.7;
+}
+
+.portal-space-animation .star:before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #fff;
+  position: absolute;
+  z-index: 10;
+  top: 80px;
+  left: 70px;
+  opacity: 0.7;
+}
+
+.portal-space-animation .star:after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #fff;
+  position: absolute;
+  z-index: 10;
+  top: 8px;
+  left: 170px;
+  opacity: 0.9;
+}
+
+.portal-space-animation .star-position1 {
+  top: 30px;
+  left: 20px;
+}
+
+.portal-space-animation .star-position2 {
+  top: 110px;
+  left: 90px;
+}
+
+.portal-space-animation .star-position3 {
+  top: 60px;
+  left: 160px;
+}
+
+.portal-space-animation .star-position4 {
+  top: 120px;
+  left: 230px;
+}
+
+.portal-space-animation .star-position5 {
+  top: 20px;
+  left: 45px;
+}
+
+.portal-space-animation .star-position6 {
+  top: 90px;
+  left: 130px;
+}
+
+.portal-space-animation .star-position7 {
+  top: 30px;
+  left: 210px;
+}
+
+.portal-space-animation .astronaut {
+  width: 250px;
+  height: 300px;
+  position: absolute;
+  z-index: 11;
+  top: calc(50% - 150px);
+  left: calc(50% - 125px);
+  animation: portal-astronaut 5s linear infinite;
+}
+
+.portal-space-animation .schoolbag {
+  width: 100px;
+  height: 150px;
+  position: absolute;
+  z-index: 1;
+  top: calc(50% - 75px);
+  left: calc(50% - 50px);
+  background-color: #94b7ca;
+  border-radius: 50px 50px 0 0 / 30px 30px 0 0;
+}
+
+.portal-space-animation .head {
+  width: 97px;
+  height: 80px;
+  position: absolute;
+  z-index: 3;
+  background: -webkit-linear-gradient(left, #e3e8eb 0%, #e3e8eb 50%, #fbfdfa 50%, #fbfdfa 100%);
+  border-radius: 50%;
+  top: 34px;
+  left: calc(50% - 47.5px);
+}
+
+.portal-space-animation .head:after {
+  content: "";
+  width: 60px;
+  height: 50px;
+  position: absolute;
+  top: calc(50% - 25px);
+  left: calc(50% - 30px);
+  background: -webkit-linear-gradient(top, #15aece 0%, #15aece 50%, #0391bf 50%, #0391bf 100%);
+  border-radius: 15px;
+}
+
+.portal-space-animation .head:before {
+  content: "";
+  width: 12px;
+  height: 25px;
+  position: absolute;
+  top: calc(50% - 12.5px);
+  left: -4px;
+  background-color: #618095;
+  border-radius: 5px;
+  box-shadow: 92px 0px 0px #618095;
+}
+
+.portal-space-animation .body {
+  width: 85px;
+  height: 100px;
+  position: absolute;
+  z-index: 2;
+  background-color: #fffbff;
+  border-radius: 40px / 20px;
+  top: 105px;
+  left: calc(50% - 41px);
+  background: -webkit-linear-gradient(left, #e3e8eb 0%, #e3e8eb 50%, #fbfdfa 50%, #fbfdfa 100%);
+}
+
+.portal-space-animation .panel {
+  width: 60px;
+  height: 40px;
+  position: absolute;
+  top: 20px;
+  left: calc(50% - 30px);
+  background-color: #b7cceb;
+}
+
+.portal-space-animation .panel:before {
+  content: "";
+  width: 30px;
+  height: 5px;
+  position: absolute;
+  top: 9px;
+  left: 7px;
+  background-color: #fbfdfa;
+  box-shadow: 0px 9px 0px #fbfdfa, 0px 18px 0px #fbfdfa;
+}
+
+.portal-space-animation .panel:after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  position: absolute;
+  top: 9px;
+  right: 7px;
+  background-color: #fbfdfa;
+  border-radius: 50%;
+  box-shadow: 0px 14px 0px 2px #fbfdfa;
+}
+
+.portal-space-animation .arm {
+  width: 80px;
+  height: 30px;
+  position: absolute;
+  top: 121px;
+  z-index: 2;
+}
+
+.portal-space-animation .arm-left {
+  left: 30px;
+  background-color: #e3e8eb;
+  border-radius: 0 0 0 39px;
+}
+
+.portal-space-animation .arm-right {
+  right: 30px;
+  background-color: #fbfdfa;
+  border-radius: 0 0 39px 0;
+}
+
+.portal-space-animation .arm-left:before,
+.portal-space-animation .arm-right:before {
+  content: "";
+  width: 30px;
+  height: 70px;
+  position: absolute;
+  top: -40px;
+}
+
+.portal-space-animation .arm-left:before {
+  border-radius: 50px 50px 0px 120px / 50px 50px 0 110px;
+  left: 0;
+  background-color: #e3e8eb;
+}
+
+.portal-space-animation .arm-right:before {
+  border-radius: 50px 50px 120px 0 / 50px 50px 110px 0;
+  right: 0;
+  background-color: #fbfdfa;
+}
+
+.portal-space-animation .arm-left:after,
+.portal-space-animation .arm-right:after {
+  content: "";
+  width: 30px;
+  height: 10px;
+  position: absolute;
+  top: -24px;
+}
+
+.portal-space-animation .arm-left:after {
+  background-color: #6e91a4;
+  left: 0;
+}
+
+.portal-space-animation .arm-right:after {
+  right: 0;
+  background-color: #b6d2e0;
+}
+
+.portal-space-animation .leg {
+  width: 30px;
+  height: 40px;
+  position: absolute;
+  z-index: 2;
+  bottom: 70px;
+}
+
+.portal-space-animation .leg-left {
+  left: 76px;
+  background-color: #e3e8eb;
+  transform: rotate(20deg);
+}
+
+.portal-space-animation .leg-right {
+  right: 73px;
+  background-color: #fbfdfa;
+  transform: rotate(-20deg);
+}
+
+.portal-space-animation .leg-left:before,
+.portal-space-animation .leg-right:before {
+  content: "";
+  width: 50px;
+  height: 25px;
+  position: absolute;
+  bottom: -26px;
+}
+
+.portal-space-animation .leg-left:before {
+  left: -20px;
+  background-color: #e3e8eb;
+  border-radius: 30px 0 0 0;
+  border-bottom: 10px solid #6d96ac;
+}
+
+.portal-space-animation .leg-right:before {
+  right: -20px;
+  background-color: #fbfdfa;
+  border-radius: 0 30px 0 0;
+  border-bottom: 10px solid #b0cfe4;
+}
+
+@media (max-width: 768px) {
+  .dashboard-nav .portal-space-animation {
+    height: 170px;
   }
 }
 

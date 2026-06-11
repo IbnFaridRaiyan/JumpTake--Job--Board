@@ -37,7 +37,10 @@ const sanitizeMessageHtml = (html = '') => {
         return '';
     }
 
-    const allowedTags = new Set(['p', 'br', 'strong', 'b', 'em', 'i', 'u', 'ul', 'ol', 'li', 'div', 'span']);
+    const allowedTags = new Set(['p', 'br', 'strong', 'b', 'em', 'i', 'u', 'ul', 'ol', 'li', 'div', 'span', 'img']);
+    const sanitizeAttribute = (value = '') => value.replace(/[<>"']/g, '');
+    const isSafeEmojiSrc = (src = '') => /^\/static\/media\/[^<>"']+\.png(?:\?[^<>"']*)?$/i.test(src)
+        || /^https?:\/\/[^/]+\/static\/media\/[^<>"']+\.png(?:\?[^<>"']*)?$/i.test(src);
 
     return html
         .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
@@ -55,6 +58,19 @@ const sanitizeMessageHtml = (html = '') => {
 
             if (isClosingTag) {
                 return `</${normalizedTag}>`;
+            }
+
+            if (normalizedTag === 'img') {
+                const srcMatch = trimmedTag.match(/\ssrc\s*=\s*(['"])(.*?)\1/i);
+                const src = srcMatch ? srcMatch[2].trim() : '';
+
+                if (!isSafeEmojiSrc(src)) {
+                    return '';
+                }
+
+                const altMatch = trimmedTag.match(/\salt\s*=\s*(['"])(.*?)\1/i);
+                const alt = altMatch ? sanitizeAttribute(altMatch[2].trim()) : 'emoji';
+                return `<img src="${sanitizeAttribute(src)}" alt="${alt}" class="chat-emoji-inline">`;
             }
 
             const styleMatch = trimmedTag.match(/style\s*=\s*(['"])(.*?)\1/i);
@@ -87,7 +103,8 @@ const getDirectKey = (firstUserId, secondUserId) => (
 
 const appendMessage = async (thread, senderType, bodyHtml, senderUserId = null) => {
     const sanitizedHtml = sanitizeMessageHtml(bodyHtml);
-    const bodyText = stripHtml(sanitizedHtml);
+    const hasEmoji = /<img\b/i.test(sanitizedHtml);
+    const bodyText = stripHtml(sanitizedHtml) || (hasEmoji ? 'Emoji' : '');
 
     if (!bodyText) {
         throw new Error('Message cannot be empty');

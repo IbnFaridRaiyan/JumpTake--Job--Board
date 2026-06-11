@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import RichMessageEditor from './RichMessageEditor';
 
 const stripHtml = (html = '') => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+const hasMessageContent = (html = '') => stripHtml(html).length > 0 || /<img\b/i.test(html);
 
 const formatDateTime = (dateString) => {
     if (!dateString) {
@@ -75,7 +76,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
     };
 
     const sendReply = async () => {
-        if (!selectedThread || !stripHtml(replyHtml)) {
+        if (!selectedThread || !hasMessageContent(replyHtml)) {
             setMessage('Write a reply before sending.');
             return;
         }
@@ -220,12 +221,11 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                         value={replyHtml}
                         onChange={setReplyHtml}
                         placeholder="Write a reply..."
+                        messageBox
+                        onSubmit={sendReply}
+                        submitting={sending}
+                        submitLabel={sending ? 'Sending...' : 'Send'}
                     />
-                    <div className="message-compose-actions">
-                        <button className="settings-button primary messenger-send-button" onClick={sendReply} disabled={sending}>
-                            {sending ? 'Sending...' : 'Send'}
-                        </button>
-                    </div>
                 </div>
             </div>
         );

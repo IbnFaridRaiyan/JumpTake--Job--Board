@@ -1656,9 +1656,6 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                         {section.id === 'completed-assessment' && hasCompletedAssessmentNotification && <span className="nav-notification-dot"></span>}
                     </button>
                 ))}
-                <button type="button" className="job-management-back-nav" onClick={onBack}>
-                    Back
-                </button>
             </nav>
 
             <div className={`mobile-job-management-section-panel ${mobileSectionVisible ? 'is-open' : ''}`}>

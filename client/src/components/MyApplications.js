@@ -373,48 +373,54 @@ const MyApplications = ({ userId, onRefresh, switchSection, onFooterBack }) => {
                     </button>
                 </div>
             ) : (
-                <div className="applications-table-container">
-                    <table className="applications-table">
-                        <thead>
-                            <tr>
-                                <th>Job Title</th>
-                                <th>Job Number</th>
-                                <th>Company</th>
-                                <th>Applied On</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {applications.map(app => (
-                                <tr key={app._id}>
-                                    <td>{getJobTitle(app)}</td>
-                                    <td>{getJobNumber(app)}</td>
-                                    <td>{getCompanyName(app)}</td>
-                                    <td>{new Date(app.createdAt).toLocaleDateString()}</td>
-                                    <td>
-                                        <span className={`status-badge ${getStatusBadgeClass(app.status)}`}>
-                                            {app.status}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div className="application-actions">
-                                            {app.status !== 'Withdrawn' && app.status !== 'Rejected' && app.status !== 'Unsuccessful' && (
-                                                <WithdrawButton
-                                                    onClick={() => handleWithdraw(app._id)}
-                                                    disabled={withdrawingId === app._id}
-                                                    title={withdrawingId === app._id ? 'Withdrawing...' : 'Withdraw'}
-                                                />
-                                            )}
-                                            <button className="view-button application-view-details-button" onClick={() => setSelectedApplication(app)}>
-                                                View Details
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                <div className="fresh-applications-list">
+                    {applications.map(app => {
+                        const canWithdraw = app.status !== 'Withdrawn'
+                            && app.status !== 'Rejected'
+                            && app.status !== 'Unsuccessful';
+
+                        return (
+                            <article className="fresh-application-card" key={app._id}>
+                                <div className="fresh-application-card-header">
+                                    <div className="fresh-application-title-block">
+                                        <span>Job Title</span>
+                                        <h3>{getJobTitle(app)}</h3>
+                                    </div>
+                                    <span className={`status-badge ${getStatusBadgeClass(app.status)}`}>
+                                        {app.status}
+                                    </span>
+                                </div>
+
+                                <div className="fresh-application-meta-grid">
+                                    <div>
+                                        <span>Job Number</span>
+                                        <strong>{getJobNumber(app)}</strong>
+                                    </div>
+                                    <div>
+                                        <span>Company</span>
+                                        <strong>{getCompanyName(app)}</strong>
+                                    </div>
+                                    <div>
+                                        <span>Applied On</span>
+                                        <strong>{new Date(app.createdAt).toLocaleDateString()}</strong>
+                                    </div>
+                                </div>
+
+                                <div className="fresh-application-actions">
+                                    {canWithdraw && (
+                                        <WithdrawButton
+                                            onClick={() => handleWithdraw(app._id)}
+                                            disabled={withdrawingId === app._id}
+                                            title={withdrawingId === app._id ? 'Withdrawing...' : 'Withdraw'}
+                                        />
+                                    )}
+                                    <button className="view-button application-view-details-button" onClick={() => setSelectedApplication(app)}>
+                                        View Details
+                                    </button>
+                                </div>
+                            </article>
+                        );
+                    })}
                 </div>
             )}
 

@@ -94,6 +94,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                 },
                 body: JSON.stringify({
                     senderType: isEmployer ? 'employer' : 'candidate',
+                    senderUserId: !isEmployer ? userId : undefined,
                     bodyHtml: replyHtml
                 })
             });
@@ -116,39 +117,88 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
         }
     };
 
-    const getThreadTitle = (thread) => (
-        isEmployer
-            ? thread?.candidate?.name || thread?.candidateUser?.email || 'Candidate'
-            : thread?.company?.name || 'Company'
-    );
+    const isDirectCandidateThread = (thread) => thread?.conversationType === 'candidate-candidate';
 
-    const getThreadSubtitle = (thread) => (
-        isEmployer
-            ? thread?.candidateUser?.email || thread?.candidate?.email || 'Email not available'
-            : thread?.company?.industry || 'Employer message'
-    );
+    const getPeerCandidate = (thread) => {
+        const profiles = Array.isArray(thread?.candidateProfiles) ? thread.candidateProfiles : [];
+        return profiles.find((profile) => String(profile?.user || '') !== String(userId || '')) || profiles[0] || null;
+    };
+
+    const getThreadTitle = (thread) => {
+        if (isEmployer) {
+            return thread?.candidate?.name || thread?.candidateUser?.email || 'Candidate';
+        }
+
+        if (isDirectCandidateThread(thread)) {
+            const peerCandidate = getPeerCandidate(thread);
+            return peerCandidate?.name || peerCandidate?.email || 'Candidate';
+        }
+
+        return thread?.company?.name || 'Company';
+    };
+
+    const getThreadSubtitle = (thread) => {
+        if (isEmployer) {
+            return thread?.candidateUser?.email || thread?.candidate?.email || 'Email not available';
+        }
+
+        if (isDirectCandidateThread(thread)) {
+            const peerCandidate = getPeerCandidate(thread);
+            return peerCandidate?.email || 'Candidate chat';
+        }
+
+        return thread?.company?.industry || 'Employer message';
+    };
+
+    const getInitial = (thread) => (getThreadTitle(thread).charAt(0) || 'J').toUpperCase();
+
+    const isOwnMessage = (thread, item) => {
+        if (isDirectCandidateThread(thread)) {
+            return String(item?.senderUser || '') === String(userId || '');
+        }
+
+        return item.senderType === (isEmployer ? 'employer' : 'candidate');
+    };
+
+    const getMessageSenderLabel = (thread, item) => {
+        if (isOwnMessage(thread, item)) {
+            return 'You';
+        }
+
+        if (isDirectCandidateThread(thread)) {
+            return getThreadTitle(thread);
+        }
+
+        return item.senderType === 'employer' ? 'Employer' : 'Candidate';
+    };
 
     if (selectedThread) {
         return (
-            <div className="inbox-container">
-                <div className="manage-jobs-header">
-                    <h2>{getThreadTitle(selectedThread)}</h2>
-                    <button className="back-button" onClick={() => setSelectedThread(null)}>
-                        Back to Inbox
+            <div className="inbox-container messenger-inbox">
+                <div className="messenger-chat-header">
+                    <button className="back-button messenger-back" onClick={() => setSelectedThread(null)}>
+                        Back
                     </button>
+                    <div className="messenger-chat-head">
+                        <div className="messenger-avatar">{getInitial(selectedThread)}</div>
+                        <div>
+                            <h2>{getThreadTitle(selectedThread)}</h2>
+                            <p>{getThreadSubtitle(selectedThread)}</p>
+                        </div>
+                    </div>
                 </div>
 
                 {message && <div className={`notification-message ${message.includes('Error') ? 'error' : 'success'}`}>{message}</div>}
                 {error && <div className="error-message">{error}</div>}
 
-                <div className="message-thread">
+                <div className="message-thread messenger-thread">
                     {(selectedThread.messages || []).map((item) => (
                         <div
                             key={item._id}
-                            className={`message-bubble ${item.senderType === (isEmployer ? 'employer' : 'candidate') ? 'sent' : 'received'}`}
+                            className={`message-bubble ${isOwnMessage(selectedThread, item) ? 'sent' : 'received'}`}
                         >
                             <div className="message-meta">
-                                <strong>{item.senderType === 'employer' ? 'Employer' : 'Candidate'}</strong>
+                                <strong>{getMessageSenderLabel(selectedThread, item)}</strong>
                                 <span>{formatDateTime(item.createdAt)}</span>
                             </div>
                             <div className="message-body" dangerouslySetInnerHTML={{ __html: item.bodyHtml }} />
@@ -156,15 +206,15 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                     ))}
                 </div>
 
-                <div className="message-compose-card">
+                <div className="message-compose-card messenger-compose-card">
                     <RichMessageEditor
                         value={replyHtml}
                         onChange={setReplyHtml}
                         placeholder="Write a reply..."
                     />
                     <div className="message-compose-actions">
-                        <button className="settings-button primary" onClick={sendReply} disabled={sending}>
-                            {sending ? 'Sending...' : 'Send Reply'}
+                        <button className="settings-button primary messenger-send-button" onClick={sendReply} disabled={sending}>
+                            {sending ? 'Sending...' : 'Send'}
                         </button>
                     </div>
                 </div>
@@ -173,7 +223,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
     }
 
     return (
-        <div className="inbox-container">
+        <div className="inbox-container messenger-inbox">
             <div className="manage-jobs-header">
                 <h2>Inbox</h2>
             </div>
@@ -188,16 +238,26 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                     <p>{isEmployer ? 'Candidate conversations will appear here.' : 'Employer messages will appear here.'}</p>
                 </div>
             ) : (
-                <div className="inbox-thread-list">
+                <div className="inbox-thread-list messenger-thread-list">
                     {threads.map((thread) => {
                         const lastMessage = thread.messages?.[thread.messages.length - 1];
 
                         return (
-                            <button className="inbox-thread-card" key={thread._id} onClick={() => setSelectedThread(thread)}>
-                                <div>
-                                    <h3>{getThreadTitle(thread)}</h3>
-                                    <p>{getThreadSubtitle(thread)}</p>
-                                    <span>{lastMessage?.bodyText || 'No message preview'}</span>
+                            <button className="inbox-thread-card button-message" id="btn-message" key={thread._id} onClick={() => setSelectedThread(thread)}>
+                                <div className="content-avatar">
+                                    <div className="avatar">
+                                        <span className="user-img">{getInitial(thread)}</span>
+                                    </div>
+                                    <span className="status-user"></span>
+                                </div>
+                                <div className="notice-content">
+                                    <div className="lable-message">
+                                        <span>Message</span>
+                                        {(thread.messages || []).length > 0 && <span className="number-message">{thread.messages.length}</span>}
+                                    </div>
+                                    <div className="username">{getThreadTitle(thread)}</div>
+                                    <div className="user-id">{getThreadSubtitle(thread)}</div>
+                                    <span className="thread-preview">{lastMessage?.bodyText || 'No message preview'}</span>
                                 </div>
                                 <time>{formatDateTime(thread.lastMessageAt)}</time>
                             </button>

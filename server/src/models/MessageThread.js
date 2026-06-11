@@ -6,6 +6,10 @@ const MessageSchema = new mongoose.Schema({
     enum: ['employer', 'candidate'],
     required: true
   },
+  senderUser: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
   bodyHtml: {
     type: String,
     default: ''
@@ -21,20 +25,36 @@ const MessageSchema = new mongoose.Schema({
 }, { _id: true });
 
 const MessageThreadSchema = new mongoose.Schema({
+  conversationType: {
+    type: String,
+    enum: ['employer-candidate', 'candidate-candidate'],
+    default: 'employer-candidate'
+  },
   company: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Company',
-    required: true
+    required: false
   },
   candidate: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'JobSeeker',
-    required: true
+    required: false
   },
   candidateUser: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: false
+  },
+  participantUsers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  candidateProfiles: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'JobSeeker'
+  }],
+  directKey: {
+    type: String
   },
   messages: {
     type: [MessageSchema],
@@ -46,6 +66,25 @@ const MessageThreadSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-MessageThreadSchema.index({ company: 1, candidateUser: 1 }, { unique: true });
+MessageThreadSchema.index(
+  { company: 1, candidateUser: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      company: { $exists: true },
+      candidateUser: { $exists: true }
+    }
+  }
+);
+MessageThreadSchema.index(
+  { directKey: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      directKey: { $exists: true }
+    }
+  }
+);
+MessageThreadSchema.index({ participantUsers: 1 });
 
 module.exports = mongoose.model('MessageThread', MessageThreadSchema);

@@ -409,11 +409,6 @@ const EmployerSettings = ({ employer, switchSection, onEmployerUpdated, onLogout
                 </button>
             </div>
 
-            <div className="section-footer-nav">
-                <button className="logout-button responsive-back-button" onClick={onLogout}>
-                    Log Out
-                </button>
-            </div>
         </div>
     );
 };

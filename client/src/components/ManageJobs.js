@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AnimatedDeleteButton from './AnimatedDeleteButton';
 import JobManagement from './JobManagement';
 
@@ -7,8 +7,36 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => 
     const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [togglingJobId, setTogglingJobId] = useState(null);
+    const [dashboardSearchTerm, setDashboardSearchTerm] = useState('');
     
+    useEffect(() => {
+        if (managingJob || !Array.isArray(jobs) || jobs.length === 0) {
+            return;
+        }
+
+        const savedJobId = localStorage.getItem('jumptakeEmployerManagedJobId');
+        if (!savedJobId) {
+            return;
+        }
+
+        const savedJob = jobs.find((job) => job._id === savedJobId);
+        if (savedJob) {
+            setManagingJob(savedJob);
+        } else {
+            localStorage.removeItem('jumptakeEmployerManagedJobId');
+        }
+    }, [jobs, managingJob]);
+
+    useEffect(() => {
+        const dashboardSearch = sessionStorage.getItem('jumptakeEmployerJobSearch');
+        if (dashboardSearch) {
+            setDashboardSearchTerm(dashboardSearch);
+            sessionStorage.removeItem('jumptakeEmployerJobSearch');
+        }
+    }, []);
+
     const handleManage = (job) => {
+        localStorage.setItem('jumptakeEmployerManagedJobId', job._id);
         setManagingJob(job);
     };
     
@@ -98,6 +126,7 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => 
     };
     
     const handleCloseManage = () => {
+        localStorage.removeItem('jumptakeEmployerManagedJobId');
         setManagingJob(null);
     };
     
@@ -112,6 +141,16 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => 
         const options = { year: 'numeric', month: 'short', day: 'numeric' };
         return new Date(dateString).toLocaleDateString(undefined, options);
     };
+
+    const normalizedSearch = dashboardSearchTerm.trim().toLowerCase();
+    const visibleJobs = normalizedSearch
+        ? jobs.filter((job) => (
+            (job.jobNumber || '').toLowerCase().includes(normalizedSearch)
+            || (job.title || '').toLowerCase().includes(normalizedSearch)
+            || (job.location || '').toLowerCase().includes(normalizedSearch)
+            || (job.jobType || '').toLowerCase().includes(normalizedSearch)
+        ))
+        : jobs;
     
    
     if (managingJob) {
@@ -139,7 +178,12 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => 
             
             {jobs.length > 0 && (
                 <div className="job-count">
-                    {jobs.length} job listing{jobs.length !== 1 ? 's' : ''} found
+                    {visibleJobs.length} job listing{visibleJobs.length !== 1 ? 's' : ''} found
+                    {dashboardSearchTerm && (
+                        <button type="button" className="clear-dashboard-search" onClick={() => setDashboardSearchTerm('')}>
+                            Clear search
+                        </button>
+                    )}
                 </div>
             )}
             
@@ -165,6 +209,14 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => 
                         Post a Job
                     </button>
                 </div>
+            ) : visibleJobs.length === 0 ? (
+                <div className="no-jobs-message">
+                    <h3>No matching job listings</h3>
+                    <p>Try another job number, title, location, or type.</p>
+                    <button className="add-job-button" onClick={() => setDashboardSearchTerm('')}>
+                        Clear search
+                    </button>
+                </div>
             ) : (
                 <div>
                     <div className="job-list-table">
@@ -181,7 +233,7 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => 
                                 </tr>
                             </thead>
                             <tbody>
-                                {jobs.map(job => (
+                                {visibleJobs.map(job => (
                                     <tr key={job._id}>
                                         <td className="date-cell">{job.jobNumber || 'Generating...'}</td>
                                         <td>

@@ -611,11 +611,6 @@ const UserSettings = ({ user, onLogout, switchSection, onFooterBack }) => {
                 </button>
             </div>
 
-            <div className="section-footer-nav">
-                <button className="logout-button responsive-back-button" onClick={onLogout}>
-                    Log Out
-                </button>
-            </div>
         </div>
     );
 };

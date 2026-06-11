@@ -77,9 +77,15 @@ const stripHtml = (html = '') => (
 const populateThread = (query) => query
     .populate('company', 'name industry')
     .populate('candidate', 'name email skills education experience')
-    .populate('candidateUser', 'email');
+    .populate('candidateUser', 'email')
+    .populate('participantUsers', 'email')
+    .populate('candidateProfiles', 'name email skills education experience user');
 
-const appendMessage = async (thread, senderType, bodyHtml) => {
+const getDirectKey = (firstUserId, secondUserId) => (
+    [String(firstUserId), String(secondUserId)].sort().join(':')
+);
+
+const appendMessage = async (thread, senderType, bodyHtml, senderUserId = null) => {
     const sanitizedHtml = sanitizeMessageHtml(bodyHtml);
     const bodyText = stripHtml(sanitizedHtml);
 
@@ -89,6 +95,7 @@ const appendMessage = async (thread, senderType, bodyHtml) => {
 
     thread.messages.push({
         senderType,
+        ...(senderUserId ? { senderUser: senderUserId } : {}),
         bodyHtml: sanitizedHtml,
         bodyText,
         createdAt: new Date()
@@ -148,9 +155,65 @@ const createOrReplyMessage = async (req, res) => {
     }
 };
 
+const createCandidateDirectMessage = async (req, res) => {
+    try {
+        const { senderUserId, recipientCandidateId, bodyHtml } = req.body;
+
+        if (!senderUserId || !recipientCandidateId || !bodyHtml) {
+            return res.status(400).json({ error: 'Sender, recipient, and message are required' });
+        }
+
+        const senderCandidate = await JobSeeker.findOne({ user: senderUserId });
+        const recipientCandidate = await JobSeeker.findById(recipientCandidateId);
+        const recipientUserId = recipientCandidate?.user;
+
+        if (!senderCandidate) {
+            return res.status(400).json({ error: 'Your candidate profile is not linked to your account yet' });
+        }
+
+        if (!recipientCandidate || !recipientUserId) {
+            return res.status(400).json({ error: 'This candidate is not linked to a user account yet' });
+        }
+
+        if (String(senderUserId) === String(recipientUserId)) {
+            return res.status(400).json({ error: 'You cannot message your own profile' });
+        }
+
+        const directKey = getDirectKey(senderUserId, recipientUserId);
+        let thread = await MessageThread.findOne({
+            conversationType: 'candidate-candidate',
+            directKey
+        });
+
+        if (!thread) {
+            thread = new MessageThread({
+                conversationType: 'candidate-candidate',
+                company: recipientCandidate._id,
+                candidate: recipientCandidate._id,
+                candidateUser: senderUserId,
+                participantUsers: [senderUserId, recipientUserId],
+                candidateProfiles: [senderCandidate._id, recipientCandidate._id],
+                directKey,
+                messages: []
+            });
+        }
+
+        await appendMessage(thread, 'candidate', bodyHtml, senderUserId);
+
+        const populatedThread = await populateThread(MessageThread.findById(thread._id));
+        return res.status(201).json(populatedThread);
+    } catch (error) {
+        console.error('Error sending candidate direct message:', error.message);
+        return res.status(500).json({
+            error: error.message || 'Failed to send message',
+            message: error.message
+        });
+    }
+};
+
 const replyToThread = async (req, res) => {
     try {
-        const { senderType, bodyHtml } = req.body;
+        const { senderType, bodyHtml, senderUserId } = req.body;
         const thread = await MessageThread.findById(req.params.threadId);
 
         if (!thread) {
@@ -161,7 +224,7 @@ const replyToThread = async (req, res) => {
             return res.status(400).json({ error: 'Sender must be employer or candidate' });
         }
 
-        await appendMessage(thread, senderType, bodyHtml);
+        await appendMessage(thread, senderType, bodyHtml, senderType === 'candidate' ? senderUserId : null);
 
         const populatedThread = await populateThread(MessageThread.findById(thread._id));
         return res.status(200).json(populatedThread);
@@ -193,7 +256,12 @@ const getCompanyThreads = async (req, res) => {
 const getCandidateThreads = async (req, res) => {
     try {
         const threads = await populateThread(
-            MessageThread.find({ candidateUser: req.params.userId }).sort({ lastMessageAt: -1 })
+            MessageThread.find({
+                $or: [
+                    { candidateUser: req.params.userId },
+                    { participantUsers: req.params.userId }
+                ]
+            }).sort({ lastMessageAt: -1 })
         );
 
         return res.status(200).json(threads);
@@ -208,6 +276,7 @@ const getCandidateThreads = async (req, res) => {
 
 module.exports = {
     createOrReplyMessage,
+    createCandidateDirectMessage,
     replyToThread,
     getCompanyThreads,
     getCandidateThreads

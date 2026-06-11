@@ -160,6 +160,7 @@ router.put('/users/:userId/notification-preferences', userController.updateNotif
 router.put('/users/:userId/job-interests', userController.updateJobInterests);
 
 router.post('/messages', messageController.createOrReplyMessage);
+router.post('/messages/candidate-direct', messageController.createCandidateDirectMessage);
 router.put('/messages/:threadId/reply', messageController.replyToThread);
 router.get('/messages/company/:companyId', messageController.getCompanyThreads);
 router.get('/messages/user/:userId', messageController.getCandidateThreads);

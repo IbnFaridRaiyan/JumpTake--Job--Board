@@ -205,6 +205,24 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
         fileInputRef.current.click();
     };
 
+    const renderProcessingLoader = () => (
+        <div className="resume-processing-loader" role="status" aria-live="polite">
+            <div className="loader-wrapper">
+                <span className="loader-letter">P</span>
+                <span className="loader-letter">r</span>
+                <span className="loader-letter">o</span>
+                <span className="loader-letter">c</span>
+                <span className="loader-letter">e</span>
+                <span className="loader-letter">s</span>
+                <span className="loader-letter">s</span>
+                <span className="loader-letter">i</span>
+                <span className="loader-letter">n</span>
+                <span className="loader-letter">g</span>
+                <div className="loader"></div>
+            </div>
+        </div>
+    );
+
     return (
         <div className="resume-dropbox">
             <h2>Resume Upload</h2>
@@ -235,42 +253,46 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
             
             {/* Centered buttons container */}
             <div className="buttons-container">
-                <button 
-                    className="candidate-login-button" 
-                    onClick={onLoginClick}
-                    disabled={isLoading}
-                >
-                    Candidate Login
-                </button>
+                {isLoading ? (
+                    renderProcessingLoader()
+                ) : (
+                    <>
+                        <button
+                            className="candidate-login-button"
+                            onClick={onLoginClick}
+                        >
+                            Candidate Login
+                        </button>
 
-                <button
-                    className="submit-button demo-cv-button"
-                    onClick={handleDemoCv}
-                    disabled={isLoading}
-                >
-                    {isLoading ? 'Processing...' : 'Run demo using pre made CV'}
-                </button>
-                
-                <div className="login-divider">OR</div>
-                
-                <button 
-                    onClick={handleSubmit} 
-                    disabled={isLoading || !resume}
-                    className="submit-button"
-                >
-                    {isLoading ? 'Processing...' : 'Submit Resume'}
-                </button>
-                
-                <button 
-                    onClick={goBack} 
-                    className="back-button"
-                >
-                    Back to Home
-                </button>
+                        <button
+                            className="submit-button demo-cv-button"
+                            onClick={handleDemoCv}
+                        >
+                            Run demo using pre made CV
+                        </button>
+
+                        <div className="login-divider">OR</div>
+
+                        <button
+                            onClick={handleSubmit}
+                            disabled={!resume}
+                            className="submit-button"
+                        >
+                            Submit Resume
+                        </button>
+
+                        <button
+                            onClick={goBack}
+                            className="back-button"
+                        >
+                            Back to Home
+                        </button>
+                    </>
+                )}
             </div>
 
             {/* Message displayed below buttons */}
-            {message && <p className="message">{message}</p>}
+            {!isLoading && message && <p className="message">{message}</p>}
 
             {/* Resume preview */}
             {resume && (

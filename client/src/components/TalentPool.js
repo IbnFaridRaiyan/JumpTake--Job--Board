@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import ContactCandidate from './ContactCandidate';
 
-const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack }) => {
+const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employer', currentUserId }) => {
     const [candidates, setCandidates] = useState([]);
     const [bookmarkedTalentIds, setBookmarkedTalentIds] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -12,14 +12,27 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack }) => {
 
     useEffect(() => {
         fetchCandidates();
-        fetchBookmarkedTalents();
+        if (mode === 'employer') {
+            fetchBookmarkedTalents();
+        } else {
+            setBookmarkedTalentIds([]);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [companyId]);
+    }, [companyId, mode]);
+
+    useEffect(() => {
+        const talentSearchKey = mode === 'candidate' ? 'jumptakeCandidateTalentSearch' : 'jumptakeEmployerTalentSearch';
+        const dashboardSearch = sessionStorage.getItem(talentSearchKey);
+        if (dashboardSearch) {
+            setSearchTerm(dashboardSearch);
+            sessionStorage.removeItem(talentSearchKey);
+        }
+    }, [mode]);
 
     const fetchCandidates = async () => {
         try {
             setIsLoading(true);
-            const token = localStorage.getItem('employerToken');
+            const token = localStorage.getItem(mode === 'candidate' ? 'token' : 'employerToken');
             const response = await fetch((process.env.REACT_APP_API_URL || '') + '/api/job-seekers', {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -31,7 +44,10 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack }) => {
             }
 
             const data = await response.json();
-            setCandidates(data);
+            const nextCandidates = Array.isArray(data) ? data : [];
+            setCandidates(mode === 'candidate'
+                ? nextCandidates.filter((candidate) => String(candidate?.user || '') !== String(currentUserId || ''))
+                : nextCandidates);
         } catch (err) {
             console.error('Error fetching candidates:', err);
             setError('Failed to load candidates. Please try again later.');
@@ -83,7 +99,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack }) => {
             event.stopPropagation();
         }
 
-        if (!candidate?._id || !companyId) {
+        if (mode !== 'employer' || !candidate?._id || !companyId) {
             return;
         }
 
@@ -254,17 +270,19 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack }) => {
     };
 
     return (
-        <div className="talent-pool-container">
+        <div className={`talent-pool-container ${mode === 'candidate' ? 'candidate-view-candidates' : ''}`}>
             <div className="talent-pool-header">
-                <h2>Talent Pool</h2>
-                <div className="talent-pool-header-actions">
-                    <button
-                        className={`spotlight-button ${spotlightActive ? 'active' : ''}`}
-                        onClick={() => setSpotlightActive(!spotlightActive)}
-                    >
-                        Spotlight
-                    </button>
-                </div>
+                <h2>{mode === 'candidate' ? 'View Candidates' : 'Talent Pool'}</h2>
+                {mode === 'employer' && (
+                    <div className="talent-pool-header-actions">
+                        <button
+                            className={`spotlight-button ${spotlightActive ? 'active' : ''}`}
+                            onClick={() => setSpotlightActive(!spotlightActive)}
+                        >
+                            Spotlight
+                        </button>
+                    </div>
+                )}
             </div>
 
             {error && <div className="error-message">{error}</div>}
@@ -315,7 +333,12 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack }) => {
                     </div>
 
                     <div className="candidate-profile-body">
-                        <ContactCandidate companyId={companyId} candidate={selectedCandidate} />
+                        <ContactCandidate
+                            companyId={companyId}
+                            candidate={selectedCandidate}
+                            mode={mode}
+                            currentUserId={currentUserId}
+                        />
 
                         <div className="profile-section">
                             <h3>Skills</h3>

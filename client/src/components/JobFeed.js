@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 const FONT_OPTIONS = [
     { label: 'Share Tech', value: 'Share Tech' },
@@ -258,6 +259,14 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser })
 
     
     const [previewJob, setPreviewJob] = useState(null);
+
+    useEffect(() => {
+        const dashboardSearch = sessionStorage.getItem('jumptakeCandidateJobSearch');
+        if (dashboardSearch) {
+            setSearchTerm(dashboardSearch);
+            sessionStorage.removeItem('jumptakeCandidateJobSearch');
+        }
+    }, []);
     const [selectedCompany, setSelectedCompany] = useState(null);
     const [companyLoading, setCompanyLoading] = useState(false);
     const [companyError, setCompanyError] = useState('');
@@ -484,6 +493,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser })
         const matchesSearch = (
             job.title.toLowerCase().includes(searchLower) ||
             job.company.name.toLowerCase().includes(searchLower) ||
+            (job.jobNumber && job.jobNumber.toLowerCase().includes(searchLower)) ||
             job.location.toLowerCase().includes(searchLower) ||
             job.description.toLowerCase().includes(searchLower) ||
             (job.skills && job.skills.some(skill => skill.toLowerCase().includes(searchLower)))
@@ -1092,7 +1102,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser })
                 </div>
             )}
 
-            {selectedCompany ? (
+            {(selectedCompany || previewJob) && createPortal(selectedCompany ? (
                 <div className="job-preview-overlay">
                     <div className="job-preview-modal" onClick={(e) => e.stopPropagation()}>
                         <div className="job-preview-header">
@@ -1279,7 +1289,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser })
                         </div>
                     </div>
                 </div>
-            )}
+            ), document.body)}
             {applicationJob && (
                 <div className="application-workspace-overlay" onClick={handleCancelApplication}>
                     <div className="application-workspace-modal" onClick={(event) => event.stopPropagation()}>

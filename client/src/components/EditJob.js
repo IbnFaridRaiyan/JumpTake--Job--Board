@@ -98,16 +98,6 @@ const EditJob = ({ job, onCancel, onJobUpdated }) => {
     
     return (
         <div className="edit-job-container">
-            <div className="section-header">
-                <h2>Edit Job Listing</h2>
-                <button 
-                    className="back-button"
-                    onClick={onCancel}
-                >
-                    Back to Job Listings
-                </button>
-            </div>
-            
             <form onSubmit={handleSubmit} className="job-form">
                 <div className="form-row">
                     <div className="form-group">

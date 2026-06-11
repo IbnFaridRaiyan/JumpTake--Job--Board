@@ -3,7 +3,7 @@ import RichMessageEditor from './RichMessageEditor';
 
 const stripHtml = (html = '') => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 
-const ContactCandidate = ({ companyId, candidate, onSent }) => {
+const ContactCandidate = ({ companyId, candidate, onSent, mode = 'employer', currentUserId }) => {
     const [open, setOpen] = useState(false);
     const [messageHtml, setMessageHtml] = useState('');
     const [sending, setSending] = useState(false);
@@ -19,19 +19,27 @@ const ContactCandidate = ({ companyId, candidate, onSent }) => {
         setNotice('');
 
         try {
-            const token = localStorage.getItem('employerToken');
-            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/messages`, {
+            const isCandidateMode = mode === 'candidate';
+            const token = localStorage.getItem(isCandidateMode ? 'token' : 'employerToken');
+            const endpoint = isCandidateMode ? '/api/messages/candidate-direct' : '/api/messages';
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}${endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({
-                    companyId,
-                    candidateId: candidate?._id,
-                    senderType: 'employer',
-                    bodyHtml: messageHtml
-                })
+                body: JSON.stringify(isCandidateMode
+                    ? {
+                        senderUserId: currentUserId,
+                        recipientCandidateId: candidate?._id,
+                        bodyHtml: messageHtml
+                    }
+                    : {
+                        companyId,
+                        candidateId: candidate?._id,
+                        senderType: 'employer',
+                        bodyHtml: messageHtml
+                    })
             });
 
             const data = await response.json();
@@ -57,7 +65,7 @@ const ContactCandidate = ({ companyId, candidate, onSent }) => {
     return (
         <div className="contact-candidate-panel">
             <button className="settings-button primary" type="button" onClick={() => setOpen((prev) => !prev)}>
-                Contact Candidate
+                {mode === 'candidate' ? 'Message Candidate' : 'Contact Candidate'}
             </button>
 
             {notice && (

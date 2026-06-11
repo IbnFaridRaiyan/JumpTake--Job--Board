@@ -9,12 +9,52 @@ import TalentPool from './TalentPool';
 import BookmarkedTalents from './BookmarkedTalents';
 import EmployerSettings from './EmployerSettings';
 import Inbox from './Inbox';
+import AboutJumpTake from './AboutJumpTake';
+import DashboardSearch from './DashboardSearch';
+import PerformanceAnalytics from './PerformanceAnalytics';
 import logo from './media/logo3.png';
+
+const EMPLOYER_SECTION_IDS = new Set([
+    'dashboard',
+    'post-job',
+    'manage-jobs',
+    'make-assessment',
+    'general-assessment',
+    'talent-pool',
+    'bookmarked-talents',
+    'inbox',
+    'company-profile',
+    'about-jumptake',
+    'application-tracking',
+    'settings'
+]);
+
+const EMPLOYER_SECTION_STORAGE_KEY = 'jumptakeEmployerSection';
+
+const isMobileViewport = () => (
+    typeof window !== 'undefined'
+    && window.matchMedia('(max-width: 768px)').matches
+);
+
+const getInitialEmployerSection = () => {
+    if (typeof window === 'undefined') {
+        return 'dashboard';
+    }
+
+    const hashValue = window.location.hash.replace(/^#/, '');
+    const [portal, section] = hashValue.split(':');
+    if (portal === 'employer' && EMPLOYER_SECTION_IDS.has(section)) {
+        return section;
+    }
+
+    const storedSection = sessionStorage.getItem(EMPLOYER_SECTION_STORAGE_KEY);
+    return EMPLOYER_SECTION_IDS.has(storedSection) ? storedSection : 'dashboard';
+};
 
 const EmployerDashboard = () => {
     const [employer, setEmployer] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [activeSection, setActiveSection] = useState('dashboard');
+    const [activeSection, setActiveSection] = useState(getInitialEmployerSection);
     const [, setSectionHistory] = useState([]);
     const [companyData, setCompanyData] = useState(null);
     const [jobs, setJobs] = useState([]);
@@ -22,6 +62,24 @@ const EmployerDashboard = () => {
     const [pendingInboxCount, setPendingInboxCount] = useState(0);
     const [mobileSectionVisible, setMobileSectionVisible] = useState(false);
     const navigate = useNavigate();
+
+    const updateActiveSection = (section, { push = true } = {}) => {
+        if (!EMPLOYER_SECTION_IDS.has(section)) {
+            return;
+        }
+
+        setActiveSection(section);
+        sessionStorage.setItem(EMPLOYER_SECTION_STORAGE_KEY, section);
+
+        const nextHash = `#employer:${section}`;
+        if (window.location.hash !== nextHash) {
+            if (push) {
+                window.history.pushState(null, '', nextHash);
+            } else {
+                window.history.replaceState(null, '', nextHash);
+            }
+        }
+    };
 
     const sectionTitles = {
         dashboard: 'Dashboard',
@@ -33,12 +91,16 @@ const EmployerDashboard = () => {
         'bookmarked-talents': 'Bookmarked Talents',
         inbox: 'Inbox',
         'company-profile': 'Company Profile',
+        'about-jumptake': 'About JumpTake',
+        'application-tracking': 'Application Tracking System',
         settings: 'Settings'
     };
 
     useEffect(() => {
         const employerData = localStorage.getItem('employer');
         if (!employerData || !localStorage.getItem('employerToken')) {
+            localStorage.removeItem('jumptakeEmployerManagedJobId');
+            sessionStorage.removeItem(EMPLOYER_SECTION_STORAGE_KEY);
             navigate('/company');
             return;
         }
@@ -51,6 +113,34 @@ const EmployerDashboard = () => {
         fetchApplicationCount(parsedEmployer.companyId);
         fetchEmployerInboxNotifications(parsedEmployer.companyId);
     }, [navigate]);
+
+    useEffect(() => {
+        const applyHashSection = () => {
+            const hashValue = window.location.hash.replace(/^#/, '');
+            const [portal, section] = hashValue.split(':');
+            if (portal !== 'employer' || !EMPLOYER_SECTION_IDS.has(section)) {
+                return;
+            }
+
+            setActiveSection(section);
+            sessionStorage.setItem(EMPLOYER_SECTION_STORAGE_KEY, section);
+            if (isMobileViewport()) {
+                setMobileSectionVisible(section !== 'dashboard');
+            }
+        };
+
+        const initialSection = getInitialEmployerSection();
+        sessionStorage.setItem(EMPLOYER_SECTION_STORAGE_KEY, initialSection);
+        if (!window.location.hash.startsWith('#employer:')) {
+            window.history.replaceState(null, '', `#employer:${initialSection}`);
+        }
+        if (isMobileViewport() && initialSection !== 'dashboard') {
+            setMobileSectionVisible(true);
+        }
+
+        window.addEventListener('hashchange', applyHashSection);
+        return () => window.removeEventListener('hashchange', applyHashSection);
+    }, []);
 
     const fetchCompanyData = async (companyId) => {
         try {
@@ -143,6 +233,9 @@ const EmployerDashboard = () => {
     const handleLogout = () => {
         localStorage.removeItem('employerToken');
         localStorage.removeItem('employer');
+        localStorage.removeItem('jumptakeEmployerManagedJobId');
+        sessionStorage.removeItem(EMPLOYER_SECTION_STORAGE_KEY);
+        window.history.replaceState(null, '', window.location.pathname);
         navigate('/');
     };
 
@@ -196,7 +289,7 @@ const EmployerDashboard = () => {
         }
 
         setSectionHistory((prev) => [...prev, activeSection]);
-        setActiveSection(nextSection);
+        updateActiveSection(nextSection);
         setMobileSectionVisible(true);
     };
 
@@ -218,9 +311,39 @@ const EmployerDashboard = () => {
         switchSection(nextSection);
     };
 
+    const handleDashboardSearch = (query) => {
+        const lowerQuery = query.toLowerCase();
+
+        const directMatches = [
+            { section: 'settings', terms: ['settings', 'security', 'notification', 'password', 'email'] },
+            { section: 'company-profile', terms: ['company', 'profile'] },
+            { section: 'post-job', terms: ['post', 'create job', 'new job'] },
+            { section: 'manage-jobs', terms: ['manage job', 'job number', 'job-', 'listing', 'applicant', 'application'] },
+            { section: 'make-assessment', terms: ['make assessment', 'create assessment', 'assessment builder'] },
+            { section: 'general-assessment', terms: ['general assessment', 'saved assessment'] },
+            { section: 'bookmarked-talents', terms: ['bookmarked talent', 'saved candidate'] },
+            { section: 'inbox', terms: ['inbox', 'message', 'reply'] },
+            { section: 'about-jumptake', terms: ['about', 'jumptake', 'help', 'guide'] },
+            { section: 'application-tracking', terms: ['tracking', 'ats', 'application tracking', 'performance', 'analytics', 'hiring rate'] },
+            { section: 'dashboard', terms: ['dashboard', 'overview'] }
+        ];
+
+        const match = directMatches.find(({ terms }) => terms.some((term) => lowerQuery.includes(term)));
+        if (match) {
+            if (match.section === 'manage-jobs') {
+                sessionStorage.setItem('jumptakeEmployerJobSearch', query);
+            }
+            openSection(match.section);
+            return;
+        }
+
+        sessionStorage.setItem('jumptakeEmployerTalentSearch', query);
+        openSection('talent-pool');
+    };
+
     const handleLogoClick = () => {
         setSectionHistory([]);
-        setActiveSection('dashboard');
+        updateActiveSection('dashboard');
         setMobileSectionVisible(false);
     };
 
@@ -240,7 +363,7 @@ const EmployerDashboard = () => {
             return prev.slice(0, -1);
         });
 
-        setActiveSection(previousSection || 'dashboard');
+        updateActiveSection(previousSection || 'dashboard');
     };
 
     const renderContent = () => {
@@ -249,7 +372,7 @@ const EmployerDashboard = () => {
                 return <PostJob
                     companyId={employer?.companyId}
                     onJobPosted={refreshJobs}
-                    onCancel={() => setActiveSection('dashboard')}
+                    onCancel={() => updateActiveSection('dashboard')}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'manage-jobs':
@@ -257,21 +380,21 @@ const EmployerDashboard = () => {
                     jobs={jobs}
                     companyId={employer?.companyId}
                     onJobUpdated={refreshJobs}
-                    onBack={() => setActiveSection('dashboard')}
+                    onBack={() => updateActiveSection('dashboard')}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'make-assessment':
                 return <MakeAssessment
                     companyId={employer?.companyId}
                     jobs={jobs}
-                    onBack={() => setActiveSection('dashboard')}
+                    onBack={() => updateActiveSection('dashboard')}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'general-assessment':
                 return <GeneralAssessments
                     companyId={employer?.companyId}
                     jobs={jobs}
-                    onBack={() => setActiveSection('dashboard')}
+                    onBack={() => updateActiveSection('dashboard')}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'company-profile':
@@ -283,28 +406,37 @@ const EmployerDashboard = () => {
                         applicationsReceived: applicationCount
                     }}
                     onCompanyUpdated={handleCompanyUpdated}
-                    onBack={() => setActiveSection('dashboard')}
+                    onBack={() => updateActiveSection('dashboard')}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'talent-pool':
                 return <TalentPool
                     jobs={jobs}
                     companyId={employer?.companyId}
-                    onBack={() => setActiveSection('dashboard')}
+                    onBack={() => updateActiveSection('dashboard')}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'bookmarked-talents':
                 return <BookmarkedTalents
                     companyId={employer?.companyId}
-                    onBack={() => setActiveSection('dashboard')}
+                    onBack={() => updateActiveSection('dashboard')}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'inbox':
                 return <Inbox
                     mode="employer"
                     companyId={employer?.companyId}
-                    onBack={() => setActiveSection('dashboard')}
+                    onBack={() => updateActiveSection('dashboard')}
                     onFooterBack={goToPreviousSection}
+                />;
+            case 'about-jumptake':
+                return <AboutJumpTake mode="employer" />;
+            case 'application-tracking':
+                return <PerformanceAnalytics
+                    mode="employer"
+                    jobs={jobs}
+                    employer={employer}
+                    applicationCount={applicationCount}
                 />;
             case 'settings':
                 return <EmployerSettings
@@ -440,7 +572,7 @@ const EmployerDashboard = () => {
                         </button>
                     </div>
                     <div className="dashboard-title employer-dashboard-title">
-                        <h1>Employer Dashboard</h1>
+                        <h1>Employer Portal</h1>
                         <p>Welcome, {employer?.companyName || 'Employer'}</p>
                     </div>
                 </div>
@@ -463,12 +595,13 @@ const EmployerDashboard = () => {
                     </button>
                 </div>
                 <div className="dashboard-title employer-dashboard-title">
-                    <h1>Employer Dashboard</h1>
+                    <h1>Employer Portal</h1>
                     <p>Welcome, {employer?.companyName || 'Employer'}</p>
                 </div>
+                <DashboardSearch onSearch={handleDashboardSearch} />
             </div>
 
-            <div className="dashboard-container">
+            <div className={`dashboard-container ${mobileSectionVisible ? 'mobile-section-open' : ''}`}>
                 <div className="sidebar">
                     <div className="user-profile">
                         <div className="avatar">
@@ -478,6 +611,7 @@ const EmployerDashboard = () => {
                             <h3>{employer?.companyName || 'Company'}</h3>
                             <p>{employer?.username}</p>
                         </div>
+                        <DashboardSearch onSearch={handleDashboardSearch} compact />
                     </div>
                     <nav className="dashboard-nav">
                         <ul>
@@ -537,6 +671,18 @@ const EmployerDashboard = () => {
                                 Company Profile
                             </li>
                             <li
+                                className={activeSection === 'about-jumptake' ? 'active' : ''}
+                                onClick={() => openSection('about-jumptake')}
+                            >
+                                About JumpTake
+                            </li>
+                            <li
+                                className={activeSection === 'application-tracking' ? 'active' : ''}
+                                onClick={() => openSection('application-tracking')}
+                            >
+                                Application Tracking System
+                            </li>
+                            <li
                                 className={activeSection === 'settings' ? 'active' : ''}
                                 onClick={() => openSection('settings')}
                             >
@@ -552,7 +698,7 @@ const EmployerDashboard = () => {
                     </nav>
                 </div>
 
-                <main className={`main-content mobile-dashboard-section-panel ${mobileSectionVisible ? 'is-open' : ''}`}>
+                <main className={`main-content mobile-dashboard-section-panel mobile-section-${activeSection} ${mobileSectionVisible ? 'is-open' : ''}`}>
                     {mobileSectionVisible && (
                         <div className="mobile-section-panel-header">
                             <button type="button" className="back-button" onClick={closeMobileSectionPanel}>

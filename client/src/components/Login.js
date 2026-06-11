@@ -122,10 +122,12 @@ const Login = ({ onClose }) => {
     return (
         <div className="modal-overlay">
             <div className="login-modal">
+                <button type="button" className="login-modal-close" onClick={onClose} aria-label="Close candidate login">
+                    ×
+                </button>
                 <div className="login-header">
                     <h2>Candidate Login</h2>
                     <div className="modal-brand">JumpTake</div>
-                    <button className="close-button" onClick={onClose}>x</button>
                 </div>
 
                 {mode === 'login' ? (

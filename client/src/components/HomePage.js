@@ -9,7 +9,11 @@ import BookmarkedJobs from './BookmarkedJobs';
 import UserProfile from './UserProfile';
 import UserSettings from './UserSettings';
 import Inbox from './Inbox';
+import TalentPool from './TalentPool';
 import InterestedJobSuggestion from './InterestedJobSuggestion';
+import AboutJumpTake from './AboutJumpTake';
+import DashboardSearch from './DashboardSearch';
+import PerformanceAnalytics from './PerformanceAnalytics';
 import logo from './media/logo3.png';
 
 const JOB_INTEREST_OPTIONS = [
@@ -35,8 +39,46 @@ const JOB_INTEREST_OPTIONS = [
     'Quality Assurance'
 ];
 
+const CANDIDATE_SECTION_IDS = new Set([
+    'job-feed',
+    'inbox',
+    'view-candidates',
+    'applications',
+    'assessments',
+    'video-interviews',
+    'draft-applications',
+    'bookmarked-jobs',
+    'interested-jobs',
+    'profile',
+    'about-jumptake',
+    'progress-check',
+    'settings'
+]);
+
+const CANDIDATE_SECTION_STORAGE_KEY = 'jumptakeCandidateSection';
+
+const isMobileViewport = () => (
+    typeof window !== 'undefined'
+    && window.matchMedia('(max-width: 768px)').matches
+);
+
+const getInitialCandidateSection = () => {
+    if (typeof window === 'undefined') {
+        return 'job-feed';
+    }
+
+    const hashValue = window.location.hash.replace(/^#/, '');
+    const [portal, section] = hashValue.split(':');
+    if (portal === 'candidate' && CANDIDATE_SECTION_IDS.has(section)) {
+        return section;
+    }
+
+    const storedSection = sessionStorage.getItem(CANDIDATE_SECTION_STORAGE_KEY);
+    return CANDIDATE_SECTION_IDS.has(storedSection) ? storedSection : 'job-feed';
+};
+
 const HomePage = () => {
-    const [activeSection, setActiveSection] = useState('job-feed');
+    const [activeSection, setActiveSection] = useState(getInitialCandidateSection);
     const [, setSectionHistory] = useState([]);
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -53,6 +95,24 @@ const HomePage = () => {
     const [mobileSectionVisible, setMobileSectionVisible] = useState(false);
     const navigate = useNavigate();
 
+    const updateActiveSection = (section, { push = true } = {}) => {
+        if (!CANDIDATE_SECTION_IDS.has(section)) {
+            return;
+        }
+
+        setActiveSection(section);
+        sessionStorage.setItem(CANDIDATE_SECTION_STORAGE_KEY, section);
+
+        const nextHash = `#candidate:${section}`;
+        if (window.location.hash !== nextHash) {
+            if (push) {
+                window.history.pushState(null, '', nextHash);
+            } else {
+                window.history.replaceState(null, '', nextHash);
+            }
+        }
+    };
+
     const sectionTitles = {
         'job-feed': 'Job Feed',
         applications: 'My Applications',
@@ -61,14 +121,18 @@ const HomePage = () => {
         'draft-applications': 'Draft Applications',
         'bookmarked-jobs': 'Bookmarked Jobs',
         inbox: 'Inbox',
+        'view-candidates': 'View Candidates',
         'interested-jobs': 'Interested Job Suggession',
         profile: 'My Profile',
+        'about-jumptake': 'About JumpTake',
+        'progress-check': 'Progress Check',
         settings: 'Settings'
     };
 
     useEffect(() => {
         const userData = localStorage.getItem('user');
         if (!userData || !localStorage.getItem('token')) {
+            sessionStorage.removeItem(CANDIDATE_SECTION_STORAGE_KEY);
             navigate('/job-seeker');
             return;
         }
@@ -106,6 +170,34 @@ const HomePage = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [navigate]);
+
+    useEffect(() => {
+        const applyHashSection = () => {
+            const hashValue = window.location.hash.replace(/^#/, '');
+            const [portal, section] = hashValue.split(':');
+            if (portal !== 'candidate' || !CANDIDATE_SECTION_IDS.has(section)) {
+                return;
+            }
+
+            setActiveSection(section);
+            sessionStorage.setItem(CANDIDATE_SECTION_STORAGE_KEY, section);
+            if (isMobileViewport()) {
+                setMobileSectionVisible(section !== 'job-feed');
+            }
+        };
+
+        const initialSection = getInitialCandidateSection();
+        sessionStorage.setItem(CANDIDATE_SECTION_STORAGE_KEY, initialSection);
+        if (!window.location.hash.startsWith('#candidate:')) {
+            window.history.replaceState(null, '', `#candidate:${initialSection}`);
+        }
+        if (isMobileViewport() && initialSection !== 'job-feed') {
+            setMobileSectionVisible(true);
+        }
+
+        window.addEventListener('hashchange', applyHashSection);
+        return () => window.removeEventListener('hashchange', applyHashSection);
+    }, []);
 
     const fetchCandidateNotifications = async (userId) => {
         if (!userId) {
@@ -234,6 +326,8 @@ const HomePage = () => {
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        sessionStorage.removeItem(CANDIDATE_SECTION_STORAGE_KEY);
+        window.history.replaceState(null, '', window.location.pathname);
         navigate('/');
     };
 
@@ -259,7 +353,11 @@ const HomePage = () => {
             const seenAt = Number(localStorage.getItem('jumptakeCandidateInboxSeenAt') || 0);
             const unseenCount = (Array.isArray(threads) ? threads : []).filter((thread) => {
                 const lastMessage = thread.messages?.[thread.messages.length - 1];
-                return lastMessage?.senderType === 'employer' && new Date(thread.lastMessageAt || lastMessage.createdAt).getTime() > seenAt;
+                const isDirectCandidateThread = thread?.conversationType === 'candidate-candidate';
+                const isIncomingDirectMessage = isDirectCandidateThread && String(lastMessage?.senderUser || '') !== String(userId || '');
+                const isIncomingEmployerMessage = !isDirectCandidateThread && lastMessage?.senderType === 'employer';
+                return (isIncomingEmployerMessage || isIncomingDirectMessage)
+                    && new Date(thread.lastMessageAt || lastMessage.createdAt).getTime() > seenAt;
             }).length;
 
             setPendingInboxCount(unseenCount);
@@ -341,7 +439,7 @@ const HomePage = () => {
         }
 
         setSectionHistory((prev) => [...prev, activeSection]);
-        setActiveSection(nextSection);
+        updateActiveSection(nextSection);
         setMobileSectionVisible(true);
     };
 
@@ -363,9 +461,37 @@ const HomePage = () => {
         switchSection(nextSection);
     };
 
+    const handleDashboardSearch = (query) => {
+        const lowerQuery = query.toLowerCase();
+
+        const directMatches = [
+            { section: 'settings', terms: ['settings', 'account', 'security', 'notification', 'email', 'password'] },
+            { section: 'profile', terms: ['profile', 'resume', 'education', 'experience', 'skill'] },
+            { section: 'applications', terms: ['application', 'applied', 'status', 'withdraw'] },
+            { section: 'assessments', terms: ['assessment', 'test', 'quiz'] },
+            { section: 'video-interviews', terms: ['video', 'interview'] },
+            { section: 'draft-applications', terms: ['draft'] },
+            { section: 'bookmarked-jobs', terms: ['bookmark', 'saved job'] },
+            { section: 'interested-jobs', terms: ['interest', 'suggestion', 'recommended'] },
+            { section: 'progress-check', terms: ['progress', 'performance', 'analytics', 'rate', 'views', 'response'] },
+            { section: 'inbox', terms: ['inbox', 'message', 'reply'] },
+            { section: 'view-candidates', terms: ['candidate', 'candidates', 'talent', 'people', 'profile'] },
+            { section: 'about-jumptake', terms: ['about', 'jumptake', 'help', 'guide'] }
+        ];
+
+        const match = directMatches.find(({ terms }) => terms.some((term) => lowerQuery.includes(term)));
+        if (match) {
+            openSection(match.section);
+            return;
+        }
+
+        sessionStorage.setItem('jumptakeCandidateJobSearch', query);
+        openSection('job-feed');
+    };
+
     const handleLogoClick = () => {
         setSectionHistory([]);
-        setActiveSection('job-feed');
+        updateActiveSection('job-feed');
         setMobileSectionVisible(false);
     };
 
@@ -385,7 +511,7 @@ const HomePage = () => {
             return prev.slice(0, -1);
         });
 
-        setActiveSection(previousSection || 'job-feed');
+        updateActiveSection(previousSection || 'job-feed');
     };
 
     const renderContent = () => {
@@ -442,7 +568,15 @@ const HomePage = () => {
                 return <Inbox
                     mode="candidate"
                     userId={user?.id}
-                    onBack={() => setActiveSection('job-feed')}
+                    onBack={() => updateActiveSection('job-feed')}
+                    onFooterBack={goToPreviousSection}
+                />;
+            case 'view-candidates':
+                return <TalentPool
+                    mode="candidate"
+                    jobs={jobs}
+                    currentUserId={user?.id}
+                    onBack={() => updateActiveSection('job-feed')}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'interested-jobs':
@@ -462,6 +596,15 @@ const HomePage = () => {
                     onUpdate={refreshData}
                     switchSection={switchSection}
                     onFooterBack={goToPreviousSection}
+                />;
+            case 'about-jumptake':
+                return <AboutJumpTake mode="candidate" />;
+            case 'progress-check':
+                return <PerformanceAnalytics
+                    mode="candidate"
+                    jobs={jobs}
+                    jobSeekerData={jobSeekerData}
+                    userId={user?.id}
                 />;
             case 'settings':
                 return <UserSettings
@@ -498,7 +641,7 @@ const HomePage = () => {
                         </button>
                     </div>
                     <div className="dashboard-title candidate-dashboard-title">
-                        <h1>Candidate Dashboard</h1>
+                        <h1>Candidate Portal</h1>
                         <p>Welcome back, {user?.email.split('@')[0] || 'User'}</p>
                     </div>
                 </div>
@@ -521,9 +664,10 @@ const HomePage = () => {
                     </button>
                 </div>
                 <div className="dashboard-title candidate-dashboard-title">
-                    <h1>Candidate Dashboard</h1>
+                    <h1>Candidate Portal</h1>
                     <p>Welcome back, {user?.email.split('@')[0] || 'User'}</p>
                 </div>
+                <DashboardSearch onSearch={handleDashboardSearch} />
             </div>
 
             {showInterestPopup && (
@@ -558,7 +702,7 @@ const HomePage = () => {
                 </div>
             )}
 
-            <div className="dashboard-container">
+            <div className={`dashboard-container ${mobileSectionVisible ? 'mobile-section-open' : ''}`}>
                 <div className="sidebar">
                     <div className="user-profile">
                         <div className="avatar">
@@ -568,6 +712,7 @@ const HomePage = () => {
                             <h3>{user?.email.split('@')[0] || 'User'}</h3>
                             <p>{user?.email}</p>
                         </div>
+                        <DashboardSearch onSearch={handleDashboardSearch} compact />
                     </div>
                     <nav className="dashboard-nav">
                         <ul>
@@ -583,6 +728,12 @@ const HomePage = () => {
                             >
                                 <span className="dashboard-nav-label">Inbox</span>
                                 {pendingInboxCount > 0 && <span className="nav-notification-dot"></span>}
+                            </li>
+                            <li
+                                className={activeSection === 'view-candidates' ? 'active' : ''}
+                                onClick={() => openSection('view-candidates')}
+                            >
+                                View Candidates
                             </li>
                             <li
                                 className={activeSection === 'applications' ? 'active' : ''}
@@ -629,6 +780,18 @@ const HomePage = () => {
                                 My Profile
                             </li>
                             <li
+                                className={activeSection === 'about-jumptake' ? 'active' : ''}
+                                onClick={() => openSection('about-jumptake')}
+                            >
+                                About JumpTake
+                            </li>
+                            <li
+                                className={activeSection === 'progress-check' ? 'active' : ''}
+                                onClick={() => openSection('progress-check')}
+                            >
+                                Progress Check
+                            </li>
+                            <li
                                 className={activeSection === 'settings' ? 'active' : ''}
                                 onClick={() => openSection('settings')}
                             >
@@ -644,7 +807,7 @@ const HomePage = () => {
                     </nav>
                 </div>
 
-                <main className={`main-content mobile-dashboard-section-panel ${mobileSectionVisible ? 'is-open' : ''}`}>
+                <main className={`main-content mobile-dashboard-section-panel mobile-section-${activeSection} ${mobileSectionVisible ? 'is-open' : ''}`}>
                     {mobileSectionVisible && (
                         <div className="mobile-section-panel-header">
                             <button type="button" className="back-button" onClick={closeMobileSectionPanel}>

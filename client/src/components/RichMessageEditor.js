@@ -8,7 +8,6 @@ const toolbarActions = [
     { command: 'justifyCenter', label: 'Center', title: 'Align center' },
     { command: 'justifyRight', label: 'Right', title: 'Align right' },
     { command: 'insertUnorderedList', label: 'Bullets', title: 'Bullet list' },
-    { command: 'insertOrderedList', label: 'Numbers', title: 'Numbered list' },
     { command: 'undo', label: 'Undo', title: 'Undo' },
     { command: 'redo', label: 'Redo', title: 'Redo' },
     { command: 'removeFormat', label: 'Clear', title: 'Clear formatting' }

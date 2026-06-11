@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import AnimatedDeleteButton from './AnimatedDeleteButton';
 
 const GeneralAssessments = ({ companyId, jobs = [], onBack, onFooterBack }) => {
     const [assessments, setAssessments] = useState([]);
@@ -210,9 +211,10 @@ const GeneralAssessments = ({ companyId, jobs = [], onBack, onFooterBack }) => {
                 </div>
 
                 <div className="assessment-footer-actions">
-                    <button className="secondary-button" onClick={() => deleteAssessment(selectedAssessment._id)}>
-                        Delete
-                    </button>
+                    <AnimatedDeleteButton
+                        onClick={() => deleteAssessment(selectedAssessment._id)}
+                        title="Delete assessment"
+                    />
                 </div>
             </div>
         );
@@ -252,9 +254,10 @@ const GeneralAssessments = ({ companyId, jobs = [], onBack, onFooterBack }) => {
                                 <button className="view-button" onClick={() => setSelectedAssessment(assessment)}>
                                     View Assessment
                                 </button>
-                                <button className="secondary-button" onClick={() => deleteAssessment(assessment._id)}>
-                                    Delete
-                                </button>
+                                <AnimatedDeleteButton
+                                    onClick={() => deleteAssessment(assessment._id)}
+                                    title="Delete assessment"
+                                />
                             </div>
                         </div>
                     ))}

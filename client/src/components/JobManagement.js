@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import AnimatedDeleteButton from './AnimatedDeleteButton';
 import EditJob from './EditJob';
+import { sendApplicationStatusEmail } from '../utils/emailVerification';
 
 const createQuestion = (type = 'multiple-choice') => ({
     clientId: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -87,6 +89,7 @@ const formatValue = (value) => {
 const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
     const [currentJob, setCurrentJob] = useState(job);
     const [activeSection, setActiveSection] = useState('view');
+    const [mobileSectionVisible, setMobileSectionVisible] = useState(false);
     const [applications, setApplications] = useState([]);
     const [bookmarkedApplicationIds, setBookmarkedApplicationIds] = useState([]);
     const [assessments, setAssessments] = useState([]);
@@ -103,6 +106,8 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
     const [editingAssessmentId, setEditingAssessmentId] = useState(null);
     const [interviewLink, setInterviewLink] = useState('');
     const [interviewDates, setInterviewDates] = useState(createInterviewDates());
+    const [seenApplicantsCount, setSeenApplicantsCount] = useState(0);
+    const [seenCompletedAssessmentCount, setSeenCompletedAssessmentCount] = useState(0);
 
     const jobId = getId(currentJob);
 
@@ -222,6 +227,9 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
         !['Video Interview', 'Hired', 'Rejected', 'Hold Candidate'].includes(assignment.decision || 'Pending')
     ));
 
+    const hasApplicantNotification = activeSection !== 'applicants' && jobApplications.length > seenApplicantsCount;
+    const hasCompletedAssessmentNotification = activeSection !== 'completed-assessment' && completedAssessments.length > seenCompletedAssessmentCount;
+
     const shortlistedVideoCandidates = jobAssignments.filter((assignment) => (
         assignment.status === 'Submitted' &&
         assignment.decision === 'Video Interview' &&
@@ -261,6 +269,21 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
         return candidate?.email || applicationOrAssignment?.user?.email || applicationOrAssignment?.candidateUser?.email || 'Email not available';
     };
 
+    const notifyCandidateApplicationUpdate = async (applicationOrAssignment, statusTitle) => {
+        const email = getCandidateEmail(applicationOrAssignment);
+        const name = getCandidateName(applicationOrAssignment);
+
+        try {
+            await sendApplicationStatusEmail({
+                email,
+                recipientName: name,
+                statusTitle
+            });
+        } catch (emailError) {
+            console.error('Error sending application status email:', emailError);
+        }
+    };
+
     const getCandidateNumber = (applicationOrAssignment) => (
         applicationOrAssignment?.candidateNumber ||
         applicationOrAssignment?.application?.candidateNumber ||
@@ -277,6 +300,19 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
     const switchSection = (sectionId) => {
         resetPanels();
         setActiveSection(sectionId);
+        setMobileSectionVisible(true);
+
+        if (sectionId === 'applicants') {
+            setSeenApplicantsCount(jobApplications.length);
+        }
+
+        if (sectionId === 'completed-assessment') {
+            setSeenCompletedAssessmentCount(completedAssessments.length);
+        }
+    };
+
+    const closeMobileSectionPanel = () => {
+        setMobileSectionVisible(false);
     };
 
     const updateApplicationStatus = async (application, status, successMessage) => {
@@ -312,6 +348,7 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                 prevApplication?._id === application._id ? { ...prevApplication, status } : prevApplication
             ));
             setMessage(successMessage || `Application moved to ${status}.`);
+            await notifyCandidateApplicationUpdate({ ...application, status }, status);
         } catch (statusError) {
             console.error('Error updating application status:', statusError);
             setError(statusError.message || 'Failed to update application.');
@@ -500,6 +537,7 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
             }))
         });
         setActiveSection('create-assessment');
+        setMobileSectionVisible(true);
     };
 
     const resetAssessmentForm = () => {
@@ -640,6 +678,10 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                 throw new Error(data.error || 'Failed to send assessment');
             }
 
+            const targetApplication = jobApplications.find((application) => getId(application) === applicationId);
+            if (targetApplication) {
+                await notifyCandidateApplicationUpdate(targetApplication, 'Assessment Invitation');
+            }
             setMessage(data.message || 'Assessment sent successfully.');
             await fetchWorkspaceData();
         } catch (sendError) {
@@ -691,6 +733,9 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                 throw new Error(`Sent some invitations, but ${failed.length} failed.`);
             }
 
+            await Promise.allSettled(unsentCandidates.map((application) => (
+                notifyCandidateApplicationUpdate(application, 'Assessment Invitation')
+            )));
             setMessage(`Assessment sent to ${unsentCandidates.length} shortlisted candidate${unsentCandidates.length === 1 ? '' : 's'}.`);
             await fetchWorkspaceData();
         } catch (sendAllError) {
@@ -702,11 +747,15 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
     };
 
     const shortlistForVideo = async (assignment) => {
-        await updateAssignment(
+        const updatedAssignment = await updateAssignment(
             `/api/assessment-assignments/${assignment._id}/shortlist-video`,
             null,
             'Candidate shortlisted for video interview.'
         );
+
+        if (updatedAssignment) {
+            await notifyCandidateApplicationUpdate(updatedAssignment, 'Shortlisted for Video Assessment');
+        }
     };
 
     const sendVideoInterview = async (assignment) => {
@@ -731,6 +780,7 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
         );
 
         if (updatedAssignment) {
+            await notifyCandidateApplicationUpdate(updatedAssignment, 'Video Interview Invitation');
             setInterviewLink('');
             setInterviewDates(createInterviewDates());
         }
@@ -778,6 +828,9 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                 throw new Error(`Sent some invitations, but ${failed.length} failed.`);
             }
 
+            await Promise.allSettled(shortlistedVideoCandidates.map((assignment) => (
+                notifyCandidateApplicationUpdate(assignment, 'Video Interview Invitation')
+            )));
             setMessage(`Video interview invitation sent to ${shortlistedVideoCandidates.length} candidate${shortlistedVideoCandidates.length === 1 ? '' : 's'}.`);
             setInterviewLink('');
             setInterviewDates(createInterviewDates());
@@ -791,11 +844,21 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
     };
 
     const decideAfterInterview = async (assignment, decision) => {
-        await updateAssignment(
+        const decisionTitles = {
+            hire: 'Accepted',
+            hold: 'On Hold',
+            reject: 'Rejected'
+        };
+
+        const updatedAssignment = await updateAssignment(
             `/api/assessment-assignments/${assignment._id}/complete-interview`,
             { decision },
             'Interview decision saved.'
         );
+
+        if (updatedAssignment) {
+            await notifyCandidateApplicationUpdate(updatedAssignment, decisionTitles[decision] || 'Application Updated');
+        }
     };
 
     const renderList = (items, emptyMessage) => {
@@ -999,13 +1062,21 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                         >
                             Shortlist for Assessment
                         </button>
-                        <button
-                            className="secondary-button"
-                            onClick={() => toggleApplicationBookmark(selectedApplication)}
-                            disabled={saving}
-                        >
-                            {bookmarkedApplicationIds.includes(String(selectedApplication._id)) ? 'Remove Bookmark' : 'Bookmark Application'}
-                        </button>
+                        {bookmarkedApplicationIds.includes(String(selectedApplication._id)) ? (
+                            <AnimatedDeleteButton
+                                onClick={() => toggleApplicationBookmark(selectedApplication)}
+                                disabled={saving}
+                                title="Remove bookmark"
+                            />
+                        ) : (
+                            <button
+                                className="secondary-button"
+                                onClick={() => toggleApplicationBookmark(selectedApplication)}
+                                disabled={saving}
+                            >
+                                Bookmark Application
+                            </button>
+                        )}
                         <button
                             className="secondary-button"
                             onClick={() => updateApplicationStatus(selectedApplication, 'On Hold', 'Candidate placed on hold.')}
@@ -1141,9 +1212,11 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                         )}
 
                         <div className="assessment-question-actions">
-                            <button className="secondary-button" onClick={() => removeQuestion(question.clientId)} disabled={assessmentForm.questions.length <= 1}>
-                                Remove Question
-                            </button>
+                            <AnimatedDeleteButton
+                                onClick={() => removeQuestion(question.clientId)}
+                                disabled={assessmentForm.questions.length <= 1}
+                                title="Remove question"
+                            />
                         </div>
                     </div>
                 ))}
@@ -1198,9 +1271,11 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                                         <button className="secondary-button" onClick={() => startEditAssessment(assessment)}>
                                             Edit
                                         </button>
-                                        <button className="secondary-button" onClick={() => deleteAssessment(assessment._id)} disabled={saving}>
-                                            Delete
-                                        </button>
+                                        <AnimatedDeleteButton
+                                            onClick={() => deleteAssessment(assessment._id)}
+                                            disabled={saving}
+                                            title="Delete assessment"
+                                        />
                                     </div>
                                 </div>
                             );
@@ -1386,6 +1461,7 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                     <button className="view-button" onClick={() => {
                         setSelectedAssignment(assignment);
                         setActiveSection('arrange-video');
+                        setMobileSectionVisible(true);
                     }}>
                         Arrange Interview
                     </button>
@@ -1575,7 +1651,9 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                         className={activeSection === section.id ? 'active' : ''}
                         onClick={() => switchSection(section.id)}
                     >
-                        {section.label}
+                        <span>{section.label}</span>
+                        {section.id === 'applicants' && hasApplicantNotification && <span className="nav-notification-dot"></span>}
+                        {section.id === 'completed-assessment' && hasCompletedAssessmentNotification && <span className="nav-notification-dot"></span>}
                     </button>
                 ))}
                 <button type="button" className="job-management-back-nav" onClick={onBack}>
@@ -1583,10 +1661,21 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                 </button>
             </nav>
 
-            {message && <div className={`notification-message ${message.includes('Error') ? 'error' : 'success'}`}>{message}</div>}
-            {error && <div className="error-message">{error}</div>}
+            <div className={`mobile-job-management-section-panel ${mobileSectionVisible ? 'is-open' : ''}`}>
+                {mobileSectionVisible && (
+                    <div className="mobile-section-panel-header">
+                        <button type="button" className="back-button" onClick={closeMobileSectionPanel}>
+                            Back
+                        </button>
+                        <h2>{SECTIONS.find((section) => section.id === activeSection)?.label || 'Job Section'}</h2>
+                    </div>
+                )}
 
-            {renderActiveSection()}
+                {message && <div className={`notification-message ${message.includes('Error') ? 'error' : 'success'}`}>{message}</div>}
+                {error && <div className="error-message">{error}</div>}
+
+                {renderActiveSection()}
+            </div>
         </div>
     );
 };

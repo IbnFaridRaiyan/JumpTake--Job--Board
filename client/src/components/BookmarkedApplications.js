@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import AnimatedDeleteButton from './AnimatedDeleteButton';
 
 const BookmarkedApplications = ({ companyId, onBack, onFooterBack }) => {
     const [bookmarks, setBookmarks] = useState([]);
@@ -173,7 +174,10 @@ const BookmarkedApplications = ({ companyId, onBack, onFooterBack }) => {
                                     <span>Saved {new Date(bookmark.createdAt).toLocaleDateString()}</span>
                                 </div>
                                 <div className="application-card-actions">
-                                    <button className="view-profile-btn secondary-action" onClick={() => removeBookmark(application?._id)}>Remove Bookmark</button>
+                                    <AnimatedDeleteButton
+                                        onClick={() => removeBookmark(application?._id)}
+                                        title="Remove bookmark"
+                                    />
                                     <button className="view-profile-btn secondary-action" onClick={() => { setSelectedApplication(application); setSelectedView('application'); }}>Open Application</button>
                                     <button className="view-profile-btn" onClick={() => { setSelectedApplication(application); setSelectedView('profile'); }}>View Candidate Profile</button>
                                 </div>

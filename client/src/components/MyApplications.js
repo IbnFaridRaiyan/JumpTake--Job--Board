@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import WithdrawButton from './WithdrawButton';
 
 const MyApplications = ({ userId, onRefresh, switchSection, onFooterBack }) => {
     const [applications, setApplications] = useState([]);
@@ -399,13 +400,11 @@ const MyApplications = ({ userId, onRefresh, switchSection, onFooterBack }) => {
                                     <td>
                                         <div className="application-actions">
                                             {app.status !== 'Withdrawn' && app.status !== 'Rejected' && app.status !== 'Unsuccessful' && (
-                                                <button
-                                                    className="withdraw-button"
+                                                <WithdrawButton
                                                     onClick={() => handleWithdraw(app._id)}
                                                     disabled={withdrawingId === app._id}
-                                                >
-                                                    {withdrawingId === app._id ? 'Withdrawing...' : 'Withdraw'}
-                                                </button>
+                                                    title={withdrawingId === app._id ? 'Withdrawing...' : 'Withdraw'}
+                                                />
                                             )}
                                             <button className="view-button" onClick={() => setSelectedApplication(app)}>
                                                 View Details

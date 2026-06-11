@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import AnimatedDeleteButton from './AnimatedDeleteButton';
 
 const createQuestion = (type = 'multiple-choice') => ({
     clientId: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -318,13 +319,11 @@ const MakeAssessment = ({ companyId, jobs = [], onBack, onFooterBack }) => {
                                     <option value="multiple-choice">Multiple Choice</option>
                                     <option value="text">Text Answer</option>
                                 </select>
-                                <button
-                                    className="secondary-button"
+                                <AnimatedDeleteButton
                                     onClick={() => removeQuestion(question.clientId)}
                                     disabled={formData.questions.length === 1}
-                                >
-                                    Remove
-                                </button>
+                                    title="Remove question"
+                                />
                             </div>
                         </div>
 
@@ -350,13 +349,11 @@ const MakeAssessment = ({ companyId, jobs = [], onBack, onFooterBack }) => {
                                             onChange={(event) => handleOptionChange(question.clientId, optionIndex, event.target.value)}
                                             placeholder={`Option ${optionIndex + 1}`}
                                         />
-                                        <button
-                                            className="secondary-button"
+                                        <AnimatedDeleteButton
                                             onClick={() => removeOption(question.clientId, optionIndex)}
                                             disabled={question.options.length <= 2}
-                                        >
-                                            Remove
-                                        </button>
+                                            title="Remove option"
+                                        />
                                     </div>
                                 ))}
                                 <button className="view-button no-icon-button" onClick={() => addOption(question.clientId)}>

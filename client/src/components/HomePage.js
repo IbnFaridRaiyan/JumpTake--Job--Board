@@ -9,7 +9,8 @@ import BookmarkedJobs from './BookmarkedJobs';
 import UserProfile from './UserProfile';
 import UserSettings from './UserSettings';
 import Inbox from './Inbox';
-import logo from './media/logo.png';
+import InterestedJobSuggestion from './InterestedJobSuggestion';
+import logo from './media/logo3.png';
 
 const JOB_INTEREST_OPTIONS = [
     'Software Engineering',
@@ -44,11 +45,26 @@ const HomePage = () => {
     const [jobSeekerData, setJobSeekerData] = useState(null);
     const [pendingAssessmentCount, setPendingAssessmentCount] = useState(0);
     const [pendingVideoInterviewCount, setPendingVideoInterviewCount] = useState(0);
+    const [pendingInboxCount, setPendingInboxCount] = useState(0);
     const [showInterestPopup, setShowInterestPopup] = useState(false);
     const [selectedJobInterests, setSelectedJobInterests] = useState([]);
     const [interestError, setInterestError] = useState('');
     const [savingInterests, setSavingInterests] = useState(false);
+    const [mobileSectionVisible, setMobileSectionVisible] = useState(false);
     const navigate = useNavigate();
+
+    const sectionTitles = {
+        'job-feed': 'Job Feed',
+        applications: 'My Applications',
+        assessments: 'My Assessments',
+        'video-interviews': 'Video Interviews',
+        'draft-applications': 'Draft Applications',
+        'bookmarked-jobs': 'Bookmarked Jobs',
+        inbox: 'Inbox',
+        'interested-jobs': 'Interested Job Suggession',
+        profile: 'My Profile',
+        settings: 'Settings'
+    };
 
     useEffect(() => {
         const userData = localStorage.getItem('user');
@@ -65,6 +81,7 @@ const HomePage = () => {
 
         fetchJobs();
         fetchCandidateNotifications(parsedUser.id);
+        fetchCandidateInboxNotifications(parsedUser.id);
 
         let seekerId = parsedUser.jobSeekerId;
 
@@ -220,6 +237,38 @@ const HomePage = () => {
         navigate('/');
     };
 
+    const fetchCandidateInboxNotifications = async (userId) => {
+        if (!userId) {
+            setPendingInboxCount(0);
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/messages/user/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch inbox notifications');
+            }
+
+            const threads = await response.json();
+            const seenAt = Number(localStorage.getItem('jumptakeCandidateInboxSeenAt') || 0);
+            const unseenCount = (Array.isArray(threads) ? threads : []).filter((thread) => {
+                const lastMessage = thread.messages?.[thread.messages.length - 1];
+                return lastMessage?.senderType === 'employer' && new Date(thread.lastMessageAt || lastMessage.createdAt).getTime() > seenAt;
+            }).length;
+
+            setPendingInboxCount(unseenCount);
+        } catch (inboxError) {
+            console.error('Error fetching inbox notifications:', inboxError);
+            setPendingInboxCount(0);
+        }
+    };
+
     const toggleJobInterest = (interest) => {
         setSelectedJobInterests((prevInterests) => (
             prevInterests.includes(interest)
@@ -278,6 +327,7 @@ const HomePage = () => {
         fetchJobs();
         if (user?.id) {
             fetchCandidateNotifications(user.id);
+            fetchCandidateInboxNotifications(user.id);
         }
         if (user?.jobSeekerId) {
             fetchJobSeekerData(user.jobSeekerId);
@@ -286,16 +336,41 @@ const HomePage = () => {
 
     const switchSection = (nextSection) => {
         if (!nextSection || nextSection === activeSection) {
+            setMobileSectionVisible(true);
             return;
         }
 
         setSectionHistory((prev) => [...prev, activeSection]);
         setActiveSection(nextSection);
+        setMobileSectionVisible(true);
+    };
+
+    const openSection = (nextSection) => {
+        if (!nextSection) {
+            return;
+        }
+
+        if (nextSection === 'inbox') {
+            setPendingInboxCount(0);
+            localStorage.setItem('jumptakeCandidateInboxSeenAt', String(Date.now()));
+        }
+
+        if (nextSection === activeSection) {
+            setMobileSectionVisible(true);
+            return;
+        }
+
+        switchSection(nextSection);
     };
 
     const handleLogoClick = () => {
         setSectionHistory([]);
         setActiveSection('job-feed');
+        setMobileSectionVisible(false);
+    };
+
+    const closeMobileSectionPanel = () => {
+        setMobileSectionVisible(false);
     };
 
     const goToPreviousSection = () => {
@@ -368,6 +443,16 @@ const HomePage = () => {
                     mode="candidate"
                     userId={user?.id}
                     onBack={() => setActiveSection('job-feed')}
+                    onFooterBack={goToPreviousSection}
+                />;
+            case 'interested-jobs':
+                return <InterestedJobSuggestion
+                    user={user}
+                    onInterestsSaved={(nextUser) => {
+                        setUser(nextUser);
+                        localStorage.setItem('user', JSON.stringify(nextUser));
+                        refreshData();
+                    }}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'profile':
@@ -488,57 +573,64 @@ const HomePage = () => {
                         <ul>
                             <li
                                 className={activeSection === 'job-feed' ? 'active' : ''}
-                                onClick={() => setActiveSection('job-feed')}
+                                onClick={() => openSection('job-feed')}
                             >
                                 Job Feed
                             </li>
                             <li
+                                className={activeSection === 'inbox' ? 'active' : ''}
+                                onClick={() => openSection('inbox')}
+                            >
+                                <span className="dashboard-nav-label">Inbox</span>
+                                {pendingInboxCount > 0 && <span className="nav-notification-dot"></span>}
+                            </li>
+                            <li
                                 className={activeSection === 'applications' ? 'active' : ''}
-                                onClick={() => switchSection('applications')}
+                                onClick={() => openSection('applications')}
                             >
                                 My Applications
                             </li>
                             <li
                                 className={activeSection === 'assessments' ? 'active' : ''}
-                                onClick={() => switchSection('assessments')}
+                                onClick={() => openSection('assessments')}
                             >
                                 <span className="dashboard-nav-label">My Assessments</span>
                                 {pendingAssessmentCount > 0 && <span className="nav-notification-dot"></span>}
                             </li>
                             <li
                                 className={activeSection === 'video-interviews' ? 'active' : ''}
-                                onClick={() => switchSection('video-interviews')}
+                                onClick={() => openSection('video-interviews')}
                             >
                                 <span className="dashboard-nav-label">Video Interviews</span>
                                 {pendingVideoInterviewCount > 0 && <span className="nav-notification-dot"></span>}
                             </li>
                             <li
                                 className={activeSection === 'draft-applications' ? 'active' : ''}
-                                onClick={() => switchSection('draft-applications')}
+                                onClick={() => openSection('draft-applications')}
                             >
                                 Draft Applications
                             </li>
                             <li
                                 className={activeSection === 'bookmarked-jobs' ? 'active' : ''}
-                                onClick={() => switchSection('bookmarked-jobs')}
+                                onClick={() => openSection('bookmarked-jobs')}
                             >
                                 Bookmarked Jobs
                             </li>
                             <li
-                                className={activeSection === 'inbox' ? 'active' : ''}
-                                onClick={() => switchSection('inbox')}
+                                className={activeSection === 'interested-jobs' ? 'active' : ''}
+                                onClick={() => openSection('interested-jobs')}
                             >
-                                Inbox
+                                Interested Job Suggession
                             </li>
                             <li
                                 className={activeSection === 'profile' ? 'active' : ''}
-                                onClick={() => switchSection('profile')}
+                                onClick={() => openSection('profile')}
                             >
                                 My Profile
                             </li>
                             <li
                                 className={activeSection === 'settings' ? 'active' : ''}
-                                onClick={() => switchSection('settings')}
+                                onClick={() => openSection('settings')}
                             >
                                 Settings
                             </li>
@@ -546,7 +638,15 @@ const HomePage = () => {
                     </nav>
                 </div>
 
-                <main className="main-content">
+                <main className={`main-content mobile-dashboard-section-panel ${mobileSectionVisible ? 'is-open' : ''}`}>
+                    {mobileSectionVisible && (
+                        <div className="mobile-section-panel-header">
+                            <button type="button" className="back-button" onClick={closeMobileSectionPanel}>
+                                Back
+                            </button>
+                            <h2>{sectionTitles[activeSection] || 'Dashboard Section'}</h2>
+                        </div>
+                    )}
                     {renderContent()}
                 </main>
             </div>

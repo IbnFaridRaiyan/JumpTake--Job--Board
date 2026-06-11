@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import AnimatedDeleteButton from './AnimatedDeleteButton';
 
 const VideoInterviews = ({ userId, switchSection, onFooterBack }) => {
     const [interviews, setInterviews] = useState([]);
@@ -204,9 +205,11 @@ const VideoInterviews = ({ userId, switchSection, onFooterBack }) => {
                             <button className="settings-button primary" onClick={() => handleRespondToInterview('accept')} disabled={saving}>
                                 {saving ? 'Saving...' : 'Accept Interview'}
                             </button>
-                            <button className="secondary-button" onClick={() => handleRespondToInterview('discard')} disabled={saving}>
-                                Discard Invitation
-                            </button>
+                            <AnimatedDeleteButton
+                                onClick={() => handleRespondToInterview('discard')}
+                                disabled={saving}
+                                title="Discard invitation"
+                            />
                         </div>
                     )}
 

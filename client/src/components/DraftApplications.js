@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import AnimatedDeleteButton from './AnimatedDeleteButton';
 
 const DraftApplications = ({ userId, switchSection, onFooterBack }) => {
     const [drafts, setDrafts] = useState([]);
@@ -114,9 +115,10 @@ const DraftApplications = ({ userId, switchSection, onFooterBack }) => {
                                 <span>Saved {new Date(draft.updatedAt).toLocaleDateString()}</span>
                             </div>
                             <div className="application-card-actions">
-                                <button className="view-profile-btn secondary-action" onClick={() => handleDeleteDraft(draft._id)}>
-                                    Delete Draft
-                                </button>
+                                <AnimatedDeleteButton
+                                    onClick={() => handleDeleteDraft(draft._id)}
+                                    title="Delete draft"
+                                />
                                 <button className="view-profile-btn" onClick={() => handleContinueDraft(draft)}>
                                     Continue Draft
                                 </button>

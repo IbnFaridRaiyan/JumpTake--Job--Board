@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import AnimatedDeleteButton from './AnimatedDeleteButton';
 
 const UserSettings = ({ user, onLogout, switchSection, onFooterBack }) => {
     const [activeTab, setActiveTab] = useState('account');
@@ -398,12 +399,10 @@ const UserSettings = ({ user, onLogout, switchSection, onFooterBack }) => {
                     and account information will be permanently deleted.
                 </p>
                 {!confirmDelete ? (
-                    <button 
-                        className="delete-account-button" 
+                    <AnimatedDeleteButton
                         onClick={handleShowDeleteConfirmation}
-                    >
-                        Delete Account
-                    </button>
+                        title="Delete account"
+                    />
                 ) : (
                     <form onSubmit={handleDeleteAccount}>
                         <div className="form-group">
@@ -418,13 +417,12 @@ const UserSettings = ({ user, onLogout, switchSection, onFooterBack }) => {
                             />
                         </div>
                         <div className="button-group">
-                            <button 
-                                type="submit" 
-                                className="confirm-delete-button"
+                            <AnimatedDeleteButton
+                                type="submit"
+                                onClick={handleDeleteAccount}
                                 disabled={isDeleting}
-                            >
-                                {isDeleting ? 'Deleting...' : 'Confirm Delete'}
-                            </button>
+                                title={isDeleting ? 'Deleting...' : 'Confirm delete'}
+                            />
                             <button 
                                 type="button" 
                                 className="cancel-edit-button"

@@ -9,7 +9,7 @@ import TalentPool from './TalentPool';
 import BookmarkedTalents from './BookmarkedTalents';
 import EmployerSettings from './EmployerSettings';
 import Inbox from './Inbox';
-import logo from './media/logo.png';
+import logo from './media/logo3.png';
 
 const EmployerDashboard = () => {
     const [employer, setEmployer] = useState(null);
@@ -19,7 +19,22 @@ const EmployerDashboard = () => {
     const [companyData, setCompanyData] = useState(null);
     const [jobs, setJobs] = useState([]);
     const [applicationCount, setApplicationCount] = useState(0);
+    const [pendingInboxCount, setPendingInboxCount] = useState(0);
+    const [mobileSectionVisible, setMobileSectionVisible] = useState(false);
     const navigate = useNavigate();
+
+    const sectionTitles = {
+        dashboard: 'Dashboard',
+        'post-job': 'Post a Job',
+        'manage-jobs': 'Manage Jobs',
+        'make-assessment': 'Make an Assessment',
+        'general-assessment': 'General Assessment',
+        'talent-pool': 'Talent Pool',
+        'bookmarked-talents': 'Bookmarked Talents',
+        inbox: 'Inbox',
+        'company-profile': 'Company Profile',
+        settings: 'Settings'
+    };
 
     useEffect(() => {
         const employerData = localStorage.getItem('employer');
@@ -34,6 +49,7 @@ const EmployerDashboard = () => {
         fetchCompanyData(parsedEmployer.companyId);
         fetchCompanyJobs(parsedEmployer.companyId);
         fetchApplicationCount(parsedEmployer.companyId);
+        fetchEmployerInboxNotifications(parsedEmployer.companyId);
     }, [navigate]);
 
     const fetchCompanyData = async (companyId) => {
@@ -92,6 +108,38 @@ const EmployerDashboard = () => {
         }
     };
 
+    const fetchEmployerInboxNotifications = async (companyId) => {
+        if (!companyId) {
+            setPendingInboxCount(0);
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('employerToken');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/messages/company/${companyId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch inbox notifications');
+            }
+
+            const threads = await response.json();
+            const seenAt = Number(localStorage.getItem('jumptakeEmployerInboxSeenAt') || 0);
+            const unseenCount = (Array.isArray(threads) ? threads : []).filter((thread) => {
+                const lastMessage = thread.messages?.[thread.messages.length - 1];
+                return lastMessage?.senderType === 'candidate' && new Date(thread.lastMessageAt || lastMessage.createdAt).getTime() > seenAt;
+            }).length;
+
+            setPendingInboxCount(unseenCount);
+        } catch (inboxError) {
+            console.error('Error fetching inbox notifications:', inboxError);
+            setPendingInboxCount(0);
+        }
+    };
+
     const handleLogout = () => {
         localStorage.removeItem('employerToken');
         localStorage.removeItem('employer');
@@ -137,21 +185,47 @@ const EmployerDashboard = () => {
         if (employer) {
             fetchCompanyJobs(employer.companyId);
             fetchApplicationCount(employer.companyId);
+            fetchEmployerInboxNotifications(employer.companyId);
         }
     };
 
     const switchSection = (nextSection) => {
         if (!nextSection || nextSection === activeSection) {
+            setMobileSectionVisible(true);
             return;
         }
 
         setSectionHistory((prev) => [...prev, activeSection]);
         setActiveSection(nextSection);
+        setMobileSectionVisible(true);
+    };
+
+    const openSection = (nextSection) => {
+        if (!nextSection) {
+            return;
+        }
+
+        if (nextSection === 'inbox') {
+            setPendingInboxCount(0);
+            localStorage.setItem('jumptakeEmployerInboxSeenAt', String(Date.now()));
+        }
+
+        if (nextSection === activeSection) {
+            setMobileSectionVisible(true);
+            return;
+        }
+
+        switchSection(nextSection);
     };
 
     const handleLogoClick = () => {
         setSectionHistory([]);
         setActiveSection('dashboard');
+        setMobileSectionVisible(false);
+    };
+
+    const closeMobileSectionPanel = () => {
+        setMobileSectionVisible(false);
     };
 
     const goToPreviousSection = () => {
@@ -409,61 +483,62 @@ const EmployerDashboard = () => {
                         <ul>
                             <li
                                 className={activeSection === 'dashboard' ? 'active' : ''}
-                                onClick={() => setActiveSection('dashboard')}
+                                onClick={() => openSection('dashboard')}
                             >
                                 Dashboard
                             </li>
                             <li
                                 className={activeSection === 'post-job' ? 'active' : ''}
-                                onClick={() => switchSection('post-job')}
+                                onClick={() => openSection('post-job')}
                             >
                                 Post a Job
                             </li>
                             <li
                                 className={activeSection === 'manage-jobs' ? 'active' : ''}
-                                onClick={() => switchSection('manage-jobs')}
+                                onClick={() => openSection('manage-jobs')}
                             >
                                 Manage Jobs
                             </li>
                             <li
                                 className={activeSection === 'make-assessment' ? 'active' : ''}
-                                onClick={() => switchSection('make-assessment')}
+                                onClick={() => openSection('make-assessment')}
                             >
                                 Make an Assessment
                             </li>
                             <li
                                 className={activeSection === 'general-assessment' ? 'active' : ''}
-                                onClick={() => switchSection('general-assessment')}
+                                onClick={() => openSection('general-assessment')}
                             >
                                 General Assessment
                             </li>
                             <li
                                 className={activeSection === 'talent-pool' ? 'active' : ''}
-                                onClick={() => switchSection('talent-pool')}
+                                onClick={() => openSection('talent-pool')}
                             >
                                 Talent Pool
                             </li>
                             <li
                                 className={activeSection === 'bookmarked-talents' ? 'active' : ''}
-                                onClick={() => switchSection('bookmarked-talents')}
+                                onClick={() => openSection('bookmarked-talents')}
                             >
                                 Bookmarked Talents
                             </li>
                             <li
                                 className={activeSection === 'inbox' ? 'active' : ''}
-                                onClick={() => switchSection('inbox')}
+                                onClick={() => openSection('inbox')}
                             >
-                                Inbox
+                                <span className="dashboard-nav-label">Inbox</span>
+                                {pendingInboxCount > 0 && <span className="nav-notification-dot"></span>}
                             </li>
                             <li
                                 className={activeSection === 'company-profile' ? 'active' : ''}
-                                onClick={() => switchSection('company-profile')}
+                                onClick={() => openSection('company-profile')}
                             >
                                 Company Profile
                             </li>
                             <li
                                 className={activeSection === 'settings' ? 'active' : ''}
-                                onClick={() => switchSection('settings')}
+                                onClick={() => openSection('settings')}
                             >
                                 Settings
                             </li>
@@ -471,7 +546,15 @@ const EmployerDashboard = () => {
                     </nav>
                 </div>
 
-                <main className="main-content">
+                <main className={`main-content mobile-dashboard-section-panel ${mobileSectionVisible ? 'is-open' : ''}`}>
+                    {mobileSectionVisible && (
+                        <div className="mobile-section-panel-header">
+                            <button type="button" className="back-button" onClick={closeMobileSectionPanel}>
+                                Back
+                            </button>
+                            <h2>{sectionTitles[activeSection] || 'Dashboard Section'}</h2>
+                        </div>
+                    )}
                     {renderContent()}
                 </main>
             </div>

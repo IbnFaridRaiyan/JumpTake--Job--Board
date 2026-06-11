@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import AnimatedDeleteButton from './AnimatedDeleteButton';
 
 const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
     const [bookmarks, setBookmarks] = useState([]);
@@ -150,9 +151,10 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
                                     {job?.salary && <span>{job.salary}</span>}
                                 </div>
                                 <div className="application-card-actions">
-                                    <button className="view-profile-btn secondary-action" onClick={() => removeBookmark(job?._id)}>
-                                        Remove Bookmark
-                                    </button>
+                                    <AnimatedDeleteButton
+                                        onClick={() => removeBookmark(job?._id)}
+                                        title="Remove bookmark"
+                                    />
                                     <button className="view-profile-btn secondary-action" onClick={() => openJob(job?._id, 'preview')}>
                                         Open Job
                                     </button>

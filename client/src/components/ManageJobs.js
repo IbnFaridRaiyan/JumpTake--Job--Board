@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AnimatedDeleteButton from './AnimatedDeleteButton';
 import JobManagement from './JobManagement';
 
 const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => {
@@ -210,13 +211,11 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => 
                                             >
                                                 Manage
                                             </button>
-                                            <button 
-                                                className="action-button delete"
+                                            <AnimatedDeleteButton
                                                 onClick={() => handleDelete(job._id)}
                                                 disabled={isLoading}
-                                            >
-                                                {isLoading ? 'Deleting...' : 'Delete'}
-                                            </button>
+                                                title={isLoading ? 'Deleting...' : 'Delete job'}
+                                            />
                                         </td>
                                     </tr>
                                 ))}

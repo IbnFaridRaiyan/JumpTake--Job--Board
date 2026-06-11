@@ -194,7 +194,10 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
     };
 
     const jobApplications = useMemo(() => (
-        applications.filter((application) => getId(application?.job) === jobId)
+        applications.filter((application) => (
+            getId(application?.job) === jobId &&
+            application?.status !== 'Withdrawn'
+        ))
     ), [applications, jobId]);
 
     const jobAssessments = useMemo(() => (
@@ -1078,14 +1081,14 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                             </button>
                         )}
                         <button
-                            className="secondary-button"
+                            className="secondary-button hold-button"
                             onClick={() => updateApplicationStatus(selectedApplication, 'On Hold', 'Candidate placed on hold.')}
                             disabled={saving}
                         >
                             Hold
                         </button>
                         <button
-                            className="secondary-button"
+                            className="secondary-button reject-button"
                             onClick={() => updateApplicationStatus(selectedApplication, 'Rejected', 'Candidate rejected.')}
                             disabled={saving}
                         >
@@ -1332,7 +1335,7 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                                     </div>
                                     <div className="assessment-card-actions">
                                         <button
-                                            className="view-button"
+                                            className="view-button no-icon-button send-candidate-button"
                                             onClick={() => sendAssessment(assessment._id, application._id)}
                                             disabled={saving || Boolean(alreadySent)}
                                         >
@@ -1358,8 +1361,8 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                 (application) => (
                     <>
                         <button className="view-button" onClick={() => handleOpenApplication(application)}>View</button>
-                        <button className="secondary-button" onClick={() => updateApplicationStatus(application, 'On Hold', 'Candidate placed on hold.')} disabled={saving}>Hold</button>
-                        <button className="secondary-button" onClick={() => updateApplicationStatus(application, 'Rejected', 'Candidate rejected.')} disabled={saving}>Reject</button>
+                        <button className="secondary-button hold-button" onClick={() => updateApplicationStatus(application, 'On Hold', 'Candidate placed on hold.')} disabled={saving}>Hold</button>
+                        <button className="secondary-button reject-button" onClick={() => updateApplicationStatus(application, 'Rejected', 'Candidate rejected.')} disabled={saving}>Reject</button>
                     </>
                 )
             )}
@@ -1444,7 +1447,7 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                     <button className="secondary-button" onClick={() => updateAssignment(`/api/assessment-assignments/${selectedAssignment._id}/hire`, null, 'Candidate hired.')} disabled={saving}>
                         Hire Directly
                     </button>
-                    <button className="secondary-button" onClick={() => updateAssignment(`/api/assessment-assignments/${selectedAssignment._id}/reject`, null, 'Candidate rejected.')} disabled={saving}>
+                    <button className="secondary-button reject-button" onClick={() => updateAssignment(`/api/assessment-assignments/${selectedAssignment._id}/reject`, null, 'Candidate rejected.')} disabled={saving}>
                         Reject
                     </button>
                 </div>
@@ -1527,7 +1530,7 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                     shortlistedVideoCandidates,
                     'No candidates are waiting for video interview invitations.',
                     (assignment) => (
-                        <button className="view-button" onClick={() => sendVideoInterview(assignment)} disabled={saving}>
+                        <button className="view-button no-icon-button send-candidate-button" onClick={() => sendVideoInterview(assignment)} disabled={saving}>
                             Send Invitation
                         </button>
                     )
@@ -1543,8 +1546,8 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                         (assignment) => (
                             <>
                                 <button className="view-button" onClick={() => decideAfterInterview(assignment, 'hire')} disabled={saving}>Hire</button>
-                                <button className="secondary-button" onClick={() => decideAfterInterview(assignment, 'hold')} disabled={saving}>Hold</button>
-                                <button className="secondary-button" onClick={() => decideAfterInterview(assignment, 'reject')} disabled={saving}>Reject</button>
+                                <button className="secondary-button hold-button" onClick={() => decideAfterInterview(assignment, 'hold')} disabled={saving}>Hold</button>
+                                <button className="secondary-button reject-button" onClick={() => decideAfterInterview(assignment, 'reject')} disabled={saving}>Reject</button>
                             </>
                         )
                     )}
@@ -1578,8 +1581,8 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                         <button className="view-button" onClick={() => handleOpenApplication(application)}>View</button>
                         <button className="secondary-button" onClick={() => updateApplicationStatus(application, 'Shortlisted for Assessment', 'Candidate shortlisted for assessment.')} disabled={saving}>Shortlist</button>
                         <button className="secondary-button" onClick={() => updateApplicationStatus(application, 'Accepted', 'Candidate marked as hired.')} disabled={saving}>Hire</button>
-                        <button className="secondary-button" onClick={() => updateApplicationStatus(application, 'On Hold', 'Candidate placed on hold.')} disabled={saving}>Hold</button>
-                        <button className="secondary-button" onClick={() => updateApplicationStatus(application, 'Rejected', 'Candidate rejected.')} disabled={saving}>Reject</button>
+                        <button className="secondary-button hold-button" onClick={() => updateApplicationStatus(application, 'On Hold', 'Candidate placed on hold.')} disabled={saving}>Hold</button>
+                        <button className="secondary-button reject-button" onClick={() => updateApplicationStatus(application, 'Rejected', 'Candidate rejected.')} disabled={saving}>Reject</button>
                     </>
                 )
             )}
@@ -1638,9 +1641,6 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                     <h2>{currentJob?.title || 'Manage Job'}</h2>
                     <p>{currentJob?.jobNumber || 'Job workspace'}</p>
                 </div>
-                <button className="back-button responsive-back-button" onClick={onBack}>
-                    Back to Job Listings
-                </button>
             </div>
 
             <nav className="job-management-nav" aria-label="Job management sections">

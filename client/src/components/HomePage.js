@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import JobFeed from './JobFeed';
 import MyApplications from './MyApplications';
@@ -6,6 +6,7 @@ import MyAssessments from './MyAssessments';
 import VideoInterviews from './VideoInterviews';
 import DraftApplications from './DraftApplications';
 import BookmarkedJobs from './BookmarkedJobs';
+import BookmarkedCandidates from './BookmarkedCandidates';
 import UserProfile from './UserProfile';
 import UserSettings from './UserSettings';
 import Inbox from './Inbox';
@@ -43,6 +44,7 @@ const CANDIDATE_SECTION_IDS = new Set([
     'job-feed',
     'inbox',
     'view-candidates',
+    'bookmarked-candidates',
     'applications',
     'assessments',
     'video-interviews',
@@ -93,6 +95,7 @@ const HomePage = () => {
     const [interestError, setInterestError] = useState('');
     const [savingInterests, setSavingInterests] = useState(false);
     const [mobileSectionVisible, setMobileSectionVisible] = useState(false);
+    const myApplicationsRef = useRef(null);
     const navigate = useNavigate();
 
     const updateActiveSection = (section, { push = true } = {}) => {
@@ -122,6 +125,7 @@ const HomePage = () => {
         'bookmarked-jobs': 'Bookmarked Jobs',
         inbox: 'Inbox',
         'view-candidates': 'View Candidates',
+        'bookmarked-candidates': 'Bookmarked Candidates',
         'interested-jobs': 'Interested Job Suggession',
         profile: 'My Profile',
         'about-jumptake': 'About JumpTake',
@@ -476,6 +480,7 @@ const HomePage = () => {
             { section: 'progress-check', terms: ['progress', 'performance', 'analytics', 'rate', 'views', 'response'] },
             { section: 'inbox', terms: ['inbox', 'message', 'reply'] },
             { section: 'view-candidates', terms: ['candidate', 'candidates', 'talent', 'people', 'profile'] },
+            { section: 'bookmarked-candidates', terms: ['bookmarked candidates', 'saved candidates', 'candidate bookmarks'] },
             { section: 'about-jumptake', terms: ['about', 'jumptake', 'help', 'guide'] }
         ];
 
@@ -496,6 +501,10 @@ const HomePage = () => {
     };
 
     const closeMobileSectionPanel = () => {
+        if (activeSection === 'applications' && myApplicationsRef.current?.goBackOneStep?.()) {
+            return;
+        }
+
         setMobileSectionVisible(false);
     };
 
@@ -533,6 +542,7 @@ const HomePage = () => {
                 />;
             case 'applications':
                 return <MyApplications
+                    ref={myApplicationsRef}
                     userId={user?.id}
                     onRefresh={refreshData}
                     switchSection={switchSection}
@@ -576,6 +586,12 @@ const HomePage = () => {
                     mode="candidate"
                     jobs={jobs}
                     currentUserId={user?.id}
+                    onBack={() => updateActiveSection('job-feed')}
+                    onFooterBack={goToPreviousSection}
+                />;
+            case 'bookmarked-candidates':
+                return <BookmarkedCandidates
+                    userId={user?.id}
                     onBack={() => updateActiveSection('job-feed')}
                     onFooterBack={goToPreviousSection}
                 />;
@@ -734,6 +750,12 @@ const HomePage = () => {
                                 onClick={() => openSection('view-candidates')}
                             >
                                 View Candidates
+                            </li>
+                            <li
+                                className={activeSection === 'bookmarked-candidates' ? 'active' : ''}
+                                onClick={() => openSection('bookmarked-candidates')}
+                            >
+                                Bookmarked Candidates
                             </li>
                             <li
                                 className={activeSection === 'applications' ? 'active' : ''}

@@ -4,6 +4,8 @@ import ContactCandidate from './ContactCandidate';
 const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employer', currentUserId }) => {
     const [candidates, setCandidates] = useState([]);
     const [bookmarkedTalentIds, setBookmarkedTalentIds] = useState([]);
+    const [likedCandidateIds, setLikedCandidateIds] = useState([]);
+    const [candidateLikeCounts, setCandidateLikeCounts] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -15,10 +17,11 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         if (mode === 'employer') {
             fetchBookmarkedTalents();
         } else {
-            setBookmarkedTalentIds([]);
+            fetchBookmarkedCandidates();
         }
+        fetchCandidateLikes();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [companyId, mode]);
+    }, [companyId, mode, currentUserId]);
 
     useEffect(() => {
         const talentSearchKey = mode === 'candidate' ? 'jumptakeCandidateTalentSearch' : 'jumptakeEmployerTalentSearch';
@@ -86,6 +89,75 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         }
     };
 
+    const fetchBookmarkedCandidates = async () => {
+        if (!currentUserId) {
+            setBookmarkedTalentIds([]);
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/candidate-bookmarks/user/${currentUserId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch bookmarked candidates');
+            }
+
+            const data = await response.json();
+            const bookmarkedIds = (Array.isArray(data) ? data : [])
+                .map((bookmark) => bookmark?.candidate?._id || bookmark?.candidate)
+                .filter(Boolean)
+                .map((candidateId) => String(candidateId));
+
+            setBookmarkedTalentIds(bookmarkedIds);
+        } catch (bookmarkError) {
+            console.error('Error fetching bookmarked candidates:', bookmarkError);
+        }
+    };
+
+    const getActorKey = () => (mode === 'employer' ? companyId : currentUserId);
+
+    const fetchCandidateLikes = async () => {
+        const actorKey = getActorKey();
+
+        if (!actorKey) {
+            setLikedCandidateIds([]);
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem(mode === 'candidate' ? 'token' : 'employerToken');
+            const params = new URLSearchParams({
+                actorType: mode === 'employer' ? 'employer' : 'candidate',
+                actorKey: String(actorKey)
+            });
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/candidate-likes?${params.toString()}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch candidate likes');
+            }
+
+            const data = await response.json();
+            const counts = {};
+            (data.counts || []).forEach((item) => {
+                counts[String(item.candidateId)] = item.count;
+            });
+
+            setCandidateLikeCounts(counts);
+            setLikedCandidateIds((data.likedCandidateIds || []).map((candidateId) => String(candidateId)));
+        } catch (likeError) {
+            console.error('Error fetching candidate likes:', likeError);
+        }
+    };
+
     const handleViewProfile = (candidate) => {
         setSelectedCandidate(candidate);
     };
@@ -99,16 +171,21 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
             event.stopPropagation();
         }
 
-        if (mode !== 'employer' || !candidate?._id || !companyId) {
+        const actorKey = mode === 'employer' ? companyId : currentUserId;
+
+        if (!candidate?._id || !actorKey) {
             return;
         }
 
         const isBookmarked = bookmarkedTalentIds.includes(String(candidate._id));
-        const token = localStorage.getItem('employerToken');
+        const token = localStorage.getItem(mode === 'candidate' ? 'token' : 'employerToken');
 
         try {
             if (isBookmarked) {
-                const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/talent-bookmarks/company/${companyId}/candidate/${candidate._id}`, {
+                const removeUrl = mode === 'employer'
+                    ? `/api/talent-bookmarks/company/${companyId}/candidate/${candidate._id}`
+                    : `/api/candidate-bookmarks/user/${currentUserId}/candidate/${candidate._id}`;
+                const response = await fetch(`${process.env.REACT_APP_API_URL || ''}${removeUrl}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -121,16 +198,16 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
 
                 setBookmarkedTalentIds((prevState) => prevState.filter((candidateId) => candidateId !== String(candidate._id)));
             } else {
-                const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/talent-bookmarks`, {
+                const createUrl = mode === 'employer' ? '/api/talent-bookmarks' : '/api/candidate-bookmarks';
+                const response = await fetch(`${process.env.REACT_APP_API_URL || ''}${createUrl}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({
-                        companyId,
-                        candidateId: candidate._id
-                    })
+                    body: JSON.stringify(mode === 'employer'
+                        ? { companyId, candidateId: candidate._id }
+                        : { userId: currentUserId, candidateId: candidate._id })
                 });
 
                 if (!response.ok) {
@@ -142,6 +219,81 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         } catch (bookmarkError) {
             console.error('Error toggling talent bookmark:', bookmarkError);
         }
+    };
+
+    const toggleCandidateLike = async (candidate, event) => {
+        if (event) {
+            event.stopPropagation();
+        }
+
+        const actorKey = getActorKey();
+        if (!candidate?._id || !actorKey) {
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem(mode === 'candidate' ? 'token' : 'employerToken');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/candidate-likes/toggle`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    candidateId: candidate._id,
+                    actorType: mode === 'employer' ? 'employer' : 'candidate',
+                    actorKey: String(actorKey)
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to update like');
+            }
+
+            setCandidateLikeCounts((prevCounts) => ({
+                ...prevCounts,
+                [String(candidate._id)]: data.count
+            }));
+
+            setLikedCandidateIds((prevIds) => (
+                data.liked
+                    ? [...new Set([...prevIds, String(candidate._id)])]
+                    : prevIds.filter((candidateId) => candidateId !== String(candidate._id))
+            ));
+        } catch (likeError) {
+            console.error('Error toggling candidate like:', likeError);
+        }
+    };
+
+    const renderLikeButton = (candidate) => {
+        const candidateId = String(candidate._id);
+        const isLiked = likedCandidateIds.includes(candidateId);
+
+        return (
+            <button
+                type="button"
+                className={`candidate-like-button ${isLiked ? 'active' : ''}`}
+                onClick={(event) => toggleCandidateLike(candidate, event)}
+                aria-label={isLiked ? 'Unlike candidate' : 'Like candidate'}
+            >
+                <span className="candidate-like-count">{candidateLikeCounts[candidateId] || 0}</span>
+                <span className="like-animation-wrap">
+                    <input type="checkbox" checked={isLiked} readOnly tabIndex="-1" />
+                    <svg className="celebrate" width="34" height="34" viewBox="0 0 100 100" aria-hidden="true">
+                        <polygon points="10,10 20,20"></polygon>
+                        <polygon points="80,10 70,20"></polygon>
+                        <polygon points="50,5 50,18"></polygon>
+                        <polygon points="10,80 22,72"></polygon>
+                        <polygon points="90,80 78,72"></polygon>
+                    </svg>
+                    <svg className="like" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3v11Zm2 0V11l4.7-8.5c.5-.9 1.8-.6 1.9.4l.3 3.1c.1 1-.2 2-.8 2.8h4.1c1.8 0 3.1 1.7 2.7 3.4l-1.4 6.6A4 4 0 0 1 16.6 22H9Z" />
+                    </svg>
+                </span>
+            </button>
+        );
     };
 
     const normalizeSkill = (skill) => String(skill || '').trim().toLowerCase();
@@ -444,7 +596,10 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                                         {candidate.name ? candidate.name.charAt(0).toUpperCase() : 'C'}
                                     </div>
                                     <div className="candidate-info">
-                                        <h3 className="candidate-name">{candidate.name || 'Unnamed Candidate'}</h3>
+                                        <div className="candidate-name-row">
+                                            <h3 className="candidate-name">{candidate.name || 'Unnamed Candidate'}</h3>
+                                            {renderLikeButton(candidate)}
+                                        </div>
                                         <p className="candidate-email">{candidate.email || 'Email not available'}</p>
                                         
                                         <div className="candidate-skills">

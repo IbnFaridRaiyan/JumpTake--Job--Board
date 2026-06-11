@@ -135,6 +135,11 @@ router.delete('/application-bookmarks/company/:companyId/application/:applicatio
 router.post('/talent-bookmarks', engagementController.createTalentBookmark);
 router.get('/talent-bookmarks/company/:companyId', engagementController.getCompanyTalentBookmarks);
 router.delete('/talent-bookmarks/company/:companyId/candidate/:candidateId', engagementController.deleteTalentBookmark);
+router.post('/candidate-bookmarks', engagementController.createCandidateBookmark);
+router.get('/candidate-bookmarks/user/:userId', engagementController.getUserCandidateBookmarks);
+router.delete('/candidate-bookmarks/user/:userId/candidate/:candidateId', engagementController.deleteCandidateBookmark);
+router.get('/candidate-likes', engagementController.getCandidateLikeSummary);
+router.post('/candidate-likes/toggle', engagementController.toggleCandidateLike);
 
 router.get('/assessments/company/:companyId', assessmentController.getCompanyAssessments);
 router.get('/assessments/company/:companyId/assignments', assessmentController.getCompanyAssessmentAssignments);

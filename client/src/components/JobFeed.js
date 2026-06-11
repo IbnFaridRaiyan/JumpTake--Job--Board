@@ -1160,6 +1160,10 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser })
             ) : previewJob && (
                 <div className="job-preview-overlay">
                     <div className="job-preview-modal" onClick={(e) => e.stopPropagation()}>
+                        <div className="mobile-job-preview-topbar">
+                            <button className="back-button" onClick={closePreview}>Back</button>
+                            <h2>{previewJob.title}</h2>
+                        </div>
                         <div className="job-preview-header">
                             <button className="preview-close-btn" onClick={closePreview}>×</button>
                             <h2>{previewJob.title}</h2>

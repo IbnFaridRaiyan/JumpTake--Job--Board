@@ -2,6 +2,8 @@ const DraftApplication = require('../models/DraftApplication');
 const JobBookmark = require('../models/JobBookmark');
 const ApplicationBookmark = require('../models/ApplicationBookmark');
 const TalentBookmark = require('../models/TalentBookmark');
+const CandidateBookmark = require('../models/CandidateBookmark');
+const CandidateLike = require('../models/CandidateLike');
 const User = require('../models/User');
 const Job = require('../models/Job');
 const JobSeeker = require('../models/JobSeeker');
@@ -440,6 +442,130 @@ const deleteTalentBookmark = async (req, res) => {
     }
 };
 
+const createCandidateBookmark = async (req, res) => {
+    try {
+        const { userId, candidateId } = req.body;
+
+        if (!userId || !candidateId) {
+            return res.status(400).json({ error: 'User ID and candidate ID are required' });
+        }
+
+        const bookmark = await CandidateBookmark.findOneAndUpdate(
+            { user: userId, candidate: candidateId },
+            { user: userId, candidate: candidateId },
+            { new: true, upsert: true, setDefaultsOnInsert: true }
+        ).populate('candidate');
+
+        return res.status(201).json(bookmark);
+    } catch (error) {
+        console.error('Error creating candidate bookmark:', error.message);
+        return res.status(500).json({
+            error: 'Failed to bookmark candidate',
+            message: error.message
+        });
+    }
+};
+
+const getUserCandidateBookmarks = async (req, res) => {
+    try {
+        const bookmarks = await CandidateBookmark.find({ user: req.params.userId })
+            .populate('candidate')
+            .sort({ createdAt: -1 });
+
+        return res.status(200).json(bookmarks);
+    } catch (error) {
+        console.error('Error fetching candidate bookmarks:', error.message);
+        return res.status(500).json({
+            error: 'Failed to fetch bookmarked candidates',
+            message: error.message
+        });
+    }
+};
+
+const deleteCandidateBookmark = async (req, res) => {
+    try {
+        await CandidateBookmark.findOneAndDelete({
+            user: req.params.userId,
+            candidate: req.params.candidateId
+        });
+
+        return res.status(200).json({ message: 'Candidate bookmark removed successfully' });
+    } catch (error) {
+        console.error('Error deleting candidate bookmark:', error.message);
+        return res.status(500).json({
+            error: 'Failed to remove candidate bookmark',
+            message: error.message
+        });
+    }
+};
+
+const getCandidateLikeSummary = async (req, res) => {
+    try {
+        const { actorType, actorKey } = req.query;
+
+        const counts = await CandidateLike.aggregate([
+            {
+                $group: {
+                    _id: '$candidate',
+                    count: { $sum: 1 }
+                }
+            }
+        ]);
+
+        const liked = actorType && actorKey
+            ? await CandidateLike.find({ actorType, actorKey }).select('candidate')
+            : [];
+
+        return res.status(200).json({
+            counts: counts.map((item) => ({
+                candidateId: String(item._id),
+                count: item.count
+            })),
+            likedCandidateIds: liked.map((item) => String(item.candidate))
+        });
+    } catch (error) {
+        console.error('Error fetching candidate likes:', error.message);
+        return res.status(500).json({
+            error: 'Failed to fetch candidate likes',
+            message: error.message
+        });
+    }
+};
+
+const toggleCandidateLike = async (req, res) => {
+    try {
+        const { candidateId, actorType, actorKey } = req.body;
+
+        if (!candidateId || !actorType || !actorKey) {
+            return res.status(400).json({ error: 'Candidate, actor type, and actor key are required' });
+        }
+
+        const existingLike = await CandidateLike.findOne({ candidate: candidateId, actorType, actorKey });
+        let liked = false;
+
+        if (existingLike) {
+            await CandidateLike.findByIdAndDelete(existingLike._id);
+        } else {
+            await CandidateLike.create({ candidate: candidateId, actorType, actorKey });
+            liked = true;
+        }
+
+        const count = await CandidateLike.countDocuments({ candidate: candidateId });
+
+        return res.status(200).json({
+            candidateId,
+            liked,
+            count
+        });
+    } catch (error) {
+        console.error('Error toggling candidate like:', error.message);
+        return res.status(500).json({
+            error: 'Failed to update candidate like',
+            message: error.message
+        });
+    }
+};
+
 module.exports = {
     createOrUpdateDraftApplication,
     getUserDraftApplications,
@@ -452,5 +578,10 @@ module.exports = {
     deleteApplicationBookmark,
     createTalentBookmark,
     getCompanyTalentBookmarks,
-    deleteTalentBookmark
+    deleteTalentBookmark,
+    createCandidateBookmark,
+    getUserCandidateBookmarks,
+    deleteCandidateBookmark,
+    getCandidateLikeSummary,
+    toggleCandidateLike
 };

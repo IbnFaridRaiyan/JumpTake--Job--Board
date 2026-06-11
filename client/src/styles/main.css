@@ -8840,6 +8840,167 @@ td,
   width: 100%;
 }
 
+/* Final header/detail corrections */
+.analytics-detail-modal {
+  position: relative !important;
+}
+
+.analytics-detail-close {
+  position: absolute !important;
+  top: 1rem !important;
+  right: 1rem !important;
+  z-index: 5 !important;
+  width: 32px !important;
+  height: 32px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #ff4c4c !important;
+  font-size: 1.55rem !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+}
+
+.candidate-name-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.45rem !important;
+}
+
+.candidate-name-row .candidate-name {
+  margin: 0 !important;
+}
+
+.candidate-name-row .candidate-like-button {
+  position: static !important;
+  transform: none !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #fff !important;
+}
+
+.candidate-name-row .candidate-like-count {
+  font-size: 0.75rem !important;
+}
+
+.candidate-name-row .like-animation-wrap {
+  width: 21px !important;
+  height: 21px !important;
+}
+
+@media (max-width: 768px) {
+  .mobile-section-panel-header,
+  .mobile-dashboard-section-panel.is-open .mobile-section-panel-header,
+  .mobile-job-management-section-panel.is-open .mobile-section-panel-header {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) !important;
+    align-items: center !important;
+    column-gap: 0.75rem !important;
+    justify-content: stretch !important;
+    min-height: 84px !important;
+    padding: 0.9rem 1.35rem !important;
+    background: #000 !important;
+  }
+
+  .mobile-section-panel-header .back-button {
+    grid-column: 1 !important;
+    justify-self: start !important;
+    width: auto !important;
+    min-width: max-content !important;
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    text-align: left !important;
+    white-space: nowrap !important;
+  }
+
+  .mobile-section-panel-header h2 {
+    grid-column: 2 !important;
+    justify-self: end !important;
+    max-width: 58vw !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    text-align: right !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    writing-mode: horizontal-tb !important;
+    word-break: keep-all !important;
+    overflow-wrap: normal !important;
+    font-size: 1rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .candidate-name-row {
+    justify-content: flex-start !important;
+  }
+
+  .candidate-name-row .candidate-like-button {
+    transform: scale(0.9) !important;
+    transform-origin: center !important;
+  }
+}
+
+/* Loading animations should run without companion text */
+.loading-container p,
+.job-list-loading p,
+.candidates-loading p,
+.loading-recommendations p,
+.resume-processing-loader .loader-letter,
+.loading-message {
+  display: none !important;
+}
+
+.loading-spinner {
+  font-size: 0 !important;
+  color: transparent !important;
+  text-indent: -9999px !important;
+  overflow: visible !important;
+}
+
+.loading-spinner::before,
+.loading-spinner::after {
+  text-indent: 0 !important;
+}
+
+button .loading-spinner {
+  text-indent: 0 !important;
+}
+
+@media (max-width: 768px) {
+  .analytics-detail-overlay .analytics-detail-modal > button.analytics-detail-close,
+  .analytics-detail-modal > button.analytics-detail-close {
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    left: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: transparent !important;
+    border: 0 !important;
+    color: #ff4c4c !important;
+    font-size: 1.7rem !important;
+    line-height: 1 !important;
+    z-index: 30 !important;
+  }
+}
+
 .job-management-header {
   align-items: flex-start;
   gap: 16px;
@@ -14884,5 +15045,504 @@ select:focus {
     font-size: 0.58rem !important;
     padding: 0.58em 0.42em !important;
     border-radius: 9px !important;
+  }
+}
+/* Final JumpTake polish pass */
+.candidate-profile-body .profile-section,
+.job-management-workspace .profile-section,
+.talent-pool-container .profile-section,
+.bookmarked-candidate-profile .profile-section,
+.home-page .profile-section {
+  background: #000 !important;
+  color: #fff !important;
+}
+
+.hold-button,
+button.hold-button,
+.secondary-button.hold-button {
+  background: #ffd84d !important;
+  border-color: #ffd84d !important;
+  color: #000 !important;
+}
+
+.reject-button,
+button.reject-button,
+.secondary-button.reject-button {
+  background: #e1141a !important;
+  border-color: #e1141a !important;
+  color: #fff !important;
+}
+
+.send-candidate-button,
+.assessment-send-panel .settings-button.primary,
+.assessment-send-panel .view-button {
+  background: #1769e0 !important;
+  border-color: #1769e0 !important;
+  color: #fff !important;
+}
+
+.send-candidate-button::before,
+.assessment-send-panel .view-button::before,
+.no-icon-button::before {
+  content: none !important;
+  display: none !important;
+}
+
+.candidate-like-button {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.45rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  cursor: pointer;
+}
+
+.candidate-like-count {
+  min-width: 1ch;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.like-animation-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 24px;
+  height: 24px;
+}
+
+.like-animation-wrap input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.like-animation-wrap .like {
+  fill: none;
+  stroke: white;
+  stroke-width: 1.6;
+  transition: transform 0.25s ease, fill 0.25s ease;
+}
+
+.candidate-like-button.active .like {
+  animation: kfs-fill-like .5s forwards;
+}
+
+.like-animation-wrap .celebrate {
+  position: absolute;
+  inset: -5px;
+  display: none;
+  stroke: white;
+}
+
+.candidate-like-button.active .celebrate {
+  display: block;
+  animation: kfs-celebrate 1s forwards;
+}
+
+@keyframes kfs-celebrate {
+  0% { transform: scale(0); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: scale(1.5) rotate(180deg); opacity: 0; display: none; }
+}
+
+@keyframes kfs-fill-like {
+  50% { fill: white; stroke: white; transform: scale(1.2); }
+  100% { fill: white; stroke: white; }
+}
+
+.candidate-like-button + .talent-bookmark-button {
+  left: auto !important;
+}
+
+.candidate-view-candidates .talent-bookmark-button {
+  display: inline-flex !important;
+}
+
+.talent-pool-container .talent-pool-header-actions,
+.talent-pool-container .spotlight-button {
+  display: flex !important;
+}
+
+.messenger-compose-card,
+.contact-candidate-panel .rich-message-editor,
+.messenger-compose-card .rich-message-editor {
+  background: #000 !important;
+  border-color: #063c31 !important;
+}
+
+.messenger-compose-card .rich-message-toolbar,
+.contact-candidate-panel .rich-message-toolbar {
+  background: #000 !important;
+  gap: 0.45rem !important;
+}
+
+.messenger-compose-card .rich-message-toolbar button,
+.contact-candidate-panel .rich-message-toolbar button {
+  background: #000 !important;
+  border: 1px solid #0d5a47 !important;
+  border-radius: 999px !important;
+  box-shadow: 0 0 0 0 #32d6a2 !important;
+  color: #fff !important;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  padding: 0.6em 1em !important;
+  transition: all 0.3s ease-in-out !important;
+}
+
+.messenger-compose-card .rich-message-toolbar button:hover,
+.contact-candidate-panel .rich-message-toolbar button:hover {
+  transform: translateY(-3px) translateX(-1px) !important;
+  box-shadow: 2px 4px 0 0 #0ea77c !important;
+}
+
+.messenger-compose-card .rich-message-input,
+.contact-candidate-panel .rich-message-input {
+  background: #000 !important;
+  color: #fff !important;
+  border-color: #111 !important;
+}
+
+.message-bubble.sent {
+  background: #0b3a31 !important;
+  background-image: none !important;
+}
+
+@media (min-width: 769px) {
+  .messenger-inbox > .manage-jobs-header {
+    display: none !important;
+  }
+
+  .messenger-thread-list {
+    padding-top: 0 !important;
+  }
+}
+
+.button-message {
+  background: linear-gradient(135deg, #050505, #071d18) !important;
+  border: 1px solid rgba(99, 192, 184, 0.28) !important;
+  border-radius: 999px !important;
+  color: #fff !important;
+  min-height: 54px;
+}
+
+.button-message.is-active .status-user {
+  background-color: #00da72 !important;
+}
+
+.button-message.is-offline .status-user {
+  --online-status: #e84b4b;
+  background-color: #e84b4b !important;
+}
+
+.about-tour-button {
+  margin-top: 1.25rem;
+  width: fit-content;
+}
+
+.about-tour-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.72);
+}
+
+.about-tour-modal {
+  width: min(880px, 94vw);
+  max-height: 86vh;
+  overflow: auto;
+  background: rgba(0, 18, 14, 0.96);
+  border: 1px solid rgba(99, 192, 184, 0.35);
+  border-radius: 18px;
+  padding: 1.5rem;
+  color: #fff;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+}
+
+.about-tour-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.about-tour-close {
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.about-tour-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.85rem;
+}
+
+.about-tour-list article {
+  background: #000;
+  border: 1px solid rgba(99, 192, 184, 0.25);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.mobile-job-preview-topbar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-section-panel-header,
+  .mobile-dashboard-section-panel.is-open .mobile-section-panel-header,
+  .mobile-job-management-section-panel.is-open .mobile-section-panel-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1200 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 0.75rem !important;
+    min-height: 72px !important;
+    padding: 0.75rem 1.25rem !important;
+    background: #000 !important;
+  }
+
+  .mobile-section-panel-header .back-button {
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    white-space: nowrap !important;
+  }
+
+  .mobile-section-panel-header h2 {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    text-align: right !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    font-size: 1rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .mobile-section-manage-jobs .mobile-section-panel-header h2 {
+    font-size: 0.95rem !important;
+  }
+
+  .job-management-nav {
+    padding-bottom: 110px !important;
+  }
+
+  .job-management-workspace,
+  .mobile-job-management-section-panel,
+  .application-detail-view,
+  .job-management-detail {
+    padding-bottom: 120px !important;
+  }
+
+  .application-detail-view .assessment-footer-actions {
+    padding-bottom: 110px !important;
+  }
+
+  .messenger-compose-card .rich-message-toolbar button,
+  .contact-candidate-panel .rich-message-toolbar button {
+    font-size: 0.66rem !important;
+    padding: 0.52em 0.72em !important;
+    min-width: 42px !important;
+  }
+
+  .candidate-like-button {
+    top: 0.8rem;
+    left: 0.8rem;
+    transform: scale(0.86);
+    transform-origin: top left;
+  }
+
+  .job-preview-overlay {
+    align-items: stretch !important;
+    padding: 0 !important;
+  }
+
+  .job-preview-modal {
+    width: 100vw !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  .mobile-job-preview-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    min-height: 72px;
+    padding: 0.85rem 1.25rem;
+    background: #000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  .mobile-job-preview-topbar h2 {
+    margin: 0;
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1rem;
+  }
+
+  .job-preview-modal > .job-preview-header {
+    display: none !important;
+  }
+
+  .job-preview-content {
+    flex: 1 1 auto !important;
+    overflow-y: auto !important;
+    padding: 1.2rem !important;
+  }
+
+  .job-preview-actions {
+    flex: 0 0 auto !important;
+    padding: 1rem 1.2rem calc(1.2rem + env(safe-area-inset-bottom)) !important;
+    background: #000 !important;
+  }
+
+  .settings-container,
+  .settings-content,
+  .mobile-section-settings {
+    min-height: auto !important;
+    overflow-y: visible !important;
+    padding-bottom: 150px !important;
+  }
+}
+
+/* Absolute final corrections for mobile headers, analytics close, and candidate likes */
+.analytics-detail-modal {
+  position: relative !important;
+}
+
+.analytics-detail-close {
+  position: absolute !important;
+  top: 1rem !important;
+  right: 1rem !important;
+  z-index: 5 !important;
+  width: 32px !important;
+  height: 32px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #ff4c4c !important;
+  font-size: 1.55rem !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+}
+
+.candidate-name-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.45rem !important;
+}
+
+.candidate-name-row .candidate-name {
+  margin: 0 !important;
+}
+
+.candidate-name-row .candidate-like-button {
+  position: static !important;
+  transform: none !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #fff !important;
+}
+
+.candidate-name-row .candidate-like-count {
+  font-size: 0.75rem !important;
+}
+
+.candidate-name-row .like-animation-wrap {
+  width: 21px !important;
+  height: 21px !important;
+}
+
+@media (max-width: 768px) {
+  .mobile-section-panel-header,
+  .mobile-dashboard-section-panel.is-open .mobile-section-panel-header,
+  .mobile-job-management-section-panel.is-open .mobile-section-panel-header {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) !important;
+    align-items: center !important;
+    column-gap: 0.75rem !important;
+    justify-content: stretch !important;
+    min-height: 84px !important;
+    padding: 0.9rem 1.35rem !important;
+    background: #000 !important;
+  }
+
+  .mobile-section-panel-header .back-button {
+    grid-column: 1 !important;
+    justify-self: start !important;
+    width: auto !important;
+    min-width: max-content !important;
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    text-align: left !important;
+    white-space: nowrap !important;
+  }
+
+  .mobile-section-panel-header h2 {
+    grid-column: 2 !important;
+    justify-self: end !important;
+    max-width: 58vw !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    text-align: right !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    writing-mode: horizontal-tb !important;
+    word-break: keep-all !important;
+    overflow-wrap: normal !important;
+    font-size: 1rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .candidate-name-row {
+    justify-content: flex-start !important;
+  }
+
+  .candidate-name-row .candidate-like-button {
+    transform: scale(0.9) !important;
+    transform-origin: center !important;
   }
 }

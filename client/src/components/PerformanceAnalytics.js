@@ -227,7 +227,7 @@ const PerformanceAnalytics = ({ mode = 'candidate', jobs = [], jobSeekerData, us
             {detailsOpen && (
                 <div className="analytics-detail-overlay" onClick={() => setDetailsOpen(false)}>
                     <div className="analytics-detail-modal" onClick={(event) => event.stopPropagation()}>
-                        <button type="button" className="preview-close-btn" onClick={() => setDetailsOpen(false)}>×</button>
+                        <button type="button" className="analytics-detail-close" onClick={() => setDetailsOpen(false)}>×</button>
                         <h2>{title} Details</h2>
                         <p>Performance signals based on the current dashboard data.</p>
                         <BarChart metrics={metrics} />

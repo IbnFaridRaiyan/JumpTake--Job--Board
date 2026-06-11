@@ -152,6 +152,15 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
 
     const getInitial = (thread) => (getThreadTitle(thread).charAt(0) || 'J').toUpperCase();
 
+    const isThreadActive = (thread) => {
+        if (!thread?.lastMessageAt) {
+            return false;
+        }
+
+        const lastMessageTime = new Date(thread.lastMessageAt).getTime();
+        return Number.isFinite(lastMessageTime) && Date.now() - lastMessageTime < 1000 * 60 * 60 * 24;
+    };
+
     const isOwnMessage = (thread, item) => {
         if (isDirectCandidateThread(thread)) {
             return String(item?.senderUser || '') === String(userId || '');
@@ -243,7 +252,12 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                         const lastMessage = thread.messages?.[thread.messages.length - 1];
 
                         return (
-                            <button className="inbox-thread-card button-message" id="btn-message" key={thread._id} onClick={() => setSelectedThread(thread)}>
+                            <button
+                                className={`inbox-thread-card button-message ${isThreadActive(thread) ? 'is-active' : 'is-offline'}`}
+                                id="btn-message"
+                                key={thread._id}
+                                onClick={() => setSelectedThread(thread)}
+                            >
                                 <div className="content-avatar">
                                     <div className="avatar">
                                         <span className="user-img">{getInitial(thread)}</span>

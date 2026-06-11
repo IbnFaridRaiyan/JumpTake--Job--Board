@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { forwardRef, useState, useEffect, useImperativeHandle } from 'react';
 import WithdrawButton from './WithdrawButton';
 
-const MyApplications = ({ userId, onRefresh, switchSection, onFooterBack }) => {
+const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterBack }, ref) => {
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -91,6 +91,22 @@ const MyApplications = ({ userId, onRefresh, switchSection, onFooterBack }) => {
             switchSection('job-feed');
         }
     };
+
+    useImperativeHandle(ref, () => ({
+        goBackOneStep: () => {
+            if (selectedCompany) {
+                setSelectedCompany(null);
+                return true;
+            }
+
+            if (selectedApplication) {
+                setSelectedApplication(null);
+                return true;
+            }
+
+            return false;
+        }
+    }), [selectedApplication, selectedCompany]);
 
     const getJobTitle = (application) => {
         return application?.job?.title || 'Job no longer available';
@@ -440,6 +456,6 @@ const MyApplications = ({ userId, onRefresh, switchSection, onFooterBack }) => {
             </div>
         </div>
     );
-};
+});
 
 export default MyApplications;

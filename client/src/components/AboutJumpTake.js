@@ -29,6 +29,7 @@ const Astronaut = () => (
 const AboutJumpTake = ({ mode = 'candidate' }) => {
     const ratingStorageKey = `jumptake-about-rating-${mode}`;
     const [rating, setRating] = useState(0);
+    const [tourOpen, setTourOpen] = useState(false);
 
     useEffect(() => {
         const savedRating = Number(localStorage.getItem(ratingStorageKey) || 0);
@@ -41,6 +42,36 @@ const AboutJumpTake = ({ mode = 'candidate' }) => {
         setRating(nextRating);
         localStorage.setItem(ratingStorageKey, String(nextRating));
     };
+
+    const tourItems = mode === 'employer'
+        ? [
+            ['Dashboard', 'See active listings, new applicants, and quick links into the hiring workspace.'],
+            ['Post a Job', 'Create job listings with skills, requirements, responsibilities, salary, and company details.'],
+            ['Manage Jobs', 'Open a posted job, view/edit it, review applicants, build assessments, invite candidates, and move people through hold, reject, hire, and interview lists.'],
+            ['Make an Assessment', 'Create reusable assessments and save them to a job or to your general library.'],
+            ['General Assessment', 'Send saved general assessments to selected jobs when you need them later.'],
+            ['Talent Pool', 'Browse candidate profiles, bookmark candidates, like profiles, and contact people directly.'],
+            ['Bookmarked Talents', 'Review saved candidates and remove bookmarks when they are no longer needed.'],
+            ['Inbox', 'Open conversations, reply with formatted messages, and keep candidate communication in one place.'],
+            ['Company Profile', 'Maintain public company information candidates see when they inspect your jobs.'],
+            ['Application Tracking System', 'Check hiring analytics, application rates, job posting rates, and assessment activity.'],
+            ['Settings', 'Update account, contact, security, and notification preferences.']
+        ]
+        : [
+            ['Job Feed', 'Browse jobs, preview details, view companies, apply, and bookmark roles.'],
+            ['Inbox', 'Open employer and candidate conversations, then reply from a messenger-style chat box.'],
+            ['View Candidates', 'Browse other candidate profiles, bookmark them, like them, and send messages.'],
+            ['Bookmarked Candidates', 'Return to saved candidate profiles and remove candidates from the list.'],
+            ['My Applications', 'Track submitted applications, view details, and withdraw when needed.'],
+            ['My Assessments', 'Complete assessment invitations sent by employers.'],
+            ['Video Interviews', 'Review interview invitations and select available interview dates.'],
+            ['Draft Applications', 'Resume unfinished applications.'],
+            ['Bookmarked Jobs', 'Return to jobs saved from the feed.'],
+            ['Interested Job Suggession', 'Update job interests so recommendations match your preferred roles.'],
+            ['My Profile', 'Review and edit resume-derived profile details.'],
+            ['Progress Check', 'View application, search, skill-match, employer-view, and response analytics.'],
+            ['Settings', 'Update account, security, notifications, and contact preferences.']
+        ];
 
     return (
         <div className="about-jumptake-section">
@@ -92,6 +123,14 @@ const AboutJumpTake = ({ mode = 'candidate' }) => {
                     </div>
                 )}
 
+                <button
+                    type="button"
+                    className="settings-button primary about-tour-button"
+                    onClick={() => setTourOpen(true)}
+                >
+                    Give a tour
+                </button>
+
                 <div className="about-rating-card">
                     <h3>Rate this demo experience</h3>
                     <div className="rating" aria-label="Rate JumpTake">
@@ -111,6 +150,28 @@ const AboutJumpTake = ({ mode = 'candidate' }) => {
                     {rating > 0 && <p className="about-rating-saved">Saved rating: {rating}/5</p>}
                 </div>
             </div>
+
+            {tourOpen && (
+                <div className="about-tour-overlay" onClick={() => setTourOpen(false)}>
+                    <div className="about-tour-modal" onClick={(event) => event.stopPropagation()}>
+                        <div className="about-tour-header">
+                            <div>
+                                <span className="about-jumptake-kicker">Portal Tour</span>
+                                <h2>{mode === 'employer' ? 'Employer Portal Tour' : 'Candidate Portal Tour'}</h2>
+                            </div>
+                            <button type="button" className="about-tour-close" onClick={() => setTourOpen(false)}>x</button>
+                        </div>
+                        <div className="about-tour-list">
+                            {tourItems.map(([title, description]) => (
+                                <article key={title}>
+                                    <h3>{title}</h3>
+                                    <p>{description}</p>
+                                </article>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

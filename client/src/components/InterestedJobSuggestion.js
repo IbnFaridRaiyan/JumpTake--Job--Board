@@ -115,7 +115,7 @@ const InterestedJobSuggestion = ({ user, onInterestsSaved, onFooterBack }) => {
 
                 <div className="assessment-footer-actions">
                     <button className="settings-button primary" onClick={saveInterests} disabled={saving}>
-                        {saving ? 'Saving...' : `Save Interests (${selectedInterests.length}/4)`}
+                        {saving ? 'Saving...' : 'Save Interests'}
                     </button>
                 </div>
             </div>

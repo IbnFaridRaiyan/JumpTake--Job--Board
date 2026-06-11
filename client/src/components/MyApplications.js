@@ -406,7 +406,7 @@ const MyApplications = ({ userId, onRefresh, switchSection, onFooterBack }) => {
                                                     title={withdrawingId === app._id ? 'Withdrawing...' : 'Withdraw'}
                                                 />
                                             )}
-                                            <button className="view-button" onClick={() => setSelectedApplication(app)}>
+                                            <button className="view-button application-view-details-button" onClick={() => setSelectedApplication(app)}>
                                                 View Details
                                             </button>
                                         </div>

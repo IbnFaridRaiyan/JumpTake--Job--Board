@@ -10941,6 +10941,7 @@ body,
     padding-bottom: max(128px, calc(env(safe-area-inset-bottom) + 96px)) !important;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: contain;
+    scroll-padding-bottom: 140px;
   }
 
   .mobile-section-panel-header {
@@ -11013,5 +11014,722 @@ body,
   td {
     white-space: normal !important;
     word-break: break-word !important;
+  }
+}
+
+/* Requested dashboard/feed refinements */
+.inbox-container .no-jobs-message {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
+.inbox-container .no-jobs-message h3,
+.inbox-container .no-jobs-message p {
+  color: #ffffff !important;
+}
+
+.job-feed-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 18px 0 4px;
+}
+
+.job-feed-pagination span {
+  color: #ffffff !important;
+  font-weight: 700;
+  font-family: 'Lexend', 'Share Tech', sans-serif;
+}
+
+.job-feed-pagination .secondary-button {
+  width: auto !important;
+  min-width: 112px;
+}
+
+.home-page .main-content > .job-feed-container > .job-feed-header .job-feed-title > h2,
+.home-page .main-content > .applications-container > .section-header:first-child > h2,
+.home-page .main-content > .my-assessments-container > .section-header:first-child > h2,
+.home-page .main-content > .video-interviews-container > .section-header:first-child > h2,
+.home-page .main-content > .draft-applications-container > .section-header:first-child > h2,
+.home-page .main-content > .bookmarked-jobs-container > .section-header:first-child > h2,
+.home-page .main-content > .interested-job-suggestion-section > .section-header:first-child > h2,
+.home-page .main-content > .profile-container > .profile-header:first-child > h2,
+.home-page .main-content > .settings-container > .section-header:first-child > h2,
+.home-page .main-content > .post-job-container > .post-job-header:first-child > h2,
+.home-page .main-content > .manage-jobs-container > .manage-jobs-header:first-child > h2,
+.home-page .main-content > .assessment-builder-container > .manage-jobs-header:first-child > h2,
+.home-page .main-content > .talent-pool-container > .talent-pool-header:first-child h2,
+.home-page .main-content > .candidate-feed-container > .candidate-feed-header:first-child h2,
+.home-page .main-content > .inbox-container > .manage-jobs-header:first-child > h2,
+.home-page .main-content > .company-profile-container > .company-profile-header:first-child > h2,
+.home-page .main-content > .employer-settings-container > .section-header:first-child > h2 {
+  display: none !important;
+}
+
+@media screen and (min-width: 769px) {
+  .job-preview-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+  }
+
+  .job-preview-modal {
+    margin: 0 !important;
+    transform: none !important;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .home-page > .dashboard-header {
+    min-height: 68px !important;
+    padding-top: 9px !important;
+    padding-bottom: 9px !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1100 !important;
+  }
+
+  .mobile-section-panel-header {
+    min-height: 54px;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 2600 !important;
+  }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table-container {
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100% !important;
+  }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table {
+    min-width: 720px !important;
+    width: 720px !important;
+    max-width: none !important;
+  }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table th,
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table td {
+    white-space: nowrap !important;
+    word-break: normal !important;
+  }
+
+  .settings-container:after,
+  .employer-settings-container:after {
+    content: "";
+    display: block;
+    height: 180px;
+    background: #000000;
+  }
+
+}
+
+/* Manage jobs polish and mobile cleanup */
+.job-management-workspace {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.055);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+}
+
+.job-management-nav {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.job-management-nav button,
+.job-management-nav button span {
+  color: #000000 !important;
+}
+
+.job-management-nav button:hover,
+.job-management-nav button.active {
+  color: #000000 !important;
+  background: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+.job-management-workspace input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 1;
+}
+
+.job-management-workspace .assessment-options-editor input,
+.job-management-workspace .assessment-question-card .compact-select,
+.job-management-workspace .assessment-question-card select {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+.job-management-workspace .assessment-options-editor input::placeholder {
+  color: rgba(255, 255, 255, 0.62) !important;
+}
+
+@media screen and (max-width: 768px) {
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table-container {
+    overflow: visible !important;
+  }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table,
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table tbody,
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table tr,
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table td {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table thead {
+    display: none !important;
+  }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table tr {
+    margin-bottom: 14px;
+    padding: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.07) !important;
+  }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table td {
+    display: grid !important;
+    grid-template-columns: 108px minmax(0, 1fr);
+    gap: 10px;
+    padding: 9px 0 !important;
+    border: none !important;
+    white-space: normal !important;
+    word-break: normal !important;
+  }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table td::before {
+    color: rgba(255, 255, 255, 0.65);
+    font-weight: 700;
+  }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table td:nth-child(1)::before { content: "Job"; }
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table td:nth-child(2)::before { content: "Number"; }
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table td:nth-child(3)::before { content: "Company"; }
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table td:nth-child(4)::before { content: "Applied"; }
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table td:nth-child(5)::before { content: "Status"; }
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table td:nth-child(6)::before { content: "Actions"; }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .application-actions {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+    align-items: stretch !important;
+  }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .application-actions .withdraw-uiverse-button,
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .application-actions .view-button {
+    width: 100% !important;
+  }
+
+  .job-management-workspace {
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  .job-management-workspace.mobile-section-active .job-management-nav {
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .mobile-job-management-section-panel.is-open {
+    background:
+      radial-gradient(circle at 12% 0%, rgba(var(--primary-color-rgb), 0.18), transparent 36%),
+      #000000 !important;
+    z-index: 2400 !important;
+  }
+
+  .mobile-job-management-section-panel.is-open .mobile-section-panel-header {
+    z-index: 5;
+    background: #000000 !important;
+  }
+
+  .job-management-nav {
+    grid-template-columns: 1fr !important;
+    padding: 10px !important;
+    border-radius: 14px !important;
+  }
+
+  .job-management-nav button {
+    min-height: 44px !important;
+    padding: 10px 12px !important;
+    border-radius: 10px !important;
+    white-space: normal !important;
+    line-height: 1.25 !important;
+  }
+
+  .post-job-container .form-actions {
+    display: grid !important;
+    grid-template-columns: 2fr 0.85fr !important;
+    gap: 10px !important;
+    align-items: stretch !important;
+  }
+
+  .post-job-container .form-actions .submit-button {
+    width: 100% !important;
+    min-height: 50px !important;
+    font-size: 15px !important;
+  }
+
+  .post-job-container .form-actions .secondary-button {
+    width: 100% !important;
+    min-height: 40px !important;
+    padding: 8px 10px !important;
+    font-size: 12px !important;
+  }
+}
+
+/* Final surface color and sidebar logout placement */
+.home-page .dashboard-nav li.dashboard-nav-logout {
+  margin-top: 8px !important;
+  border-color: rgba(220, 38, 38, 0.32) !important;
+  background: rgba(220, 38, 38, 0.16) !important;
+  color: #ffffff !important;
+}
+
+.home-page .dashboard-nav li.dashboard-nav-logout:hover {
+  background: rgba(220, 38, 38, 0.34) !important;
+  border-color: rgba(220, 38, 38, 0.58) !important;
+}
+
+.home-page .section-footer-nav {
+  display: none !important;
+}
+
+.employer-dashboard-header ~ .dashboard-container .dashboard-content,
+.employer-dashboard-header ~ .dashboard-container .dashboard-stats,
+.employer-dashboard-header ~ .dashboard-container .stat-card,
+.employer-dashboard-header ~ .dashboard-container .dashboard-card,
+.candidate-dashboard-header ~ .dashboard-container .my-applications-container,
+.candidate-dashboard-header ~ .dashboard-container .applications-table-container,
+.candidate-dashboard-header ~ .dashboard-container .applications-table,
+.candidate-dashboard-header ~ .dashboard-container .applications-table tr,
+.job-management-workspace,
+.job-management-workspace .job-management-panel,
+.job-management-workspace .assessment-summary-card,
+.job-management-workspace .profile-section,
+.job-management-workspace .assessment-card,
+.job-management-workspace .assessment-question-card,
+.job-management-workspace .application-card,
+.inbox-container .inbox-thread-card {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
+.employer-dashboard-header ~ .dashboard-container .dashboard-content h2,
+.employer-dashboard-header ~ .dashboard-container .dashboard-content p,
+.employer-dashboard-header ~ .dashboard-container .stat-card h3,
+.employer-dashboard-header ~ .dashboard-container .stat-card p,
+.employer-dashboard-header ~ .dashboard-container .dashboard-card h3,
+.employer-dashboard-header ~ .dashboard-container .dashboard-card p,
+.candidate-dashboard-header ~ .dashboard-container .applications-table th,
+.candidate-dashboard-header ~ .dashboard-container .applications-table td,
+.job-management-workspace h2,
+.job-management-workspace h3,
+.job-management-workspace p,
+.job-management-workspace li,
+.job-management-workspace span,
+.inbox-container .inbox-thread-card h3,
+.inbox-container .inbox-thread-card p,
+.inbox-container .inbox-thread-card span,
+.inbox-container .inbox-thread-card time {
+  color: #ffffff !important;
+}
+
+@media screen and (max-width: 768px) {
+  .candidate-dashboard-logo,
+  .employer-dashboard-logo {
+    width: 94px !important;
+  }
+
+  .candidate-dashboard-title h1,
+  .employer-dashboard-title h1,
+  .dashboard-title h1 {
+    font-size: 16px !important;
+  }
+
+  .candidate-dashboard-title p,
+  .employer-dashboard-title p,
+  .dashboard-title p {
+    font-size: 11px !important;
+  }
+
+  .mobile-section-panel-header .back-button {
+    min-height: 34px !important;
+    padding: 6px 9px !important;
+  }
+
+  .mobile-section-panel-header h2 {
+    font-size: 16px !important;
+  }
+
+  .mobile-dashboard-section-panel.is-open,
+  .mobile-job-management-section-panel.is-open {
+    padding-top: 8px !important;
+  }
+}
+/* Final layout refinements: interest buttons and mobile table parity */
+.interested-job-suggestion-section .interested-job-card,
+.interested-job-suggestion-section .job-interest-grid,
+.job-interest-modal .job-interest-grid {
+  background: #000000 !important;
+}
+
+.interested-job-suggestion-section .job-interest-grid,
+.job-interest-modal .job-interest-grid {
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+}
+
+.interested-job-suggestion-section .job-interest-grid button,
+.job-interest-modal .job-interest-grid button {
+  background: #000000 !important;
+  border-color: rgba(255, 255, 255, 0.28) !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.interested-job-suggestion-section .job-interest-grid button:hover,
+.interested-job-suggestion-section .job-interest-grid button.selected,
+.job-interest-modal .job-interest-grid button:hover,
+.job-interest-modal .job-interest-grid button.selected {
+  background: #111111 !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+}
+
+.job-management-nav button,
+.job-management-nav button span {
+  color: #000000 !important;
+}
+
+.job-management-nav button:hover,
+.job-management-nav button.active,
+.job-management-nav button:hover span,
+.job-management-nav button.active span {
+  color: #000000 !important;
+}
+
+@media screen and (max-width: 768px) {
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table {
+    display: table !important;
+    width: 100% !important;
+    min-width: 760px !important;
+    max-width: none !important;
+    table-layout: auto !important;
+    border-collapse: collapse !important;
+  }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table thead {
+    display: table-header-group !important;
+  }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table tbody {
+    display: table-row-group !important;
+  }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table tr {
+    display: table-row !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+  }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table th,
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table td {
+    display: table-cell !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    padding: 12px 14px !important;
+    white-space: nowrap !important;
+    word-break: normal !important;
+    vertical-align: middle !important;
+  }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table td::before,
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table td:nth-child(1)::before,
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table td:nth-child(2)::before,
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table td:nth-child(3)::before,
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table td:nth-child(4)::before,
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table td:nth-child(5)::before,
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table td:nth-child(6)::before {
+    content: none !important;
+    display: none !important;
+  }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .application-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 8px !important;
+    white-space: nowrap !important;
+  }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .application-actions .withdraw-uiverse-button {
+    width: 150px !important;
+    min-width: 150px !important;
+    flex: 0 0 auto !important;
+  }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .application-actions .view-button {
+    width: auto !important;
+    min-width: 118px !important;
+    flex: 0 0 auto !important;
+    color: #ffffff !important;
+  }
+
+  .job-management-workspace .job-list-table,
+  .job-management-workspace .compact-table,
+  .job-management-workspace .table-responsive {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .job-management-workspace table,
+  .job-management-workspace .job-list-table table,
+  .job-management-workspace .compact-table table {
+    display: table !important;
+    width: 100% !important;
+    min-width: 780px !important;
+    max-width: none !important;
+    table-layout: auto !important;
+    border-collapse: collapse !important;
+  }
+
+  .job-management-workspace thead,
+  .job-management-workspace .job-list-table thead,
+  .job-management-workspace .compact-table thead {
+    display: table-header-group !important;
+  }
+
+  .job-management-workspace tbody,
+  .job-management-workspace .job-list-table tbody,
+  .job-management-workspace .compact-table tbody {
+    display: table-row-group !important;
+  }
+
+  .job-management-workspace tr,
+  .job-management-workspace .job-list-table tr,
+  .job-management-workspace .compact-table tr {
+    display: table-row !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+
+  .job-management-workspace th,
+  .job-management-workspace td,
+  .job-management-workspace .job-list-table th,
+  .job-management-workspace .job-list-table td,
+  .job-management-workspace .compact-table th,
+  .job-management-workspace .compact-table td {
+    display: table-cell !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    white-space: nowrap !important;
+    word-break: normal !important;
+    vertical-align: middle !important;
+  }
+
+  .job-management-workspace .compact-table .actions-cell,
+  .job-management-workspace .job-list-table .actions-cell {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 8px !important;
+    white-space: nowrap !important;
+  }
+
+  .job-management-workspace .action-button,
+  .job-management-workspace .view-button,
+  .job-management-workspace .settings-button,
+  .manage-jobs-container .actions-cell .action-button.edit {
+    width: auto !important;
+    min-width: max-content !important;
+    white-space: nowrap !important;
+  }
+
+  .mobile-job-management-section-panel.is-open {
+    padding-top: 142px !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  .mobile-job-management-section-panel.is-open .mobile-section-panel-header {
+    position: fixed !important;
+    top: 8px !important;
+    left: 10px !important;
+    right: 10px !important;
+    z-index: 2500 !important;
+    min-height: 50px !important;
+    background: #000000 !important;
+  }
+
+  .job-management-workspace.mobile-section-active .job-management-nav {
+    visibility: visible !important;
+    pointer-events: auto !important;
+    position: fixed !important;
+    top: 66px !important;
+    left: 10px !important;
+    right: 10px !important;
+    z-index: 2490 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    grid-template-columns: none !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin: 0 !important;
+    padding: 8px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    background: #000000 !important;
+    border-color: rgba(255, 255, 255, 0.16) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.38);
+  }
+
+  .job-management-workspace.mobile-section-active .job-management-nav button,
+  .job-management-workspace.mobile-section-active .job-management-nav .job-management-back-nav {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: max-content !important;
+    margin-left: 0 !important;
+    padding: 10px 12px !important;
+    white-space: nowrap !important;
+    color: #000000 !important;
+  }
+}
+
+/* Final mobile overrides for Manage Jobs section pages and wide tables */
+.my-applications-container .application-actions .view-button.application-view-details-button,
+.candidate-dashboard-header ~ .dashboard-container .my-applications-container .application-actions .view-button.application-view-details-button,
+.candidate-dashboard-header ~ .dashboard-container .my-applications-container .application-actions button.view-button.application-view-details-button {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+@media screen and (max-width: 768px) {
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table {
+    min-width: 980px !important;
+    width: 980px !important;
+    max-width: none !important;
+  }
+
+  .manage-jobs-container .job-list-table,
+  .manage-jobs-container .table-responsive,
+  .job-management-workspace .job-list-table,
+  .job-management-workspace .compact-table,
+  .job-management-workspace .table-responsive {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .manage-jobs-container .job-list-table table,
+  .manage-jobs-container .table-responsive table,
+  .job-management-workspace table,
+  .job-management-workspace .job-list-table table,
+  .job-management-workspace .compact-table table {
+    min-width: 1120px !important;
+    width: 1120px !important;
+    max-width: none !important;
+    table-layout: auto !important;
+  }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table th,
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .applications-table td,
+  .manage-jobs-container .job-list-table th,
+  .manage-jobs-container .job-list-table td,
+  .job-management-workspace th,
+  .job-management-workspace td {
+    white-space: nowrap !important;
+    word-break: normal !important;
+  }
+
+  .candidate-dashboard-header ~ .dashboard-container .my-applications-container .application-actions .view-button.application-view-details-button {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+  }
+
+  .job-management-workspace.mobile-section-active .job-management-nav {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  .mobile-job-management-section-panel.is-open {
+    padding-top: 70px !important;
+  }
+
+  .mobile-job-management-section-panel.is-open .mobile-section-panel-header {
+    position: fixed !important;
+    top: 8px !important;
+    left: 10px !important;
+    right: 10px !important;
+    z-index: 2500 !important;
+  }
+
+  .job-management-workspace:not(.mobile-section-active) .job-management-nav {
+    position: static !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin: 10px 0 0 !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .job-management-workspace:not(.mobile-section-active) .job-management-nav button,
+  .job-management-workspace:not(.mobile-section-active) .job-management-nav .job-management-back-nav {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: max-content !important;
+    margin-left: 0 !important;
+    white-space: nowrap !important;
   }
 }

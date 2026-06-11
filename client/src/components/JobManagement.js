@@ -1632,7 +1632,7 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
     };
 
     return (
-        <div className="job-management-workspace">
+        <div className={`job-management-workspace ${mobileSectionVisible ? 'mobile-section-active' : ''}`}>
             <div className="manage-jobs-header job-management-header">
                 <div>
                     <h2>{currentJob?.title || 'Manage Job'}</h2>

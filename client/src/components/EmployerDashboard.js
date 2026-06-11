@@ -542,6 +542,12 @@ const EmployerDashboard = () => {
                             >
                                 Settings
                             </li>
+                            <li
+                                className="dashboard-nav-logout"
+                                onClick={handleLogout}
+                            >
+                                Log Out
+                            </li>
                         </ul>
                     </nav>
                 </div>

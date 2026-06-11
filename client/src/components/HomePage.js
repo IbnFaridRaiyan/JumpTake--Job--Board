@@ -551,7 +551,7 @@ const HomePage = () => {
 
                         <div className="message-compose-actions">
                             <button className="settings-button primary" onClick={saveJobInterests} disabled={savingInterests}>
-                                {savingInterests ? 'Saving...' : `Save Interests (${selectedJobInterests.length}/4)`}
+                                {savingInterests ? 'Saving...' : 'Save Interests'}
                             </button>
                         </div>
                     </div>
@@ -633,6 +633,12 @@ const HomePage = () => {
                                 onClick={() => openSection('settings')}
                             >
                                 Settings
+                            </li>
+                            <li
+                                className="dashboard-nav-logout"
+                                onClick={handleLogout}
+                            >
+                                Log Out
                             </li>
                         </ul>
                     </nav>

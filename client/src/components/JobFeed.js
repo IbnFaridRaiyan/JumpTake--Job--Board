@@ -1116,14 +1116,6 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser })
                         </div>
 
                         <div className="job-preview-content">
-                            <div className="candidate-job-preview-scroll-area">
-                                <div className="candidate-job-preview-mobile-meta">
-                                    <span><strong>Job Number:</strong> {previewJob.jobNumber || 'Generating...'}</span>
-                                    <span><strong>Company:</strong> {previewJob.company.name}</span>
-                                    <span><strong>Location:</strong> {previewJob.location || 'Not specified'}</span>
-                                    <span><strong>Type:</strong> {previewJob.jobType || 'Not specified'}</span>
-                                    {previewJob.salary && <span><strong>Salary:</strong> {previewJob.salary}</span>}
-                                </div>
                             <div className="preview-section">
                                 <h3>Company Details</h3>
                                 <p><strong>Founded:</strong> {formatFoundedDate(selectedCompany.founded)}</p>
@@ -1207,6 +1199,14 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser })
                         </div>
                         
                         <div className="job-preview-content">
+                            <div className="candidate-job-preview-scroll-area">
+                                <div className="candidate-job-preview-mobile-meta">
+                                    <span><strong>Job Number:</strong> {previewJob.jobNumber || 'Generating...'}</span>
+                                    <span><strong>Company:</strong> {previewJob.company.name}</span>
+                                    <span><strong>Location:</strong> {previewJob.location || 'Not specified'}</span>
+                                    <span><strong>Type:</strong> {previewJob.jobType || 'Not specified'}</span>
+                                    {previewJob.salary && <span><strong>Salary:</strong> {previewJob.salary}</span>}
+                                </div>
                             <div className="preview-section">
                                 <h3>Description</h3>
                                 <p>{previewJob.description}</p>

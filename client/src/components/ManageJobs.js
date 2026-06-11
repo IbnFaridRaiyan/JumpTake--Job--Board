@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import EditJob from './EditJob';
+import JobManagement from './JobManagement';
 
 const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => {
-    const [editingJob, setEditingJob] = useState(null);
+    const [managingJob, setManagingJob] = useState(null);
     const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [togglingJobId, setTogglingJobId] = useState(null);
     
-    const handleEdit = (job) => {
-        setEditingJob(job);
+    const handleManage = (job) => {
+        setManagingJob(job);
     };
     
     const handleDelete = async (jobId) => {
@@ -96,13 +96,11 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => 
         }
     };
     
-    const handleCancelEdit = () => {
-        setEditingJob(null);
+    const handleCloseManage = () => {
+        setManagingJob(null);
     };
     
     const handleJobUpdated = () => {
-        
-        setEditingJob(null);
         if (onJobUpdated) {
             onJobUpdated();
         }
@@ -115,11 +113,12 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => 
     };
     
    
-    if (editingJob) {
+    if (managingJob) {
         return (
-            <EditJob 
-                job={editingJob}
-                onCancel={handleCancelEdit}
+            <JobManagement
+                job={managingJob}
+                companyId={companyId}
+                onBack={handleCloseManage}
                 onJobUpdated={handleJobUpdated}
             />
         );
@@ -185,7 +184,7 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => 
                                     <tr key={job._id}>
                                         <td className="date-cell">{job.jobNumber || 'Generating...'}</td>
                                         <td>
-                                            <div className="job-title-cell" onClick={() => handleEdit(job)}>
+                                            <div className="job-title-cell" onClick={() => handleManage(job)}>
                                                 {job.title}
                                             </div>
                                         </td>
@@ -207,9 +206,9 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => 
                                         <td className="actions-cell">
                                             <button 
                                                 className="action-button edit"
-                                                onClick={() => handleEdit(job)}
+                                                onClick={() => handleManage(job)}
                                             >
-                                                Edit
+                                                Manage
                                             </button>
                                             <button 
                                                 className="action-button delete"

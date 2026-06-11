@@ -1,6 +1,7 @@
 const Job = require('../models/Job');
 const Company = require('../models/Company');
 const JobSeeker = require('../models/JobSeeker');
+const User = require('../models/User');
 const {
     ensureReferenceNumber,
     ensureReferenceNumbers,
@@ -218,6 +219,8 @@ const getRecommendedJobs = async (req, res) => {
             return res.status(404).json({ error: 'Job seeker not found' });
         }
         
+        const linkedUser = jobSeeker.user ? await User.findById(jobSeeker.user) : null;
+
         // Extract skills - handle different possible formats
         let seekerSkills = [];
         if (jobSeeker.skills) {
@@ -227,9 +230,14 @@ const getRecommendedJobs = async (req, res) => {
                 seekerSkills = jobSeeker.skills.split(',').map(skill => skill.trim());
             }
         }
+
+        const interestKeywords = Array.isArray(linkedUser?.jobInterests)
+            ? linkedUser.jobInterests.map((interest) => String(interest).trim()).filter(Boolean)
+            : [];
+        const allSignals = [...new Set([...seekerSkills, ...interestKeywords])];
         
         // If no skills, return empty array
-        if (seekerSkills.length === 0) {
+        if (allSignals.length === 0) {
             return res.status(200).json([]);
         }
         
@@ -252,7 +260,17 @@ const getRecommendedJobs = async (req, res) => {
                 }
             }
             
-            // Calculate score based on matching skills
+            const searchableText = [
+                job.title,
+                job.description,
+                job.location,
+                job.jobType,
+                ...(Array.isArray(job.skills) ? job.skills : []),
+                ...(Array.isArray(job.requirements) ? job.requirements : []),
+                ...(Array.isArray(job.responsibilities) ? job.responsibilities : [])
+            ].join(' ').toLowerCase();
+
+            // Calculate score based on matching skills and selected job interests
             let matchScore = 0;
             for (const seekerSkill of seekerSkills) {
                 const skillMatch = jobSkills.some(jobSkill => 
@@ -261,6 +279,13 @@ const getRecommendedJobs = async (req, res) => {
                 
                 if (skillMatch) {
                     matchScore++;
+                }
+            }
+
+            for (const interest of interestKeywords) {
+                const normalizedInterest = interest.toLowerCase();
+                if (searchableText.includes(normalizedInterest)) {
+                    matchScore += 2;
                 }
             }
             

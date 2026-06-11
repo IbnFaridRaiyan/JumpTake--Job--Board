@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
+import ContactCandidate from './ContactCandidate';
 
 const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack }) => {
     const [candidates, setCandidates] = useState([]);
@@ -314,6 +315,8 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack }) => {
                     </div>
 
                     <div className="candidate-profile-body">
+                        <ContactCandidate companyId={companyId} candidate={selectedCandidate} />
+
                         <div className="profile-section">
                             <h3>Skills</h3>
                             <div className="skills-container">

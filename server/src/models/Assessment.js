@@ -31,18 +31,20 @@ const AssessmentSchema = new mongoose.Schema({
   },
   application: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Application',
-    required: true
+    ref: 'Application'
   },
   job: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Job',
-    required: true
+    ref: 'Job'
   },
   candidateUser: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    ref: 'User'
+  },
+  scope: {
+    type: String,
+    enum: ['general', 'job', 'candidate'],
+    default: 'candidate'
   },
   title: {
     type: String,

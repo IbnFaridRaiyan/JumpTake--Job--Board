@@ -1,6 +1,7 @@
 const Assessment = require('../models/Assessment');
 const AssessmentAssignment = require('../models/AssessmentAssignment');
 const Application = require('../models/Application');
+const Job = require('../models/Job');
 const { ensureReferenceNumbers } = require('../utils/referenceNumbers');
 
 const sanitizeQuestions = (questions = []) => {
@@ -204,28 +205,64 @@ const getAssignmentWithApplication = async (assignmentId) => {
 
 const createAssessment = async (req, res) => {
     try {
-        const { companyId, applicationId, title, instructions, questions } = req.body;
+        const { companyId, applicationId, jobId, scope, title, instructions, questions } = req.body;
 
-        if (!companyId || !applicationId || !title?.trim()) {
-            return res.status(400).json({ error: 'Company, application, and title are required' });
-        }
-
-        const application = await Application.findById(applicationId).populate('job');
-        if (!application || !application.job) {
-            return res.status(404).json({ error: 'Application not found' });
-        }
-
-        if (String(application.job.company) !== String(companyId)) {
-            return res.status(403).json({ error: 'This application does not belong to your company' });
+        if (!companyId || !title?.trim()) {
+            return res.status(400).json({ error: 'Company and title are required' });
         }
 
         const sanitizedQuestions = sanitizeQuestions(questions);
 
+        if (applicationId) {
+            const application = await Application.findById(applicationId).populate('job');
+            if (!application || !application.job) {
+                return res.status(404).json({ error: 'Application not found' });
+            }
+
+            if (String(application.job.company) !== String(companyId)) {
+                return res.status(403).json({ error: 'This application does not belong to your company' });
+            }
+
+            const assessment = await Assessment.create({
+                company: companyId,
+                application: application._id,
+                job: application.job._id,
+                candidateUser: application.user,
+                scope: 'candidate',
+                title: title.trim(),
+                instructions: instructions?.trim() || '',
+                questions: sanitizedQuestions
+            });
+
+            const populatedAssessment = await populateAssessment(
+                Assessment.findById(assessment._id)
+            );
+
+            return res.status(201).json(populatedAssessment);
+        }
+
+        const saveScope = scope === 'job' || jobId ? 'job' : 'general';
+        let job = null;
+
+        if (saveScope === 'job') {
+            if (!jobId) {
+                return res.status(400).json({ error: 'Please choose a job or save the assessment in general' });
+            }
+
+            job = await Job.findById(jobId);
+            if (!job) {
+                return res.status(404).json({ error: 'Job not found' });
+            }
+
+            if (String(job.company) !== String(companyId)) {
+                return res.status(403).json({ error: 'This job does not belong to your company' });
+            }
+        }
+
         const assessment = await Assessment.create({
             company: companyId,
-            application: application._id,
-            job: application.job._id,
-            candidateUser: application.user,
+            job: job?._id,
+            scope: saveScope,
             title: title.trim(),
             instructions: instructions?.trim() || '',
             questions: sanitizedQuestions
@@ -327,7 +364,7 @@ const sendAssessment = async (req, res) => {
 
 const updateAssessment = async (req, res) => {
     try {
-        const { applicationId, title, instructions, questions } = req.body;
+        const { applicationId, jobId, scope, title, instructions, questions } = req.body;
         const assessment = await Assessment.findById(req.params.id);
 
         if (!assessment) {
@@ -348,6 +385,29 @@ const updateAssessment = async (req, res) => {
             assessment.application = application._id;
             assessment.job = application.job._id;
             assessment.candidateUser = application.user;
+            assessment.scope = 'candidate';
+        } else if (jobId !== undefined || scope !== undefined) {
+            const saveScope = scope === 'job' || jobId ? 'job' : 'general';
+
+            if (saveScope === 'job') {
+                const job = await Job.findById(jobId);
+                if (!job) {
+                    return res.status(404).json({ error: 'Job not found' });
+                }
+
+                if (String(job.company) !== String(assessment.company)) {
+                    return res.status(403).json({ error: 'This job does not belong to your company' });
+                }
+
+                assessment.job = job._id;
+                assessment.scope = 'job';
+            } else {
+                assessment.job = undefined;
+                assessment.scope = 'general';
+            }
+
+            assessment.application = undefined;
+            assessment.candidateUser = undefined;
         }
 
         if (title?.trim()) {
@@ -504,7 +564,7 @@ const sendVideoInterviewInvitation = async (req, res) => {
         await record.assignment.save();
 
         if (record.application && !['Accepted', 'Rejected', 'Withdrawn'].includes(record.application.status)) {
-            record.application.status = 'Under Review';
+            record.application.status = 'Shortlisted for Video Assessment';
             record.application.updatedAt = Date.now();
             await record.application.save();
         }
@@ -521,6 +581,44 @@ const sendVideoInterviewInvitation = async (req, res) => {
         console.error('Error sending video interview invitation:', error.message);
         return res.status(500).json({
             error: 'Failed to send video interview invitation',
+            message: error.message
+        });
+    }
+};
+
+const shortlistForVideoInterview = async (req, res) => {
+    try {
+        const record = await getAssignmentWithApplication(req.params.assignmentId);
+
+        if (!record?.assignment) {
+            return res.status(404).json({ error: 'Assessment assignment not found' });
+        }
+
+        if (record.assignment.status !== 'Submitted') {
+            return res.status(400).json({ error: 'Only completed assessments can be shortlisted for video interview' });
+        }
+
+        record.assignment.decision = 'Video Interview';
+        await record.assignment.save();
+
+        if (record.application && !['Accepted', 'Rejected', 'Withdrawn', 'Unsuccessful'].includes(record.application.status)) {
+            record.application.status = 'Shortlisted for Video Assessment';
+            record.application.updatedAt = Date.now();
+            await record.application.save();
+        }
+
+        const populatedAssignment = await populateAssignment(
+            AssessmentAssignment.findById(record.assignment._id)
+        );
+
+        return res.status(200).json({
+            message: 'Candidate shortlisted for video interview successfully',
+            assignment: populatedAssignment
+        });
+    } catch (error) {
+        console.error('Error shortlisting candidate for video interview:', error.message);
+        return res.status(500).json({
+            error: 'Failed to shortlist candidate for video interview',
             message: error.message
         });
     }
@@ -726,6 +824,7 @@ module.exports = {
     updateAssessment,
     deleteAssessment,
     submitAssessmentAssignment,
+    shortlistForVideoInterview,
     sendVideoInterviewInvitation,
     respondToVideoInterviewInvitation,
     hireCandidateFromAssessment,

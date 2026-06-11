@@ -187,7 +187,8 @@ const Register = ({ jobSeekerId, initialName = '', initialEmail = '', onClose, o
             localStorage.setItem('user', JSON.stringify({
                 id: loginData.user.id,
                 email: loginData.user.email,
-                jobSeekerId: jobSeekerId 
+                jobSeekerId: jobSeekerId,
+                jobInterests: loginData.user.jobInterests || []
             }));
             
             if (jobSeekerId) {

@@ -8,7 +8,31 @@ import DraftApplications from './DraftApplications';
 import BookmarkedJobs from './BookmarkedJobs';
 import UserProfile from './UserProfile';
 import UserSettings from './UserSettings';
+import Inbox from './Inbox';
 import logo from './media/logo.png';
+
+const JOB_INTEREST_OPTIONS = [
+    'Software Engineering',
+    'Frontend Development',
+    'Backend Development',
+    'Data Analysis',
+    'Artificial Intelligence',
+    'Cybersecurity',
+    'Product Management',
+    'Project Management',
+    'Marketing',
+    'Sales',
+    'Finance',
+    'Human Resources',
+    'Healthcare',
+    'Education',
+    'Customer Support',
+    'Design',
+    'Operations',
+    'Business Analysis',
+    'Cloud Engineering',
+    'Quality Assurance'
+];
 
 const HomePage = () => {
     const [activeSection, setActiveSection] = useState('job-feed');
@@ -20,6 +44,10 @@ const HomePage = () => {
     const [jobSeekerData, setJobSeekerData] = useState(null);
     const [pendingAssessmentCount, setPendingAssessmentCount] = useState(0);
     const [pendingVideoInterviewCount, setPendingVideoInterviewCount] = useState(0);
+    const [showInterestPopup, setShowInterestPopup] = useState(false);
+    const [selectedJobInterests, setSelectedJobInterests] = useState([]);
+    const [interestError, setInterestError] = useState('');
+    const [savingInterests, setSavingInterests] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -31,6 +59,9 @@ const HomePage = () => {
 
         const parsedUser = JSON.parse(userData);
         setUser(parsedUser);
+        const savedInterests = Array.isArray(parsedUser.jobInterests) ? parsedUser.jobInterests : [];
+        setSelectedJobInterests(savedInterests);
+        setShowInterestPopup(savedInterests.length < 4);
 
         fetchJobs();
         fetchCandidateNotifications(parsedUser.id);
@@ -189,6 +220,60 @@ const HomePage = () => {
         navigate('/');
     };
 
+    const toggleJobInterest = (interest) => {
+        setSelectedJobInterests((prevInterests) => (
+            prevInterests.includes(interest)
+                ? prevInterests.filter((item) => item !== interest)
+                : [...prevInterests, interest]
+        ));
+        setInterestError('');
+    };
+
+    const saveJobInterests = async () => {
+        if (selectedJobInterests.length < 4) {
+            setInterestError('Please select at least 4 job types.');
+            return;
+        }
+
+        setSavingInterests(true);
+        setInterestError('');
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/users/${user.id}/job-interests`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    jobInterests: selectedJobInterests
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to save job interests');
+            }
+
+            const nextUser = {
+                ...user,
+                jobInterests: data.jobInterests || selectedJobInterests
+            };
+
+            setUser(nextUser);
+            localStorage.setItem('user', JSON.stringify(nextUser));
+            setShowInterestPopup(false);
+            refreshData();
+        } catch (saveError) {
+            console.error('Error saving job interests:', saveError);
+            setInterestError(saveError.message || 'Failed to save job interests.');
+        } finally {
+            setSavingInterests(false);
+        }
+    };
+
     const refreshData = () => {
         fetchJobs();
         if (user?.id) {
@@ -278,6 +363,13 @@ const HomePage = () => {
                     switchSection={switchSection}
                     onFooterBack={goToPreviousSection}
                 />;
+            case 'inbox':
+                return <Inbox
+                    mode="candidate"
+                    userId={user?.id}
+                    onBack={() => setActiveSection('job-feed')}
+                    onFooterBack={goToPreviousSection}
+                />;
             case 'profile':
                 console.log('Rendering profile with userId:', user?.id);
                 return <UserProfile
@@ -349,6 +441,38 @@ const HomePage = () => {
                 </div>
             </div>
 
+            {showInterestPopup && (
+                <div className="modal-overlay">
+                    <div className="job-interest-modal">
+                        <div className="modal-header">
+                            <h2>What type of jobs are you interested in?</h2>
+                        </div>
+                        <p>Select at least 4 job types so your recommended jobs can be tuned to your goals.</p>
+
+                        {interestError && <div className="error-message">{interestError}</div>}
+
+                        <div className="job-interest-grid">
+                            {JOB_INTEREST_OPTIONS.map((interest) => (
+                                <button
+                                    key={interest}
+                                    type="button"
+                                    className={selectedJobInterests.includes(interest) ? 'selected' : ''}
+                                    onClick={() => toggleJobInterest(interest)}
+                                >
+                                    {interest}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="message-compose-actions">
+                            <button className="settings-button primary" onClick={saveJobInterests} disabled={savingInterests}>
+                                {savingInterests ? 'Saving...' : `Save Interests (${selectedJobInterests.length}/4)`}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="dashboard-container">
                 <div className="sidebar">
                     <div className="user-profile">
@@ -399,6 +523,12 @@ const HomePage = () => {
                                 onClick={() => switchSection('bookmarked-jobs')}
                             >
                                 Bookmarked Jobs
+                            </li>
+                            <li
+                                className={activeSection === 'inbox' ? 'active' : ''}
+                                onClick={() => switchSection('inbox')}
+                            >
+                                Inbox
                             </li>
                             <li
                                 className={activeSection === 'profile' ? 'active' : ''}

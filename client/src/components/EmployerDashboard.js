@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PostJob from './PostJob';
 import ManageJobs from './ManageJobs';
-import ManageApplications from './ManageApplications';
 import MakeAssessment from './MakeAssessment';
-import BookmarkedApplications from './BookmarkedApplications';
+import GeneralAssessments from './GeneralAssessments';
 import CompanyProfile from './CompanyProfile';
 import TalentPool from './TalentPool';
 import BookmarkedTalents from './BookmarkedTalents';
 import EmployerSettings from './EmployerSettings';
+import Inbox from './Inbox';
 import logo from './media/logo.png';
 
 const EmployerDashboard = () => {
@@ -186,21 +186,17 @@ const EmployerDashboard = () => {
                     onBack={() => setActiveSection('dashboard')}
                     onFooterBack={goToPreviousSection}
                 />;
-            case 'manage-applications':
-                return <ManageApplications
-                    companyId={employer?.companyId}
-                    onBack={() => setActiveSection('dashboard')}
-                    onFooterBack={goToPreviousSection}
-                />;
             case 'make-assessment':
                 return <MakeAssessment
                     companyId={employer?.companyId}
+                    jobs={jobs}
                     onBack={() => setActiveSection('dashboard')}
                     onFooterBack={goToPreviousSection}
                 />;
-            case 'bookmarked-applications':
-                return <BookmarkedApplications
+            case 'general-assessment':
+                return <GeneralAssessments
                     companyId={employer?.companyId}
+                    jobs={jobs}
                     onBack={() => setActiveSection('dashboard')}
                     onFooterBack={goToPreviousSection}
                 />;
@@ -225,6 +221,13 @@ const EmployerDashboard = () => {
                 />;
             case 'bookmarked-talents':
                 return <BookmarkedTalents
+                    companyId={employer?.companyId}
+                    onBack={() => setActiveSection('dashboard')}
+                    onFooterBack={goToPreviousSection}
+                />;
+            case 'inbox':
+                return <Inbox
+                    mode="employer"
                     companyId={employer?.companyId}
                     onBack={() => setActiveSection('dashboard')}
                     onFooterBack={goToPreviousSection}
@@ -278,24 +281,24 @@ const EmployerDashboard = () => {
                             </div>
 
                             <div className="dashboard-card">
-                                <h3>Manage Applications</h3>
-                                <p>Review candidate applications and profile details</p>
-                                <button
-                                    className="card-button"
-                                    onClick={() => switchSection('manage-applications')}
-                                >
-                                    View Applications
-                                </button>
-                            </div>
-
-                            <div className="dashboard-card">
                                 <h3>Make an Assessment</h3>
-                                <p>Create question sets for candidates with options or written responses</p>
+                                <p>Create reusable assessments for a job or your general library</p>
                                 <button
                                     className="card-button"
                                     onClick={() => switchSection('make-assessment')}
                                 >
                                     Open Builder
+                                </button>
+                            </div>
+
+                            <div className="dashboard-card">
+                                <h3>General Assessment</h3>
+                                <p>View assessments saved without a specific job</p>
+                                <button
+                                    className="card-button"
+                                    onClick={() => switchSection('general-assessment')}
+                                >
+                                    View General
                                 </button>
                             </div>
 
@@ -318,6 +321,17 @@ const EmployerDashboard = () => {
                                     onClick={() => switchSection('company-profile')}
                                 >
                                     View Profile
+                                </button>
+                            </div>
+
+                            <div className="dashboard-card">
+                                <h3>Inbox</h3>
+                                <p>Read and reply to candidate messages</p>
+                                <button
+                                    className="card-button"
+                                    onClick={() => switchSection('inbox')}
+                                >
+                                    Open Inbox
                                 </button>
                             </div>
 
@@ -412,22 +426,16 @@ const EmployerDashboard = () => {
                                 Manage Jobs
                             </li>
                             <li
-                                className={activeSection === 'manage-applications' ? 'active' : ''}
-                                onClick={() => switchSection('manage-applications')}
-                            >
-                                Manage Applications
-                            </li>
-                            <li
                                 className={activeSection === 'make-assessment' ? 'active' : ''}
                                 onClick={() => switchSection('make-assessment')}
                             >
                                 Make an Assessment
                             </li>
                             <li
-                                className={activeSection === 'bookmarked-applications' ? 'active' : ''}
-                                onClick={() => switchSection('bookmarked-applications')}
+                                className={activeSection === 'general-assessment' ? 'active' : ''}
+                                onClick={() => switchSection('general-assessment')}
                             >
-                                Bookmarked Applications
+                                General Assessment
                             </li>
                             <li
                                 className={activeSection === 'talent-pool' ? 'active' : ''}
@@ -440,6 +448,12 @@ const EmployerDashboard = () => {
                                 onClick={() => switchSection('bookmarked-talents')}
                             >
                                 Bookmarked Talents
+                            </li>
+                            <li
+                                className={activeSection === 'inbox' ? 'active' : ''}
+                                onClick={() => switchSection('inbox')}
+                            >
+                                Inbox
                             </li>
                             <li
                                 className={activeSection === 'company-profile' ? 'active' : ''}

@@ -11,6 +11,7 @@ const applicationController = require('../controllers/applicationController');
 const assessmentController = require('../controllers/assessmentController');
 const engagementController = require('../controllers/engagementController');
 const passwordResetController = require('../controllers/passwordResetController');
+const messageController = require('../controllers/messageController');
 
 
 
@@ -143,6 +144,7 @@ router.post('/assessments/:id/send', assessmentController.sendAssessment);
 router.put('/assessments/:id', assessmentController.updateAssessment);
 router.delete('/assessments/:id', assessmentController.deleteAssessment);
 router.put('/assessment-assignments/:assignmentId/submit', assessmentController.submitAssessmentAssignment);
+router.put('/assessment-assignments/:assignmentId/shortlist-video', assessmentController.shortlistForVideoInterview);
 router.put('/assessment-assignments/:assignmentId/video-interview', assessmentController.sendVideoInterviewInvitation);
 router.put('/assessment-assignments/:assignmentId/video-interview/respond', assessmentController.respondToVideoInterviewInvitation);
 router.put('/assessment-assignments/:assignmentId/hire', assessmentController.hireCandidateFromAssessment);
@@ -155,5 +157,11 @@ router.put('/users/:userId/password', userController.updatePassword);
 router.delete('/users/:userId', userController.deleteUser);
 router.get('/users/:userId/notification-preferences', userController.getNotificationPreferences);
 router.put('/users/:userId/notification-preferences', userController.updateNotificationPreferences);
+router.put('/users/:userId/job-interests', userController.updateJobInterests);
+
+router.post('/messages', messageController.createOrReplyMessage);
+router.put('/messages/:threadId/reply', messageController.replyToThread);
+router.get('/messages/company/:companyId', messageController.getCompanyThreads);
+router.get('/messages/user/:userId', messageController.getCandidateThreads);
 
 module.exports = router;

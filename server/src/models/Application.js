@@ -19,7 +19,18 @@ const ApplicationSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Submitted', 'Reviewed', 'Under Review', 'Accepted', 'Rejected', 'Withdrawn', 'On Hold', 'Unsuccessful'],
+    enum: [
+      'Submitted',
+      'Reviewed',
+      'Under Review',
+      'Shortlisted for Assessment',
+      'Shortlisted for Video Assessment',
+      'Accepted',
+      'Rejected',
+      'Withdrawn',
+      'On Hold',
+      'Unsuccessful'
+    ],
     default: 'Submitted'
   },
   message: {

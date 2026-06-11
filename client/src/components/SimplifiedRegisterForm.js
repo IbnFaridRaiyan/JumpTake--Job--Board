@@ -235,7 +235,8 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
             localStorage.setItem('user', JSON.stringify({
                 id: loginData.user.id,
                 email: loginData.user.email,
-                jobSeekerId: jobSeekerId 
+                jobSeekerId: jobSeekerId,
+                jobInterests: loginData.user.jobInterests || []
             }));
             
         

@@ -18,6 +18,10 @@ const UserSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'JobSeeker'
   },
+  jobInterests: {
+    type: [String],
+    default: []
+  },
   passwordResetToken: {
     type: String,
     default: null

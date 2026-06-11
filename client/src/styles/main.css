@@ -8835,3 +8835,320 @@ td,
 
 
 
+/* Job-specific employer management workspace */
+.job-management-workspace {
+  width: 100%;
+}
+
+.job-management-header {
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.job-management-header p {
+  margin-top: 4px;
+  color: var(--text-muted);
+  font-family: 'Lexend', 'Share Tech', sans-serif;
+}
+
+.job-management-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 22px;
+  padding: 12px;
+  background: var(--off-white-lightest);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.job-management-nav button {
+  border: 1px solid var(--border-color);
+  background: #ffffff;
+  color: #000000 !important;
+  border-radius: 6px;
+  padding: 8px 11px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.job-management-nav button:hover,
+.job-management-nav button.active {
+  border-color: var(--primary-color);
+  background: var(--primary-color) !important;
+  color: #ffffff !important;
+}
+
+.job-management-nav .job-management-back-nav {
+  margin-left: auto;
+  border-color: var(--secondary-color);
+}
+
+.job-management-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.job-management-form {
+  width: 100%;
+}
+
+.compact-table .actions-cell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.compact-select {
+  max-width: 190px;
+}
+
+.job-management-detail {
+  margin-top: 0;
+}
+
+.job-management-detail .candidate-profile-header {
+  margin-bottom: 18px;
+}
+
+.job-management-detail .assessment-footer-actions {
+  justify-content: flex-start;
+}
+
+.job-management-workspace .secondary-button,
+.job-management-workspace .view-button,
+.job-management-workspace .settings-button:not(.primary),
+.job-management-workspace .action-button {
+  color: #000000 !important;
+}
+
+.status-badge.shortlisted-for-assessment,
+.status-badge.shortlisted-for-video-assessment {
+  background: #7dd3fc !important;
+  border-color: #7dd3fc !important;
+  color: #000000 !important;
+}
+
+.contact-candidate-panel,
+.message-compose-card,
+.inbox-container {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #262626 !important;
+}
+
+.contact-candidate-panel {
+  margin-bottom: 20px;
+}
+
+.message-compose-card {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 14px 0 20px;
+}
+
+.rich-message-editor {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000000;
+}
+
+.rich-message-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px;
+  border-bottom: 1px solid var(--border-color);
+  background: #111111;
+}
+
+.rich-message-toolbar button {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #d0d0d0;
+  border-radius: 5px;
+  padding: 6px 9px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rich-message-input {
+  min-height: 150px;
+  padding: 14px;
+  color: #ffffff;
+  outline: none;
+  line-height: 1.6;
+}
+
+.rich-message-input:empty:before {
+  content: attr(data-placeholder);
+  color: #b8b8b8;
+}
+
+.message-compose-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.inbox-thread-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.inbox-thread-card {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  text-align: left;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+  background: #000000;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.inbox-thread-card h3,
+.inbox-thread-card p,
+.inbox-thread-card span,
+.inbox-thread-card time {
+  color: #ffffff !important;
+}
+
+.inbox-thread-card span {
+  display: block;
+  margin-top: 8px;
+  color: #d6d6d6 !important;
+}
+
+.message-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 18px 0;
+}
+
+.message-bubble {
+  max-width: 78%;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 14px;
+  background: #111111;
+}
+
+.message-bubble.sent {
+  align-self: flex-end;
+  border-color: var(--primary-color);
+}
+
+.message-bubble.received {
+  align-self: flex-start;
+}
+
+.message-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #d0d0d0;
+}
+
+.message-body,
+.message-body p,
+.message-body li,
+.message-body span,
+.message-body strong,
+.message-body em {
+  color: #ffffff !important;
+}
+
+.message-compose-card .secondary-button,
+.contact-candidate-panel .secondary-button,
+.inbox-container .secondary-button,
+.inbox-container .view-button,
+.contact-candidate-panel .settings-button:not(.primary),
+.message-compose-card .settings-button:not(.primary) {
+  color: #000000 !important;
+}
+
+.job-interest-modal {
+  width: min(720px, calc(100% - 28px));
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #000000;
+  color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+}
+
+.job-interest-modal p,
+.job-interest-modal h2 {
+  color: #ffffff !important;
+}
+
+.job-interest-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.job-interest-grid button {
+  min-height: 42px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: #ffffff !important;
+  color: #000000 !important;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 10px 12px;
+}
+
+.job-interest-grid button.selected {
+  background: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: #ffffff !important;
+}
+
+.general-assessment-job-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+@media (max-width: 768px) {
+  .job-management-header {
+    flex-direction: column;
+  }
+
+  .job-management-nav {
+    flex-direction: column;
+  }
+
+  .job-management-nav .job-management-back-nav {
+    margin-left: 0;
+  }
+
+  .compact-table .actions-cell {
+    flex-direction: column;
+  }
+
+  .message-bubble {
+    max-width: 100%;
+  }
+
+  .inbox-thread-card {
+    flex-direction: column;
+  }
+}

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ContactCandidate from './ContactCandidate';
 
 const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
     const [bookmarks, setBookmarks] = useState([]);
@@ -88,6 +89,8 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
                     </div>
                 </div>
                 <div className="candidate-profile-body">
+                    <ContactCandidate companyId={companyId} candidate={selectedCandidate} />
+
                     <div className="profile-section"><h3>Skills</h3><div className="skills-container">{Array.isArray(selectedCandidate.skills) && selectedCandidate.skills.length > 0 ? selectedCandidate.skills.map((skill, index) => <span key={index} className="skill-tag">{skill}</span>) : <p>No skills listed</p>}</div></div>
                     <div className="profile-section"><h3>Education</h3>{renderList(selectedCandidate.education, 'No education information available')}</div>
                     <div className="profile-section"><h3>Experience</h3>{renderList(selectedCandidate.experience, 'No experience information available')}</div>

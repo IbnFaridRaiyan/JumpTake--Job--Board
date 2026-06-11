@@ -42,7 +42,9 @@ const Login = ({ onClose }) => {
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify({
                 id: data.user.id,
-                email: data.user.email
+                email: data.user.email,
+                jobSeekerId: data.user.jobSeekerId,
+                jobInterests: data.user.jobInterests || []
             }));
 
             setIsSuccess(true);

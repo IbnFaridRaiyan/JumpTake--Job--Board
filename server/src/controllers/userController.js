@@ -43,7 +43,8 @@ const createAccount = async (req, res) => {
             user: {
                 id: user._id,
                 email: user.email,
-                jobSeekerId: user.jobSeekerId
+                jobSeekerId: user.jobSeekerId,
+                jobInterests: user.jobInterests || []
             }
         });
     } catch (error) {
@@ -89,7 +90,8 @@ const login = async (req, res) => {
             user: {
                 id: user._id,
                 email: user.email,
-                jobSeekerId: user.jobSeekerId
+                jobSeekerId: user.jobSeekerId,
+                jobInterests: user.jobInterests || []
             }
         });
     } catch (error) {
@@ -292,6 +294,40 @@ const getNotificationPreferences = async (req, res) => {
     }
 };
 
+const updateJobInterests = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const interests = Array.isArray(req.body.jobInterests) ? req.body.jobInterests : [];
+        const cleanedInterests = [...new Set(interests
+            .map((interest) => typeof interest === 'string' ? interest.trim() : '')
+            .filter(Boolean))]
+            .slice(0, 20);
+
+        if (cleanedInterests.length < 4) {
+            return res.status(400).json({ error: 'Please select at least 4 job interests' });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        user.jobInterests = cleanedInterests;
+        await user.save();
+
+        return res.status(200).json({
+            message: 'Job interests updated successfully',
+            jobInterests: user.jobInterests
+        });
+    } catch (error) {
+        console.error('Error updating job interests:', error.message);
+        return res.status(500).json({
+            error: 'Failed to update job interests',
+            message: error.message
+        });
+    }
+};
+
 module.exports = {
     createAccount,
     login,
@@ -299,5 +335,6 @@ module.exports = {
     updatePassword,
     deleteUser,
     updateNotificationPreferences,
-    getNotificationPreferences
+    getNotificationPreferences,
+    updateJobInterests
 };

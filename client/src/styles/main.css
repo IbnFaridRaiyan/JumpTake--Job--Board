@@ -10406,7 +10406,7 @@ button .loading-spinner {
 .inbox-container {
   background: #000000 !important;
   color: #ffffff !important;
-  border-color: #262626 !important;
+  border-color: #000000 !important;
 }
 
 .contact-candidate-panel {
@@ -15974,7 +15974,7 @@ button .loading-spinner,
   background: transparent !important;
   color: #ffffff !important;
   border: 0 !important;
-  padding: 10px !important;
+  padding: 20px !important;
 }
 
 .messenger-send-button {

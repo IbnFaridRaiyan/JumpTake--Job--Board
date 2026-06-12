@@ -7,6 +7,7 @@ import {
     sendVerificationCodeEmail,
     validateEmailAddress
 } from '../utils/emailVerification';
+import TermsAgreement from './TermsAgreement';
 
 const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSuccess }) => {
     const [formData, setFormData] = useState({
@@ -24,6 +25,7 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
     const [verificationExpiresAt, setVerificationExpiresAt] = useState(null);
     const [isEmailVerified, setIsEmailVerified] = useState(false);
     const [isSendingVerificationCode, setIsSendingVerificationCode] = useState(false);
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
     const navigate = useNavigate();
 
     const resetVerificationState = () => {
@@ -163,6 +165,11 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
 
         if (!validateEmailAddress(normalizedEmail)) {
             setError('Please enter a valid email address');
+            return;
+        }
+
+        if (!acceptedTerms) {
+            setError('Please accept the Terms and Conditions before creating your account.');
             return;
         }
 
@@ -371,11 +378,17 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
                     isDisabled={isLoading}
                     showSendButton={false}
                 />
+
+                <TermsAgreement
+                    accepted={acceptedTerms}
+                    onAcceptedChange={setAcceptedTerms}
+                    disabled={isLoading || isSendingVerificationCode}
+                />
                 
                 <button 
                     type="submit" 
                     className="create-account-button"
-                    disabled={isLoading || isSendingVerificationCode}
+                    disabled={isLoading || isSendingVerificationCode || !acceptedTerms}
                 >
                     {isLoading
                         ? 'Creating Account...'

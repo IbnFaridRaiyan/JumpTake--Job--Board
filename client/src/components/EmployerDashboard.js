@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PostJob from './PostJob';
 import ManageJobs from './ManageJobs';
@@ -56,12 +56,16 @@ const EmployerDashboard = () => {
     const [employer, setEmployer] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeSection, setActiveSection] = useState(getInitialEmployerSection);
-    const [, setSectionHistory] = useState([]);
+    const sectionHistoryRef = useRef([]);
+    const manageJobsRef = useRef(null);
+    const generalAssessmentsRef = useRef(null);
     const [companyData, setCompanyData] = useState(null);
     const [jobs, setJobs] = useState([]);
     const [applicationCount, setApplicationCount] = useState(0);
     const [pendingInboxCount, setPendingInboxCount] = useState(0);
     const [mobileSectionVisible, setMobileSectionVisible] = useState(false);
+    const [isManagingEmployerJob, setIsManagingEmployerJob] = useState(false);
+    const mobilePanelRef = useRef(null);
     const navigate = useNavigate();
 
     const updateActiveSection = (section, { push = true } = {}) => {
@@ -286,12 +290,20 @@ const EmployerDashboard = () => {
     const switchSection = (nextSection) => {
         if (!nextSection || nextSection === activeSection) {
             setMobileSectionVisible(true);
+            resetMobilePanelScroll();
             return;
         }
 
-        setSectionHistory((prev) => [...prev, activeSection]);
+        const openedFromMobileNav = isMobileViewport() && !mobileSectionVisible;
+        sectionHistoryRef.current = openedFromMobileNav
+            ? []
+            : [...sectionHistoryRef.current, activeSection];
+        if (nextSection !== 'manage-jobs') {
+            setIsManagingEmployerJob(false);
+        }
         updateActiveSection(nextSection);
         setMobileSectionVisible(true);
+        resetMobilePanelScroll();
     };
 
     const openSection = (nextSection) => {
@@ -343,28 +355,53 @@ const EmployerDashboard = () => {
     };
 
     const handleLogoClick = () => {
-        setSectionHistory([]);
+        sectionHistoryRef.current = [];
+        setIsManagingEmployerJob(false);
         updateActiveSection('dashboard');
         setMobileSectionVisible(false);
+        resetMobilePanelScroll();
     };
 
-    const closeMobileSectionPanel = () => {
-        setMobileSectionVisible(false);
+    const resetMobilePanelScroll = () => {
+        window.requestAnimationFrame(() => {
+            if (mobilePanelRef.current) {
+                mobilePanelRef.current.scrollTop = 0;
+            }
+        });
     };
 
     const goToPreviousSection = () => {
-        let previousSection = null;
+        if (activeSection === 'manage-jobs' && manageJobsRef.current?.goBackOneStep?.()) {
+            resetMobilePanelScroll();
+            return;
+        }
 
-        setSectionHistory((prev) => {
-            if (!prev.length) {
-                return prev;
+        if (activeSection === 'general-assessment' && generalAssessmentsRef.current?.goBackOneStep?.()) {
+            resetMobilePanelScroll();
+            return;
+        }
+
+        const previousSection = sectionHistoryRef.current.pop();
+
+        if (previousSection) {
+            if (previousSection !== 'manage-jobs') {
+                setIsManagingEmployerJob(false);
             }
+            updateActiveSection(previousSection);
+            setMobileSectionVisible(!isMobileViewport() || previousSection !== 'dashboard');
+            resetMobilePanelScroll();
+            return;
+        }
 
-            previousSection = prev[prev.length - 1];
-            return prev.slice(0, -1);
-        });
+        if (isMobileViewport()) {
+            setMobileSectionVisible(false);
+            resetMobilePanelScroll();
+            return;
+        }
 
-        updateActiveSection(previousSection || 'dashboard');
+        updateActiveSection('dashboard');
+        setIsManagingEmployerJob(false);
+        resetMobilePanelScroll();
     };
 
     const renderContent = () => {
@@ -373,29 +410,32 @@ const EmployerDashboard = () => {
                 return <PostJob
                     companyId={employer?.companyId}
                     onJobPosted={refreshJobs}
-                    onCancel={() => updateActiveSection('dashboard')}
+                    onCancel={goToPreviousSection}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'manage-jobs':
                 return <ManageJobs
+                    ref={manageJobsRef}
                     jobs={jobs}
                     companyId={employer?.companyId}
                     onJobUpdated={refreshJobs}
-                    onBack={() => updateActiveSection('dashboard')}
+                    onBack={goToPreviousSection}
                     onFooterBack={goToPreviousSection}
+                    onManagingChange={setIsManagingEmployerJob}
                 />;
             case 'make-assessment':
                 return <MakeAssessment
                     companyId={employer?.companyId}
                     jobs={jobs}
-                    onBack={() => updateActiveSection('dashboard')}
+                    onBack={goToPreviousSection}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'general-assessment':
                 return <GeneralAssessments
+                    ref={generalAssessmentsRef}
                     companyId={employer?.companyId}
                     jobs={jobs}
-                    onBack={() => updateActiveSection('dashboard')}
+                    onBack={goToPreviousSection}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'company-profile':
@@ -407,27 +447,27 @@ const EmployerDashboard = () => {
                         applicationsReceived: applicationCount
                     }}
                     onCompanyUpdated={handleCompanyUpdated}
-                    onBack={() => updateActiveSection('dashboard')}
+                    onBack={goToPreviousSection}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'talent-pool':
                 return <TalentPool
                     jobs={jobs}
                     companyId={employer?.companyId}
-                    onBack={() => updateActiveSection('dashboard')}
+                    onBack={goToPreviousSection}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'bookmarked-talents':
                 return <BookmarkedTalents
                     companyId={employer?.companyId}
-                    onBack={() => updateActiveSection('dashboard')}
+                    onBack={goToPreviousSection}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'inbox':
                 return <Inbox
                     mode="employer"
                     companyId={employer?.companyId}
-                    onBack={() => updateActiveSection('dashboard')}
+                    onBack={goToPreviousSection}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'about-jumptake':
@@ -700,11 +740,11 @@ const EmployerDashboard = () => {
                     </nav>
                 </div>
 
-                <main className={`main-content mobile-dashboard-section-panel mobile-section-${activeSection} ${mobileSectionVisible ? 'is-open' : ''}`}>
+                <main ref={mobilePanelRef} className={`main-content mobile-dashboard-section-panel mobile-section-${activeSection} ${mobileSectionVisible ? 'is-open' : ''}`}>
                     {mobileSectionVisible && (
                         <div className="mobile-section-panel-header">
-                            <button type="button" className="back-button" onClick={closeMobileSectionPanel}>
-                                Back
+                            <button type="button" className="back-button" onClick={goToPreviousSection}>
+                                {activeSection === 'manage-jobs' && isManagingEmployerJob ? 'Back to Manage Jobs' : 'Back'}
                             </button>
                             <h2>{sectionTitles[activeSection] || 'Dashboard Section'}</h2>
                         </div>

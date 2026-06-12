@@ -376,8 +376,8 @@ const MakeAssessment = ({ companyId, jobs = [], onBack, onFooterBack }) => {
             </div>
 
             <div className="page-footer-actions">
-                <button className="back-button responsive-back-button" onClick={onBack}>
-                    Back to Dashboard
+                <button className="back-button responsive-back-button" onClick={onFooterBack || onBack}>
+                    Back
                 </button>
                 <button className="back-button responsive-back-button" onClick={onFooterBack || onBack}>
                     Back

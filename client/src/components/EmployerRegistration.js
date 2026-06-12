@@ -6,6 +6,7 @@ import {
     sendVerificationCodeEmail,
     validateEmailAddress
 } from '../utils/emailVerification';
+import TermsAgreement from './TermsAgreement';
 
 const EmployerRegistration = ({ companyId, companyName, onComplete }) => {
     const [username, setUsername] = useState('');
@@ -21,6 +22,7 @@ const EmployerRegistration = ({ companyId, companyName, onComplete }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [registrationComplete, setRegistrationComplete] = useState(false);
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
 
     const resetVerificationState = () => {
         setVerificationCode('');
@@ -120,6 +122,11 @@ const EmployerRegistration = ({ companyId, companyName, onComplete }) => {
         
         if (password !== confirmPassword) {
             setMessage('Passwords do not match');
+            return;
+        }
+
+        if (!acceptedTerms) {
+            setMessage('Please accept the Terms and Conditions before creating your employer account.');
             return;
         }
 
@@ -248,10 +255,16 @@ const EmployerRegistration = ({ companyId, companyName, onComplete }) => {
                         showSendButton={false}
                     />
 
+                    <TermsAgreement
+                        accepted={acceptedTerms}
+                        onAcceptedChange={setAcceptedTerms}
+                        disabled={isLoading || isSendingVerificationCode}
+                    />
+
                     <button 
                         type="submit" 
                         className="submit-button"
-                        disabled={isLoading || isSendingVerificationCode}
+                        disabled={isLoading || isSendingVerificationCode || !acceptedTerms}
                     >
                         {isLoading
                             ? 'Creating Account...'

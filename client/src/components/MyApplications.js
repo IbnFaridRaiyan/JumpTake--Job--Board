@@ -349,8 +349,8 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
                     )}
 
                     <div className="section-footer-nav">
-                        <button className="back-button" onClick={handleBrowseJobs}>
-                            Back to Job Feed
+                        <button className="back-button" onClick={onFooterBack || handleBrowseJobs}>
+                            Back
                         </button>
                     </div>
                 </div>
@@ -443,9 +443,9 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
             <div className="page-footer-actions">
                 <button 
                     className="back-button"
-                    onClick={handleBrowseJobs}
+                    onClick={onFooterBack || handleBrowseJobs}
                 >
-                    Back to Job Feed
+                    Back
                 </button>
                 <button
                     className="back-button"

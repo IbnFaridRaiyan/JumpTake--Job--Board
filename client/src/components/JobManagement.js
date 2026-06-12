@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import AnimatedDeleteButton from './AnimatedDeleteButton';
 import EditJob from './EditJob';
 import { sendApplicationStatusEmail } from '../utils/emailVerification';
@@ -108,6 +108,7 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
     const [interviewDates, setInterviewDates] = useState(createInterviewDates());
     const [seenApplicantsCount, setSeenApplicantsCount] = useState(0);
     const [seenCompletedAssessmentCount, setSeenCompletedAssessmentCount] = useState(0);
+    const mobileSectionPanelRef = useRef(null);
 
     const jobId = getId(currentJob);
 
@@ -304,6 +305,7 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
         resetPanels();
         setActiveSection(sectionId);
         setMobileSectionVisible(true);
+        resetMobileWorkspaceScroll();
 
         if (sectionId === 'applicants') {
             setSeenApplicantsCount(jobApplications.length);
@@ -316,6 +318,21 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
 
     const closeMobileSectionPanel = () => {
         setMobileSectionVisible(false);
+        resetMobileWorkspaceScroll();
+    };
+
+    const resetMobileWorkspaceScroll = () => {
+        window.requestAnimationFrame(() => {
+            const panel = mobileSectionPanelRef.current;
+            if (panel) {
+                panel.scrollTop = 0;
+            }
+
+            const outerPanel = panel?.closest?.('.mobile-dashboard-section-panel');
+            if (outerPanel) {
+                outerPanel.scrollTop = 0;
+            }
+        });
     };
 
     const updateApplicationStatus = async (application, status, successMessage) => {
@@ -1643,6 +1660,11 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                 </div>
             </div>
 
+            <div className="job-management-mobile-job-title" aria-label="Selected job">
+                <h3>{currentJob?.title || 'Manage Job'}</h3>
+                <p>{currentJob?.jobNumber || 'Job workspace'}</p>
+            </div>
+
             <nav className="job-management-nav" aria-label="Job management sections">
                 {SECTIONS.map((section) => (
                     <button
@@ -1658,7 +1680,10 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                 ))}
             </nav>
 
-            <div className={`mobile-job-management-section-panel ${mobileSectionVisible ? 'is-open' : ''}`}>
+            <div
+                ref={mobileSectionPanelRef}
+                className={`mobile-job-management-section-panel ${mobileSectionVisible ? 'is-open' : ''}`}
+            >
                 {mobileSectionVisible && (
                     <div className="mobile-section-panel-header">
                         <button type="button" className="back-button" onClick={closeMobileSectionPanel}>

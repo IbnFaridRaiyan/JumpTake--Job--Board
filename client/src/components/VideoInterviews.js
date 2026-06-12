@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import AnimatedDeleteButton from './AnimatedDeleteButton';
 
-const VideoInterviews = ({ userId, switchSection, onFooterBack }) => {
+const VideoInterviews = forwardRef(({ userId, switchSection, onFooterBack }, ref) => {
     const [interviews, setInterviews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -14,6 +14,24 @@ const VideoInterviews = ({ userId, switchSection, onFooterBack }) => {
         fetchInterviews();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userId]);
+
+    const closeInterviewDetails = () => {
+        setSelectedInterview(null);
+        setSelectedDate('');
+        setMessage('');
+        setError('');
+    };
+
+    useImperativeHandle(ref, () => ({
+        goBackOneStep: () => {
+            if (!selectedInterview) {
+                return false;
+            }
+
+            closeInterviewDetails();
+            return true;
+        }
+    }), [selectedInterview]);
 
     const fetchInterviews = async () => {
         if (!userId) {
@@ -131,12 +149,7 @@ const VideoInterviews = ({ userId, switchSection, onFooterBack }) => {
                     <div className="section-actions">
                         <button
                             className="back-button responsive-back-button"
-                            onClick={() => {
-                                setSelectedInterview(null);
-                                setSelectedDate('');
-                                setMessage('');
-                                setError('');
-                            }}
+                            onClick={closeInterviewDetails}
                         >
                             Back to Video Interviews
                         </button>
@@ -214,17 +227,12 @@ const VideoInterviews = ({ userId, switchSection, onFooterBack }) => {
                     )}
 
                     <div className="page-footer-actions">
-                        <button className="back-button responsive-back-button" onClick={handleBackToFeed}>
-                            Back to Job Feed
+                        <button className="back-button responsive-back-button" onClick={onFooterBack || handleBackToFeed}>
+                            Back
                         </button>
                         <button
                             className="back-button responsive-back-button"
-                            onClick={() => {
-                                setSelectedInterview(null);
-                                setSelectedDate('');
-                                setMessage('');
-                                setError('');
-                            }}
+                            onClick={closeInterviewDetails}
                         >
                             Back
                         </button>
@@ -279,8 +287,8 @@ const VideoInterviews = ({ userId, switchSection, onFooterBack }) => {
             )}
 
             <div className="page-footer-actions">
-                <button className="back-button responsive-back-button" onClick={handleBackToFeed}>
-                    Back to Job Feed
+                <button className="back-button responsive-back-button" onClick={onFooterBack || handleBackToFeed}>
+                    Back
                 </button>
                 <button
                     className="back-button responsive-back-button"
@@ -291,6 +299,6 @@ const VideoInterviews = ({ userId, switchSection, onFooterBack }) => {
             </div>
         </div>
     );
-};
+});
 
 export default VideoInterviews;

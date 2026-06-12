@@ -82,7 +82,7 @@ const getInitialCandidateSection = () => {
 
 const HomePage = () => {
     const [activeSection, setActiveSection] = useState(getInitialCandidateSection);
-    const [, setSectionHistory] = useState([]);
+    const sectionHistoryRef = useRef([]);
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -97,6 +97,8 @@ const HomePage = () => {
     const [savingInterests, setSavingInterests] = useState(false);
     const [mobileSectionVisible, setMobileSectionVisible] = useState(false);
     const myApplicationsRef = useRef(null);
+    const videoInterviewsRef = useRef(null);
+    const mobilePanelRef = useRef(null);
     const navigate = useNavigate();
 
     const updateActiveSection = (section, { push = true } = {}) => {
@@ -440,12 +442,17 @@ const HomePage = () => {
     const switchSection = (nextSection) => {
         if (!nextSection || nextSection === activeSection) {
             setMobileSectionVisible(true);
+            resetMobilePanelScroll();
             return;
         }
 
-        setSectionHistory((prev) => [...prev, activeSection]);
+        const openedFromMobileNav = isMobileViewport() && !mobileSectionVisible;
+        sectionHistoryRef.current = openedFromMobileNav
+            ? []
+            : [...sectionHistoryRef.current, activeSection];
         updateActiveSection(nextSection);
         setMobileSectionVisible(true);
+        resetMobilePanelScroll();
     };
 
     const openSection = (nextSection) => {
@@ -496,32 +503,68 @@ const HomePage = () => {
     };
 
     const handleLogoClick = () => {
-        setSectionHistory([]);
+        sectionHistoryRef.current = [];
         updateActiveSection('job-feed');
         setMobileSectionVisible(false);
+        resetMobilePanelScroll();
+    };
+
+    const resetMobilePanelScroll = () => {
+        window.requestAnimationFrame(() => {
+            if (mobilePanelRef.current) {
+                mobilePanelRef.current.scrollTop = 0;
+            }
+        });
     };
 
     const closeMobileSectionPanel = () => {
         if (activeSection === 'applications' && myApplicationsRef.current?.goBackOneStep?.()) {
+            resetMobilePanelScroll();
             return;
         }
 
-        setMobileSectionVisible(false);
+        goToPreviousSection();
     };
 
     const goToPreviousSection = () => {
-        let previousSection = null;
+        if (activeSection === 'applications' && myApplicationsRef.current?.goBackOneStep?.()) {
+            resetMobilePanelScroll();
+            return;
+        }
 
-        setSectionHistory((prev) => {
-            if (!prev.length) {
-                return prev;
-            }
+        if (activeSection === 'video-interviews' && videoInterviewsRef.current?.goBackOneStep?.()) {
+            resetMobilePanelScroll();
+            return;
+        }
 
-            previousSection = prev[prev.length - 1];
-            return prev.slice(0, -1);
-        });
+        const previousSection = sectionHistoryRef.current.pop();
 
-        updateActiveSection(previousSection || 'job-feed');
+        if (previousSection) {
+            updateActiveSection(previousSection);
+            setMobileSectionVisible(!isMobileViewport() || previousSection !== 'job-feed');
+            resetMobilePanelScroll();
+            return;
+        }
+
+        if (isMobileViewport()) {
+            setMobileSectionVisible(false);
+            resetMobilePanelScroll();
+            return;
+        }
+
+        updateActiveSection('job-feed');
+        resetMobilePanelScroll();
+    };
+
+    const returnToSection = (section) => {
+        if (!CANDIDATE_SECTION_IDS.has(section)) {
+            return;
+        }
+
+        sectionHistoryRef.current = sectionHistoryRef.current.filter((item) => item !== section);
+        updateActiveSection(section);
+        setMobileSectionVisible(true);
+        resetMobilePanelScroll();
     };
 
     const renderContent = () => {
@@ -540,6 +583,7 @@ const HomePage = () => {
                     onRefresh={refreshData}
                     jobSeekerData={jobSeekerData}
                     currentUser={user}
+                    returnToSection={returnToSection}
                 />;
             case 'applications':
                 return <MyApplications
@@ -559,6 +603,7 @@ const HomePage = () => {
                 />;
             case 'video-interviews':
                 return <VideoInterviews
+                    ref={videoInterviewsRef}
                     userId={user?.id}
                     switchSection={switchSection}
                     onFooterBack={goToPreviousSection}
@@ -579,7 +624,7 @@ const HomePage = () => {
                 return <Inbox
                     mode="candidate"
                     userId={user?.id}
-                    onBack={() => updateActiveSection('job-feed')}
+                    onBack={goToPreviousSection}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'view-candidates':
@@ -587,13 +632,13 @@ const HomePage = () => {
                     mode="candidate"
                     jobs={jobs}
                     currentUserId={user?.id}
-                    onBack={() => updateActiveSection('job-feed')}
+                    onBack={goToPreviousSection}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'bookmarked-candidates':
                 return <BookmarkedCandidates
                     userId={user?.id}
-                    onBack={() => updateActiveSection('job-feed')}
+                    onBack={goToPreviousSection}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'interested-jobs':
@@ -639,6 +684,7 @@ const HomePage = () => {
                     onRefresh={refreshData}
                     jobSeekerData={jobSeekerData}
                     currentUser={user}
+                    returnToSection={returnToSection}
                 />;
         }
     };
@@ -831,7 +877,7 @@ const HomePage = () => {
                     </nav>
                 </div>
 
-                <main className={`main-content mobile-dashboard-section-panel mobile-section-${activeSection} ${mobileSectionVisible ? 'is-open' : ''}`}>
+                <main ref={mobilePanelRef} className={`main-content mobile-dashboard-section-panel mobile-section-${activeSection} ${mobileSectionVisible ? 'is-open' : ''}`}>
                     {mobileSectionVisible && (
                         <div className="mobile-section-panel-header">
                             <button type="button" className="back-button" onClick={closeMobileSectionPanel}>

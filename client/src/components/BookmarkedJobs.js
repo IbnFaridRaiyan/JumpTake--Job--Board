@@ -42,6 +42,7 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
     const openJob = (jobId, action = 'preview') => {
         localStorage.setItem('jumptakeActiveJobId', String(jobId));
         localStorage.setItem('jumptakeActiveJobAction', action);
+        localStorage.setItem('jumptakeActiveJobReturnSection', 'bookmarked-jobs');
         if (switchSection) {
             switchSection('job-feed');
         }
@@ -169,9 +170,6 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
             )}
 
             <div className="page-footer-actions">
-                <button className="back-button" onClick={() => switchSection && switchSection('job-feed')}>
-                    Back to Job Feed
-                </button>
                 <button className="back-button" onClick={onFooterBack || (() => switchSection && switchSection('job-feed'))}>
                     Back
                 </button>

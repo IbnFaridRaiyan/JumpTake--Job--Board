@@ -225,7 +225,7 @@ const RichTextEditor = ({ value, onChange, disabled = false }) => {
     );
 };
 
-const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser }) => {
+const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, returnToSection }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [applyingToJobId, setApplyingToJobId] = useState(null);
     const [applicationJob, setApplicationJob] = useState(null);
@@ -235,6 +235,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser })
     const [coverLetterHtml, setCoverLetterHtml] = useState('');
     const [applicationProfile, setApplicationProfile] = useState(() => createApplicationProfileDraft(jobSeekerData, currentUser));
     const [activeDraftId, setActiveDraftId] = useState(null);
+    const [activeReturnSection, setActiveReturnSection] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState('');
     const [recommendedJobs, setRecommendedJobs] = useState([]);
@@ -332,6 +333,11 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser })
         const activeDraftStorageId = localStorage.getItem('jumptakeActiveDraftId');
         const activeJobId = localStorage.getItem('jumptakeActiveJobId');
         const activeJobAction = localStorage.getItem('jumptakeActiveJobAction') || 'preview';
+        const storedReturnSection = localStorage.getItem('jumptakeActiveJobReturnSection');
+        if (storedReturnSection) {
+            setActiveReturnSection(storedReturnSection);
+            localStorage.removeItem('jumptakeActiveJobReturnSection');
+        }
 
         if (activeDraftStorageId) {
             openDraftFromStorage(activeDraftStorageId);
@@ -364,6 +370,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser })
         
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [previewJob, selectedCompany]);
 
     useEffect(() => {
@@ -570,13 +577,31 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser })
         setPreviewJob(null); 
     };
     
-    const handleCancelApplication = () => {
+    const returnToOriginSection = () => {
+        if (!activeReturnSection || !returnToSection) {
+            return;
+        }
+
+        const nextSection = activeReturnSection;
+        setActiveReturnSection(null);
+        returnToSection(nextSection);
+    };
+
+    const handleCancelApplication = (options = {}) => {
+        const shouldReturn = Object.prototype.hasOwnProperty.call(options, 'shouldReturn')
+            ? options.shouldReturn
+            : true;
+
         setApplyingToJobId(null);
         setApplicationJob(null);
         setApplicationMessage('');
         setCoverLetterHtml('');
         setActiveDraftId(null);
         setApplicationProfile(createApplicationProfileDraft(jobSeekerData, resolvedUser));
+
+        if (shouldReturn) {
+            returnToOriginSection();
+        }
     };
 
     const openDraftFromStorage = async (draftId) => {
@@ -705,6 +730,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser })
             setCoverLetterHtml('');
             setActiveDraftId(null);
             setApplicationProfile(createApplicationProfileDraft(jobSeekerData, resolvedUser));
+            returnToOriginSection();
             
             if (onRefresh) onRefresh();
             
@@ -720,11 +746,19 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser })
         }
     };
 
-    const closePreview = () => {
+    const closePreview = (options = {}) => {
+        const shouldReturn = Object.prototype.hasOwnProperty.call(options, 'shouldReturn')
+            ? options.shouldReturn
+            : true;
+
         setPreviewJob(null);
         setSelectedCompany(null);
         setCompanyLoading(false);
         setCompanyError('');
+
+        if (shouldReturn) {
+            returnToOriginSection();
+        }
     };
 
     const formatFoundedDate = (founded) => {

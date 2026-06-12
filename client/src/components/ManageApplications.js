@@ -580,9 +580,9 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
             <div className="page-footer-actions">
                 <button
                     className="back-button responsive-back-button"
-                    onClick={onBack}
+                    onClick={onFooterBack || onBack}
                 >
-                    Back to Dashboard
+                    Back
                 </button>
                 <button
                     className="back-button responsive-back-button"

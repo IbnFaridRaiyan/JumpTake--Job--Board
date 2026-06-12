@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import AnimatedDeleteButton from './AnimatedDeleteButton';
 import JobManagement from './JobManagement';
 
-const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => {
+const ManageJobs = forwardRef(({ jobs, companyId, onJobUpdated, onBack, onFooterBack, onManagingChange }, ref) => {
     const [managingJob, setManagingJob] = useState(null);
     const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -34,6 +34,12 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => 
             sessionStorage.removeItem('jumptakeEmployerJobSearch');
         }
     }, []);
+
+    useEffect(() => {
+        if (onManagingChange) {
+            onManagingChange(Boolean(managingJob));
+        }
+    }, [managingJob, onManagingChange]);
 
     const handleManage = (job) => {
         localStorage.setItem('jumptakeEmployerManagedJobId', job._id);
@@ -129,6 +135,17 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => 
         localStorage.removeItem('jumptakeEmployerManagedJobId');
         setManagingJob(null);
     };
+
+    useImperativeHandle(ref, () => ({
+        goBackOneStep: () => {
+            if (!managingJob) {
+                return false;
+            }
+
+            handleCloseManage();
+            return true;
+        }
+    }), [managingJob]);
     
     const handleJobUpdated = () => {
         if (onJobUpdated) {
@@ -166,6 +183,7 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => 
     
     return (
         <div className="manage-jobs-container">
+            <div className="manage-jobs-mobile-local-title" aria-hidden="true">Manage Jobs</div>
             <div className="manage-jobs-header">
                 <h2>Manage Job Listings</h2>
             </div>
@@ -278,9 +296,9 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => 
                     <div className="page-footer-actions">
                         <button
                             className="back-button"
-                            onClick={onBack}
+                            onClick={onFooterBack || onBack}
                         >
-                            Back to Dashboard
+                            Back
                         </button>
                         <button
                             className="back-button"
@@ -293,6 +311,6 @@ const ManageJobs = ({ jobs, companyId, onJobUpdated, onBack, onFooterBack }) => 
             )}
         </div>
     );
-};
+});
 
 export default ManageJobs;

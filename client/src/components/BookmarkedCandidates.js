@@ -160,7 +160,7 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack }) => {
             )}
 
             <div className="page-footer-actions">
-                <button className="back-button" onClick={onBack}>Back to Dashboard</button>
+                <button className="back-button" onClick={onFooterBack || onBack}>Back</button>
                 <button className="back-button" onClick={onFooterBack || onBack}>Back</button>
             </div>
         </div>

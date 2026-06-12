@@ -401,8 +401,8 @@ const EmployerSettings = ({ employer, switchSection, onEmployerUpdated, onLogout
             </div>
 
             <div className="page-footer-actions">
-                <button className="back-button responsive-back-button" onClick={handleBackToDashboard}>
-                    Back to Dashboard
+                <button className="back-button responsive-back-button" onClick={onFooterBack || handleBackToDashboard}>
+                    Back
                 </button>
                 <button className="back-button responsive-back-button" onClick={onFooterBack || handleBackToDashboard}>
                     Back

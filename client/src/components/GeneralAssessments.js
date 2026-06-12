@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import AnimatedDeleteButton from './AnimatedDeleteButton';
 
-const GeneralAssessments = ({ companyId, jobs = [], onBack, onFooterBack }) => {
+const GeneralAssessments = forwardRef(({ companyId, jobs = [], onBack, onFooterBack }, ref) => {
     const [assessments, setAssessments] = useState([]);
     const [selectedAssessment, setSelectedAssessment] = useState(null);
     const [selectedJobIds, setSelectedJobIds] = useState([]);
@@ -14,6 +14,17 @@ const GeneralAssessments = ({ companyId, jobs = [], onBack, onFooterBack }) => {
         fetchAssessments();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [companyId]);
+
+    useImperativeHandle(ref, () => ({
+        goBackOneStep: () => {
+            if (!selectedAssessment) {
+                return false;
+            }
+
+            setSelectedAssessment(null);
+            return true;
+        }
+    }), [selectedAssessment]);
 
     const fetchAssessments = async () => {
         if (!companyId) {
@@ -265,8 +276,8 @@ const GeneralAssessments = ({ companyId, jobs = [], onBack, onFooterBack }) => {
             )}
 
             <div className="page-footer-actions">
-                <button className="back-button responsive-back-button" onClick={onBack}>
-                    Back to Dashboard
+                <button className="back-button responsive-back-button" onClick={onFooterBack || onBack}>
+                    Back
                 </button>
                 <button className="back-button responsive-back-button" onClick={onFooterBack || onBack}>
                     Back
@@ -274,6 +285,6 @@ const GeneralAssessments = ({ companyId, jobs = [], onBack, onFooterBack }) => {
             </div>
         </div>
     );
-};
+});
 
 export default GeneralAssessments;

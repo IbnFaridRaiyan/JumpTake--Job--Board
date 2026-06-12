@@ -39,9 +39,9 @@ const CompanyProfile = ({ company, jobStats, onBack, onCompanyUpdated, onFooterB
                 <div className="page-footer-actions">
                     <button
                         className="back-button"
-                        onClick={onBack}
+                        onClick={onFooterBack || onBack}
                     >
-                        Back to Dashboard
+                        Back
                     </button>
                     <button
                         className="back-button"
@@ -330,9 +330,9 @@ const CompanyProfile = ({ company, jobStats, onBack, onCompanyUpdated, onFooterB
                     <div className="page-footer-actions">
                         <button
                             className="back-button"
-                            onClick={onBack}
+                            onClick={onFooterBack || onBack}
                         >
-                            Back to Dashboard
+                            Back
                         </button>
                         <button
                             className="back-button"

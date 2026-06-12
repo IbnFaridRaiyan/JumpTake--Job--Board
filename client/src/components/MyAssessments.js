@@ -248,8 +248,8 @@ const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection,
                 </div>
 
                 <div className="section-footer-nav">
-                    <button className="back-button responsive-back-button" onClick={handleBackToFeed}>
-                        Back to Job Feed
+                    <button className="back-button responsive-back-button" onClick={onFooterBack || handleBackToFeed}>
+                        Back
                     </button>
                 </div>
             </div>
@@ -325,8 +325,8 @@ const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection,
             )}
 
             <div className="page-footer-actions">
-                <button className="back-button responsive-back-button" onClick={handleBackToFeed}>
-                    Back to Job Feed
+                <button className="back-button responsive-back-button" onClick={onFooterBack || handleBackToFeed}>
+                    Back
                 </button>
                 <button
                     className="back-button responsive-back-button"

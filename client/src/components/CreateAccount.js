@@ -6,6 +6,7 @@ import {
     sendVerificationCodeEmail,
     validateEmailAddress
 } from '../utils/emailVerification';
+import TermsAgreement from './TermsAgreement';
 
 const CreateAccount = ({ email, jobSeekerId, onCancel }) => {
     const [userEmail, setUserEmail] = useState(email || '');
@@ -20,6 +21,7 @@ const CreateAccount = ({ email, jobSeekerId, onCancel }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [accountCreated, setAccountCreated] = useState(false);
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
 
     const resetVerificationState = () => {
         setVerificationCode('');
@@ -109,6 +111,11 @@ const CreateAccount = ({ email, jobSeekerId, onCancel }) => {
         
         if (password !== confirmPassword) {
             setMessage('Passwords do not match');
+            return;
+        }
+
+        if (!acceptedTerms) {
+            setMessage('Please accept the Terms and Conditions before creating your account.');
             return;
         }
 
@@ -213,12 +220,18 @@ const CreateAccount = ({ email, jobSeekerId, onCancel }) => {
                             required
                         />
                     </div>
+
+                    <TermsAgreement
+                        accepted={acceptedTerms}
+                        onAcceptedChange={setAcceptedTerms}
+                        disabled={isLoading || isSendingVerificationCode}
+                    />
                     
                     <div className="button-group">
                         <button 
                             type="submit" 
                             className="submit-button"
-                            disabled={isLoading || isSendingVerificationCode}
+                            disabled={isLoading || isSendingVerificationCode || !acceptedTerms}
                         >
                             {isLoading ? 'Creating Account...' : 'Create Account'}
                         </button>

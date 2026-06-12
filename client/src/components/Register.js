@@ -6,6 +6,7 @@ import {
     sendVerificationCodeEmail,
     validateEmailAddress
 } from '../utils/emailVerification';
+import TermsAgreement from './TermsAgreement';
 
 
 const Register = ({ jobSeekerId, initialName = '', initialEmail = '', onClose, onSuccess }) => {
@@ -23,6 +24,7 @@ const Register = ({ jobSeekerId, initialName = '', initialEmail = '', onClose, o
     const [verificationExpiresAt, setVerificationExpiresAt] = useState(null);
     const [isEmailVerified, setIsEmailVerified] = useState(false);
     const [isSendingVerificationCode, setIsSendingVerificationCode] = useState(false);
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
 
     const resetVerificationState = () => {
         setVerificationCode('');
@@ -129,6 +131,11 @@ const Register = ({ jobSeekerId, initialName = '', initialEmail = '', onClose, o
 
         if (!validateEmailAddress(normalizedEmail)) {
             setError('Please enter a valid email address');
+            return;
+        }
+
+        if (!acceptedTerms) {
+            setError('Please accept the Terms and Conditions before creating your account.');
             return;
         }
 
@@ -295,11 +302,17 @@ const Register = ({ jobSeekerId, initialName = '', initialEmail = '', onClose, o
                                 required
                             />
                         </div>
+
+                        <TermsAgreement
+                            accepted={acceptedTerms}
+                            onAcceptedChange={setAcceptedTerms}
+                            disabled={isLoading || isSendingVerificationCode}
+                        />
                         
                         <button 
                             type="submit" 
                             className="submit-button"
-                            disabled={isLoading || isSendingVerificationCode}
+                            disabled={isLoading || isSendingVerificationCode || !acceptedTerms}
                         >
                             {isLoading ? 'Creating Account...' : 'Create Account'}
                         </button>

@@ -261,8 +261,8 @@ const UserProfile = ({ userId, onUpdate, switchSection, onFooterBack }) => {
                     <button className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
                         Back
                     </button>
-                    <button className="back-button profile-job-feed-button" onClick={handleBackToJobFeed}>
-                        Back to Job Feed
+                    <button className="back-button profile-job-feed-button" onClick={onFooterBack || handleBackToJobFeed}>
+                        Back
                     </button>
                 </div>
             </div>
@@ -285,8 +285,8 @@ const UserProfile = ({ userId, onUpdate, switchSection, onFooterBack }) => {
                     <button className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
                         Back
                     </button>
-                    <button className="back-button profile-job-feed-button" onClick={handleBackToJobFeed}>
-                        Back to Job Feed
+                    <button className="back-button profile-job-feed-button" onClick={onFooterBack || handleBackToJobFeed}>
+                        Back
                     </button>
                 </div>
             </div>
@@ -454,8 +454,8 @@ const UserProfile = ({ userId, onUpdate, switchSection, onFooterBack }) => {
                             <button type="button" className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
                                 Back
                             </button>
-                            <button type="button" className="back-button profile-job-feed-button" onClick={handleBackToJobFeed}>
-                                Back to Job Feed
+                            <button type="button" className="back-button profile-job-feed-button" onClick={onFooterBack || handleBackToJobFeed}>
+                                Back
                             </button>
                         </div>
                     </form>
@@ -534,8 +534,8 @@ const UserProfile = ({ userId, onUpdate, switchSection, onFooterBack }) => {
                             <button className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
                                 Back
                             </button>
-                            <button className="back-button profile-job-feed-button" onClick={handleBackToJobFeed}>
-                                Back to Job Feed
+                            <button className="back-button profile-job-feed-button" onClick={onFooterBack || handleBackToJobFeed}>
+                                Back
                             </button>
                         </div>
                     </div>

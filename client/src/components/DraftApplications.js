@@ -39,6 +39,7 @@ const DraftApplications = ({ userId, switchSection, onFooterBack }) => {
 
     const handleContinueDraft = (draft) => {
         localStorage.setItem('jumptakeActiveDraftId', draft._id);
+        localStorage.setItem('jumptakeActiveJobReturnSection', 'draft-applications');
         if (switchSection) {
             switchSection('job-feed');
         }
@@ -129,9 +130,6 @@ const DraftApplications = ({ userId, switchSection, onFooterBack }) => {
             )}
 
             <div className="page-footer-actions">
-                <button className="back-button" onClick={() => switchSection && switchSection('job-feed')}>
-                    Back to Job Feed
-                </button>
                 <button className="back-button" onClick={onFooterBack || (() => switchSection && switchSection('job-feed'))}>
                     Back
                 </button>

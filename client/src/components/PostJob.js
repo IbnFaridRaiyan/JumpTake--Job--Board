@@ -272,7 +272,7 @@ const PostJob = ({ companyId, onJobPosted, onCancel, onFooterBack }) => {
                         <button 
                             type="button" 
                             className="secondary-button"
-                            onClick={onCancel}
+                            onClick={onFooterBack || onCancel}
                             disabled={isLoading}
                         >
                             Cancel
@@ -286,7 +286,7 @@ const PostJob = ({ companyId, onJobPosted, onCancel, onFooterBack }) => {
                             onClick={onCancel}
                             disabled={isLoading}
                         >
-                            Back to Dashboard
+                            Back
                         </button>
                         <button
                             type="button"

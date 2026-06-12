@@ -603,8 +603,8 @@ const UserSettings = ({ user, onLogout, switchSection, onFooterBack }) => {
             </div>
 
             <div className="page-footer-actions">
-                <button className="back-button" onClick={handleBackToJobFeed}>
-                    Back to Job Feed
+                <button className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
+                    Back
                 </button>
                 <button className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
                     Back

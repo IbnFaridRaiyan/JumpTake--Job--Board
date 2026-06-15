@@ -20,6 +20,16 @@ const AssessmentQuestionSchema = new mongoose.Schema({
     default: 2000,
     min: 1,
     max: 2000
+  },
+  correctAnswer: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  marks: {
+    type: Number,
+    default: 1,
+    min: 0
   }
 }, { _id: true });
 
@@ -54,6 +64,12 @@ const AssessmentSchema = new mongoose.Schema({
   instructions: {
     type: String,
     trim: true
+  },
+  timeLimitMinutes: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 1440
   },
   questions: {
     type: [AssessmentQuestionSchema],

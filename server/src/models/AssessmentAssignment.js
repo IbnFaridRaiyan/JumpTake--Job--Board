@@ -20,6 +20,16 @@ const AssessmentQuestionSnapshotSchema = new mongoose.Schema({
     default: 2000,
     min: 1,
     max: 2000
+  },
+  correctAnswer: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  marks: {
+    type: Number,
+    default: 1,
+    min: 0
   }
 }, { _id: true });
 
@@ -48,6 +58,25 @@ const AssessmentResponseSchema = new mongoose.Schema({
     default: 2000,
     min: 1,
     max: 2000
+  },
+  correctAnswer: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  marks: {
+    type: Number,
+    default: 1,
+    min: 0
+  },
+  awardedMarks: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  isCorrect: {
+    type: Boolean,
+    default: false
   }
 }, { _id: true });
 
@@ -94,6 +123,30 @@ const AssessmentAssignmentSchema = new mongoose.Schema({
   responses: {
     type: [AssessmentResponseSchema],
     default: []
+  },
+  timeLimitMinutes: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 1440
+  },
+  startedAt: {
+    type: Date,
+    default: null
+  },
+  expiresAt: {
+    type: Date,
+    default: null
+  },
+  score: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  totalMarks: {
+    type: Number,
+    default: 0,
+    min: 0
   },
   status: {
     type: String,

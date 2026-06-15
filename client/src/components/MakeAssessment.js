@@ -6,12 +6,15 @@ const createQuestion = (type = 'multiple-choice') => ({
     prompt: '',
     type,
     options: type === 'multiple-choice' ? ['', ''] : [],
-    maxWords: 2000
+    maxWords: 2000,
+    correctAnswer: '',
+    marks: 1
 });
 
 const createEmptyAssessment = () => ({
     title: '',
     instructions: '',
+    timeLimitMinutes: '',
     saveTarget: 'general',
     jobId: '',
     questions: [createQuestion()]
@@ -83,7 +86,8 @@ const MakeAssessment = ({ companyId, jobs = [], onBack, onFooterBack }) => {
                         type,
                         options: type === 'multiple-choice'
                             ? (question.options?.length ? question.options : ['', ''])
-                            : []
+                            : [],
+                        correctAnswer: ''
                     }
                     : question
             ))
@@ -150,7 +154,9 @@ const MakeAssessment = ({ companyId, jobs = [], onBack, onFooterBack }) => {
             options: question.type === 'multiple-choice'
                 ? question.options.map((option) => option.trim()).filter(Boolean)
                 : [],
-            maxWords: 2000
+            maxWords: 2000,
+            correctAnswer: question.correctAnswer.trim(),
+            marks: Number(question.marks)
         }))
     );
 
@@ -168,11 +174,14 @@ const MakeAssessment = ({ companyId, jobs = [], onBack, onFooterBack }) => {
         const questions = buildQuestions();
         const hasInvalidQuestion = questions.some((question) => (
             !question.prompt ||
+            !question.correctAnswer ||
+            !Number.isFinite(question.marks) ||
+            question.marks <= 0 ||
             (question.type === 'multiple-choice' && question.options.length < 2)
         ));
 
         if (hasInvalidQuestion) {
-            setError('Each question needs a prompt, and multiple-choice questions need at least two options.');
+            setError('Each question needs a prompt, correct answer, marks greater than 0, and multiple-choice questions need at least two options.');
             return;
         }
 
@@ -194,6 +203,7 @@ const MakeAssessment = ({ companyId, jobs = [], onBack, onFooterBack }) => {
                     jobId: formData.saveTarget === 'job' ? formData.jobId : undefined,
                     title: formData.title,
                     instructions: formData.instructions,
+                    timeLimitMinutes: Number(formData.timeLimitMinutes) || 0,
                     questions
                 })
             });
@@ -257,6 +267,19 @@ const MakeAssessment = ({ companyId, jobs = [], onBack, onFooterBack }) => {
                 </div>
 
                 <div className="form-row">
+                    <div className="form-group">
+                        <label htmlFor="assessment-time-limit">Time Limit (minutes)</label>
+                        <input
+                            id="assessment-time-limit"
+                            type="number"
+                            min="0"
+                            className="form-control"
+                            value={formData.timeLimitMinutes}
+                            onChange={(event) => setFormData((prev) => ({ ...prev, timeLimitMinutes: event.target.value }))}
+                            placeholder="0 means no limit"
+                        />
+                    </div>
+
                     <div className="form-group">
                         <label htmlFor="assessment-save-target">Save Location</label>
                         <select
@@ -338,6 +361,20 @@ const MakeAssessment = ({ companyId, jobs = [], onBack, onFooterBack }) => {
                             />
                         </div>
 
+                        <div className="form-row assessment-question-meta-row">
+                            <div className="form-group">
+                                <label>Marks</label>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    className="form-control"
+                                    value={question.marks}
+                                    onChange={(event) => updateQuestion(question.clientId, { marks: event.target.value })}
+                                    placeholder="1"
+                                />
+                            </div>
+                        </div>
+
                         {question.type === 'multiple-choice' ? (
                             <div className="assessment-options-editor">
                                 {question.options.map((option, optionIndex) => (
@@ -359,10 +396,37 @@ const MakeAssessment = ({ companyId, jobs = [], onBack, onFooterBack }) => {
                                 <button className="view-button no-icon-button" onClick={() => addOption(question.clientId)}>
                                     Add Option
                                 </button>
+                                <div className="form-group">
+                                    <label>Correct Answer</label>
+                                    <select
+                                        className="form-control"
+                                        value={question.correctAnswer}
+                                        onChange={(event) => updateQuestion(question.clientId, { correctAnswer: event.target.value })}
+                                    >
+                                        <option value="">Choose the correct option</option>
+                                        {question.options.filter((option) => option.trim()).map((option, optionIndex) => (
+                                            <option key={`${question.clientId}-correct-${optionIndex}`} value={option}>
+                                                {option}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
                         ) : (
-                            <div className="assessment-text-limit">
-                                Candidate answer field will be limited to 2000 words.
+                            <div>
+                                <div className="form-group">
+                                    <label>Correct Answer</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={question.correctAnswer}
+                                        onChange={(event) => updateQuestion(question.clientId, { correctAnswer: event.target.value })}
+                                        placeholder="Exact answer used for automatic marking"
+                                    />
+                                </div>
+                                <div className="assessment-text-limit">
+                                    Candidate answer field will be limited to 2000 words.
+                                </div>
                             </div>
                         )}
                     </div>

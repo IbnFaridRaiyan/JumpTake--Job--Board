@@ -2,6 +2,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 const countWords = (text = '') => text.trim().split(/\s+/).filter(Boolean).length;
 
+const formatDuration = (milliseconds = 0) => {
+    const safeMilliseconds = Math.max(0, milliseconds);
+    const totalSeconds = Math.ceil(safeMilliseconds / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${String(seconds).padStart(2, '0')}`;
+};
+
 const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection, onFooterBack }) => {
     const [assessments, setAssessments] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -10,6 +18,7 @@ const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection,
     const [selectedAssessment, setSelectedAssessment] = useState(null);
     const [responses, setResponses] = useState([]);
     const [submitting, setSubmitting] = useState(false);
+    const [currentTime, setCurrentTime] = useState(Date.now());
 
     const pendingCount = useMemo(
         () => assessments.filter((assessment) => assessment.status === 'Sent').length,
@@ -26,6 +35,18 @@ const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection,
             onPendingCountChange(pendingCount);
         }
     }, [onPendingCountChange, pendingCount]);
+
+    useEffect(() => {
+        if (!selectedAssessment || selectedAssessment.status === 'Submitted' || !selectedAssessment.expiresAt) {
+            return undefined;
+        }
+
+        const timer = setInterval(() => {
+            setCurrentTime(Date.now());
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [selectedAssessment]);
 
     const fetchAssessments = async () => {
         if (!userId) {
@@ -61,14 +82,46 @@ const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection,
         }
     };
 
-    const handleOpenAssessment = (assessment) => {
-        setSelectedAssessment(assessment);
+    const handleOpenAssessment = async (assessment) => {
+        let assessmentToOpen = assessment;
         setMessage('');
         setError('');
+
+        if (assessment.status !== 'Submitted') {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/assessment-assignments/${assessment._id}/start`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ userId })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to start assessment');
+                }
+
+                assessmentToOpen = data.assignment;
+                setAssessments((prevAssessments) => prevAssessments.map((item) => (
+                    item._id === assessmentToOpen._id ? assessmentToOpen : item
+                )));
+            } catch (startError) {
+                console.error('Error starting assessment:', startError);
+                setError(startError.message || 'Failed to start assessment.');
+                return;
+            }
+        }
+
+        setCurrentTime(Date.now());
+        setSelectedAssessment(assessmentToOpen);
         setResponses(
-            assessment.status === 'Submitted'
-                ? (assessment.responses || []).map((response) => response.answer || '')
-                : (assessment.questions || []).map(() => '')
+            assessmentToOpen.status === 'Submitted'
+                ? (assessmentToOpen.responses || []).map((response) => response.answer || '')
+                : (assessmentToOpen.questions || []).map(() => '')
         );
     };
 
@@ -153,6 +206,12 @@ const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection,
         }
 
         const isSubmitted = selectedAssessment.status === 'Submitted';
+        const remainingMilliseconds = selectedAssessment.expiresAt
+            ? new Date(selectedAssessment.expiresAt).getTime() - currentTime
+            : null;
+        const hasTimeExpired = remainingMilliseconds !== null && remainingMilliseconds <= 0;
+        const score = selectedAssessment.score ?? selectedAssessment.responses?.reduce((total, response) => total + (Number(response.awardedMarks) || 0), 0);
+        const totalMarks = selectedAssessment.totalMarks ?? selectedAssessment.responses?.reduce((total, response) => total + (Number(response.marks) || 0), 0);
 
         return (
             <div className="assessment-builder-container candidate-assessment-detail">
@@ -170,6 +229,13 @@ const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection,
                     <p><strong>Company:</strong> {selectedAssessment.job?.company?.name || 'Company unavailable'}</p>
                     <p><strong>Job:</strong> {selectedAssessment.job?.title || 'Unknown job'}</p>
                     <p><strong>Status:</strong> {selectedAssessment.status}</p>
+                    <p><strong>Time Limit:</strong> {selectedAssessment.timeLimitMinutes ? `${selectedAssessment.timeLimitMinutes} minutes` : 'No limit'}</p>
+                    {!isSubmitted && selectedAssessment.expiresAt && (
+                        <p><strong>Time Remaining:</strong> {formatDuration(remainingMilliseconds)}</p>
+                    )}
+                    {isSubmitted && (
+                        <p><strong>Score:</strong> {score || 0}/{totalMarks || 0}</p>
+                    )}
                     {selectedAssessment.instructions && (
                         <div className="assessment-instructions">
                             <h3>Instructions</h3>
@@ -194,6 +260,7 @@ const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection,
 
                                 <div className="assessment-answer-block">
                                     <p><strong>Question:</strong> {question.prompt}</p>
+                                    <p><strong>Marks:</strong> {question.marks || 1}</p>
 
                                     {question.type === 'multiple-choice' ? (
                                         <div className="assessment-option-list">
@@ -241,7 +308,7 @@ const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection,
 
                 <div className="assessment-footer-actions">
                     {!isSubmitted && (
-                        <button className="settings-button primary" onClick={handleSubmit} disabled={submitting}>
+                        <button className="settings-button primary" onClick={handleSubmit} disabled={submitting || hasTimeExpired}>
                             {submitting ? 'Submitting...' : 'Submit Assessment'}
                         </button>
                     )}

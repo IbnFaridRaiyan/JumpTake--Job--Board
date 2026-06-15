@@ -8,12 +8,15 @@ const createQuestion = (type = 'multiple-choice') => ({
     prompt: '',
     type,
     options: type === 'multiple-choice' ? ['', ''] : [],
-    maxWords: 2000
+    maxWords: 2000,
+    correctAnswer: '',
+    marks: 1
 });
 
 const createEmptyAssessment = (applicationId = '') => ({
     title: '',
     instructions: '',
+    timeLimitMinutes: '',
     applicationId,
     questions: [createQuestion()]
 });
@@ -502,7 +505,8 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                         type,
                         options: type === 'multiple-choice'
                             ? (question.options?.length ? question.options : ['', ''])
-                            : []
+                            : [],
+                        correctAnswer: ''
                     }
                     : question
             ))
@@ -545,7 +549,8 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
         setAssessmentForm({
             title: assessment.title || '',
             instructions: assessment.instructions || '',
-            applicationId: getId(assessment.application) || shortlistedAssessmentCandidates[0]?._id || jobApplications[0]?._id || '',
+            timeLimitMinutes: assessment.timeLimitMinutes || '',
+            applicationId: '',
             questions: (assessment.questions || []).map((question) => ({
                 clientId: question._id || `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
                 prompt: question.prompt || '',
@@ -553,7 +558,9 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                 options: question.type === 'multiple-choice'
                     ? (question.options?.length ? question.options : ['', ''])
                     : [],
-                maxWords: 2000
+                maxWords: 2000,
+                correctAnswer: question.correctAnswer || '',
+                marks: question.marks || 1
             }))
         });
         setActiveSection('create-assessment');
@@ -571,27 +578,27 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
             return;
         }
 
-        if (!assessmentForm.applicationId) {
-            setError('Choose one applicant to anchor this assessment to the job.');
-            return;
-        }
-
         const cleanedQuestions = assessmentForm.questions.map((question) => ({
             prompt: question.prompt.trim(),
             type: question.type,
             options: question.type === 'multiple-choice'
                 ? question.options.map((option) => option.trim()).filter(Boolean)
                 : [],
-            maxWords: 2000
+            maxWords: 2000,
+            correctAnswer: (question.correctAnswer || '').trim(),
+            marks: Number(question.marks)
         }));
 
         const hasInvalidQuestion = cleanedQuestions.some((question) => (
             !question.prompt ||
+            !question.correctAnswer ||
+            !Number.isFinite(question.marks) ||
+            question.marks <= 0 ||
             (question.type === 'multiple-choice' && question.options.length < 2)
         ));
 
         if (hasInvalidQuestion) {
-            setError('Each question needs a prompt, and multiple-choice questions need at least two options.');
+            setError('Each question needs a prompt, correct answer, marks greater than 0, and multiple-choice questions need at least two options.');
             return;
         }
 
@@ -613,9 +620,11 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                 },
                 body: JSON.stringify({
                     companyId,
-                    applicationId: assessmentForm.applicationId,
+                    jobId,
+                    scope: 'job',
                     title: assessmentForm.title,
                     instructions: assessmentForm.instructions,
+                    timeLimitMinutes: Number(assessmentForm.timeLimitMinutes) || 0,
                     questions: cleanedQuestions
                 })
             });
@@ -1135,34 +1144,15 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
 
     const renderAssessmentForm = () => (
         <div className="settings-card job-management-form">
-            <div className="section-header">
-                <h3>{editingAssessmentId ? 'Edit Assessment' : 'Create Assessment'}</h3>
-                {editingAssessmentId && (
-                    <button className="secondary-button" onClick={resetAssessmentForm} disabled={saving}>
-                        New Assessment
-                    </button>
-                )}
-            </div>
-
-            <div className="form-group">
-                <label htmlFor="assessment-application">Anchor Applicant</label>
-                <select
-                    id="assessment-application"
-                    className="form-control"
-                    value={assessmentForm.applicationId}
-                    onChange={(event) => setAssessmentForm((prevForm) => ({ ...prevForm, applicationId: event.target.value }))}
-                >
-                    <option value="">Choose an applicant</option>
-                    {[...shortlistedAssessmentCandidates, ...jobApplications.filter((application) => application.status !== 'Withdrawn')]
-                        .filter((application, index, list) => list.findIndex((item) => item._id === application._id) === index)
-                        .map((application) => (
-                            <option key={application._id} value={application._id}>
-                                {getCandidateName(application)} ({getCandidateNumber(application)})
-                            </option>
-                        ))}
-                </select>
-                <p className="form-hint">The assessment is tied to this job; after it is created you can send it to any shortlisted candidate for this job.</p>
-            </div>
+            {editingAssessmentId && (
+                <div className="section-header assessment-edit-actions">
+                    {editingAssessmentId && (
+                        <button className="secondary-button" onClick={resetAssessmentForm} disabled={saving}>
+                            New Assessment
+                        </button>
+                    )}
+                </div>
+            )}
 
             <div className="form-group">
                 <label htmlFor="assessment-title">Assessment Title</label>
@@ -1184,6 +1174,19 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                     value={assessmentForm.instructions}
                     onChange={(event) => setAssessmentForm((prevForm) => ({ ...prevForm, instructions: event.target.value }))}
                     placeholder="Add any context candidates should read before answering"
+                />
+            </div>
+
+            <div className="form-group">
+                <label htmlFor="job-assessment-time-limit">Time Limit (minutes)</label>
+                <input
+                    id="job-assessment-time-limit"
+                    type="number"
+                    min="0"
+                    className="form-control"
+                    value={assessmentForm.timeLimitMinutes}
+                    onChange={(event) => setAssessmentForm((prevForm) => ({ ...prevForm, timeLimitMinutes: event.target.value }))}
+                    placeholder="0 means no limit"
                 />
             </div>
 
@@ -1210,6 +1213,18 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                             placeholder="Question prompt"
                         />
 
+                        <div className="form-group">
+                            <label>Marks</label>
+                            <input
+                                type="number"
+                                min="1"
+                                className="form-control"
+                                value={question.marks}
+                                onChange={(event) => updateQuestion(question.clientId, { marks: event.target.value })}
+                                placeholder="1"
+                            />
+                        </div>
+
                         {question.type === 'multiple-choice' && (
                             <div className="assessment-options-editor">
                                 {question.options.map((option, optionIndex) => (
@@ -1228,6 +1243,34 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                                 >
                                     Add Option
                                 </button>
+                                <div className="form-group">
+                                    <label>Correct Answer</label>
+                                    <select
+                                        className="form-control"
+                                        value={question.correctAnswer}
+                                        onChange={(event) => updateQuestion(question.clientId, { correctAnswer: event.target.value })}
+                                    >
+                                        <option value="">Choose the correct option</option>
+                                        {question.options.filter((option) => option.trim()).map((option, optionIndex) => (
+                                            <option key={`${question.clientId}-correct-${optionIndex}`} value={option}>
+                                                {option}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                        )}
+
+                        {question.type === 'text' && (
+                            <div className="form-group">
+                                <label>Correct Answer</label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    value={question.correctAnswer}
+                                    onChange={(event) => updateQuestion(question.clientId, { correctAnswer: event.target.value })}
+                                    placeholder="Exact answer used for automatic marking"
+                                />
                             </div>
                         )}
 
@@ -1437,6 +1480,11 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                 <p><strong>Decision:</strong> {selectedAssignment.decision || 'Pending'}</p>
                 <p><strong>Sent:</strong> {formatDateTime(selectedAssignment.sentAt)}</p>
                 <p><strong>Submitted:</strong> {formatDateTime(selectedAssignment.submittedAt)}</p>
+                <p>
+                    <strong>Score:</strong>{' '}
+                    {selectedAssignment.score ?? 0}/{selectedAssignment.totalMarks ?? selectedAssignment.responses?.reduce((total, response) => total + (Number(response.marks) || 0), 0) ?? 0}
+                </p>
+                <p><strong>Time Limit:</strong> {selectedAssignment.timeLimitMinutes ? `${selectedAssignment.timeLimitMinutes} minutes` : 'No limit'}</p>
             </div>
 
             {selectedAssignment.responses?.length > 0 ? (
@@ -1449,6 +1497,12 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                             </div>
                             <p><strong>Question:</strong> {response.prompt}</p>
                             <p><strong>Answer:</strong> {response.answer || 'No answer submitted.'}</p>
+                            <p><strong>Correct Answer:</strong> {response.correctAnswer || 'Not set'}</p>
+                            <p>
+                                <strong>Marks:</strong>{' '}
+                                {response.awardedMarks ?? 0}/{response.marks ?? 0}
+                            </p>
+                            <p><strong>Result:</strong> {response.isCorrect ? 'Correct' : 'Incorrect'}</p>
                         </div>
                     ))}
                 </div>
@@ -1658,6 +1712,13 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                     <h2>{currentJob?.title || 'Manage Job'}</h2>
                     <p>{currentJob?.jobNumber || 'Job workspace'}</p>
                 </div>
+                <button
+                    type="button"
+                    className="back-button desktop-back-to-manage-jobs"
+                    onClick={onBack}
+                >
+                    Back to Manage Jobs
+                </button>
             </div>
 
             <div className="job-management-mobile-job-title" aria-label="Selected job">

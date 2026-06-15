@@ -148,6 +148,7 @@ router.post('/assessments', assessmentController.createAssessment);
 router.post('/assessments/:id/send', assessmentController.sendAssessment);
 router.put('/assessments/:id', assessmentController.updateAssessment);
 router.delete('/assessments/:id', assessmentController.deleteAssessment);
+router.put('/assessment-assignments/:assignmentId/start', assessmentController.startAssessmentAssignment);
 router.put('/assessment-assignments/:assignmentId/submit', assessmentController.submitAssessmentAssignment);
 router.put('/assessment-assignments/:assignmentId/shortlist-video', assessmentController.shortlistForVideoInterview);
 router.put('/assessment-assignments/:assignmentId/video-interview', assessmentController.sendVideoInterviewInvitation);

@@ -260,6 +260,8 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
 
     
     const [previewJob, setPreviewJob] = useState(null);
+    const previewModalRef = useRef(null);
+    const applicationModalRef = useRef(null);
 
     useEffect(() => {
         const dashboardSearch = sessionStorage.getItem('jumptakeCandidateJobSearch');
@@ -384,6 +386,44 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
             document.body.style.overflow = 'auto';
         };
     }, [previewJob, selectedCompany, applicationJob]);
+
+    useEffect(() => {
+        if (!previewJob && !selectedCompany) {
+            return;
+        }
+
+        requestAnimationFrame(() => {
+            const modal = previewModalRef.current;
+            if (!modal) {
+                return;
+            }
+
+            modal.scrollTop = 0;
+            modal.querySelectorAll('.job-preview-content, .candidate-job-preview-scroll-area')
+                .forEach((element) => {
+                    element.scrollTop = 0;
+                });
+        });
+    }, [previewJob, selectedCompany]);
+
+    useEffect(() => {
+        if (!applicationJob) {
+            return;
+        }
+
+        requestAnimationFrame(() => {
+            const modal = applicationModalRef.current;
+            if (!modal) {
+                return;
+            }
+
+            modal.scrollTop = 0;
+            modal.querySelectorAll('.application-workspace-body')
+                .forEach((element) => {
+                    element.scrollTop = 0;
+                });
+        });
+    }, [applicationJob]);
 
     const fetchRecommendedJobs = async () => {
         if (!jobSeekerData || !jobSeekerData._id) {
@@ -1138,7 +1178,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
 
             {(selectedCompany || previewJob) && createPortal(selectedCompany ? (
                 <div className="job-preview-overlay">
-                    <div className="job-preview-modal" onClick={(e) => e.stopPropagation()}>
+                    <div className="job-preview-modal" ref={previewModalRef} onClick={(e) => e.stopPropagation()}>
                         <div className="job-preview-header">
                             <button className="preview-close-btn" onClick={closePreview}>Ã—</button>
                             <h2>{selectedCompany.name}</h2>
@@ -1193,7 +1233,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                 </div>
             ) : previewJob && (
                 <div className="job-preview-overlay candidate-job-preview-overlay">
-                    <div className="job-preview-modal candidate-job-preview-modal" onClick={(e) => e.stopPropagation()}>
+                    <div className="job-preview-modal candidate-job-preview-modal" ref={previewModalRef} onClick={(e) => e.stopPropagation()}>
                         <div className="mobile-job-preview-topbar">
                             <h2>{previewJob.title}</h2>
                             <button
@@ -1343,9 +1383,9 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                     </div>
                 </div>
             ), document.body)}
-            {applicationJob && (
+            {applicationJob && createPortal((
                 <div className="application-workspace-overlay" onClick={handleCancelApplication}>
-                    <div className="application-workspace-modal" onClick={(event) => event.stopPropagation()}>
+                    <div className="application-workspace-modal" ref={applicationModalRef} onClick={(event) => event.stopPropagation()}>
                         <div className="application-workspace-header">
                             <div>
                                 <h3>Apply to: {applicationJob.title}</h3>
@@ -1423,7 +1463,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                         </div>
                     </div>
                 </div>
-            )}
+            ), document.body)}
         </div>
     );
 };

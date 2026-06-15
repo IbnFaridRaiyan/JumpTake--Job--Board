@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import ContactCandidate from './ContactCandidate';
 
 const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employer', currentUserId }) => {
@@ -11,6 +11,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCandidate, setSelectedCandidate] = useState(null);
     const [spotlightActive, setSpotlightActive] = useState(false);
+    const candidateProfileRef = useRef(null);
 
     useEffect(() => {
         fetchCandidates();
@@ -161,6 +162,28 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
     const handleViewProfile = (candidate) => {
         setSelectedCandidate(candidate);
     };
+
+    useEffect(() => {
+        if (!selectedCandidate) {
+            return;
+        }
+
+        const resetProfileScroll = () => {
+            const profileNode = candidateProfileRef.current;
+            if (!profileNode) {
+                return;
+            }
+
+            profileNode.scrollTop = 0;
+            const scrollParent = profileNode.closest('.mobile-dashboard-section-panel, .dashboard-content, .main-content, .content-area');
+            if (scrollParent) {
+                scrollParent.scrollTop = 0;
+            }
+            profileNode.scrollIntoView({ block: 'start', behavior: 'auto' });
+        };
+
+        requestAnimationFrame(resetProfileScroll);
+    }, [selectedCandidate]);
 
     const handleCloseProfile = () => {
         setSelectedCandidate(null);
@@ -466,7 +489,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                             <p>Loading candidates...</p>
                 </div>
             ) : selectedCandidate ? (
-                <div className="candidate-profile">
+                <div className="candidate-profile" ref={candidateProfileRef}>
                     <div className="candidate-profile-header">
                         <div className="candidate-profile-back">
                             <button onClick={handleCloseProfile} className="back-button">

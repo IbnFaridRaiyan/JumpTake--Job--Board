@@ -4,6 +4,28 @@ const Application = require('../models/Application');
 const Job = require('../models/Job');
 const { ensureReferenceNumbers } = require('../utils/referenceNumbers');
 
+const normalizeAnswer = (value = '') => String(value).trim().toLowerCase();
+
+const sanitizeMarks = (value, index) => {
+    const marks = Number(value);
+
+    if (!Number.isFinite(marks) || marks <= 0) {
+        throw new Error(`Question ${index + 1} needs a marks value greater than 0`);
+    }
+
+    return Math.min(marks, 1000);
+};
+
+const sanitizeTimeLimitMinutes = (value) => {
+    const minutes = Number(value);
+
+    if (!Number.isFinite(minutes) || minutes <= 0) {
+        return 0;
+    }
+
+    return Math.min(Math.round(minutes), 1440);
+};
+
 const sanitizeQuestions = (questions = []) => {
     if (!Array.isArray(questions) || questions.length === 0) {
         throw new Error('At least one question is required');
@@ -25,24 +47,45 @@ const sanitizeQuestions = (questions = []) => {
             const options = Array.isArray(question.options)
                 ? question.options.map((option) => option.trim()).filter(Boolean)
                 : [];
+            const correctAnswer = String(question.correctAnswer || '').trim();
 
             if (options.length < 2) {
                 throw new Error(`Question ${index + 1} needs at least two options`);
+            }
+
+            if (!correctAnswer) {
+                throw new Error(`Question ${index + 1} needs a correct answer`);
+            }
+
+            const matchedCorrectAnswer = options.find((option) => normalizeAnswer(option) === normalizeAnswer(correctAnswer));
+
+            if (!matchedCorrectAnswer) {
+                throw new Error(`Question ${index + 1} correct answer must match one of its options`);
             }
 
             return {
                 prompt,
                 type,
                 options,
-                maxWords: 2000
+                maxWords: 2000,
+                correctAnswer: matchedCorrectAnswer,
+                marks: sanitizeMarks(question.marks, index)
             };
+        }
+
+        const correctAnswer = String(question.correctAnswer || '').trim();
+
+        if (!correctAnswer) {
+            throw new Error(`Question ${index + 1} needs a correct answer`);
         }
 
         return {
             prompt,
             type,
             options: [],
-            maxWords: 2000
+            maxWords: 2000,
+            correctAnswer,
+            marks: sanitizeMarks(question.marks, index)
         };
     });
 };
@@ -205,13 +248,14 @@ const getAssignmentWithApplication = async (assignmentId) => {
 
 const createAssessment = async (req, res) => {
     try {
-        const { companyId, applicationId, jobId, scope, title, instructions, questions } = req.body;
+        const { companyId, applicationId, jobId, scope, title, instructions, questions, timeLimitMinutes } = req.body;
 
         if (!companyId || !title?.trim()) {
             return res.status(400).json({ error: 'Company and title are required' });
         }
 
         const sanitizedQuestions = sanitizeQuestions(questions);
+        const sanitizedTimeLimitMinutes = sanitizeTimeLimitMinutes(timeLimitMinutes);
 
         if (applicationId) {
             const application = await Application.findById(applicationId).populate('job');
@@ -231,6 +275,7 @@ const createAssessment = async (req, res) => {
                 scope: 'candidate',
                 title: title.trim(),
                 instructions: instructions?.trim() || '',
+                timeLimitMinutes: sanitizedTimeLimitMinutes,
                 questions: sanitizedQuestions
             });
 
@@ -265,6 +310,7 @@ const createAssessment = async (req, res) => {
             scope: saveScope,
             title: title.trim(),
             instructions: instructions?.trim() || '',
+            timeLimitMinutes: sanitizedTimeLimitMinutes,
             questions: sanitizedQuestions
         });
 
@@ -334,11 +380,14 @@ const sendAssessment = async (req, res) => {
             candidateUser: application.user,
             title: assessment.title,
             instructions: assessment.instructions || '',
+            timeLimitMinutes: assessment.timeLimitMinutes || 0,
             questions: assessment.questions.map((question) => ({
                 prompt: question.prompt,
                 type: question.type,
                 options: question.options || [],
-                maxWords: question.maxWords || 2000
+                maxWords: question.maxWords || 2000,
+                correctAnswer: question.correctAnswer || '',
+                marks: question.marks || 1
             })),
             responses: [],
             status: 'Sent',
@@ -364,7 +413,7 @@ const sendAssessment = async (req, res) => {
 
 const updateAssessment = async (req, res) => {
     try {
-        const { applicationId, jobId, scope, title, instructions, questions } = req.body;
+        const { applicationId, jobId, scope, title, instructions, questions, timeLimitMinutes } = req.body;
         const assessment = await Assessment.findById(req.params.id);
 
         if (!assessment) {
@@ -415,6 +464,7 @@ const updateAssessment = async (req, res) => {
         }
 
         assessment.instructions = instructions?.trim() || '';
+        assessment.timeLimitMinutes = sanitizeTimeLimitMinutes(timeLimitMinutes);
         assessment.questions = sanitizeQuestions(questions);
         await assessment.save();
 
@@ -452,6 +502,56 @@ const deleteAssessment = async (req, res) => {
     }
 };
 
+const startAssessmentAssignment = async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const assignment = await AssessmentAssignment.findById(req.params.assignmentId);
+
+        if (!assignment) {
+            return res.status(404).json({ error: 'Assessment assignment not found' });
+        }
+
+        if (userId && String(assignment.candidateUser) !== String(userId)) {
+            return res.status(403).json({ error: 'This assessment does not belong to the current user' });
+        }
+
+        if (assignment.status === 'Submitted') {
+            const populatedSubmittedAssignment = await populateAssignment(
+                AssessmentAssignment.findById(assignment._id)
+            );
+
+            return res.status(200).json({
+                message: 'This assessment has already been submitted',
+                assignment: populatedSubmittedAssignment
+            });
+        }
+
+        if (!assignment.startedAt) {
+            const now = new Date();
+            assignment.startedAt = now;
+            assignment.expiresAt = assignment.timeLimitMinutes > 0
+                ? new Date(now.getTime() + assignment.timeLimitMinutes * 60 * 1000)
+                : null;
+            await assignment.save();
+        }
+
+        const populatedAssignment = await populateAssignment(
+            AssessmentAssignment.findById(assignment._id)
+        );
+
+        return res.status(200).json({
+            message: 'Assessment started',
+            assignment: populatedAssignment
+        });
+    } catch (error) {
+        console.error('Error starting assessment assignment:', error.message);
+        return res.status(500).json({
+            error: 'Failed to start assessment',
+            message: error.message
+        });
+    }
+};
+
 const submitAssessmentAssignment = async (req, res) => {
     try {
         const { responses, userId } = req.body;
@@ -469,12 +569,30 @@ const submitAssessmentAssignment = async (req, res) => {
             return res.status(400).json({ error: 'This assessment has already been submitted' });
         }
 
+        const now = new Date();
+
+        if (!assignment.startedAt) {
+            assignment.startedAt = now;
+            assignment.expiresAt = assignment.timeLimitMinutes > 0
+                ? new Date(now.getTime() + assignment.timeLimitMinutes * 60 * 1000)
+                : null;
+        }
+
+        if (assignment.expiresAt && now > assignment.expiresAt) {
+            return res.status(400).json({ error: 'The time limit for this assessment has expired' });
+        }
+
         if (!Array.isArray(responses) || responses.length !== assignment.questions.length) {
             return res.status(400).json({ error: 'A response is required for each question' });
         }
 
+        let totalMarks = 0;
+        let score = 0;
+
         const sanitizedResponses = assignment.questions.map((question, index) => {
             const rawAnswer = typeof responses[index] === 'string' ? responses[index].trim() : '';
+            const marks = Number(question.marks) || 1;
+            const correctAnswer = question.correctAnswer || '';
 
             if (!rawAnswer) {
                 throw new Error(`Question ${index + 1} requires an answer`);
@@ -493,16 +611,27 @@ const submitAssessmentAssignment = async (req, res) => {
                 }
             }
 
+            const isCorrect = normalizeAnswer(rawAnswer) === normalizeAnswer(correctAnswer);
+            const awardedMarks = isCorrect ? marks : 0;
+            totalMarks += marks;
+            score += awardedMarks;
+
             return {
                 prompt: question.prompt,
                 type: question.type,
                 answer: rawAnswer,
                 options: question.options || [],
-                maxWords: question.maxWords || 2000
+                maxWords: question.maxWords || 2000,
+                correctAnswer,
+                marks,
+                awardedMarks,
+                isCorrect
             };
         });
 
         assignment.responses = sanitizedResponses;
+        assignment.score = score;
+        assignment.totalMarks = totalMarks;
         assignment.status = 'Submitted';
         assignment.submittedAt = new Date();
         await assignment.save();
@@ -823,6 +952,7 @@ module.exports = {
     sendAssessment,
     updateAssessment,
     deleteAssessment,
+    startAssessmentAssignment,
     submitAssessmentAssignment,
     shortlistForVideoInterview,
     sendVideoInterviewInvitation,

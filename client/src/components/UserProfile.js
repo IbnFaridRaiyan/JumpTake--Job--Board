@@ -250,18 +250,12 @@ const UserProfile = ({ userId, onUpdate, switchSection, onFooterBack }) => {
     if (loading) {
         return (
             <div className="profile-container">
-                <div className="profile-header">
-                    <h2>My Profile</h2>
-                </div>
                 <div className="loading-container">
                     <div className="loading-spinner"></div>
                     <p>Loading your profile data...</p>
                 </div>
                 <div className="page-footer-actions">
                     <button className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
-                        Back
-                    </button>
-                    <button className="back-button profile-job-feed-button" onClick={onFooterBack || handleBackToJobFeed}>
                         Back
                     </button>
                 </div>
@@ -272,9 +266,6 @@ const UserProfile = ({ userId, onUpdate, switchSection, onFooterBack }) => {
     if (!jobSeekerData) {
         return (
             <div className="profile-container">
-                <div className="profile-header">
-                    <h2>My Profile</h2>
-                </div>
                 <div className="profile-message">
                     <p>No profile information available. Please upload your resume in the Candidate Portal.</p>
                     <button className="submit-button" onClick={() => window.location.href = '/job-seeker'}>
@@ -285,9 +276,6 @@ const UserProfile = ({ userId, onUpdate, switchSection, onFooterBack }) => {
                     <button className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
                         Back
                     </button>
-                    <button className="back-button profile-job-feed-button" onClick={onFooterBack || handleBackToJobFeed}>
-                        Back
-                    </button>
                 </div>
             </div>
         );
@@ -296,7 +284,6 @@ const UserProfile = ({ userId, onUpdate, switchSection, onFooterBack }) => {
     return (
         <div className="profile-container">
             <div className="profile-header">
-                <h2>My Profile</h2>
                 {!isEditing ? (
                     <button 
                         className="edit-profile-button" 
@@ -454,9 +441,6 @@ const UserProfile = ({ userId, onUpdate, switchSection, onFooterBack }) => {
                             <button type="button" className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
                                 Back
                             </button>
-                            <button type="button" className="back-button profile-job-feed-button" onClick={onFooterBack || handleBackToJobFeed}>
-                                Back
-                            </button>
                         </div>
                     </form>
                 ) : (
@@ -532,9 +516,6 @@ const UserProfile = ({ userId, onUpdate, switchSection, onFooterBack }) => {
 
                         <div className="page-footer-actions">
                             <button className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
-                                Back
-                            </button>
-                            <button className="back-button profile-job-feed-button" onClick={onFooterBack || handleBackToJobFeed}>
                                 Back
                             </button>
                         </div>

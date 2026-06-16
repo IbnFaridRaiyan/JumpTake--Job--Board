@@ -20006,3 +20006,139 @@ html[data-theme="light"] .home-page .rating label:hover ~ label:before {
     text-align: left !important;
   }
 }
+
+/* Final QA cleanup: remove duplicate empty headers and all remaining black light-mode surfaces. */
+html[data-theme="light"] .home-page .main-content > .interested-job-suggestion-section > .section-header,
+html[data-theme="light"] .home-page .main-content > .profile-container > .profile-header:empty,
+html[data-theme="light"] .home-page .main-content > .profile-container > .profile-header:not(:has(button)),
+html[data-theme="light"] .home-page .main-content > .settings-container > .section-header:empty,
+html[data-theme="light"] .home-page .main-content > .employer-settings-container > .section-header:empty {
+  display: none !important;
+}
+
+html[data-theme="light"] .home-page .profile-container,
+html[data-theme="light"] .home-page .profile-content,
+html[data-theme="light"] .home-page .profile-display,
+html[data-theme="light"] .home-page .profile-form,
+html[data-theme="light"] .home-page .profile-header,
+html[data-theme="light"] .home-page .profile-message,
+html[data-theme="light"] .home-page .loading-container,
+html[data-theme="light"] .home-page .loading-recommendations,
+html[data-theme="light"] .home-page .job-list-loading,
+html[data-theme="light"] .home-page .candidates-loading,
+html[data-theme="light"] .home-page .resume-processing-loader,
+html[data-theme="light"] .home-page .resume-processing-loader .loader-wrapper {
+  background: var(--cream-panel) !important;
+  background-color: var(--cream-panel) !important;
+  border-color: rgba(216, 197, 168, 0.82) !important;
+  color: var(--cream-ink) !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .home-page .profile-header {
+  border: 1px solid rgba(216, 197, 168, 0.82) !important;
+  border-radius: 16px !important;
+  margin: 0 0 1rem !important;
+  padding: 1rem !important;
+}
+
+html[data-theme="light"] .home-page .profile-header:empty {
+  display: none !important;
+}
+
+html[data-theme="light"] .home-page .profile-card,
+html[data-theme="light"] .home-page .profile-section,
+html[data-theme="light"] .home-page .form-section,
+html[data-theme="light"] .home-page .button-group {
+  background: var(--cream-card) !important;
+  background-color: var(--cream-card) !important;
+  border-color: rgba(216, 197, 168, 0.82) !important;
+  color: var(--cream-ink) !important;
+}
+
+html[data-theme="light"] .home-page .loading-container p,
+html[data-theme="light"] .home-page .job-list-loading p,
+html[data-theme="light"] .home-page .candidates-loading p,
+html[data-theme="light"] .home-page .loading-recommendations p,
+html[data-theme="light"] .home-page .resume-processing-loader .loader-letter,
+html[data-theme="light"] .home-page .loading-message {
+  color: var(--cream-ink) !important;
+  -webkit-text-fill-color: var(--cream-ink) !important;
+}
+
+html[data-theme="light"] .home-page .loading-spinner {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .home-page .loading-spinner::before,
+html[data-theme="light"] .home-page .loading-spinner::after {
+  background: transparent !important;
+}
+
+html[data-theme="light"] .home-page button,
+html[data-theme="light"] .home-page button span,
+html[data-theme="light"] .home-page .job-interest-grid button,
+html[data-theme="light"] .home-page .job-interest-grid button *,
+html[data-theme="light"] .home-page .card-button,
+html[data-theme="light"] .home-page .card-button *,
+html[data-theme="light"] .home-page .edit-profile-button,
+html[data-theme="light"] .home-page .edit-profile-button *,
+html[data-theme="light"] .home-page .save-profile-button,
+html[data-theme="light"] .home-page .save-profile-button *,
+html[data-theme="light"] .home-page .cancel-edit-button,
+html[data-theme="light"] .home-page .cancel-edit-button *,
+html[data-theme="light"] .home-page .back-button,
+html[data-theme="light"] .home-page .back-button * {
+  color: var(--cream-ink) !important;
+  -webkit-text-fill-color: var(--cream-ink) !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] .home-page .job-interest-grid button {
+  user-select: none !important;
+}
+
+html[data-theme="light"] .home-page .job-interest-grid button::selection,
+html[data-theme="light"] .home-page .job-interest-grid button *::selection {
+  background: transparent !important;
+  color: var(--cream-ink) !important;
+  -webkit-text-fill-color: var(--cream-ink) !important;
+}
+
+html[data-theme="light"] .home-page .edit-profile-button,
+html[data-theme="light"] .home-page .save-profile-button,
+html[data-theme="light"] .home-page .cancel-edit-button,
+html[data-theme="light"] .home-page .back-button,
+html[data-theme="light"] .home-page .submit-button {
+  background: var(--cream-raised) !important;
+  background-color: var(--cream-raised) !important;
+  border: 1px solid rgba(85, 170, 161, 0.55) !important;
+  box-shadow: 0 8px 18px rgba(86, 66, 37, 0.08) !important;
+}
+
+html[data-theme="light"] .home-page .edit-profile-button:hover,
+html[data-theme="light"] .home-page .save-profile-button:hover,
+html[data-theme="light"] .home-page .cancel-edit-button:hover,
+html[data-theme="light"] .home-page .back-button:hover,
+html[data-theme="light"] .home-page .submit-button:hover {
+  background: rgba(213, 241, 232, 0.92) !important;
+}
+
+html[data-theme="light"] .loading-container,
+html[data-theme="light"] .loading-container .dashboard-header,
+html[data-theme="light"] .job-list-loading,
+html[data-theme="light"] .candidates-loading,
+html[data-theme="light"] .loading-recommendations {
+  background: var(--cream-panel, #fff3e2) !important;
+  background-color: var(--cream-panel, #fff3e2) !important;
+  color: var(--cream-ink, #102f2a) !important;
+}
+
+html[data-theme="light"] .loading-container *,
+html[data-theme="light"] .job-list-loading *,
+html[data-theme="light"] .candidates-loading *,
+html[data-theme="light"] .loading-recommendations * {
+  color: var(--cream-ink, #102f2a) !important;
+  -webkit-text-fill-color: var(--cream-ink, #102f2a) !important;
+}

@@ -7,6 +7,7 @@ const {
     ensureReferenceNumbers,
     generateUniqueReferenceNumber
 } = require('../utils/referenceNumbers');
+const { createNotification } = require('./notificationController');
 
 const normalizeString = (value) => {
     if (typeof value !== 'string') {
@@ -199,6 +200,21 @@ const createApplication = async (req, res) => {
         });
         
         await application.save();
+
+        await createNotification({
+            recipientType: 'employer',
+            recipientId: job.company,
+            title: 'New job application',
+            message: `${application.profileSnapshot?.name || user.email} applied for ${job.title}. Open now?`,
+            section: 'manage-jobs',
+            actionLabel: 'Open applicants',
+            payload: {
+                jobId: String(job._id),
+                jobTitle: job.title,
+                applicationId: String(application._id),
+                subSection: 'applicants'
+            }
+        });
 
         if (draftId) {
             await DraftApplication.findOneAndDelete({ _id: draftId, user: userId });

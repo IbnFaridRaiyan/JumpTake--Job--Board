@@ -269,11 +269,11 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                                         <span>Message</span>
                                         {(thread.messages || []).length > 0 && <span className="number-message">{thread.messages.length}</span>}
                                     </div>
-                                    <div className="username">{getThreadTitle(thread)}</div>
-                                    <div className="user-id">{getThreadSubtitle(thread)}</div>
+                                    <div className="username" title={getThreadTitle(thread)}>{getThreadTitle(thread)}</div>
+                                    <div className="user-id" title={getThreadSubtitle(thread)}>{getThreadSubtitle(thread)}</div>
                                     <span className="thread-preview">{lastMessage?.bodyText || 'No message preview'}</span>
                                 </div>
-                                <time>{formatDateTime(thread.lastMessageAt)}</time>
+                                <time className="thread-time">{formatDateTime(thread.lastMessageAt)}</time>
                             </button>
                         );
                     })}
@@ -281,7 +281,6 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
             )}
 
             <div className="page-footer-actions">
-                <button className="back-button" onClick={onFooterBack || onBack}>Back</button>
                 <button className="back-button" onClick={onFooterBack || onBack}>Back</button>
             </div>
         </div>

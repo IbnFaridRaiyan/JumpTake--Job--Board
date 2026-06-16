@@ -665,12 +665,6 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                     >
                         Back
                     </button>
-                    <button 
-                        className="back-button"
-                        onClick={onFooterBack || onBack}
-                    >
-                        Back
-                    </button>
                 </div>
             )}
         </div>

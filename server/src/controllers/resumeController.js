@@ -1,5 +1,7 @@
 const axios = require('axios');
 const JobSeeker = require('../models/JobSeeker');
+const Company = require('../models/Company');
+const { createNotification } = require('./notificationController');
 
 
 
@@ -294,6 +296,25 @@ const linkResumeToUser = async (req, res) => {
         if (user) {
             user.jobSeekerId = jobSeekerId;
             await user.save();
+        }
+
+        try {
+            const companies = await Company.find({}).select('_id name').limit(200);
+            await Promise.all(companies.map((company) => createNotification({
+                recipientType: 'employer',
+                recipientId: String(company._id),
+                title: 'New talent in the pool',
+                message: `${jobSeeker.name || 'A new candidate'} has joined the Talent Pool. Visit now?`,
+                section: 'talent-pool',
+                actionLabel: 'View Talent Pool',
+                payload: {
+                    candidateId: String(jobSeeker._id),
+                    candidateName: jobSeeker.name || '',
+                    search: jobSeeker.name || jobSeeker.email || ''
+                }
+            })));
+        } catch (notificationError) {
+            console.error('Error creating talent pool notifications:', notificationError.message);
         }
         
         return res.status(200).json({

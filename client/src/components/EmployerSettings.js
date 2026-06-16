@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import AppModeCard from './AppModeCard';
 
-const EmployerSettings = ({ employer, switchSection, onEmployerUpdated, onLogout, onFooterBack }) => {
+const EmployerSettings = ({ employer, switchSection, onEmployerUpdated, onLogout, onFooterBack, appMode, onAppModeChange }) => {
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -238,6 +239,8 @@ const EmployerSettings = ({ employer, switchSection, onEmployerUpdated, onLogout
             )}
 
             <div className="settings-tab employer-settings-stack">
+                <AppModeCard appMode={appMode} onAppModeChange={onAppModeChange} />
+
                 <div className="settings-card">
                     <h3>Security</h3>
                     <form onSubmit={handleChangePassword}>

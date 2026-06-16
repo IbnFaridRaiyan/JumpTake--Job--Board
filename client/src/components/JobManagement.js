@@ -26,6 +26,7 @@ const createInterviewDates = (dates = []) => Array.from({ length: 5 }, (_, index
 const SECTIONS = [
     { id: 'view', label: 'View Job Post' },
     { id: 'edit', label: 'Edit' },
+    { id: 'send-job-invite', label: 'Send Job Invite' },
     { id: 'applicants', label: 'Applicants' },
     { id: 'create-assessment', label: 'Create Assessment' },
     { id: 'shortlisted-assessment', label: 'Shortlisted for Assessment Candidates' },
@@ -111,6 +112,11 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
     const [interviewDates, setInterviewDates] = useState(createInterviewDates());
     const [seenApplicantsCount, setSeenApplicantsCount] = useState(0);
     const [seenCompletedAssessmentCount, setSeenCompletedAssessmentCount] = useState(0);
+    const [jobInviteCandidates, setJobInviteCandidates] = useState([]);
+    const [selectedJobInviteCandidateIds, setSelectedJobInviteCandidateIds] = useState([]);
+    const [jobInviteMessage, setJobInviteMessage] = useState('');
+    const [loadingJobInvites, setLoadingJobInvites] = useState(false);
+    const [sendingJobInvites, setSendingJobInvites] = useState(false);
     const mobileSectionPanelRef = useRef(null);
 
     const jobId = getId(currentJob);
@@ -123,6 +129,29 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
         fetchWorkspaceData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [companyId, jobId]);
+
+    useEffect(() => {
+        const storedSection = localStorage.getItem('jumptakeEmployerManagedJobSection');
+        if (!storedSection) {
+            return;
+        }
+
+        if (SECTIONS.some((section) => section.id === storedSection)) {
+            setActiveSection(storedSection);
+            setMobileSectionVisible(true);
+            resetMobileWorkspaceScroll();
+        }
+
+        localStorage.removeItem('jumptakeEmployerManagedJobSection');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [jobId]);
+
+    useEffect(() => {
+        if (activeSection === 'send-job-invite') {
+            fetchJobInviteMatches();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeSection, companyId, jobId]);
 
     const fetchWorkspaceData = async () => {
         if (!companyId || !jobId) {
@@ -194,6 +223,36 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
             setError(fetchError.message || 'Failed to load this job workspace.');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchJobInviteMatches = async () => {
+        if (!companyId || !jobId) {
+            setJobInviteCandidates([]);
+            return;
+        }
+
+        setLoadingJobInvites(true);
+
+        try {
+            const token = localStorage.getItem('employerToken');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/job-invitations/company/${companyId}/job/${jobId}/matches`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to load matching candidates');
+            }
+
+            const rows = await response.json();
+            setJobInviteCandidates(Array.isArray(rows) ? rows : []);
+        } catch (inviteError) {
+            console.error('Error loading job invite matches:', inviteError);
+            setJobInviteCandidates([]);
+        } finally {
+            setLoadingJobInvites(false);
         }
     };
 
@@ -676,6 +735,62 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
             setError(deleteError.message || 'Failed to delete assessment.');
         } finally {
             setSaving(false);
+        }
+    };
+
+    const toggleJobInviteCandidate = (candidateId) => {
+        setSelectedJobInviteCandidateIds((prevIds) => (
+            prevIds.includes(candidateId)
+                ? prevIds.filter((id) => id !== candidateId)
+                : [...prevIds, candidateId]
+        ));
+    };
+
+    const selectAllJobInviteCandidates = () => {
+        setSelectedJobInviteCandidateIds(jobInviteCandidates.map((row) => getId(row.candidate)).filter(Boolean));
+    };
+
+    const sendJobInvitations = async ({ sendToAllBookmarked = false, candidateIds = selectedJobInviteCandidateIds } = {}) => {
+        const ids = Array.isArray(candidateIds) ? candidateIds.filter(Boolean) : [];
+        if (!sendToAllBookmarked && ids.length === 0) {
+            setError('Choose at least one matching candidate to invite.');
+            return;
+        }
+
+        setSendingJobInvites(true);
+        setError('');
+        setMessage('');
+
+        try {
+            const token = localStorage.getItem('employerToken');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/job-invitations/send`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    companyId,
+                    jobId,
+                    candidateIds: ids,
+                    sendToAllBookmarked,
+                    message: jobInviteMessage
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to send job invitations');
+            }
+
+            setMessage(data.message || 'Job invitations sent.');
+            setSelectedJobInviteCandidateIds([]);
+        } catch (inviteError) {
+            console.error('Error sending job invitations:', inviteError);
+            setError(inviteError.message || 'Failed to send job invitations.');
+        } finally {
+            setSendingJobInvites(false);
         }
     };
 
@@ -1299,6 +1414,106 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
         </div>
     );
 
+    const renderJobInvitePanel = () => (
+        <div className="settings-card job-invite-panel">
+            <div className="section-header">
+                <div>
+                    <p>Invite matching talents to apply for this job.</p>
+                </div>
+                <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={fetchJobInviteMatches}
+                    disabled={loadingJobInvites}
+                >
+                    Refresh Matches
+                </button>
+            </div>
+
+            <div className="form-group">
+                <label htmlFor="job-invite-message">Invitation Message</label>
+                <textarea
+                    id="job-invite-message"
+                    className="form-control"
+                    rows="3"
+                    value={jobInviteMessage}
+                    onChange={(event) => setJobInviteMessage(event.target.value)}
+                    placeholder={`Tell candidates why ${currentJob?.title || 'this role'} could be a strong fit.`}
+                />
+            </div>
+
+            <div className="assessment-footer-actions job-invite-actions">
+                <button
+                    type="button"
+                    className="settings-button primary"
+                    onClick={() => sendJobInvitations()}
+                    disabled={sendingJobInvites || selectedJobInviteCandidateIds.length === 0}
+                >
+                    {sendingJobInvites ? 'Sending...' : `Send to Selected (${selectedJobInviteCandidateIds.length})`}
+                </button>
+                <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={selectAllJobInviteCandidates}
+                    disabled={loadingJobInvites || jobInviteCandidates.length === 0}
+                >
+                    Select All Matches
+                </button>
+                <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={() => sendJobInvitations({ sendToAllBookmarked: true })}
+                    disabled={sendingJobInvites}
+                >
+                    Send to All Bookmarked
+                </button>
+            </div>
+
+            {loadingJobInvites ? (
+                <div className="loading-spinner"></div>
+            ) : jobInviteCandidates.length === 0 ? (
+                <p className="empty-info">No matching talents found for this job role yet.</p>
+            ) : (
+                <div className="job-invite-candidate-list">
+                    {jobInviteCandidates.map((row) => {
+                        const candidate = row.candidate || {};
+                        const candidateId = getId(candidate);
+                        const selected = selectedJobInviteCandidateIds.includes(candidateId);
+                        const candidateName = candidate.name || candidate.email || 'Unnamed Candidate';
+
+                        return (
+                            <div className={`job-invite-candidate-row ${selected ? 'selected' : ''}`} key={candidateId}>
+                                <label className="job-invite-candidate-check">
+                                    <input
+                                        type="checkbox"
+                                        checked={selected}
+                                        onChange={() => toggleJobInviteCandidate(candidateId)}
+                                    />
+                                    <span>
+                                        <strong>{candidateName}</strong>
+                                        <small>{candidate.email || 'Email not available'}</small>
+                                    </span>
+                                </label>
+                                <div className="job-invite-match-meta">
+                                    <span>{row.matchScore} skill match{row.matchScore === 1 ? '' : 'es'}</span>
+                                    <p>{(row.matchedSkills || []).join(', ') || 'Matched by profile details'}</p>
+                                </div>
+                                <button
+                                    type="button"
+                                    className="view-button no-icon-button send-candidate-button"
+                                    onClick={() => sendJobInvitations({ candidateIds: [candidateId] })}
+                                    disabled={sendingJobInvites}
+                                >
+                                    Send Invite
+                                </button>
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
+        </div>
+    );
+
     const renderCreateAssessment = () => (
         <div className="job-management-panel">
             {renderAssessmentForm()}
@@ -1680,6 +1895,12 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                 return renderJobPost();
             case 'applicants':
                 return renderApplicants();
+            case 'send-job-invite':
+                return (
+                    <div className="job-management-panel">
+                        {renderJobInvitePanel()}
+                    </div>
+                );
             case 'create-assessment':
                 return renderCreateAssessment();
             case 'shortlisted-assessment':

@@ -7,6 +7,7 @@ const {
     ensureReferenceNumbers,
     generateUniqueReferenceNumber
 } = require('../utils/referenceNumbers');
+const { createNotification } = require('./notificationController');
 
 const getAllJobs = async (req, res) => {
     try {
@@ -93,6 +94,22 @@ const createJob = async (req, res) => {
         });
         
         await job.save();
+
+        const candidateUsers = await User.find({ jobSeekerId: { $exists: true, $ne: null } }).select('_id').limit(200);
+        await Promise.allSettled(candidateUsers.map((candidateUser) => (
+            createNotification({
+                recipientType: 'candidate',
+                recipientId: candidateUser._id,
+                title: 'New job posted',
+                message: `${company.name} posted ${job.title}. Visit Job Feed?`,
+                section: 'job-feed',
+                actionLabel: 'Open job feed',
+                payload: {
+                    jobId: String(job._id),
+                    jobTitle: job.title
+                }
+            })
+        )));
         
         return res.status(201).json({
             message: 'Job created successfully',

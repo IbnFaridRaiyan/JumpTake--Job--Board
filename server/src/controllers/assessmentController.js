@@ -3,6 +3,7 @@ const AssessmentAssignment = require('../models/AssessmentAssignment');
 const Application = require('../models/Application');
 const Job = require('../models/Job');
 const { ensureReferenceNumbers } = require('../utils/referenceNumbers');
+const { createNotification } = require('./notificationController');
 
 const normalizeAnswer = (value = '') => String(value).trim().toLowerCase();
 
@@ -398,6 +399,21 @@ const sendAssessment = async (req, res) => {
             AssessmentAssignment.findById(assignment._id)
         );
 
+        await createNotification({
+            recipientType: 'candidate',
+            recipientId: application.user,
+            title: 'Assessment invitation',
+            message: `You have a new assessment invitation for ${application.job.title}. Start now?`,
+            section: 'assessments',
+            actionLabel: 'Open assessment',
+            payload: {
+                jobId: String(application.job._id),
+                jobTitle: application.job.title,
+                assessmentId: String(assessment._id),
+                assignmentId: String(assignment._id)
+            }
+        });
+
         return res.status(201).json({
             message: 'Assessment sent successfully',
             assignment: populatedAssignment
@@ -640,6 +656,21 @@ const submitAssessmentAssignment = async (req, res) => {
             AssessmentAssignment.findById(assignment._id)
         );
 
+        await createNotification({
+            recipientType: 'employer',
+            recipientId: assignment.company,
+            title: 'Assessment completed',
+            message: `A candidate has submitted ${populatedAssignment?.job?.title || 'a job'}'s ${assignment.title}. Check now?`,
+            section: 'manage-jobs',
+            actionLabel: 'Open completed assessment',
+            payload: {
+                jobId: String(assignment.job),
+                assessmentId: String(assignment.assessment),
+                assignmentId: String(assignment._id),
+                subSection: 'completed-assessment'
+            }
+        });
+
         return res.status(200).json({
             message: 'Assessment submitted successfully',
             assignment: populatedAssignment
@@ -701,6 +732,19 @@ const sendVideoInterviewInvitation = async (req, res) => {
         const populatedAssignment = await populateAssignment(
             AssessmentAssignment.findById(record.assignment._id)
         );
+
+        await createNotification({
+            recipientType: 'candidate',
+            recipientId: record.assignment.candidateUser,
+            title: 'Video interview invitation',
+            message: `You have a video interview invitation for ${populatedAssignment?.job?.title || 'a role'}. Select dates now?`,
+            section: 'video-interviews',
+            actionLabel: 'Open invitation',
+            payload: {
+                jobId: String(record.assignment.job),
+                assignmentId: String(record.assignment._id)
+            }
+        });
 
         return res.status(200).json({
             message: 'Video interview invitation sent successfully',
@@ -797,6 +841,22 @@ const respondToVideoInterviewInvitation = async (req, res) => {
         const populatedAssignment = await populateAssignment(
             AssessmentAssignment.findById(assignment._id)
         );
+
+        if (action === 'accept') {
+            await createNotification({
+                recipientType: 'employer',
+                recipientId: assignment.company,
+                title: 'Interview date selected',
+                message: `A candidate has selected a video interview date for ${populatedAssignment?.job?.title || 'a role'}. Check now?`,
+                section: 'manage-jobs',
+                actionLabel: 'Open interview',
+                payload: {
+                    jobId: String(assignment.job),
+                    assignmentId: String(assignment._id),
+                    subSection: 'arrange-video'
+                }
+            });
+        }
 
         return res.status(200).json({
             message: action === 'accept'

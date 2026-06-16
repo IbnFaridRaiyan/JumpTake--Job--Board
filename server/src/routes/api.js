@@ -12,6 +12,8 @@ const assessmentController = require('../controllers/assessmentController');
 const engagementController = require('../controllers/engagementController');
 const passwordResetController = require('../controllers/passwordResetController');
 const messageController = require('../controllers/messageController');
+const notificationController = require('../controllers/notificationController');
+const jobInvitationController = require('../controllers/jobInvitationController');
 
 
 
@@ -140,6 +142,13 @@ router.get('/candidate-bookmarks/user/:userId', engagementController.getUserCand
 router.delete('/candidate-bookmarks/user/:userId/candidate/:candidateId', engagementController.deleteCandidateBookmark);
 router.get('/candidate-likes', engagementController.getCandidateLikeSummary);
 router.post('/candidate-likes/toggle', engagementController.toggleCandidateLike);
+
+router.get('/notifications', notificationController.getNotifications);
+router.put('/notifications/:id/read', notificationController.markNotificationRead);
+router.put('/notifications/read-all', notificationController.markAllNotificationsRead);
+router.get('/job-invitations/user/:userId', jobInvitationController.getCandidateJobInvitations);
+router.get('/job-invitations/company/:companyId/job/:jobId/matches', jobInvitationController.getMatchingCandidates);
+router.post('/job-invitations/send', jobInvitationController.sendJobInvitations);
 
 router.get('/assessments/company/:companyId', assessmentController.getCompanyAssessments);
 router.get('/assessments/company/:companyId/assignments', assessmentController.getCompanyAssessmentAssignments);

@@ -15,7 +15,8 @@ import InterestedJobSuggestion from './InterestedJobSuggestion';
 import AboutJumpTake from './AboutJumpTake';
 import DashboardSearch from './DashboardSearch';
 import PerformanceAnalytics from './PerformanceAnalytics';
-import PortalSpaceAnimation from './PortalSpaceAnimation';
+import PortalSidebar from './PortalSidebar';
+import Notifications from './Notifications';
 import logo from './media/logo3.png';
 
 const JOB_INTEREST_OPTIONS = [
@@ -44,6 +45,7 @@ const JOB_INTEREST_OPTIONS = [
 const CANDIDATE_SECTION_IDS = new Set([
     'job-feed',
     'inbox',
+    'notifications',
     'view-candidates',
     'bookmarked-candidates',
     'applications',
@@ -80,7 +82,7 @@ const getInitialCandidateSection = () => {
     return CANDIDATE_SECTION_IDS.has(storedSection) ? storedSection : 'job-feed';
 };
 
-const HomePage = () => {
+const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const [activeSection, setActiveSection] = useState(getInitialCandidateSection);
     const sectionHistoryRef = useRef([]);
     const [jobs, setJobs] = useState([]);
@@ -91,6 +93,7 @@ const HomePage = () => {
     const [pendingAssessmentCount, setPendingAssessmentCount] = useState(0);
     const [pendingVideoInterviewCount, setPendingVideoInterviewCount] = useState(0);
     const [pendingInboxCount, setPendingInboxCount] = useState(0);
+    const [pendingNotificationCount, setPendingNotificationCount] = useState(0);
     const [showInterestPopup, setShowInterestPopup] = useState(false);
     const [selectedJobInterests, setSelectedJobInterests] = useState([]);
     const [interestError, setInterestError] = useState('');
@@ -127,6 +130,7 @@ const HomePage = () => {
         'draft-applications': 'Draft Applications',
         'bookmarked-jobs': 'Bookmarked Jobs',
         inbox: 'Inbox',
+        notifications: 'Notifications',
         'view-candidates': 'View Candidates',
         'bookmarked-candidates': 'Bookmarked Candidates',
         'interested-jobs': 'Interested Job Suggession',
@@ -153,6 +157,7 @@ const HomePage = () => {
         fetchJobs();
         fetchCandidateNotifications(parsedUser.id);
         fetchCandidateInboxNotifications(parsedUser.id);
+        fetchCandidatePortalNotifications(parsedUser.id);
 
         let seekerId = parsedUser.jobSeekerId;
 
@@ -374,6 +379,36 @@ const HomePage = () => {
         }
     };
 
+    const fetchCandidatePortalNotifications = async (userId) => {
+        if (!userId) {
+            setPendingNotificationCount(0);
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            const params = new URLSearchParams({
+                recipientType: 'candidate',
+                recipientId: String(userId)
+            });
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/notifications?${params.toString()}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch notifications');
+            }
+
+            const notifications = await response.json();
+            setPendingNotificationCount((Array.isArray(notifications) ? notifications : []).filter((notification) => !notification.read).length);
+        } catch (notificationError) {
+            console.error('Error fetching candidate portal notifications:', notificationError);
+            setPendingNotificationCount(0);
+        }
+    };
+
     const toggleJobInterest = (interest) => {
         setSelectedJobInterests((prevInterests) => (
             prevInterests.includes(interest)
@@ -433,6 +468,7 @@ const HomePage = () => {
         if (user?.id) {
             fetchCandidateNotifications(user.id);
             fetchCandidateInboxNotifications(user.id);
+            fetchCandidatePortalNotifications(user.id);
         }
         if (user?.jobSeekerId) {
             fetchJobSeekerData(user.jobSeekerId);
@@ -465,6 +501,10 @@ const HomePage = () => {
             localStorage.setItem('jumptakeCandidateInboxSeenAt', String(Date.now()));
         }
 
+        if (nextSection === 'notifications') {
+            fetchCandidatePortalNotifications(user?.id);
+        }
+
         if (nextSection === activeSection) {
             setMobileSectionVisible(true);
             return;
@@ -473,11 +513,41 @@ const HomePage = () => {
         switchSection(nextSection);
     };
 
+    const candidatePrimaryNavItems = [
+        { id: 'job-feed', label: 'Job Feed', icon: 'briefcase' },
+        { id: 'inbox', label: 'Inbox', icon: 'inbox', notification: pendingInboxCount > 0 },
+        { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 },
+        { id: 'view-candidates', label: 'View Candidates', icon: 'users' },
+        { id: 'bookmarked-candidates', label: 'Bookmarked Candidates', icon: 'heart' },
+        { id: 'applications', label: 'My Applications', icon: 'profile' },
+        { id: 'assessments', label: 'My Assessments', icon: 'assessment', notification: pendingAssessmentCount > 0 },
+        { id: 'video-interviews', label: 'Video Interviews', icon: 'send', notification: pendingVideoInterviewCount > 0 },
+        { id: 'draft-applications', label: 'Draft Applications', icon: 'draft' },
+        { id: 'bookmarked-jobs', label: 'Bookmarked Jobs', icon: 'star' },
+        { id: 'interested-jobs', label: 'Interested Job Suggession', icon: 'briefcase' }
+    ].map((item) => ({
+        ...item,
+        active: activeSection === item.id,
+        onClick: () => openSection(item.id)
+    }));
+
+    const candidateSecondaryNavItems = [
+        { id: 'profile', label: 'My Profile', icon: 'user' },
+        { id: 'about-jumptake', label: 'About JumpTake', icon: 'info' },
+        { id: 'progress-check', label: 'Progress Check', icon: 'chart' },
+        { id: 'settings', label: 'Settings', icon: 'settings' }
+    ].map((item) => ({
+        ...item,
+        active: activeSection === item.id,
+        onClick: () => openSection(item.id)
+    }));
+
     const handleDashboardSearch = (query) => {
         const lowerQuery = query.toLowerCase();
 
         const directMatches = [
-            { section: 'settings', terms: ['settings', 'account', 'security', 'notification', 'email', 'password'] },
+            { section: 'notifications', terms: ['notification', 'notifications', 'activity', 'alert', 'updates'] },
+            { section: 'settings', terms: ['settings', 'account', 'security', 'email', 'password'] },
             { section: 'profile', terms: ['profile', 'resume', 'education', 'experience', 'skill'] },
             { section: 'applications', terms: ['application', 'applied', 'status', 'withdraw'] },
             { section: 'assessments', terms: ['assessment', 'test', 'quiz'] },
@@ -500,6 +570,18 @@ const HomePage = () => {
 
         sessionStorage.setItem('jumptakeCandidateJobSearch', query);
         openSection('job-feed');
+    };
+
+    const handleOpenNotification = (notification) => {
+        const payload = notification?.payload || {};
+        const nextSection = notification?.section || 'notifications';
+
+        if (nextSection === 'job-feed' && payload.jobId) {
+            localStorage.setItem('jumptakeActiveJobId', String(payload.jobId));
+            localStorage.setItem('jumptakeActiveJobAction', payload.intent === 'apply' ? 'apply' : 'preview');
+        }
+
+        openSection(CANDIDATE_SECTION_IDS.has(nextSection) ? nextSection : 'notifications');
     };
 
     const handleLogoClick = () => {
@@ -627,6 +709,13 @@ const HomePage = () => {
                     onBack={goToPreviousSection}
                     onFooterBack={goToPreviousSection}
                 />;
+            case 'notifications':
+                return <Notifications
+                    mode="candidate"
+                    recipientId={user?.id}
+                    onOpenNotification={handleOpenNotification}
+                    onUnreadCountChange={setPendingNotificationCount}
+                />;
             case 'view-candidates':
                 return <TalentPool
                     mode="candidate"
@@ -675,6 +764,8 @@ const HomePage = () => {
                     onLogout={handleLogout}
                     switchSection={switchSection}
                     onFooterBack={goToPreviousSection}
+                    appMode={appMode}
+                    onAppModeChange={onAppModeChange}
                 />;
             default:
                 return <JobFeed
@@ -766,118 +857,19 @@ const HomePage = () => {
             )}
 
             <div className={`dashboard-container ${mobileSectionVisible ? 'mobile-section-open' : ''}`}>
-                <div className="sidebar">
-                    <div className="user-profile">
-                        <div className="avatar">
-                            {user?.email.charAt(0).toUpperCase() || 'U'}
-                        </div>
-                        <div className="user-info">
-                            <h3>{user?.email.split('@')[0] || 'User'}</h3>
-                            <p>{user?.email}</p>
-                        </div>
-                        <DashboardSearch onSearch={handleDashboardSearch} compact />
-                    </div>
-                    <nav className="dashboard-nav">
-                        <ul>
-                            <li
-                                className={activeSection === 'job-feed' ? 'active' : ''}
-                                onClick={() => openSection('job-feed')}
-                            >
-                                Job Feed
-                            </li>
-                            <li
-                                className={activeSection === 'inbox' ? 'active' : ''}
-                                onClick={() => openSection('inbox')}
-                            >
-                                <span className="dashboard-nav-label">Inbox</span>
-                                {pendingInboxCount > 0 && <span className="nav-notification-dot"></span>}
-                            </li>
-                            <li
-                                className={activeSection === 'view-candidates' ? 'active' : ''}
-                                onClick={() => openSection('view-candidates')}
-                            >
-                                View Candidates
-                            </li>
-                            <li
-                                className={activeSection === 'bookmarked-candidates' ? 'active' : ''}
-                                onClick={() => openSection('bookmarked-candidates')}
-                            >
-                                Bookmarked Candidates
-                            </li>
-                            <li
-                                className={activeSection === 'applications' ? 'active' : ''}
-                                onClick={() => openSection('applications')}
-                            >
-                                My Applications
-                            </li>
-                            <li
-                                className={activeSection === 'assessments' ? 'active' : ''}
-                                onClick={() => openSection('assessments')}
-                            >
-                                <span className="dashboard-nav-label">My Assessments</span>
-                                {pendingAssessmentCount > 0 && <span className="nav-notification-dot"></span>}
-                            </li>
-                            <li
-                                className={activeSection === 'video-interviews' ? 'active' : ''}
-                                onClick={() => openSection('video-interviews')}
-                            >
-                                <span className="dashboard-nav-label">Video Interviews</span>
-                                {pendingVideoInterviewCount > 0 && <span className="nav-notification-dot"></span>}
-                            </li>
-                            <li
-                                className={activeSection === 'draft-applications' ? 'active' : ''}
-                                onClick={() => openSection('draft-applications')}
-                            >
-                                Draft Applications
-                            </li>
-                            <li
-                                className={activeSection === 'bookmarked-jobs' ? 'active' : ''}
-                                onClick={() => openSection('bookmarked-jobs')}
-                            >
-                                Bookmarked Jobs
-                            </li>
-                            <li
-                                className={activeSection === 'interested-jobs' ? 'active' : ''}
-                                onClick={() => openSection('interested-jobs')}
-                            >
-                                Interested Job Suggession
-                            </li>
-                            <li
-                                className={activeSection === 'profile' ? 'active' : ''}
-                                onClick={() => openSection('profile')}
-                            >
-                                My Profile
-                            </li>
-                            <li
-                                className={activeSection === 'about-jumptake' ? 'active' : ''}
-                                onClick={() => openSection('about-jumptake')}
-                            >
-                                About JumpTake
-                            </li>
-                            <li
-                                className={activeSection === 'progress-check' ? 'active' : ''}
-                                onClick={() => openSection('progress-check')}
-                            >
-                                Progress Check
-                            </li>
-                            <li
-                                className={activeSection === 'settings' ? 'active' : ''}
-                                onClick={() => openSection('settings')}
-                            >
-                                Settings
-                            </li>
-                            <li
-                                className="dashboard-nav-logout"
-                                onClick={handleLogout}
-                            >
-                                Log Out
-                            </li>
-                            <PortalSpaceAnimation />
-                        </ul>
-                    </nav>
-                </div>
+                <PortalSidebar
+                    userName={user?.email.split('@')[0] || 'User'}
+                    userSubtitle={user?.email || ''}
+                    userInitial={user?.email.charAt(0).toUpperCase() || 'U'}
+                    primaryItems={candidatePrimaryNavItems}
+                    secondaryItems={candidateSecondaryNavItems}
+                    onLogout={handleLogout}
+                />
 
                 <main ref={mobilePanelRef} className={`main-content mobile-dashboard-section-panel mobile-section-${activeSection} ${mobileSectionVisible ? 'is-open' : ''}`}>
+                    <div className="dashboard-section-title">
+                        <h2>{sectionTitles[activeSection] || 'Dashboard Section'}</h2>
+                    </div>
                     {mobileSectionVisible && (
                         <div className="mobile-section-panel-header">
                             <button type="button" className="back-button" onClick={closeMobileSectionPanel}>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import AnimatedDeleteButton from './AnimatedDeleteButton';
+import AppModeCard from './AppModeCard';
 
-const UserSettings = ({ user, onLogout, switchSection, onFooterBack }) => {
+const UserSettings = ({ user, onLogout, switchSection, onFooterBack, appMode, onAppModeChange }) => {
     const [activeTab, setActiveTab] = useState('account');
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -569,6 +570,8 @@ const UserSettings = ({ user, onLogout, switchSection, onFooterBack }) => {
                     {message}
                 </div>
             )}
+
+            <AppModeCard appMode={appMode} onAppModeChange={onAppModeChange} />
             
             <div className="settings-tabs">
                 <div className="tabs-header">

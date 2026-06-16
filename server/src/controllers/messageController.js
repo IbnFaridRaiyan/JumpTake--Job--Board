@@ -1,5 +1,6 @@
 const MessageThread = require('../models/MessageThread');
 const JobSeeker = require('../models/JobSeeker');
+const { createNotification } = require('./notificationController');
 
 const sanitizeStyleAttribute = (styleValue = '') => {
     const allowedProperties = new Set([
@@ -161,6 +162,28 @@ const createOrReplyMessage = async (req, res) => {
 
         await appendMessage(thread, senderType, bodyHtml);
 
+        if (senderType === 'employer') {
+            await createNotification({
+                recipientType: 'candidate',
+                recipientId: resolvedCandidateUserId,
+                title: 'New message',
+                message: 'You have a new message in your inbox. Open now?',
+                section: 'inbox',
+                actionLabel: 'Open inbox',
+                payload: { threadId: String(thread._id) }
+            });
+        } else {
+            await createNotification({
+                recipientType: 'employer',
+                recipientId: companyId,
+                title: 'New message',
+                message: 'You have new messages in your inbox. Open now?',
+                section: 'inbox',
+                actionLabel: 'Open inbox',
+                payload: { threadId: String(thread._id) }
+            });
+        }
+
         const populatedThread = await populateThread(MessageThread.findById(thread._id));
         return res.status(201).json(populatedThread);
     } catch (error) {
@@ -217,6 +240,16 @@ const createCandidateDirectMessage = async (req, res) => {
 
         await appendMessage(thread, 'candidate', bodyHtml, senderUserId);
 
+        await createNotification({
+            recipientType: 'candidate',
+            recipientId: recipientUserId,
+            title: 'New candidate message',
+            message: `${senderCandidate.name || senderCandidate.email || 'A candidate'} sent you a message. Open inbox?`,
+            section: 'inbox',
+            actionLabel: 'Open inbox',
+            payload: { threadId: String(thread._id) }
+        });
+
         const populatedThread = await populateThread(MessageThread.findById(thread._id));
         return res.status(201).json(populatedThread);
     } catch (error) {
@@ -242,6 +275,44 @@ const replyToThread = async (req, res) => {
         }
 
         await appendMessage(thread, senderType, bodyHtml, senderType === 'candidate' ? senderUserId : null);
+
+        if (thread.conversationType === 'candidate-candidate') {
+            const recipientUserId = (thread.participantUsers || [])
+                .map((participant) => String(participant))
+                .find((participant) => participant !== String(senderUserId || ''));
+
+            if (recipientUserId) {
+                await createNotification({
+                    recipientType: 'candidate',
+                    recipientId: recipientUserId,
+                    title: 'New candidate message',
+                    message: 'You have a new candidate message. Open inbox?',
+                    section: 'inbox',
+                    actionLabel: 'Open inbox',
+                    payload: { threadId: String(thread._id) }
+                });
+            }
+        } else if (senderType === 'employer' && thread.candidateUser) {
+            await createNotification({
+                recipientType: 'candidate',
+                recipientId: thread.candidateUser,
+                title: 'New message',
+                message: 'You have a new message in your inbox. Open now?',
+                section: 'inbox',
+                actionLabel: 'Open inbox',
+                payload: { threadId: String(thread._id) }
+            });
+        } else if (senderType === 'candidate' && thread.company) {
+            await createNotification({
+                recipientType: 'employer',
+                recipientId: thread.company,
+                title: 'New message',
+                message: 'You have new messages in your inbox. Open now?',
+                section: 'inbox',
+                actionLabel: 'Open inbox',
+                payload: { threadId: String(thread._id) }
+            });
+        }
 
         const populatedThread = await populateThread(MessageThread.findById(thread._id));
         return res.status(200).json(populatedThread);

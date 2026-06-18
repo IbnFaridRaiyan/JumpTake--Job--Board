@@ -9,7 +9,6 @@ import BookmarkedJobs from './BookmarkedJobs';
 import BookmarkedCandidates from './BookmarkedCandidates';
 import UserProfile from './UserProfile';
 import UserSettings from './UserSettings';
-import Inbox from './Inbox';
 import TalentPool from './TalentPool';
 import InterestedJobSuggestion from './InterestedJobSuggestion';
 import AboutJumpTake from './AboutJumpTake';
@@ -18,6 +17,7 @@ import PerformanceAnalytics from './PerformanceAnalytics';
 import PortalSidebar from './PortalSidebar';
 import Notifications from './Notifications';
 import FriendInvitations from './FriendInvitations';
+import FloatingMessenger from './FloatingMessenger';
 import logo from './media/logo3.png';
 import logoDark from './media/logo4.png';
 
@@ -46,7 +46,6 @@ const JOB_INTEREST_OPTIONS = [
 
 const CANDIDATE_SECTION_IDS = new Set([
     'job-feed',
-    'inbox',
     'notifications',
     'view-candidates',
     'friend-invitations',
@@ -172,7 +171,6 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         'video-interviews': 'Video Interviews',
         'draft-applications': 'Draft Applications',
         'bookmarked-jobs': 'Bookmarked Jobs',
-        inbox: 'Inbox',
         notifications: 'Notifications',
         'view-candidates': 'View Candidates',
         'friend-invitations': 'Friends',
@@ -541,11 +539,6 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             return;
         }
 
-        if (nextSection === 'inbox') {
-            setPendingInboxCount(0);
-            localStorage.setItem('jumptakeCandidateInboxSeenAt', String(Date.now()));
-        }
-
         if (nextSection === 'notifications') {
             fetchCandidatePortalNotifications(user?.id);
         }
@@ -560,7 +553,6 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
 
     const candidatePrimaryNavItems = [
         { id: 'job-feed', label: 'Job Feed', icon: 'briefcase' },
-        { id: 'inbox', label: 'Inbox', icon: 'inbox', notification: pendingInboxCount > 0 },
         { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 },
         { id: 'view-candidates', label: 'View Candidates', icon: 'users' },
         { id: 'friend-invitations', label: 'Friends', icon: 'user-plus' },
@@ -591,6 +583,13 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const handleDashboardSearch = (query) => {
         const lowerQuery = query.toLowerCase();
 
+        if (['inbox', 'message', 'messages', 'reply', 'chat'].some((term) => lowerQuery.includes(term))) {
+            setPendingInboxCount(0);
+            localStorage.setItem('jumptakeCandidateInboxSeenAt', String(Date.now()));
+            window.dispatchEvent(new CustomEvent('jumptake-open-candidate-messenger'));
+            return;
+        }
+
         const directMatches = [
             { section: 'notifications', terms: ['notification', 'notifications', 'activity', 'alert', 'updates'] },
             { section: 'settings', terms: ['settings', 'account', 'security', 'email', 'password'] },
@@ -602,7 +601,6 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             { section: 'bookmarked-jobs', terms: ['bookmark', 'saved job'] },
             { section: 'interested-jobs', terms: ['interest', 'suggestion', 'recommended'] },
             { section: 'progress-check', terms: ['progress', 'performance', 'analytics', 'rate', 'views', 'response'] },
-            { section: 'inbox', terms: ['inbox', 'message', 'reply'] },
             { section: 'view-candidates', terms: ['candidate', 'candidates', 'talent', 'people', 'profile'] },
             { section: 'friend-invitations', terms: ['friend', 'friends', 'invitation', 'request', 'connection'] },
             { section: 'bookmarked-candidates', terms: ['bookmarked candidates', 'saved candidates', 'candidate bookmarks'] },
@@ -622,6 +620,13 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const handleOpenNotification = (notification) => {
         const payload = notification?.payload || {};
         const nextSection = notification?.section || 'notifications';
+
+        if (nextSection === 'inbox') {
+            setPendingInboxCount(0);
+            localStorage.setItem('jumptakeCandidateInboxSeenAt', String(Date.now()));
+            window.dispatchEvent(new CustomEvent('jumptake-open-candidate-messenger', { detail: payload }));
+            return;
+        }
 
         if (nextSection === 'job-feed' && payload.jobId) {
             localStorage.setItem('jumptakeActiveJobId', String(payload.jobId));
@@ -747,13 +752,6 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                 return <BookmarkedJobs
                     userId={user?.id}
                     switchSection={switchSection}
-                    onFooterBack={goToPreviousSection}
-                />;
-            case 'inbox':
-                return <Inbox
-                    mode="candidate"
-                    userId={user?.id}
-                    onBack={goToPreviousSection}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'notifications':
@@ -938,6 +936,15 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                         </div>
                     )}
                 </main>
+                <FloatingMessenger
+                    mode="candidate"
+                    userId={user?.id}
+                    unreadCount={pendingInboxCount}
+                    onSeen={() => {
+                        setPendingInboxCount(0);
+                        localStorage.setItem('jumptakeCandidateInboxSeenAt', String(Date.now()));
+                    }}
+                />
             </div>
         </div>
     );

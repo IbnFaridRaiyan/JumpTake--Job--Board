@@ -23464,3 +23464,357 @@ html[data-theme="light"] .add-friend-form input {
     color: #0b4f35 !important;
   }
 }
+
+.floating-messenger {
+  position: fixed;
+  right: 2rem;
+  bottom: 1.8rem;
+  z-index: 12000;
+}
+
+.floating-messenger-trigger {
+  position: relative !important;
+  width: 4rem !important;
+  height: 4rem !important;
+  min-width: 4rem !important;
+  min-height: 4rem !important;
+  max-width: 4rem !important;
+  max-height: 4rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  border: 1px solid rgba(156, 163, 175, 0.32) !important;
+  border-radius: 999px !important;
+  background: rgba(13, 18, 20, 0.92) !important;
+  color: #c8ced6 !important;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.42) !important;
+  backdrop-filter: blur(12px) !important;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, color 0.18s ease !important;
+}
+
+.floating-messenger-trigger:hover {
+  transform: translateY(-2px) !important;
+  color: #e5e7eb !important;
+  box-shadow: 0 22px 44px rgba(0, 0, 0, 0.48) !important;
+}
+
+.floating-messenger-trigger svg {
+  width: 2rem !important;
+  height: 2rem !important;
+}
+
+.floating-messenger-badge {
+  position: absolute;
+  top: -0.15rem;
+  right: -0.15rem;
+  min-width: 1.3rem;
+  height: 1.3rem;
+  padding: 0 0.3rem;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.74rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.floating-messenger-panel {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 1rem);
+  width: min(980px, calc(100vw - 5rem));
+  height: min(680px, calc(100vh - 8rem));
+  border-radius: 1.35rem;
+  overflow: hidden;
+  background: rgba(12, 16, 18, 0.97);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  box-shadow: 0 35px 80px rgba(0, 0, 0, 0.5);
+}
+
+.floating-messenger-shell {
+  display: grid;
+  grid-template-columns: minmax(280px, 320px) minmax(0, 1fr);
+  width: 100%;
+  height: 100%;
+}
+
+.floating-messenger-contacts {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.04);
+  border-right: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.floating-messenger-header {
+  position: relative;
+  padding: 1.2rem 1.2rem 1rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.floating-messenger-header h2 {
+  margin: 0;
+  color: #ffffff;
+}
+
+.floating-messenger-close {
+  position: absolute !important;
+  top: 0.8rem !important;
+  right: 0.9rem !important;
+  width: 2rem !important;
+  height: 2rem !important;
+  min-width: 2rem !important;
+  min-height: 2rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: rgba(229, 231, 235, 0.84) !important;
+  font-size: 1.5rem !important;
+  line-height: 1 !important;
+}
+
+.floating-messenger-contact-list {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 0.9rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.floating-messenger-contact {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: 3rem minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  padding: 0.85rem !important;
+  border: 1px solid rgba(148, 163, 184, 0.12) !important;
+  border-radius: 1rem !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  text-align: left !important;
+}
+
+.floating-messenger-contact.is-active {
+  border-color: rgba(99, 192, 184, 0.42) !important;
+  background: rgba(99, 192, 184, 0.12) !important;
+}
+
+.floating-messenger-contact-avatar,
+.floating-messenger-chat-avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #7b9488, #4a8e8a);
+  color: #10211e;
+  font-weight: 800;
+}
+
+.floating-messenger-contact-copy {
+  min-width: 0;
+  display: grid;
+  gap: 0.22rem;
+}
+
+.floating-messenger-contact-copy strong,
+.floating-messenger-chat-head strong {
+  color: #ffffff;
+}
+
+.floating-messenger-contact-copy span,
+.floating-messenger-chat-head span,
+.floating-messenger-contact time,
+.floating-messenger-chat-seen {
+  color: rgba(229, 231, 235, 0.72);
+  font-size: 0.84rem;
+  overflow-wrap: anywhere;
+}
+
+.floating-messenger-chat {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  min-width: 0;
+  background: rgba(8, 11, 13, 0.98);
+}
+
+.floating-messenger-chat-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.floating-messenger-chat-head {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  min-width: 0;
+}
+
+.floating-messenger-messages {
+  overflow-y: auto;
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  background: #0b0f10;
+}
+
+.floating-messenger-message {
+  align-self: flex-start;
+  max-width: 72%;
+  padding: 0.8rem 1rem;
+  border-radius: 1rem 1rem 1rem 0.25rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.floating-messenger-message.is-own {
+  align-self: flex-end;
+  border-radius: 1rem 1rem 0.25rem 1rem;
+  background: #173d36;
+}
+
+.floating-messenger-message-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-bottom: 0.45rem;
+}
+
+.floating-messenger-message-meta strong,
+.floating-messenger-message-meta span,
+.floating-messenger-message-body,
+.floating-messenger-message-body p,
+.floating-messenger-message-body li,
+.floating-messenger-message-body span,
+.floating-messenger-message-body strong,
+.floating-messenger-message-body em {
+  color: #ffffff !important;
+}
+
+.floating-messenger-input {
+  padding: 1rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(10, 14, 16, 0.98);
+}
+
+.floating-messenger-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 1rem;
+  color: rgba(229, 231, 235, 0.72);
+  text-align: center;
+}
+
+.floating-messenger-chat-empty {
+  min-height: 280px;
+}
+
+html[data-theme="light"] .floating-messenger-panel {
+  background: rgba(248, 244, 236, 0.98);
+  border-color: rgba(113, 88, 64, 0.16);
+}
+
+html[data-theme="light"] .floating-messenger-contacts {
+  background: rgba(255, 255, 255, 0.7);
+  border-right-color: rgba(113, 88, 64, 0.14);
+}
+
+html[data-theme="light"] .floating-messenger-chat,
+html[data-theme="light"] .floating-messenger-messages,
+html[data-theme="light"] .floating-messenger-input {
+  background: #f7f0e5;
+}
+
+html[data-theme="light"] .floating-messenger-header,
+html[data-theme="light"] .floating-messenger-chat-bar,
+html[data-theme="light"] .floating-messenger-input {
+  border-color: rgba(113, 88, 64, 0.14);
+}
+
+html[data-theme="light"] .floating-messenger-header h2,
+html[data-theme="light"] .floating-messenger-contact-copy strong,
+html[data-theme="light"] .floating-messenger-chat-head strong,
+html[data-theme="light"] .floating-messenger-message-meta strong,
+html[data-theme="light"] .floating-messenger-message-body,
+html[data-theme="light"] .floating-messenger-message-body p,
+html[data-theme="light"] .floating-messenger-message-body li,
+html[data-theme="light"] .floating-messenger-message-body span,
+html[data-theme="light"] .floating-messenger-message-body strong,
+html[data-theme="light"] .floating-messenger-message-body em {
+  color: #2f241b !important;
+}
+
+html[data-theme="light"] .floating-messenger-contact-copy span,
+html[data-theme="light"] .floating-messenger-chat-head span,
+html[data-theme="light"] .floating-messenger-contact time,
+html[data-theme="light"] .floating-messenger-chat-seen,
+html[data-theme="light"] .floating-messenger-empty {
+  color: #6a5542 !important;
+}
+
+html[data-theme="light"] .floating-messenger-message {
+  background: #ffffff;
+  border-color: rgba(113, 88, 64, 0.12);
+}
+
+html[data-theme="light"] .floating-messenger-message.is-own {
+  background: #d6efe9;
+}
+
+@media (max-width: 768px) {
+  .floating-messenger {
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 13000;
+  }
+
+  .floating-messenger-trigger {
+    width: 3.4rem !important;
+    height: 3.4rem !important;
+    min-width: 3.4rem !important;
+    min-height: 3.4rem !important;
+  }
+
+  .floating-messenger-trigger svg {
+    width: 1.6rem !important;
+    height: 1.6rem !important;
+  }
+
+  .floating-messenger-panel {
+    position: fixed;
+    right: 0.75rem;
+    left: 0.75rem;
+    bottom: 5.25rem;
+    width: auto;
+    height: min(78vh, 720px);
+  }
+
+  .floating-messenger-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(180px, 34%) minmax(0, 1fr);
+  }
+
+  .floating-messenger-contact {
+    grid-template-columns: 2.7rem minmax(0, 1fr);
+  }
+
+  .floating-messenger-contact time,
+  .floating-messenger-chat-seen {
+    display: none;
+  }
+
+  .floating-messenger-message {
+    max-width: 88%;
+  }
+}

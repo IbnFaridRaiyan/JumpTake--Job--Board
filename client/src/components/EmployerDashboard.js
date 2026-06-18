@@ -8,12 +8,12 @@ import CompanyProfile from './CompanyProfile';
 import TalentPool from './TalentPool';
 import BookmarkedTalents from './BookmarkedTalents';
 import EmployerSettings from './EmployerSettings';
-import Inbox from './Inbox';
 import AboutJumpTake from './AboutJumpTake';
 import DashboardSearch from './DashboardSearch';
 import PerformanceAnalytics from './PerformanceAnalytics';
 import PortalSidebar from './PortalSidebar';
 import Notifications from './Notifications';
+import FloatingMessenger from './FloatingMessenger';
 import logo from './media/logo3.png';
 import logoDark from './media/logo4.png';
 
@@ -25,7 +25,6 @@ const EMPLOYER_SECTION_IDS = new Set([
     'general-assessment',
     'talent-pool',
     'bookmarked-talents',
-    'inbox',
     'notifications',
     'company-profile',
     'about-jumptake',
@@ -99,7 +98,6 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         'general-assessment': 'General Assessment',
         'talent-pool': 'Talent Pool',
         'bookmarked-talents': 'Bookmarked Talents',
-        inbox: 'Inbox',
         notifications: 'Notifications',
         'company-profile': 'Company Profile',
         'about-jumptake': 'About JumpTake',
@@ -349,11 +347,6 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
             return;
         }
 
-        if (nextSection === 'inbox') {
-            setPendingInboxCount(0);
-            localStorage.setItem('jumptakeEmployerInboxSeenAt', String(Date.now()));
-        }
-
         if (nextSection === 'notifications') {
             fetchEmployerPortalNotifications(employer?.companyId);
         }
@@ -374,7 +367,6 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         { id: 'general-assessment', label: 'General Assessment', icon: 'assessment' },
         { id: 'talent-pool', label: 'Talent Pool', icon: 'users' },
         { id: 'bookmarked-talents', label: 'Bookmarked Talents', icon: 'star' },
-        { id: 'inbox', label: 'Inbox', icon: 'inbox', notification: pendingInboxCount > 0 },
         { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 }
     ].map((item) => ({
         ...item,
@@ -396,6 +388,13 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     const handleDashboardSearch = (query) => {
         const lowerQuery = query.toLowerCase();
 
+        if (['inbox', 'message', 'messages', 'reply', 'chat'].some((term) => lowerQuery.includes(term))) {
+            setPendingInboxCount(0);
+            localStorage.setItem('jumptakeEmployerInboxSeenAt', String(Date.now()));
+            window.dispatchEvent(new CustomEvent('jumptake-open-employer-messenger'));
+            return;
+        }
+
         const directMatches = [
             { section: 'notifications', terms: ['notification', 'notifications', 'activity', 'alert', 'updates'] },
             { section: 'settings', terms: ['settings', 'security', 'password', 'email'] },
@@ -405,7 +404,6 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
             { section: 'make-assessment', terms: ['make assessment', 'create assessment', 'assessment builder'] },
             { section: 'general-assessment', terms: ['general assessment', 'saved assessment'] },
             { section: 'bookmarked-talents', terms: ['bookmarked talent', 'saved candidate'] },
-            { section: 'inbox', terms: ['inbox', 'message', 'reply'] },
             { section: 'about-jumptake', terms: ['about', 'jumptake', 'help', 'guide'] },
             { section: 'application-tracking', terms: ['tracking', 'ats', 'application tracking', 'performance', 'analytics', 'hiring rate'] },
             { section: 'dashboard', terms: ['dashboard', 'overview'] }
@@ -427,6 +425,13 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     const handleOpenNotification = (notification) => {
         const payload = notification?.payload || {};
         const nextSection = notification?.section || 'notifications';
+
+        if (nextSection === 'inbox') {
+            setPendingInboxCount(0);
+            localStorage.setItem('jumptakeEmployerInboxSeenAt', String(Date.now()));
+            window.dispatchEvent(new CustomEvent('jumptake-open-employer-messenger', { detail: payload }));
+            return;
+        }
 
         if (nextSection === 'manage-jobs' && payload.jobId) {
             localStorage.setItem('jumptakeEmployerManagedJobId', String(payload.jobId));
@@ -551,13 +556,6 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                     onBack={goToPreviousSection}
                     onFooterBack={goToPreviousSection}
                 />;
-            case 'inbox':
-                return <Inbox
-                    mode="employer"
-                    companyId={employer?.companyId}
-                    onBack={goToPreviousSection}
-                    onFooterBack={goToPreviousSection}
-                />;
             case 'notifications':
                 return <Notifications
                     mode="employer"
@@ -670,13 +668,17 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                             </div>
 
                             <div className="dashboard-card">
-                                <h3>Inbox</h3>
+                                <h3>Messages</h3>
                                 <p>Read and reply to candidate messages</p>
                                 <button
                                     className="card-button"
-                                    onClick={() => switchSection('inbox')}
+                                    onClick={() => {
+                                        setPendingInboxCount(0);
+                                        localStorage.setItem('jumptakeEmployerInboxSeenAt', String(Date.now()));
+                                        window.dispatchEvent(new CustomEvent('jumptake-open-employer-messenger'));
+                                    }}
                                 >
-                                    Open Inbox
+                                    Open Messages
                                 </button>
                             </div>
 
@@ -776,6 +778,15 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                     )}
                     {renderContent()}
                 </main>
+                <FloatingMessenger
+                    mode="employer"
+                    companyId={employer?.companyId}
+                    unreadCount={pendingInboxCount}
+                    onSeen={() => {
+                        setPendingInboxCount(0);
+                        localStorage.setItem('jumptakeEmployerInboxSeenAt', String(Date.now()));
+                    }}
+                />
             </div>
         </div>
     );

@@ -1,7 +1,9 @@
 const axios = require('axios');
 const JobSeeker = require('../models/JobSeeker');
 const Company = require('../models/Company');
+const User = require('../models/User');
 const { createNotification } = require('./notificationController');
+const { getAuthenticatedUserId } = require('../utils/candidateAuth');
 
 
 
@@ -16,7 +18,7 @@ const parseResume = async (req, res) => {
         console.log('[RESUME] Step 1: Received resume text (' + resumeText.length + ' chars)');
         console.log('[RESUME] Step 2: GEMINI_API_KEY present?', !!process.env.GEMINI_API_KEY);
         
-        const processedData = await processResumeWithGemini(resumeText);
+        const processedData = normalizeProcessedResumeData(await processResumeWithGemini(resumeText));
         console.log('[RESUME] Step 3: Gemini processing complete');
         
         // Try to save to MongoDB, but don't fail the whole request if DB is down
@@ -56,6 +58,32 @@ const parseResume = async (req, res) => {
 
 
 const handleResume = parseResume;
+
+const normalizeStringListField = (value) => {
+    if (Array.isArray(value)) {
+        return value
+            .flatMap((item) => String(item ?? '').split(/[\n,;|]+/))
+            .map((item) => item.trim())
+            .filter(Boolean);
+    }
+
+    if (typeof value === 'string') {
+        return value
+            .split(/[\n,;|]+/)
+            .map((item) => item.trim())
+            .filter(Boolean);
+    }
+
+    return value ?? [];
+};
+
+const normalizeProcessedResumeData = (processedData = {}) => ({
+    ...processedData,
+    skills: normalizeStringListField(processedData.skills),
+    interests: normalizeStringListField(processedData.interests),
+    hobbies: normalizeStringListField(processedData.hobbies),
+    achievements: normalizeStringListField(processedData.achievements)
+});
 
 const processResumeWithGemini = async (resumeText) => {
     const apiKey = process.env.GEMINI_API_KEY;
@@ -366,11 +394,74 @@ const updateResumeAnalysis = async (req, res) => {
     }
 };
 
+const replaceResume = async (req, res) => {
+    try {
+        const authenticatedUserId = getAuthenticatedUserId(req);
+        const resumeText = String(req.body.resumeText || '').trim();
+
+        if (!resumeText) {
+            return res.status(400).json({ error: 'No resume text provided' });
+        }
+
+        const user = await User.findById(authenticatedUserId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const processedData = normalizeProcessedResumeData(await processResumeWithGemini(resumeText));
+        let jobSeeker = user.jobSeekerId
+            ? await JobSeeker.findById(user.jobSeekerId)
+            : await JobSeeker.findOne({ user: authenticatedUserId });
+
+        if (!jobSeeker) {
+            jobSeeker = new JobSeeker({ user: authenticatedUserId });
+        }
+
+        [
+            'name',
+            'email',
+            'education',
+            'degrees',
+            'experience',
+            'skills',
+            'achievements',
+            'interests',
+            'hobbies'
+        ].forEach((field) => {
+            if (processedData[field] !== undefined) {
+                jobSeeker[field] = processedData[field];
+            }
+        });
+
+        jobSeeker.resumeText = resumeText;
+        jobSeeker.user = authenticatedUserId;
+        await jobSeeker.save();
+
+        if (String(user.jobSeekerId || '') !== String(jobSeeker._id)) {
+            user.jobSeekerId = jobSeeker._id;
+            await user.save();
+        }
+
+        return res.status(200).json({
+            message: 'Resume replaced and profile updated successfully',
+            jobSeekerId: jobSeeker._id,
+            data: jobSeeker
+        });
+    } catch (error) {
+        console.error('Error replacing resume:', error.message);
+        return res.status(error.status || 500).json({
+            error: 'Failed to replace resume',
+            message: error.message
+        });
+    }
+};
+
 
 module.exports = {
     handleResume,
     parseResume,
     linkResumeToUser,
     getResumeAnalysisByUserId,
-    updateResumeAnalysis
+    updateResumeAnalysis,
+    replaceResume
 };

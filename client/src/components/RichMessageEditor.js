@@ -7,16 +7,16 @@ const emojiOptions = emojiContext.keys().map((key) => ({
 }));
 
 const toolbarActions = [
-    { command: 'bold', label: 'B', title: 'Bold' },
-    { command: 'italic', label: 'I', title: 'Italic' },
-    { command: 'underline', label: 'U', title: 'Underline' },
-    { command: 'justifyLeft', label: 'Left', title: 'Align left' },
-    { command: 'justifyCenter', label: 'Center', title: 'Align center' },
-    { command: 'justifyRight', label: 'Right', title: 'Align right' },
-    { command: 'insertUnorderedList', label: 'Bullets', title: 'Bullet list' },
-    { command: 'undo', label: 'Undo', title: 'Undo' },
-    { command: 'redo', label: 'Redo', title: 'Redo' },
-    { command: 'removeFormat', label: 'Clear', title: 'Clear formatting' }
+    { command: 'bold', label: 'B', title: 'Bold', trackState: true },
+    { command: 'italic', label: 'I', title: 'Italic', trackState: true },
+    { command: 'underline', label: 'U', title: 'Underline', trackState: true },
+    { command: 'justifyLeft', label: 'Left', title: 'Align left', trackState: true },
+    { command: 'justifyCenter', label: 'Center', title: 'Align center', trackState: true },
+    { command: 'justifyRight', label: 'Right', title: 'Align right', trackState: true },
+    { command: 'insertUnorderedList', label: 'Bullets', title: 'Bullet list', trackState: true },
+    { command: 'undo', label: 'Undo', title: 'Undo', trackState: false },
+    { command: 'redo', label: 'Redo', title: 'Redo', trackState: false },
+    { command: 'removeFormat', label: 'Clear', title: 'Clear formatting', trackState: false }
 ];
 
 const RichMessageEditor = ({
@@ -30,6 +30,7 @@ const RichMessageEditor = ({
 }) => {
     const editorRef = useRef(null);
     const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
+    const [activeCommands, setActiveCommands] = useState({});
 
     useEffect(() => {
         if (editorRef.current && editorRef.current.innerHTML !== value) {
@@ -37,12 +38,59 @@ const RichMessageEditor = ({
         }
     }, [value]);
 
+    const selectionBelongsToEditor = () => {
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0 || !editorRef.current) {
+            return false;
+        }
+
+        const anchorNode = selection.anchorNode;
+        const focusNode = selection.focusNode;
+
+        return (
+            (!!anchorNode && editorRef.current.contains(anchorNode)) ||
+            (!!focusNode && editorRef.current.contains(focusNode))
+        );
+    };
+
+    const syncToolbarState = () => {
+        if (!editorRef.current || !selectionBelongsToEditor()) {
+            setActiveCommands({});
+            return;
+        }
+
+        const nextState = {};
+
+        toolbarActions.forEach((action) => {
+            if (!action.trackState) {
+                return;
+            }
+
+            try {
+                nextState[action.command] = Boolean(document.queryCommandState(action.command));
+            } catch (error) {
+                nextState[action.command] = false;
+            }
+        });
+
+        setActiveCommands(nextState);
+    };
+
+    useEffect(() => {
+        const handleSelectionChange = () => syncToolbarState();
+
+        document.addEventListener('selectionchange', handleSelectionChange);
+        return () => document.removeEventListener('selectionchange', handleSelectionChange);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     const runCommand = (command) => {
         editorRef.current?.focus();
         document.execCommand(command, false, null);
         if (editorRef.current) {
             onChange(editorRef.current.innerHTML);
         }
+        window.requestAnimationFrame(syncToolbarState);
     };
 
     const insertEmoji = (emoji) => {
@@ -56,6 +104,7 @@ const RichMessageEditor = ({
             onChange(editorRef.current.innerHTML);
         }
         setEmojiPickerOpen(false);
+        window.requestAnimationFrame(syncToolbarState);
     };
 
     const handleSubmit = () => {
@@ -72,6 +121,9 @@ const RichMessageEditor = ({
                         key={action.command}
                         type="button"
                         title={action.title}
+                        className={activeCommands[action.command] ? 'is-active' : ''}
+                        aria-pressed={action.trackState ? Boolean(activeCommands[action.command]) : undefined}
+                        onMouseDown={(event) => event.preventDefault()}
                         onClick={() => runCommand(action.command)}
                     >
                         {action.label}
@@ -119,6 +171,9 @@ const RichMessageEditor = ({
                         aria-label={placeholder}
                         data-placeholder={placeholder}
                         onInput={() => onChange(editorRef.current?.innerHTML || '')}
+                        onFocus={syncToolbarState}
+                        onKeyUp={syncToolbarState}
+                        onMouseUp={syncToolbarState}
                         suppressContentEditableWarning
                     />
                     <button
@@ -142,6 +197,9 @@ const RichMessageEditor = ({
                     aria-label={placeholder}
                     data-placeholder={placeholder}
                     onInput={() => onChange(editorRef.current?.innerHTML || '')}
+                    onFocus={syncToolbarState}
+                    onKeyUp={syncToolbarState}
+                    onMouseUp={syncToolbarState}
                     suppressContentEditableWarning
                 />
             )}

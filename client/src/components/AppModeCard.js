@@ -12,7 +12,6 @@ const AppModeCard = ({ appMode = 'dark', onAppModeChange }) => {
     return (
         <div className="settings-card app-mode-card">
             <div className="app-mode-copy">
-                <span className="settings-eyebrow">App Mode</span>
                 <h3>App Mode</h3>
                 <p>Switch between the current dark mode and a clean light mode across JumpTake.</p>
             </div>

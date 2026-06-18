@@ -24,6 +24,7 @@ const { getAuthenticatedPayload } = require('../utils/candidateAuth');
 router.post('/upload', resumeController.handleResume);
 router.post('/resume/parse', resumeController.handleResume);
 router.post('/resume/link', resumeController.linkResumeToUser);
+router.post('/resume/replace', resumeController.replaceResume);
 router.get('/resume/analysis/:userId', resumeController.getResumeAnalysisByUserId);
 router.put('/resume/analysis/:jobSeekerId', resumeController.updateResumeAnalysis);
 

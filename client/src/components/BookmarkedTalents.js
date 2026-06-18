@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ContactCandidate from './ContactCandidate';
 
 const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
@@ -11,6 +11,7 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
     const [isMobileView, setIsMobileView] = useState(() => (
         typeof window !== 'undefined' ? window.innerWidth <= 768 : false
     ));
+    const containerRef = useRef(null);
 
     useEffect(() => {
         fetchBookmarks();
@@ -89,6 +90,17 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
         }
     };
 
+    const changePage = (nextPage) => {
+        setCurrentPage(nextPage);
+        window.requestAnimationFrame(() => {
+            const scrollParent = containerRef.current?.closest('.mobile-dashboard-section-panel, .main-content');
+            if (scrollParent) {
+                scrollParent.scrollTop = 0;
+            }
+            containerRef.current?.scrollIntoView({ block: 'start', behavior: 'auto' });
+        });
+    };
+
     const renderList = (items, emptyMessage) => {
         if (!items || (Array.isArray(items) && items.length === 0)) {
             return <p className="empty-info">{emptyMessage}</p>;
@@ -129,7 +141,7 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
     }
 
     return (
-        <div className="talent-pool-container">
+        <div ref={containerRef} className="talent-pool-container">
             <div className="talent-pool-header">
                 <h2>Bookmarked Talents</h2>
             </div>
@@ -162,11 +174,11 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
 
             {isMobileView && totalPages > 1 && !loading && !selectedCandidate && (
                 <div className="mobile-list-pagination" aria-label="Bookmarked talent pages">
-                    <button type="button" className="secondary-button" onClick={() => setCurrentPage((page) => Math.max(1, page - 1))} disabled={currentPage === 1}>
+                    <button type="button" className="secondary-button" onClick={() => changePage(Math.max(1, currentPage - 1))} disabled={currentPage === 1}>
                         Previous
                     </button>
                     <span>Page {currentPage} of {totalPages}</span>
-                    <button type="button" className="secondary-button" onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))} disabled={currentPage === totalPages}>
+                    <button type="button" className="secondary-button" onClick={() => changePage(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages}>
                         Next
                     </button>
                 </div>

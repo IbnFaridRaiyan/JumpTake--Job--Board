@@ -240,8 +240,11 @@ const getConnections = async (req, res) => {
                 ? connection.recipient?._id
                 : connection.requester?._id
         )).filter(Boolean);
+        const relatedUsers = await User.find({ _id: { $in: relatedUserIds } })
+            .select('email jumptakeId');
+        const userMap = new Map(relatedUsers.map((user) => [String(user._id), user]));
         const profiles = await JobSeeker.find({ user: { $in: relatedUserIds } })
-            .select('user name skills education experience');
+            .select('user name email skills education experience achievements interests hobbies');
         const profileMap = new Map(profiles.map((profile) => [String(profile.user), profile]));
 
         const serialize = (connection) => {
@@ -249,6 +252,10 @@ const getConnections = async (req, res) => {
             const peerUser = requesterId === userId ? connection.recipient : connection.requester;
             const peerId = String(peerUser?._id || peerUser);
             const profile = profileMap.get(peerId);
+            const peerAccount = userMap.get(peerId);
+            const fallbackName = peerAccount?.email
+                ? String(peerAccount.email).split('@')[0]
+                : 'Candidate';
 
             return {
                 _id: connection._id,
@@ -256,10 +263,17 @@ const getConnections = async (req, res) => {
                 direction: requesterId === userId ? 'outgoing' : 'incoming',
                 createdAt: connection.createdAt,
                 peer: {
+                    candidateId: profile?._id || null,
                     userId: peerId,
-                    jumptakeId: peerUser?.jumptakeId || null,
-                    name: profile?.name || 'Candidate',
-                    skills: profile?.skills || []
+                    jumptakeId: peerUser?.jumptakeId || peerAccount?.jumptakeId || null,
+                    name: profile?.name || fallbackName,
+                    email: profile?.email || peerAccount?.email || '',
+                    skills: profile?.skills || [],
+                    education: profile?.education || [],
+                    experience: profile?.experience || [],
+                    achievements: profile?.achievements || [],
+                    interests: profile?.interests || [],
+                    hobbies: profile?.hobbies || []
                 }
             };
         };
@@ -303,12 +317,18 @@ const respondToConnection = async (req, res) => {
             }
             connection.status = 'declined';
             connection.respondedAt = new Date();
+        } else if (action === 'cancel') {
+            if (String(connection.requester) !== userId || connection.status !== 'pending') {
+                return res.status(400).json({ error: 'This invitation cannot be cancelled' });
+            }
+            await connection.deleteOne();
+            return res.status(200).json({ message: 'Invitation cancelled' });
         } else if (action === 'block') {
             connection.status = 'blocked';
             connection.blockedBy = userId;
             connection.respondedAt = new Date();
         } else {
-            return res.status(400).json({ error: 'Use accept, decline, or block' });
+            return res.status(400).json({ error: 'Use accept, decline, cancel, or block' });
         }
 
         await connection.save();

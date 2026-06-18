@@ -85,6 +85,42 @@ const getInitialCandidateSection = () => {
     return CANDIDATE_SECTION_IDS.has(storedSection) ? storedSection : 'job-feed';
 };
 
+const normalizeStringList = (value) => {
+    if (Array.isArray(value)) {
+        return value
+            .flatMap((item) => (
+                typeof item === 'string'
+                    ? item.split(/[\n,;|]+/)
+                    : [String(item ?? '')]
+            ))
+            .map((item) => String(item).trim())
+            .filter(Boolean);
+    }
+
+    if (typeof value === 'string') {
+        return value
+            .split(/[\n,;|]+/)
+            .map((item) => item.trim())
+            .filter(Boolean);
+    }
+
+    return [];
+};
+
+const normalizeCandidateProfile = (profile) => {
+    if (!profile || typeof profile !== 'object') {
+        return profile;
+    }
+
+    return {
+        ...profile,
+        skills: normalizeStringList(profile.skills),
+        interests: normalizeStringList(profile.interests),
+        hobbies: normalizeStringList(profile.hobbies),
+        achievements: Array.isArray(profile.achievements) ? profile.achievements : normalizeStringList(profile.achievements)
+    };
+};
+
 const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const [activeSection, setActiveSection] = useState(getInitialCandidateSection);
     const sectionHistoryRef = useRef([]);
@@ -107,6 +143,9 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const mobilePanelRef = useRef(null);
     const navigate = useNavigate();
     const dashboardLogo = appMode === 'dark' ? logoDark : logo;
+    const displayEmail = typeof user?.email === 'string' ? user.email : '';
+    const displayName = displayEmail.includes('@') ? displayEmail.split('@')[0] : (displayEmail || 'User');
+    const displayInitial = displayName ? displayName.charAt(0).toUpperCase() : 'U';
 
     const updateActiveSection = (section, { push = true } = {}) => {
         if (!CANDIDATE_SECTION_IDS.has(section)) {
@@ -136,7 +175,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         inbox: 'Inbox',
         notifications: 'Notifications',
         'view-candidates': 'View Candidates',
-        'friend-invitations': 'Friend Invitations',
+        'friend-invitations': 'Friends',
         'bookmarked-candidates': 'Bookmarked Candidates',
         'interested-jobs': 'Job Preferences',
         profile: 'My Profile',
@@ -314,7 +353,8 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
 
             const data = await response.json();
             console.log('Job seeker data retrieved successfully');
-            setJobSeekerData(data);
+            const normalizedData = normalizeCandidateProfile(data);
+            setJobSeekerData(normalizedData);
 
             try {
                 const analysisResponse = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/resume/analysis/${user.id}`, {
@@ -327,7 +367,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     const analysisData = await analysisResponse.json();
 
                     if (analysisData && !data.skills && analysisData.skills) {
-                        setJobSeekerData({ ...data, ...analysisData });
+                        setJobSeekerData(normalizeCandidateProfile({ ...data, ...analysisData }));
                     }
                 }
             } catch (analysisError) {
@@ -523,7 +563,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         { id: 'inbox', label: 'Inbox', icon: 'inbox', notification: pendingInboxCount > 0 },
         { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 },
         { id: 'view-candidates', label: 'View Candidates', icon: 'users' },
-        { id: 'friend-invitations', label: 'Friend Invitations', icon: 'user-plus' },
+        { id: 'friend-invitations', label: 'Friends', icon: 'user-plus' },
         { id: 'bookmarked-candidates', label: 'Bookmarked Candidates', icon: 'heart' },
         { id: 'applications', label: 'My Applications', icon: 'profile' },
         { id: 'assessments', label: 'My Assessments', icon: 'assessment', notification: pendingAssessmentCount > 0 },
@@ -806,7 +846,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     </div>
                     <div className="dashboard-title candidate-dashboard-title">
                         <h1>Candidate Portal</h1>
-                        <p>Welcome back, {user?.email.split('@')[0] || 'User'}</p>
+                        <p>Welcome back, {displayName}</p>
                     </div>
                 </div>
                 <div className="loading-spinner">Loading your dashboard...</div>
@@ -829,7 +869,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                 </div>
                 <div className="dashboard-title candidate-dashboard-title">
                     <h1>Candidate Portal</h1>
-                    <p>Welcome back, {user?.email.split('@')[0] || 'User'}</p>
+                    <p>Welcome back, {displayName}</p>
                 </div>
                 <DashboardSearch onSearch={handleDashboardSearch} />
             </div>
@@ -868,9 +908,9 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
 
             <div className={`dashboard-container ${mobileSectionVisible ? 'mobile-section-open' : ''}`}>
                 <PortalSidebar
-                    userName={user?.email.split('@')[0] || 'User'}
-                    userSubtitle={user?.email || ''}
-                    userInitial={user?.email.charAt(0).toUpperCase() || 'U'}
+                    userName={displayName}
+                    userSubtitle={displayEmail}
+                    userInitial={displayInitial}
                     primaryItems={candidatePrimaryNavItems}
                     secondaryItems={candidateSecondaryNavItems}
                     onLogout={handleLogout}

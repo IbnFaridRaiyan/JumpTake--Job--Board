@@ -61,6 +61,23 @@ const splitMultilineValue = (value = '') => (
         .filter(Boolean)
 );
 
+const normalizeSkillList = (value) => {
+    if (Array.isArray(value)) {
+        return value
+            .map((item) => String(item).trim())
+            .filter(Boolean);
+    }
+
+    if (typeof value === 'string') {
+        return value
+            .split(/[\n,;|]+/)
+            .map((item) => item.trim())
+            .filter(Boolean);
+    }
+
+    return [];
+};
+
 const createApplicationProfileDraft = (profileData, userData = {}) => ({
     name: profileData?.name || '',
     email: profileData?.email || userData?.email || '',
@@ -245,6 +262,18 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
     const [isDesktopView, setIsDesktopView] = useState(() => (
         typeof window !== 'undefined' ? window.innerWidth > 768 : true
     ));
+
+    const changeJobPage = (nextPage) => {
+        setCurrentJobPage(nextPage);
+        window.requestAnimationFrame(() => {
+            const container = document.querySelector('.mobile-section-job-feed .job-feed-container, .job-feed-container');
+            const scrollParent = container?.closest('.mobile-dashboard-section-panel, .main-content');
+            if (scrollParent) {
+                scrollParent.scrollTop = 0;
+            }
+            container?.scrollIntoView({ block: 'start', behavior: 'auto' });
+        });
+    };
     
     
     const [showFilters, setShowFilters] = useState(false);
@@ -274,6 +303,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
     const [companyLoading, setCompanyLoading] = useState(false);
     const [companyError, setCompanyError] = useState('');
     const resolvedUser = currentUser || JSON.parse(localStorage.getItem('user') || '{}');
+    const candidateSkills = normalizeSkillList(jobSeekerData?.skills);
 
     useEffect(() => {
         const handleResize = () => {
@@ -309,11 +339,11 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
 
    
     useEffect(() => {
-        if (jobSeekerData && jobSeekerData.skills && jobSeekerData.skills.length > 0) {
+        if (candidateSkills.length > 0) {
             fetchRecommendedJobs();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [jobSeekerData, jobs]);
+    }, [candidateSkills.length, jobSeekerData, jobs]);
 
     useEffect(() => {
         if (!userId) {
@@ -895,10 +925,10 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
     };
 
     const getMatchScore = (job) => {
-        if (!jobSeekerData || !jobSeekerData.skills || !job.skills) return 0;
+        if (candidateSkills.length === 0 || !Array.isArray(job?.skills)) return 0;
         
-        const userSkills = jobSeekerData.skills;
-        const jobSkills = job.skills;
+        const userSkills = candidateSkills;
+        const jobSkills = job.skills.map((skill) => String(skill).trim()).filter(Boolean);
         
         const matchingSkills = userSkills.filter(skill => 
             jobSkills.some(jobSkill => 
@@ -928,7 +958,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
             <div className="job-feed-header">
                 <div className="job-feed-title">
                     <h2>Job Feed</h2>
-                    {jobSeekerData && jobSeekerData.skills && jobSeekerData.skills.length > 0 && (
+                    {candidateSkills.length > 0 && (
                         <div className="job-feed-tabs">
                             <button 
                                 className={`tab-button ${activeTab === 'all' ? 'active' : ''}`}
@@ -1071,7 +1101,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                     {displayedJobs.length > 0 ? (
                         pagedJobs.map(job => {
                             const matchScore = getMatchScore(job);
-                            const hasMatchScore = activeTab === 'all' && matchScore > 0 && jobSeekerData && jobSeekerData.skills;
+                            const hasMatchScore = activeTab === 'all' && matchScore > 0 && candidateSkills.length > 0;
                             const hasApplied = appliedJobIds.includes(String(job._id));
                             const isBookmarked = bookmarkedJobIds.includes(String(job._id));
                             
@@ -1111,11 +1141,9 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                                                 <strong>Skills:</strong> 
                                                 <div className="skill-tags">
                                                     {job.skills.map((skill, index) => {
-                                                        const isMatch = jobSeekerData && 
-                                                            Array.isArray(jobSeekerData.skills) && 
-                                                            jobSeekerData.skills.some(s => 
+                                                        const isMatch = candidateSkills.some(s => 
                                                                 s.toLowerCase() === skill.toLowerCase()
-                                                            );
+                                                        );
                                                         
                                                         return (
                                                             <span 
@@ -1155,7 +1183,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                             <button
                                 type="button"
                                 className="secondary-button"
-                                onClick={() => setCurrentJobPage((page) => Math.max(1, page - 1))}
+                                onClick={() => changeJobPage(Math.max(1, currentJobPage - 1))}
                                 disabled={currentJobPage === 1}
                             >
                                 Previous
@@ -1164,7 +1192,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                             <button
                                 type="button"
                                 className="secondary-button"
-                                onClick={() => setCurrentJobPage((page) => Math.min(totalJobPages, page + 1))}
+                                onClick={() => changeJobPage(Math.min(totalJobPages, currentJobPage + 1))}
                                 disabled={currentJobPage === totalJobPages}
                             >
                                 Next
@@ -1303,11 +1331,9 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                                     <h3>Skills</h3>
                                     <div className="preview-skills">
                                         {previewJob.skills.map((skill, index) => {
-                                            const isMatch = jobSeekerData && 
-                                                Array.isArray(jobSeekerData.skills) && 
-                                                jobSeekerData.skills.some(s => 
+                                            const isMatch = candidateSkills.some(s => 
                                                     s.toLowerCase() === skill.toLowerCase()
-                                                );
+                                            );
                                             
                                             return (
                                                 <span 

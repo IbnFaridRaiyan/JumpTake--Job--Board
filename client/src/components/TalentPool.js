@@ -20,6 +20,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         typeof window !== 'undefined' ? window.innerWidth <= 768 : false
     ));
     const candidateProfileRef = useRef(null);
+    const talentPoolRef = useRef(null);
 
     useEffect(() => {
         fetchCandidates();
@@ -206,6 +207,17 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         setSelectedCandidate(null);
     };
 
+    const changeCandidatePage = (nextPage) => {
+        setCurrentCandidatePage(nextPage);
+        window.requestAnimationFrame(() => {
+            const scrollParent = talentPoolRef.current?.closest('.mobile-dashboard-section-panel, .main-content');
+            if (scrollParent) {
+                scrollParent.scrollTop = 0;
+            }
+            talentPoolRef.current?.scrollIntoView({ block: 'start', behavior: 'auto' });
+        });
+    };
+
     const toggleTalentBookmark = async (candidate, event) => {
         if (event) {
             event.stopPropagation();
@@ -333,12 +345,54 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
             if (candidateId) {
                 setCandidates((currentCandidates) => currentCandidates.map((candidate) => (
                     String(candidate._id) === String(candidateId)
-                        ? { ...candidate, connectionStatus: { status: 'pending', direction: 'outgoing' } }
+                        ? {
+                            ...candidate,
+                            connectionStatus: {
+                                id: data.connection?._id,
+                                status: 'pending',
+                                direction: 'outgoing'
+                            }
+                        }
                         : candidate
                 )));
             } else {
                 setShowAddFriend(false);
             }
+        } catch (friendError) {
+            setFriendNotice(`Error: ${friendError.message}`);
+        } finally {
+            setSendingFriendRequest(false);
+        }
+    };
+
+    const cancelFriendRequest = async (candidate) => {
+        const connectionId = candidate.connectionStatus?.id;
+        if (!connectionId || candidate.connectionStatus?.direction !== 'outgoing') {
+            return;
+        }
+
+        try {
+            setSendingFriendRequest(true);
+            setFriendNotice('');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/candidate-connections/${connectionId}/respond`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({ action: 'cancel' })
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to cancel friend invitation');
+            }
+
+            setCandidates((currentCandidates) => currentCandidates.map((currentCandidate) => (
+                String(currentCandidate._id) === String(candidate._id)
+                    ? { ...currentCandidate, connectionStatus: null }
+                    : currentCandidate
+            )));
+            setFriendNotice('Friend invitation cancelled.');
         } catch (friendError) {
             setFriendNotice(`Error: ${friendError.message}`);
         } finally {
@@ -559,7 +613,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
     };
 
     return (
-        <div className={`talent-pool-container ${mode === 'candidate' ? 'candidate-view-candidates' : ''}`}>
+        <div ref={talentPoolRef} className={`talent-pool-container ${mode === 'candidate' ? 'candidate-view-candidates' : ''}`}>
             <div className="talent-pool-header">
                 <h2>{mode === 'candidate' ? 'View Candidates' : 'Talent Pool'}</h2>
                 {mode === 'employer' && (
@@ -781,44 +835,48 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                                 return (
                                 <div key={candidate._id} className="candidate-card" onClick={() => handleViewProfile(candidate)}>
                                     {mode === 'candidate' && (
-                                        <button
-                                            type="button"
-                                            className={`candidate-add-friend-button ${candidate.connectionStatus?.status || 'is-new'}`}
-                                            onClick={(event) => {
-                                                event.stopPropagation();
-                                                if (!candidate.connectionStatus) {
-                                                    sendFriendRequest({ candidateId: candidate._id });
-                                                }
-                                            }}
-                                            disabled={sendingFriendRequest || Boolean(candidate.connectionStatus)}
-                                            aria-label={candidate.connectionStatus?.status === 'accepted'
-                                                ? 'Already friends'
-                                                : candidate.connectionStatus?.status === 'pending'
-                                                    ? 'Friend invitation pending'
-                                                    : `Add ${candidate.name || 'candidate'} as a friend`}
-                                            title={candidate.connectionStatus?.status === 'accepted'
-                                                ? 'Friends'
-                                                : candidate.connectionStatus?.status === 'pending'
-                                                    ? 'Invitation pending'
-                                                    : 'Add friend'}
-                                        >
-                                            {candidate.connectionStatus?.status === 'accepted' ? (
-                                                <span className="candidate-add-friend-state" aria-hidden="true">&#10003;</span>
-                                            ) : candidate.connectionStatus?.status === 'pending' ? (
-                                                <span className="candidate-add-friend-state" aria-hidden="true">&#8230;</span>
-                                            ) : (
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 24 24"
-                                                    className="candidate-add-friend-icon"
-                                                    aria-hidden="true"
-                                                >
-                                                    <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" strokeWidth="1.5"></path>
-                                                    <path d="M8 12H16" strokeWidth="1.5"></path>
-                                                    <path d="M12 16V8" strokeWidth="1.5"></path>
-                                                </svg>
-                                            )}
-                                        </button>
+                                        <div className="candidate-connection-corner-anchor">
+                                            <button
+                                                type="button"
+                                                className={`candidate-connection-corner-button ${candidate.connectionStatus?.status || 'is-new'}`}
+                                                onClick={(event) => {
+                                                    event.stopPropagation();
+                                                    if (!candidate.connectionStatus) {
+                                                        sendFriendRequest({ candidateId: candidate._id });
+                                                    } else if (candidate.connectionStatus.status === 'pending' && candidate.connectionStatus.direction === 'outgoing') {
+                                                        cancelFriendRequest(candidate);
+                                                    }
+                                                }}
+                                                disabled={sendingFriendRequest || candidate.connectionStatus?.status === 'accepted' || (candidate.connectionStatus?.status === 'pending' && candidate.connectionStatus?.direction !== 'outgoing')}
+                                                aria-label={candidate.connectionStatus?.status === 'accepted'
+                                                    ? 'Already friends'
+                                                    : candidate.connectionStatus?.status === 'pending'
+                                                        ? (candidate.connectionStatus?.direction === 'outgoing' ? 'Unsend friend invitation' : 'Friend invitation pending')
+                                                        : `Add ${candidate.name || 'candidate'} as a friend`}
+                                                title={candidate.connectionStatus?.status === 'accepted'
+                                                    ? 'Friends'
+                                                    : candidate.connectionStatus?.status === 'pending'
+                                                        ? (candidate.connectionStatus?.direction === 'outgoing' ? 'Unsend invitation' : 'Invitation pending')
+                                                        : 'Add friend'}
+                                            >
+                                                {candidate.connectionStatus?.status === 'accepted' ? (
+                                                    <span className="candidate-connection-corner-state" aria-hidden="true">&#10003;</span>
+                                                ) : candidate.connectionStatus?.status === 'pending' ? (
+                                                    <span className="candidate-connection-corner-state" aria-hidden="true">&#8230;</span>
+                                                ) : (
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        viewBox="0 0 24 24"
+                                                        className="candidate-connection-corner-icon"
+                                                        aria-hidden="true"
+                                                    >
+                                                        <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" strokeWidth="1.5"></path>
+                                                        <path d="M8 12H16" strokeWidth="1.5"></path>
+                                                        <path d="M12 16V8" strokeWidth="1.5"></path>
+                                                    </svg>
+                                                )}
+                                            </button>
+                                        </div>
                                     )}
                                     <button
                                         type="button"
@@ -880,7 +938,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                                 <button
                                     type="button"
                                     className="secondary-button"
-                                    onClick={() => setCurrentCandidatePage((page) => Math.max(1, page - 1))}
+                                    onClick={() => changeCandidatePage(Math.max(1, currentCandidatePage - 1))}
                                     disabled={currentCandidatePage === 1}
                                 >
                                     Previous
@@ -889,7 +947,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                                 <button
                                     type="button"
                                     className="secondary-button"
-                                    onClick={() => setCurrentCandidatePage((page) => Math.min(totalCandidatePages, page + 1))}
+                                    onClick={() => changeCandidatePage(Math.min(totalCandidatePages, currentCandidatePage + 1))}
                                     disabled={currentCandidatePage === totalCandidatePages}
                                 >
                                     Next

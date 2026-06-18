@@ -183,8 +183,6 @@ const ManageJobs = forwardRef(({ jobs, companyId, onJobUpdated, onBack, onFooter
     
     return (
         <div className="manage-jobs-container">
-            <div className="manage-jobs-mobile-local-title" aria-hidden="true">Manage Jobs</div>
-            
             {message && (
                 <div className={`notification-message ${message.includes('Error') ? 'error' : 'success'}`}>
                     {message}

@@ -1,4 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import * as pdfjsLib from 'pdfjs-dist';
+import mammoth from 'mammoth';
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
 const UserProfile = ({ userId, jumptakeId: initialJumpTakeId, onUpdate, switchSection, onFooterBack }) => {
     const [jobSeekerData, setJobSeekerData] = useState(null);
@@ -17,6 +21,8 @@ const UserProfile = ({ userId, jumptakeId: initialJumpTakeId, onUpdate, switchSe
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState('');
     const [jumptakeId, setJumpTakeId] = useState(initialJumpTakeId || '');
+    const [isReplacingResume, setIsReplacingResume] = useState(false);
+    const resumeInputRef = useRef(null);
     
     useEffect(() => {
         if (userId) {
@@ -263,6 +269,114 @@ const UserProfile = ({ userId, jumptakeId: initialJumpTakeId, onUpdate, switchSe
             switchSection('job-feed');
         }
     };
+
+    const parseResumeFile = (file) => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error('Could not read the selected resume.'));
+
+        if (file.type === 'text/plain') {
+            reader.onload = (event) => resolve(String(event.target.result || ''));
+            reader.readAsText(file);
+            return;
+        }
+
+        if (file.type === 'application/pdf') {
+            reader.onload = async (event) => {
+                try {
+                    const pdf = await pdfjsLib.getDocument(new Uint8Array(event.target.result)).promise;
+                    let resumeText = '';
+                    for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
+                        const page = await pdf.getPage(pageNumber);
+                        const content = await page.getTextContent();
+                        resumeText += `${content.items.map((item) => item.str).join(' ')}\n`;
+                    }
+                    resolve(resumeText);
+                } catch (error) {
+                    reject(error);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+            return;
+        }
+
+        if (file.type.includes('officedocument.wordprocessingml')) {
+            reader.onload = async (event) => {
+                try {
+                    const result = await mammoth.extractRawText({ arrayBuffer: event.target.result });
+                    resolve(result.value);
+                } catch (error) {
+                    reject(error);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+            return;
+        }
+
+        reject(new Error('Upload a PDF, DOCX, or TXT resume.'));
+    });
+
+    const handleResumeReplacement = async (event) => {
+        const file = event.target.files?.[0];
+        event.target.value = '';
+        if (!file) {
+            return;
+        }
+
+        try {
+            setIsReplacingResume(true);
+            setMessage('Scanning your new resume and rebuilding your profile...');
+            const resumeText = (await parseResumeFile(file)).trim();
+            if (!resumeText) {
+                throw new Error('No readable text was found in this resume.');
+            }
+
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/resume/replace`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({ resumeText })
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || data.message || 'Failed to replace resume');
+            }
+
+            const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+            const nextUser = { ...storedUser, jobSeekerId: data.jobSeekerId };
+            localStorage.setItem('user', JSON.stringify(nextUser));
+            localStorage.setItem('jobSeekerId', data.jobSeekerId);
+            setJobSeekerData(data.data);
+            initializeFormData(data.data);
+            setMessage('Resume scanned successfully. Your profile has been updated.');
+            onUpdate?.();
+        } catch (error) {
+            setMessage(`Error: ${error.message}`);
+        } finally {
+            setIsReplacingResume(false);
+        }
+    };
+
+    const resumeUploadControl = (
+        <>
+            <input
+                ref={resumeInputRef}
+                type="file"
+                className="profile-resume-input"
+                accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+                onChange={handleResumeReplacement}
+            />
+            <button
+                type="button"
+                className="upload-resume-button"
+                onClick={() => resumeInputRef.current?.click()}
+                disabled={isReplacingResume}
+            >
+                {isReplacingResume ? 'Scanning Resume...' : 'Upload New Resume'}
+            </button>
+        </>
+    );
     
     if (loading) {
         return (
@@ -285,9 +399,12 @@ const UserProfile = ({ userId, jumptakeId: initialJumpTakeId, onUpdate, switchSe
             <div className="profile-container">
                 <div className="profile-message">
                     <p>No profile information available. Please upload your resume in the Candidate Portal.</p>
-                    <button className="submit-button" onClick={() => window.location.href = '/job-seeker'}>
-                        Go to Resume Upload
-                    </button>
+                    {message && (
+                        <div className={`notification-message ${message.includes('Error') ? 'error' : 'success'}`}>
+                            {message}
+                        </div>
+                    )}
+                    {resumeUploadControl}
                 </div>
                 <div className="page-footer-actions">
                     <button className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
@@ -302,12 +419,15 @@ const UserProfile = ({ userId, jumptakeId: initialJumpTakeId, onUpdate, switchSe
         <div className="profile-container">
             <div className="profile-header">
                 {!isEditing ? (
-                    <button 
-                        className="edit-profile-button" 
-                        onClick={handleEditToggle}
-                    >
-                        Edit Profile
-                    </button>
+                    <div className="profile-header-actions">
+                        <button
+                            className="edit-profile-button"
+                            onClick={handleEditToggle}
+                        >
+                            Edit Profile
+                        </button>
+                        {resumeUploadControl}
+                    </div>
                 ) : null}
             </div>
             

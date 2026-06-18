@@ -17,6 +17,7 @@ import DashboardSearch from './DashboardSearch';
 import PerformanceAnalytics from './PerformanceAnalytics';
 import PortalSidebar from './PortalSidebar';
 import Notifications from './Notifications';
+import FriendInvitations from './FriendInvitations';
 import logo from './media/logo3.png';
 import logoDark from './media/logo4.png';
 
@@ -48,6 +49,7 @@ const CANDIDATE_SECTION_IDS = new Set([
     'inbox',
     'notifications',
     'view-candidates',
+    'friend-invitations',
     'bookmarked-candidates',
     'applications',
     'assessments',
@@ -134,8 +136,9 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         inbox: 'Inbox',
         notifications: 'Notifications',
         'view-candidates': 'View Candidates',
+        'friend-invitations': 'Friend Invitations',
         'bookmarked-candidates': 'Bookmarked Candidates',
-        'interested-jobs': 'Interested Job Suggession',
+        'interested-jobs': 'Job Preferences',
         profile: 'My Profile',
         'about-jumptake': 'About JumpTake',
         'progress-check': 'Progress Check',
@@ -520,13 +523,14 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         { id: 'inbox', label: 'Inbox', icon: 'inbox', notification: pendingInboxCount > 0 },
         { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 },
         { id: 'view-candidates', label: 'View Candidates', icon: 'users' },
+        { id: 'friend-invitations', label: 'Friend Invitations', icon: 'user-plus' },
         { id: 'bookmarked-candidates', label: 'Bookmarked Candidates', icon: 'heart' },
         { id: 'applications', label: 'My Applications', icon: 'profile' },
         { id: 'assessments', label: 'My Assessments', icon: 'assessment', notification: pendingAssessmentCount > 0 },
         { id: 'video-interviews', label: 'Video Interviews', icon: 'send', notification: pendingVideoInterviewCount > 0 },
         { id: 'draft-applications', label: 'Draft Applications', icon: 'draft' },
         { id: 'bookmarked-jobs', label: 'Bookmarked Jobs', icon: 'star' },
-        { id: 'interested-jobs', label: 'Interested Job Suggession', icon: 'briefcase' }
+        { id: 'interested-jobs', label: 'Job Preferences', icon: 'briefcase' }
     ].map((item) => ({
         ...item,
         active: activeSection === item.id,
@@ -560,6 +564,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             { section: 'progress-check', terms: ['progress', 'performance', 'analytics', 'rate', 'views', 'response'] },
             { section: 'inbox', terms: ['inbox', 'message', 'reply'] },
             { section: 'view-candidates', terms: ['candidate', 'candidates', 'talent', 'people', 'profile'] },
+            { section: 'friend-invitations', terms: ['friend', 'friends', 'invitation', 'request', 'connection'] },
             { section: 'bookmarked-candidates', terms: ['bookmarked candidates', 'saved candidates', 'candidate bookmarks'] },
             { section: 'about-jumptake', terms: ['about', 'jumptake', 'help', 'guide'] }
         ];
@@ -726,6 +731,8 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     onBack={goToPreviousSection}
                     onFooterBack={goToPreviousSection}
                 />;
+            case 'friend-invitations':
+                return <FriendInvitations userId={user?.id} />;
             case 'bookmarked-candidates':
                 return <BookmarkedCandidates
                     userId={user?.id}
@@ -746,6 +753,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                 console.log('Rendering profile with userId:', user?.id);
                 return <UserProfile
                     userId={user?.id}
+                    jumptakeId={user?.jumptakeId}
                     onUpdate={refreshData}
                     switchSection={switchSection}
                     onFooterBack={goToPreviousSection}

@@ -80,7 +80,7 @@ const AboutJumpTake = ({ mode = 'candidate' }) => {
             ['Video Interviews', 'Review interview invitations and select available interview dates.'],
             ['Draft Applications', 'Resume unfinished applications.'],
             ['Bookmarked Jobs', 'Return to jobs saved from the feed.'],
-            ['Interested Job Suggession', 'Update job interests so recommendations match your preferred roles.'],
+            ['Job Preferences', 'Update job interests so recommendations match your preferred roles.'],
             ['My Profile', 'Review and edit resume-derived profile details.'],
             ['Progress Check', 'View application, search, skill-match, employer-view, and response analytics.'],
             ['Settings', 'Update account, security, notifications, and contact preferences.']
@@ -123,7 +123,7 @@ const AboutJumpTake = ({ mode = 'candidate' }) => {
                     <div className="about-guide-grid">
                         <article>
                             <h3>Find matched jobs</h3>
-                            <p>Use Job Feed and Interested Job Suggession to tune recommendations around your preferred roles.</p>
+                            <p>Use Job Feed and Job Preferences to tune recommendations around your preferred roles.</p>
                         </article>
                         <article>
                             <h3>Apply and follow up</h3>

@@ -132,7 +132,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
 
         if (isDirectCandidateThread(thread)) {
             const peerCandidate = getPeerCandidate(thread);
-            return peerCandidate?.name || peerCandidate?.email || 'Candidate';
+            return peerCandidate?.name || 'Candidate';
         }
 
         return thread?.company?.name || 'Company';
@@ -144,8 +144,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
         }
 
         if (isDirectCandidateThread(thread)) {
-            const peerCandidate = getPeerCandidate(thread);
-            return peerCandidate?.email || 'Candidate chat';
+            return 'Candidate connection';
         }
 
         return thread?.company?.industry || 'Employer message';

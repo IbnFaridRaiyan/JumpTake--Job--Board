@@ -195,7 +195,8 @@ const Register = ({ jobSeekerId, initialName = '', initialEmail = '', onClose, o
                 id: loginData.user.id,
                 email: loginData.user.email,
                 jobSeekerId: jobSeekerId,
-                jobInterests: loginData.user.jobInterests || []
+                jobInterests: loginData.user.jobInterests || [],
+                jumptakeId: loginData.user.jumptakeId || registerData.user?.jumptakeId || null
             }));
             
             if (jobSeekerId) {

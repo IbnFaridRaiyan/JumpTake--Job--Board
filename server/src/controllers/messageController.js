@@ -1,6 +1,8 @@
 const MessageThread = require('../models/MessageThread');
 const JobSeeker = require('../models/JobSeeker');
+const CandidateConnection = require('../models/CandidateConnection');
 const { createNotification } = require('./notificationController');
+const { getAuthenticatedUserId } = require('../utils/candidateAuth');
 
 const sanitizeStyleAttribute = (styleValue = '') => {
     const allowedProperties = new Set([
@@ -95,12 +97,73 @@ const populateThread = (query) => query
     .populate('company', 'name industry')
     .populate('candidate', 'name email skills education experience')
     .populate('candidateUser', 'email')
-    .populate('participantUsers', 'email')
-    .populate('candidateProfiles', 'name email skills education experience user');
+    .populate('participantUsers', 'jumptakeId')
+    .populate('candidateProfiles', 'name skills education experience achievements interests hobbies user');
 
 const getDirectKey = (firstUserId, secondUserId) => (
     [String(firstUserId), String(secondUserId)].sort().join(':')
 );
+
+const getCandidateRelationship = (firstUserId, secondUserId) => (
+    CandidateConnection.findOne({ pairKey: getDirectKey(firstUserId, secondUserId) })
+);
+
+const sanitizeDirectThread = (thread) => {
+    const serialized = thread?.toObject ? thread.toObject() : { ...thread };
+    if (serialized.conversationType !== 'candidate-candidate') {
+        return serialized;
+    }
+
+    if (serialized.candidate) {
+        delete serialized.candidate.email;
+    }
+    if (serialized.candidateUser) {
+        delete serialized.candidateUser.email;
+    }
+    (serialized.candidateProfiles || []).forEach((profile) => {
+        delete profile.email;
+        delete profile.phone;
+        delete profile.address;
+        delete profile.location;
+    });
+    (serialized.participantUsers || []).forEach((participant) => {
+        delete participant.email;
+    });
+
+    return serialized;
+};
+
+const canSendDirectMessage = (thread, senderUserId, relationship) => {
+    if (relationship?.status === 'blocked') {
+        return { allowed: false, error: 'Messaging is unavailable for this connection' };
+    }
+
+    if (relationship?.status === 'accepted') {
+        return { allowed: true };
+    }
+
+    const messages = thread?.messages || [];
+    if (messages.length === 0) {
+        return { allowed: true };
+    }
+
+    const participatingSenders = new Set(
+        messages.map((message) => String(message.senderUser || '')).filter(Boolean)
+    );
+
+    if (participatingSenders.size >= 2) {
+        return { allowed: true };
+    }
+
+    if (!participatingSenders.has(String(senderUserId))) {
+        return { allowed: true };
+    }
+
+    return {
+        allowed: false,
+        error: 'You can send one introductory message until this candidate replies or accepts your friend invitation.'
+    };
+};
 
 const appendMessage = async (thread, senderType, bodyHtml, senderUserId = null) => {
     const sanitizedHtml = sanitizeMessageHtml(bodyHtml);
@@ -197,10 +260,15 @@ const createOrReplyMessage = async (req, res) => {
 
 const createCandidateDirectMessage = async (req, res) => {
     try {
+        const authenticatedUserId = getAuthenticatedUserId(req);
         const { senderUserId, recipientCandidateId, bodyHtml } = req.body;
 
         if (!senderUserId || !recipientCandidateId || !bodyHtml) {
             return res.status(400).json({ error: 'Sender, recipient, and message are required' });
+        }
+
+        if (String(senderUserId) !== authenticatedUserId) {
+            return res.status(403).json({ error: 'You cannot send messages from another account' });
         }
 
         const senderCandidate = await JobSeeker.findOne({ user: senderUserId });
@@ -238,6 +306,12 @@ const createCandidateDirectMessage = async (req, res) => {
             });
         }
 
+        const relationship = await getCandidateRelationship(senderUserId, recipientUserId);
+        const permission = canSendDirectMessage(thread, senderUserId, relationship);
+        if (!permission.allowed) {
+            return res.status(403).json({ error: permission.error });
+        }
+
         await appendMessage(thread, 'candidate', bodyHtml, senderUserId);
 
         await createNotification({
@@ -251,7 +325,7 @@ const createCandidateDirectMessage = async (req, res) => {
         });
 
         const populatedThread = await populateThread(MessageThread.findById(thread._id));
-        return res.status(201).json(populatedThread);
+        return res.status(201).json(sanitizeDirectThread(populatedThread));
     } catch (error) {
         console.error('Error sending candidate direct message:', error.message);
         return res.status(500).json({
@@ -272,6 +346,25 @@ const replyToThread = async (req, res) => {
 
         if (!['employer', 'candidate'].includes(senderType)) {
             return res.status(400).json({ error: 'Sender must be employer or candidate' });
+        }
+
+        if (thread.conversationType === 'candidate-candidate') {
+            const authenticatedUserId = getAuthenticatedUserId(req);
+            if (senderType !== 'candidate' || String(senderUserId) !== authenticatedUserId) {
+                return res.status(403).json({ error: 'You cannot reply from another account' });
+            }
+
+            const participantIds = (thread.participantUsers || []).map(String);
+            if (!participantIds.includes(authenticatedUserId)) {
+                return res.status(403).json({ error: 'You are not part of this conversation' });
+            }
+
+            const peerUserId = participantIds.find((participantId) => participantId !== authenticatedUserId);
+            const relationship = await getCandidateRelationship(authenticatedUserId, peerUserId);
+            const permission = canSendDirectMessage(thread, authenticatedUserId, relationship);
+            if (!permission.allowed) {
+                return res.status(403).json({ error: permission.error });
+            }
         }
 
         await appendMessage(thread, senderType, bodyHtml, senderType === 'candidate' ? senderUserId : null);
@@ -315,7 +408,11 @@ const replyToThread = async (req, res) => {
         }
 
         const populatedThread = await populateThread(MessageThread.findById(thread._id));
-        return res.status(200).json(populatedThread);
+        return res.status(200).json(
+            thread.conversationType === 'candidate-candidate'
+                ? sanitizeDirectThread(populatedThread)
+                : populatedThread
+        );
     } catch (error) {
         console.error('Error replying to message thread:', error.message);
         return res.status(500).json({
@@ -343,6 +440,11 @@ const getCompanyThreads = async (req, res) => {
 
 const getCandidateThreads = async (req, res) => {
     try {
+        const authenticatedUserId = getAuthenticatedUserId(req);
+        if (String(req.params.userId) !== authenticatedUserId) {
+            return res.status(403).json({ error: 'You cannot access another candidate inbox' });
+        }
+
         const threads = await populateThread(
             MessageThread.find({
                 $or: [
@@ -352,7 +454,7 @@ const getCandidateThreads = async (req, res) => {
             }).sort({ lastMessageAt: -1 })
         );
 
-        return res.status(200).json(threads);
+        return res.status(200).json(threads.map(sanitizeDirectThread));
     } catch (error) {
         console.error('Error fetching candidate inbox:', error.message);
         return res.status(500).json({

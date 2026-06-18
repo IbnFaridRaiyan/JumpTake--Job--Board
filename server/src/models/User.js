@@ -22,6 +22,14 @@ const UserSchema = new mongoose.Schema({
     type: [String],
     default: []
   },
+  jumptakeId: {
+    type: String,
+    unique: true,
+    sparse: true,
+    immutable: true,
+    trim: true,
+    lowercase: true
+  },
   passwordResetToken: {
     type: String,
     default: null

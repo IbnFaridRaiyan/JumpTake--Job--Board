@@ -44,7 +44,8 @@ const Login = ({ onClose }) => {
                 id: data.user.id,
                 email: data.user.email,
                 jobSeekerId: data.user.jobSeekerId,
-                jobInterests: data.user.jobInterests || []
+                jobInterests: data.user.jobInterests || [],
+                jumptakeId: data.user.jumptakeId || null
             }));
 
             setIsSuccess(true);

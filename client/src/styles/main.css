@@ -18713,8 +18713,8 @@ html[data-theme="light"] .home-page .analytics-detail-overlay {
 
 .home-page .portal-vertical-sidebar .sidebar__toggle-container {
   block-size: var(--item);
-  display: flex;
-  justify-content: flex-end;
+  display: grid;
+  place-items: center end;
 }
 
 .home-page .portal-vertical-sidebar .nav__toggle {
@@ -18724,6 +18724,8 @@ html[data-theme="light"] .home-page .analytics-detail-overlay {
   border-radius: var(--brad-inner);
   display: inline-flex;
   height: 100%;
+  width: var(--item);
+  justify-content: center;
   outline: 2px solid transparent;
   outline-offset: -2px;
   overflow: hidden;
@@ -18738,15 +18740,19 @@ html[data-theme="light"] .home-page .analytics-detail-overlay {
 
 .home-page .portal-vertical-sidebar .toggle--icons {
   aspect-ratio: 1;
-  block-size: inherit;
+  block-size: 100%;
+  inline-size: 100%;
   display: inline-grid;
   grid-template-areas: "svg";
-  place-content: center;
+  place-items: center;
 }
 
 .home-page .portal-vertical-sidebar .toggle-svg-icon {
   fill: var(--sidebar-muted);
   grid-area: svg;
+  width: 1.05rem;
+  height: 1.05rem;
+  display: block;
   transition: fill 200ms ease, opacity 200ms ease;
 }
 
@@ -21653,7 +21659,15 @@ html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .post
     pointer-events: auto !important;
   }
 
-  .dashboard-container.mobile-section-open .portal-vertical-sidebar .toggle--icons,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar .toggle--icons {
+    display: grid !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 100% !important;
+    height: 100% !important;
+    place-items: center !important;
+  }
+
   .dashboard-container.mobile-section-open .portal-vertical-sidebar .toggle-svg-icon {
     display: block !important;
     visibility: visible !important;
@@ -21661,6 +21675,7 @@ html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .post
     width: 1rem !important;
     height: 1rem !important;
     fill: currentColor !important;
+    margin: 0 auto !important;
   }
 
   .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .toggle--open,
@@ -21878,7 +21893,7 @@ html[data-theme="light"] .notifications-page .notification-action {
     position: absolute !important;
     top: 0.55rem !important;
     right: 0.7rem !important;
-    display: flex !important;
+    display: grid !important;
     align-items: center !important;
     justify-content: center !important;
     width: 2rem !important;
@@ -21890,6 +21905,9 @@ html[data-theme="light"] .notifications-page .notification-action {
   }
 
   .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .nav__toggle {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     width: 1.8rem !important;
     min-width: 1.8rem !important;
     height: 1.8rem !important;
@@ -21897,10 +21915,18 @@ html[data-theme="light"] .notifications-page .notification-action {
     margin: 0 !important;
   }
 
-  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .toggle--icons,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .toggle--icons {
+    display: grid !important;
+    width: 100% !important;
+    height: 100% !important;
+    place-items: center !important;
+  }
+
   .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .toggle-svg-icon {
     width: 0.95rem !important;
     height: 0.95rem !important;
+    display: block !important;
+    margin: 0 auto !important;
   }
 
   .post-job-container .form-actions,
@@ -22253,5 +22279,546 @@ html[data-theme="light"] .notifications-page .notification-action {
 
   .mobile-dashboard-section-panel.mobile-section-profile.is-open .page-footer-actions {
     display: none !important;
+  }
+}
+
+/* Candidate paging and Job Preferences spacing. */
+.candidate-list-pagination {
+  padding-bottom: 0.5rem;
+}
+
+.interested-job-suggestion-section .interested-job-card {
+  padding: clamp(1rem, 2vw, 1.35rem) !important;
+}
+
+.interested-job-suggestion-section .interested-job-card > h3 {
+  margin: 0 0 0.35rem !important;
+}
+
+.interested-job-suggestion-section .interested-job-card > p {
+  margin: 0 0 1rem !important;
+}
+
+.interested-job-suggestion-section .interested-job-card .job-interest-grid {
+  margin: 0 0 1rem !important;
+}
+
+.interested-job-suggestion-section .interested-job-card .assessment-footer-actions {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+@media (min-width: 769px) {
+  .candidate-list-pagination {
+    margin: 1.5rem auto 0 !important;
+  }
+
+  .candidate-list-pagination .secondary-button {
+    min-width: 5.5rem !important;
+    padding: 0.52rem 0.8rem !important;
+  }
+
+  .candidate-list-pagination span {
+    min-width: 7rem;
+    text-align: center;
+    white-space: nowrap;
+  }
+}
+
+/* Candidate connections and candidate-only networking surfaces. */
+.candidate-view-candidates .talent-pool-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.candidate-view-candidates .talent-pool-header h2 {
+  margin: 0;
+}
+
+.candidate-view-candidates .talent-pool-header-actions {
+  margin-left: auto;
+}
+
+.candidate-community-note {
+  margin-bottom: 1rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid rgba(99, 192, 184, 0.22);
+  border-radius: 0.9rem;
+  background: rgba(99, 192, 184, 0.08);
+  color: #e9f5f2;
+}
+
+.candidate-community-note strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.96rem;
+}
+
+.candidate-community-note p {
+  margin: 0;
+  color: rgba(233, 245, 242, 0.84);
+  line-height: 1.55;
+}
+
+.add-friends-button {
+  min-height: 2.5rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid rgba(99, 192, 184, 0.45);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(99, 192, 184, 0.24), rgba(129, 218, 154, 0.18));
+  color: #f7fbfa;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.add-friends-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(129, 218, 154, 0.6);
+}
+
+.add-friend-panel {
+  display: grid;
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid rgba(99, 192, 184, 0.2);
+  border-radius: 0.95rem;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.add-friend-panel h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+}
+
+.add-friend-panel p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.add-friend-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  align-items: center;
+}
+
+.add-friend-form input {
+  flex: 1 1 15rem;
+  min-width: 0;
+  min-height: 2.65rem;
+  padding: 0.72rem 0.9rem;
+  border: 1px solid rgba(99, 192, 184, 0.24);
+  border-radius: 0.8rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+.candidate-view-candidates .candidate-card {
+  position: relative;
+}
+
+.candidate-add-friend-button {
+  position: absolute;
+  top: 0.9rem;
+  left: 0.9rem;
+  z-index: 2;
+  width: 2.35rem;
+  height: 2.35rem;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #ffffff;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.candidate-add-friend-button:hover:not(:disabled) {
+  transform: rotate(90deg);
+}
+
+.candidate-add-friend-button:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.candidate-add-friend-button.is-new:hover:not(:disabled) .candidate-add-friend-icon {
+  fill: rgba(255, 255, 255, 0.16);
+}
+
+.candidate-add-friend-button.accepted,
+.candidate-add-friend-button.pending {
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 0.7rem;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.candidate-add-friend-button.accepted {
+  color: #93f0bb;
+  border-color: rgba(147, 240, 187, 0.5);
+}
+
+.candidate-add-friend-button.pending {
+  color: #f1d68a;
+  border-color: rgba(241, 214, 138, 0.5);
+}
+
+.candidate-add-friend-icon {
+  width: 2rem;
+  height: 2rem;
+  stroke: rgba(214, 221, 224, 0.88);
+  fill: none;
+  transition: fill 0.3s ease, stroke 0.3s ease;
+}
+
+.candidate-add-friend-state {
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.candidate-match-summary {
+  display: grid;
+  gap: 0.32rem;
+  margin-top: 0.75rem;
+}
+
+.candidate-match-summary strong {
+  color: #9de3da;
+  font-size: 0.84rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.candidate-match-summary span {
+  color: rgba(247, 251, 250, 0.88);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.friend-invitations-section {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.friend-invitations-shell {
+  display: grid;
+  gap: 1rem;
+}
+
+.friend-invitation-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.friend-invitation-tab {
+  min-height: 2.6rem;
+  padding: 0.7rem 1.1rem;
+  border: 1px solid rgba(99, 192, 184, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.friend-invitation-tab.is-active {
+  background: rgba(99, 192, 184, 0.18);
+  border-color: rgba(99, 192, 184, 0.42);
+  color: #ffffff;
+}
+
+.friend-invitation-panel {
+  padding: 1.15rem;
+  border: 1px solid rgba(99, 192, 184, 0.16);
+  border-radius: 1.15rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.friend-invitation-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.friend-invitation-card,
+.friend-outgoing-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.9rem;
+  align-items: center;
+  padding: 0.95rem 1rem;
+  border: 1px solid rgba(99, 192, 184, 0.16);
+  border-radius: 0.95rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.friend-invitation-avatar {
+  width: 2.7rem;
+  height: 2.7rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #63c0b8, #8fe0d5);
+  color: #10211e;
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+.friend-invitation-copy {
+  min-width: 0;
+}
+
+.friend-invitation-copy h3 {
+  margin: 0 0 0.18rem;
+  font-size: 1rem;
+}
+
+.friend-invitation-copy p,
+.friend-invitation-copy span {
+  display: block;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 0.84rem;
+  overflow-wrap: anywhere;
+}
+
+.friend-invitation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  justify-content: flex-end;
+}
+
+.friend-block-button {
+  min-height: 2.45rem;
+  padding: 0.58rem 0.9rem;
+  border: 1px solid rgba(241, 120, 120, 0.32);
+  border-radius: 0.78rem;
+  background: rgba(241, 120, 120, 0.08);
+  color: #ffb9b9;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.friend-outgoing-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.friend-outgoing-copy {
+  display: grid;
+  gap: 0.22rem;
+  min-width: 0;
+}
+
+.friend-outgoing-row strong {
+  color: #ffffff;
+}
+
+.friend-outgoing-row span,
+.friend-outgoing-copy span {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.friend-status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.2rem;
+  padding: 0.48rem 0.85rem;
+  border: 1px solid rgba(99, 192, 184, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #f4f7f8;
+  font-size: 0.84rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.friend-outgoing-row.is-friend span {
+  color: #9de3da;
+}
+
+.friend-status-pill.is-friend {
+  color: #9de3da;
+  border-color: rgba(129, 218, 154, 0.3);
+}
+
+.message-compose-note {
+  margin: 0 0 0.8rem;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.jumptake-id-profile-row .info-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.01em;
+}
+
+html[data-theme="light"] .candidate-community-note,
+html[data-theme="light"] .add-friend-panel,
+html[data-theme="light"] .friend-invitations-intro,
+html[data-theme="light"] .friend-invitation-card,
+html[data-theme="light"] .friend-outgoing-row {
+  background: #fffaf2;
+  border-color: rgba(113, 88, 64, 0.14);
+}
+
+html[data-theme="light"] .candidate-community-note,
+html[data-theme="light"] .candidate-community-note p,
+html[data-theme="light"] .add-friend-panel p,
+html[data-theme="light"] .friend-invitations-intro p,
+html[data-theme="light"] .friend-invitation-copy p,
+html[data-theme="light"] .friend-invitation-copy span,
+html[data-theme="light"] .friend-outgoing-row span {
+  color: #5c4735;
+}
+
+html[data-theme="light"] .candidate-add-friend-button {
+  color: #3c2f24;
+}
+
+html[data-theme="light"] .message-compose-note {
+  color: #5c4735;
+}
+
+html[data-theme="light"] .candidate-add-friend-button.accepted,
+html[data-theme="light"] .candidate-add-friend-button.pending {
+  background: rgba(255, 250, 242, 0.92);
+  border-color: rgba(107, 78, 55, 0.2);
+}
+
+html[data-theme="light"] .candidate-add-friend-icon {
+  stroke: rgba(72, 57, 45, 0.88);
+}
+
+html[data-theme="light"] .candidate-add-friend-button.is-new:hover:not(:disabled) .candidate-add-friend-icon {
+  fill: rgba(60, 47, 36, 0.1);
+}
+
+html[data-theme="light"] .friend-invitation-tab,
+html[data-theme="light"] .friend-invitation-panel {
+  background: #fffaf2;
+  border-color: rgba(113, 88, 64, 0.14);
+  color: #5c4735;
+}
+
+html[data-theme="light"] .friend-invitation-tab.is-active {
+  background: #eef8f4;
+  border-color: rgba(88, 170, 163, 0.35);
+  color: #2f241b;
+}
+
+html[data-theme="light"] .friend-status-pill {
+  background: #ffffff;
+  border-color: rgba(113, 88, 64, 0.14);
+  color: #4d3b2d;
+}
+
+html[data-theme="light"] .candidate-match-summary strong {
+  color: #2f6f67;
+}
+
+html[data-theme="light"] .candidate-match-summary span {
+  color: #5c4735;
+}
+
+html[data-theme="light"] .add-friend-form input {
+  background: #ffffff;
+  color: #2f241b;
+  border-color: rgba(107, 78, 55, 0.18);
+}
+
+.settings-container .tabs-header,
+.employer-settings-container .tabs-header {
+  align-items: stretch !important;
+}
+
+.settings-container .tab-button,
+.employer-settings-container .tab-button {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.42rem !important;
+  min-height: 2.8rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+.settings-container .tab-button .tab-icon,
+.employer-settings-container .tab-button .tab-icon {
+  margin-right: 0 !important;
+  vertical-align: middle !important;
+  flex-shrink: 0 !important;
+}
+
+@media (max-width: 768px) {
+  .candidate-add-friend-button {
+    top: 0.45rem;
+    left: 0.45rem;
+    width: 1.85rem;
+    height: 1.85rem;
+  }
+
+  .candidate-add-friend-button.accepted,
+  .candidate-add-friend-button.pending {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 0.62rem;
+  }
+
+  .candidate-add-friend-icon {
+    width: 1.55rem;
+    height: 1.55rem;
+  }
+
+  .candidate-add-friend-state {
+    font-size: 1rem;
+  }
+
+  .candidate-view-candidates .talent-pool-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .candidate-view-candidates .talent-pool-header-actions {
+    width: 100%;
+  }
+
+  .add-friends-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .add-friend-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .friend-invitation-card,
+  .friend-outgoing-row {
+    grid-template-columns: 1fr;
+  }
+
+  .friend-invitation-panel {
+    padding: 0.9rem;
+  }
+
+  .friend-invitation-actions {
+    justify-content: stretch;
+  }
+
+  .friend-invitation-actions > button {
+    flex: 1 1 100%;
   }
 }

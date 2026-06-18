@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const UserProfile = ({ userId, onUpdate, switchSection, onFooterBack }) => {
+const UserProfile = ({ userId, jumptakeId: initialJumpTakeId, onUpdate, switchSection, onFooterBack }) => {
     const [jobSeekerData, setJobSeekerData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -16,13 +16,30 @@ const UserProfile = ({ userId, onUpdate, switchSection, onFooterBack }) => {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState('');
+    const [jumptakeId, setJumpTakeId] = useState(initialJumpTakeId || '');
     
     useEffect(() => {
         if (userId) {
             fetchProfileData();
+            fetchNetworkProfile();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userId]);
+
+    const fetchNetworkProfile = async () => {
+        try {
+            const response = await fetch(
+                `${process.env.REACT_APP_API_URL || ''}/api/candidate-network/profile/${userId}`,
+                { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+            );
+            if (response.ok) {
+                const data = await response.json();
+                setJumpTakeId(data.jumptakeId || '');
+            }
+        } catch (networkError) {
+            console.error('Error fetching JumpTake ID:', networkError);
+        }
+    };
     
     const fetchProfileData = async () => {
         try {
@@ -447,6 +464,10 @@ const UserProfile = ({ userId, onUpdate, switchSection, onFooterBack }) => {
                     <div className="profile-display">
                         <div className="profile-card personal-info">
                             <h3>Personal Information</h3>
+                            <div className="profile-info-item jumptake-id-profile-row">
+                                <span className="info-label">JumpTake ID:</span>
+                                <span className="info-value">{jumptakeId || 'Not assigned to this legacy account'}</span>
+                            </div>
                             <div className="profile-info-item">
                                 <span className="info-label">Name:</span>
                                 <span className="info-value">{jobSeekerData.name || 'Not specified'}</span>

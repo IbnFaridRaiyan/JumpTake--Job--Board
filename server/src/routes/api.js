@@ -14,6 +14,9 @@ const passwordResetController = require('../controllers/passwordResetController'
 const messageController = require('../controllers/messageController');
 const notificationController = require('../controllers/notificationController');
 const jobInvitationController = require('../controllers/jobInvitationController');
+const candidateNetworkController = require('../controllers/candidateNetworkController');
+const User = require('../models/User');
+const { getAuthenticatedPayload } = require('../utils/candidateAuth');
 
 
 
@@ -64,32 +67,59 @@ router.put('/companies/:id', companyController.updateCompanyInfo);
 
 router.get('/job-seekers', async (req, res) => {
     try {
+        const payload = getAuthenticatedPayload(req);
+        if (!payload.companyId) {
+            return res.status(403).json({ error: 'The full candidate directory is available only to employers' });
+        }
         const jobSeekers = await JobSeeker.find().sort({ createdAt: -1 });
         res.json(jobSeekers);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(error.status || 500).json({ error: error.message });
     }
 });
 
 
 router.get('/job-seekers/:id', async (req, res) => {
     try {
+        const payload = getAuthenticatedPayload(req);
         const jobSeeker = await JobSeeker.findById(req.params.id);
         if (!jobSeeker) {
             return res.status(404).json({ error: 'Job seeker not found' });
         }
+
+        if (!payload.companyId) {
+            const user = await User.findById(payload.id).select('jobSeekerId');
+            const ownsProfile = String(jobSeeker.user || '') === String(payload.id)
+                || String(user?.jobSeekerId || '') === String(jobSeeker._id);
+            if (!ownsProfile) {
+                return res.status(403).json({ error: 'Private candidate profiles cannot be accessed directly' });
+            }
+        }
         res.json(jobSeeker);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(error.status || 500).json({ error: error.message });
     }
 });
 
 
 router.put('/job-seekers/:id', async (req, res) => {
     try {
+        const payload = getAuthenticatedPayload(req);
+        if (!payload.companyId) {
+            const existingProfile = await JobSeeker.findById(req.params.id).select('user');
+            const user = await User.findById(payload.id).select('jobSeekerId');
+            const ownsProfile = String(existingProfile?.user || '') === String(payload.id)
+                || String(user?.jobSeekerId || '') === String(req.params.id);
+            if (!ownsProfile) {
+                return res.status(403).json({ error: 'You cannot update another candidate profile' });
+            }
+        }
+
+        const safeUpdate = { ...req.body };
+        delete safeUpdate.user;
         const jobSeeker = await JobSeeker.findByIdAndUpdate(
             req.params.id,
-            req.body,
+            safeUpdate,
             { new: true, runValidators: true }
         );
         
@@ -99,7 +129,7 @@ router.put('/job-seekers/:id', async (req, res) => {
         
         res.json(jobSeeker);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(error.status || 500).json({ error: error.message });
     }
 });
 
@@ -142,6 +172,11 @@ router.get('/candidate-bookmarks/user/:userId', engagementController.getUserCand
 router.delete('/candidate-bookmarks/user/:userId/candidate/:candidateId', engagementController.deleteCandidateBookmark);
 router.get('/candidate-likes', engagementController.getCandidateLikeSummary);
 router.post('/candidate-likes/toggle', engagementController.toggleCandidateLike);
+router.get('/candidate-network/matches/:userId', candidateNetworkController.getMatchedCandidates);
+router.get('/candidate-network/profile/:userId', candidateNetworkController.getMyNetworkProfile);
+router.post('/candidate-connections/request', candidateNetworkController.sendFriendRequest);
+router.get('/candidate-connections/user/:userId', candidateNetworkController.getConnections);
+router.put('/candidate-connections/:connectionId/respond', candidateNetworkController.respondToConnection);
 
 router.get('/notifications', notificationController.getNotifications);
 router.put('/notifications/:id/read', notificationController.markNotificationRead);

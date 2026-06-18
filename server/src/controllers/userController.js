@@ -1,13 +1,14 @@
 const User = require('../models/User');
 const JobSeeker = require('../models/JobSeeker');
 const jwt = require('jsonwebtoken');
+const { generateJumpTakeId } = require('../utils/jumptakeId');
 
 
 const JWT_SECRET = process.env.JWT_SECRET || 'jumptake-jwt-secret';
 
 const createAccount = async (req, res) => {
     try {
-        const { email, password, jobSeekerId } = req.body;
+        const { name, email, password, jobSeekerId } = req.body;
         
         
         if (!email || !password) {
@@ -21,21 +22,34 @@ const createAccount = async (req, res) => {
         }
         
         
+        let jobSeeker = null;
         if (jobSeekerId) {
-            const jobSeeker = await JobSeeker.findById(jobSeekerId);
+            jobSeeker = await JobSeeker.findById(jobSeekerId);
             if (!jobSeeker) {
                 return res.status(404).json({ error: 'Job seeker profile not found' });
             }
         }
+
+        const displayName = name || jobSeeker?.name || email.split('@')[0];
+        const jumptakeId = await generateJumpTakeId(displayName);
         
       
         const user = new User({
             email,
             password,
-            jobSeekerId
+            jobSeekerId,
+            jumptakeId
         });
         
         await user.save();
+
+        if (jobSeeker) {
+            jobSeeker.user = user._id;
+            if (!jobSeeker.name && name) {
+                jobSeeker.name = name;
+            }
+            await jobSeeker.save();
+        }
         
        
         return res.status(201).json({
@@ -44,7 +58,8 @@ const createAccount = async (req, res) => {
                 id: user._id,
                 email: user.email,
                 jobSeekerId: user.jobSeekerId,
-                jobInterests: user.jobInterests || []
+                jobInterests: user.jobInterests || [],
+                jumptakeId: user.jumptakeId
             }
         });
     } catch (error) {
@@ -91,7 +106,8 @@ const login = async (req, res) => {
                 id: user._id,
                 email: user.email,
                 jobSeekerId: user.jobSeekerId,
-                jobInterests: user.jobInterests || []
+                jobInterests: user.jobInterests || [],
+                jumptakeId: user.jumptakeId || null
             }
         });
     } catch (error) {

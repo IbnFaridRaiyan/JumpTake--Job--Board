@@ -454,7 +454,7 @@ const createCandidateBookmark = async (req, res) => {
             { user: userId, candidate: candidateId },
             { user: userId, candidate: candidateId },
             { new: true, upsert: true, setDefaultsOnInsert: true }
-        ).populate('candidate');
+        ).populate('candidate', 'name skills education degrees experience achievements interests hobbies user');
 
         return res.status(201).json(bookmark);
     } catch (error) {
@@ -469,7 +469,7 @@ const createCandidateBookmark = async (req, res) => {
 const getUserCandidateBookmarks = async (req, res) => {
     try {
         const bookmarks = await CandidateBookmark.find({ user: req.params.userId })
-            .populate('candidate')
+            .populate('candidate', 'name skills education degrees experience achievements interests hobbies user')
             .sort({ createdAt: -1 });
 
         return res.status(200).json(bookmarks);

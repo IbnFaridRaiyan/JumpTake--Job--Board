@@ -12,6 +12,10 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
     const [selectedCandidate, setSelectedCandidate] = useState(null);
     const [spotlightActive, setSpotlightActive] = useState(false);
     const [currentCandidatePage, setCurrentCandidatePage] = useState(1);
+    const [showAddFriend, setShowAddFriend] = useState(false);
+    const [friendJumpTakeId, setFriendJumpTakeId] = useState('');
+    const [friendNotice, setFriendNotice] = useState('');
+    const [sendingFriendRequest, setSendingFriendRequest] = useState(false);
     const [isMobileView, setIsMobileView] = useState(() => (
         typeof window !== 'undefined' ? window.innerWidth <= 768 : false
     ));
@@ -49,7 +53,10 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         try {
             setIsLoading(true);
             const token = localStorage.getItem(mode === 'candidate' ? 'token' : 'employerToken');
-            const response = await fetch((process.env.REACT_APP_API_URL || '') + '/api/job-seekers', {
+            const endpoint = mode === 'candidate'
+                ? `/api/candidate-network/matches/${currentUserId}`
+                : '/api/job-seekers';
+            const response = await fetch((process.env.REACT_APP_API_URL || '') + endpoint, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -61,9 +68,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
 
             const data = await response.json();
             const nextCandidates = Array.isArray(data) ? data : [];
-            setCandidates(mode === 'candidate'
-                ? nextCandidates.filter((candidate) => String(candidate?.user || '') !== String(currentUserId || ''))
-                : nextCandidates);
+            setCandidates(nextCandidates);
         } catch (err) {
             console.error('Error fetching candidates:', err);
             setError('Failed to load candidates. Please try again later.');
@@ -302,6 +307,45 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         }
     };
 
+    const sendFriendRequest = async ({ candidateId, jumptakeId } = {}) => {
+        try {
+            setSendingFriendRequest(true);
+            setFriendNotice('');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/candidate-connections/request`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(
+                    jumptakeId
+                        ? { jumptakeId: jumptakeId.trim() }
+                        : { recipientCandidateId: candidateId }
+                )
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to send friend invitation');
+            }
+
+            setFriendNotice('Friend invitation sent.');
+            setFriendJumpTakeId('');
+            if (candidateId) {
+                setCandidates((currentCandidates) => currentCandidates.map((candidate) => (
+                    String(candidate._id) === String(candidateId)
+                        ? { ...candidate, connectionStatus: { status: 'pending', direction: 'outgoing' } }
+                        : candidate
+                )));
+            } else {
+                setShowAddFriend(false);
+            }
+        } catch (friendError) {
+            setFriendNotice(`Error: ${friendError.message}`);
+        } finally {
+            setSendingFriendRequest(false);
+        }
+    };
+
     const renderLikeButton = (candidate) => {
         const candidateId = String(candidate._id);
         const isLiked = likedCandidateIds.includes(candidateId);
@@ -343,6 +387,46 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         }
 
         return [];
+    };
+
+    const valuesToSearch = (value) => {
+        if (!value) {
+            return [];
+        }
+        if (Array.isArray(value)) {
+            return value.flatMap(valuesToSearch);
+        }
+        if (typeof value === 'object') {
+            return Object.values(value).flatMap(valuesToSearch);
+        }
+        return [String(value)];
+    };
+
+    const getPrimaryMatchSummary = (candidate) => {
+        const summary = candidate.matchSummary || {};
+
+        if ((summary.skills || []).length > 0) {
+            return {
+                title: 'Based on skill match',
+                detail: `${summary.skills.length} skill${summary.skills.length === 1 ? '' : 's'} matched`
+            };
+        }
+
+        if ((summary.education || []).length > 0) {
+            return {
+                title: 'Based on education match',
+                detail: `Studied ${summary.education[0]}`
+            };
+        }
+
+        if ((summary.experience || []).length > 0) {
+            return {
+                title: 'Based on experience match',
+                detail: `Worked as ${summary.experience[0]}`
+            };
+        }
+
+        return null;
     };
 
     const jobSkillMap = useMemo(() => {
@@ -408,28 +492,28 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
 
     const filteredCandidateRows = candidateRows.filter(({ candidate, spotlight }) => {
         const searchLower = searchTerm.toLowerCase();
-        
-       
-        const matchesSearch = 
+
+        const searchablePublicProfile = [
+            ...getSkillList(candidate.skills),
+            ...valuesToSearch(candidate.education),
+            ...valuesToSearch(candidate.experience)
+        ].join(' ').toLowerCase();
+
+        const matchesSearch =
             (candidate.name && candidate.name.toLowerCase().includes(searchLower)) ||
-            (candidate.email && candidate.email.toLowerCase().includes(searchLower)) ||
-            (getSkillList(candidate.skills).some(skill => 
-                skill.toLowerCase().includes(searchLower)
-            )) ||
+            searchablePublicProfile.includes(searchLower) ||
             (spotlightActive && spotlight.matchedSkills.some(skill =>
                 skill.toLowerCase().includes(searchLower)
             ));
             
         return matchesSearch;
     });
-    const candidatesPerMobilePage = 6;
-    const totalCandidatePages = Math.max(1, Math.ceil(filteredCandidateRows.length / candidatesPerMobilePage));
-    const pagedCandidateRows = isMobileView
-        ? filteredCandidateRows.slice(
-            (currentCandidatePage - 1) * candidatesPerMobilePage,
-            currentCandidatePage * candidatesPerMobilePage
-        )
-        : filteredCandidateRows;
+    const candidatesPerPage = isMobileView ? 6 : 9;
+    const totalCandidatePages = Math.max(1, Math.ceil(filteredCandidateRows.length / candidatesPerPage));
+    const pagedCandidateRows = filteredCandidateRows.slice(
+        (currentCandidatePage - 1) * candidatesPerPage,
+        currentCandidatePage * candidatesPerPage
+    );
 
     useEffect(() => {
         setCurrentCandidatePage(1);
@@ -488,6 +572,13 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                         </button>
                     </div>
                 )}
+                {mode === 'candidate' && (
+                    <div className="talent-pool-header-actions">
+                        <button className="add-friends-button" type="button" onClick={() => setShowAddFriend(true)}>
+                            Add Friends
+                        </button>
+                    </div>
+                )}
             </div>
 
             {error && <div className="error-message">{error}</div>}
@@ -501,11 +592,55 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                 </div>
             )}
 
+            {mode === 'candidate' && (
+                <div className="candidate-community-note">
+                    <strong>Connect, learn, and grow together.</strong>
+                    <p>Discover candidates with similar skills and experience, exchange career guidance, and learn from one another while keeping personal contact details private.</p>
+                </div>
+            )}
+
+            {friendNotice && (
+                <div className={`notification-message ${friendNotice.startsWith('Error:') ? 'error' : 'success'}`}>
+                    {friendNotice}
+                </div>
+            )}
+
+            {mode === 'candidate' && showAddFriend && (
+                <div className="add-friend-panel">
+                    <div>
+                        <h3>Add a friend</h3>
+                        <p>Enter the candidate's unique JumpTake ID.</p>
+                    </div>
+                    <div className="add-friend-form">
+                        <input
+                            type="text"
+                            value={friendJumpTakeId}
+                            onChange={(event) => setFriendJumpTakeId(event.target.value)}
+                            placeholder="e.g. raiyan-4827"
+                            aria-label="JumpTake ID"
+                        />
+                        <button
+                            type="button"
+                            className="settings-button primary"
+                            onClick={() => sendFriendRequest({ jumptakeId: friendJumpTakeId })}
+                            disabled={sendingFriendRequest || !friendJumpTakeId.trim()}
+                        >
+                            Send Invitation
+                        </button>
+                        <button type="button" className="secondary-button" onClick={() => setShowAddFriend(false)} disabled={sendingFriendRequest}>
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
+
             <div className="talent-pool-controls">
                 <div className="search-container">
                     <input 
                         type="text" 
-                        placeholder="Search candidates by name, email or skills..." 
+                        placeholder={mode === 'candidate'
+                            ? 'Search by name, skills, education or experience...'
+                            : 'Search candidates by name, email or skills...'}
                         className="candidate-search"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -530,9 +665,9 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                             <div className="candidate-initial">
                                 {selectedCandidate.name ? selectedCandidate.name.charAt(0).toUpperCase() : 'C'}
                             </div>
-                            <div className="candidate-header-text">
-                                <h2>{selectedCandidate.name || 'Unnamed Candidate'}</h2>
-                                <p>{selectedCandidate.email || 'Email not available'}</p>
+                        <div className="candidate-header-text">
+                            <h2>{selectedCandidate.name || 'Unnamed Candidate'}</h2>
+                            <p>{mode === 'candidate' ? 'Public matched profile' : (selectedCandidate.email || 'Email not available')}</p>
                             </div>
                         </div>
                     </div>
@@ -628,7 +763,11 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                             </div>
                             <h3>{spotlightActive ? 'No spotlight matches found' : 'No candidates found'}</h3>
                             <p>
-                                {spotlightActive
+                                {mode === 'candidate'
+                                    ? (searchTerm
+                                        ? 'Try a broader search using names, skills, education, or experience.'
+                                        : 'No matched candidates are available yet. Candidates will appear here when they share skills, education, or experience with you.')
+                                    : spotlightActive
                                     ? 'Post jobs with skills that match candidate profiles, or turn off Spotlight to view all candidates.'
                                     : searchTerm ? 'Try adjusting your search criteria' : 'No candidates are available in the talent pool yet'}
                             </p>
@@ -636,8 +775,51 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                     ) : (
                         <>
                         <div className="candidates-grid">
-                            {pagedCandidateRows.map(({ candidate, spotlight }) => (
+                            {pagedCandidateRows.map(({ candidate, spotlight }) => {
+                                const matchSummary = mode === 'candidate' ? getPrimaryMatchSummary(candidate) : null;
+
+                                return (
                                 <div key={candidate._id} className="candidate-card" onClick={() => handleViewProfile(candidate)}>
+                                    {mode === 'candidate' && (
+                                        <button
+                                            type="button"
+                                            className={`candidate-add-friend-button ${candidate.connectionStatus?.status || 'is-new'}`}
+                                            onClick={(event) => {
+                                                event.stopPropagation();
+                                                if (!candidate.connectionStatus) {
+                                                    sendFriendRequest({ candidateId: candidate._id });
+                                                }
+                                            }}
+                                            disabled={sendingFriendRequest || Boolean(candidate.connectionStatus)}
+                                            aria-label={candidate.connectionStatus?.status === 'accepted'
+                                                ? 'Already friends'
+                                                : candidate.connectionStatus?.status === 'pending'
+                                                    ? 'Friend invitation pending'
+                                                    : `Add ${candidate.name || 'candidate'} as a friend`}
+                                            title={candidate.connectionStatus?.status === 'accepted'
+                                                ? 'Friends'
+                                                : candidate.connectionStatus?.status === 'pending'
+                                                    ? 'Invitation pending'
+                                                    : 'Add friend'}
+                                        >
+                                            {candidate.connectionStatus?.status === 'accepted' ? (
+                                                <span className="candidate-add-friend-state" aria-hidden="true">&#10003;</span>
+                                            ) : candidate.connectionStatus?.status === 'pending' ? (
+                                                <span className="candidate-add-friend-state" aria-hidden="true">&#8230;</span>
+                                            ) : (
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 24 24"
+                                                    className="candidate-add-friend-icon"
+                                                    aria-hidden="true"
+                                                >
+                                                    <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" strokeWidth="1.5"></path>
+                                                    <path d="M8 12H16" strokeWidth="1.5"></path>
+                                                    <path d="M12 16V8" strokeWidth="1.5"></path>
+                                                </svg>
+                                            )}
+                                        </button>
+                                    )}
                                     <button
                                         type="button"
                                         className={`bookmark-star-button talent-bookmark-button ${bookmarkedTalentIds.includes(String(candidate._id)) ? 'active' : ''}`}
@@ -654,16 +836,25 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                                             <h3 className="candidate-name">{candidate.name || 'Unnamed Candidate'}</h3>
                                             {renderLikeButton(candidate)}
                                         </div>
-                                        <p className="candidate-email">{candidate.email || 'Email not available'}</p>
+                                        {mode === 'employer' && <p className="candidate-email">{candidate.email || 'Email not available'}</p>}
                                         
-                                        <div className="candidate-skills">
-                                            {getSkillList(candidate.skills).slice(0, 3).map((skill, index) => (
-                                                <span key={index} className="candidate-skill-tag">{skill}</span>
-                                            ))}
-                                            {getSkillList(candidate.skills).length > 3 && (
-                                                <span className="candidate-skill-tag more">+{getSkillList(candidate.skills).length - 3}</span>
-                                            )}
-                                        </div>
+                                        {mode === 'candidate' ? (
+                                            matchSummary ? (
+                                                <div className="candidate-match-summary">
+                                                    <strong>{matchSummary.title}</strong>
+                                                    <span>{matchSummary.detail}</span>
+                                                </div>
+                                            ) : null
+                                        ) : (
+                                            <div className="candidate-skills">
+                                                {getSkillList(candidate.skills).slice(0, 3).map((skill, index) => (
+                                                    <span key={index} className="candidate-skill-tag">{skill}</span>
+                                                ))}
+                                                {getSkillList(candidate.skills).length > 3 && (
+                                                    <span className="candidate-skill-tag more">+{getSkillList(candidate.skills).length - 3}</span>
+                                                )}
+                                            </div>
+                                        )}
 
                                         {spotlightActive && (
                                             <div className="spotlight-match">
@@ -682,10 +873,10 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                                     </div>
                                     <div className="candidate-view-profile">View Profile</div>
                                 </div>
-                            ))}
+                            )})}
                         </div>
-                        {isMobileView && totalCandidatePages > 1 && (
-                            <div className="mobile-list-pagination" aria-label="Candidate pages">
+                        {totalCandidatePages > 1 && (
+                            <div className="mobile-list-pagination candidate-list-pagination" aria-label="Candidate pages">
                                 <button
                                     type="button"
                                     className="secondary-button"

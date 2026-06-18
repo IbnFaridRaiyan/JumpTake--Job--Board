@@ -90,7 +90,7 @@ const InterestedJobSuggestion = ({ user, onInterestsSaved, onFooterBack }) => {
     return (
         <div className="interested-job-suggestion-section">
             <div className="section-header">
-                <h2>Interested Job Suggession</h2>
+                <h2>Job Preferences</h2>
             </div>
 
             <div className="settings-card interested-job-card">

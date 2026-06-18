@@ -132,7 +132,7 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack }) => {
                         <div className="candidate-initial">{selectedCandidate.name ? selectedCandidate.name.charAt(0).toUpperCase() : 'C'}</div>
                         <div className="candidate-header-text">
                             <h2>{selectedCandidate.name || 'Unnamed Candidate'}</h2>
-                            <p>{selectedCandidate.email || 'Email not available'}</p>
+                            <p>Public candidate profile</p>
                         </div>
                     </div>
                 </div>
@@ -178,7 +178,7 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack }) => {
                                 <div className="candidate-avatar">{candidate.name ? candidate.name.charAt(0).toUpperCase() : 'C'}</div>
                                 <div className="candidate-info">
                                     <h3 className="candidate-name">{candidate.name || 'Unnamed Candidate'}</h3>
-                                    <p className="candidate-email">{candidate.email || 'Email not available'}</p>
+                                    <p className="candidate-email">Saved candidate profile</p>
                                 </div>
                                 <div className="candidate-view-profile">View Profile</div>
                             </div>

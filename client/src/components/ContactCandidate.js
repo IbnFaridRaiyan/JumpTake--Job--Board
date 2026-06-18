@@ -76,6 +76,11 @@ const ContactCandidate = ({ companyId, candidate, onSent, mode = 'employer', cur
 
             {open && (
                 <div className="message-compose-card">
+                    {mode === 'candidate' && (
+                        <p className="message-compose-note">
+                            You can send one introduction message first. A full conversation opens once the other candidate replies or accepts your friend invitation.
+                        </p>
+                    )}
                     <RichMessageEditor
                         value={messageHtml}
                         onChange={setMessageHtml}

@@ -279,9 +279,6 @@ const GeneralAssessments = forwardRef(({ companyId, jobs = [], onBack, onFooterB
                 <button className="back-button responsive-back-button" onClick={onFooterBack || onBack}>
                     Back
                 </button>
-                <button className="back-button responsive-back-button" onClick={onFooterBack || onBack}>
-                    Back
-                </button>
             </div>
         </div>
     );

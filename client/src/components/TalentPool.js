@@ -11,6 +11,10 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCandidate, setSelectedCandidate] = useState(null);
     const [spotlightActive, setSpotlightActive] = useState(false);
+    const [currentCandidatePage, setCurrentCandidatePage] = useState(1);
+    const [isMobileView, setIsMobileView] = useState(() => (
+        typeof window !== 'undefined' ? window.innerWidth <= 768 : false
+    ));
     const candidateProfileRef = useRef(null);
 
     useEffect(() => {
@@ -32,6 +36,14 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
             sessionStorage.removeItem(talentSearchKey);
         }
     }, [mode]);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobileView(window.innerWidth <= 768);
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const fetchCandidates = async () => {
         try {
@@ -410,6 +422,24 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
             
         return matchesSearch;
     });
+    const candidatesPerMobilePage = 6;
+    const totalCandidatePages = Math.max(1, Math.ceil(filteredCandidateRows.length / candidatesPerMobilePage));
+    const pagedCandidateRows = isMobileView
+        ? filteredCandidateRows.slice(
+            (currentCandidatePage - 1) * candidatesPerMobilePage,
+            currentCandidatePage * candidatesPerMobilePage
+        )
+        : filteredCandidateRows;
+
+    useEffect(() => {
+        setCurrentCandidatePage(1);
+    }, [searchTerm, spotlightActive, isMobileView, filteredCandidateRows.length]);
+
+    useEffect(() => {
+        if (currentCandidatePage > totalCandidatePages) {
+            setCurrentCandidatePage(totalCandidatePages);
+        }
+    }, [currentCandidatePage, totalCandidatePages]);
 
     const formatDataForDisplay = (data) => {
         if (Array.isArray(data)) {
@@ -604,8 +634,9 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                             </p>
                         </div>
                     ) : (
+                        <>
                         <div className="candidates-grid">
-                            {filteredCandidateRows.map(({ candidate, spotlight }) => (
+                            {pagedCandidateRows.map(({ candidate, spotlight }) => (
                                 <div key={candidate._id} className="candidate-card" onClick={() => handleViewProfile(candidate)}>
                                     <button
                                         type="button"
@@ -613,7 +644,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                                         onClick={(event) => toggleTalentBookmark(candidate, event)}
                                         aria-label={bookmarkedTalentIds.includes(String(candidate._id)) ? 'Remove bookmark' : 'Bookmark talent'}
                                     >
-                                        {bookmarkedTalentIds.includes(String(candidate._id)) ? '★' : '☆'}
+                                        {bookmarkedTalentIds.includes(String(candidate._id)) ? '\u2605' : '\u2606'}
                                     </button>
                                     <div className="candidate-avatar">
                                         {candidate.name ? candidate.name.charAt(0).toUpperCase() : 'C'}
@@ -653,6 +684,28 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                                 </div>
                             ))}
                         </div>
+                        {isMobileView && totalCandidatePages > 1 && (
+                            <div className="mobile-list-pagination" aria-label="Candidate pages">
+                                <button
+                                    type="button"
+                                    className="secondary-button"
+                                    onClick={() => setCurrentCandidatePage((page) => Math.max(1, page - 1))}
+                                    disabled={currentCandidatePage === 1}
+                                >
+                                    Previous
+                                </button>
+                                <span>Page {currentCandidatePage} of {totalCandidatePages}</span>
+                                <button
+                                    type="button"
+                                    className="secondary-button"
+                                    onClick={() => setCurrentCandidatePage((page) => Math.min(totalCandidatePages, page + 1))}
+                                    disabled={currentCandidatePage === totalCandidatePages}
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        )}
+                        </>
                     )}
                 </>
             )}

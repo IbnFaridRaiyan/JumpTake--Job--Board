@@ -15,6 +15,7 @@ import PerformanceAnalytics from './PerformanceAnalytics';
 import PortalSidebar from './PortalSidebar';
 import Notifications from './Notifications';
 import logo from './media/logo3.png';
+import logoDark from './media/logo4.png';
 
 const EMPLOYER_SECTION_IDS = new Set([
     'dashboard',
@@ -70,6 +71,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     const [isManagingEmployerJob, setIsManagingEmployerJob] = useState(false);
     const mobilePanelRef = useRef(null);
     const navigate = useNavigate();
+    const dashboardLogo = appMode === 'dark' ? logoDark : logo;
 
     const updateActiveSection = (section, { push = true } = {}) => {
         if (!EMPLOYER_SECTION_IDS.has(section)) {
@@ -585,8 +587,9 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
             default:
                 return (
                     <div className="dashboard-content">
-                        <h2>Welcome to your Employer Dashboard</h2>
-                        <p>From here you can post new job listings and manage applications.</p>
+                        <div className="employer-dashboard-content-title">
+                            <h2>Dashboard</h2>
+                        </div>
 
                         <div className="dashboard-stats">
                             <div className="stat-card">
@@ -715,7 +718,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                             onClick={handleLogoClick}
                             aria-label="Go to Dashboard"
                         >
-                            <img src={logo} alt="JumpTake" className="employer-dashboard-logo" />
+                            <img src={dashboardLogo} alt="JumpTake" className="employer-dashboard-logo" />
                         </button>
                     </div>
                     <div className="dashboard-title employer-dashboard-title">
@@ -738,7 +741,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                         onClick={handleLogoClick}
                         aria-label="Go to Dashboard"
                     >
-                        <img src={logo} alt="JumpTake" className="employer-dashboard-logo" />
+                        <img src={dashboardLogo} alt="JumpTake" className="employer-dashboard-logo" />
                     </button>
                 </div>
                 <div className="dashboard-title employer-dashboard-title">
@@ -756,13 +759,16 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                     primaryItems={employerPrimaryNavItems}
                     secondaryItems={employerSecondaryNavItems}
                     onLogout={handleLogout}
+                    mobileSectionOpen={mobileSectionVisible}
                 />
 
                 <main ref={mobilePanelRef} className={`main-content mobile-dashboard-section-panel mobile-section-${activeSection} ${mobileSectionVisible ? 'is-open' : ''}`}>
-                    <div className="dashboard-section-title">
-                        <h2>{sectionTitles[activeSection] || 'Dashboard Section'}</h2>
-                    </div>
-                    {mobileSectionVisible && (
+                    {activeSection !== 'dashboard' && activeSection !== 'post-job' && (
+                        <div className="dashboard-section-title">
+                            <h2>{sectionTitles[activeSection] || 'Dashboard Section'}</h2>
+                        </div>
+                    )}
+                    {mobileSectionVisible && activeSection !== 'dashboard' && activeSection !== 'post-job' && (
                         <div className="mobile-section-panel-header">
                             <button type="button" className="back-button" onClick={goToPreviousSection}>
                                 {activeSection === 'manage-jobs' && isManagingEmployerJob ? 'Back to Manage Jobs' : 'Back'}

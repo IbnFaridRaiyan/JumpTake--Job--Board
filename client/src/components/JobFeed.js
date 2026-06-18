@@ -576,11 +576,9 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
 
     
     const displayedJobs = activeTab === 'recommended' ? recommendedJobs : filteredJobs;
-    const jobsPerDesktopPage = 5;
-    const totalJobPages = Math.max(1, Math.ceil(displayedJobs.length / jobsPerDesktopPage));
-    const pagedJobs = isDesktopView
-        ? displayedJobs.slice((currentJobPage - 1) * jobsPerDesktopPage, currentJobPage * jobsPerDesktopPage)
-        : displayedJobs;
+    const jobsPerPage = isDesktopView ? 5 : 3;
+    const totalJobPages = Math.max(1, Math.ceil(displayedJobs.length / jobsPerPage));
+    const pagedJobs = displayedJobs.slice((currentJobPage - 1) * jobsPerPage, currentJobPage * jobsPerPage);
 
     useEffect(() => {
         setCurrentJobPage(1);
@@ -1152,7 +1150,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                             <p>Please check back later for new opportunities or try a different search.</p>
                         </div>
                     )}
-                    {isDesktopView && displayedJobs.length > jobsPerDesktopPage && (
+                    {displayedJobs.length > jobsPerPage && (
                         <div className="job-feed-pagination" aria-label="Job feed pages">
                             <button
                                 type="button"

@@ -184,9 +184,6 @@ const ManageJobs = forwardRef(({ jobs, companyId, onJobUpdated, onBack, onFooter
     return (
         <div className="manage-jobs-container">
             <div className="manage-jobs-mobile-local-title" aria-hidden="true">Manage Jobs</div>
-            <div className="manage-jobs-header">
-                <h2>Manage Job Listings</h2>
-            </div>
             
             {message && (
                 <div className={`notification-message ${message.includes('Error') ? 'error' : 'success'}`}>
@@ -293,20 +290,6 @@ const ManageJobs = forwardRef(({ jobs, companyId, onJobUpdated, onBack, onFooter
                         </table>
                     </div>
 
-                    <div className="page-footer-actions">
-                        <button
-                            className="back-button"
-                            onClick={onFooterBack || onBack}
-                        >
-                            Back
-                        </button>
-                        <button
-                            className="back-button"
-                            onClick={onFooterBack || onBack}
-                        >
-                            Back
-                        </button>
-                    </div>
                 </div>
             )}
         </div>

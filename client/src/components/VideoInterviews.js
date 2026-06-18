@@ -227,14 +227,11 @@ const VideoInterviews = forwardRef(({ userId, switchSection, onFooterBack }, ref
                     )}
 
                     <div className="page-footer-actions">
-                        <button className="back-button responsive-back-button" onClick={onFooterBack || handleBackToFeed}>
-                            Back
-                        </button>
                         <button
                             className="back-button responsive-back-button"
                             onClick={closeInterviewDetails}
                         >
-                            Back
+                            Back to Video Interviews
                         </button>
                     </div>
                 </div>
@@ -288,12 +285,6 @@ const VideoInterviews = forwardRef(({ userId, switchSection, onFooterBack }, ref
 
             <div className="page-footer-actions">
                 <button className="back-button responsive-back-button" onClick={onFooterBack || handleBackToFeed}>
-                    Back
-                </button>
-                <button
-                    className="back-button responsive-back-button"
-                    onClick={onFooterBack || handleBackToFeed}
-                >
                     Back
                 </button>
             </div>

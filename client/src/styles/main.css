@@ -1822,9 +1822,9 @@ textarea:focus {
 }
 
 .view-button:before {
-  content: "👁️";
-  margin-right: 8px;
-  font-size: 14px;
+  content: none;
+  display: none;
+  margin-right: 0;
 }
 
 .view-button.no-icon-button:before {
@@ -20141,4 +20141,2117 @@ html[data-theme="light"] .candidates-loading *,
 html[data-theme="light"] .loading-recommendations * {
   color: var(--cream-ink, #102f2a) !important;
   -webkit-text-fill-color: var(--cream-ink, #102f2a) !important;
+}
+
+/* Employer dashboard QA pass: keep dashboard controls inside the content panel. */
+.employer-dashboard-header ~ .dashboard-container .dashboard-content {
+  position: relative !important;
+}
+
+.employer-dashboard-content-title {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 1rem !important;
+  margin: 0 0 1.1rem !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.employer-dashboard-content-title h2 {
+  margin: 0 !important;
+  color: inherit !important;
+  text-align: right !important;
+}
+
+.employer-dashboard-inline-back {
+  display: none !important;
+}
+
+.employer-dashboard-header ~ .dashboard-container .dashboard-content > h2,
+.employer-dashboard-header ~ .dashboard-container .dashboard-content > p {
+  display: none !important;
+}
+
+.employer-dashboard-header ~ .dashboard-container .dashboard-card .card-button {
+  align-self: stretch !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin-top: auto !important;
+  padding: 0.25rem 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #5aa79f !important;
+  -webkit-text-fill-color: #5aa79f !important;
+  text-align: center !important;
+}
+
+.employer-dashboard-header ~ .dashboard-container .dashboard-card .card-button:hover,
+.employer-dashboard-header ~ .dashboard-container .dashboard-card .card-button:focus-visible {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  text-decoration: underline !important;
+  text-underline-offset: 0.2em !important;
+}
+
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .dashboard-content,
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .dashboard-stats,
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .dashboard-cards {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .employer-dashboard-content-title h2 {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+}
+
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .stat-card,
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .dashboard-card {
+  background: #fff1df !important;
+  background-color: #fff1df !important;
+  border-color: rgba(216, 197, 168, 0.82) !important;
+  color: var(--cream-ink, #102f2a) !important;
+}
+
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .stat-card h3,
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .stat-card p,
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .dashboard-card h3,
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .dashboard-card p {
+  color: var(--cream-ink, #102f2a) !important;
+  -webkit-text-fill-color: var(--cream-ink, #102f2a) !important;
+}
+
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .dashboard-card .card-button,
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .dashboard-card .card-button * {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #4b2e14 !important;
+  -webkit-text-fill-color: #4b2e14 !important;
+}
+
+@media (max-width: 920px) {
+  .mobile-dashboard-section-panel.mobile-section-dashboard.is-open > .dashboard-section-title,
+  .mobile-dashboard-section-panel.mobile-section-dashboard.is-open > .mobile-section-panel-header {
+    display: none !important;
+  }
+
+  .employer-dashboard-header ~ .dashboard-container .dashboard-content {
+    padding-top: 1rem !important;
+  }
+
+  .employer-dashboard-content-title {
+    justify-content: space-between !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .employer-dashboard-inline-back {
+    display: inline-flex !important;
+    width: auto !important;
+    min-width: 0 !important;
+    padding: 0.25rem 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .employer-dashboard-content-title h2 {
+    text-align: right !important;
+  }
+
+  html[data-theme="light"] .employer-dashboard-inline-back,
+  html[data-theme="light"] .employer-dashboard-inline-back * {
+    color: #000 !important;
+    -webkit-text-fill-color: #000 !important;
+  }
+}
+
+/* Employer dashboard and Post a Job title/back placement pass. */
+.employer-dashboard-header ~ .dashboard-container .dashboard-content {
+  padding: clamp(1.5rem, 2.4vw, 2.35rem) !important;
+}
+
+.employer-dashboard-header ~ .dashboard-container .dashboard-content .employer-dashboard-content-title {
+  padding: 0.15rem clamp(0.35rem, 1vw, 0.75rem) 0.7rem !important;
+}
+
+.post-job-content-title {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 1rem !important;
+  margin: 0 0 1.1rem !important;
+  padding: 0.15rem clamp(0.35rem, 1vw, 0.75rem) 0.7rem !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.post-job-content-title h2 {
+  margin: 0 !important;
+  color: inherit !important;
+  text-align: right !important;
+  white-space: nowrap !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
+.post-job-inline-back {
+  display: none !important;
+}
+
+.employer-dashboard-header ~ .dashboard-container .post-job-header,
+.mobile-dashboard-section-panel.mobile-section-post-job.is-open > .dashboard-section-title,
+.mobile-dashboard-section-panel.mobile-section-post-job.is-open > .mobile-section-panel-header {
+  display: none !important;
+}
+
+.employer-dashboard-header ~ .dashboard-container .post-job-container,
+.employer-dashboard-header ~ .dashboard-container .post-job-content {
+  position: relative !important;
+}
+
+.employer-dashboard-header ~ .dashboard-container .post-job-content::before {
+  content: none !important;
+  display: none !important;
+}
+
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .post-job-content-title h2 {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+}
+
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .post-job-content,
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .job-form-intro {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: rgba(216, 197, 168, 0.72) !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .job-form-intro {
+  background: var(--cream-card, #fffaf1) !important;
+  background-color: var(--cream-card, #fffaf1) !important;
+}
+
+@media (max-width: 920px) {
+  .employer-dashboard-header ~ .dashboard-container .dashboard-content {
+    padding: 1rem !important;
+  }
+
+  .employer-dashboard-content-title,
+  .post-job-content-title {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    margin: 0 0 1rem !important;
+    padding: 0 0 0.75rem !important;
+  }
+
+  .employer-dashboard-content-title h2,
+  .post-job-content-title h2 {
+    min-width: max-content !important;
+    max-width: none !important;
+    white-space: nowrap !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    text-align: right !important;
+    font-size: clamp(1rem, 4.8vw, 1.28rem) !important;
+    line-height: 1.05 !important;
+  }
+
+  .employer-dashboard-inline-back,
+  .post-job-inline-back {
+    display: inline-flex !important;
+    justify-content: flex-start !important;
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    text-align: left !important;
+  }
+
+  .employer-dashboard-inline-back:hover,
+  .post-job-inline-back:hover,
+  .employer-dashboard-inline-back:focus-visible,
+  .post-job-inline-back:focus-visible {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    text-decoration: underline !important;
+    text-underline-offset: 0.18em !important;
+  }
+
+  html[data-theme="light"] .employer-dashboard-inline-back,
+  html[data-theme="light"] .employer-dashboard-inline-back *,
+  html[data-theme="light"] .post-job-inline-back,
+  html[data-theme="light"] .post-job-inline-back * {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: #4b2e14 !important;
+    -webkit-text-fill-color: #4b2e14 !important;
+  }
+}
+
+/* Employer light-mode surface and mobile back-button cleanup. */
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .dashboard-content,
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .dashboard-content > .dashboard-stats,
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .dashboard-content > .dashboard-cards {
+  background: #fff3e2 !important;
+  background-color: #fff3e2 !important;
+}
+
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .dashboard-content .stat-card,
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .dashboard-content .dashboard-card {
+  background: #fff3e2 !important;
+  background-color: #fff3e2 !important;
+  border-color: rgba(216, 197, 168, 0.88) !important;
+  box-shadow: 0 10px 22px rgba(86, 66, 37, 0.06) !important;
+}
+
+html[data-theme="light"] .home-page .portal-sidebar-nav {
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.55), transparent 30%),
+    linear-gradient(180deg, #fff9ef 0%, #f8eddc 48%, #fff5e7 100%) !important;
+  border-color: rgba(216, 197, 168, 0.82) !important;
+  box-shadow: 0 18px 40px rgba(86, 66, 37, 0.1) !important;
+}
+
+html[data-theme="light"] .home-page .portal-sidebar-profile {
+  background: linear-gradient(135deg, #fff5e7 0%, #f2e2cc 100%) !important;
+  border-color: rgba(216, 197, 168, 0.86) !important;
+  box-shadow: 0 10px 20px rgba(86, 66, 37, 0.08) !important;
+}
+
+html[data-theme="light"] .home-page .portal-sidebar-avatar {
+  background: #c9a77a !important;
+  color: #3b2410 !important;
+  -webkit-text-fill-color: #3b2410 !important;
+}
+
+html[data-theme="light"] .home-page .portal-sidebar-user-id,
+html[data-theme="light"] .home-page .portal-sidebar-user-role,
+html[data-theme="light"] .home-page .portal-vertical-sidebar .sidebar__item--heading,
+html[data-theme="light"] .home-page .portal-vertical-sidebar .text {
+  color: #17342e !important;
+  -webkit-text-fill-color: #17342e !important;
+}
+
+html[data-theme="light"] .home-page .portal-vertical-sidebar .sidebar__link {
+  background: #fffaf1 !important;
+  background-color: #fffaf1 !important;
+  border-color: rgba(216, 197, 168, 0.88) !important;
+  color: #17342e !important;
+  box-shadow: 0 6px 14px rgba(86, 66, 37, 0.05) !important;
+}
+
+html[data-theme="light"] .home-page .portal-vertical-sidebar .sidebar__link:hover,
+html[data-theme="light"] .home-page .portal-vertical-sidebar .sidebar__link.is-active {
+  background: #fff0dc !important;
+  background-color: #fff0dc !important;
+  border-color: rgba(86, 170, 161, 0.62) !important;
+}
+
+html[data-theme="light"] .home-page .portal-vertical-sidebar .sidebar__link.is-danger {
+  background: #fff7ee !important;
+  border-color: rgba(142, 47, 35, 0.34) !important;
+}
+
+html[data-theme="light"] .home-page .portal-vertical-sidebar .icon svg,
+html[data-theme="light"] .home-page .portal-vertical-sidebar .toggle-svg-icon {
+  fill: #7b8b82 !important;
+}
+
+@media (max-width: 920px) {
+  .employer-dashboard-content-title,
+  .post-job-content-title {
+    margin-left: -0.35rem !important;
+    padding-left: 0 !important;
+  }
+
+  .employer-dashboard-inline-back,
+  .post-job-inline-back,
+  .mobile-dashboard-section-panel.is-open .employer-dashboard-inline-back.back-button,
+  .mobile-dashboard-section-panel.is-open .post-job-inline-back.back-button {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    justify-self: start !important;
+    transform: translateX(-0.45rem) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: none !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    outline-offset: 3px !important;
+  }
+
+  .employer-dashboard-inline-back::before,
+  .employer-dashboard-inline-back::after,
+  .post-job-inline-back::before,
+  .post-job-inline-back::after {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  html[data-theme="light"] .employer-dashboard-inline-back,
+  html[data-theme="light"] .post-job-inline-back,
+  html[data-theme="light"] .mobile-dashboard-section-panel.is-open .employer-dashboard-inline-back.back-button,
+  html[data-theme="light"] .mobile-dashboard-section-panel.is-open .post-job-inline-back.back-button {
+    background: none !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: #4b2e14 !important;
+    -webkit-text-fill-color: #4b2e14 !important;
+  }
+
+  html[data-theme="dark"] .employer-dashboard-inline-back,
+  html[data-theme="dark"] .post-job-inline-back,
+  html[data-theme="dark"] .mobile-dashboard-section-panel.is-open .employer-dashboard-inline-back.back-button,
+  html[data-theme="dark"] .mobile-dashboard-section-panel.is-open .post-job-inline-back.back-button {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+  }
+}
+
+/* Final requested cleanup: text-only mobile backs, flat Post Job form, and clean Manage Jobs table. */
+.text-only-back-button,
+.home-page .text-only-back-button,
+.mobile-dashboard-section-panel.is-open .text-only-back-button {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline-offset: 3px !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-align: left !important;
+}
+
+.text-only-back-button::before {
+  content: "←" !important;
+  margin-right: 0.35rem !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.text-only-back-button::after {
+  content: none !important;
+  display: none !important;
+}
+
+.text-only-back-button:hover,
+.text-only-back-button:focus-visible {
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  text-decoration: underline !important;
+  text-underline-offset: 0.18em !important;
+}
+
+html[data-theme="light"] .text-only-back-button,
+html[data-theme="light"] .home-page .text-only-back-button,
+html[data-theme="light"] .mobile-dashboard-section-panel.is-open .text-only-back-button {
+  color: #4b2e14 !important;
+  -webkit-text-fill-color: #4b2e14 !important;
+}
+
+html[data-theme="dark"] .text-only-back-button,
+html[data-theme="dark"] .home-page .text-only-back-button,
+html[data-theme="dark"] .mobile-dashboard-section-panel.is-open .text-only-back-button {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+@media (max-width: 920px) {
+  .employer-dashboard-content-title,
+  .post-job-content-title {
+    grid-template-columns: auto minmax(0, 1fr) !important;
+    margin-left: -0.85rem !important;
+  }
+
+  .employer-dashboard-content-title h2,
+  .post-job-content-title h2 {
+    justify-self: end !important;
+  }
+}
+
+.employer-dashboard-header ~ .dashboard-container .post-job-container,
+.employer-dashboard-header ~ .dashboard-container .post-job-content {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.employer-dashboard-header ~ .dashboard-container .post-job-content {
+  padding-inline: clamp(0.5rem, 2vw, 1.25rem) !important;
+}
+
+.employer-dashboard-header ~ .dashboard-container .job-form-intro {
+  display: none !important;
+}
+
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .post-job-container,
+html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .post-job-content {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.employer-dashboard-header ~ .dashboard-container .manage-jobs-container > .manage-jobs-header {
+  display: none !important;
+}
+
+.employer-dashboard-header ~ .dashboard-container .manage-jobs-container .job-list-table {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.employer-dashboard-header ~ .dashboard-container .manage-jobs-container .job-list-table table {
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+}
+
+.employer-dashboard-header ~ .dashboard-container .manage-jobs-container .job-list-table td.location-cell {
+  display: table-cell !important;
+  align-items: initial !important;
+  white-space: nowrap !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.employer-dashboard-header ~ .dashboard-container .manage-jobs-container .job-list-table td.location-cell::before {
+  display: inline-block !important;
+  vertical-align: -0.18em !important;
+}
+
+.employer-dashboard-header ~ .dashboard-container .manage-jobs-container .job-list-table td {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Desktop should not show the inline section back controls. */
+@media (min-width: 921px) {
+  .employer-dashboard-inline-back,
+  .post-job-inline-back,
+  .home-page .employer-dashboard-inline-back,
+  .home-page .post-job-inline-back {
+    display: none !important;
+  }
+}
+
+/* Mobile opened sections keep the sidebar tucked left with a reopen handle. */
+@media (max-width: 768px) {
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.sidebar {
+    display: flex !important;
+    position: fixed !important;
+    top: clamp(7.1rem, 28vw, 8.75rem) !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    z-index: 2800 !important;
+    flex: 0 0 min(82vw, 19rem) !important;
+    inline-size: min(82vw, 19rem) !important;
+    min-inline-size: min(82vw, 19rem) !important;
+    width: min(82vw, 19rem) !important;
+    max-width: min(82vw, 19rem) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: translateX(calc(-100% + 3rem)) !important;
+    transition: transform 260ms ease, box-shadow 260ms ease !important;
+    pointer-events: auto !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded {
+    transform: translateX(0) !important;
+    box-shadow: 18px 0 42px rgba(0, 0, 0, 0.38) !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed {
+    transform: translateX(calc(-100% + 3rem)) !important;
+    box-shadow: none !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-sidebar-nav {
+    min-height: 100% !important;
+    max-height: 100% !important;
+    overflow: hidden auto !important;
+    border-radius: 0 1rem 1rem 0 !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar .sidebar__toggle-container {
+    display: flex !important;
+    position: sticky !important;
+    top: 0 !important;
+    justify-content: flex-end !important;
+    z-index: 3 !important;
+    min-height: 3rem !important;
+    pointer-events: auto !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar .nav__toggle {
+    display: inline-flex !important;
+    justify-content: center !important;
+    width: 3rem !important;
+    min-width: 3rem !important;
+    height: 3rem !important;
+    background: rgba(99, 192, 184, 0.12) !important;
+    border: 1px solid rgba(99, 192, 184, 0.24) !important;
+    border-radius: 0.75rem !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .portal-sidebar-profile,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .sidebar__wrapper {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .portal-sidebar-profile,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .sidebar__wrapper {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed figcaption,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .item--heading,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .text {
+    opacity: 0 !important;
+    width: 0 !important;
+    pointer-events: none !important;
+  }
+
+  .dashboard-container.mobile-section-open .mobile-dashboard-section-panel.is-open {
+    z-index: 2400 !important;
+  }
+
+  html[data-theme="light"] .dashboard-container.mobile-section-open .portal-vertical-sidebar .nav__toggle {
+    background: #fffaf1 !important;
+    border-color: rgba(216, 197, 168, 0.86) !important;
+  }
+}
+
+/* Mobile correction: no Back controls, content clears the rail, collapsed nav keeps icons visible. */
+@media (max-width: 768px) {
+  .mobile-dashboard-section-panel.is-open .back-button,
+  .mobile-job-management-section-panel.is-open .back-button,
+  .mobile-dashboard-section-panel.is-open .text-only-back-button,
+  .mobile-job-management-section-panel.is-open .text-only-back-button,
+  .employer-dashboard-inline-back,
+  .post-job-inline-back {
+    display: none !important;
+  }
+
+  .employer-dashboard-content-title,
+  .post-job-content-title {
+    grid-template-columns: 1fr !important;
+    margin-left: 0 !important;
+  }
+
+  .employer-dashboard-content-title h2,
+  .post-job-content-title h2,
+  .mobile-dashboard-section-panel.is-open > .mobile-section-panel-header h2,
+  .mobile-job-management-section-panel.is-open > .mobile-section-panel-header h2 {
+    justify-self: end !important;
+    margin-left: auto !important;
+  }
+
+  .dashboard-container.mobile-section-open .mobile-dashboard-section-panel.is-open,
+  .dashboard-container.mobile-section-open .mobile-job-management-section-panel.is-open {
+    left: 2.8rem !important;
+    right: 0 !important;
+    width: calc(100vw - 2.8rem) !important;
+    max-width: calc(100vw - 2.8rem) !important;
+    padding-left: 0.8rem !important;
+    padding-right: 0.7rem !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.sidebar {
+    top: clamp(7.2rem, 28vw, 8.5rem) !important;
+    flex-basis: min(82vw, 18.5rem) !important;
+    inline-size: min(82vw, 18.5rem) !important;
+    min-inline-size: min(82vw, 18.5rem) !important;
+    width: min(82vw, 18.5rem) !important;
+    max-width: min(82vw, 18.5rem) !important;
+    transform: translateX(calc(-100% + 2.4rem)) !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed {
+    transform: translateX(calc(-100% + 2.4rem)) !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-sidebar-nav {
+    padding: 0.25rem !important;
+    border-radius: 0 0.75rem 0.75rem 0 !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar .sidebar__toggle-container {
+    min-height: 2.25rem !important;
+    height: 2.25rem !important;
+    justify-content: flex-end !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar .nav__toggle {
+    width: 2rem !important;
+    min-width: 2rem !important;
+    height: 2rem !important;
+    border-radius: 0.55rem !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar .toggle--icons,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar .toggle-svg-icon {
+    width: 1.05rem !important;
+    height: 1.05rem !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .portal-sidebar-profile,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .portal-space-animation {
+    display: none !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .sidebar__wrapper {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    padding-top: 0.35rem !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .sidebar__list {
+    align-items: flex-end !important;
+    gap: 0.25rem !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .sidebar__item {
+    min-block-size: 2.25rem !important;
+    width: 2rem !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .item--heading,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .text,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed figcaption {
+    display: none !important;
+    opacity: 0 !important;
+    width: 0 !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .sidebar__link {
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 2rem !important;
+    min-width: 2rem !important;
+    height: 2rem !important;
+    min-height: 2rem !important;
+    padding: 0 !important;
+    border-radius: 0.55rem !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .icon {
+    display: inline-grid !important;
+    place-items: center !important;
+    width: 2rem !important;
+    min-width: 2rem !important;
+    height: 2rem !important;
+    flex: 0 0 2rem !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .icon svg {
+    display: block !important;
+    width: 1rem !important;
+    height: 1rem !important;
+    opacity: 1 !important;
+    fill: rgba(236, 255, 251, 0.72) !important;
+  }
+
+  html[data-theme="light"] .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .icon svg {
+    fill: #6f8178 !important;
+  }
+}
+
+/* Mobile drawer geometry fix: visible rail, fully opening drawer. */
+@media (max-width: 768px) {
+  .dashboard-container.mobile-section-open {
+    --mobile-nav-rail: 2.85rem;
+    --mobile-nav-drawer: min(82vw, 18.75rem);
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.sidebar {
+    left: 0 !important;
+    width: var(--mobile-nav-drawer) !important;
+    min-width: var(--mobile-nav-drawer) !important;
+    max-width: var(--mobile-nav-drawer) !important;
+    inline-size: var(--mobile-nav-drawer) !important;
+    min-inline-size: var(--mobile-nav-drawer) !important;
+    flex-basis: var(--mobile-nav-drawer) !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed {
+    transform: translateX(calc(-1 * (var(--mobile-nav-drawer) - var(--mobile-nav-rail)))) !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded {
+    transform: translateX(0) !important;
+  }
+
+  .dashboard-container.mobile-section-open .mobile-dashboard-section-panel.is-open,
+  .dashboard-container.mobile-section-open .mobile-job-management-section-panel.is-open {
+    left: var(--mobile-nav-rail) !important;
+    width: calc(100vw - var(--mobile-nav-rail)) !important;
+    max-width: calc(100vw - var(--mobile-nav-rail)) !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-sidebar-nav {
+    padding-right: 0.38rem !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar .sidebar__toggle-container {
+    padding-right: 0.28rem !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar .nav__toggle {
+    width: 1.75rem !important;
+    min-width: 1.75rem !important;
+    height: 1.75rem !important;
+    border-radius: 0.5rem !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar .toggle--icons,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar .toggle-svg-icon {
+    width: 0.95rem !important;
+    height: 0.95rem !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .sidebar__list {
+    align-items: flex-end !important;
+    padding-right: 0.18rem !important;
+  }
+}
+
+/* Final Manage Jobs mobile pass: no stray backs, right-aligned page title, and content clears the icon rail. */
+@media (min-width: 769px) {
+  .desktop-back-to-manage-jobs,
+  .job-management-nav .job-management-back-nav {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container.mobile-section-open {
+    --mobile-nav-rail: 2.95rem;
+  }
+
+  .dashboard-container.mobile-section-open .mobile-dashboard-section-panel.mobile-section-manage-jobs.is-open,
+  .dashboard-container.mobile-section-open .mobile-job-management-section-panel.is-open {
+    left: var(--mobile-nav-rail) !important;
+    width: calc(100vw - var(--mobile-nav-rail)) !important;
+    max-width: calc(100vw - var(--mobile-nav-rail)) !important;
+    padding: 0.65rem 0.7rem 1.5rem !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-manage-jobs.is-open > .dashboard-section-title,
+  .mobile-dashboard-section-panel.mobile-section-manage-jobs.is-open > .mobile-section-panel-header {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    min-height: 3.75rem !important;
+    margin: 0 0 0.65rem !important;
+    padding: 0.85rem 0.95rem !important;
+    border-radius: 0.75rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-manage-jobs.is-open > .mobile-section-panel-header .back-button,
+  .mobile-dashboard-section-panel.mobile-section-manage-jobs.is-open > .dashboard-section-title .back-button,
+  .mobile-job-management-section-panel.is-open > .mobile-section-panel-header .back-button {
+    display: none !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-manage-jobs.is-open > .dashboard-section-title h2,
+  .mobile-dashboard-section-panel.mobile-section-manage-jobs.is-open > .mobile-section-panel-header h2 {
+    grid-column: 2 !important;
+    justify-self: end !important;
+    margin: 0 !important;
+    text-align: right !important;
+    white-space: nowrap !important;
+    max-width: calc(100vw - var(--mobile-nav-rail) - 2rem) !important;
+  }
+
+  .mobile-section-manage-jobs.is-open .manage-jobs-mobile-local-title,
+  .job-management-workspace .job-management-header,
+  .job-management-workspace.mobile-section-active > .job-management-mobile-job-title {
+    display: none !important;
+  }
+
+  .mobile-section-manage-jobs.is-open .manage-jobs-container,
+  .mobile-section-manage-jobs.is-open .job-management-workspace,
+  .mobile-section-manage-jobs.is-open .mobile-job-management-section-panel,
+  .mobile-section-manage-jobs.is-open .job-management-panel,
+  .mobile-section-manage-jobs.is-open .job-management-form,
+  .mobile-section-manage-jobs.is-open .job-management-detail,
+  .mobile-section-manage-jobs.is-open .profile-section,
+  .mobile-section-manage-jobs.is-open .settings-card,
+  .mobile-section-manage-jobs.is-open .application-detail-view,
+  .mobile-section-manage-jobs.is-open .assessment-summary-card,
+  .mobile-section-manage-jobs.is-open .assessment-question-card,
+  .mobile-section-manage-jobs.is-open .application-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .mobile-section-manage-jobs.is-open .job-management-workspace {
+    display: block !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  .mobile-section-manage-jobs.is-open .job-management-workspace:not(.mobile-section-active) .job-management-nav {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 0.55rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0.85rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .mobile-section-manage-jobs.is-open .job-management-nav button,
+  .mobile-section-manage-jobs.is-open .job-management-nav .job-management-back-nav {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .mobile-section-manage-jobs.is-open .job-management-nav .job-management-back-nav {
+    display: inline-flex !important;
+    margin-top: 0.45rem !important;
+  }
+
+  .mobile-section-manage-jobs.is-open .mobile-job-management-section-panel.is-open {
+    position: static !important;
+    inset: auto !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  .mobile-section-manage-jobs.is-open .mobile-job-management-section-panel.is-open > .mobile-section-panel-header {
+    display: none !important;
+  }
+
+  .mobile-section-manage-jobs.is-open .job-management-panel,
+  .mobile-section-manage-jobs.is-open .job-management-form,
+  .mobile-section-manage-jobs.is-open .job-management-detail {
+    padding: 0.95rem !important;
+    overflow-x: hidden !important;
+  }
+
+  .mobile-section-manage-jobs.is-open .job-management-panel *,
+  .mobile-section-manage-jobs.is-open .job-management-form *,
+  .mobile-section-manage-jobs.is-open .job-management-detail * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .mobile-section-manage-jobs.is-open input,
+  .mobile-section-manage-jobs.is-open textarea,
+  .mobile-section-manage-jobs.is-open select {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+/* Final navigation/subpage polish: visible footer backs, clean stars, and a sturdier collapsed desktop rail. */
+@media (max-width: 768px) {
+  .mobile-dashboard-section-panel.is-open > .mobile-section-panel-header .back-button,
+  .mobile-job-management-section-panel.is-open > .mobile-section-panel-header .back-button {
+    display: none !important;
+  }
+
+  .mobile-dashboard-section-panel.is-open .page-footer-actions,
+  .mobile-dashboard-section-panel.is-open .section-footer-nav,
+  .mobile-job-management-section-panel.is-open .page-footer-actions,
+  .mobile-job-management-section-panel.is-open .section-footer-nav {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin: 1.25rem 0 0 !important;
+    padding: 0.35rem 0 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .mobile-dashboard-section-panel.is-open .page-footer-actions .back-button,
+  .mobile-dashboard-section-panel.is-open .section-footer-nav .back-button,
+  .mobile-job-management-section-panel.is-open .page-footer-actions .back-button,
+  .mobile-job-management-section-panel.is-open .section-footer-nav .back-button,
+  .mobile-bottom-back-button {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
+    padding: 0.2rem 0 !important;
+    background: none !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+    text-align: center !important;
+  }
+
+  .mobile-dashboard-section-panel.is-open .page-footer-actions .back-button::before,
+  .mobile-dashboard-section-panel.is-open .section-footer-nav .back-button::before,
+  .mobile-job-management-section-panel.is-open .page-footer-actions .back-button::before,
+  .mobile-job-management-section-panel.is-open .section-footer-nav .back-button::before,
+  .mobile-bottom-back-button::before {
+    content: "←" !important;
+    margin-right: 0.35rem !important;
+  }
+
+  .mobile-dashboard-section-panel.is-open .page-footer-actions .back-button::after,
+  .mobile-dashboard-section-panel.is-open .section-footer-nav .back-button::after,
+  .mobile-job-management-section-panel.is-open .page-footer-actions .back-button::after,
+  .mobile-job-management-section-panel.is-open .section-footer-nav .back-button::after,
+  .mobile-bottom-back-button::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  html[data-theme="light"] .mobile-dashboard-section-panel.is-open .page-footer-actions .back-button,
+  html[data-theme="light"] .mobile-dashboard-section-panel.is-open .section-footer-nav .back-button,
+  html[data-theme="light"] .mobile-job-management-section-panel.is-open .page-footer-actions .back-button,
+  html[data-theme="light"] .mobile-job-management-section-panel.is-open .section-footer-nav .back-button,
+  html[data-theme="light"] .mobile-bottom-back-button {
+    color: #4b2e14 !important;
+    -webkit-text-fill-color: #4b2e14 !important;
+  }
+}
+
+.talent-pool-container .talent-bookmark-button,
+.candidate-bookmarked-container .talent-bookmark-button,
+.candidate-view-candidates .talent-bookmark-button,
+.bookmark-star-button.talent-bookmark-button {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 2rem !important;
+  min-width: 2rem !important;
+  height: 2rem !important;
+  min-height: 2rem !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: rgba(255, 236, 98, 0.95) !important;
+  -webkit-text-fill-color: rgba(255, 236, 98, 0.95) !important;
+  font-size: 1.65rem !important;
+  font-family: Arial, sans-serif !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  overflow: visible !important;
+  text-align: center !important;
+  transform: none !important;
+}
+
+.talent-pool-container .talent-bookmark-button:not(.active),
+.candidate-bookmarked-container .talent-bookmark-button:not(.active),
+.candidate-view-candidates .talent-bookmark-button:not(.active) {
+  color: rgba(120, 125, 122, 0.9) !important;
+  -webkit-text-fill-color: rgba(120, 125, 122, 0.9) !important;
+}
+
+@media (max-width: 768px) {
+  .talent-pool-container .talent-bookmark-button,
+  .candidate-bookmarked-container .talent-bookmark-button,
+  .candidate-view-candidates .talent-bookmark-button {
+    top: 0.42rem !important;
+    right: 0.45rem !important;
+    width: 1.85rem !important;
+    min-width: 1.85rem !important;
+    height: 1.85rem !important;
+    min-height: 1.85rem !important;
+    font-size: 1.5rem !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .home-page .portal-vertical-sidebar.sidebar {
+    --collapsed: 4.25rem;
+    --item: 2.75rem;
+    position: relative !important;
+    z-index: 50 !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-collapsed .portal-sidebar-profile {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-height: 4.25rem !important;
+    padding: 0.45rem 0 !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-collapsed .portal-sidebar-avatar {
+    width: 2.35rem !important;
+    min-width: 2.35rem !important;
+    height: 2.35rem !important;
+    margin: 0 auto !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-collapsed .sidebar__link {
+    min-width: 2.75rem !important;
+  }
+
+  .home-page .portal-vertical-sidebar [data-tooltip]::before {
+    left: calc(100% + 0.75rem) !important;
+    z-index: 10000 !important;
+  }
+}
+
+/* Latest mobile rail, bookmark, header, and pagination cleanup. */
+.page-footer-actions .back-button + .back-button,
+.section-footer-nav .back-button + .back-button {
+  display: none !important;
+}
+
+.bookmark-star-button::before,
+.bookmark-star-button::after,
+.talent-bookmark-button::before,
+.talent-bookmark-button::after {
+  content: none !important;
+  display: none !important;
+}
+
+.bookmark-star-button,
+.talent-bookmark-button {
+  font-family: Arial, sans-serif !important;
+}
+
+.mobile-list-pagination,
+.job-feed-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  width: 100%;
+  margin: 1.2rem 0 0;
+  color: inherit;
+}
+
+.mobile-list-pagination .secondary-button,
+.job-feed-pagination .secondary-button {
+  width: auto !important;
+  min-width: 6rem !important;
+  padding: 0.62rem 0.9rem !important;
+}
+
+@media (max-width: 768px) {
+  .home-page .dashboard-header,
+  .home-page .candidate-dashboard-header,
+  .home-page .employer-dashboard-header {
+    min-height: 6.2rem !important;
+    height: auto !important;
+    padding: 0.55rem 0.75rem !important;
+    margin: 0.45rem 0.55rem 0.8rem !important;
+  }
+
+  .home-page .dashboard-logo-button {
+    width: 4.65rem !important;
+    height: 4.65rem !important;
+    min-width: 4.65rem !important;
+    min-height: 4.65rem !important;
+  }
+
+  .home-page .candidate-dashboard-logo,
+  .home-page .employer-dashboard-logo {
+    max-width: 3.6rem !important;
+    max-height: 3.2rem !important;
+    object-fit: contain !important;
+  }
+
+  .home-page .dashboard-title h1 {
+    font-size: 1.05rem !important;
+    line-height: 1.1 !important;
+  }
+
+  .home-page .dashboard-title p {
+    font-size: 0.66rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .dashboard-container.mobile-section-open {
+    --mobile-nav-rail: 3.25rem;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar {
+    width: var(--mobile-nav-rail) !important;
+    min-width: var(--mobile-nav-rail) !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-sidebar-nav {
+    align-items: center !important;
+    padding-left: 0.16rem !important;
+    padding-right: 0.16rem !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-sidebar-header,
+  .dashboard-container.mobile-section-open .sidebar__toggle-container,
+  .dashboard-container.mobile-section-open .sidebar__list,
+  .dashboard-container.mobile-section-open .sidebar__item {
+    width: 100% !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar .nav__toggle {
+    width: 1.65rem !important;
+    min-width: 1.65rem !important;
+    height: 1.65rem !important;
+    min-height: 1.65rem !important;
+    margin-inline: auto !important;
+    transform: translateX(0.12rem) !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .sidebar__link,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .icon {
+    width: 2.15rem !important;
+    min-width: 2.15rem !important;
+    height: 2.15rem !important;
+    min-height: 2.15rem !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar .icon svg {
+    width: 1.08rem !important;
+    height: 1.08rem !important;
+  }
+
+  .mobile-dashboard-section-panel.is-open .page-footer-actions .back-button::before,
+  .mobile-dashboard-section-panel.is-open .section-footer-nav .back-button::before,
+  .mobile-job-management-section-panel.is-open .page-footer-actions .back-button::before,
+  .mobile-job-management-section-panel.is-open .section-footer-nav .back-button::before,
+  .mobile-bottom-back-button::before {
+    content: "\2190" !important;
+  }
+
+  .mobile-dashboard-section-panel.is-open .page-footer-actions .back-button,
+  .mobile-dashboard-section-panel.is-open .section-footer-nav .back-button,
+  .mobile-job-management-section-panel.is-open .page-footer-actions .back-button,
+  .mobile-job-management-section-panel.is-open .section-footer-nav .back-button,
+  .mobile-bottom-back-button {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open,
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-container,
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-content,
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-display,
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-display {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 1rem !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-card,
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-section {
+    margin-inline: 0 !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-card *,
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-section * {
+    max-width: 100% !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .talent-pool-container .talent-bookmark-button,
+  .candidate-bookmarked-container .talent-bookmark-button,
+  .candidate-view-candidates .talent-bookmark-button {
+    top: 0.35rem !important;
+    right: 0.36rem !important;
+    width: 1.9rem !important;
+    min-width: 1.9rem !important;
+    height: 1.9rem !important;
+    min-height: 1.9rem !important;
+    font-size: 1.55rem !important;
+    line-height: 1 !important;
+    z-index: 5 !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .home-page .portal-vertical-sidebar.sidebar {
+    --collapsed: 4.6rem;
+    --item: 2.95rem;
+  }
+
+  .home-page .portal-vertical-sidebar.is-collapsed .sidebar__link {
+    min-width: 2.95rem !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-collapsed .portal-sidebar-avatar {
+    width: 2.55rem !important;
+    min-width: 2.55rem !important;
+    height: 2.55rem !important;
+  }
+}
+
+/* Mobile pagination and rail repair after compact drawer changes. */
+@media (max-width: 768px) {
+  .mobile-list-pagination,
+  .job-feed-pagination {
+    display: grid !important;
+    grid-template-columns: 4.45rem max-content 4.45rem !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 0.32rem !important;
+    width: min(100%, 14.5rem) !important;
+    max-width: 100% !important;
+    margin: 1.05rem auto 0 !important;
+  }
+
+  .mobile-list-pagination span,
+  .job-feed-pagination span {
+    display: inline-block !important;
+    width: auto !important;
+    min-width: max-content !important;
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+    overflow-wrap: normal !important;
+    text-align: center !important;
+    font-size: 0.7rem !important;
+    line-height: 1 !important;
+  }
+
+  .mobile-list-pagination .secondary-button,
+  .job-feed-pagination .secondary-button {
+    width: 4.45rem !important;
+    min-width: 0 !important;
+    max-width: 4.45rem !important;
+    min-height: 0 !important;
+    padding: 0.44rem 0.25rem !important;
+    border-radius: 0.52rem !important;
+    font-size: 0.78rem !important;
+    line-height: 1 !important;
+  }
+
+  .dashboard-container.mobile-section-open {
+    --mobile-nav-rail: 3rem;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .sidebar__wrapper {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: var(--mobile-nav-rail) !important;
+    max-width: var(--mobile-nav-rail) !important;
+    margin-left: auto !important;
+    padding: 0.3rem 0.18rem 0.65rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .sidebar__list {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    align-items: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    gap: 0.3rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .sidebar__item {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-block-size: 2.15rem !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .sidebar__link {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 2.05rem !important;
+    min-width: 2.05rem !important;
+    height: 2.05rem !important;
+    min-height: 2.05rem !important;
+    padding: 0 !important;
+    transform: none !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .icon,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .icon svg {
+    display: inline-grid !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .icon {
+    place-items: center !important;
+    width: 1.15rem !important;
+    min-width: 1.15rem !important;
+    height: 1.15rem !important;
+    min-height: 1.15rem !important;
+    flex: 0 0 1.15rem !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .icon svg {
+    width: 1.05rem !important;
+    height: 1.05rem !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .portal-sidebar-profile,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .portal-space-animation,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .item--heading,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .text,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed figcaption {
+    display: none !important;
+  }
+
+  .page-footer-actions .back-button + .back-button,
+  .page-footer-actions .responsive-back-button + .responsive-back-button,
+  .section-footer-nav .back-button + .back-button,
+  .section-footer-nav .responsive-back-button + .responsive-back-button {
+    display: none !important;
+  }
+}
+
+/* Final portal pass: visible mobile drawer control and compact detail surfaces. */
+@media (max-width: 768px) {
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar .portal-sidebar-header {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    min-height: 2.45rem !important;
+    z-index: 20 !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar .sidebar__toggle-container {
+    position: absolute !important;
+    top: 0.2rem !important;
+    right: 0 !important;
+    z-index: 50 !important;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: var(--mobile-nav-rail) !important;
+    min-width: var(--mobile-nav-rail) !important;
+    height: 2.15rem !important;
+    min-height: 2.15rem !important;
+    padding: 0 !important;
+    pointer-events: auto !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar .nav__toggle {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 1.8rem !important;
+    min-width: 1.8rem !important;
+    height: 1.8rem !important;
+    min-height: 1.8rem !important;
+    margin: 0 !important;
+    transform: none !important;
+    color: #ffffff !important;
+    background: rgba(99, 192, 184, 0.12) !important;
+    border: 1px solid rgba(99, 192, 184, 0.45) !important;
+    border-radius: 0.5rem !important;
+    pointer-events: auto !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar .toggle--icons,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar .toggle-svg-icon {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 1rem !important;
+    height: 1rem !important;
+    fill: currentColor !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .toggle--open,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .toggle--close {
+    opacity: 0 !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .toggle--close,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .toggle--open {
+    opacity: 1 !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-collapsed .sidebar__wrapper {
+    padding-top: 2.55rem !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .sidebar__toggle-container {
+    position: sticky !important;
+    top: 0 !important;
+    right: auto !important;
+    justify-content: flex-end !important;
+    width: 100% !important;
+    padding-right: 0.55rem !important;
+    background: inherit !important;
+  }
+
+  .mobile-list-pagination .secondary-button,
+  .job-feed-pagination .secondary-button {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .mobile-list-pagination .secondary-button:disabled,
+  .job-feed-pagination .secondary-button:disabled {
+    color: rgba(255, 255, 255, 0.38) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0.38) !important;
+    opacity: 1 !important;
+  }
+
+  .about-tour-overlay {
+    align-items: flex-start !important;
+    overflow: hidden !important;
+    padding: 0.7rem !important;
+  }
+
+  .about-tour-modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: calc(100dvh - 1.4rem) !important;
+    margin: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    scroll-behavior: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .analytics-card-top {
+    align-items: flex-start !important;
+    gap: 0.45rem !important;
+  }
+
+  .analytics-card-title-row {
+    min-width: 0 !important;
+    gap: 0.45rem !important;
+  }
+
+  .analytics-card-title-row h3 {
+    min-width: 0 !important;
+    font-size: 0.82rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .analytics-live {
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    align-items: center !important;
+    gap: 0.28rem !important;
+    width: auto !important;
+    min-width: max-content !important;
+    padding: 0.28rem 0.42rem !important;
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+    font-size: 0.62rem !important;
+    line-height: 1 !important;
+  }
+
+  .analytics-detail-close,
+  .analytics-detail-overlay .analytics-detail-modal > button.analytics-detail-close {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+  }
+
+  .mobile-section-company-profile.is-open .company-profile-container,
+  .mobile-section-company-profile.is-open .company-profile-content,
+  .mobile-section-company-profile.is-open .company-profile-card {
+    min-height: 0 !important;
+    height: auto !important;
+    padding-bottom: 0.5rem !important;
+    margin-bottom: 0 !important;
+  }
+
+  .company-profile-container .edit-profile-button {
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+  }
+
+  .home-page .dashboard-header,
+  .home-page .candidate-dashboard-header,
+  .home-page .employer-dashboard-header {
+    min-height: 5.2rem !important;
+    padding: 0.35rem 0.65rem !important;
+  }
+
+  .home-page .dashboard-logo-button {
+    width: 3.9rem !important;
+    min-width: 3.9rem !important;
+    height: 3.9rem !important;
+    min-height: 3.9rem !important;
+  }
+
+  .home-page .candidate-dashboard-logo,
+  .home-page .employer-dashboard-logo {
+    width: 3.7rem !important;
+    max-width: 3.7rem !important;
+    height: auto !important;
+    max-height: 3.25rem !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .employer-dashboard-inline-back,
+  .post-job-inline-back {
+    display: none !important;
+  }
+}
+
+html[data-theme="light"] .notifications-page button,
+html[data-theme="light"] .notifications-page .notification-action {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+.notifications-page .notifications-hero .secondary-button {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+/* Form actions, table actions, drawer close alignment, and icon cleanup. */
+.view-button::before,
+.view-button::after,
+.view-profile-btn::before,
+.view-profile-btn::after,
+.candidate-view-profile::before,
+.candidate-view-profile::after {
+  content: none !important;
+  display: none !important;
+  background-image: none !important;
+}
+
+.talent-pool-container .talent-bookmark-button:not(.active),
+.candidate-bookmarked-container .talent-bookmark-button:not(.active),
+.candidate-view-candidates .talent-bookmark-button:not(.active),
+.bookmark-star-button.talent-bookmark-button:not(.active) {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+.manage-jobs-container .actions-cell {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.55rem !important;
+  min-width: 10.5rem !important;
+  white-space: nowrap !important;
+}
+
+.manage-jobs-container .actions-cell .action-button.edit {
+  flex: 0 0 auto !important;
+  width: 7.8rem !important;
+  min-width: 7.8rem !important;
+  min-height: 2.55rem !important;
+  margin: 0 !important;
+}
+
+.manage-jobs-container .actions-cell .delete-button {
+  flex: 0 0 2.3rem !important;
+  width: 2.3rem !important;
+  min-width: 2.3rem !important;
+  height: 2.3rem !important;
+  min-height: 2.3rem !important;
+  margin: 0 !important;
+}
+
+.manage-jobs-container .job-list-table {
+  overflow-x: auto !important;
+}
+
+.manage-jobs-container .job-list-table table {
+  min-width: 58rem !important;
+}
+
+@media (max-width: 768px) {
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .portal-sidebar-header {
+    min-height: 3.15rem !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .sidebar__toggle-container {
+    position: absolute !important;
+    top: 0.55rem !important;
+    right: 0.7rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 2rem !important;
+    min-width: 2rem !important;
+    height: 2rem !important;
+    min-height: 2rem !important;
+    padding: 0 !important;
+    background: transparent !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .nav__toggle {
+    width: 1.8rem !important;
+    min-width: 1.8rem !important;
+    height: 1.8rem !important;
+    min-height: 1.8rem !important;
+    margin: 0 !important;
+  }
+
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .toggle--icons,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .toggle-svg-icon {
+    width: 0.95rem !important;
+    height: 0.95rem !important;
+  }
+
+  .post-job-container .form-actions,
+  .edit-job-container .form-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 0.55rem !important;
+    width: 100% !important;
+  }
+
+  .post-job-container .form-actions .submit-button,
+  .edit-job-container .form-actions .submit-button {
+    flex: 1 1 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: 2.75rem !important;
+    min-height: 2.75rem !important;
+    padding: 0.55rem 0.8rem !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
+  }
+
+  .post-job-container .form-actions .secondary-button,
+  .edit-job-container .form-actions .secondary-button {
+    flex: 0 0 4.8rem !important;
+    width: 4.8rem !important;
+    min-width: 4.8rem !important;
+    max-width: 4.8rem !important;
+    height: 2.75rem !important;
+    min-height: 2.75rem !important;
+    padding: 0.55rem 0.4rem !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
+  }
+
+  .edit-job-container .form-actions .submit-button {
+    flex-basis: calc(100% - 5.35rem) !important;
+    font-size: 0.82rem !important;
+  }
+
+  .manage-jobs-container .actions-cell {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    min-width: 10.7rem !important;
+  }
+
+  .manage-jobs-container .actions-cell .action-button.edit {
+    width: 7.8rem !important;
+    min-width: 7.8rem !important;
+  }
+}
+
+/* Mobile layout polish: profiles, forms, invitations, applications, and assessments. */
+.edit-job-container .form-checkbox {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.4rem;
+  align-items: start;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid rgba(99, 192, 184, 0.28);
+  border-radius: 0.55rem;
+}
+
+.edit-job-container .form-checkbox label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: fit-content;
+  margin: 0;
+}
+
+.edit-job-container .form-checkbox label input {
+  flex: 0 0 1rem;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: #63c0b8;
+}
+
+.edit-job-container .form-checkbox label span {
+  margin: 0;
+  white-space: nowrap;
+  line-height: 1.25;
+}
+
+.edit-job-container .form-checkbox .form-hint {
+  margin: 0;
+  padding-left: 1.55rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 768px) {
+  .mobile-section-company-profile.is-open {
+    padding-right: 0.35rem !important;
+  }
+
+  .mobile-section-company-profile.is-open .company-profile-container,
+  .mobile-section-company-profile.is-open .company-profile-content,
+  .mobile-section-company-profile.is-open .company-profile-card {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+  }
+
+  .mobile-section-company-profile.is-open .company-profile-content {
+    padding: 0.45rem !important;
+    overflow-x: hidden !important;
+  }
+
+  .mobile-section-company-profile.is-open .company-profile-card {
+    margin: 0 !important;
+    border-radius: 0.55rem !important;
+  }
+
+  .mobile-section-company-profile.is-open .company-header {
+    align-items: flex-start !important;
+    padding: 0.9rem !important;
+  }
+
+  .mobile-section-company-profile.is-open .company-avatar {
+    width: 4.25rem !important;
+    height: 4.25rem !important;
+    margin-right: 0.75rem !important;
+  }
+
+  .mobile-section-company-profile.is-open .company-title {
+    min-width: 0 !important;
+  }
+
+  .mobile-section-company-profile.is-open .company-title h3,
+  .mobile-section-company-profile.is-open .company-industry {
+    max-width: 100% !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .mobile-section-company-profile.is-open .company-profile-actions {
+    padding: 0.75rem 0.9rem 0 !important;
+  }
+
+  .mobile-section-company-profile.is-open .company-details {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0.8rem !important;
+    padding: 0.9rem !important;
+  }
+
+  .mobile-section-company-profile.is-open .detail-item.full-width {
+    margin-top: 0 !important;
+    padding-top: 0.8rem !important;
+  }
+
+  .post-job-container .form-actions,
+  .edit-job-container .form-actions {
+    align-items: center !important;
+  }
+
+  .post-job-container .form-actions .secondary-button,
+  .edit-job-container .form-actions .secondary-button {
+    position: relative !important;
+    top: 0.22rem !important;
+  }
+
+  .edit-job-container .form-checkbox {
+    margin: 0.9rem 0 !important;
+    padding: 0.75rem !important;
+  }
+
+  .edit-job-container .form-checkbox label span {
+    font-size: 0.82rem !important;
+  }
+
+  .job-invite-candidate-row {
+    position: relative !important;
+    padding: 0.9rem !important;
+  }
+
+  .job-invite-candidate-check {
+    display: block !important;
+    min-width: 0 !important;
+    padding-right: 2.1rem !important;
+  }
+
+  .job-invite-candidate-check input {
+    position: absolute !important;
+    top: 0.9rem !important;
+    right: 0.9rem !important;
+    width: 1.1rem !important;
+    height: 1.1rem !important;
+    margin: 0 !important;
+  }
+
+  .job-invite-candidate-check span {
+    display: grid !important;
+    gap: 0.2rem !important;
+    min-width: 0 !important;
+    text-align: left !important;
+  }
+
+  .job-invite-candidate-check strong,
+  .job-invite-candidate-check small {
+    overflow-wrap: anywhere !important;
+  }
+
+  .fresh-application-actions {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+
+  .fresh-application-actions .application-view-details-button {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 2.35rem !important;
+    min-height: 2.35rem !important;
+    padding: 0.4rem 0.55rem !important;
+  }
+
+  .fresh-application-actions .withdraw-uiverse-button {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 2.35rem !important;
+    min-height: 2.35rem !important;
+    overflow: hidden !important;
+  }
+
+  .fresh-application-actions .withdraw-uiverse-button .withdraw-uiverse-button__text {
+    transform: none !important;
+    width: 100% !important;
+    padding: 0 0.45rem !important;
+    font-size: 0.76rem !important;
+  }
+
+  .fresh-application-actions .withdraw-uiverse-button .withdraw-uiverse-button__icon {
+    display: none !important;
+  }
+
+  .candidate-assessment-detail .assessment-option-list {
+    display: grid !important;
+    gap: 0.5rem !important;
+    margin-top: 0.4rem !important;
+  }
+
+  .candidate-assessment-detail .assessment-response-option {
+    display: grid !important;
+    grid-template-columns: 1rem minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 0.65rem !important;
+    width: 100% !important;
+    min-height: 2.75rem !important;
+    margin: 0 !important;
+    padding: 0.65rem 0.75rem !important;
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.055) !important;
+    border: 1px solid rgba(99, 192, 184, 0.35) !important;
+    border-radius: 0.55rem !important;
+    box-shadow: none !important;
+  }
+
+  .candidate-assessment-detail .assessment-response-option:has(input:checked) {
+    background: rgba(99, 192, 184, 0.18) !important;
+    border-color: #63c0b8 !important;
+  }
+
+  .candidate-assessment-detail .assessment-response-option input {
+    width: 1rem !important;
+    height: 1rem !important;
+    margin: 0 !important;
+    accent-color: #63c0b8 !important;
+  }
+
+  .candidate-assessment-detail .assessment-response-option-text {
+    min-width: 0 !important;
+    color: inherit !important;
+    line-height: 1.35 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  html[data-theme="light"] .candidate-assessment-detail .assessment-response-option {
+    color: #2f2118 !important;
+    background: #fffaf2 !important;
+    border-color: rgba(107, 78, 55, 0.24) !important;
+  }
+
+  html[data-theme="light"] .candidate-assessment-detail .assessment-response-option:has(input:checked) {
+    background: #eef8f4 !important;
+    border-color: #58aaa3 !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open {
+    padding-bottom: 0.5rem !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-container,
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-content,
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-display {
+    min-height: 0 !important;
+    height: auto !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-header {
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0.35rem 0.55rem 0.55rem !important;
+    border-bottom: 0 !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-header .edit-profile-button {
+    min-height: 2.5rem !important;
+    margin: 0 !important;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-content {
+    padding: 0.45rem !important;
+    overflow-x: hidden !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-display {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0.65rem !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0.8rem !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-card h3 {
+    margin-bottom: 0.65rem !important;
+    padding-bottom: 0.45rem !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-info-item {
+    margin-bottom: 0.55rem !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .page-footer-actions {
+    display: none !important;
+  }
 }

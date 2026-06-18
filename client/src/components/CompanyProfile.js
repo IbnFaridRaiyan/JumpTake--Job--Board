@@ -36,20 +36,6 @@ const CompanyProfile = ({ company, jobStats, onBack, onCompanyUpdated, onFooterB
                 <div className="loading-message">
                     Loading company profile...
                 </div>
-                <div className="page-footer-actions">
-                    <button
-                        className="back-button"
-                        onClick={onFooterBack || onBack}
-                    >
-                        Back
-                    </button>
-                    <button
-                        className="back-button"
-                        onClick={onFooterBack || onBack}
-                    >
-                        Back
-                    </button>
-                </div>
             </div>
         );
     }
@@ -327,20 +313,6 @@ const CompanyProfile = ({ company, jobStats, onBack, onCompanyUpdated, onFooterB
                         </div>
                     </div>
 
-                    <div className="page-footer-actions">
-                        <button
-                            className="back-button"
-                            onClick={onFooterBack || onBack}
-                        >
-                            Back
-                        </button>
-                        <button
-                            className="back-button"
-                            onClick={onFooterBack || onBack}
-                        >
-                            Back
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>

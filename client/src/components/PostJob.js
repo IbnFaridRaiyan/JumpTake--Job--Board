@@ -110,11 +110,11 @@ const PostJob = ({ companyId, onJobPosted, onCancel, onFooterBack }) => {
     
     return (
         <div className="post-job-container">
-            <div className="post-job-header">
-                <h2>Post a New Job</h2>
-            </div>
-            
             <div className="post-job-content">
+                <div className="post-job-content-title">
+                    <h2>Post a Job</h2>
+                </div>
+
                 {message && (
                     <div className={`form-message ${isSuccess ? 'success-message' : 'error-message'}`}>
                         {message}
@@ -168,7 +168,7 @@ const PostJob = ({ companyId, onJobPosted, onCancel, onFooterBack }) => {
                             </div>
                         </div>
                         
-                        <div class="form-row">
+                        <div className="form-row">
                             <div className="form-group">
                                 <label htmlFor="location">Location <span className="required">*</span></label>
                                 <input
@@ -279,24 +279,6 @@ const PostJob = ({ companyId, onJobPosted, onCancel, onFooterBack }) => {
                         </button>
                     </div>
 
-                    <div className="page-footer-actions">
-                        <button
-                            type="button"
-                            className="back-button"
-                            onClick={onCancel}
-                            disabled={isLoading}
-                        >
-                            Back
-                        </button>
-                        <button
-                            type="button"
-                            className="back-button"
-                            onClick={onFooterBack || onCancel}
-                            disabled={isLoading}
-                        >
-                            Back
-                        </button>
-                    </div>
                 </form>
             </div>
         </div>

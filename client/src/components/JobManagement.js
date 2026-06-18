@@ -1960,6 +1960,13 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                         {section.id === 'completed-assessment' && hasCompletedAssessmentNotification && <span className="nav-notification-dot"></span>}
                     </button>
                 ))}
+                <button
+                    type="button"
+                    className="job-management-back-nav"
+                    onClick={onBack}
+                >
+                    <span>Back to Manage Jobs</span>
+                </button>
             </nav>
 
             <div
@@ -1979,6 +1986,18 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                 {error && <div className="error-message">{error}</div>}
 
                 {renderActiveSection()}
+
+                {mobileSectionVisible && (
+                    <div className="section-footer-nav mobile-subpage-return">
+                        <button
+                            type="button"
+                            className="back-button responsive-back-button mobile-bottom-back-button"
+                            onClick={closeMobileSectionPanel}
+                        >
+                            Back to Manage Jobs
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

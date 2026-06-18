@@ -443,9 +443,6 @@ const MakeAssessment = ({ companyId, jobs = [], onBack, onFooterBack }) => {
                 <button className="back-button responsive-back-button" onClick={onFooterBack || onBack}>
                     Back
                 </button>
-                <button className="back-button responsive-back-button" onClick={onFooterBack || onBack}>
-                    Back
-                </button>
             </div>
         </div>
     );

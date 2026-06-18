@@ -609,9 +609,6 @@ const UserSettings = ({ user, onLogout, switchSection, onFooterBack, appMode, on
                 <button className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
                     Back
                 </button>
-                <button className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
-                    Back
-                </button>
             </div>
 
         </div>

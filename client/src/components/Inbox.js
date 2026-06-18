@@ -227,6 +227,12 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                         submitLabel={sending ? 'Sending...' : 'Send'}
                     />
                 </div>
+
+                <div className="section-footer-nav mobile-subpage-return">
+                    <button className="back-button responsive-back-button mobile-bottom-back-button" onClick={() => setSelectedThread(null)}>
+                        Back to Inbox
+                    </button>
+                </div>
             </div>
         );
     }

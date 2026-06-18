@@ -7,11 +7,39 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
     const [selectedCandidate, setSelectedCandidate] = useState(null);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [isMobileView, setIsMobileView] = useState(() => (
+        typeof window !== 'undefined' ? window.innerWidth <= 768 : false
+    ));
 
     useEffect(() => {
         fetchBookmarks();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [companyId]);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobileView(window.innerWidth <= 768);
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const bookmarksPerMobilePage = 6;
+    const totalPages = Math.max(1, Math.ceil(bookmarks.length / bookmarksPerMobilePage));
+    const pagedBookmarks = isMobileView
+        ? bookmarks.slice((currentPage - 1) * bookmarksPerMobilePage, currentPage * bookmarksPerMobilePage)
+        : bookmarks;
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [bookmarks.length, isMobileView]);
+
+    useEffect(() => {
+        if (currentPage > totalPages) {
+            setCurrentPage(totalPages);
+        }
+    }, [currentPage, totalPages]);
 
     const fetchBookmarks = async () => {
         try {
@@ -115,11 +143,11 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
                 <div className="no-candidates"><h3>No bookmarked talents yet</h3><p>Star candidate cards in Talent Pool to keep them here.</p></div>
             ) : (
                 <div className="candidates-grid">
-                    {bookmarks.map((bookmark) => {
+                    {pagedBookmarks.map((bookmark) => {
                         const candidate = bookmark.candidate;
                         return (
                             <div key={bookmark._id} className="candidate-card" onClick={() => setSelectedCandidate(candidate)}>
-                                <button type="button" className="bookmark-star-button active talent-bookmark-button" onClick={(event) => { event.stopPropagation(); removeBookmark(candidate._id); }}>★</button>
+                                <button type="button" className="bookmark-star-button active talent-bookmark-button" onClick={(event) => { event.stopPropagation(); removeBookmark(candidate._id); }}>{'\u2605'}</button>
                                 <div className="candidate-avatar">{candidate.name ? candidate.name.charAt(0).toUpperCase() : 'C'}</div>
                                 <div className="candidate-info">
                                     <h3 className="candidate-name">{candidate.name || 'Unnamed Candidate'}</h3>
@@ -132,8 +160,19 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
                 </div>
             )}
 
+            {isMobileView && totalPages > 1 && !loading && !selectedCandidate && (
+                <div className="mobile-list-pagination" aria-label="Bookmarked talent pages">
+                    <button type="button" className="secondary-button" onClick={() => setCurrentPage((page) => Math.max(1, page - 1))} disabled={currentPage === 1}>
+                        Previous
+                    </button>
+                    <span>Page {currentPage} of {totalPages}</span>
+                    <button type="button" className="secondary-button" onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))} disabled={currentPage === totalPages}>
+                        Next
+                    </button>
+                </div>
+            )}
+
             <div className="page-footer-actions">
-                <button className="back-button" onClick={onFooterBack || onBack}>Back</button>
                 <button className="back-button" onClick={onFooterBack || onBack}>Back</button>
             </div>
         </div>

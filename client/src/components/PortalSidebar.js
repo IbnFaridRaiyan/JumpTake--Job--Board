@@ -1,10 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PortalSpaceAnimation from './PortalSpaceAnimation';
 
 const ICON_PATHS = {
     dashboard: 'M3 13h8V3H3v10Zm0 8h8v-6H3v6Zm10 0h8V11h-8v10Zm0-18v6h8V3h-8Z',
     briefcase: 'M10 6V5a3 3 0 0 1 3-3h2a3 3 0 0 1 3 3v1h3a2 2 0 0 1 2 2v4.5a4 4 0 0 1-2 3.46V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4.04A4 4 0 0 1 1 12.5V8a2 2 0 0 1 2-2h7Zm2 0h4V5a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v1Zm9 9.72A4 4 0 0 1 20 16H4a4 4 0 0 1-1-.28V20h18v-4.28ZM3 8v4.5A1.5 1.5 0 0 0 4.5 14h15a1.5 1.5 0 0 0 1.5-1.5V8H3Z',
-    inbox: 'M4.98 4a.5.5 0 0 0-.39.188L1.54 8H6a.5.5 0 0 1 .5.5 1.5 1.5 0 1 0 3 0A.5.5 0 0 1 10 8h4.46l-3.05-3.812A.5.5 0 0 0 11.02 4H4.98Zm9.954 5H10.45a2.5 2.5 0 0 1-4.9 0H1.066l.32 2.562a.5.5 0 0 0 .497.438h12.234a.5.5 0 0 0 .496-.438L14.934 9ZM3.809 3.563A1.5 1.5 0 0 1 4.981 3h6.038a1.5 1.5 0 0 1 1.172.563l3.7 4.625a.5.5 0 0 1 .105.374l-.39 3.124A1.5 1.5 0 0 1 14.117 13H1.883a1.5 1.5 0 0 1-1.489-1.314l-.39-3.124a.5.5 0 0 1 .106-.374l3.7-4.625Z',
+    inbox: 'M4 4h16l3 7v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-7l3-7Zm1.35 2-1.7 4H8a1 1 0 0 1 .92.6 3.37 3.37 0 0 0 6.16 0A1 1 0 0 1 16 10h4.35l-1.7-4H5.35ZM3 12v6h18v-6h-4.42a5.36 5.36 0 0 1-9.16 0H3Z',
     bell: 'M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22Zm7-6v-5a7 7 0 1 0-14 0v5l-2 2v1h18v-1l-2-2Zm-2 1H7v-6a5 5 0 1 1 10 0v6Z',
     star: 'm12 2 3.1 6.28 6.9 1-5 4.87 1.18 6.87L12 17.77l-6.18 3.25L7 14.15 2 9.28l6.9-1L12 2Z',
     send: 'M2 21 23 3l-7 20-4-9-10-3Zm5.5-10.2 5.2 1.8 1.9 4.5 3.7-10.5-10.8 4.2Z',
@@ -32,11 +32,16 @@ const PortalSidebar = ({
     userInitial = 'U',
     primaryItems = [],
     secondaryItems = [],
-    onLogout
+    onLogout,
+    mobileSectionOpen = false
 }) => {
     const [expanded, setExpanded] = useState(true);
     const toggleIdRef = useRef(`portal-sidebar-toggle-${Math.random().toString(36).slice(2)}`);
     const toggleId = toggleIdRef.current;
+
+    useEffect(() => {
+        setExpanded(!mobileSectionOpen);
+    }, [mobileSectionOpen]);
 
     const renderItem = (item) => (
         <li key={item.id || item.label} className="sidebar__item">
@@ -44,7 +49,12 @@ const PortalSidebar = ({
                 type="button"
                 className={`sidebar__link ${item.active ? 'is-active' : ''} ${item.danger ? 'is-danger' : ''}`}
                 data-tooltip={item.label}
-                onClick={item.onClick}
+                onClick={() => {
+                    item.onClick?.();
+                    if (mobileSectionOpen) {
+                        setExpanded(false);
+                    }
+                }}
                 aria-current={item.active ? 'page' : undefined}
             >
                 <span className="icon">

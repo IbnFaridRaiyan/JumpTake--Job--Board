@@ -18,6 +18,7 @@ import PerformanceAnalytics from './PerformanceAnalytics';
 import PortalSidebar from './PortalSidebar';
 import Notifications from './Notifications';
 import logo from './media/logo3.png';
+import logoDark from './media/logo4.png';
 
 const JOB_INTEREST_OPTIONS = [
     'Software Engineering',
@@ -103,6 +104,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const videoInterviewsRef = useRef(null);
     const mobilePanelRef = useRef(null);
     const navigate = useNavigate();
+    const dashboardLogo = appMode === 'dark' ? logoDark : logo;
 
     const updateActiveSection = (section, { push = true } = {}) => {
         if (!CANDIDATE_SECTION_IDS.has(section)) {
@@ -791,7 +793,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                             onClick={handleLogoClick}
                             aria-label="Go to Job Feed"
                         >
-                            <img src={logo} alt="JumpTake Logo" className="candidate-dashboard-logo" />
+                            <img src={dashboardLogo} alt="JumpTake Logo" className="candidate-dashboard-logo" />
                         </button>
                     </div>
                     <div className="dashboard-title candidate-dashboard-title">
@@ -814,7 +816,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                         onClick={handleLogoClick}
                         aria-label="Go to Job Feed"
                     >
-                        <img src={logo} alt="JumpTake Logo" className="candidate-dashboard-logo" />
+                        <img src={dashboardLogo} alt="JumpTake Logo" className="candidate-dashboard-logo" />
                     </button>
                 </div>
                 <div className="dashboard-title candidate-dashboard-title">
@@ -864,6 +866,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     primaryItems={candidatePrimaryNavItems}
                     secondaryItems={candidateSecondaryNavItems}
                     onLogout={handleLogout}
+                    mobileSectionOpen={mobileSectionVisible}
                 />
 
                 <main ref={mobilePanelRef} className={`main-content mobile-dashboard-section-panel mobile-section-${activeSection} ${mobileSectionVisible ? 'is-open' : ''}`}>
@@ -879,6 +882,13 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                         </div>
                     )}
                     {renderContent()}
+                    {mobileSectionVisible && ['notifications', 'about-jumptake', 'progress-check'].includes(activeSection) && (
+                        <div className="page-footer-actions mobile-section-fallback-footer">
+                            <button type="button" className="back-button responsive-back-button mobile-bottom-back-button" onClick={goToPreviousSection}>
+                                Back
+                            </button>
+                        </div>
+                    )}
                 </main>
             </div>
         </div>

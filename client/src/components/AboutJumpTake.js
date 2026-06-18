@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const StarLayer = ({ className }) => (
     <div className={className} aria-hidden="true">
@@ -30,6 +30,7 @@ const AboutJumpTake = ({ mode = 'candidate' }) => {
     const ratingStorageKey = `jumptake-about-rating-${mode}`;
     const [rating, setRating] = useState(0);
     const [tourOpen, setTourOpen] = useState(false);
+    const tourModalRef = useRef(null);
 
     useEffect(() => {
         const savedRating = Number(localStorage.getItem(ratingStorageKey) || 0);
@@ -37,6 +38,18 @@ const AboutJumpTake = ({ mode = 'candidate' }) => {
             setRating(savedRating);
         }
     }, [ratingStorageKey]);
+
+    useEffect(() => {
+        if (!tourOpen) {
+            return;
+        }
+
+        const frameId = window.requestAnimationFrame(() => {
+            tourModalRef.current?.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        });
+
+        return () => window.cancelAnimationFrame(frameId);
+    }, [tourOpen]);
 
     const saveRating = (nextRating) => {
         setRating(nextRating);
@@ -153,7 +166,7 @@ const AboutJumpTake = ({ mode = 'candidate' }) => {
 
             {tourOpen && (
                 <div className="about-tour-overlay" onClick={() => setTourOpen(false)}>
-                    <div className="about-tour-modal" onClick={(event) => event.stopPropagation()}>
+                    <div ref={tourModalRef} className="about-tour-modal" onClick={(event) => event.stopPropagation()}>
                         <div className="about-tour-header">
                             <div>
                                 <span className="about-jumptake-kicker">Portal Tour</span>

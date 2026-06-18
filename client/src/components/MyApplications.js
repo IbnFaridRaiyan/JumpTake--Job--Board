@@ -264,7 +264,7 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
 
                     <div className="section-footer-nav">
                         <button className="back-button" onClick={() => setSelectedCompany(null)}>
-                            Back
+                            Back to Application
                         </button>
                     </div>
                 </div>
@@ -349,8 +349,8 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
                     )}
 
                     <div className="section-footer-nav">
-                        <button className="back-button" onClick={onFooterBack || handleBrowseJobs}>
-                            Back
+                        <button className="back-button" onClick={() => setSelectedApplication(null)}>
+                            Back to My Applications
                         </button>
                     </div>
                 </div>
@@ -442,12 +442,6 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
 
             <div className="page-footer-actions">
                 <button 
-                    className="back-button"
-                    onClick={onFooterBack || handleBrowseJobs}
-                >
-                    Back
-                </button>
-                <button
                     className="back-button"
                     onClick={onFooterBack || handleBrowseJobs}
                 >

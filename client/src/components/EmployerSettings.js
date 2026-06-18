@@ -407,9 +407,6 @@ const EmployerSettings = ({ employer, switchSection, onEmployerUpdated, onLogout
                 <button className="back-button responsive-back-button" onClick={onFooterBack || handleBackToDashboard}>
                     Back
                 </button>
-                <button className="back-button responsive-back-button" onClick={onFooterBack || handleBackToDashboard}>
-                    Back
-                </button>
             </div>
 
         </div>

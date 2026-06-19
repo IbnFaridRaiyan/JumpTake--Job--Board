@@ -527,9 +527,7 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
                                             className={`bookmark-star-button ${isBookmarked ? 'active' : ''}`}
                                             onClick={(event) => toggleApplicationBookmark(application, event)}
                                             aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark application'}
-                                        >
-                                            {isBookmarked ? '★' : '☆'}
-                                        </button>
+                                        />\r\n
                                         <span className={`status-badge ${getStatusClassName(application.status)}`}>
                                             {application.status || 'Submitted'}
                                         </span>
@@ -596,3 +594,4 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
 };
 
 export default ManageApplications;
+

@@ -883,9 +883,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                                         className={`bookmark-star-button talent-bookmark-button ${bookmarkedTalentIds.includes(String(candidate._id)) ? 'active' : ''}`}
                                         onClick={(event) => toggleTalentBookmark(candidate, event)}
                                         aria-label={bookmarkedTalentIds.includes(String(candidate._id)) ? 'Remove bookmark' : 'Bookmark talent'}
-                                    >
-                                        {bookmarkedTalentIds.includes(String(candidate._id)) ? '\u2605' : '\u2606'}
-                                    </button>
+                                    />
                                     <div className="candidate-avatar">
                                         {candidate.name ? candidate.name.charAt(0).toUpperCase() : 'C'}
                                     </div>

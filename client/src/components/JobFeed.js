@@ -1117,9 +1117,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                                             className={`bookmark-star-button ${isBookmarked ? 'active' : ''}`}
                                             onClick={(event) => handleToggleBookmark(job, event)}
                                             aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark job'}
-                                        >
-                                            {isBookmarked ? '★' : '☆'}
-                                        </button>
+                                        />\r\n
                                         <h3>{job.title}</h3>
                                         <span className="company-name">{job.company.name}</span>
                                         {hasMatchScore && (
@@ -1496,3 +1494,4 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
 };
 
 export default JobFeed;
+

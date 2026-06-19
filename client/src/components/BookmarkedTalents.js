@@ -159,7 +159,7 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
                         const candidate = bookmark.candidate;
                         return (
                             <div key={bookmark._id} className="candidate-card" onClick={() => setSelectedCandidate(candidate)}>
-                                <button type="button" className="bookmark-star-button active talent-bookmark-button" onClick={(event) => { event.stopPropagation(); removeBookmark(candidate._id); }}>{'\u2605'}</button>
+                                <button type="button" className="bookmark-star-button active talent-bookmark-button" onClick={(event) => { event.stopPropagation(); removeBookmark(candidate._id); }} />
                                 <div className="candidate-avatar">{candidate.name ? candidate.name.charAt(0).toUpperCase() : 'C'}</div>
                                 <div className="candidate-info">
                                     <h3 className="candidate-name">{candidate.name || 'Unnamed Candidate'}</h3>

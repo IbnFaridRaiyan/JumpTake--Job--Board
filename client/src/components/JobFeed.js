@@ -1140,7 +1140,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                                             <div className="job-skills">
                                                 <strong>Skills:</strong> 
                                                 <div className="skill-tags">
-                                                    {job.skills.map((skill, index) => {
+                                                    {job.skills.slice(0, 3).map((skill, index) => {
                                                         const isMatch = candidateSkills.some(s => 
                                                                 s.toLowerCase() === skill.toLowerCase()
                                                         );
@@ -1155,6 +1155,9 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                                                             </span>
                                                         );
                                                     })}
+                                                    {job.skills.length > 3 && (
+                                                        <span className="skill-tag skill-tag-more">+ more</span>
+                                                    )}
                                                 </div>
                                             </div>
                                         )}

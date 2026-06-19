@@ -31,6 +31,9 @@ const FloatingMessenger = ({
     const [sending, setSending] = useState(false);
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
+    const [isMobileView, setIsMobileView] = useState(() => (
+        typeof window !== 'undefined' ? window.matchMedia('(max-width: 768px)').matches : false
+    ));
     const messagesRef = useRef(null);
     const openEventName = isEmployer ? 'jumptake-open-employer-messenger' : 'jumptake-open-candidate-messenger';
 
@@ -114,11 +117,11 @@ const FloatingMessenger = ({
             setThreads(nextThreads);
 
             if (!preserveSelection) {
-                setSelectedThreadId(nextThreads[0]?._id || '');
+                setSelectedThreadId(isMobileView ? '' : (nextThreads[0]?._id || ''));
             } else {
                 const threadStillExists = nextThreads.some((thread) => thread._id === selectedThreadId);
                 if (!threadStillExists) {
-                    setSelectedThreadId(nextThreads[0]?._id || '');
+                    setSelectedThreadId(isMobileView ? '' : (nextThreads[0]?._id || ''));
                 }
             }
         } catch (fetchError) {
@@ -128,6 +131,24 @@ const FloatingMessenger = ({
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return undefined;
+
+        const mediaQuery = window.matchMedia('(max-width: 768px)');
+        const handleViewportChange = (event) => {
+            setIsMobileView(event.matches);
+        };
+
+        setIsMobileView(mediaQuery.matches);
+        if (typeof mediaQuery.addEventListener === 'function') {
+            mediaQuery.addEventListener('change', handleViewportChange);
+            return () => mediaQuery.removeEventListener('change', handleViewportChange);
+        }
+
+        mediaQuery.addListener(handleViewportChange);
+        return () => mediaQuery.removeListener(handleViewportChange);
+    }, []);
 
     useEffect(() => {
         if (!open) return undefined;
@@ -152,12 +173,15 @@ const FloatingMessenger = ({
     useEffect(() => {
         const handleOpenEvent = () => {
             setOpen(true);
+            if (isMobileView) {
+                setSelectedThreadId('');
+            }
             onSeen?.();
         };
 
         window.addEventListener(openEventName, handleOpenEvent);
         return () => window.removeEventListener(openEventName, handleOpenEvent);
-    }, [onSeen, openEventName]);
+    }, [isMobileView, onSeen, openEventName]);
 
     useEffect(() => {
         if (!message || /^write a message/i.test(message)) {
@@ -173,11 +197,15 @@ const FloatingMessenger = ({
 
     const handleOpen = () => {
         setOpen(true);
+        if (isMobileView) {
+            setSelectedThreadId('');
+        }
         onSeen?.();
     };
 
     const handleClose = () => {
         setOpen(false);
+        setSelectedThreadId('');
         setReplyHtml('');
         setMessage('');
         setError('');
@@ -186,6 +214,13 @@ const FloatingMessenger = ({
     const handleSelectThread = (threadId) => {
         setSelectedThreadId(threadId);
         onSeen?.();
+    };
+
+    const handleBackToThreadList = () => {
+        setSelectedThreadId('');
+        setReplyHtml('');
+        setMessage('');
+        setError('');
     };
 
     const sendReply = async () => {
@@ -234,12 +269,18 @@ const FloatingMessenger = ({
     };
 
     const lastMessagePreview = (thread) => thread?.messages?.[thread.messages.length - 1]?.bodyText || 'No messages yet';
+    const mobileChatOpen = isMobileView && Boolean(selectedThread);
 
     return (
         <div className={`floating-messenger ${open ? 'is-open' : ''}`}>
             {open && (
-                <div className="floating-messenger-panel" role="dialog" aria-modal="false" aria-label="Messages">
-                    <div className="floating-messenger-shell">
+                <div
+                    className={`floating-messenger-panel ${isMobileView ? 'is-mobile' : ''} ${mobileChatOpen ? 'is-mobile-chat-open' : 'is-mobile-thread-list'}`}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Messages"
+                >
+                    <div className={`floating-messenger-shell ${mobileChatOpen ? 'is-mobile-chat-open' : ''}`}>
                         <aside className="floating-messenger-contacts">
                             <div className="floating-messenger-header">
                                 <button
@@ -296,6 +337,26 @@ const FloatingMessenger = ({
                                         <span className="floating-messenger-chat-seen">
                                             {selectedThread.lastMessageAt ? `Last update ${formatDateTime(selectedThread.lastMessageAt)}` : 'Conversation'}
                                         </span>
+                                        {isMobileView ? (
+                                            <div className="floating-messenger-chat-actions">
+                                                <button
+                                                    type="button"
+                                                    className="floating-messenger-mobile-back"
+                                                    onClick={handleBackToThreadList}
+                                                    aria-label="Back to message list"
+                                                >
+                                                    ←
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="floating-messenger-mobile-close"
+                                                    onClick={handleClose}
+                                                    aria-label="Close messages"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                        ) : null}
                                     </div>
 
                                     {message && <div className={`notification-message ${message.includes('Error') ? 'error' : 'success'}`}>{message}</div>}

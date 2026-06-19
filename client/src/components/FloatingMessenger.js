@@ -159,6 +159,18 @@ const FloatingMessenger = ({
         return () => window.removeEventListener(openEventName, handleOpenEvent);
     }, [onSeen, openEventName]);
 
+    useEffect(() => {
+        if (!message || /^write a message/i.test(message)) {
+            return undefined;
+        }
+
+        const timeoutId = window.setTimeout(() => {
+            setMessage('');
+        }, 2200);
+
+        return () => window.clearTimeout(timeoutId);
+    }, [message]);
+
     const handleOpen = () => {
         setOpen(true);
         onSeen?.();
@@ -276,7 +288,7 @@ const FloatingMessenger = ({
                                     <div className="floating-messenger-chat-bar">
                                         <div className="floating-messenger-chat-head">
                                             <div className="floating-messenger-chat-avatar">{getInitial(selectedThread)}</div>
-                                            <div>
+                                            <div className="floating-messenger-chat-copy">
                                                 <strong>{getThreadTitle(selectedThread)}</strong>
                                                 <span>{getThreadSubtitle(selectedThread)}</span>
                                             </div>
@@ -310,6 +322,7 @@ const FloatingMessenger = ({
                                             onChange={setReplyHtml}
                                             placeholder="Type your message here!"
                                             messageBox
+                                            showToolbar={false}
                                             onSubmit={sendReply}
                                             submitting={sending}
                                             submitLabel={sending ? 'Sending...' : 'Send'}

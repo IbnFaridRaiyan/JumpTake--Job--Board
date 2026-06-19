@@ -24,6 +24,7 @@ const RichMessageEditor = ({
     onChange,
     placeholder = 'Write a message...',
     messageBox = false,
+    showToolbar = true,
     onSubmit,
     submitting = false,
     submitLabel = 'Send'
@@ -115,21 +116,23 @@ const RichMessageEditor = ({
 
     return (
         <div className={`rich-message-editor ${messageBox ? 'rich-message-editor-messagebox' : ''}`}>
-            <div className="rich-message-toolbar" aria-label="Message formatting toolbar">
-                {toolbarActions.map((action) => (
-                    <button
-                        key={action.command}
-                        type="button"
-                        title={action.title}
-                        className={activeCommands[action.command] ? 'is-active' : ''}
-                        aria-pressed={action.trackState ? Boolean(activeCommands[action.command]) : undefined}
-                        onMouseDown={(event) => event.preventDefault()}
-                        onClick={() => runCommand(action.command)}
-                    >
-                        {action.label}
-                    </button>
-                ))}
-            </div>
+            {showToolbar && (
+                <div className="rich-message-toolbar" aria-label="Message formatting toolbar">
+                    {toolbarActions.map((action) => (
+                        <button
+                            key={action.command}
+                            type="button"
+                            title={action.title}
+                            className={activeCommands[action.command] ? 'is-active' : ''}
+                            aria-pressed={action.trackState ? Boolean(activeCommands[action.command]) : undefined}
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => runCommand(action.command)}
+                        >
+                            {action.label}
+                        </button>
+                    ))}
+                </div>
+            )}
             {messageBox ? (
                 <div className="messageBox">
                     <div className="fileUploadWrapper emojiUploadWrapper">

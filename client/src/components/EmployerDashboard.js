@@ -778,16 +778,16 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                     )}
                     {renderContent()}
                 </main>
-                <FloatingMessenger
-                    mode="employer"
-                    companyId={employer?.companyId}
-                    unreadCount={pendingInboxCount}
-                    onSeen={() => {
-                        setPendingInboxCount(0);
-                        localStorage.setItem('jumptakeEmployerInboxSeenAt', String(Date.now()));
-                    }}
-                />
             </div>
+            <FloatingMessenger
+                mode="employer"
+                companyId={employer?.companyId}
+                unreadCount={pendingInboxCount}
+                onSeen={() => {
+                    setPendingInboxCount(0);
+                    localStorage.setItem('jumptakeEmployerInboxSeenAt', String(Date.now()));
+                }}
+            />
         </div>
     );
 };

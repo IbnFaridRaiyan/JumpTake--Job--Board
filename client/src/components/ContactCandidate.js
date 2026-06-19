@@ -85,6 +85,7 @@ const ContactCandidate = ({ companyId, candidate, onSent, mode = 'employer', cur
                         value={messageHtml}
                         onChange={setMessageHtml}
                         placeholder={`Message ${candidate?.name || 'candidate'}...`}
+                        showToolbar={false}
                     />
                     <div className="message-compose-actions">
                         <button className="settings-button primary" type="button" onClick={sendMessage} disabled={sending}>

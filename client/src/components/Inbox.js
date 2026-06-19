@@ -221,6 +221,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                         onChange={setReplyHtml}
                         placeholder="Write a reply..."
                         messageBox
+                        showToolbar={false}
                         onSubmit={sendReply}
                         submitting={sending}
                         submitLabel={sending ? 'Sending...' : 'Send'}

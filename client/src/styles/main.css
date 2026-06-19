@@ -23624,6 +23624,11 @@ html[data-theme="light"] .add-friend-form input {
 .floating-messenger-contact-copy strong,
 .floating-messenger-chat-head strong {
   color: #ffffff;
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .floating-messenger-contact-copy span,
@@ -23632,7 +23637,11 @@ html[data-theme="light"] .add-friend-form input {
 .floating-messenger-chat-seen {
   color: rgba(229, 231, 235, 0.72);
   font-size: 0.84rem;
-  overflow-wrap: anywhere;
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .floating-messenger-chat {
@@ -23655,6 +23664,10 @@ html[data-theme="light"] .add-friend-form input {
   display: flex;
   align-items: center;
   gap: 0.8rem;
+  min-width: 0;
+}
+
+.floating-messenger-chat-copy {
   min-width: 0;
 }
 
@@ -23704,6 +23717,42 @@ html[data-theme="light"] .add-friend-form input {
   padding: 1rem;
   border-top: 1px solid rgba(148, 163, 184, 0.14);
   background: rgba(10, 14, 16, 0.98);
+}
+
+.floating-messenger-input .rich-message-editor-messagebox {
+  gap: 0 !important;
+}
+
+.floating-messenger-input .messageBox {
+  min-height: 3.5rem !important;
+  align-items: stretch !important;
+  padding: 0.35rem 0.45rem 0.35rem 0.7rem !important;
+  border-radius: 0.95rem !important;
+}
+
+.floating-messenger-input .fileUploadWrapper {
+  flex: 0 0 auto !important;
+}
+
+.floating-messenger-input .emoji-trigger-button {
+  min-width: 2rem !important;
+  height: 100% !important;
+}
+
+.floating-messenger-input .messageInput,
+.floating-messenger-input .rich-message-editor-messagebox .rich-message-input {
+  min-height: 2.65rem !important;
+  max-height: 4.75rem !important;
+  padding: 0.55rem 0.65rem !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.floating-messenger-input .sendButton {
+  flex: 0 0 3rem !important;
+  width: 3rem !important;
+  min-width: 3rem !important;
+  padding: 0 !important;
 }
 
 .floating-messenger-empty {
@@ -23807,11 +23856,56 @@ html[data-theme="light"] .floating-messenger-message.is-own {
 
   .floating-messenger-contact {
     grid-template-columns: 2.7rem minmax(0, 1fr);
+    gap: 0.6rem !important;
+    padding: 0.72rem !important;
   }
 
   .floating-messenger-contact time,
   .floating-messenger-chat-seen {
     display: none;
+  }
+
+  .floating-messenger-contact-avatar,
+  .floating-messenger-chat-avatar {
+    width: 2.7rem;
+    height: 2.7rem;
+    font-size: 0.95rem;
+  }
+
+  .floating-messenger-contact-copy strong,
+  .floating-messenger-chat-head strong {
+    font-size: 0.96rem;
+  }
+
+  .floating-messenger-contact-copy span,
+  .floating-messenger-chat-head span {
+    font-size: 0.76rem;
+  }
+
+  .floating-messenger-chat-bar {
+    padding: 0.85rem 0.9rem;
+  }
+
+  .floating-messenger-input {
+    padding: 0.8rem;
+  }
+
+  .floating-messenger-input .messageBox {
+    min-height: 3.2rem !important;
+    padding: 0.28rem 0.38rem 0.28rem 0.55rem !important;
+  }
+
+  .floating-messenger-input .messageInput,
+  .floating-messenger-input .rich-message-editor-messagebox .rich-message-input {
+    min-height: 2.45rem !important;
+    max-height: 4rem !important;
+    padding: 0.45rem 0.55rem !important;
+  }
+
+  .floating-messenger-input .sendButton {
+    flex-basis: 2.7rem !important;
+    width: 2.7rem !important;
+    min-width: 2.7rem !important;
   }
 
   .floating-messenger-message {

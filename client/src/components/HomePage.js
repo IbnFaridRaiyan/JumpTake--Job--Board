@@ -936,16 +936,16 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                         </div>
                     )}
                 </main>
-                <FloatingMessenger
-                    mode="candidate"
-                    userId={user?.id}
-                    unreadCount={pendingInboxCount}
-                    onSeen={() => {
-                        setPendingInboxCount(0);
-                        localStorage.setItem('jumptakeCandidateInboxSeenAt', String(Date.now()));
-                    }}
-                />
             </div>
+            <FloatingMessenger
+                mode="candidate"
+                userId={user?.id}
+                unreadCount={pendingInboxCount}
+                onSeen={() => {
+                    setPendingInboxCount(0);
+                    localStorage.setItem('jumptakeCandidateInboxSeenAt', String(Date.now()));
+                }}
+            />
         </div>
     );
 };

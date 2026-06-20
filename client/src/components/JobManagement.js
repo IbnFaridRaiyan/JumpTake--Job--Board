@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import AnimatedDeleteButton from './AnimatedDeleteButton';
 import EditJob from './EditJob';
+import ResumeFilePreview from './ResumeFilePreview';
 import { sendApplicationStatusEmail } from '../utils/emailVerification';
 
 const createQuestion = (type = 'multiple-choice') => ({
@@ -1193,9 +1194,18 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
 
                     <div className="profile-section">
                         <h3>Candidate Profile</h3>
-                        <p><strong>Skills:</strong> {formatValue(candidate.skills)}</p>
-                        <p><strong>Education:</strong> {formatValue(candidate.education)}</p>
-                        <p><strong>Experience:</strong> {formatValue(candidate.experience)}</p>
+                        {selectedApplication.uploadedResume?.dataUrl ? (
+                            <ResumeFilePreview
+                                resume={selectedApplication.uploadedResume}
+                                className="application-uploaded-resume-preview-readonly"
+                            />
+                        ) : (
+                            <>
+                                <p><strong>Skills:</strong> {formatValue(candidate.skills)}</p>
+                                <p><strong>Education:</strong> {formatValue(candidate.education)}</p>
+                                <p><strong>Experience:</strong> {formatValue(candidate.experience)}</p>
+                            </>
+                        )}
                     </div>
 
                     <div className="assessment-footer-actions">

@@ -14,6 +14,7 @@ import PerformanceAnalytics from './PerformanceAnalytics';
 import PortalSidebar from './PortalSidebar';
 import Notifications from './Notifications';
 import FloatingMessenger from './FloatingMessenger';
+import ResumePlayground from './ResumePlayground';
 import logo from './media/logo3.png';
 import logoDark from './media/logo4.png';
 
@@ -26,6 +27,7 @@ const EMPLOYER_SECTION_IDS = new Set([
     'talent-pool',
     'bookmarked-talents',
     'notifications',
+    'create-document',
     'company-profile',
     'about-jumptake',
     'application-tracking',
@@ -99,6 +101,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         'talent-pool': 'Talent Pool',
         'bookmarked-talents': 'Bookmarked Talents',
         notifications: 'Notifications',
+        'create-document': 'Create Document',
         'company-profile': 'Company Profile',
         'about-jumptake': 'About JumpTake',
         'application-tracking': 'Application Tracking System',
@@ -367,7 +370,8 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         { id: 'general-assessment', label: 'General Assessment', icon: 'assessment' },
         { id: 'talent-pool', label: 'Talent Pool', icon: 'users' },
         { id: 'bookmarked-talents', label: 'Bookmarked Talents', icon: 'star' },
-        { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 }
+        { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 },
+        { id: 'create-document', label: 'Create Document', icon: 'profile' }
     ].map((item) => ({
         ...item,
         active: activeSection === item.id,
@@ -562,6 +566,12 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                     recipientId={employer?.companyId}
                     onOpenNotification={handleOpenNotification}
                     onUnreadCountChange={setPendingNotificationCount}
+                />;
+            case 'create-document':
+                return <ResumePlayground
+                    user={employer}
+                    onFooterBack={goToPreviousSection}
+                    mode="document"
                 />;
             case 'about-jumptake':
                 return <AboutJumpTake mode="employer" />;

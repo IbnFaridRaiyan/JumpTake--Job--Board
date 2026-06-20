@@ -2861,6 +2861,1177 @@ textarea:focus {
   overflow-y: auto;
 }
 
+.resume-playground-section {
+  display: grid;
+  gap: 1rem;
+}
+
+.resume-playground-section .section-header {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.resume-playground-section .section-header p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.92rem;
+}
+
+.resume-playground-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.resume-playground-tabs button,
+.resume-playground-template-tabs button,
+.resume-playground-tool-button,
+.resume-playground-choice-card,
+.resume-playground-select,
+.resume-playground-name-field input {
+  font-family: 'Lexend', 'Share Tech', 'Segoe UI', sans-serif;
+}
+
+.resume-playground-tabs button,
+.resume-playground-template-tabs button {
+  border: 1px solid rgba(99, 192, 184, 0.22);
+  border-radius: 999px;
+  padding: 0.8rem 1.15rem;
+  background: rgba(255, 255, 255, 0.03);
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.resume-playground-tabs button.is-active,
+.resume-playground-template-tabs button.is-active,
+.resume-playground-tabs button:hover,
+.resume-playground-template-tabs button:hover {
+  background: rgba(99, 192, 184, 0.18);
+  border-color: rgba(99, 192, 184, 0.48);
+  transform: translateY(-1px);
+}
+
+.resume-playground-panel {
+  display: grid;
+  gap: 1rem;
+  padding: 1.15rem;
+  border: 1px solid rgba(99, 192, 184, 0.14);
+  border-radius: 1.1rem;
+  background: rgba(10, 14, 16, 0.72);
+}
+
+.resume-playground-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.resume-playground-choice-card {
+  border: 1px solid rgba(99, 192, 184, 0.18);
+  border-radius: 1rem;
+  padding: 1.1rem;
+  background: rgba(255, 255, 255, 0.03);
+  color: #ffffff;
+  text-align: left;
+  cursor: pointer;
+  display: grid;
+  gap: 0.45rem;
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.resume-playground-choice-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(99, 192, 184, 0.44);
+  background: rgba(99, 192, 184, 0.08);
+}
+
+.resume-playground-choice-card strong,
+.resume-playground-template-copy h4,
+.resume-playground-saved-copy h4,
+.resume-playground-edit-header h3,
+.resume-playground-editor-head span {
+  color: #ffffff;
+}
+
+.resume-playground-choice-card span,
+.resume-playground-template-copy p,
+.resume-playground-saved-copy p,
+.resume-playground-edit-header p,
+.resume-playground-editor-head p,
+.resume-playground-empty,
+.resume-playground-saved-source,
+.resume-playground-uploading {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.resume-playground-template-panel {
+  display: grid;
+  gap: 1rem;
+}
+
+.resume-playground-template-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.resume-playground-template-grid,
+.resume-playground-saved-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.resume-playground-template-card,
+.resume-playground-saved-card {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1rem;
+  border: 1px solid rgba(99, 192, 184, 0.16);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.resume-playground-template-preview,
+.resume-playground-saved-preview {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem;
+  border-radius: 0.95rem;
+  background: #070b0d;
+  min-height: 220px;
+  max-height: 220px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.resume-playground-template-preview-scale,
+.resume-playground-saved-preview-scale {
+  width: 794px;
+  min-height: 1123px;
+  transform-origin: top center;
+  transform: scale(0.17);
+  pointer-events: none;
+  background: #ffffff;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32);
+}
+
+.resume-playground-template-card .settings-button.primary,
+.resume-playground-saved-card .settings-button.primary {
+  margin-bottom: 0;
+}
+
+.resume-playground-saved-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.resume-playground-danger-button {
+  color: #dc2626 !important;
+}
+
+.resume-playground-editor-shell {
+  display: grid;
+  gap: 0.95rem;
+  padding: 1rem;
+  border: 1px solid rgba(99, 192, 184, 0.16);
+  border-radius: 1.2rem;
+  background: rgba(8, 10, 12, 0.82);
+}
+
+.resume-playground-editor-topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.resume-playground-editor-head {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.resume-playground-name-field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.resume-playground-name-field input {
+  min-width: 260px;
+  background: #111111;
+  color: #ffffff;
+  border: 1px solid #2a2a2a;
+}
+
+.resume-playground-editor-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.resume-playground-editor-actions .settings-button,
+.resume-playground-editor-actions .secondary-button {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.15rem;
+  margin-bottom: 0;
+}
+
+.resume-playground-editor-mobile-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483646;
+  background: #05080b;
+  overflow: hidden;
+}
+
+.resume-playground-toolbar {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.9rem;
+  border: 1px solid #262626;
+  border-radius: 1rem;
+  background: #050505;
+}
+
+.resume-playground-toolbar-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px;
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
+.resume-playground-toolbar {
+  display: grid;
+  gap: 0.6rem;
+  padding: 0.7rem;
+  border: 1px solid rgba(99, 192, 184, 0.14);
+  border-radius: 1.15rem;
+  background:
+    linear-gradient(180deg, rgba(10, 14, 19, 0.96), rgba(7, 10, 15, 0.98));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.resume-playground-toolbar-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, max-content));
+  gap: 0.55rem;
+  align-items: start;
+  justify-content: start;
+  padding: 0.8rem 0.55rem 0.55rem;
+  border: 0.35px solid rgba(99, 192, 184, 0.12);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.resume-playground-toolbar-row::before {
+  position: absolute;
+  top: 0.32rem;
+  left: 0.62rem;
+  font-size: 0.6rem;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.resume-playground-toolbar-row:nth-child(1)::before {
+  content: "Type & emphasis";
+}
+
+.resume-playground-toolbar-row:nth-child(2)::before {
+  content: "Layout, lists & inserts";
+}
+
+.resume-playground-toolbar-row:nth-child(3)::before {
+  content: "Pages & utilities";
+}
+
+.resume-playground-toolbar-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem;
+  border: 0.35px solid #262626;
+  border-radius: 0.8rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.resume-playground-toolbar-group-wide {
+  min-width: 220px;
+}
+
+.resume-playground-select,
+.resume-playground-tool-button {
+  min-height: 32px;
+  border-radius: 0.7rem;
+  border: 0.35px solid #262626;
+  background: #111111;
+  color: #ffffff;
+}
+
+.resume-playground-select {
+  padding: 0 0.7rem;
+  font-size: 0.82rem;
+}
+
+.resume-playground-tool-button {
+  padding: 0 0.7rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.resume-playground-icon-button {
+  min-width: 28px;
+  justify-content: center;
+  align-items: center;
+  display: inline-flex;
+  padding: 0;
+  font-size: 0.72rem;
+  line-height: 1;
+}
+
+.resume-playground-icon-button.is-active {
+  background: rgba(99, 192, 184, 0.18);
+  border-color: rgba(99, 192, 184, 0.4);
+}
+
+.resume-playground-tool-button:hover {
+  background: #171717;
+}
+
+.resume-playground-color-picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 32px;
+  border: 0.35px solid #262626;
+  border-radius: 0.7rem;
+  padding: 0 0.55rem;
+  color: #ffffff;
+  background: #111111;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.resume-playground-color-picker input {
+  width: 1.3rem;
+  height: 1.3rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.resume-playground-ats-panel {
+  display: grid;
+  gap: 0.4rem;
+  padding: 0.55rem;
+  border: 1px solid rgba(99, 192, 184, 0.14);
+  border-radius: 1.15rem;
+  background: linear-gradient(180deg, rgba(10, 14, 19, 0.96), rgba(7, 10, 15, 0.98));
+  align-content: start;
+}
+
+.resume-playground-signature-card {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.resume-playground-signature-canvas {
+  width: 100%;
+  min-height: 110px;
+  border-radius: 0.9rem;
+  border: 0.35px solid rgba(99, 192, 184, 0.18);
+  background: #ffffff;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.resume-playground-ats-score-card {
+  display: grid;
+  gap: 0.2rem;
+  min-height: 122px;
+  padding: 0.85rem 0.8rem;
+  border-radius: 0.95rem;
+  border: 1px solid rgba(99, 192, 184, 0.12);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015));
+  align-content: center;
+}
+
+.resume-playground-ats-caption {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.resume-playground-ats-score {
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  line-height: 0.95;
+  color: #d1d5db;
+}
+
+.resume-playground-ats-label {
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+
+.resume-playground-ats-panel.is-low .resume-playground-ats-score {
+  color: #ef4444;
+}
+
+.resume-playground-ats-panel.is-medium .resume-playground-ats-score {
+  color: #facc15;
+}
+
+.resume-playground-ats-panel.is-good .resume-playground-ats-score {
+  color: #22c55e;
+}
+
+.resume-playground-ats-panel.is-excellent .resume-playground-ats-score {
+  color: #166534;
+}
+
+.resume-playground-ats-actions {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.resume-playground-ats-actions .resume-playground-ats-button {
+  width: 100%;
+}
+
+.resume-playground-ats-button {
+  min-height: 30px;
+  border-radius: 0.7rem;
+  border: 1px solid rgba(99, 192, 184, 0.28);
+  background: linear-gradient(135deg, rgba(99, 192, 184, 0.2), rgba(99, 192, 184, 0.1));
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 0 0.45rem;
+}
+
+.resume-playground-ats-button.secondary {
+  background: #111111;
+  border-color: #262626;
+}
+
+.resume-playground-ats-button:hover {
+  filter: brightness(1.05);
+}
+
+.resume-playground-ats-details {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1rem;
+  border: 1px solid rgba(99, 192, 184, 0.14);
+  border-radius: 1rem;
+  background: rgba(5, 8, 12, 0.84);
+}
+
+.resume-playground-ats-details-section {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.resume-playground-ats-details-section h4 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+.resume-playground-ats-details-section p,
+.resume-playground-ats-details-section li {
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.55;
+}
+
+.resume-playground-ats-details-section ul {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.resume-playground-editor-canvas {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 1rem;
+  background: linear-gradient(180deg, rgba(17, 24, 39, 0.92), rgba(4, 6, 8, 0.98));
+  border: 1px solid rgba(99, 192, 184, 0.12);
+  border-radius: 1rem;
+  height: min(78vh, 1120px);
+  max-height: min(78vh, 1120px);
+  overflow: auto;
+}
+
+.resume-playground-editor-workbench {
+  position: relative;
+  padding: 0 0 0 0;
+  min-width: calc(794px + 34px);
+}
+
+.resume-playground-editor-page-frame {
+  position: relative;
+  margin-top: 34px;
+  margin-left: 34px;
+  padding: 0.65rem;
+  border: 1px solid rgba(99, 192, 184, 0.16);
+  border-radius: 0.95rem;
+  background: linear-gradient(180deg, rgba(14, 23, 36, 0.88), rgba(10, 16, 28, 0.92));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.resume-playground-ruler {
+  position: absolute;
+  z-index: 3;
+  background: rgba(19, 26, 36, 0.96);
+  border: 1px solid rgba(99, 192, 184, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  user-select: none;
+}
+
+.resume-playground-ruler-horizontal {
+  top: 0;
+  left: 34px;
+  width: 794px;
+  height: 34px;
+  border-radius: 0.8rem 0.8rem 0.3rem 0.3rem;
+  cursor: ew-resize;
+}
+
+.resume-playground-ruler-vertical {
+  top: 34px;
+  left: 0;
+  width: 34px;
+  border-radius: 0.8rem 0.3rem 0.3rem 0.8rem;
+  cursor: ns-resize;
+}
+
+.resume-playground-ruler-horizontal .resume-playground-ruler-ticks {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.06) 0,
+      rgba(255, 255, 255, 0.06) 1px,
+      transparent 1px,
+      transparent 12px
+    );
+}
+
+.resume-playground-ruler-vertical .resume-playground-ruler-ticks {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.06) 0,
+      rgba(255, 255, 255, 0.06) 1px,
+      transparent 1px,
+      transparent 12px
+    );
+}
+
+.resume-playground-ruler-labels {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.68rem;
+  pointer-events: none;
+}
+
+.resume-playground-ruler-horizontal .resume-playground-ruler-labels {
+  align-items: flex-start;
+  justify-content: space-around;
+  padding-top: 0.15rem;
+}
+
+.resume-playground-ruler-vertical .resume-playground-ruler-labels {
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  padding-block: 0.35rem;
+}
+
+.resume-playground-ruler-indicator {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.resume-playground-ruler-indicator-horizontal {
+  top: 0;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 11px solid #59a8ff;
+  transform: translateX(-50%);
+}
+
+.resume-playground-ruler-indicator-vertical {
+  left: 0;
+  width: 0;
+  height: 0;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 11px solid #59a8ff;
+  transform: translateY(-50%);
+}
+
+.resume-playground-editor-pages-stack {
+  position: relative;
+  max-width: 100%;
+}
+
+.resume-playground-editor-page-layer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-radius: 0.55rem;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  pointer-events: none;
+}
+
+.resume-playground-editor-document {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 794px);
+  background: transparent;
+  color: #111827;
+  outline: none;
+  line-height: 1.6;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  padding: 48px 56px;
+  border-radius: 0.3rem;
+}
+
+.resume-playground-editor-document.is-plain-mode {
+  color: #111827;
+}
+
+.resume-playground-editor-document.is-plain-mode::selection {
+  background: rgba(99, 192, 184, 0.18);
+  color: #111827;
+}
+
+.resume-playground-editor-document:empty::before {
+  content: 'Start building your resume here...';
+  color: #9ca3af;
+  display: block;
+  padding: 2rem;
+}
+
+.resume-playground-editor-document table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.75rem 0;
+}
+
+.resume-playground-editor-document td,
+.resume-playground-editor-document th {
+  border: 1px solid #d1d5db;
+  padding: 0.45rem 0.55rem;
+}
+
+.resume-playground-editor-document p,
+.resume-playground-editor-document ul,
+.resume-playground-editor-document ol,
+.resume-playground-editor-document h1,
+.resume-playground-editor-document h2,
+.resume-playground-editor-document h3 {
+  margin-inline: 0;
+}
+
+.resume-playground-page-break {
+  display: block;
+  width: 100%;
+  margin: 0;
+  page-break-after: always;
+  break-after: page;
+  border: 0;
+  background: transparent;
+}
+
+.resume-playground-edit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.resume-playground-empty,
+.resume-playground-uploading {
+  padding: 1rem;
+  border: 1px dashed rgba(99, 192, 184, 0.24);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+html[data-theme="light"] .resume-playground-section .section-header p,
+html[data-theme="light"] .resume-playground-choice-card span,
+html[data-theme="light"] .resume-playground-template-copy p,
+html[data-theme="light"] .resume-playground-saved-copy p,
+html[data-theme="light"] .resume-playground-edit-header p,
+html[data-theme="light"] .resume-playground-editor-head p,
+html[data-theme="light"] .resume-playground-empty,
+html[data-theme="light"] .resume-playground-saved-source,
+html[data-theme="light"] .resume-playground-uploading {
+  color: #6a5542;
+}
+
+html[data-theme="light"] .resume-playground-choice-card strong,
+html[data-theme="light"] .resume-playground-template-copy h4,
+html[data-theme="light"] .resume-playground-saved-copy h4,
+html[data-theme="light"] .resume-playground-edit-header h3,
+html[data-theme="light"] .resume-playground-editor-head span {
+  color: #2f241b;
+}
+
+html[data-theme="light"] .resume-playground-panel,
+html[data-theme="light"] .resume-playground-editor-shell {
+  background: rgba(255, 250, 243, 0.88);
+  border-color: rgba(113, 88, 64, 0.14);
+}
+
+html[data-theme="light"] .resume-playground-tabs button,
+html[data-theme="light"] .resume-playground-template-tabs button,
+html[data-theme="light"] .resume-playground-choice-card,
+html[data-theme="light"] .resume-playground-template-card,
+html[data-theme="light"] .resume-playground-saved-card,
+html[data-theme="light"] .resume-playground-empty,
+html[data-theme="light"] .resume-playground-uploading {
+  background: rgba(255, 255, 255, 0.72);
+  color: #2f241b;
+  border-color: rgba(113, 88, 64, 0.14);
+}
+
+html[data-theme="light"] .resume-playground-tabs button.is-active,
+html[data-theme="light"] .resume-playground-template-tabs button.is-active,
+html[data-theme="light"] .resume-playground-tabs button:hover,
+html[data-theme="light"] .resume-playground-template-tabs button:hover,
+html[data-theme="light"] .resume-playground-choice-card:hover {
+  background: rgba(99, 192, 184, 0.18);
+}
+
+html[data-theme="light"] .resume-playground-toolbar,
+html[data-theme="light"] .resume-playground-select,
+html[data-theme="light"] .resume-playground-tool-button,
+html[data-theme="light"] .resume-playground-color-picker,
+html[data-theme="light"] .resume-playground-ats-panel,
+html[data-theme="light"] .resume-playground-ats-button.secondary,
+html[data-theme="light"] .resume-playground-name-field input {
+  background: #fffdf8;
+  color: #2f241b;
+  border-color: rgba(113, 88, 64, 0.16);
+}
+
+html[data-theme="light"] .resume-playground-ats-score-card,
+html[data-theme="light"] .resume-playground-ats-details {
+  background: rgba(255, 255, 255, 0.84);
+  border-color: rgba(113, 88, 64, 0.14);
+}
+
+html[data-theme="light"] .resume-playground-ats-caption,
+html[data-theme="light"] .resume-playground-ats-label,
+html[data-theme="light"] .resume-playground-ats-details-section p,
+html[data-theme="light"] .resume-playground-ats-details-section li {
+  color: #6a5542;
+}
+
+html[data-theme="light"] .resume-playground-ats-details-section h4 {
+  color: #2f241b;
+}
+
+html[data-theme="light"] .resume-playground-ats-button {
+  color: #2f241b;
+}
+
+html[data-theme="light"] .resume-playground-editor-canvas {
+  background: linear-gradient(180deg, rgba(240, 233, 223, 0.9), rgba(232, 223, 212, 0.95));
+  border-color: rgba(113, 88, 64, 0.14);
+}
+
+html[data-theme="light"] .resume-playground-editor-page-frame,
+html[data-theme="light"] .resume-playground-ruler {
+  background: rgba(248, 243, 235, 0.98);
+  border-color: rgba(113, 88, 64, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+html[data-theme="light"] .resume-playground-ruler-labels {
+  color: rgba(47, 36, 27, 0.75);
+}
+
+@media (max-width: 768px) {
+  .resume-playground-editor-shell {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 0.28rem;
+    width: 100vw !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: calc(0.28rem + env(safe-area-inset-top)) 0.28rem calc(0.3rem + env(safe-area-inset-bottom)) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: #05080b !important;
+    overflow: hidden !important;
+  }
+
+  .resume-playground-editor-mobile-overlay .resume-playground-editor-shell {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .resume-playground-choice-grid,
+  .resume-playground-template-grid,
+  .resume-playground-saved-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .resume-playground-tabs,
+  .resume-playground-template-tabs,
+  .resume-playground-editor-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .resume-playground-toolbar-shell {
+    grid-row: 1;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.14rem;
+    align-items: stretch;
+    overflow: hidden;
+  }
+
+  .resume-playground-toolbar {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.28rem;
+    padding: 0.18rem 0.22rem;
+    min-width: 0;
+    border-radius: 0.72rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  .resume-playground-toolbar-row {
+    display: flex !important;
+    flex-wrap: nowrap;
+    gap: 0.28rem;
+    padding: 0;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 0;
+    min-width: max-content;
+  }
+
+  .resume-playground-toolbar-row::before {
+    display: none !important;
+  }
+
+  .resume-playground-toolbar-group,
+  .resume-playground-toolbar-group-wide {
+    display: contents;
+  }
+
+  .resume-playground-toolbar-group-wide {
+    min-width: 0;
+  }
+
+  .resume-playground-tabs button,
+  .resume-playground-template-tabs button,
+  .resume-playground-tool-button,
+  .resume-playground-select,
+  .resume-playground-color-picker {
+    width: auto;
+  }
+
+  .resume-playground-tool-button,
+  .resume-playground-select,
+  .resume-playground-color-picker,
+  .resume-playground-ats-button {
+    min-height: 32px;
+    font-size: 0.54rem;
+    border-radius: 0.28rem;
+  }
+
+  .resume-playground-icon-button {
+    min-width: 32px;
+    width: 32px;
+    min-height: 32px;
+    font-size: 0.54rem;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1;
+    flex: 0 0 32px;
+  }
+
+  .resume-playground-select,
+  .resume-playground-tool-button,
+  .resume-playground-color-picker {
+    min-width: 0;
+    padding-inline: 0.16rem;
+    flex: 0 0 auto;
+  }
+
+  .resume-playground-color-picker {
+    width: 36px;
+    min-width: 36px;
+    padding: 0 0.14rem;
+    justify-content: center;
+  }
+
+  .resume-playground-color-picker input {
+    width: 0.72rem;
+    height: 0.72rem;
+  }
+
+  .resume-playground-toolbar-row-mobile {
+    display: contents !important;
+  }
+
+  .resume-playground-toolbar-row-mobile .resume-playground-select {
+    width: 118px;
+    min-width: 118px;
+  }
+
+  .resume-playground-toolbar-row-mobile .resume-playground-select:last-of-type {
+    width: 58px;
+    min-width: 58px;
+  }
+
+  .resume-playground-name-field input {
+    min-width: 0;
+    width: 100%;
+    min-height: 24px;
+    font-size: 0.62rem;
+    padding: 0.18rem 0.5rem;
+  }
+
+  .resume-playground-editor-topbar,
+  .resume-playground-edit-header {
+    display: grid;
+  }
+
+  .resume-playground-editor-topbar {
+    grid-row: 3;
+    gap: 0.14rem;
+    grid-template-columns: minmax(0, 70%) minmax(0, 30%);
+    grid-template-areas:
+      "actions ats";
+    align-items: stretch;
+  }
+
+  .resume-playground-editor-head {
+    display: none;
+  }
+
+  .resume-playground-editor-head p {
+    display: none;
+  }
+
+  .resume-playground-editor-actions {
+    grid-area: actions;
+    gap: 0.12rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .resume-playground-editor-actions .settings-button,
+  .resume-playground-editor-actions .secondary-button {
+    min-height: 18px;
+    padding: 0 0.14rem;
+    font-size: 0.5rem;
+    line-height: 1.05;
+  }
+
+  .resume-playground-editor-actions .secondary-button,
+  .resume-playground-editor-actions .secondary-button *,
+  .resume-playground-editor-actions .settings-button:not(.primary),
+  .resume-playground-editor-actions .settings-button:not(.primary) * {
+    color: #111111 !important;
+  }
+
+  .resume-playground-editor-canvas {
+    grid-row: 2;
+    padding: 0.04rem;
+    min-height: 0;
+    height: 100%;
+    max-height: 100%;
+    flex: 1 1 auto;
+    overflow: auto;
+    border-radius: 0.9rem;
+    overscroll-behavior: contain;
+  }
+
+  .resume-playground-editor-workbench {
+    position: relative;
+    min-width: calc(794px + 24px);
+    width: calc(794px + 24px);
+    padding-top: 24px;
+    padding-left: 24px;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .resume-playground-ruler {
+    display: block;
+    z-index: 5;
+    background: rgba(15, 22, 31, 0.98);
+    border-color: rgba(99, 192, 184, 0.14);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  }
+
+  .resume-playground-ruler-horizontal {
+    left: 24px;
+    width: calc(100% - 24px);
+    height: 24px;
+    border-radius: 0.68rem 0.68rem 0.25rem 0.25rem;
+  }
+
+  .resume-playground-ruler-vertical {
+    top: 24px !important;
+    left: 0;
+    width: 24px;
+    border-radius: 0.68rem 0.25rem 0.25rem 0.68rem;
+  }
+
+  .resume-playground-ruler-labels {
+    font-size: 0.5rem;
+  }
+
+  .resume-playground-ruler-horizontal .resume-playground-ruler-labels {
+    padding-top: 0.12rem;
+  }
+
+  .resume-playground-ruler-vertical .resume-playground-ruler-labels {
+    padding-block: 0.2rem;
+  }
+
+  .resume-playground-ruler-indicator-horizontal {
+    border-left-width: 5px;
+    border-right-width: 5px;
+    border-top-width: 8px;
+  }
+
+  .resume-playground-ruler-indicator-vertical {
+    border-top-width: 5px;
+    border-bottom-width: 5px;
+    border-left-width: 8px;
+  }
+
+  .resume-playground-editor-page-frame {
+    margin-top: 24px;
+    margin-left: 24px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    display: flex;
+    justify-content: center;
+  }
+
+  .resume-playground-editor-pages-stack {
+    width: 794px !important;
+    max-width: 794px !important;
+  }
+
+  .resume-playground-editor-page-layer {
+    width: 794px;
+  }
+
+  .resume-playground-editor-document {
+    width: 794px;
+    padding: 48px 56px;
+  }
+
+  .resume-playground-template-preview,
+  .resume-playground-saved-preview {
+    min-height: 180px;
+    max-height: 180px;
+    padding: 0.7rem;
+  }
+
+  .resume-playground-template-preview-scale,
+  .resume-playground-saved-preview-scale {
+    transform: scale(0.135);
+  }
+
+  .resume-playground-ats-panel {
+    gap: 0.22rem;
+    padding: 0.16rem;
+    align-content: start;
+    border-radius: 0.9rem;
+  }
+
+  .resume-playground-ats-panel-mobile {
+    grid-area: ats;
+    min-width: 0;
+    align-self: stretch;
+    display: grid;
+    grid-template-rows: auto auto;
+    gap: 0.14rem;
+  }
+
+  .resume-playground-ats-score-card {
+    min-height: 86px;
+    padding: 0.38rem 0.28rem;
+  }
+
+  .resume-playground-ats-caption {
+    font-size: 0.42rem;
+  }
+
+  .resume-playground-ats-score {
+    font-size: 1.62rem;
+  }
+
+  .resume-playground-ats-label {
+    font-size: 0.41rem;
+    line-height: 1.12;
+  }
+
+  .resume-playground-ats-actions {
+    gap: 0.14rem;
+  }
+
+  .resume-playground-ats-button {
+    min-height: 22px;
+    padding: 0 0.2rem;
+    font-size: 0.42rem;
+  }
+}
+
 .application-resume-switcher {
   display: grid;
   gap: 0.75rem;

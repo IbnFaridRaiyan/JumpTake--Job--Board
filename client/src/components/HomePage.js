@@ -18,6 +18,7 @@ import PortalSidebar from './PortalSidebar';
 import Notifications from './Notifications';
 import FriendInvitations from './FriendInvitations';
 import FloatingMessenger from './FloatingMessenger';
+import ResumePlayground from './ResumePlayground';
 import logo from './media/logo3.png';
 import logoDark from './media/logo4.png';
 
@@ -56,6 +57,7 @@ const CANDIDATE_SECTION_IDS = new Set([
     'draft-applications',
     'bookmarked-jobs',
     'interested-jobs',
+    'resume-playground',
     'profile',
     'about-jumptake',
     'progress-check',
@@ -176,6 +178,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         'friend-invitations': 'Friends',
         'bookmarked-candidates': 'Bookmarked Candidates',
         'interested-jobs': 'Job Preferences',
+        'resume-playground': 'Resume Playground',
         profile: 'My Profile',
         'about-jumptake': 'About JumpTake',
         'progress-check': 'Progress Check',
@@ -562,7 +565,8 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         { id: 'video-interviews', label: 'Video Interviews', icon: 'send', notification: pendingVideoInterviewCount > 0 },
         { id: 'draft-applications', label: 'Draft Applications', icon: 'draft' },
         { id: 'bookmarked-jobs', label: 'Bookmarked Jobs', icon: 'star' },
-        { id: 'interested-jobs', label: 'Job Preferences', icon: 'briefcase' }
+        { id: 'interested-jobs', label: 'Job Preferences', icon: 'briefcase' },
+        { id: 'resume-playground', label: 'Resume Playground', icon: 'draft' }
     ].map((item) => ({
         ...item,
         active: activeSection === item.id,
@@ -593,6 +597,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         const directMatches = [
             { section: 'notifications', terms: ['notification', 'notifications', 'activity', 'alert', 'updates'] },
             { section: 'settings', terms: ['settings', 'account', 'security', 'email', 'password'] },
+            { section: 'resume-playground', terms: ['resume playground', 'resume editor', 'resume template', 'cv editor', 'cv builder'] },
             { section: 'profile', terms: ['profile', 'resume', 'education', 'experience', 'skill'] },
             { section: 'applications', terms: ['application', 'applied', 'status', 'withdraw'] },
             { section: 'assessments', terms: ['assessment', 'test', 'quiz'] },
@@ -785,6 +790,11 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                         localStorage.setItem('user', JSON.stringify(nextUser));
                         refreshData();
                     }}
+                    onFooterBack={goToPreviousSection}
+                />;
+            case 'resume-playground':
+                return <ResumePlayground
+                    user={user}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'profile':

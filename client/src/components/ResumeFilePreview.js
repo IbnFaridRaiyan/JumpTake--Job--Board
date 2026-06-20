@@ -37,16 +37,6 @@ const ResumeFilePreview = ({ resume, className = '' }) => {
                             className={`resume-file-preview-frame ${isDoc ? 'is-doc-preview' : ''} ${isPdf ? 'is-pdf-preview' : ''} ${isText ? 'is-text-preview' : ''}`.trim()}
                         />
                     )}
-
-                    <div className="resume-file-preview-actions">
-                        <a
-                            href={dataUrl}
-                            download={fileName}
-                            className="secondary-button resume-file-preview-link"
-                        >
-                            Download Resume
-                        </a>
-                    </div>
                 </div>
             ) : (
                 <pre>{legacyText}</pre>

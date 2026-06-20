@@ -24,6 +24,38 @@ const escapeHtml = (value = '') => (
         .replace(/'/g, '&#39;')
 );
 
+const RESUME_PLAYGROUND_STORAGE_KEY = 'jumptakeResumePlayground:';
+
+const buildSavedResumePreview = (resumeRecord) => {
+    if (!resumeRecord?.html) {
+        return null;
+    }
+
+    const resumeMarkup = `<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>${escapeHtml(resumeRecord.name || 'Saved Resume')}</title>
+  <style>
+    body { margin: 0; padding: 24px; background: #ffffff; color: #111111; font-family: Arial, sans-serif; }
+    .resume-preview-root { max-width: 850px; margin: 0 auto; }
+    img, iframe, table { max-width: 100%; }
+  </style>
+</head>
+<body>
+  <div class="resume-preview-root">${resumeRecord.html}</div>
+</body>
+</html>`;
+
+    const encoded = window.btoa(unescape(encodeURIComponent(resumeMarkup)));
+    return {
+        fileName: `${resumeRecord.name || 'Saved Resume'}.html`,
+        mimeType: 'text/html',
+        dataUrl: `data:text/html;base64,${encoded}`,
+        source: 'saved-resume'
+    };
+};
+
 const formatCommaSeparatedValue = (value) => {
     if (Array.isArray(value)) {
         return value.join(', ');
@@ -769,6 +801,50 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
         }
     };
 
+    const handleApplyUsingSavedResume = () => {
+        try {
+            const storageKey = `${RESUME_PLAYGROUND_STORAGE_KEY}${userId || 'guest'}`;
+            const savedRecords = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            const resumes = Array.isArray(savedRecords) ? savedRecords.filter((item) => item?.html) : [];
+
+            if (!resumes.length) {
+                setMessage('No saved resumes found in Resume Playground yet.');
+                setTimeout(() => setMessage(''), 3000);
+                return;
+            }
+
+            const optionsText = resumes
+                .map((resume, index) => `${index + 1}. ${resume.name || `Saved Resume ${index + 1}`}`)
+                .join('\n');
+
+            const selectedValue = window.prompt(`Choose a saved resume by number:\n\n${optionsText}`, '1');
+            if (!selectedValue) {
+                return;
+            }
+
+            const selectedIndex = Number(selectedValue) - 1;
+            const selectedResume = resumes[selectedIndex];
+
+            if (!selectedResume) {
+                setMessage('Saved resume selection was not valid.');
+                setTimeout(() => setMessage(''), 3000);
+                return;
+            }
+
+            const previewPayload = buildSavedResumePreview(selectedResume);
+            if (!previewPayload) {
+                throw new Error('Could not prepare that saved resume for preview.');
+            }
+
+            setApplicationResumeUpload(previewPayload);
+            setMessage(`Saved resume "${selectedResume.name || 'Saved Resume'}" attached to this application.`);
+            setTimeout(() => setMessage(''), 3000);
+        } catch (savedResumeError) {
+            console.error('Error attaching saved resume:', savedResumeError);
+            setMessage(`Error: ${savedResumeError.message}`);
+        }
+    };
+
     const handleSaveDraft = async () => {
         if (!applicationJob?._id) {
             return;
@@ -1509,7 +1585,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                                 {applicationResumeUpload ? (
                                     <>
                                         <p className="application-resume-upload-note">
-                                            This uploaded resume will be sent with your application instead of the profile snapshot fields below.
+                                            This uploaded resume will be sent with your application.
                                         </p>
                                         <ResumeFilePreview resume={applicationResumeUpload} />
                                     </>
@@ -1562,6 +1638,14 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                                     disabled={isSubmitting || isPreparingResumeUpload}
                                 >
                                 {isPreparingResumeUpload ? 'Reading Resume...' : applicationResumeUpload ? 'Change Resume' : 'Apply with Resume'}
+                            </button>
+                            <button
+                                type="button"
+                                className="submit-application-button application-resume-upload-button"
+                                onClick={handleApplyUsingSavedResume}
+                                disabled={isSubmitting || isPreparingResumeUpload}
+                            >
+                                Apply using Saved Resume
                             </button>
                             <button className="secondary-button" onClick={handleSaveDraft} disabled={isSubmitting}>
                                 {activeDraftId ? 'Update Draft' : 'Save Draft'}

@@ -1,0 +1,2073 @@
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import * as pdfjsLib from 'pdfjs-dist';
+import mammoth from 'mammoth';
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+
+const STORAGE_PREFIX = 'jumptakeResumePlayground:';
+const DOCUMENT_STORAGE_PREFIX = 'jumptakeDocumentPlayground:';
+const A4_PAGE_WIDTH = 794;
+const A4_PAGE_HEIGHT = 1123;
+const A4_PAGE_GAP = 56;
+const RULER_SIZE = 34;
+const A4_TOP_PADDING = 48;
+const A4_RIGHT_PADDING = 56;
+const A4_BOTTOM_PADDING = 48;
+const A4_LEFT_PADDING = 56;
+const DEFAULT_EDITOR_MARGINS = {
+    top: A4_TOP_PADDING,
+    left: A4_LEFT_PADDING
+};
+const MIN_TOP_MARGIN = 24;
+const MAX_TOP_MARGIN = 180;
+const MIN_LEFT_MARGIN = 24;
+const MAX_LEFT_MARGIN = 180;
+
+const cloneMargins = (margins = DEFAULT_EDITOR_MARGINS) => ({
+    top: Number.isFinite(margins?.top) ? margins.top : DEFAULT_EDITOR_MARGINS.top,
+    left: Number.isFinite(margins?.left) ? margins.left : DEFAULT_EDITOR_MARGINS.left
+});
+
+const createPageMargins = (pageCount = 1, sourceMargins = []) => Array.from(
+    { length: Math.max(1, pageCount) },
+    (_, index) => cloneMargins(sourceMargins[index] || sourceMargins[0] || DEFAULT_EDITOR_MARGINS)
+);
+
+const FONT_OPTIONS = [
+    'Arial',
+    'Calibri',
+    'Georgia',
+    'Times New Roman',
+    'Helvetica',
+    'Lexend',
+    'Share Tech'
+];
+
+const FONT_SIZE_OPTIONS = [
+    { label: '10', value: '2' },
+    { label: '12', value: '3' },
+    { label: '14', value: '4' },
+    { label: '18', value: '5' },
+    { label: '24', value: '6' }
+];
+
+const escapeHtml = (value = '') => (
+    String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+);
+
+const stripHtml = (value = '') => (
+    String(value)
+        .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+        .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/(p|div|li|h1|h2|h3|h4|h5|h6|tr)>/gi, '\n')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\u00a0/g, ' ')
+        .replace(/[ \t]+\n/g, '\n')
+        .replace(/\n{3,}/g, '\n\n')
+        .replace(/[ \t]{2,}/g, ' ')
+        .trim()
+);
+
+const plainTextToHtml = (text = '') => {
+    const normalized = String(text || '').replace(/\r\n/g, '\n').trim();
+    if (!normalized) {
+        return '<p></p>';
+    }
+
+    return normalized
+        .split(/\n\s*\n/)
+        .map((block) => `<p>${escapeHtml(block).replace(/\n/g, '<br />')}</p>`)
+        .join('');
+};
+
+const createResumeId = () => (
+    `resume-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+);
+
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+const ATS_REQUIRED_WEIGHTS = {
+    header: 24,
+    summary: 14,
+    experience: 24,
+    education: 20,
+    skills: 18
+};
+
+const ATS_OPTIONAL_BONUSES = {
+    projects: 4,
+    languages: 2,
+    certifications: 3,
+    achievements: 3,
+    interests: 1,
+    hobbies: 1,
+    bullets: 3,
+    metrics: 5
+};
+
+const ATS_SCORE_STATES = {
+    low: {
+        label: 'Not ATS Friendly',
+        colorClass: 'is-low'
+    },
+    medium: {
+        label: 'Could be improved for ATS',
+        colorClass: 'is-medium'
+    },
+    good: {
+        label: 'Good for ATS Scan',
+        colorClass: 'is-good'
+    },
+    excellent: {
+        label: 'Excellent!',
+        colorClass: 'is-excellent'
+    }
+};
+
+const getAtsStateForScore = (score) => {
+    if (score > 80) {
+        return ATS_SCORE_STATES.excellent;
+    }
+    if (score >= 70) {
+        return ATS_SCORE_STATES.good;
+    }
+    if (score >= 30) {
+        return ATS_SCORE_STATES.medium;
+    }
+    return ATS_SCORE_STATES.low;
+};
+
+const analyzeResumeForATS = (html = '') => {
+    const plainText = stripHtml(html).replace(/\r/g, '').trim();
+    const normalized = plainText.toLowerCase();
+    const lines = plainText
+        .split(/\n+/)
+        .map((line) => line.trim())
+        .filter(Boolean);
+    const topLines = lines.slice(0, 6);
+
+    const hasEmail = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i.test(plainText);
+    const hasPhone = /(?:\+\d{1,3}[\s-]?)?(?:\(?\d{2,4}\)?[\s-]?)?\d{3,4}[\s-]?\d{3,4}/.test(plainText);
+    const hasLinkedIn = /linkedin|portfolio|github/i.test(normalized);
+    const hasName = topLines.some((line) => (
+        /^[A-Za-z][A-Za-z.' -]{2,40}$/.test(line)
+        && line.split(/\s+/).length <= 5
+        && !/(summary|experience|education|skills|projects|resume|profile|phone|email|location)/i.test(line)
+    ));
+
+    const hasSummary = /(summary|professional summary|profile|career objective|objective|about me)/i.test(normalized);
+    const hasExperience = /(experience|employment|work history|professional experience)/i.test(normalized);
+    const hasEducation = /(education|academic|qualification|degree|university|school)/i.test(normalized);
+    const hasSkills = /(skills|technical skills|core competencies|competencies)/i.test(normalized);
+
+    const hasProjects = /(projects|project experience|portfolio|case study|case studies)/i.test(normalized);
+    const hasLanguages = /\blanguages?\b/i.test(normalized);
+    const hasCertifications = /(certifications?|certificates?|training|courses?)/i.test(normalized);
+    const hasAchievements = /(achievements?|awards?|strengths?|key achievements?)/i.test(normalized);
+    const hasInterests = /\binterests?\b/i.test(normalized);
+    const hasHobbies = /\bhobbies?\b/i.test(normalized);
+    const hasBullets = /(^|\n)\s*[\u2022*-]\s+\S/m.test(plainText);
+    const hasMetrics = /(\b\d+%|\b\d+\+|\$\s?\d|£\s?\d|\b\d+\s*(years?|months?|clients?|users?|projects?|team members?|sales?|revenue|people)\b)/i.test(plainText);
+
+    let points = 0;
+    const strengths = [];
+    const improvements = [];
+    const missingCritical = [];
+
+    const headerSignals = [hasName, hasEmail, hasPhone, hasLinkedIn].filter(Boolean).length;
+    const headerPoints = Math.round((headerSignals / 4) * ATS_REQUIRED_WEIGHTS.header);
+    points += headerPoints;
+
+    if (hasName && hasEmail && hasPhone) {
+        strengths.push('Your resume includes strong core contact information near the top.');
+    } else {
+        if (!hasName) {
+            missingCritical.push('Add your full name clearly at the top of the resume.');
+        }
+        if (!hasEmail) {
+            missingCritical.push('Add an email address so ATS systems can identify your contact details.');
+        }
+        if (!hasPhone) {
+            missingCritical.push('Add a phone number near the top of the resume.');
+        }
+    }
+
+    if (hasSummary) {
+        points += ATS_REQUIRED_WEIGHTS.summary;
+        strengths.push('You included a summary/profile section, which helps ATS and recruiters understand your target role quickly.');
+    } else {
+        missingCritical.push('Add a short summary or profile section.');
+    }
+
+    if (hasExperience) {
+        points += ATS_REQUIRED_WEIGHTS.experience;
+        strengths.push('You included an experience section, which is one of the most important ATS signals.');
+    } else {
+        missingCritical.push('Add an experience or work history section.');
+    }
+
+    if (hasEducation) {
+        points += ATS_REQUIRED_WEIGHTS.education;
+        strengths.push('You included an education section.');
+    } else {
+        missingCritical.push('Add an education section.');
+    }
+
+    if (hasSkills) {
+        points += ATS_REQUIRED_WEIGHTS.skills;
+        strengths.push('You included a skills section, which helps keyword matching.');
+    } else {
+        missingCritical.push('Add a skills or core competencies section.');
+    }
+
+    let bonus = 0;
+    if (hasProjects) bonus += ATS_OPTIONAL_BONUSES.projects;
+    if (hasLanguages) bonus += ATS_OPTIONAL_BONUSES.languages;
+    if (hasCertifications) bonus += ATS_OPTIONAL_BONUSES.certifications;
+    if (hasAchievements) bonus += ATS_OPTIONAL_BONUSES.achievements;
+    if (hasInterests) bonus += ATS_OPTIONAL_BONUSES.interests;
+    if (hasHobbies) bonus += ATS_OPTIONAL_BONUSES.hobbies;
+    if (hasBullets) {
+        bonus += ATS_OPTIONAL_BONUSES.bullets;
+        strengths.push('Bullet points are present, which makes the resume easier for ATS and recruiters to scan.');
+    } else {
+        improvements.push('Use bullet points for responsibilities and achievements to improve scanability.');
+    }
+    if (hasMetrics) {
+        bonus += ATS_OPTIONAL_BONUSES.metrics;
+        strengths.push('You included measurable impact or numbers, which usually strengthens ATS and recruiter reviews.');
+    } else {
+        improvements.push('Add numbers, percentages, dates, or measurable achievements where possible.');
+    }
+
+    if (!hasLinkedIn) {
+        improvements.push('Consider adding LinkedIn, portfolio, or GitHub details if relevant to your field.');
+    }
+
+    if (hasExperience && !/(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|\b20\d{2}\b|\b19\d{2}\b|present|current)/i.test(normalized)) {
+        improvements.push('Add clearer dates to your experience section so ATS systems can understand your timeline.');
+    }
+
+    const baseScore = Math.round((points / Object.values(ATS_REQUIRED_WEIGHTS).reduce((sum, value) => sum + value, 0)) * 100);
+    const score = Math.max(0, Math.min(100, baseScore + bonus));
+    const state = getAtsStateForScore(score);
+
+    if (score <= 30 && improvements.length === 0) {
+        improvements.push('Add the main ATS-friendly sections first: contact info, summary, experience, education, and skills.');
+    }
+    if (score >= 70 && strengths.length === 0) {
+        strengths.push('Your resume covers the main ATS-readable sections well.');
+    }
+
+    return {
+        score,
+        label: state.label,
+        colorClass: state.colorClass,
+        missingCritical,
+        improvements,
+        strengths,
+        summary: plainText
+    };
+};
+
+const getStorageKey = (userId, mode = 'resume') => `${mode === 'document' ? DOCUMENT_STORAGE_PREFIX : STORAGE_PREFIX}${userId || 'guest'}`;
+
+const createBlankEditorHtml = (name = 'Your Name', email = 'email@example.com') => `
+    <div style="font-family: Arial, sans-serif; color: #111827; padding: 36px 42px; min-height: 100%;">
+        <h1 style="font-size: 30px; margin: 0 0 8px;">${escapeHtml(name)}</h1>
+        <p style="font-size: 14px; color: #6b7280; margin: 0 0 24px;">${escapeHtml(email)} • Phone • LinkedIn • Location</p>
+        <h2 style="font-size: 16px; letter-spacing: 0.08em; text-transform: uppercase; margin: 28px 0 10px; border-bottom: 2px solid #0f172a; padding-bottom: 6px;">Summary</h2>
+        <p>Write a short professional summary tailored to the role you want.</p>
+        <h2 style="font-size: 16px; letter-spacing: 0.08em; text-transform: uppercase; margin: 28px 0 10px; border-bottom: 2px solid #0f172a; padding-bottom: 6px;">Experience</h2>
+        <p><strong>Job Title</strong> — Company Name</p>
+        <p style="color: #6b7280;">Date period • Location</p>
+        <ul>
+            <li>Add measurable impact and strong action verbs.</li>
+            <li>Keep achievements concise and easy to scan.</li>
+        </ul>
+        <h2 style="font-size: 16px; letter-spacing: 0.08em; text-transform: uppercase; margin: 28px 0 10px; border-bottom: 2px solid #0f172a; padding-bottom: 6px;">Education</h2>
+        <p><strong>Degree and Field of Study</strong> — School or University</p>
+        <p style="color: #6b7280;">Date period • Location</p>
+        <h2 style="font-size: 16px; letter-spacing: 0.08em; text-transform: uppercase; margin: 28px 0 10px; border-bottom: 2px solid #0f172a; padding-bottom: 6px;">Skills</h2>
+        <p>Skill • Skill • Skill • Skill</p>
+    </div>
+`;
+
+const createBlankDocumentHtml = () => `
+<div class="resume-template-shell">
+  <p>Start building your document here...</p>
+</div>
+`;
+
+const createTemplateLibrary = (name = 'YOUR NAME', email = 'Email') => {
+    const safeName = escapeHtml(name);
+    const safeEmail = escapeHtml(email);
+
+    return [
+        {
+            id: 'ats-1',
+            category: 'ats',
+            label: 'ATS Friendly 1',
+            description: 'Classic centered layout with clear section dividers.',
+            html: `
+                <div style="font-family: Georgia, 'Times New Roman', serif; color: #111827; padding: 42px 52px; min-height: 100%;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 28px; font-weight: 700; letter-spacing: 0.04em;">${safeName}</div>
+                        <div style="font-size: 15px; color: #9ca3af; margin-top: 6px;">The role you are applying for?</div>
+                        <div style="font-size: 13px; color: #9ca3af; margin-top: 6px;">Phone • ${safeEmail} • LinkedIn/Portfolio • Location</div>
+                    </div>
+                    <div style="margin-top: 28px; text-align: center; font-size: 15px; font-weight: 700;">Summary</div>
+                    <div style="border-top: 1px solid #111827; margin-top: 6px; padding-top: 10px; color: #9ca3af; font-size: 13px;">Briefly explain why you're a great fit for the role - use the AI assistant to tailor this summary for each job posting.</div>
+                    <div style="margin-top: 26px; text-align: center; font-size: 15px; font-weight: 700;">Experience</div>
+                    <div style="border-top: 1px solid #111827; margin-top: 6px; padding-top: 10px;">
+                        <p style="margin: 0 0 8px;"><strong>Company Name</strong><span style="float: right; color: #9ca3af;">Location</span></p>
+                        <p style="margin: 0 0 6px;">Title <span style="float: right; color: #9ca3af;">Date period</span></p>
+                        <ul style="margin: 0 0 20px 18px;">
+                            <li>Highlight your accomplishments, using numbers if possible.</li>
+                        </ul>
+                        <p style="margin: 0 0 8px;"><strong>Company Name</strong><span style="float: right; color: #9ca3af;">Location</span></p>
+                        <p style="margin: 0 0 6px;">Title <span style="float: right; color: #9ca3af;">Date period</span></p>
+                        <ul style="margin: 0 0 20px 18px;">
+                            <li>Highlight your accomplishments, using numbers if possible.</li>
+                        </ul>
+                    </div>
+                    <div style="margin-top: 18px; text-align: center; font-size: 15px; font-weight: 700;">Skills</div>
+                    <div style="border-top: 1px solid #111827; margin-top: 6px; padding-top: 10px;">Your Skill</div>
+                    <div style="margin-top: 22px; text-align: center; font-size: 15px; font-weight: 700;">Education</div>
+                    <div style="border-top: 1px solid #111827; margin-top: 6px; padding-top: 10px;">
+                        <p style="margin: 0 0 6px;"><strong>School or University</strong><span style="float: right; color: #9ca3af;">Location</span></p>
+                        <p style="margin: 0;">Degree and Field of Study <span style="float: right; color: #9ca3af;">Date period</span></p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            id: 'ats-2',
+            category: 'ats',
+            label: 'ATS Friendly 2',
+            description: 'Clean left-aligned structure with strong headings.',
+            html: `
+                <div style="font-family: Arial, sans-serif; color: #6b7280; padding: 42px 50px; min-height: 100%;">
+                    <div style="font-size: 34px; font-weight: 700; color: #6b7280;">${safeName}</div>
+                    <div style="font-size: 18px; color: #9ca3af;">The role you are applying for?</div>
+                    <div style="font-size: 13px; margin-top: 8px;">Phone &nbsp; ${safeEmail} &nbsp; LinkedIn/Portfolio &nbsp; Location</div>
+                    <div style="margin-top: 26px; font-size: 14px; font-weight: 800; text-transform: uppercase; color: #6b7280;">Summary</div>
+                    <p style="margin-top: 8px;">Briefly explain why you're a great fit for the role - use the AI assistant to tailor this summary for each job posting.</p>
+                    <div style="margin-top: 20px; font-size: 14px; font-weight: 800; text-transform: uppercase; color: #6b7280;">Experience</div>
+                    <div style="margin-top: 10px;">
+                        <p style="margin: 0; font-size: 18px; color: #6b7280;">Title <span style="float: right; font-size: 13px;">Location</span></p>
+                        <p style="margin: 0; color: #b4b8de;">Company Name <span style="float: right; color: #9ca3af;">Date period</span></p>
+                        <ul style="margin: 8px 0 18px 18px; color: #9ca3af;">
+                            <li>Highlight your accomplishments, using numbers if possible.</li>
+                        </ul>
+                        <p style="margin: 0; font-size: 18px; color: #6b7280;">Title <span style="float: right; font-size: 13px;">Location</span></p>
+                        <p style="margin: 0; color: #b4b8de;">Company Name <span style="float: right; color: #9ca3af;">Date period</span></p>
+                        <ul style="margin: 8px 0 18px 18px; color: #9ca3af;">
+                            <li>Highlight your accomplishments, using numbers if possible.</li>
+                        </ul>
+                    </div>
+                    <div style="margin-top: 20px; font-size: 14px; font-weight: 800; text-transform: uppercase; color: #6b7280;">Education</div>
+                    <p style="margin: 8px 0 0; font-size: 18px; color: #6b7280;">Degree and Field of Study <span style="float: right; font-size: 13px;">Location</span></p>
+                    <p style="margin: 0; color: #9ca3af;">School or University <span style="float: right;">Date period</span></p>
+                    <div style="margin-top: 20px; font-size: 14px; font-weight: 800; text-transform: uppercase; color: #6b7280;">Skills</div>
+                    <p style="margin-top: 8px;">Your Skill</p>
+                </div>
+            `
+        },
+        {
+            id: 'ats-3',
+            category: 'ats',
+            label: 'ATS Friendly 3',
+            description: 'Elegant ATS structure with achievements near the top.',
+            html: `
+                <div style="font-family: Georgia, 'Times New Roman', serif; color: #111827; padding: 42px 52px; min-height: 100%;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 26px; font-weight: 700; letter-spacing: 0.04em;">${safeName}</div>
+                        <div style="font-size: 15px; color: #9ca3af; margin-top: 6px;">The role you are applying for?</div>
+                        <div style="font-size: 13px; color: #9ca3af; margin-top: 6px;">Phone • ${safeEmail} • LinkedIn/Portfolio • Location</div>
+                    </div>
+                    <div style="margin-top: 24px; text-align: center; font-size: 15px; font-weight: 700;">Summary</div>
+                    <div style="border-top: 1px solid #111827; margin-top: 6px; padding-top: 10px; color: #9ca3af; font-size: 13px;">Briefly explain why you're a great fit for the role - use the AI assistant to tailor this summary for each job posting.</div>
+                    <div style="margin-top: 22px; text-align: center; font-size: 15px; font-weight: 700;">Key Achievements</div>
+                    <div style="border-top: 1px solid #111827; margin-top: 6px; padding-top: 10px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; color: #9ca3af; font-size: 13px;">
+                        <div><strong style="color: #9ca3af;">Your Achievement</strong><br />Describe what you did and the impact it had.</div>
+                        <div><strong style="color: #9ca3af;">Your Achievement</strong><br />Describe what you did and the impact it had.</div>
+                        <div><strong style="color: #9ca3af;">Your Achievement</strong><br />Describe what you did and the impact it had.</div>
+                    </div>
+                    <div style="margin-top: 22px; text-align: center; font-size: 15px; font-weight: 700;">Experience</div>
+                    <div style="border-top: 1px solid #111827; margin-top: 6px; padding-top: 10px;">
+                        <p style="margin: 0 0 8px; color: #b4b8de;">Company Name<span style="float: right; color: #9ca3af;">Location</span></p>
+                        <p style="margin: 0 0 6px;">Title <span style="float: right; color: #9ca3af;">Date period</span></p>
+                        <ul style="margin: 0 0 20px 18px;">
+                            <li>Highlight your accomplishments, using numbers if possible.</li>
+                        </ul>
+                    </div>
+                    <div style="margin-top: 18px; text-align: center; font-size: 15px; font-weight: 700;">Core Competencies</div>
+                    <div style="border-top: 1px solid #111827; margin-top: 6px; padding-top: 10px;">Your Skill</div>
+                    <div style="margin-top: 18px; text-align: center; font-size: 15px; font-weight: 700;">Education</div>
+                    <div style="border-top: 1px solid #111827; margin-top: 6px; padding-top: 10px;">
+                        <p style="margin: 0 0 6px; color: #b4b8de;">School or University<span style="float: right; color: #9ca3af;">Location</span></p>
+                        <p style="margin: 0;">Degree and Field of Study <span style="float: right; color: #9ca3af;">Date period</span></p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            id: 'general-1',
+            category: 'general',
+            label: 'General Resume 1',
+            description: 'Balanced blue two-column professional layout.',
+            html: `
+                <div style="font-family: Arial, sans-serif; color: #6b7280; padding: 42px 48px; min-height: 100%;">
+                    <div style="font-size: 34px; font-weight: 700; color: #7b93c3;">${safeName}</div>
+                    <div style="font-size: 18px; color: #b6d9ff; margin-top: 2px;">The role you are applying for?</div>
+                    <div style="font-size: 13px; color: #9ca3af; margin-top: 8px;">Phone &nbsp; ${safeEmail} &nbsp; LinkedIn/Portfolio &nbsp; Location</div>
+                    <div style="display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.95fr); gap: 34px; margin-top: 28px;">
+                        <div>
+                            <div style="font-size: 14px; font-weight: 800; color: #123a8f; margin-bottom: 10px; border-bottom: 3px solid #123a8f; padding-bottom: 4px;">SUMMARY</div>
+                            <p>Briefly explain why you're a great fit for the role - use the AI assistant to tailor this summary for each job posting.</p>
+                            <div style="font-size: 14px; font-weight: 800; color: #123a8f; margin: 22px 0 10px; border-bottom: 3px solid #123a8f; padding-bottom: 4px;">EXPERIENCE</div>
+                            <p style="margin: 0;"><strong>Title</strong></p>
+                            <p style="margin: 0; color: #7aaef1;"><strong>Company Name</strong></p>
+                            <p style="margin: 0 0 8px; font-size: 13px;">Date period • Location</p>
+                            <ul style="margin: 0 0 18px 18px;">
+                                <li>Highlight your accomplishments, using numbers if possible.</li>
+                            </ul>
+                            <div style="font-size: 14px; font-weight: 800; color: #123a8f; margin: 22px 0 10px; border-bottom: 3px solid #123a8f; padding-bottom: 4px;">EDUCATION</div>
+                            <p style="margin: 0;"><strong>Degree and Field of Study</strong></p>
+                            <p style="margin: 0; color: #7aaef1;"><strong>School or University</strong></p>
+                            <p style="margin: 0; font-size: 13px;">Date period • Location</p>
+                        </div>
+                        <div>
+                            <div style="font-size: 14px; font-weight: 800; color: #123a8f; margin-bottom: 10px; border-bottom: 3px solid #123a8f; padding-bottom: 4px;">STRENGTHS</div>
+                            <p style="margin: 0 0 12px;"><strong>Your Strength</strong><br />Explain how it benefits your work.</p>
+                            <p style="margin: 0 0 12px;"><strong>Your Strength</strong><br />Explain how it benefits your work.</p>
+                            <div style="font-size: 14px; font-weight: 800; color: #123a8f; margin: 22px 0 10px; border-bottom: 3px solid #123a8f; padding-bottom: 4px;">SKILLS</div>
+                            <p>Your Skill</p>
+                            <div style="font-size: 14px; font-weight: 800; color: #123a8f; margin: 22px 0 10px; border-bottom: 3px solid #123a8f; padding-bottom: 4px;">CERTIFICATIONS</div>
+                            <p style="margin: 0 0 10px;"><strong>Course Title</strong><br />Which institution provided the course?</p>
+                            <div style="font-size: 14px; font-weight: 800; color: #123a8f; margin: 22px 0 10px; border-bottom: 3px solid #123a8f; padding-bottom: 4px;">LANGUAGES</div>
+                            <p>Language — Native</p>
+                            <p>Language — Proficient</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            id: 'general-2',
+            category: 'general',
+            label: 'General Resume 2',
+            description: 'Modern light green layout with side highlights.',
+            html: `
+                <div style="font-family: Arial, sans-serif; color: #8a8a8a; padding: 42px 48px; min-height: 100%;">
+                    <div style="font-size: 34px; font-weight: 700; color: #8a8a8a;">${safeName}</div>
+                    <div style="font-size: 18px; color: #b8d9c3;">The role you are applying for?</div>
+                    <div style="font-size: 13px; color: #b3b3b3; margin-top: 8px;">Phone &nbsp; ${safeEmail} &nbsp; LinkedIn/Portfolio &nbsp; Location</div>
+                    <div style="display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.95fr); gap: 34px; margin-top: 28px;">
+                        <div>
+                            <div style="font-size: 14px; font-weight: 700; color: #55b77a;">SUMMARY</div>
+                            <p>Briefly explain why you're a great fit for the role - use the AI assistant to tailor this summary for each job posting.</p>
+                            <div style="font-size: 14px; font-weight: 700; color: #55b77a; margin-top: 20px;">EXPERIENCE</div>
+                            <p style="margin: 8px 0 0;"><strong>Title</strong></p>
+                            <p style="margin: 0;">Company Name &nbsp; Date period &nbsp; Location</p>
+                            <ul style="margin: 8px 0 18px 18px;">
+                                <li>Highlight your accomplishments, using numbers if possible.</li>
+                            </ul>
+                            <p style="margin: 8px 0 0;"><strong>Title</strong></p>
+                            <p style="margin: 0;">Company Name &nbsp; Date period &nbsp; Location</p>
+                            <ul style="margin: 8px 0 18px 18px;">
+                                <li>Highlight your accomplishments, using numbers if possible.</li>
+                            </ul>
+                            <div style="font-size: 14px; font-weight: 700; color: #55b77a; margin-top: 20px;">EDUCATION</div>
+                            <p style="margin: 8px 0 0;"><strong>Degree and Field of Study</strong></p>
+                            <p style="margin: 0;">School or University &nbsp; Date period &nbsp; Location</p>
+                        </div>
+                        <div>
+                            <div style="font-size: 14px; font-weight: 700; color: #55b77a;">STRENGTHS</div>
+                            <p><strong>Your Strength</strong><br />Explain how it benefits your work.</p>
+                            <p><strong>Your Strength</strong><br />Explain how it benefits your work.</p>
+                            <div style="font-size: 14px; font-weight: 700; color: #55b77a; margin-top: 20px;">SKILLS</div>
+                            <p>Your Skill</p>
+                            <div style="font-size: 14px; font-weight: 700; color: #55b77a; margin-top: 20px;">PROJECTS</div>
+                            <p><strong>Project Name</strong><br />URL<br />Short summary of your work</p>
+                            <div style="font-size: 14px; font-weight: 700; color: #55b77a; margin-top: 20px;">HOW I SPLIT MY TIME</div>
+                            <p>Writing code • Continuous education • Contributing to open source • Code review • Volunteering</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            id: 'general-3',
+            category: 'general',
+            label: 'General Resume 3',
+            description: 'Statement layout with a bold sidebar for highlights.',
+            html: `
+                <div style="display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.85fr); min-height: 100%; font-family: Arial, sans-serif; color: #8a8a8a;">
+                    <div style="padding: 42px 48px;">
+                        <div style="font-size: 34px; font-weight: 700; color: #8a8a8a;">${safeName}</div>
+                        <div style="font-size: 18px; color: #b8ecf0;">The role you are applying for?</div>
+                        <div style="font-size: 13px; color: #b3b3b3; margin-top: 8px;">Phone &nbsp; ${safeEmail} &nbsp; LinkedIn/Portfolio &nbsp; Location</div>
+                        <div style="font-size: 14px; margin-top: 28px; color: #1f2937;">SUMMARY</div>
+                        <p>Briefly explain why you're a great fit for the role - use the AI assistant to tailor this summary for each job posting.</p>
+                        <div style="font-size: 14px; margin-top: 18px; color: #1f2937;">EXPERIENCE</div>
+                        <p style="margin: 8px 0 0;"><strong>Title</strong></p>
+                        <p style="margin: 0; color: #7cd0d2;"><strong>Company Name</strong></p>
+                        <p style="margin: 0 0 8px;">Date period <span style="float: right;">Location</span></p>
+                        <ul style="margin: 8px 0 16px 18px;">
+                            <li>Highlight your accomplishments, using numbers if possible.</li>
+                        </ul>
+                        <div style="font-size: 14px; margin-top: 18px; color: #1f2937;">EDUCATION</div>
+                        <p style="margin: 8px 0 0;"><strong>Degree and Field of Study</strong></p>
+                        <p style="margin: 0; color: #7cd0d2;"><strong>School or University</strong></p>
+                        <p style="margin: 0;">Date period <span style="float: right;">Location</span></p>
+                        <div style="font-size: 14px; margin-top: 18px; color: #1f2937;">LANGUAGES</div>
+                        <p>Language — Native</p>
+                        <p>Language — Advanced</p>
+                    </div>
+                    <div style="background: #2d7b7b; color: #e8f8f8; padding: 42px 32px;">
+                        <div style="font-size: 14px; font-weight: 700; letter-spacing: 0.04em; border-bottom: 1px solid rgba(255,255,255,0.5); padding-bottom: 8px;">KEY ACHIEVEMENTS</div>
+                        <p style="margin-top: 12px;"><strong>Your Achievement</strong><br />Describe what you did and the impact it had.</p>
+                        <p><strong>Your Achievement</strong><br />Describe what you did and the impact it had.</p>
+                        <div style="font-size: 14px; font-weight: 700; letter-spacing: 0.04em; border-bottom: 1px solid rgba(255,255,255,0.5); padding-bottom: 8px; margin-top: 22px;">SKILLS</div>
+                        <p style="margin-top: 12px;">Your Skill</p>
+                        <div style="font-size: 14px; font-weight: 700; letter-spacing: 0.04em; border-bottom: 1px solid rgba(255,255,255,0.5); padding-bottom: 8px; margin-top: 22px;">COURSES</div>
+                        <p style="margin-top: 12px;"><strong>Course Title</strong><br />Which institution provided the course?</p>
+                        <div style="font-size: 14px; font-weight: 700; letter-spacing: 0.04em; border-bottom: 1px solid rgba(255,255,255,0.5); padding-bottom: 8px; margin-top: 22px;">INTERESTS</div>
+                        <p style="margin-top: 12px;"><strong>Career Interest / Passion</strong><br />What does the company have which makes it attractive for you?</p>
+                    </div>
+                </div>
+            `
+        }
+    ];
+};
+
+const parseResumeFileToText = async (file) => {
+    if (file.type === 'text/plain' || /\.txt$/i.test(file.name)) {
+        return await file.text();
+    }
+
+    if (file.type === 'application/pdf' || /\.pdf$/i.test(file.name)) {
+        const buffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument(new Uint8Array(buffer)).promise;
+        let fullText = '';
+        for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
+            const page = await pdf.getPage(pageNumber);
+            const content = await page.getTextContent();
+            fullText += `${content.items.map((item) => item.str).join(' ')}\n\n`;
+        }
+        return fullText;
+    }
+
+    if (file.type.includes('officedocument.wordprocessingml') || /\.docx$/i.test(file.name)) {
+        const buffer = await file.arrayBuffer();
+        const result = await mammoth.extractRawText({ arrayBuffer: buffer });
+        return result.value;
+    }
+
+    if (file.type === 'application/msword' || /\.doc$/i.test(file.name)) {
+        throw new Error('DOC files are not supported for editable conversion yet. Please upload PDF, DOCX, or TXT.');
+    }
+
+    throw new Error('Upload a PDF, DOCX, or TXT resume to convert it into editable content.');
+};
+
+const buildExportDocument = (title, html) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>${escapeHtml(title)}</title>
+    <style>
+        body {
+            margin: 0;
+            background: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+        .resume-export-page {
+            width: ${A4_PAGE_WIDTH}px;
+            min-height: ${A4_PAGE_HEIGHT}px;
+            margin: 0 auto;
+            background: #ffffff;
+            color: #111827;
+            box-sizing: border-box;
+        }
+        .resume-export-page table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .resume-export-page td,
+        .resume-export-page th {
+            border: 1px solid #d1d5db;
+            padding: 6px 8px;
+        }
+        .resume-playground-page-break {
+            page-break-after: always;
+            break-after: page;
+            height: 0;
+            border: 0;
+            margin: 1.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="resume-export-page">${html}</div>
+</body>
+</html>
+`;
+
+const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
+    const isDocumentMode = mode === 'document';
+    const userId = user?.id || 'guest';
+    const displayEmail = typeof user?.email === 'string' ? user.email : '';
+    const displayName = displayEmail.includes('@') ? displayEmail.split('@')[0] : (displayEmail || 'Your Name');
+    const storageKey = getStorageKey(userId, mode);
+    const resourceLabel = isDocumentMode ? 'Document' : 'Resume';
+    const resourceLabelPlural = isDocumentMode ? 'documents' : 'resumes';
+    const uploadInputRef = useRef(null);
+    const editorRef = useRef(null);
+    const selectionRef = useRef(null);
+    const rulerDragRef = useRef(null);
+    const signatureCanvasRef = useRef(null);
+    const signatureDrawingRef = useRef(false);
+
+    const [activeTab, setActiveTab] = useState('create');
+    const [createMode, setCreateMode] = useState('');
+    const [savedResumes, setSavedResumes] = useState([]);
+    const [editorResume, setEditorResume] = useState(null);
+    const [editorPageCount, setEditorPageCount] = useState(1);
+    const [editorPageMargins, setEditorPageMargins] = useState(() => createPageMargins(1));
+    const [statusMessage, setStatusMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [uploading, setUploading] = useState(false);
+    const [spellcheckEnabled, setSpellcheckEnabled] = useState(true);
+    const [editorMargins, setEditorMargins] = useState(DEFAULT_EDITOR_MARGINS);
+    const [atsScanResult, setAtsScanResult] = useState(null);
+    const [showAtsDetails, setShowAtsDetails] = useState(false);
+    const [signatureDataUrl, setSignatureDataUrl] = useState('');
+    const [isMobileViewport, setIsMobileViewport] = useState(() => (
+        typeof window !== 'undefined' ? window.innerWidth <= 768 : false
+    ));
+    useEffect(() => {
+        try {
+            const stored = localStorage.getItem(storageKey);
+            const parsed = stored ? JSON.parse(stored) : [];
+            setSavedResumes(Array.isArray(parsed) ? parsed : []);
+        } catch (error) {
+            console.error('Failed to load saved resumes:', error);
+            setSavedResumes([]);
+        }
+    }, [storageKey]);
+
+    const persistResumes = (nextResumes) => {
+        setSavedResumes(nextResumes);
+        localStorage.setItem(storageKey, JSON.stringify(nextResumes));
+    };
+
+    const createResumeRecord = ({ name, html, source = 'scratch', templateId = '', templateCategory: nextCategory = '' }) => {
+        const now = new Date().toISOString();
+        return {
+            id: createResumeId(),
+            name,
+            html,
+            margins: { ...DEFAULT_EDITOR_MARGINS },
+            pageMargins: createPageMargins(1),
+            source,
+            templateId,
+            templateCategory: nextCategory,
+            createdAt: now,
+            updatedAt: now
+        };
+    };
+
+    const clearMessages = () => {
+        setStatusMessage('');
+        setErrorMessage('');
+    };
+
+    const syncSignaturePreview = useCallback(() => {
+        const canvas = signatureCanvasRef.current;
+        if (!canvas) {
+            return '';
+        }
+
+        const dataUrl = canvas.toDataURL('image/png');
+        setSignatureDataUrl(dataUrl);
+        return dataUrl;
+    }, []);
+
+    const clearSignature = useCallback(() => {
+        const canvas = signatureCanvasRef.current;
+        if (!canvas) {
+            return;
+        }
+
+        const context = canvas.getContext('2d');
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        setSignatureDataUrl('');
+    }, []);
+
+    useEffect(() => {
+        if (!isDocumentMode) {
+            return undefined;
+        }
+
+        const canvas = signatureCanvasRef.current;
+        if (!canvas) {
+            return undefined;
+        }
+
+        const context = canvas.getContext('2d');
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.strokeStyle = '#111111';
+        context.lineWidth = 2;
+        context.lineCap = 'round';
+        context.lineJoin = 'round';
+
+        const getPoint = (event) => {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: ((event.clientX - rect.left) / rect.width) * canvas.width,
+                y: ((event.clientY - rect.top) / rect.height) * canvas.height
+            };
+        };
+
+        const handlePointerDown = (event) => {
+            signatureDrawingRef.current = true;
+            const point = getPoint(event);
+            context.beginPath();
+            context.moveTo(point.x, point.y);
+        };
+
+        const handlePointerMove = (event) => {
+            if (!signatureDrawingRef.current) {
+                return;
+            }
+
+            const point = getPoint(event);
+            context.lineTo(point.x, point.y);
+            context.stroke();
+        };
+
+        const stopDrawing = () => {
+            if (!signatureDrawingRef.current) {
+                return;
+            }
+
+            signatureDrawingRef.current = false;
+            syncSignaturePreview();
+        };
+
+        canvas.addEventListener('pointerdown', handlePointerDown);
+        canvas.addEventListener('pointermove', handlePointerMove);
+        window.addEventListener('pointerup', stopDrawing);
+
+        return () => {
+            canvas.removeEventListener('pointerdown', handlePointerDown);
+            canvas.removeEventListener('pointermove', handlePointerMove);
+            window.removeEventListener('pointerup', stopDrawing);
+        };
+    }, [isDocumentMode, syncSignaturePreview]);
+
+    const addSignatureToDocument = useCallback(() => {
+        const dataUrl = signatureDataUrl || syncSignaturePreview();
+        if (!dataUrl) {
+            return;
+        }
+
+        insertHtml(`
+            <div style="display:flex;justify-content:flex-end;margin:16px 0;">
+                <img src="${dataUrl}" alt="Signature" style="max-width:180px;max-height:72px;object-fit:contain;" />
+            </div>
+            <p></p>
+        `);
+    }, [signatureDataUrl, syncSignaturePreview]);
+
+    const updateMarginFromPointer = useCallback((dragState, clientX, clientY) => {
+        if (!dragState?.rect) {
+            return;
+        }
+
+        if (dragState.axis === 'horizontal') {
+            const nextLeft = clamp(clientX - dragState.rect.left, MIN_LEFT_MARGIN, MAX_LEFT_MARGIN);
+            setEditorPageMargins((current) => {
+                const nextMargins = createPageMargins(Math.max(editorPageCount, current.length), current);
+                nextMargins[dragState.pageIndex || 0] = {
+                    ...nextMargins[dragState.pageIndex || 0],
+                    left: Math.round(nextLeft)
+                };
+                return nextMargins;
+            });
+
+            if ((dragState.pageIndex || 0) === 0) {
+                setEditorMargins((current) => ({ ...current, left: Math.round(nextLeft) }));
+            }
+            return;
+        }
+
+        if (dragState.axis === 'vertical') {
+            const nextTop = clamp(clientY - dragState.rect.top, MIN_TOP_MARGIN, MAX_TOP_MARGIN);
+            setEditorPageMargins((current) => {
+                const nextMargins = createPageMargins(Math.max(editorPageCount, current.length), current);
+                nextMargins[dragState.pageIndex || 0] = {
+                    ...nextMargins[dragState.pageIndex || 0],
+                    top: Math.round(nextTop)
+                };
+                return nextMargins;
+            });
+
+            if ((dragState.pageIndex || 0) === 0) {
+                setEditorMargins((current) => ({ ...current, top: Math.round(nextTop) }));
+            }
+        }
+    }, [editorPageCount]);
+
+    const startRulerDrag = useCallback((axis, pageIndex, event) => {
+        event.preventDefault();
+        rulerDragRef.current = {
+            axis,
+            pageIndex,
+            rect: event.currentTarget.getBoundingClientRect()
+        };
+        updateMarginFromPointer(rulerDragRef.current, event.clientX, event.clientY);
+    }, [updateMarginFromPointer]);
+
+    useEffect(() => {
+        const handlePointerMove = (event) => {
+            if (!rulerDragRef.current) {
+                return;
+            }
+
+            updateMarginFromPointer(rulerDragRef.current, event.clientX, event.clientY);
+        };
+
+        const stopRulerDrag = () => {
+            rulerDragRef.current = null;
+        };
+
+        window.addEventListener('mousemove', handlePointerMove);
+        window.addEventListener('mouseup', stopRulerDrag);
+
+        return () => {
+            window.removeEventListener('mousemove', handlePointerMove);
+            window.removeEventListener('mouseup', stopRulerDrag);
+        };
+    }, [updateMarginFromPointer]);
+
+    const getPaginationHost = useCallback((root = editorRef.current) => {
+        if (!root) {
+            return null;
+        }
+
+        const meaningfulChildren = Array.from(root.childNodes).filter((node) => (
+            !(node.nodeType === Node.TEXT_NODE && !node.textContent?.trim())
+        ));
+
+        if (
+            meaningfulChildren.length === 1
+            && meaningfulChildren[0].nodeType === Node.ELEMENT_NODE
+            && meaningfulChildren[0].tagName === 'DIV'
+            && !meaningfulChildren[0].classList.contains('resume-playground-page-break')
+        ) {
+            return meaningfulChildren[0];
+        }
+
+        return root;
+    }, []);
+
+    const normalizeEditorContent = useCallback(() => {
+        const root = getPaginationHost();
+
+        if (!root) {
+            return;
+        }
+        const childNodes = Array.from(root.childNodes);
+
+        childNodes.forEach((node) => {
+            if (node.nodeType === Node.TEXT_NODE) {
+                const rawText = node.textContent || '';
+
+                if (!rawText.trim()) {
+                    node.remove();
+                    return;
+                }
+
+                const paragraph = document.createElement('p');
+                paragraph.textContent = rawText;
+                root.replaceChild(paragraph, node);
+            }
+        });
+
+        if (!root.childNodes.length) {
+            root.innerHTML = '<p></p>';
+        }
+    }, [getPaginationHost]);
+
+    const createMeasurementContainer = useCallback(() => {
+        const measurement = document.createElement('div');
+        measurement.style.position = 'absolute';
+        measurement.style.left = '-100000px';
+        measurement.style.top = '0';
+        measurement.style.visibility = 'hidden';
+        measurement.style.pointerEvents = 'none';
+        measurement.style.width = `${A4_PAGE_WIDTH}px`;
+        measurement.style.padding = `${editorMargins.top}px ${A4_RIGHT_PADDING}px ${A4_BOTTOM_PADDING}px ${editorMargins.left}px`;
+        measurement.style.boxSizing = 'border-box';
+        measurement.style.background = '#ffffff';
+        measurement.style.color = '#111827';
+        measurement.style.fontFamily = "'Lexend', 'Share Tech', 'Segoe UI', sans-serif";
+        measurement.style.lineHeight = '1.6';
+        measurement.style.whiteSpace = 'normal';
+        measurement.style.wordBreak = 'break-word';
+        measurement.style.overflowWrap = 'anywhere';
+        document.body.appendChild(measurement);
+        return measurement;
+    }, [editorMargins.left, editorMargins.top]);
+
+    const splitTextBlockToFit = useCallback((node, measurement) => {
+        if (!node || node.nodeType !== Node.ELEMENT_NODE) {
+            return null;
+        }
+
+        const tagName = node.tagName?.toUpperCase();
+        if (!['P', 'DIV', 'LI'].includes(tagName)) {
+            return null;
+        }
+
+        const text = node.textContent || '';
+        if (!text.trim()) {
+            return null;
+        }
+
+        const wordTokens = text.match(/\S+\s*/g) || [];
+        const tokens = wordTokens.length > 1
+            ? wordTokens
+            : Array.from(text);
+        if (tokens.length < 2) {
+            return null;
+        }
+
+        const probe = node.cloneNode(false);
+        probe.textContent = '';
+        measurement.appendChild(probe);
+
+        let fitText = '';
+        let splitIndex = 0;
+
+        for (let index = 0; index < tokens.length; index += 1) {
+            probe.textContent += tokens[index];
+
+            if (measurement.scrollHeight > A4_PAGE_HEIGHT) {
+                break;
+            }
+
+            fitText += tokens[index];
+            splitIndex = index + 1;
+        }
+
+        measurement.removeChild(probe);
+
+        if (splitIndex <= 0 || splitIndex >= tokens.length) {
+            return null;
+        }
+
+        const fittingNode = node.cloneNode(false);
+        fittingNode.textContent = fitText.trimEnd();
+
+        const overflowNode = node.cloneNode(false);
+        overflowNode.textContent = tokens.slice(splitIndex).join('').trimStart();
+
+        if (!fittingNode.textContent?.trim() || !overflowNode.textContent?.trim()) {
+            return null;
+        }
+
+        return { fittingNode, overflowNode };
+    }, []);
+
+    const repaginateEditorContent = useCallback(() => {
+        if (!editorRef.current) {
+            return;
+        }
+
+        normalizeEditorContent();
+        const root = getPaginationHost();
+
+        if (!root) {
+            return;
+        }
+
+        root.querySelectorAll('.resume-playground-page-break[data-break-type="auto"]').forEach((node) => node.remove());
+
+        while (
+            root.firstChild
+            && root.firstChild.nodeType === Node.ELEMENT_NODE
+            && root.firstChild.classList.contains('resume-playground-page-break')
+        ) {
+            const leadingBreak = root.firstChild;
+            const nextSibling = leadingBreak.nextSibling;
+            leadingBreak.remove();
+            if (
+                nextSibling
+                && nextSibling.nodeType === Node.ELEMENT_NODE
+                && nextSibling.tagName === 'P'
+                && !nextSibling.textContent?.trim()
+            ) {
+                nextSibling.remove();
+            }
+        }
+
+        const measurement = createMeasurementContainer();
+        const nodes = Array.from(root.childNodes);
+        let pages = 1;
+        let currentPageIndex = 0;
+        let blocksOnCurrentPage = 0;
+
+        const getPageTopMargin = (pageIndex) => (editorPageMargins[pageIndex] || editorMargins).top;
+        const getUsedHeight = () => Math.max(measurement.scrollHeight, getPageTopMargin(currentPageIndex) + A4_BOTTOM_PADDING);
+        const createBreakHeight = (usedHeight, nextPageIndex = currentPageIndex + 1) => {
+            const nextTopMargin = getPageTopMargin(nextPageIndex);
+            return Math.max(nextTopMargin, (A4_PAGE_HEIGHT + A4_PAGE_GAP + nextTopMargin) - usedHeight);
+        };
+
+        nodes.forEach((node) => {
+            if (node.nodeType === Node.TEXT_NODE && !node.textContent?.trim()) {
+                return;
+            }
+
+            if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains('resume-playground-page-break')) {
+                const usedHeight = getUsedHeight();
+                node.style.height = `${createBreakHeight(usedHeight, pages)}px`;
+                measurement.innerHTML = '';
+                pages += 1;
+                currentPageIndex = pages - 1;
+                blocksOnCurrentPage = 0;
+                return;
+            }
+
+            const usedBeforeAppend = getUsedHeight();
+            const nodeClone = node.cloneNode(true);
+            measurement.appendChild(nodeClone);
+
+            if (measurement.scrollHeight > A4_PAGE_HEIGHT) {
+                measurement.removeChild(nodeClone);
+
+                if (blocksOnCurrentPage > 0) {
+                    const splitResult = splitTextBlockToFit(node, measurement);
+
+                    if (splitResult) {
+                        const { fittingNode, overflowNode } = splitResult;
+                        root.insertBefore(fittingNode, node);
+
+                        const autoBreak = document.createElement('div');
+                        autoBreak.className = 'resume-playground-page-break';
+                        autoBreak.setAttribute('data-break-type', 'auto');
+                        autoBreak.setAttribute('contenteditable', 'false');
+                        autoBreak.style.height = `${createBreakHeight(getUsedHeight(), pages)}px`;
+                        root.insertBefore(autoBreak, node);
+
+                        node.replaceWith(overflowNode);
+
+                        measurement.innerHTML = '';
+                        measurement.appendChild(overflowNode.cloneNode(true));
+                        pages += 1;
+                        currentPageIndex = pages - 1;
+                        blocksOnCurrentPage = 1;
+                        return;
+                    }
+                }
+
+                const autoBreak = document.createElement('div');
+                autoBreak.className = 'resume-playground-page-break';
+                autoBreak.setAttribute('data-break-type', 'auto');
+                autoBreak.setAttribute('contenteditable', 'false');
+                autoBreak.style.height = `${createBreakHeight(usedBeforeAppend, pages)}px`;
+                root.insertBefore(autoBreak, node);
+
+                measurement.innerHTML = '';
+                measurement.appendChild(node.cloneNode(true));
+                pages += 1;
+                currentPageIndex = pages - 1;
+                blocksOnCurrentPage = 1;
+                return;
+            }
+
+            blocksOnCurrentPage += 1;
+        });
+
+        document.body.removeChild(measurement);
+        setEditorPageCount(pages);
+    }, [createMeasurementContainer, editorMargins, editorPageMargins, getPaginationHost, normalizeEditorContent, splitTextBlockToFit]);
+
+    useEffect(() => {
+        if (!editorRef.current || !editorResume) {
+            return;
+        }
+
+        if (editorRef.current.innerHTML !== editorResume.html) {
+            editorRef.current.innerHTML = editorResume.html;
+        }
+
+        window.requestAnimationFrame(() => {
+            repaginateEditorContent();
+        });
+    }, [editorResume, repaginateEditorContent]);
+
+    useEffect(() => {
+        if (!editorResume || !editorRef.current) {
+            return;
+        }
+
+        window.requestAnimationFrame(() => {
+            repaginateEditorContent();
+        });
+    }, [editorMargins, editorPageMargins, editorResume, repaginateEditorContent]);
+
+    useEffect(() => {
+        setEditorPageMargins((current) => createPageMargins(editorPageCount, current));
+    }, [editorPageCount]);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') {
+            return undefined;
+        }
+
+        const handleResize = () => {
+            setIsMobileViewport(window.innerWidth <= 768);
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (typeof document === 'undefined' || !editorResume || !isMobileViewport) {
+            return undefined;
+        }
+
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [editorResume, isMobileViewport]);
+
+    const openEditor = (resume, nextTab = 'edit') => {
+        setEditorResume(resume);
+        setEditorMargins(resume?.margins ? { ...DEFAULT_EDITOR_MARGINS, ...resume.margins } : DEFAULT_EDITOR_MARGINS);
+        setEditorPageMargins(
+            Array.isArray(resume?.pageMargins) && resume.pageMargins.length
+                ? resume.pageMargins.map((margin) => cloneMargins(margin))
+                : createPageMargins(1, resume?.margins ? [{ ...DEFAULT_EDITOR_MARGINS, ...resume.margins }] : [])
+        );
+        setEditorPageCount(1);
+        setAtsScanResult(null);
+        setShowAtsDetails(false);
+        setActiveTab(nextTab);
+        clearMessages();
+        window.requestAnimationFrame(() => {
+            editorRef.current?.focus();
+            window.getSelection()?.removeAllRanges();
+            repaginateEditorContent();
+        });
+    };
+
+    const saveSelection = () => {
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0 || !editorRef.current) {
+            return;
+        }
+        if (!editorRef.current.contains(selection.anchorNode)) {
+            return;
+        }
+        selectionRef.current = selection.getRangeAt(0);
+    };
+
+    const restoreSelection = () => {
+        if (!editorRef.current) {
+            return;
+        }
+
+        editorRef.current.focus();
+
+        if (!selectionRef.current) {
+            return;
+        }
+
+        const selection = window.getSelection();
+        if (!selection) {
+            return;
+        }
+
+        selection.removeAllRanges();
+        selection.addRange(selectionRef.current);
+    };
+
+    const syncEditorResume = () => {
+        if (!editorRef.current || !editorResume) {
+            return;
+        }
+
+        saveSelection();
+        window.requestAnimationFrame(() => {
+            repaginateEditorContent();
+            setEditorResume((current) => (
+                current
+                    ? { ...current, html: editorRef.current.innerHTML }
+                    : current
+            ));
+            saveSelection();
+        });
+    };
+
+    const runCommand = (command, value = null) => {
+        if (!editorResume || typeof document.execCommand !== 'function') {
+            return;
+        }
+
+        restoreSelection();
+        document.execCommand(command, false, value);
+        syncEditorResume();
+    };
+
+    const insertHtml = (html) => {
+        if (!editorResume) {
+            return;
+        }
+
+        restoreSelection();
+        document.execCommand('insertHTML', false, html);
+        syncEditorResume();
+    };
+
+    const insertTable = () => {
+        const rowInput = window.prompt('How many rows?', '3');
+        const colInput = window.prompt('How many columns?', '2');
+        const rows = Number(rowInput);
+        const cols = Number(colInput);
+
+        if (!rows || !cols || rows < 1 || cols < 1) {
+            return;
+        }
+
+        const tableRows = Array.from({ length: rows }, () => (
+            `<tr>${Array.from({ length: cols }, () => '<td>Cell</td>').join('')}</tr>`
+        )).join('');
+
+        insertHtml(`<table><tbody>${tableRows}</tbody></table><p></p>`);
+    };
+
+    const insertLink = () => {
+        const href = window.prompt('Paste the link URL');
+        if (!href) {
+            return;
+        }
+        runCommand('createLink', href);
+    };
+
+    const insertPageBreak = () => {
+        const paginationHost = getPaginationHost();
+
+        if (!paginationHost || !editorResume) {
+            return;
+        }
+
+        const pageBreakMarkup = document.createElement('div');
+        pageBreakMarkup.innerHTML = '<div class="resume-playground-page-break" data-break-type="manual" contenteditable="false"></div><p></p>';
+        paginationHost.append(...Array.from(pageBreakMarkup.childNodes));
+        syncEditorResume();
+        editorRef.current.focus();
+    };
+
+    const removeLastPageBreak = () => {
+        const paginationHost = getPaginationHost();
+
+        if (!paginationHost) {
+            return;
+        }
+
+        const pageBreaks = paginationHost.querySelectorAll('.resume-playground-page-break[data-break-type="manual"]');
+        const lastPageBreak = pageBreaks[pageBreaks.length - 1];
+
+        if (!lastPageBreak) {
+            return;
+        }
+
+        const nextSibling = lastPageBreak.nextSibling;
+        if (nextSibling && nextSibling.nodeType === Node.ELEMENT_NODE && nextSibling.tagName === 'P' && !nextSibling.textContent?.trim()) {
+            nextSibling.remove();
+        }
+
+        lastPageBreak.remove();
+        syncEditorResume();
+    };
+
+    const insertShape = (shape) => {
+        const shapes = {
+            circle: '<div style="width:88px;height:88px;border:2px solid #111827;border-radius:999px;margin:16px auto;"></div><p></p>',
+            square: '<div style="width:88px;height:88px;border:2px solid #111827;margin:16px auto;"></div><p></p>',
+            rectangle: '<div style="width:140px;height:80px;border:2px solid #111827;margin:16px auto;"></div><p></p>',
+            triangle: '<div style="width:0;height:0;border-left:48px solid transparent;border-right:48px solid transparent;border-bottom:84px solid #111827;margin:16px auto;"></div><p></p>',
+            line: '<div style="width:100%;border-top:2px solid #111827;margin:18px 0;"></div><p></p>'
+        };
+
+        if (shapes[shape]) {
+            insertHtml(shapes[shape]);
+        }
+    };
+
+    const handleStartScratch = () => {
+        setCreateMode('scratch');
+        openEditor(createResumeRecord({
+            name: `${displayName} ${resourceLabel}`,
+            html: isDocumentMode
+                ? createBlankDocumentHtml()
+                : createBlankEditorHtml(displayName, displayEmail || 'email@example.com'),
+            source: 'scratch'
+        }), 'create');
+    };
+
+    const handleUploadResume = async (event) => {
+        const file = event.target.files?.[0];
+        event.target.value = '';
+        if (!file) {
+            return;
+        }
+
+        setUploading(true);
+        clearMessages();
+        try {
+            const text = (await parseResumeFileToText(file)).trim();
+            if (!text) {
+                throw new Error('No readable text was found in that resume.');
+            }
+
+            const baseName = file.name.replace(/\.[^.]+$/, '') || `${displayName} ${resourceLabel}`;
+            setCreateMode('upload');
+            openEditor(createResumeRecord({
+                name: baseName,
+                html: plainTextToHtml(text),
+                source: 'upload'
+            }), 'edit');
+            setStatusMessage(`${resourceLabel} converted into editable mode. You can now refine and save it.`);
+        } catch (error) {
+            console.error(`Error converting ${resourceLabel.toLowerCase()} for editing:`, error);
+            setErrorMessage(error.message || `Could not convert that ${resourceLabel.toLowerCase()} into editable content.`);
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const handleSaveResume = () => {
+        if (!editorResume) {
+            return;
+        }
+
+        const currentHtml = editorRef.current?.innerHTML || editorResume.html;
+        const now = new Date().toISOString();
+        const nextResume = {
+            ...editorResume,
+            html: currentHtml,
+            margins: { ...editorMargins },
+            pageMargins: createPageMargins(editorPageCount, editorPageMargins),
+            updatedAt: now
+        };
+
+        setEditorResume(nextResume);
+        persistResumes(
+            savedResumes.some((resume) => resume.id === nextResume.id)
+                ? savedResumes.map((resume) => (resume.id === nextResume.id ? nextResume : resume))
+                : [nextResume, ...savedResumes]
+        );
+        setStatusMessage(`${resourceLabel} saved successfully.`);
+        setErrorMessage('');
+    };
+
+    const handleRenameResume = (resume) => {
+        const nextName = window.prompt(`Rename ${resourceLabel.toLowerCase()}`, resume.name);
+        if (!nextName || !nextName.trim()) {
+            return;
+        }
+
+        const updatedName = nextName.trim();
+        const nextResumes = savedResumes.map((item) => (
+            item.id === resume.id ? { ...item, name: updatedName, updatedAt: new Date().toISOString() } : item
+        ));
+
+        persistResumes(nextResumes);
+        if (editorResume?.id === resume.id) {
+            setEditorResume((current) => (current ? { ...current, name: updatedName } : current));
+        }
+        setStatusMessage(`${resourceLabel} renamed.`);
+    };
+
+    const handleDeleteResume = (resumeId) => {
+        const nextResumes = savedResumes.filter((resume) => resume.id !== resumeId);
+        persistResumes(nextResumes);
+        if (editorResume?.id === resumeId) {
+            setEditorResume(null);
+        }
+        setStatusMessage(`Saved ${resourceLabel.toLowerCase()} removed.`);
+    };
+
+    const handleDuplicateResume = (resume) => {
+        const duplicatedResume = createResumeRecord({
+            name: `${resume.name} Copy`,
+            html: resume.html,
+            source: resume.source,
+            templateId: resume.templateId,
+            templateCategory: resume.templateCategory
+        });
+
+        persistResumes([duplicatedResume, ...savedResumes]);
+        setStatusMessage(`Saved ${resourceLabel.toLowerCase()} duplicated.`);
+    };
+
+    const handleDownloadDoc = (resume = editorResume) => {
+        if (!resume) {
+            return;
+        }
+
+        const html = editorRef.current && editorResume?.id === resume.id
+            ? editorRef.current.innerHTML
+            : resume.html;
+
+        const blob = new Blob(
+            ['\ufeff', buildExportDocument(resume.name, html)],
+            { type: 'application/msword' }
+        );
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `${resume.name.replace(/[^\w\s-]/g, '').trim() || 'resume'}.doc`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+    };
+
+    const handlePrintResume = (resume = editorResume) => {
+        if (!resume) {
+            return;
+        }
+
+        const html = editorRef.current && editorResume?.id === resume.id
+            ? editorRef.current.innerHTML
+            : resume.html;
+
+        const popup = window.open('', '_blank', 'width=1000,height=900');
+        if (!popup) {
+            setErrorMessage('Please allow popups to print or save this resume as PDF.');
+            return;
+        }
+
+        popup.document.open();
+        popup.document.write(buildExportDocument(resume.name, html));
+        popup.document.close();
+        popup.focus();
+        popup.onload = () => popup.print();
+    };
+
+    const closeEditor = () => {
+        setEditorResume(null);
+        setAtsScanResult(null);
+        setShowAtsDetails(false);
+        clearMessages();
+    };
+
+    const editorStatusText = spellcheckEnabled
+        ? 'Browser spellcheck is on while you edit.'
+        : 'Browser spellcheck is off for this editor.';
+    const editorPageStride = A4_PAGE_HEIGHT + A4_PAGE_GAP;
+    const editorDocumentHeight = (editorPageCount * A4_PAGE_HEIGHT) + (Math.max(editorPageCount - 1, 0) * A4_PAGE_GAP);
+
+    const handleAtsScan = useCallback(() => {
+        const currentHtml = editorRef.current?.innerHTML || editorResume?.html || '';
+        const result = analyzeResumeForATS(currentHtml);
+        setAtsScanResult(result);
+        return result;
+    }, [editorResume]);
+
+    const handleScoreDetailsToggle = useCallback(() => {
+        if (!atsScanResult) {
+            const result = handleAtsScan();
+            setShowAtsDetails(Boolean(result));
+            return;
+        }
+
+        setShowAtsDetails((current) => !current);
+    }, [atsScanResult, handleAtsScan]);
+
+    const renderIconButton = (label, icon, onClick, extraClassName = '') => (
+        <button
+            type="button"
+            className={`resume-playground-tool-button resume-playground-icon-button ${extraClassName}`.trim()}
+            title={label}
+            aria-label={label}
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={onClick}
+        >
+            <span aria-hidden="true">{icon}</span>
+        </button>
+    );
+
+    const renderSavedResumeCard = (resume, showManagementActions = false) => (
+        <article key={resume.id} className="resume-playground-saved-card">
+            <div className="resume-playground-saved-preview">
+                <div
+                    className="resume-playground-saved-preview-scale"
+                    dangerouslySetInnerHTML={{ __html: resume.html }}
+                />
+            </div>
+            <div className="resume-playground-saved-copy">
+                <h4>{resume.name}</h4>
+                <p>Updated {new Date(resume.updatedAt).toLocaleString()}</p>
+                <p className="resume-playground-saved-source">Source: {resume.source}</p>
+                <p>{stripHtml(resume.html).slice(0, 120) || `Saved ${resourceLabel.toLowerCase()} session`}{stripHtml(resume.html).length > 120 ? '...' : ''}</p>
+            </div>
+            <div className="resume-playground-saved-actions">
+                <button type="button" className="settings-button primary" onClick={() => openEditor(resume, 'edit')}>
+                    {`Edit ${resourceLabel}`}
+                </button>
+                <button type="button" className="secondary-button" onClick={() => handleDownloadDoc(resume)}>
+                    Export DOC
+                </button>
+                <button type="button" className="secondary-button" onClick={() => handlePrintResume(resume)}>
+                    Print / Save PDF
+                </button>
+                {showManagementActions && (
+                    <>
+                        <button type="button" className="secondary-button" onClick={() => handleRenameResume(resume)}>
+                            Rename
+                        </button>
+                        <button type="button" className="secondary-button" onClick={() => handleDuplicateResume(resume)}>
+                            Duplicate
+                        </button>
+                        <button type="button" className="secondary-button resume-playground-danger-button" onClick={() => handleDeleteResume(resume.id)}>
+                            Delete
+                        </button>
+                    </>
+                )}
+            </div>
+        </article>
+    );
+
+    return (
+        <div className="resume-playground-section">
+            <div className="resume-playground-tabs">
+                <button
+                    type="button"
+                    className={activeTab === 'create' ? 'is-active' : ''}
+                    onClick={() => {
+                        setActiveTab('create');
+                        clearMessages();
+                    }}
+                >
+                    {isDocumentMode ? 'Create Document' : 'Create Resume'}
+                </button>
+                <button
+                    type="button"
+                    className={activeTab === 'edit' ? 'is-active' : ''}
+                    onClick={() => {
+                        setActiveTab('edit');
+                        clearMessages();
+                    }}
+                >
+                    {isDocumentMode ? 'Edit Document' : 'Edit Resume'}
+                </button>
+                <button
+                    type="button"
+                    className={activeTab === 'saved' ? 'is-active' : ''}
+                    onClick={() => {
+                        setActiveTab('saved');
+                        clearMessages();
+                    }}
+                >
+                    {isDocumentMode ? 'Saved Documents' : 'Saved Resumes'}
+                </button>
+            </div>
+
+            {statusMessage && <div className="notification-message success">{statusMessage}</div>}
+            {errorMessage && <div className="error-message">{errorMessage}</div>}
+
+            {editorResume ? (
+                (() => {
+                    const atsPanel = !isDocumentMode && (
+                        <aside className={`resume-playground-ats-panel ${atsScanResult?.colorClass || ''}${isMobileViewport ? ' resume-playground-ats-panel-mobile' : ''}`}>
+                            <div className="resume-playground-ats-score-card">
+                                <span className="resume-playground-ats-caption">ATS Readability</span>
+                                <strong className="resume-playground-ats-score">
+                                    {atsScanResult ? `${atsScanResult.score}%` : '--%'}
+                                </strong>
+                                <span className="resume-playground-ats-label">
+                                    {atsScanResult ? atsScanResult.label : 'Run a scan to score this resume.'}
+                                </span>
+                            </div>
+
+                            <div className="resume-playground-ats-actions">
+                                <button
+                                    type="button"
+                                    className="resume-playground-ats-button"
+                                    onClick={() => {
+                                        handleAtsScan();
+                                        setShowAtsDetails(false);
+                                    }}
+                                >
+                                    ATS Scan
+                                </button>
+                                <button
+                                    type="button"
+                                    className="resume-playground-ats-button secondary"
+                                    onClick={handleScoreDetailsToggle}
+                                >
+                                    Score Details
+                                </button>
+                            </div>
+                        </aside>
+                    );
+
+                    const signaturePanel = isDocumentMode && (
+                        <aside className={`resume-playground-ats-panel resume-playground-signature-panel${isMobileViewport ? ' resume-playground-ats-panel-mobile' : ''}`}>
+                            <div className="resume-playground-signature-card">
+                                <span className="resume-playground-ats-caption">Signature</span>
+                                <canvas
+                                    ref={signatureCanvasRef}
+                                    className="resume-playground-signature-canvas"
+                                    width="280"
+                                    height="120"
+                                />
+                            </div>
+
+                            <div className="resume-playground-ats-actions">
+                                <button
+                                    type="button"
+                                    className="resume-playground-ats-button"
+                                    onClick={addSignatureToDocument}
+                                >
+                                    Add to Document
+                                </button>
+                                <button
+                                    type="button"
+                                    className="resume-playground-ats-button secondary"
+                                    onClick={clearSignature}
+                                >
+                                    Clear
+                                </button>
+                            </div>
+                        </aside>
+                    );
+
+                    const shell = (
+                        <div className="resume-playground-editor-shell">
+                    <div className="resume-playground-editor-topbar">
+                        <div className="resume-playground-editor-head">
+                            <label className="resume-playground-name-field">
+                                <span>{isDocumentMode ? 'Document Name' : 'Resume Name'}</span>
+                                <input
+                                    type="text"
+                                    value={editorResume.name}
+                                    onChange={(event) => setEditorResume((current) => (
+                                        current ? { ...current, name: event.target.value } : current
+                                    ))}
+                                />
+                            </label>
+                            <p>{editorStatusText}</p>
+                        </div>
+                        <div className="resume-playground-editor-actions">
+                            <button type="button" className="settings-button primary" onClick={handleSaveResume}>
+                                {isDocumentMode ? 'Save Document' : 'Save Resume'}
+                            </button>
+                            <button type="button" className="secondary-button" onClick={() => handleDownloadDoc(editorResume)}>
+                                Export DOC
+                            </button>
+                            <button type="button" className="secondary-button" onClick={() => handlePrintResume(editorResume)}>
+                                Print / Save PDF
+                            </button>
+                            <button type="button" className="secondary-button" onClick={closeEditor}>
+                                Close Editor
+                            </button>
+                            {isMobileViewport && (isDocumentMode ? signaturePanel : atsPanel)}
+                        </div>
+                    </div>
+
+                    <div className="resume-playground-toolbar-shell">
+                        <div className="resume-playground-toolbar">
+                            {isMobileViewport ? (
+                                <>
+                                    <div className="resume-playground-toolbar-row resume-playground-toolbar-row-mobile">
+                                        {renderIconButton('Justify', '☰', () => runCommand('justifyFull'))}
+                                        {renderIconButton('Undo', '↶', () => runCommand('undo'))}
+                                        {renderIconButton('Redo', '↷', () => runCommand('redo'))}
+                                        {renderIconButton('Bold', 'B', () => runCommand('bold'))}
+                                        <select className="resume-playground-select" defaultValue="Arial" onChange={(event) => runCommand('fontName', event.target.value)}>
+                                            {FONT_OPTIONS.map((font) => (
+                                                <option key={font} value={font}>{font}</option>
+                                            ))}
+                                        </select>
+                                        <select className="resume-playground-select" defaultValue="3" onChange={(event) => runCommand('fontSize', event.target.value)}>
+                                            {FONT_SIZE_OPTIONS.map((option) => (
+                                                <option key={option.value} value={option.value}>{option.label}</option>
+                                            ))}
+                                        </select>
+                                        {renderIconButton('Title', 'T1', () => runCommand('formatBlock', '<h1>'))}
+                                        {renderIconButton('Header', 'H1', () => runCommand('formatBlock', '<h2>'))}
+                                        {renderIconButton('Subtitle', 'H2', () => runCommand('formatBlock', '<h3>'))}
+                                        {renderIconButton('Body', '¶', () => runCommand('formatBlock', '<p>'))}
+                                        {renderIconButton('Italic', 'I', () => runCommand('italic'))}
+                                        {renderIconButton('Underline', 'U', () => runCommand('underline'))}
+                                        <label className="resume-playground-color-picker" title="Color" aria-label="Color">
+                                            <span aria-hidden="true">🎨</span>
+                                            <input type="color" defaultValue="#111111" onInput={(event) => runCommand('foreColor', event.target.value)} onChange={(event) => runCommand('foreColor', event.target.value)} />
+                                        </label>
+                                    </div>
+
+                                    <div className="resume-playground-toolbar-row resume-playground-toolbar-row-mobile">
+                                        {renderIconButton('Left', '⇤', () => runCommand('justifyLeft'))}
+                                        {renderIconButton('Center', '≣', () => runCommand('justifyCenter'))}
+                                        {renderIconButton('Right', '⇥', () => runCommand('justifyRight'))}
+                                        {renderIconButton('Bullets', '•≣', () => runCommand('insertUnorderedList'))}
+                                        {renderIconButton('Numbers', '1≣', () => runCommand('insertOrderedList'))}
+                                        {renderIconButton('Link', '🔗', insertLink)}
+                                        {renderIconButton('Indent +', '⇢', () => runCommand('indent'))}
+                                        {renderIconButton('Indent -', '⇠', () => runCommand('outdent'))}
+                                        {renderIconButton('Table', '▦', insertTable)}
+                                        {renderIconButton('Divider', '─', () => insertHtml('<hr />'))}
+                                        {renderIconButton('Circle', '○', () => insertShape('circle'))}
+                                        {renderIconButton('Square', '□', () => insertShape('square'))}
+                                        {renderIconButton('Rectangle', '▭', () => insertShape('rectangle'))}
+                                        {renderIconButton('Triangle', '△', () => insertShape('triangle'))}
+                                        {renderIconButton('Line', '/', () => insertShape('line'))}
+                                        {renderIconButton('Add New Page', '+', insertPageBreak)}
+                                        {renderIconButton('Delete Last Page', '−', removeLastPageBreak)}
+                                        {renderIconButton('Print', '🖨', () => handlePrintResume(editorResume))}
+                                        {renderIconButton(spellcheckEnabled ? 'Spellcheck On' : 'Spellcheck Off', '✓', () => setSpellcheckEnabled((current) => !current), spellcheckEnabled ? 'is-active' : '')}
+                                        {renderIconButton('Clear Format', 'Tx', () => runCommand('removeFormat'))}
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="resume-playground-toolbar-row">
+                                        <div className="resume-playground-toolbar-group">
+                                            {renderIconButton('Undo', '↶', () => runCommand('undo'))}
+                                            {renderIconButton('Redo', '↷', () => runCommand('redo'))}
+                                        </div>
+
+                                        <div className="resume-playground-toolbar-group resume-playground-toolbar-group-wide">
+                                            <select className="resume-playground-select" defaultValue="Arial" onChange={(event) => runCommand('fontName', event.target.value)}>
+                                                {FONT_OPTIONS.map((font) => (
+                                                    <option key={font} value={font}>{font}</option>
+                                                ))}
+                                            </select>
+                                            <select className="resume-playground-select" defaultValue="3" onChange={(event) => runCommand('fontSize', event.target.value)}>
+                                                {FONT_SIZE_OPTIONS.map((option) => (
+                                                    <option key={option.value} value={option.value}>{option.label}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="resume-playground-toolbar-group">
+                                            {renderIconButton('Title', 'T1', () => runCommand('formatBlock', '<h1>'))}
+                                            {renderIconButton('Header', 'H1', () => runCommand('formatBlock', '<h2>'))}
+                                            {renderIconButton('Subtitle', 'H2', () => runCommand('formatBlock', '<h3>'))}
+                                            {renderIconButton('Body', '¶', () => runCommand('formatBlock', '<p>'))}
+                                        </div>
+
+                                        <div className="resume-playground-toolbar-group">
+                                            {renderIconButton('Bold', 'B', () => runCommand('bold'))}
+                                            {renderIconButton('Italic', 'I', () => runCommand('italic'))}
+                                            {renderIconButton('Underline', 'U', () => runCommand('underline'))}
+                                            <label className="resume-playground-color-picker" title="Color" aria-label="Color">
+                                                <span aria-hidden="true">🎨</span>
+                                                <input type="color" defaultValue="#111111" onChange={(event) => runCommand('foreColor', event.target.value)} />
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div className="resume-playground-toolbar-row">
+                                        <div className="resume-playground-toolbar-group">
+                                            {renderIconButton('Left', '⇤', () => runCommand('justifyLeft'))}
+                                            {renderIconButton('Center', '≣', () => runCommand('justifyCenter'))}
+                                            {renderIconButton('Right', '⇥', () => runCommand('justifyRight'))}
+                                            {renderIconButton('Justify', '☰', () => runCommand('justifyFull'))}
+                                        </div>
+
+                                        <div className="resume-playground-toolbar-group">
+                                            {renderIconButton('Indent +', '⇢', () => runCommand('indent'))}
+                                            {renderIconButton('Indent -', '⇠', () => runCommand('outdent'))}
+                                            {renderIconButton('Bullets', '•≣', () => runCommand('insertUnorderedList'))}
+                                            {renderIconButton('Numbers', '1≣', () => runCommand('insertOrderedList'))}
+                                        </div>
+
+                                        <div className="resume-playground-toolbar-group">
+                                            {renderIconButton('Table', '▦', insertTable)}
+                                            {renderIconButton('Link', '🔗', insertLink)}
+                                            {renderIconButton('Divider', '━', () => insertHtml('<hr />'))}
+                                        </div>
+
+                                        <div className="resume-playground-toolbar-group">
+                                            {renderIconButton('Circle', '○', () => insertShape('circle'))}
+                                            {renderIconButton('Square', '□', () => insertShape('square'))}
+                                            {renderIconButton('Rectangle', '▭', () => insertShape('rectangle'))}
+                                            {renderIconButton('Triangle', '△', () => insertShape('triangle'))}
+                                            {renderIconButton('Line', '／', () => insertShape('line'))}
+                                        </div>
+                                    </div>
+
+                                    <div className="resume-playground-toolbar-row">
+                                        <div className="resume-playground-toolbar-group">
+                                            {renderIconButton('Add New Page', '+', insertPageBreak)}
+                                            {renderIconButton('Delete Last Page', '−', removeLastPageBreak)}
+                                        </div>
+
+                                        <div className="resume-playground-toolbar-group">
+                                            {renderIconButton('Print', '🖨', () => handlePrintResume(editorResume))}
+                                            {renderIconButton(spellcheckEnabled ? 'Spellcheck On' : 'Spellcheck Off', '✓', () => setSpellcheckEnabled((current) => !current), spellcheckEnabled ? 'is-active' : '')}
+                                            {renderIconButton('Clear Format', 'Tx', () => runCommand('removeFormat'))}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+
+                        {!isMobileViewport && (isDocumentMode ? signaturePanel : atsPanel)}
+                    </div>
+
+                    {!isDocumentMode && showAtsDetails && atsScanResult && (
+                        <div className="resume-playground-ats-details">
+                            <div className="resume-playground-ats-details-section">
+                                <h4>ATS score summary</h4>
+                                <p>
+                                    {atsScanResult.score}% — {atsScanResult.label}
+                                </p>
+                            </div>
+
+                            {atsScanResult.missingCritical.length > 0 && (
+                                <div className="resume-playground-ats-details-section">
+                                    <h4>Important items missing</h4>
+                                    <ul>
+                                        {atsScanResult.missingCritical.map((item) => (
+                                            <li key={item}>{item}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                            {atsScanResult.improvements.length > 0 && (
+                                <div className="resume-playground-ats-details-section">
+                                    <h4>What you can improve</h4>
+                                    <ul>
+                                        {atsScanResult.improvements.map((item) => (
+                                            <li key={item}>{item}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                            {atsScanResult.strengths.length > 0 && (
+                                <div className="resume-playground-ats-details-section">
+                                    <h4>What is already working well</h4>
+                                    <ul>
+                                        {atsScanResult.strengths.map((item) => (
+                                            <li key={item}>{item}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    <div className="resume-playground-editor-canvas">
+                        <div className="resume-playground-editor-workbench">
+                            {Array.from({ length: editorPageCount }).map((_, index) => (
+                                <React.Fragment key={`page-rulers-${index}`}>
+                                    <div
+                                        className="resume-playground-ruler resume-playground-ruler-horizontal"
+                                        style={{ top: `${index * editorPageStride}px` }}
+                                        onMouseDown={(event) => startRulerDrag('horizontal', index, event)}
+                                    >
+                                        <div className="resume-playground-ruler-ticks" />
+                                        <div className="resume-playground-ruler-labels">
+                                            {Array.from({ length: 7 }).map((__, labelIndex) => (
+                                                <span key={`hr-${index}-${labelIndex}`}>{labelIndex + 1}</span>
+                                            ))}
+                                        </div>
+                                        <div
+                                            className="resume-playground-ruler-indicator resume-playground-ruler-indicator-horizontal"
+                                            style={{ left: `${(editorPageMargins[index] || editorMargins).left}px` }}
+                                        />
+                                    </div>
+
+                                    <div
+                                        className="resume-playground-ruler resume-playground-ruler-vertical"
+                                        style={{
+                                            top: `${(index * editorPageStride) + RULER_SIZE}px`,
+                                            height: `${A4_PAGE_HEIGHT}px`
+                                        }}
+                                        onMouseDown={(event) => startRulerDrag('vertical', index, event)}
+                                    >
+                                        <div className="resume-playground-ruler-ticks" />
+                                        <div className="resume-playground-ruler-labels">
+                                            {Array.from({ length: 9 }).map((__, labelIndex) => (
+                                                <span key={`vr-${index}-${labelIndex}`}>{labelIndex + 1}</span>
+                                            ))}
+                                        </div>
+                                        <div
+                                            className="resume-playground-ruler-indicator resume-playground-ruler-indicator-vertical"
+                                            style={{ top: `${(editorPageMargins[index] || editorMargins).top}px` }}
+                                        />
+                                    </div>
+                                </React.Fragment>
+                            ))}
+
+                            <div className="resume-playground-editor-page-frame">
+                                <div className="resume-playground-editor-pages-stack" style={{ minHeight: `${editorDocumentHeight}px`, width: `${A4_PAGE_WIDTH}px` }}>
+                            {Array.from({ length: editorPageCount }).map((_, index) => (
+                                <div
+                                    key={`page-${index}`}
+                                    className="resume-playground-editor-page-layer"
+                                    style={{ top: `${index * editorPageStride}px`, height: `${A4_PAGE_HEIGHT}px` }}
+                                />
+                            ))}
+                            <div
+                                ref={editorRef}
+                                className={`resume-playground-editor-document${editorResume?.source === 'scratch' || editorResume?.source === 'upload' ? ' is-plain-mode' : ''}`}
+                                contentEditable
+                                suppressContentEditableWarning
+                                spellCheck={spellcheckEnabled}
+                                style={{
+                                    minHeight: `${editorDocumentHeight}px`,
+                                    padding: `${editorMargins.top}px ${A4_RIGHT_PADDING}px ${A4_BOTTOM_PADDING}px ${editorMargins.left}px`
+                                }}
+                                onInput={syncEditorResume}
+                                onBlur={saveSelection}
+                                onKeyUp={saveSelection}
+                                onMouseUp={saveSelection}
+                                onFocus={saveSelection}
+                            />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        </div>
+                    );
+
+                    return isMobileViewport && typeof document !== 'undefined'
+                        ? createPortal(
+                            <div className="resume-playground-editor-mobile-overlay">
+                                {shell}
+                            </div>,
+                            document.body
+                        )
+                        : shell;
+                })()
+            ) : (
+                <>
+                    {activeTab === 'create' && (
+                        <div className="resume-playground-panel">
+                            <div className="resume-playground-choice-grid">
+                                <button type="button" className="resume-playground-choice-card" onClick={handleStartScratch}>
+                                    <strong>Create from scratch</strong>
+                                    <span>{`Open a full ${resourceLabel.toLowerCase()} editor and start with a clean page.`}</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    className="resume-playground-choice-card"
+                                    onClick={() => uploadInputRef.current?.click()}
+                                >
+                                    <strong>{`Upload ${resourceLabel.toLowerCase()} to edit`}</strong>
+                                    <span>{`Convert a PDF, DOCX, or TXT ${resourceLabel.toLowerCase()} into editable content.`}</span>
+                                </button>
+                            </div>
+
+                            <input
+                                ref={uploadInputRef}
+                                type="file"
+                                className="profile-resume-input"
+                                accept=".pdf,.doc,.docx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+                                onChange={handleUploadResume}
+                            />
+
+                            {uploading && (
+                                <div className="resume-playground-uploading">
+                                    {`Reading your ${resourceLabel.toLowerCase()} and converting it into editable content...`}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {activeTab === 'edit' && (
+                        <div className="resume-playground-panel">
+                            <div className="resume-playground-edit-header">
+                                <div>
+                                    <h3>{`Edit a saved ${resourceLabel.toLowerCase()}`}</h3>
+                                    <p>{`Open a saved session or upload a ${resourceLabel.toLowerCase()} file to convert it into editable content.`}</p>
+                                </div>
+                                <button type="button" className="settings-button primary" onClick={() => uploadInputRef.current?.click()}>
+                                    {`Upload ${resourceLabel.toLowerCase()} to edit`}
+                                </button>
+                            </div>
+                            <input
+                                ref={uploadInputRef}
+                                type="file"
+                                className="profile-resume-input"
+                                accept=".pdf,.doc,.docx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+                                onChange={handleUploadResume}
+                            />
+                            {savedResumes.length > 0 ? (
+                                <div className="resume-playground-saved-grid">
+                                    {savedResumes.map((resume) => renderSavedResumeCard(resume))}
+                                </div>
+                            ) : (
+                                <div className="resume-playground-empty">
+                                    {`No saved ${resourceLabelPlural} yet. Start from scratch or upload a ${resourceLabel.toLowerCase()} to edit.`}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {activeTab === 'saved' && (
+                        <div className="resume-playground-panel">
+                            <div className="resume-playground-edit-header">
+                                <div>
+                                    <h3>{`Saved ${resourceLabelPlural}`}</h3>
+                                    <p>{`Rename, duplicate, reopen, export, or remove your saved ${resourceLabel.toLowerCase()} sessions.`}</p>
+                                </div>
+                            </div>
+                            {savedResumes.length > 0 ? (
+                                <div className="resume-playground-saved-grid">
+                                    {savedResumes.map((resume) => renderSavedResumeCard(resume, true))}
+                                </div>
+                            ) : (
+                                <div className="resume-playground-empty">
+                                    {`You do not have any saved ${resourceLabelPlural} yet.`}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </>
+            )}
+
+            <div className="page-footer-actions">
+                <button className="back-button responsive-back-button" onClick={onFooterBack}>
+                    Back
+                </button>
+            </div>
+        </div>
+    );
+};
+
+export default ResumePlayground;

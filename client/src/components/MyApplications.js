@@ -1,5 +1,8 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle } from 'react';
 import WithdrawButton from './WithdrawButton';
+import ResumeFilePreview from './ResumeFilePreview';
+
+const MOBILE_APPLICATIONS_PER_PAGE = 4;
 
 const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterBack }, ref) => {
     const [applications, setApplications] = useState([]);
@@ -11,11 +14,29 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
     const [selectedCompany, setSelectedCompany] = useState(null);
     const [companyLoading, setCompanyLoading] = useState(false);
     const [companyError, setCompanyError] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [isMobileView, setIsMobileView] = useState(() => (
+        typeof window !== 'undefined' ? window.innerWidth <= 768 : false
+    ));
     
     useEffect(() => {
         fetchApplications();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userId]);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobileView(window.innerWidth <= 768);
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [applications.length, isMobileView]);
     
     const fetchApplications = async () => {
         try {
@@ -90,6 +111,29 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
         if (switchSection) {
             switchSection('job-feed');
         }
+    };
+
+    const totalPages = isMobileView
+        ? Math.max(1, Math.ceil(applications.length / MOBILE_APPLICATIONS_PER_PAGE))
+        : 1;
+
+    const visibleApplications = isMobileView
+        ? applications.slice(
+            (currentPage - 1) * MOBILE_APPLICATIONS_PER_PAGE,
+            currentPage * MOBILE_APPLICATIONS_PER_PAGE
+        )
+        : applications;
+
+    const changePage = (nextPage) => {
+        setCurrentPage(nextPage);
+        window.requestAnimationFrame(() => {
+            const container = document.querySelector('.mobile-section-applications .applications-container, .applications-container');
+            const scrollParent = container?.closest('.mobile-dashboard-section-panel, .main-content');
+            if (scrollParent) {
+                scrollParent.scrollTop = 0;
+            }
+            container?.scrollIntoView({ block: 'start', behavior: 'auto' });
+        });
     };
 
     useImperativeHandle(ref, () => ({
@@ -274,6 +318,7 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
 
     if (selectedApplication) {
         const submittedProfile = getSubmittedProfile(selectedApplication);
+        const uploadedResume = selectedApplication.uploadedResume;
 
         return (
             <div className="applications-container">
@@ -324,7 +369,12 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
                         {renderRichTextPreview(selectedApplication.coverLetterHtml, 'No cover letter included.')}
                     </div>
 
-                    {submittedProfile && (
+                    {uploadedResume ? (
+                        <div className="profile-section">
+                            <h3>Resume Preview</h3>
+                            <ResumeFilePreview resume={uploadedResume} className="application-uploaded-resume-preview-readonly" />
+                        </div>
+                    ) : submittedProfile && (
                         <div className="profile-section">
                             <h3>Submitted Profile Snapshot</h3>
                             <p><strong>Full Name:</strong> {submittedProfile.name || 'Not specified'}</p>
@@ -390,7 +440,7 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
                 </div>
             ) : (
                 <div className="fresh-applications-list">
-                    {applications.map(app => {
+                    {visibleApplications.map(app => {
                         const canWithdraw = app.status !== 'Withdrawn'
                             && app.status !== 'Rejected'
                             && app.status !== 'Unsuccessful';
@@ -437,6 +487,28 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
                             </article>
                         );
                     })}
+                </div>
+            )}
+
+            {isMobileView && applications.length > 0 && totalPages > 1 && !selectedApplication && !selectedCompany && (
+                <div className="mobile-list-pagination" aria-label="My applications pages">
+                    <button
+                        type="button"
+                        className="secondary-button"
+                        onClick={() => changePage(Math.max(1, currentPage - 1))}
+                        disabled={currentPage === 1}
+                    >
+                        Previous
+                    </button>
+                    <span>Page {currentPage} of {totalPages}</span>
+                    <button
+                        type="button"
+                        className="secondary-button"
+                        onClick={() => changePage(Math.min(totalPages, currentPage + 1))}
+                        disabled={currentPage === totalPages}
+                    >
+                        Next
+                    </button>
                 </div>
             )}
 

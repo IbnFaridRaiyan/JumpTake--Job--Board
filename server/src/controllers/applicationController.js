@@ -152,9 +152,31 @@ const buildProfileSnapshot = (profileInput = {}, user = null, fallbackProfile = 
     };
 };
 
+const buildUploadedResume = (resumeInput = null) => {
+    if (!resumeInput || typeof resumeInput !== 'object') {
+        return null;
+    }
+
+    const fileName = normalizeString(resumeInput.fileName || '');
+    const mimeType = normalizeString(resumeInput.mimeType || '');
+    const dataUrl = typeof resumeInput.dataUrl === 'string' ? resumeInput.dataUrl.trim() : '';
+    const text = typeof resumeInput.text === 'string' ? resumeInput.text.trim() : '';
+
+    if (!dataUrl && !text) {
+        return null;
+    }
+
+    return {
+        fileName: fileName || 'Uploaded resume',
+        mimeType,
+        dataUrl,
+        text
+    };
+};
+
 const createApplication = async (req, res) => {
     try {
-        const { jobId, userId, message, coverLetterHtml, profileSnapshot, draftId } = req.body;
+        const { jobId, userId, message, coverLetterHtml, profileSnapshot, uploadedResume, draftId } = req.body;
         
         
         if (!jobId || !userId) {
@@ -196,6 +218,7 @@ const createApplication = async (req, res) => {
             coverLetterHtml: sanitizeCoverLetterHtml(coverLetterHtml || ''),
             coverLetterText: stripHtml(coverLetterHtml || ''),
             profileSnapshot: buildProfileSnapshot(profileSnapshot, user, baseProfile),
+            uploadedResume: buildUploadedResume(uploadedResume),
             status: 'Submitted'
         });
         

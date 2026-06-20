@@ -456,33 +456,6 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         return [String(value)];
     };
 
-    const getPrimaryMatchSummary = (candidate) => {
-        const summary = candidate.matchSummary || {};
-
-        if ((summary.skills || []).length > 0) {
-            return {
-                title: 'Based on skill match',
-                detail: `${summary.skills.length} skill${summary.skills.length === 1 ? '' : 's'} matched`
-            };
-        }
-
-        if ((summary.education || []).length > 0) {
-            return {
-                title: 'Based on education match',
-                detail: `Studied ${summary.education[0]}`
-            };
-        }
-
-        if ((summary.experience || []).length > 0) {
-            return {
-                title: 'Based on experience match',
-                detail: `Worked as ${summary.experience[0]}`
-            };
-        }
-
-        return null;
-    };
-
     const jobSkillMap = useMemo(() => {
         const skillMap = new Map();
 
@@ -830,8 +803,6 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                         <>
                         <div className="candidates-grid">
                             {pagedCandidateRows.map(({ candidate, spotlight }) => {
-                                const matchSummary = mode === 'candidate' ? getPrimaryMatchSummary(candidate) : null;
-
                                 return (
                                 <div key={candidate._id} className="candidate-card" onClick={() => handleViewProfile(candidate)}>
                                     {mode === 'candidate' && (
@@ -895,12 +866,9 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                                         {mode === 'employer' && <p className="candidate-email">{candidate.email || 'Email not available'}</p>}
                                         
                                         {mode === 'candidate' ? (
-                                            matchSummary ? (
-                                                <div className="candidate-match-summary">
-                                                    <strong>{matchSummary.title}</strong>
-                                                    <span>{matchSummary.detail}</span>
-                                                </div>
-                                            ) : null
+                                            <div className="candidate-match-summary candidate-jumptake-meta">
+                                                <span>{candidate.jumptakeId || candidate.jumpTakeId || 'JumpTake ID unavailable'}</span>
+                                            </div>
                                         ) : (
                                             <div className="candidate-skills">
                                                 {getSkillList(candidate.skills).slice(0, 3).map((skill, index) => (

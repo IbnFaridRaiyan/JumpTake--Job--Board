@@ -162,6 +162,12 @@ const FriendInvitations = ({ userId }) => {
         { id: 'friends', label: 'Friends' }
     ];
 
+    const isActiveTabEmpty = (
+        (activeTab === 'incoming' && connections.incoming.length === 0)
+        || (activeTab === 'outgoing' && connections.outgoing.length === 0)
+        || (activeTab === 'friends' && connections.friends.length === 0)
+    );
+
     const renderActiveTab = () => {
         if (activeTab === 'incoming') {
             return connections.incoming.length > 0
@@ -229,7 +235,7 @@ const FriendInvitations = ({ userId }) => {
                     ))}
                 </div>
             )
-            : <p className="empty-info">Accepted friends will appear here.</p>;
+            : <p className="empty-info">You have no friends yet.</p>;
     };
 
     if (selectedCandidate) {
@@ -294,7 +300,7 @@ const FriendInvitations = ({ userId }) => {
                             </button>
                         ))}
                     </div>
-                    <div className="friend-invitation-panel">
+                    <div className={`friend-invitation-panel ${isActiveTabEmpty ? 'is-empty-panel' : ''}`}>
                         {renderActiveTab()}
                     </div>
                 </div>

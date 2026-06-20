@@ -305,7 +305,7 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack }) => {
                                 <div className="candidate-avatar">{candidate.name ? candidate.name.charAt(0).toUpperCase() : 'C'}</div>
                                 <div className="candidate-info">
                                     <h3 className="candidate-name">{candidate.name || 'Unnamed Candidate'}</h3>
-                                    <p className="candidate-email">Saved candidate profile</p>
+                                    <p className="candidate-email">{candidate.jumptakeId || 'JumpTake ID unavailable'}</p>
                                 </div>
                                 <div className="candidate-view-profile">View Profile</div>
                             </div>

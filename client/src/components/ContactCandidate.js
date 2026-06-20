@@ -63,7 +63,7 @@ const ContactCandidate = ({ companyId, candidate, onSent, mode = 'employer', cur
     };
 
     return (
-        <div className="contact-candidate-panel">
+        <div className={`contact-candidate-panel ${mode === 'candidate' ? 'candidate-contact-panel' : ''}`}>
             <button className="settings-button primary" type="button" onClick={() => setOpen((prev) => !prev)}>
                 {mode === 'candidate' ? 'Message Candidate' : 'Contact Candidate'}
             </button>

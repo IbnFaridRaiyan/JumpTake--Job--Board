@@ -26,6 +26,10 @@ const DraftApplicationSchema = new mongoose.Schema({
   profileSnapshot: {
     type: mongoose.Schema.Types.Mixed,
     default: null
+  },
+  uploadedResume: {
+    type: mongoose.Schema.Types.Mixed,
+    default: null
   }
 }, { timestamps: true });
 

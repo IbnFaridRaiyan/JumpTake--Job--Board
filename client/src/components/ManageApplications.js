@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ResumeFilePreview from './ResumeFilePreview';
 
 const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
     const [applications, setApplications] = useState([]);
@@ -225,6 +226,13 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
                         <h3>Application Message</h3>
                         <p>{selectedApplication.message || 'No message included.'}</p>
                     </div>
+
+                    {selectedApplication.uploadedResume && (
+                        <div className="profile-section">
+                            <h3>Resume Preview</h3>
+                            <ResumeFilePreview resume={selectedApplication.uploadedResume} className="application-uploaded-resume-preview-readonly" />
+                        </div>
+                    )}
 
                     <div className="profile-section">
                         <h3>Applied Job</h3>
@@ -454,6 +462,13 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
                         <h3>Submitted Cover Letter</h3>
                         {renderRichTextPreview(selectedApplication.coverLetterHtml, 'No cover letter included.')}
                     </div>
+
+                    {selectedApplication.uploadedResume && (
+                        <div className="profile-section">
+                            <h3>Resume Preview</h3>
+                            <ResumeFilePreview resume={selectedApplication.uploadedResume} className="application-uploaded-resume-preview-readonly" />
+                        </div>
+                    )}
 
                     <div className="section-footer-nav">
                         <button

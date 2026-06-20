@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import ResumeFilePreview from './ResumeFilePreview';
 
 const FONT_OPTIONS = [
     { label: 'Share Tech', value: 'Share Tech' },
@@ -98,6 +99,13 @@ const prepareApplicationProfileSnapshot = (profileDraft) => ({
     education: splitMultilineValue(profileDraft.education),
     experience: splitMultilineValue(profileDraft.experience),
     achievements: splitMultilineValue(profileDraft.achievements)
+});
+
+const readResumeFileAsDataUrl = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Could not read the selected resume.'));
+    reader.onload = (event) => resolve(String(event.target.result || ''));
+    reader.readAsDataURL(file);
 });
 
 const createCoverLetterTemplate = (profileData, job, userData = {}) => {
@@ -251,9 +259,11 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
     const [applicationMessage, setApplicationMessage] = useState('');
     const [coverLetterHtml, setCoverLetterHtml] = useState('');
     const [applicationProfile, setApplicationProfile] = useState(() => createApplicationProfileDraft(jobSeekerData, currentUser));
+    const [applicationResumeUpload, setApplicationResumeUpload] = useState(null);
     const [activeDraftId, setActiveDraftId] = useState(null);
     const [activeReturnSection, setActiveReturnSection] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isPreparingResumeUpload, setIsPreparingResumeUpload] = useState(false);
     const [message, setMessage] = useState('');
     const [recommendedJobs, setRecommendedJobs] = useState([]);
     const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
@@ -291,6 +301,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
     const [previewJob, setPreviewJob] = useState(null);
     const previewModalRef = useRef(null);
     const applicationModalRef = useRef(null);
+    const applicationResumeInputRef = useRef(null);
 
     useEffect(() => {
         const dashboardSearch = sessionStorage.getItem('jumptakeCandidateJobSearch');
@@ -642,6 +653,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
         setApplicationMessage('');
         setCoverLetterHtml(createCoverLetterTemplate(jobSeekerData, job, resolvedUser));
         setApplicationProfile(createApplicationProfileDraft(jobSeekerData, resolvedUser));
+        setApplicationResumeUpload(null);
         setPreviewJob(null); 
     };
     
@@ -666,6 +678,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
         setCoverLetterHtml('');
         setActiveDraftId(null);
         setApplicationProfile(createApplicationProfileDraft(jobSeekerData, resolvedUser));
+        setApplicationResumeUpload(null);
 
         if (shouldReturn) {
             returnToOriginSection();
@@ -697,6 +710,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
             setApplicationMessage(selectedDraft.message || '');
             setCoverLetterHtml(selectedDraft.coverLetterHtml || createCoverLetterTemplate(jobSeekerData, selectedDraft.job, resolvedUser));
             setApplicationProfile(createApplicationProfileDraft(selectedDraft.profileSnapshot || jobSeekerData, resolvedUser));
+            setApplicationResumeUpload(selectedDraft.uploadedResume || null);
             setPreviewJob(null);
         } catch (draftError) {
             console.error('Error opening draft application:', draftError);
@@ -710,6 +724,49 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
             ...prevState,
             [name]: value
         }));
+    };
+
+    const handleApplicationResumeUpload = async (event) => {
+        const file = event.target.files?.[0];
+        event.target.value = '';
+
+        if (!file) {
+            return;
+        }
+
+        try {
+            setIsPreparingResumeUpload(true);
+            const mimeType = file.type || '';
+            const isSupportedFile = (
+                mimeType === 'application/pdf'
+                || mimeType === 'application/msword'
+                || mimeType.includes('officedocument.wordprocessingml.document')
+                || mimeType === 'text/plain'
+                || /\.pdf$/i.test(file.name)
+                || /\.doc$/i.test(file.name)
+                || /\.docx$/i.test(file.name)
+                || /\.txt$/i.test(file.name)
+            );
+
+            if (!isSupportedFile) {
+                throw new Error('Upload a PDF, DOC, DOCX, or TXT resume.');
+            }
+
+            const dataUrl = await readResumeFileAsDataUrl(file);
+
+            setApplicationResumeUpload({
+                fileName: file.name,
+                mimeType,
+                dataUrl
+            });
+            setMessage('New resume attached to this application.');
+            setTimeout(() => setMessage(''), 3000);
+        } catch (resumeError) {
+            console.error('Error preparing application resume:', resumeError);
+            setMessage(`Error: ${resumeError.message}`);
+        } finally {
+            setIsPreparingResumeUpload(false);
+        }
     };
 
     const handleSaveDraft = async () => {
@@ -732,7 +789,8 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                     userId,
                     message: applicationMessage,
                     coverLetterHtml,
-                    profileSnapshot: prepareApplicationProfileSnapshot(applicationProfile)
+                    profileSnapshot: prepareApplicationProfileSnapshot(applicationProfile),
+                    uploadedResume: applicationResumeUpload
                 })
             });
 
@@ -778,6 +836,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                     message: applicationMessage,
                     coverLetterHtml,
                     profileSnapshot: prepareApplicationProfileSnapshot(applicationProfile),
+                    uploadedResume: applicationResumeUpload,
                     draftId: activeDraftId
                 })
             });
@@ -798,6 +857,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
             setCoverLetterHtml('');
             setActiveDraftId(null);
             setApplicationProfile(createApplicationProfileDraft(jobSeekerData, resolvedUser));
+            setApplicationResumeUpload(null);
             returnToOriginSection();
             
             if (onRefresh) onRefresh();
@@ -1117,7 +1177,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                                             className={`bookmark-star-button ${isBookmarked ? 'active' : ''}`}
                                             onClick={(event) => handleToggleBookmark(job, event)}
                                             aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark job'}
-                                        />\r\n
+                                        />
                                         <h3>{job.title}</h3>
                                         <span className="company-name">{job.company.name}</span>
                                         {hasMatchScore && (
@@ -1419,6 +1479,13 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                             <button type="button" className="preview-close-btn" onClick={handleCancelApplication}>×</button>
                         </div>
                         <div className="application-workspace-body">
+                                <input
+                                    ref={applicationResumeInputRef}
+                                    type="file"
+                                    className="profile-resume-input"
+                                    accept=".pdf,.doc,.docx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+                                    onChange={handleApplicationResumeUpload}
+                                />
                             <div className="application-form-section">
                                 <h4>Cover Letter</h4>
                                 <RichTextEditor
@@ -1438,46 +1505,63 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                                 />
                             </div>
                             <div className="application-form-section">
-                                <h4>Profile Snapshot</h4>
-                                <div className="application-profile-grid">
-                                    <label className="application-profile-field">
-                                        <span>Full Name</span>
-                                        <input type="text" name="name" value={applicationProfile.name} onChange={handleApplicationProfileChange} disabled={isSubmitting} />
-                                    </label>
-                                    <label className="application-profile-field">
-                                        <span>Email</span>
-                                        <input type="email" name="email" value={applicationProfile.email} onChange={handleApplicationProfileChange} disabled={isSubmitting} />
-                                    </label>
-                                    <label className="application-profile-field application-profile-field-full">
-                                        <span>Skills</span>
-                                        <input type="text" name="skills" value={applicationProfile.skills} onChange={handleApplicationProfileChange} disabled={isSubmitting} />
-                                    </label>
-                                    <label className="application-profile-field">
-                                        <span>Interests</span>
-                                        <input type="text" name="interests" value={applicationProfile.interests} onChange={handleApplicationProfileChange} disabled={isSubmitting} />
-                                    </label>
-                                    <label className="application-profile-field">
-                                        <span>Hobbies</span>
-                                        <input type="text" name="hobbies" value={applicationProfile.hobbies} onChange={handleApplicationProfileChange} disabled={isSubmitting} />
-                                    </label>
-                                    <label className="application-profile-field application-profile-field-full">
-                                        <span>Education</span>
-                                        <textarea name="education" value={applicationProfile.education} onChange={handleApplicationProfileChange} rows="4" disabled={isSubmitting} />
-                                    </label>
-                                    <label className="application-profile-field application-profile-field-full">
-                                        <span>Experience</span>
-                                        <textarea name="experience" value={applicationProfile.experience} onChange={handleApplicationProfileChange} rows="5" disabled={isSubmitting} />
-                                    </label>
-                                    <label className="application-profile-field application-profile-field-full">
-                                        <span>Achievements</span>
-                                        <textarea name="achievements" value={applicationProfile.achievements} onChange={handleApplicationProfileChange} rows="4" disabled={isSubmitting} />
-                                    </label>
-                                </div>
+                                <h4>{applicationResumeUpload?.dataUrl ? 'Resume Preview' : 'Profile Snapshot'}</h4>
+                                {applicationResumeUpload ? (
+                                    <>
+                                        <p className="application-resume-upload-note">
+                                            This uploaded resume will be sent with your application instead of the profile snapshot fields below.
+                                        </p>
+                                        <ResumeFilePreview resume={applicationResumeUpload} />
+                                    </>
+                                ) : (
+                                    <div className="application-profile-grid">
+                                        <label className="application-profile-field">
+                                            <span>Full Name</span>
+                                            <input type="text" name="name" value={applicationProfile.name} onChange={handleApplicationProfileChange} disabled={isSubmitting} />
+                                        </label>
+                                        <label className="application-profile-field">
+                                            <span>Email</span>
+                                            <input type="email" name="email" value={applicationProfile.email} onChange={handleApplicationProfileChange} disabled={isSubmitting} />
+                                        </label>
+                                        <label className="application-profile-field application-profile-field-full">
+                                            <span>Skills</span>
+                                            <input type="text" name="skills" value={applicationProfile.skills} onChange={handleApplicationProfileChange} disabled={isSubmitting} />
+                                        </label>
+                                        <label className="application-profile-field">
+                                            <span>Interests</span>
+                                            <input type="text" name="interests" value={applicationProfile.interests} onChange={handleApplicationProfileChange} disabled={isSubmitting} />
+                                        </label>
+                                        <label className="application-profile-field">
+                                            <span>Hobbies</span>
+                                            <input type="text" name="hobbies" value={applicationProfile.hobbies} onChange={handleApplicationProfileChange} disabled={isSubmitting} />
+                                        </label>
+                                        <label className="application-profile-field application-profile-field-full">
+                                            <span>Education</span>
+                                            <textarea name="education" value={applicationProfile.education} onChange={handleApplicationProfileChange} rows="4" disabled={isSubmitting} />
+                                        </label>
+                                        <label className="application-profile-field application-profile-field-full">
+                                            <span>Experience</span>
+                                            <textarea name="experience" value={applicationProfile.experience} onChange={handleApplicationProfileChange} rows="5" disabled={isSubmitting} />
+                                        </label>
+                                        <label className="application-profile-field application-profile-field-full">
+                                            <span>Achievements</span>
+                                            <textarea name="achievements" value={applicationProfile.achievements} onChange={handleApplicationProfileChange} rows="4" disabled={isSubmitting} />
+                                        </label>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div className="application-workspace-actions">
                             <button className="submit-application-button" onClick={() => handleApplySubmit(applicationJob._id)} disabled={isSubmitting}>
                                 {isSubmitting ? 'Submitting...' : 'Submit Application'}
+                            </button>
+                            <button
+                                type="button"
+                                    className="submit-application-button application-resume-upload-button"
+                                    onClick={() => applicationResumeInputRef.current?.click()}
+                                    disabled={isSubmitting || isPreparingResumeUpload}
+                                >
+                                {isPreparingResumeUpload ? 'Reading Resume...' : applicationResumeUpload ? 'Change Resume' : 'Apply with Resume'}
                             </button>
                             <button className="secondary-button" onClick={handleSaveDraft} disabled={isSubmitting}>
                                 {activeDraftId ? 'Update Draft' : 'Save Draft'}
@@ -1494,4 +1578,5 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
 };
 
 export default JobFeed;
+
 

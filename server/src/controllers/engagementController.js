@@ -151,6 +151,28 @@ const buildProfileSnapshot = (profileInput = {}, user = null, fallbackProfile = 
     };
 };
 
+const buildUploadedResume = (resumeInput = null) => {
+    if (!resumeInput || typeof resumeInput !== 'object') {
+        return null;
+    }
+
+    const fileName = normalizeString(resumeInput.fileName || '');
+    const mimeType = normalizeString(resumeInput.mimeType || '');
+    const dataUrl = typeof resumeInput.dataUrl === 'string' ? resumeInput.dataUrl.trim() : '';
+    const text = typeof resumeInput.text === 'string' ? resumeInput.text.trim() : '';
+
+    if (!dataUrl && !text) {
+        return null;
+    }
+
+    return {
+        fileName: fileName || 'Uploaded resume',
+        mimeType,
+        dataUrl,
+        text
+    };
+};
+
 const resolveBaseProfile = async (userId) => {
     const user = await User.findById(userId);
     if (!user) {
@@ -166,7 +188,7 @@ const resolveBaseProfile = async (userId) => {
 
 const createOrUpdateDraftApplication = async (req, res) => {
     try {
-        const { draftId, jobId, userId, message, coverLetterHtml, profileSnapshot } = req.body;
+        const { draftId, jobId, userId, message, coverLetterHtml, profileSnapshot, uploadedResume } = req.body;
 
         if (!jobId || !userId) {
             return res.status(400).json({ error: 'Job ID and user ID are required' });
@@ -187,6 +209,7 @@ const createOrUpdateDraftApplication = async (req, res) => {
         nextDraft.coverLetterHtml = sanitizeCoverLetterHtml(coverLetterHtml || '');
         nextDraft.coverLetterText = stripHtml(coverLetterHtml || '');
         nextDraft.profileSnapshot = buildProfileSnapshot(profileSnapshot, user, baseProfile);
+        nextDraft.uploadedResume = buildUploadedResume(uploadedResume);
 
         await nextDraft.save();
         await nextDraft.populate({

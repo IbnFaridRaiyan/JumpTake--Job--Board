@@ -3045,6 +3045,12 @@ textarea:focus {
   gap: 1rem;
 }
 
+.resume-playground-saved-grid {
+  grid-template-columns: repeat(auto-fill, minmax(260px, 300px));
+  justify-content: start;
+  align-items: start;
+}
+
 .resume-playground-template-card,
 .resume-playground-saved-card {
   display: grid;
@@ -3059,9 +3065,6 @@ textarea:focus {
 .resume-playground-saved-preview {
   position: relative;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   padding: 0.8rem;
   border-radius: 0.95rem;
   background: #070b0d;
@@ -3072,13 +3075,18 @@ textarea:focus {
 
 .resume-playground-template-preview-scale,
 .resume-playground-saved-preview-scale {
+  position: absolute;
+  top: 0.8rem;
+  left: 50%;
   width: 794px;
+  height: 1123px;
   min-height: 1123px;
   transform-origin: top center;
-  transform: scale(0.17);
+  transform: translateX(-50%) scale(0.17);
   pointer-events: none;
   background: #ffffff;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32);
+  overflow: hidden;
 }
 
 .resume-playground-template-card .settings-button.primary,
@@ -4166,7 +4174,8 @@ html[data-theme="light"] .resume-playground-ruler-labels {
 
   .resume-playground-template-preview-scale,
   .resume-playground-saved-preview-scale {
-    transform: scale(0.135);
+    top: 0.7rem;
+    transform: translateX(-50%) scale(0.135);
   }
 
   .resume-playground-ats-panel {
@@ -27358,4 +27367,110 @@ html[data-theme="light"] .home-page .job-feed-container .job-card-footer {
     border-radius: 15px;
     font-size: 1.45rem;
   }
+}
+
+/* Unified portal glass buttons */
+.home-page :is(
+  .settings-button.primary,
+  .apply-button,
+  .preview-apply-button,
+  .submit-application-button,
+  .save-profile-button,
+  .upload-resume-button,
+  .company-logo-upload-button,
+  .profile-picture-upload-button,
+  .send-candidate-button,
+  .contact-candidate-panel > .settings-button.primary,
+  .friend-invitation-actions > .settings-button.primary
+):not(.portal-sidebar-button):not(.dashboard-logo-button):not(.mobile-menu-toggle):not(.resume-playground-tool-button):not(.resume-playground-icon-button),
+.resume-playground-editor-actions .settings-button.primary,
+.resume-playground-ai-template-actions .settings-button.primary,
+.resume-playground-saved-actions .settings-button.primary,
+.resume-playground-template-card .settings-button.primary,
+.resume-playground-saved-card .settings-button.primary {
+  background: linear-gradient(135deg, rgba(66, 164, 155, 0.32), rgba(11, 64, 54, 0.42)) !important;
+  border: 1px solid rgba(23, 112, 95, 0.92) !important;
+  color: #f8fffd !important;
+  -webkit-text-fill-color: #f8fffd !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 10px 24px rgba(0, 0, 0, 0.16) !important;
+  backdrop-filter: blur(12px) saturate(135%);
+}
+
+.home-page :is(
+  .secondary-button,
+  .settings-button:not(.primary):not(.danger):not(.warning),
+  .cancel-edit-button,
+  .view-button,
+  .open-application-button,
+  .friend-cancel-button,
+  .friend-status-pill
+):not(.portal-sidebar-button):not(.dashboard-logo-button):not(.mobile-menu-toggle):not(.resume-playground-tool-button):not(.resume-playground-icon-button),
+.resume-playground-editor-actions .secondary-button,
+.resume-playground-saved-actions .secondary-button,
+.resume-playground-template-card .secondary-button,
+.resume-playground-saved-card .secondary-button,
+.resume-playground-ai-tailor-panel .resume-playground-tool-button:not(.resume-playground-icon-button) {
+  background: linear-gradient(135deg, rgba(6, 78, 59, 0.34), rgba(5, 46, 38, 0.44)) !important;
+  border: 1px solid rgba(99, 192, 184, 0.42) !important;
+  color: #eefcf8 !important;
+  -webkit-text-fill-color: #eefcf8 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 10px 24px rgba(0, 0, 0, 0.14) !important;
+  backdrop-filter: blur(12px) saturate(135%);
+}
+
+.home-page :is(
+  .settings-button.primary,
+  .apply-button,
+  .preview-apply-button,
+  .submit-application-button,
+  .save-profile-button,
+  .upload-resume-button,
+  .company-logo-upload-button,
+  .profile-picture-upload-button,
+  .send-candidate-button,
+  .contact-candidate-panel > .settings-button.primary,
+  .friend-invitation-actions > .settings-button.primary,
+  .secondary-button,
+  .settings-button:not(.primary):not(.danger):not(.warning),
+  .cancel-edit-button,
+  .view-button,
+  .open-application-button,
+  .friend-cancel-button,
+  .friend-status-pill
+):not(.portal-sidebar-button):not(.dashboard-logo-button):not(.mobile-menu-toggle):not(.resume-playground-tool-button):not(.resume-playground-icon-button):hover,
+.resume-playground-editor-actions :is(.settings-button.primary, .secondary-button):hover,
+.resume-playground-saved-actions :is(.settings-button.primary, .secondary-button):hover,
+.resume-playground-template-card :is(.settings-button.primary, .secondary-button):hover,
+.resume-playground-saved-card :is(.settings-button.primary, .secondary-button):hover {
+  background: linear-gradient(135deg, rgba(99, 192, 184, 0.42), rgba(8, 84, 69, 0.52)) !important;
+  border-color: rgba(143, 242, 221, 0.68) !important;
+  transform: translateY(-1px);
+}
+
+.home-page :is(.settings-button.danger, .friend-block-button, .resume-playground-danger-button),
+.resume-playground-editor-actions .resume-playground-close-editor-button,
+.resume-playground-saved-actions .resume-playground-danger-button {
+  background: linear-gradient(135deg, rgba(185, 28, 28, 0.34), rgba(88, 10, 10, 0.48)) !important;
+  border: 1px solid rgba(239, 68, 68, 0.72) !important;
+  color: #fff7f7 !important;
+  -webkit-text-fill-color: #fff7f7 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 10px 24px rgba(0, 0, 0, 0.14) !important;
+  backdrop-filter: blur(12px) saturate(135%);
+}
+
+html[data-theme="light"] .home-page :is(
+  .secondary-button,
+  .settings-button:not(.primary):not(.danger):not(.warning),
+  .cancel-edit-button,
+  .view-button,
+  .open-application-button,
+  .friend-cancel-button,
+  .friend-status-pill
+):not(.portal-sidebar-button):not(.dashboard-logo-button):not(.mobile-menu-toggle):not(.resume-playground-tool-button):not(.resume-playground-icon-button),
+html[data-theme="light"] .resume-playground-editor-actions .secondary-button,
+html[data-theme="light"] .resume-playground-saved-actions .secondary-button {
+  color: #12372f !important;
+  -webkit-text-fill-color: #12372f !important;
+  background: linear-gradient(135deg, rgba(99, 192, 184, 0.22), rgba(15, 118, 110, 0.12)) !important;
+  border-color: rgba(15, 118, 110, 0.42) !important;
 }

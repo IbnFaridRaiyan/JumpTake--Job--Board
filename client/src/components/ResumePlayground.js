@@ -278,30 +278,34 @@ const analyzeResumeForATS = (html = '') => {
 };
 
 const getStorageKey = (userId, mode = 'resume') => `${mode === 'document' ? DOCUMENT_STORAGE_PREFIX : STORAGE_PREFIX}${userId || 'guest'}`;
+const SIGNATURE_STROKE_COLORS = {
+    black: '#111111',
+    white: '#ffffff'
+};
 
 const createBlankEditorHtml = (name = 'Your Name', email = 'email@example.com') => `
     <div style="font-family: Arial, sans-serif; color: #111827; padding: 36px 42px; min-height: 100%;">
         <h1 style="font-size: 30px; margin: 0 0 8px;">${escapeHtml(name)}</h1>
-        <p style="font-size: 14px; color: #6b7280; margin: 0 0 24px;">${escapeHtml(email)} • Phone • LinkedIn • Location</p>
+        <p style="font-size: 14px; color: #111111; margin: 0 0 24px;">${escapeHtml(email)} • Phone • LinkedIn • Location</p>
         <h2 style="font-size: 16px; letter-spacing: 0.08em; text-transform: uppercase; margin: 28px 0 10px; border-bottom: 2px solid #0f172a; padding-bottom: 6px;">Summary</h2>
         <p>Write a short professional summary tailored to the role you want.</p>
         <h2 style="font-size: 16px; letter-spacing: 0.08em; text-transform: uppercase; margin: 28px 0 10px; border-bottom: 2px solid #0f172a; padding-bottom: 6px;">Experience</h2>
         <p><strong>Job Title</strong> — Company Name</p>
-        <p style="color: #6b7280;">Date period • Location</p>
+        <p style="color: #111111;">Date period • Location</p>
         <ul>
             <li>Add measurable impact and strong action verbs.</li>
             <li>Keep achievements concise and easy to scan.</li>
         </ul>
         <h2 style="font-size: 16px; letter-spacing: 0.08em; text-transform: uppercase; margin: 28px 0 10px; border-bottom: 2px solid #0f172a; padding-bottom: 6px;">Education</h2>
         <p><strong>Degree and Field of Study</strong> — School or University</p>
-        <p style="color: #6b7280;">Date period • Location</p>
+        <p style="color: #111111;">Date period • Location</p>
         <h2 style="font-size: 16px; letter-spacing: 0.08em; text-transform: uppercase; margin: 28px 0 10px; border-bottom: 2px solid #0f172a; padding-bottom: 6px;">Skills</h2>
         <p>Skill • Skill • Skill • Skill</p>
     </div>
 `;
 
 const createBlankDocumentHtml = () => `
-<div class="resume-template-shell">
+<div class="resume-template-shell" style="color: #111111;">
   <p>Start building your document here...</p>
 </div>
 `;
@@ -653,6 +657,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
     const [atsScanResult, setAtsScanResult] = useState(null);
     const [showAtsDetails, setShowAtsDetails] = useState(false);
     const [signatureDataUrl, setSignatureDataUrl] = useState('');
+    const [signatureStrokeColor, setSignatureStrokeColor] = useState('black');
     const [isMobileViewport, setIsMobileViewport] = useState(() => (
         typeof window !== 'undefined' ? window.innerWidth <= 768 : false
     ));
@@ -712,8 +717,6 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
 
         const context = canvas.getContext('2d');
         context.clearRect(0, 0, canvas.width, canvas.height);
-        context.fillStyle = '#ffffff';
-        context.fillRect(0, 0, canvas.width, canvas.height);
         setSignatureDataUrl('');
     }, []);
 
@@ -728,9 +731,8 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         }
 
         const context = canvas.getContext('2d');
-        context.fillStyle = '#ffffff';
-        context.fillRect(0, 0, canvas.width, canvas.height);
-        context.strokeStyle = '#111111';
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.strokeStyle = SIGNATURE_STROKE_COLORS[signatureStrokeColor] || SIGNATURE_STROKE_COLORS.black;
         context.lineWidth = 2;
         context.lineCap = 'round';
         context.lineJoin = 'round';
@@ -778,7 +780,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
             canvas.removeEventListener('pointermove', handlePointerMove);
             window.removeEventListener('pointerup', stopDrawing);
         };
-    }, [isDocumentMode, syncSignaturePreview]);
+    }, [isDocumentMode, signatureStrokeColor, syncSignaturePreview]);
 
     const addSignatureToDocument = useCallback(() => {
         const dataUrl = signatureDataUrl || syncSignaturePreview();
@@ -1644,9 +1646,25 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                         <aside className={`resume-playground-ats-panel resume-playground-signature-panel${isMobileViewport ? ' resume-playground-ats-panel-mobile' : ''}`}>
                             <div className="resume-playground-signature-card">
                                 <span className="resume-playground-ats-caption">Signature</span>
+                                <div className="resume-playground-signature-color-actions">
+                                    <button
+                                        type="button"
+                                        className={`resume-playground-signature-color-button${signatureStrokeColor === 'black' ? ' is-active' : ''}`}
+                                        onClick={() => setSignatureStrokeColor('black')}
+                                    >
+                                        Black
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={`resume-playground-signature-color-button resume-playground-signature-color-button-light${signatureStrokeColor === 'white' ? ' is-active' : ''}`}
+                                        onClick={() => setSignatureStrokeColor('white')}
+                                    >
+                                        White
+                                    </button>
+                                </div>
                                 <canvas
                                     ref={signatureCanvasRef}
-                                    className="resume-playground-signature-canvas"
+                                    className={`resume-playground-signature-canvas${signatureStrokeColor === 'white' ? ' is-light-signature' : ''}`}
                                     width="280"
                                     height="120"
                                 />
@@ -1700,19 +1718,21 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                             <button type="button" className="secondary-button" onClick={closeEditor}>
                                 Close Editor
                             </button>
-                            {isMobileViewport && (isDocumentMode ? signaturePanel : atsPanel)}
                         </div>
+                        {isMobileViewport && (
+                            <div className="resume-playground-editor-mobile-sidepanel">
+                                {isDocumentMode ? signaturePanel : atsPanel}
+                            </div>
+                        )}
                     </div>
 
                     <div className="resume-playground-toolbar-shell">
                         <div className="resume-playground-toolbar">
                             {isMobileViewport ? (
                                 <>
-                                    <div className="resume-playground-toolbar-row resume-playground-toolbar-row-mobile">
-                                        {renderIconButton('Justify', '☰', () => runCommand('justifyFull'))}
+                                    <div className="resume-playground-toolbar-row resume-playground-toolbar-row-fixed">
                                         {renderIconButton('Undo', '↶', () => runCommand('undo'))}
                                         {renderIconButton('Redo', '↷', () => runCommand('redo'))}
-                                        {renderIconButton('Bold', 'B', () => runCommand('bold'))}
                                         <select className="resume-playground-select" defaultValue="Arial" onChange={(event) => runCommand('fontName', event.target.value)}>
                                             {FONT_OPTIONS.map((font) => (
                                                 <option key={font} value={font}>{font}</option>
@@ -1727,18 +1747,22 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                                         {renderIconButton('Header', 'H1', () => runCommand('formatBlock', '<h2>'))}
                                         {renderIconButton('Subtitle', 'H2', () => runCommand('formatBlock', '<h3>'))}
                                         {renderIconButton('Body', '¶', () => runCommand('formatBlock', '<p>'))}
+                                        {renderIconButton('Bold', 'B', () => runCommand('bold'))}
                                         {renderIconButton('Italic', 'I', () => runCommand('italic'))}
                                         {renderIconButton('Underline', 'U', () => runCommand('underline'))}
                                         <label className="resume-playground-color-picker" title="Color" aria-label="Color">
                                             <span aria-hidden="true">🎨</span>
                                             <input type="color" defaultValue="#111111" onInput={(event) => runCommand('foreColor', event.target.value)} onChange={(event) => runCommand('foreColor', event.target.value)} />
                                         </label>
+                                        {renderIconButton('Add New Page', '+', insertPageBreak)}
+                                        {renderIconButton('Delete Last Page', '−', removeLastPageBreak)}
                                     </div>
 
-                                    <div className="resume-playground-toolbar-row resume-playground-toolbar-row-mobile">
+                                    <div className="resume-playground-toolbar-row resume-playground-toolbar-row-scroll">
                                         {renderIconButton('Left', '⇤', () => runCommand('justifyLeft'))}
                                         {renderIconButton('Center', '≣', () => runCommand('justifyCenter'))}
                                         {renderIconButton('Right', '⇥', () => runCommand('justifyRight'))}
+                                        {renderIconButton('Justify', '☰', () => runCommand('justifyFull'))}
                                         {renderIconButton('Bullets', '•≣', () => runCommand('insertUnorderedList'))}
                                         {renderIconButton('Numbers', '1≣', () => runCommand('insertOrderedList'))}
                                         {renderIconButton('Link', '🔗', insertLink)}
@@ -1751,8 +1775,6 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                                         {renderIconButton('Rectangle', '▭', () => insertShape('rectangle'))}
                                         {renderIconButton('Triangle', '△', () => insertShape('triangle'))}
                                         {renderIconButton('Line', '/', () => insertShape('line'))}
-                                        {renderIconButton('Add New Page', '+', insertPageBreak)}
-                                        {renderIconButton('Delete Last Page', '−', removeLastPageBreak)}
                                         {renderIconButton('Print', '🖨', () => handlePrintResume(editorResume))}
                                         {renderIconButton(spellcheckEnabled ? 'Spellcheck On' : 'Spellcheck Off', '✓', () => setSpellcheckEnabled((current) => !current), spellcheckEnabled ? 'is-active' : '')}
                                         {renderIconButton('Clear Format', 'Tx', () => runCommand('removeFormat'))}

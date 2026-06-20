@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from 'mammoth';
+import { createSquareProfileImage } from '../utils/profileImages';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -286,6 +287,154 @@ const SIGNATURE_STROKE_COLORS = {
 
 const createBlankEditorHtml = () => '<p style="color: #000000;"><br></p>';
 const createBlankDocumentHtml = createBlankEditorHtml;
+
+const normalizeResumeItems = (value) => {
+    if (Array.isArray(value)) {
+        return value
+            .map((item) => {
+                if (item && typeof item === 'object') {
+                    return Object.values(item).filter(Boolean).join(' - ');
+                }
+                return String(item || '').trim();
+            })
+            .filter(Boolean);
+    }
+
+    if (typeof value === 'string') {
+        return value
+            .split(/\n|,/)
+            .map((item) => item.trim())
+            .filter(Boolean);
+    }
+
+    return [];
+};
+
+const renderResumeBullets = (items, fallback) => (
+    (items.length ? items : [fallback])
+        .map((item) => `<li>${escapeHtml(item)}</li>`)
+        .join('')
+);
+
+const getTailorProfile = (profileData, user, displayName) => {
+    const email = profileData?.email || user?.email || '';
+    const name = profileData?.name || user?.name || displayName || (email.includes('@') ? email.split('@')[0] : 'Your Name');
+    const skills = normalizeResumeItems(profileData?.skills);
+    const experience = normalizeResumeItems(profileData?.experience);
+    const education = normalizeResumeItems(profileData?.education);
+    const achievements = normalizeResumeItems(profileData?.achievements);
+    const interests = normalizeResumeItems(profileData?.interests);
+    const hobbies = normalizeResumeItems(profileData?.hobbies);
+
+    return {
+        name,
+        email,
+        phone: profileData?.phone || 'Phone',
+        location: profileData?.location || 'Location',
+        profileImage: profileData?.profileImage || '',
+        skills,
+        experience,
+        education,
+        achievements,
+        interests,
+        hobbies,
+        summary: `${name} is a motivated candidate with experience across ${skills.slice(0, 4).join(', ') || 'relevant professional skills'}. Focused on delivering clear results, learning quickly, and contributing reliably in practical team environments.`
+    };
+};
+
+const buildAtsResumeHtml = (profile, variantIndex = 0) => {
+    const fonts = ["Georgia, 'Times New Roman', serif", 'Arial, Helvetica, sans-serif', "'Times New Roman', Times, serif"];
+    const accent = ['#111111', '#1f2937', '#0f3d3a', '#334155', '#4b5563'][variantIndex % 5];
+    const headerAlign = variantIndex % 2 === 0 ? 'center' : 'left';
+    const safeName = escapeHtml(profile.name);
+    const contact = [profile.location, profile.phone, profile.email].filter(Boolean).map(escapeHtml).join(' | ');
+
+    return `
+        <div style="font-family:${fonts[variantIndex % fonts.length]}; color:#111111; padding:34px 44px; font-size:${variantIndex % 3 === 0 ? '13px' : '14px'}; line-height:1.24;">
+            <div style="text-align:${headerAlign}; margin-bottom:14px;">
+                <div style="font-size:${variantIndex % 2 === 0 ? '27px' : '30px'}; font-weight:700; color:${accent}; letter-spacing:${variantIndex % 2 === 0 ? '0.01em' : '0'};">${safeName}</div>
+                <div style="font-size:12px; margin-top:4px;">${contact || 'Location | Phone | Email'}</div>
+            </div>
+            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:2px solid ${accent}; margin-top:12px;">Professional Summary</div>
+            <p style="margin:6px 0 10px;">${escapeHtml(profile.summary)}</p>
+
+            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:2px solid ${accent}; margin-top:12px;">Core Skills</div>
+            <p style="margin:6px 0 10px;">${escapeHtml((profile.skills.length ? profile.skills : ['Communication', 'Teamwork', 'Problem Solving']).join(' | '))}</p>
+
+            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:2px solid ${accent}; margin-top:12px;">Professional Experience</div>
+            <ul style="margin:6px 0 10px 18px; padding:0;">
+                ${renderResumeBullets(profile.experience, 'Add your recent role, company, dates, responsibilities, and measurable achievements.')}
+            </ul>
+
+            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:2px solid ${accent}; margin-top:12px;">Projects & Achievements</div>
+            <ul style="margin:6px 0 10px 18px; padding:0;">
+                ${renderResumeBullets(profile.achievements, 'Add measurable achievements, awards, projects, or impact statements.')}
+            </ul>
+
+            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:2px solid ${accent}; margin-top:12px;">Education</div>
+            <ul style="margin:6px 0 10px 18px; padding:0;">
+                ${renderResumeBullets(profile.education, 'Add your institution, qualification, subjects, dates, and grade if relevant.')}
+            </ul>
+
+            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:2px solid ${accent}; margin-top:12px;">Additional</div>
+            <p style="margin:6px 0 0;"><strong>Interests:</strong> ${escapeHtml((profile.interests.length ? profile.interests : ['Relevant interests']).join(', '))}</p>
+            <p style="margin:2px 0 0;"><strong>Hobbies:</strong> ${escapeHtml((profile.hobbies.length ? profile.hobbies : ['Relevant hobbies']).join(', '))}</p>
+        </div>
+    `;
+};
+
+const buildGeneralResumeHtml = (profile, variantIndex = 0, photo = '') => {
+    const themes = [
+        ['#9b5724', '#f0a25a'], ['#0f766e', '#5eead4'], ['#1d4ed8', '#93c5fd'], ['#6d28d9', '#c4b5fd'], ['#be123c', '#fda4af'],
+        ['#365314', '#bef264'], ['#374151', '#d1d5db'], ['#92400e', '#fcd34d'], ['#0f172a', '#38bdf8'], ['#7c2d12', '#fdba74']
+    ];
+    const [dark, light] = themes[variantIndex % themes.length];
+    const imageMarkup = photo
+        ? `<img src="${photo}" alt="${escapeHtml(profile.name)}" style="width:132px;height:132px;object-fit:cover;border-radius:${variantIndex % 2 ? '24px' : '50%'};border:5px solid #ffffff;margin:0 auto 20px;display:block;" />`
+        : `<div style="width:118px;height:118px;border-radius:${variantIndex % 2 ? '24px' : '50%'};border:5px solid #ffffff;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;background:${light};color:${dark};font-size:44px;font-weight:800;">${escapeHtml(profile.name.charAt(0).toUpperCase() || 'Y')}</div>`;
+
+    return `
+        <div style="font-family:Arial, Helvetica, sans-serif; display:grid; grid-template-columns:230px 1fr; min-height:1030px; color:#111827;">
+            <aside style="background:${dark}; color:#ffffff; padding:34px 26px;">
+                ${imageMarkup}
+                <h3 style="letter-spacing:0.18em;font-size:15px;margin:18px 0 10px;">CONTACT</h3>
+                <p style="font-size:12px;line-height:1.55;margin:0 0 18px;">${escapeHtml(profile.phone)}<br />${escapeHtml(profile.email || 'Email')}<br />${escapeHtml(profile.location)}</p>
+                <h3 style="letter-spacing:0.18em;font-size:15px;margin:18px 0 10px;">EDUCATION</h3>
+                <ul style="font-size:12px;line-height:1.45;margin:0 0 18px 16px;padding:0;">${renderResumeBullets(profile.education, 'Add education details')}</ul>
+                <h3 style="letter-spacing:0.18em;font-size:15px;margin:18px 0 10px;">KEY SKILLS</h3>
+                <ul style="font-size:12px;line-height:1.45;margin:0 0 18px 16px;padding:0;">${renderResumeBullets(profile.skills, 'Add key skills')}</ul>
+            </aside>
+            <main style="background:#ffffff;padding:50px 34px;">
+                <div style="border-bottom:4px solid ${light};padding-bottom:14px;margin-bottom:18px;">
+                    <h1 style="font-size:42px;line-height:1;margin:0;color:#111827;">${escapeHtml(profile.name)}</h1>
+                    <p style="margin:8px 0 0;font-weight:700;color:${dark};">Professional Resume</p>
+                </div>
+                <h3 style="letter-spacing:0.18em;font-size:16px;margin:16px 0 8px;color:#111827;">ABOUT ME</h3>
+                <p style="font-size:13px;line-height:1.55;margin:0 0 16px;">${escapeHtml(profile.summary)}</p>
+                <h3 style="letter-spacing:0.18em;font-size:16px;margin:16px 0 8px;color:#111827;">PROFESSIONAL EXPERIENCE</h3>
+                <ul style="font-size:13px;line-height:1.55;margin:0 0 16px 18px;padding:0;">${renderResumeBullets(profile.experience, 'Add professional experience and measurable achievements')}</ul>
+                <h3 style="letter-spacing:0.18em;font-size:16px;margin:16px 0 8px;color:#111827;">ACHIEVEMENTS</h3>
+                <ul style="font-size:13px;line-height:1.55;margin:0 0 16px 18px;padding:0;">${renderResumeBullets(profile.achievements, 'Add achievements, projects, certifications, or awards')}</ul>
+                <h3 style="letter-spacing:0.18em;font-size:16px;margin:16px 0 8px;color:#111827;">INTERESTS</h3>
+                <p style="font-size:13px;line-height:1.55;margin:0;">${escapeHtml([...profile.interests, ...profile.hobbies].join(', ') || 'Add relevant interests and hobbies')}</p>
+            </main>
+        </div>
+    `;
+};
+
+const buildAiTailorTemplates = (profile, type = 'ats', photo = '') => (
+    Array.from({ length: 10 }, (_, index) => ({
+        id: `${type}-tailored-${index + 1}`,
+        category: type,
+        label: `${type === 'ats' ? 'ATS Friendly' : 'General'} Style ${index + 1}`,
+        description: type === 'ats'
+            ? 'ATS-readable structure using your profile sections.'
+            : 'Designed resume with section color blocks and optional photo.',
+        html: type === 'ats'
+            ? buildAtsResumeHtml(profile, index)
+            : buildGeneralResumeHtml(profile, index, photo)
+    }))
+);
 
 const createTemplateLibrary = (name = 'YOUR NAME', email = 'Email') => {
     const safeName = escapeHtml(name);
@@ -614,12 +763,14 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
     const resourceLabel = isDocumentMode ? 'Document' : 'Resume';
     const resourceLabelPlural = isDocumentMode ? 'documents' : 'resumes';
     const uploadInputRef = useRef(null);
+    const aiPhotoInputRef = useRef(null);
     const editorRef = useRef(null);
     const selectionRef = useRef(null);
     const rulerDragRef = useRef(null);
     const signatureCanvasRef = useRef(null);
     const signatureDrawingRef = useRef(false);
     const textColorRef = useRef(DEFAULT_TEXT_COLOR);
+    const manualTextInsertRef = useRef(false);
 
     const [activeTab, setActiveTab] = useState('create');
     const [createMode, setCreateMode] = useState('');
@@ -631,6 +782,11 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
     const [statusMessage, setStatusMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [uploading, setUploading] = useState(false);
+    const [tailorStep, setTailorStep] = useState('');
+    const [tailorTemplates, setTailorTemplates] = useState([]);
+    const [tailorProfileData, setTailorProfileData] = useState(null);
+    const [tailorPhoto, setTailorPhoto] = useState('');
+    const [tailorPhotoProcessing, setTailorPhotoProcessing] = useState(false);
     const [spellcheckEnabled, setSpellcheckEnabled] = useState(true);
     const [textColor, setTextColor] = useState(DEFAULT_TEXT_COLOR);
     const [editorMargins, setEditorMargins] = useState(DEFAULT_EDITOR_MARGINS);
@@ -651,6 +807,57 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
             setSavedResumes([]);
         }
     }, [storageKey]);
+
+    useEffect(() => {
+        if (isDocumentMode || !userId) {
+            return undefined;
+        }
+
+        let isMounted = true;
+        const fetchTailorProfile = async () => {
+            const token = localStorage.getItem('token');
+            let storedUser = {};
+            try {
+                storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+            } catch (error) {
+                storedUser = {};
+            }
+            const jobSeekerId = user?.jobSeekerId || storedUser.jobSeekerId || localStorage.getItem('jobSeekerId') || localStorage.getItem('tempJobSeekerId');
+
+            try {
+                if (jobSeekerId) {
+                    const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/job-seekers/${jobSeekerId}`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (isMounted) {
+                            setTailorProfileData(data);
+                        }
+                        return;
+                    }
+                }
+
+                const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/resume/analysis/${userId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (isMounted) {
+                        setTailorProfileData(data);
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load profile data for AI tailoring:', error);
+            }
+        };
+
+        fetchTailorProfile();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [isDocumentMode, user, userId]);
 
     const persistResumes = (nextResumes) => {
         setSavedResumes(nextResumes);
@@ -1240,25 +1447,87 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
     };
 
     const insertColoredText = (text) => {
-        if (!editorResume || !text || typeof document.execCommand !== 'function') {
+        if (!editorResume || !text || !editorRef.current) {
             return;
         }
 
-        saveSelection();
-        restoreSelection();
+        const editor = editorRef.current;
+        editor.focus();
+
+        let selection = window.getSelection();
+        let range = null;
+
+        if (selection && selection.rangeCount > 0 && editor.contains(selection.anchorNode)) {
+            range = selection.getRangeAt(0);
+        } else {
+            restoreSelection();
+            selection = window.getSelection();
+            if (selection && selection.rangeCount > 0 && editor.contains(selection.anchorNode)) {
+                range = selection.getRangeAt(0);
+            }
+        }
+
+        if (!range) {
+            range = document.createRange();
+            const paragraph = editor.querySelector('p') || editor;
+            if (paragraph !== editor && paragraph.firstChild?.nodeName === 'BR') {
+                range.setStart(paragraph, 0);
+            } else {
+                range.selectNodeContents(paragraph);
+                range.collapse(false);
+            }
+            selection = window.getSelection();
+            selection?.removeAllRanges();
+            selection?.addRange(range);
+        }
 
         const safeColor = textColorRef.current || textColor || DEFAULT_TEXT_COLOR;
-        const html = escapeHtml(text)
-            .replace(/ /g, '&nbsp;')
-            .replace(/\r\n|\r|\n/g, '<br />');
+        const fragment = document.createDocumentFragment();
+        const parts = String(text).split(/(\r\n|\r|\n)/);
+        let lastInsertedNode = null;
 
-        document.execCommand('styleWithCSS', false, true);
-        document.execCommand(
-            'insertHTML',
-            false,
-            `<span class="resume-playground-typed-color" style="--resume-typed-color: ${safeColor}; color: ${safeColor}; -webkit-text-fill-color: ${safeColor};">${html}</span>`
-        );
+        parts.forEach((part) => {
+            if (!part) {
+                return;
+            }
+
+            if (/^(?:\r\n|\r|\n)$/.test(part)) {
+                const br = document.createElement('br');
+                fragment.appendChild(br);
+                lastInsertedNode = br;
+                return;
+            }
+
+            const span = document.createElement('span');
+            span.className = 'resume-playground-typed-color';
+            span.style.setProperty('--resume-typed-color', safeColor);
+            span.style.color = safeColor;
+            span.style.webkitTextFillColor = safeColor;
+            span.textContent = part.replace(/ /g, '\u00a0');
+            fragment.appendChild(span);
+            lastInsertedNode = span;
+        });
+
+        if (!lastInsertedNode) {
+            return;
+        }
+
+        manualTextInsertRef.current = true;
+        range.deleteContents();
+        range.insertNode(fragment);
+
+        const nextRange = document.createRange();
+        nextRange.setStartAfter(lastInsertedNode);
+        nextRange.collapse(true);
+        selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(nextRange);
+        saveSelection();
         syncEditorResume();
+
+        window.setTimeout(() => {
+            manualTextInsertRef.current = false;
+        }, 0);
     };
 
     const colorRecentlyInsertedText = (textLength = 1) => {
@@ -1354,6 +1623,11 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         const inputType = nativeEvent.inputType || '';
         const insertedText = nativeEvent.data || '';
 
+        if (manualTextInsertRef.current) {
+            syncEditorResume();
+            return;
+        }
+
         if (inputType.startsWith('insert') && insertedText) {
             colorRecentlyInsertedText(insertedText.length);
         }
@@ -1361,19 +1635,8 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         syncEditorResume();
     };
 
-    const handleEditorKeyDown = (event) => {
-        const isPrintableKey = event.key?.length === 1
-            && !event.ctrlKey
-            && !event.metaKey
-            && !event.altKey;
-
-        if (isPrintableKey) {
-            event.preventDefault();
-            insertColoredText(event.key);
-            return;
-        }
-
-        maintainTextColorForTyping(event);
+    const handleEditorKeyDown = () => {
+        saveSelection();
     };
 
     const syncEditorResume = () => {
@@ -1400,9 +1663,6 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
 
         restoreSelection();
         document.execCommand(command, false, value);
-        if (!['undo', 'redo', 'foreColor'].includes(command)) {
-            applyTextColor();
-        }
         syncEditorResume();
     };
 
@@ -1493,6 +1753,8 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
     };
 
     const handleStartScratch = () => {
+        setTailorStep('');
+        setTailorTemplates([]);
         setCreateMode('scratch');
         openEditor(createResumeRecord({
             name: `${displayName} ${resourceLabel}`,
@@ -1501,6 +1763,75 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                 : createBlankEditorHtml(),
             source: 'scratch'
         }), 'create');
+    };
+
+    const getCurrentTailorProfile = () => getTailorProfile(tailorProfileData, user, displayName);
+
+    const generateTailorTemplates = (type, photo = tailorPhoto) => {
+        const profile = getCurrentTailorProfile();
+        const nextTemplates = buildAiTailorTemplates(profile, type, type === 'general' ? photo : '');
+        setTailorTemplates(nextTemplates);
+        setTailorStep(type);
+        setStatusMessage(`${nextTemplates.length} ${type === 'ats' ? 'ATS-friendly' : 'general'} resume styles are ready. Choose one to edit.`);
+        setErrorMessage('');
+    };
+
+    const handleOpenTailor = () => {
+        setCreateMode('ai-tailor');
+        setTailorStep('choose');
+        setTailorTemplates([]);
+        clearMessages();
+    };
+
+    const handleGeneralTailorChoice = () => {
+        setTailorStep('general-photo');
+        setTailorTemplates([]);
+        clearMessages();
+    };
+
+    const handleTailorPhotoUpload = async (event) => {
+        const file = event.target.files?.[0];
+        event.target.value = '';
+        if (!file) {
+            return;
+        }
+
+        setTailorPhotoProcessing(true);
+        clearMessages();
+        try {
+            const imageDataUrl = await createSquareProfileImage(file);
+            setTailorPhoto(imageDataUrl);
+            generateTailorTemplates('general', imageDataUrl);
+        } catch (error) {
+            console.error('Failed to prepare resume photo:', error);
+            setErrorMessage(error.message || 'Could not prepare that photo. Try another image or skip the photo.');
+        } finally {
+            setTailorPhotoProcessing(false);
+        }
+    };
+
+    const handleSkipTailorPhoto = () => {
+        setTailorPhoto('');
+        generateTailorTemplates('general', '');
+    };
+
+    const handleUseTailorTemplate = (template) => {
+        if (!template) {
+            return;
+        }
+
+        setCreateMode('ai-tailor');
+        openEditor(createResumeRecord({
+            name: `${displayName} ${template.label}`,
+            html: template.html,
+            source: 'ai-tailor',
+            templateId: template.id,
+            templateCategory: template.category,
+            textColor: DEFAULT_TEXT_COLOR
+        }), 'create');
+        setTailorStep('');
+        setTailorTemplates([]);
+        setStatusMessage(`${template.label} opened in the editor. You can edit, save, export, or print it now.`);
     };
 
     const handleUploadResume = async (event) => {
@@ -2199,6 +2530,16 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                                     <strong>{`Upload ${resourceLabel.toLowerCase()} to edit`}</strong>
                                     <span>{`Convert a PDF, DOCX, or TXT ${resourceLabel.toLowerCase()} into editable content.`}</span>
                                 </button>
+                                {!isDocumentMode && (
+                                    <button
+                                        type="button"
+                                        className="resume-playground-choice-card resume-playground-ai-choice-card"
+                                        onClick={handleOpenTailor}
+                                    >
+                                        <strong>Let AI Tailor it?</strong>
+                                        <span>Generate 10 ATS-friendly or designed resume styles from your profile, then edit your pick.</span>
+                                    </button>
+                                )}
                             </div>
 
                             <input
@@ -2208,10 +2549,97 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                                 accept=".pdf,.doc,.docx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
                                 onChange={handleUploadResume}
                             />
+                            {!isDocumentMode && (
+                                <input
+                                    ref={aiPhotoInputRef}
+                                    type="file"
+                                    className="profile-resume-input"
+                                    accept="image/*"
+                                    onChange={handleTailorPhotoUpload}
+                                />
+                            )}
 
                             {uploading && (
                                 <div className="resume-playground-uploading">
                                     {`Reading your ${resourceLabel.toLowerCase()} and converting it into editable content...`}
+                                </div>
+                            )}
+
+                            {!isDocumentMode && tailorStep && (
+                                <div className="resume-playground-ai-tailor-panel">
+                                    <div className="resume-playground-ai-tailor-header">
+                                        <div>
+                                            <h3>Let AI Tailor it?</h3>
+                                            <p>Choose a resume type, preview 10 generated styles, then open the one you like in the editor.</p>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            className="resume-playground-tool-button"
+                                            onClick={() => {
+                                                setTailorStep('');
+                                                setTailorTemplates([]);
+                                            }}
+                                        >
+                                            Close
+                                        </button>
+                                    </div>
+
+                                    {tailorStep === 'choose' && (
+                                        <div className="resume-playground-choice-grid resume-playground-ai-choice-grid">
+                                            <button type="button" className="resume-playground-choice-card" onClick={() => generateTailorTemplates('ats')}>
+                                                <strong>Tailor ATS Friendly Resume</strong>
+                                                <span>Simple readable layouts with clear sections, bullets, contact details, skills, experience, and education.</span>
+                                            </button>
+                                            <button type="button" className="resume-playground-choice-card" onClick={handleGeneralTailorChoice}>
+                                                <strong>General Resume</strong>
+                                                <span>Designed resume templates with color blocks and an optional photo, built from your profile sections.</span>
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {tailorStep === 'general-photo' && (
+                                        <div className="resume-playground-ai-photo-panel">
+                                            <h4>Add a photo to the general resume?</h4>
+                                            <p>You can upload a photo for the template preview, or skip it and use a clean initial badge instead.</p>
+                                            <div className="resume-playground-ai-photo-actions">
+                                                <button
+                                                    type="button"
+                                                    className="settings-button primary"
+                                                    onClick={() => aiPhotoInputRef.current?.click()}
+                                                    disabled={tailorPhotoProcessing}
+                                                >
+                                                    {tailorPhotoProcessing ? 'Preparing Photo...' : 'Upload Photo'}
+                                                </button>
+                                                <button type="button" className="settings-button secondary" onClick={handleSkipTailorPhoto}>
+                                                    Skip Photo
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {tailorTemplates.length > 0 && (
+                                        <div className="resume-playground-template-grid resume-playground-ai-template-grid">
+                                            {tailorTemplates.map((template) => (
+                                                <article className="resume-playground-template-card" key={template.id}>
+                                                    <div className="resume-playground-template-preview">
+                                                        <div
+                                                            className="resume-playground-template-preview-scale"
+                                                            dangerouslySetInnerHTML={{ __html: template.html }}
+                                                        />
+                                                    </div>
+                                                    <div className="resume-playground-template-copy">
+                                                        <h4>{template.label}</h4>
+                                                        <p>{template.description}</p>
+                                                    </div>
+                                                    <div className="resume-playground-ai-template-actions">
+                                                        <button type="button" className="settings-button primary" onClick={() => handleUseTailorTemplate(template)}>
+                                                            Use This Style
+                                                        </button>
+                                                    </div>
+                                                </article>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>

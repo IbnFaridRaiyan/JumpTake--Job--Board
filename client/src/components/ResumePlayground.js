@@ -764,9 +764,11 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
     const resourceLabelPlural = isDocumentMode ? 'documents' : 'resumes';
     const uploadInputRef = useRef(null);
     const aiPhotoInputRef = useRef(null);
+    const editorCanvasRef = useRef(null);
     const editorRef = useRef(null);
     const selectionRef = useRef(null);
     const rulerDragRef = useRef(null);
+    const mobilePinchRef = useRef(null);
     const signatureCanvasRef = useRef(null);
     const signatureDrawingRef = useRef(false);
     const textColorRef = useRef(DEFAULT_TEXT_COLOR);
@@ -789,6 +791,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
     const [tailorPhotoProcessing, setTailorPhotoProcessing] = useState(false);
     const [spellcheckEnabled, setSpellcheckEnabled] = useState(true);
     const [textColor, setTextColor] = useState(DEFAULT_TEXT_COLOR);
+    const [mobileEditorZoom, setMobileEditorZoom] = useState(0.46);
     const [editorMargins, setEditorMargins] = useState(DEFAULT_EDITOR_MARGINS);
     const [atsScanResult, setAtsScanResult] = useState(null);
     const [showAtsDetails, setShowAtsDetails] = useState(false);
@@ -1362,6 +1365,52 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
             document.body.style.overflow = previousOverflow;
         };
     }, [editorResume, isMobileViewport]);
+
+    const getTouchDistance = (touches) => {
+        if (!touches || touches.length < 2) {
+            return 0;
+        }
+
+        const [first, second] = touches;
+        return Math.hypot(second.clientX - first.clientX, second.clientY - first.clientY);
+    };
+
+    const handleEditorCanvasTouchStart = (event) => {
+        if (!isMobileViewport || event.touches.length !== 2) {
+            return;
+        }
+
+        event.preventDefault();
+        mobilePinchRef.current = {
+            distance: getTouchDistance(event.touches),
+            zoom: mobileEditorZoom
+        };
+    };
+
+    const handleEditorCanvasTouchMove = (event) => {
+        if (!isMobileViewport || event.touches.length !== 2 || !mobilePinchRef.current) {
+            return;
+        }
+
+        event.preventDefault();
+        const nextDistance = getTouchDistance(event.touches);
+        if (!nextDistance || !mobilePinchRef.current.distance) {
+            return;
+        }
+
+        const nextZoom = clamp(
+            mobilePinchRef.current.zoom * (nextDistance / mobilePinchRef.current.distance),
+            0.34,
+            1.18
+        );
+        setMobileEditorZoom(Number(nextZoom.toFixed(3)));
+    };
+
+    const handleEditorCanvasTouchEnd = (event) => {
+        if (event.touches.length < 2) {
+            mobilePinchRef.current = null;
+        }
+    };
 
     const openEditor = (resume, nextTab = 'edit') => {
         setEditorResume(resume);
@@ -2409,8 +2458,18 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                         </div>
                     )}
 
-                    <div className="resume-playground-editor-canvas">
-                        <div className="resume-playground-editor-workbench">
+                    <div
+                        ref={editorCanvasRef}
+                        className="resume-playground-editor-canvas"
+                        onTouchStart={handleEditorCanvasTouchStart}
+                        onTouchMove={handleEditorCanvasTouchMove}
+                        onTouchEnd={handleEditorCanvasTouchEnd}
+                        onTouchCancel={handleEditorCanvasTouchEnd}
+                    >
+                        <div
+                            className="resume-playground-editor-workbench"
+                            style={isMobileViewport ? { '--resume-mobile-editor-zoom': mobileEditorZoom } : undefined}
+                        >
                             {Array.from({ length: editorPageCount }).map((_, index) => (
                                 <React.Fragment key={`page-rulers-${index}`}>
                                     <div

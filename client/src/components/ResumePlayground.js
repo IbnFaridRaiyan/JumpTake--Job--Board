@@ -21,9 +21,9 @@ const DEFAULT_EDITOR_MARGINS = {
 };
 const DEFAULT_TEXT_COLOR = '#000000';
 const MIN_TOP_MARGIN = 24;
-const MAX_TOP_MARGIN = 180;
 const MIN_LEFT_MARGIN = 24;
-const MAX_LEFT_MARGIN = 180;
+const MAX_TOP_MARGIN = A4_PAGE_HEIGHT - A4_BOTTOM_PADDING;
+const MAX_LEFT_MARGIN = A4_PAGE_WIDTH - A4_RIGHT_PADDING;
 
 const cloneMargins = (margins = DEFAULT_EDITOR_MARGINS) => ({
     top: Number.isFinite(margins?.top) ? margins.top : DEFAULT_EDITOR_MARGINS.top,
@@ -284,8 +284,8 @@ const SIGNATURE_STROKE_COLORS = {
     white: '#ffffff'
 };
 
-const createBlankEditorHtml = () => '<p><br></p>';
-const createBlankDocumentHtml = () => '<p><br></p>';
+const createBlankEditorHtml = () => '<p style="color: #000000;"><br></p>';
+const createBlankDocumentHtml = createBlankEditorHtml;
 
 const createTemplateLibrary = (name = 'YOUR NAME', email = 'Email') => {
     const safeName = escapeHtml(name);
@@ -619,6 +619,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
     const rulerDragRef = useRef(null);
     const signatureCanvasRef = useRef(null);
     const signatureDrawingRef = useRef(false);
+    const textColorRef = useRef(DEFAULT_TEXT_COLOR);
 
     const [activeTab, setActiveTab] = useState('create');
     const [createMode, setCreateMode] = useState('');
@@ -782,7 +783,8 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         }
 
         if (dragState.axis === 'horizontal') {
-            const nextLeft = clamp(clientX - dragState.rect.left, MIN_LEFT_MARGIN, MAX_LEFT_MARGIN);
+            const scaleX = dragState.rect.width > 0 ? dragState.rect.width / A4_PAGE_WIDTH : 1;
+            const nextLeft = clamp((clientX - dragState.rect.left) / scaleX, MIN_LEFT_MARGIN, MAX_LEFT_MARGIN);
             setEditorPageMargins((current) => {
                 const nextMargins = createPageMargins(Math.max(editorPageCount, current.length), current);
                 nextMargins[dragState.pageIndex || 0] = {
@@ -799,7 +801,8 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         }
 
         if (dragState.axis === 'vertical') {
-            const nextTop = clamp(clientY - dragState.rect.top, MIN_TOP_MARGIN, MAX_TOP_MARGIN);
+            const scaleY = dragState.rect.height > 0 ? dragState.rect.height / A4_PAGE_HEIGHT : 1;
+            const nextTop = clamp((clientY - dragState.rect.top) / scaleY, MIN_TOP_MARGIN, MAX_TOP_MARGIN);
             setEditorPageMargins((current) => {
                 const nextMargins = createPageMargins(Math.max(editorPageCount, current.length), current);
                 nextMargins[dragState.pageIndex || 0] = {
@@ -817,6 +820,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
 
     const startRulerDrag = useCallback((axis, pageIndex, event) => {
         event.preventDefault();
+        event.currentTarget.setPointerCapture?.(event.pointerId);
         rulerDragRef.current = {
             axis,
             pageIndex,
@@ -831,6 +835,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                 return;
             }
 
+            event.preventDefault();
             updateMarginFromPointer(rulerDragRef.current, event.clientX, event.clientY);
         };
 
@@ -838,12 +843,14 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
             rulerDragRef.current = null;
         };
 
-        window.addEventListener('mousemove', handlePointerMove);
-        window.addEventListener('mouseup', stopRulerDrag);
+        window.addEventListener('pointermove', handlePointerMove);
+        window.addEventListener('pointerup', stopRulerDrag);
+        window.addEventListener('pointercancel', stopRulerDrag);
 
         return () => {
-            window.removeEventListener('mousemove', handlePointerMove);
-            window.removeEventListener('mouseup', stopRulerDrag);
+            window.removeEventListener('pointermove', handlePointerMove);
+            window.removeEventListener('pointerup', stopRulerDrag);
+            window.removeEventListener('pointercancel', stopRulerDrag);
         };
     }, [updateMarginFromPointer]);
 
@@ -892,7 +899,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         });
 
         if (!root.childNodes.length) {
-            root.innerHTML = '<p></p>';
+            root.innerHTML = createBlankEditorHtml();
         }
     }, [getPaginationHost]);
 
@@ -1152,7 +1159,9 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
     const openEditor = (resume, nextTab = 'edit') => {
         setEditorResume(resume);
         setEditorSuspended(false);
-        setTextColor(resume?.textColor || DEFAULT_TEXT_COLOR);
+        const nextTextColor = resume?.textColor || DEFAULT_TEXT_COLOR;
+        textColorRef.current = nextTextColor;
+        setTextColor(nextTextColor);
         setEditorMargins(resume?.margins ? { ...DEFAULT_EDITOR_MARGINS, ...resume.margins } : DEFAULT_EDITOR_MARGINS);
         setEditorPageMargins(
             Array.isArray(resume?.pageMargins) && resume.pageMargins.length
@@ -1213,17 +1222,158 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
 
     const handleTextColorChange = (color) => {
         const nextColor = color || DEFAULT_TEXT_COLOR;
+        textColorRef.current = nextColor;
         setTextColor(nextColor);
         setEditorResume((current) => current ? { ...current, textColor: nextColor } : current);
-        restoreSelection();
-        applyTextColor(nextColor);
-        syncEditorResume();
+        saveSelection();
     };
 
     const maintainTextColorForTyping = (event) => {
-        if (event.key === 'Enter' || (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey)) {
+        const inputType = event.nativeEvent?.inputType || '';
+        const isTypingKey = event.key === 'Enter'
+            || (event.key?.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey);
+        const isTextInput = inputType.startsWith('insert');
+
+        if (isTypingKey || isTextInput) {
             applyTextColor();
         }
+    };
+
+    const insertColoredText = (text) => {
+        if (!editorResume || !text || typeof document.execCommand !== 'function') {
+            return;
+        }
+
+        saveSelection();
+        restoreSelection();
+
+        const safeColor = textColorRef.current || textColor || DEFAULT_TEXT_COLOR;
+        const html = escapeHtml(text)
+            .replace(/ /g, '&nbsp;')
+            .replace(/\r\n|\r|\n/g, '<br />');
+
+        document.execCommand('styleWithCSS', false, true);
+        document.execCommand(
+            'insertHTML',
+            false,
+            `<span class="resume-playground-typed-color" style="--resume-typed-color: ${safeColor}; color: ${safeColor}; -webkit-text-fill-color: ${safeColor};">${html}</span>`
+        );
+        syncEditorResume();
+    };
+
+    const colorRecentlyInsertedText = (textLength = 1) => {
+        if (!editorRef.current || textLength <= 0) {
+            return false;
+        }
+
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0 || !selection.isCollapsed) {
+            return false;
+        }
+
+        let textNode = selection.anchorNode;
+        let offset = selection.anchorOffset;
+
+        if (textNode?.nodeType === Node.ELEMENT_NODE && offset > 0) {
+            const previousNode = textNode.childNodes[offset - 1];
+            if (previousNode?.nodeType === Node.TEXT_NODE) {
+                textNode = previousNode;
+                offset = previousNode.textContent?.length || 0;
+            }
+        }
+
+        if (!textNode || textNode.nodeType !== Node.TEXT_NODE || !editorRef.current.contains(textNode)) {
+            return false;
+        }
+
+        const content = textNode.textContent || '';
+        if (!content || offset <= 0) {
+            return false;
+        }
+
+        const safeLength = Math.min(textLength, offset, content.length);
+        const start = Math.max(0, offset - safeLength);
+        const safeColor = textColorRef.current || textColor || DEFAULT_TEXT_COLOR;
+
+        let coloredNode = textNode;
+        if (start > 0) {
+            coloredNode = textNode.splitText(start);
+        }
+
+        let trailingNode = null;
+        if ((coloredNode.textContent || '').length > safeLength) {
+            trailingNode = coloredNode.splitText(safeLength);
+        }
+
+        if (!coloredNode.textContent) {
+            return false;
+        }
+
+        const wrapper = document.createElement('span');
+        wrapper.className = 'resume-playground-typed-color';
+        wrapper.style.setProperty('--resume-typed-color', safeColor);
+        wrapper.style.color = safeColor;
+        wrapper.style.webkitTextFillColor = safeColor;
+
+        coloredNode.parentNode.insertBefore(wrapper, coloredNode);
+        wrapper.appendChild(coloredNode);
+
+        const nextRange = document.createRange();
+        if (trailingNode) {
+            nextRange.setStartBefore(trailingNode);
+        } else {
+            nextRange.setStartAfter(wrapper);
+        }
+        nextRange.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(nextRange);
+        saveSelection();
+        return true;
+    };
+
+    const handleEditorBeforeInput = (event) => {
+        const nativeEvent = event.nativeEvent || {};
+        const inputType = nativeEvent.inputType || '';
+        const insertedText = nativeEvent.data || '';
+
+        if (!editorResume) {
+            return;
+        }
+
+        if ((inputType === 'insertText' || inputType === 'insertCompositionText') && insertedText) {
+            event.preventDefault();
+            insertColoredText(insertedText);
+            return;
+        }
+
+        maintainTextColorForTyping(event);
+    };
+
+    const handleEditorInput = (event) => {
+        const nativeEvent = event.nativeEvent || {};
+        const inputType = nativeEvent.inputType || '';
+        const insertedText = nativeEvent.data || '';
+
+        if (inputType.startsWith('insert') && insertedText) {
+            colorRecentlyInsertedText(insertedText.length);
+        }
+
+        syncEditorResume();
+    };
+
+    const handleEditorKeyDown = (event) => {
+        const isPrintableKey = event.key?.length === 1
+            && !event.ctrlKey
+            && !event.metaKey
+            && !event.altKey;
+
+        if (isPrintableKey) {
+            event.preventDefault();
+            insertColoredText(event.key);
+            return;
+        }
+
+        maintainTextColorForTyping(event);
     };
 
     const syncEditorResume = () => {
@@ -1731,7 +1881,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                             <button type="button" className="secondary-button" onClick={() => handlePrintResume(editorResume)}>
                                 Print / Save PDF
                             </button>
-                            <button type="button" className="secondary-button" onClick={closeEditor}>
+                            <button type="button" className="secondary-button resume-playground-close-editor-button" onClick={closeEditor}>
                                 Close Editor
                             </button>
                         </div>
@@ -1935,7 +2085,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                                     <div
                                         className="resume-playground-ruler resume-playground-ruler-horizontal"
                                         style={{ top: `${index * editorPageStride}px` }}
-                                        onMouseDown={(event) => startRulerDrag('horizontal', index, event)}
+                                        onPointerDown={(event) => startRulerDrag('horizontal', index, event)}
                                     >
                                         <div className="resume-playground-ruler-ticks" />
                                         <div className="resume-playground-ruler-labels">
@@ -1955,7 +2105,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                                             top: `${(index * editorPageStride) + RULER_SIZE}px`,
                                             height: `${A4_PAGE_HEIGHT}px`
                                         }}
-                                        onMouseDown={(event) => startRulerDrag('vertical', index, event)}
+                                        onPointerDown={(event) => startRulerDrag('vertical', index, event)}
                                     >
                                         <div className="resume-playground-ruler-ticks" />
                                         <div className="resume-playground-ruler-labels">
@@ -1990,11 +2140,13 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                                     minHeight: `${editorDocumentHeight}px`,
                                     padding: `${editorMargins.top}px ${A4_RIGHT_PADDING}px ${A4_BOTTOM_PADDING}px ${editorMargins.left}px`,
                                     color: DEFAULT_TEXT_COLOR,
+                                    WebkitTextFillColor: DEFAULT_TEXT_COLOR,
                                     caretColor: textColor
                                 }}
-                                onInput={syncEditorResume}
+                                onInput={handleEditorInput}
+                                onBeforeInput={handleEditorBeforeInput}
                                 onBlur={saveSelection}
-                                onKeyDown={maintainTextColorForTyping}
+                                onKeyDown={handleEditorKeyDown}
                                 onKeyUp={saveSelection}
                                 onMouseUp={saveSelection}
                                 onFocus={saveSelection}

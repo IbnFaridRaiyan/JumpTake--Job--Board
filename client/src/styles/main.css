@@ -26482,9 +26482,53 @@ html[data-theme="light"] .talent-bookmark-button::before {
   content: none !important;
 }
 
+.resume-playground-editor-document {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+.resume-playground-editor-document *,
+.resume-playground-editor-document span,
+.resume-playground-editor-document font,
+.resume-playground-editor-document p,
+.resume-playground-editor-document div,
+.resume-playground-editor-document li,
+.resume-playground-editor-document h1,
+.resume-playground-editor-document h2,
+.resume-playground-editor-document h3,
+.resume-playground-editor-document td,
+.resume-playground-editor-document th {
+  -webkit-text-fill-color: currentColor !important;
+}
+
+.resume-playground-editor-document p:not([style*="color"]),
+.resume-playground-editor-document div:not([style*="color"]),
+.resume-playground-editor-document span:not([style*="color"]),
+.resume-playground-editor-document li:not([style*="color"]),
+.resume-playground-editor-document h1:not([style*="color"]),
+.resume-playground-editor-document h2:not([style*="color"]),
+.resume-playground-editor-document h3:not([style*="color"]),
+.resume-playground-editor-document td:not([style*="color"]),
+.resume-playground-editor-document th:not([style*="color"]),
+.resume-playground-editor-document font:not([color]):not([style*="color"]) {
+  color: inherit !important;
+}
+
+.resume-playground-editor-document .resume-playground-typed-color {
+  color: var(--resume-typed-color, #000000) !important;
+  -webkit-text-fill-color: var(--resume-typed-color, #000000) !important;
+}
+
+.resume-playground-ruler,
+.resume-playground-ruler-indicator {
+  touch-action: none !important;
+  user-select: none !important;
+}
+
 .resume-playground-editor-actions .secondary-button,
 .resume-playground-editor-actions .secondary-button * {
   color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
 }
 
 .resume-playground-open-session {
@@ -26571,6 +26615,191 @@ html[data-theme="light"] .talent-bookmark-button::before {
   -webkit-text-fill-color: #111111 !important;
 }
 
+.company-profile-container .company-edit-actions .cancel-edit-button,
+.company-profile-container .company-edit-actions .cancel-edit-button *,
+.company-profile-container .company-edit-actions .cancel-edit-button:disabled,
+.company-profile-container .company-edit-actions .cancel-edit-button:disabled *,
+.mobile-section-company-profile.is-open .company-edit-actions .cancel-edit-button,
+.mobile-section-company-profile.is-open .company-edit-actions .cancel-edit-button * {
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  opacity: 1;
+}
+
+.friend-invitations-section {
+  gap: 0.65rem !important;
+}
+
+.friend-invitations-shell {
+  gap: 0.65rem !important;
+}
+
+.friend-invitation-tabs {
+  gap: 0.45rem !important;
+}
+
+.friend-invitation-tab {
+  min-height: 2.15rem !important;
+  padding: 0.42rem 0.78rem !important;
+  border-radius: 0.75rem !important;
+  font-size: 0.78rem !important;
+  line-height: 1.1 !important;
+}
+
+.friend-invitation-panel {
+  padding: 0.7rem !important;
+  border-radius: 0.85rem !important;
+}
+
+.friend-invitation-list {
+  gap: 0.55rem !important;
+}
+
+.friend-invitation-card,
+.friend-outgoing-row {
+  grid-template-columns: auto minmax(0, 1fr) minmax(230px, 320px) !important;
+  gap: 0.65rem !important;
+  align-items: center !important;
+  padding: 0.65rem 0.75rem !important;
+  border-radius: 0.78rem !important;
+}
+
+.friend-invitation-avatar {
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+  font-size: 0.86rem !important;
+}
+
+.friend-invitation-copy h3 {
+  margin-bottom: 0.08rem !important;
+  font-size: 0.88rem !important;
+}
+
+.friend-invitation-copy p,
+.friend-invitation-copy span {
+  font-size: 0.74rem !important;
+  line-height: 1.25 !important;
+}
+
+.friend-invitation-actions {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  width: min(100%, 320px) !important;
+  gap: 0.38rem !important;
+  justify-content: stretch !important;
+  justify-self: end !important;
+}
+
+.friend-invitation-actions > .secondary-button,
+.friend-invitation-actions > .contact-candidate-panel {
+  flex: 0 1 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.friend-invitation-actions .contact-candidate-panel > .settings-button.primary,
+.friend-invitation-actions > .secondary-button,
+.friend-invitation-actions > .settings-button.primary,
+.friend-invitation-actions > .friend-block-button,
+.friend-cancel-button,
+.friend-status-pill {
+  width: 100% !important;
+  min-height: 2.15rem !important;
+  padding: 0.42rem 0.62rem !important;
+  border-radius: 0.58rem !important;
+  font-size: 0.72rem !important;
+  line-height: 1.1 !important;
+  text-align: center !important;
+}
+
+.friend-invitation-actions .message-compose-card {
+  grid-column: 1 / -1 !important;
+}
+
+.resume-playground-editor-actions .resume-playground-close-editor-button,
+.resume-playground-editor-actions .resume-playground-close-editor-button *,
+.resume-playground-editor-actions .resume-playground-close-editor-button:hover,
+.resume-playground-editor-actions .resume-playground-close-editor-button:focus,
+.resume-playground-editor-actions .resume-playground-close-editor-button:active,
+.resume-playground-editor-actions .resume-playground-close-editor-button:hover *,
+.resume-playground-editor-actions .resume-playground-close-editor-button:focus *,
+.resume-playground-editor-actions .resume-playground-close-editor-button:active * {
+  background: #b91c1c !important;
+  border-color: #ef4444 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.home-page .job-feed-container .job-card-footer,
+.candidate-dashboard-header ~ .dashboard-container .job-feed-container .job-card-footer,
+html[data-theme="light"] .home-page .job-feed-container .job-card-footer {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  border-top: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0.6rem 1rem 0 !important;
+}
+
+@media (max-width: 768px) {
+  .mobile-section-friend-invitations.is-open .friend-invitation-tabs,
+  .mobile-section-friends.is-open .friend-invitation-tabs {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 0.35rem !important;
+    overflow-x: auto !important;
+    padding-bottom: 0.12rem !important;
+  }
+
+  .mobile-section-friend-invitations.is-open .friend-invitation-tab,
+  .mobile-section-friends.is-open .friend-invitation-tab {
+    flex: 0 0 auto !important;
+    min-height: 2rem !important;
+    padding: 0.4rem 0.55rem !important;
+    border-radius: 0.78rem !important;
+    font-size: 0.72rem !important;
+    white-space: nowrap !important;
+  }
+
+  .mobile-section-friend-invitations.is-open .friend-invitation-panel,
+  .mobile-section-friends.is-open .friend-invitation-panel {
+    padding: 0.55rem !important;
+    border-radius: 0.82rem !important;
+  }
+
+  .mobile-section-friend-invitations.is-open .friend-invitation-card,
+  .mobile-section-friend-invitations.is-open .friend-outgoing-row,
+  .mobile-section-friends.is-open .friend-invitation-card,
+  .mobile-section-friends.is-open .friend-outgoing-row {
+    grid-template-columns: auto minmax(0, 1fr) !important;
+    gap: 0.5rem !important;
+    padding: 0.65rem !important;
+    border-radius: 0.82rem !important;
+  }
+
+  .mobile-section-friend-invitations.is-open .friend-invitation-actions,
+  .mobile-section-friends.is-open .friend-invitation-actions {
+    grid-column: 1 / -1 !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    width: 100% !important;
+    justify-self: stretch !important;
+  }
+
+  .mobile-section-friend-invitations.is-open .friend-invitation-actions .contact-candidate-panel > .settings-button.primary,
+  .mobile-section-friend-invitations.is-open .friend-invitation-actions > .secondary-button,
+  .mobile-section-friend-invitations.is-open .friend-invitation-actions > .settings-button.primary,
+  .mobile-section-friend-invitations.is-open .friend-invitation-actions > .friend-block-button,
+  .mobile-section-friends.is-open .friend-invitation-actions .contact-candidate-panel > .settings-button.primary,
+  .mobile-section-friends.is-open .friend-invitation-actions > .secondary-button,
+  .mobile-section-friends.is-open .friend-invitation-actions > .settings-button.primary,
+  .mobile-section-friends.is-open .friend-invitation-actions > .friend-block-button {
+    min-height: 2.12rem !important;
+    padding: 0.42rem 0.5rem !important;
+    font-size: 0.72rem !important;
+  }
+}
+
 .job-company-logo {
   width: 52px;
   height: 52px;
@@ -26609,6 +26838,50 @@ html[data-theme="light"] .talent-bookmark-button::before {
 }
 
 @media (max-width: 768px) {
+  .candidate-job-preview-modal .mobile-job-preview-topbar,
+  .mobile-job-preview-topbar {
+    grid-template-columns: 3rem minmax(0, 1fr) 2rem !important;
+    min-height: 4.25rem !important;
+    gap: 0.55rem !important;
+    padding: calc(0.55rem + env(safe-area-inset-top)) 0.7rem 0.55rem !important;
+    align-items: center !important;
+  }
+
+  .candidate-job-preview-modal .mobile-job-preview-topbar .preview-company-logo,
+  .mobile-job-preview-topbar .preview-company-logo {
+    width: 3rem !important;
+    height: 3rem !important;
+    min-width: 3rem !important;
+    margin: 0 !important;
+    border-width: 2px !important;
+    border-radius: 0.75rem !important;
+    font-size: 1rem !important;
+  }
+
+  .candidate-job-preview-modal .mobile-job-preview-topbar h2,
+  .mobile-job-preview-topbar h2 {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    font-size: 0.88rem !important;
+    line-height: 1.16 !important;
+    text-align: left !important;
+    white-space: normal !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+  }
+
+  .candidate-job-preview-modal .mobile-job-preview-close,
+  .mobile-job-preview-close {
+    width: 2rem !important;
+    height: 2rem !important;
+    min-width: 2rem !important;
+    font-size: 1.45rem !important;
+  }
+
   .resume-playground-open-session {
     display: none;
   }

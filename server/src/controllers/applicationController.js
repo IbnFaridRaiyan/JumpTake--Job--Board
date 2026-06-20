@@ -143,6 +143,7 @@ const buildProfileSnapshot = (profileInput = {}, user = null, fallbackProfile = 
     return {
         name: normalizeString(source.name || baseProfile.name || ''),
         email: normalizeString(source.email || baseProfile.email || user?.email || ''),
+        profileImage: normalizeString(source.profileImage || baseProfile.profileImage || ''),
         skills: normalizeListValue(source.skills ?? baseProfile.skills ?? []),
         interests: normalizeListValue(source.interests ?? baseProfile.interests ?? []),
         hobbies: normalizeListValue(source.hobbies ?? baseProfile.hobbies ?? []),
@@ -268,7 +269,7 @@ const getUserApplications = async (req, res) => {
                 path: 'job',
                 populate: {
                     path: 'company',
-                    select: 'name'
+                    select: 'name logo'
                 }
             })
             .sort({ createdAt: -1 });
@@ -302,7 +303,7 @@ const getCompanyApplications = async (req, res) => {
                 select: 'title location jobType salary company createdAt',
                 populate: {
                     path: 'company',
-                    select: 'name'
+                    select: 'name logo'
                 }
             })
             .populate({

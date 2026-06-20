@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from 'mammoth';
+import ProfileAvatar from './ProfileAvatar';
+import { createSquareProfileImage } from '../utils/profileImages';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -22,7 +24,9 @@ const UserProfile = ({ userId, jumptakeId: initialJumpTakeId, onUpdate, switchSe
     const [message, setMessage] = useState('');
     const [jumptakeId, setJumpTakeId] = useState(initialJumpTakeId || '');
     const [isReplacingResume, setIsReplacingResume] = useState(false);
+    const [isUploadingProfileImage, setIsUploadingProfileImage] = useState(false);
     const resumeInputRef = useRef(null);
+    const profileImageInputRef = useRef(null);
     
     useEffect(() => {
         if (userId) {
@@ -358,6 +362,60 @@ const UserProfile = ({ userId, jumptakeId: initialJumpTakeId, onUpdate, switchSe
         }
     };
 
+    const handleProfileImageUpload = async (event) => {
+        const file = event.target.files?.[0];
+        event.target.value = '';
+        if (!file || !jobSeekerData?._id) {
+            return;
+        }
+
+        try {
+            setIsUploadingProfileImage(true);
+            setMessage('Preparing your profile picture...');
+            const profileImage = await createSquareProfileImage(file);
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/job-seekers/${jobSeekerData._id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({ profileImage })
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to update profile picture');
+            }
+
+            setJobSeekerData(data);
+            setMessage('Profile picture updated successfully.');
+            onUpdate?.();
+        } catch (error) {
+            setMessage(`Error: ${error.message}`);
+        } finally {
+            setIsUploadingProfileImage(false);
+        }
+    };
+
+    const profileImageControl = (
+        <>
+            <input
+                ref={profileImageInputRef}
+                type="file"
+                className="profile-resume-input"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                onChange={handleProfileImageUpload}
+            />
+            <button
+                type="button"
+                className="secondary-button profile-picture-upload-button"
+                onClick={() => profileImageInputRef.current?.click()}
+                disabled={isUploadingProfileImage}
+            >
+                {isUploadingProfileImage ? 'Uploading Picture...' : 'Upload Profile Picture'}
+            </button>
+        </>
+    );
+
     const resumeUploadControl = (
         <>
             <input
@@ -418,6 +476,15 @@ const UserProfile = ({ userId, jumptakeId: initialJumpTakeId, onUpdate, switchSe
     return (
         <div className="profile-container">
             <div className="profile-header">
+                <div className="profile-picture-panel">
+                    <ProfileAvatar
+                        imageSrc={jobSeekerData.profileImage}
+                        name={jobSeekerData.name}
+                        className="profile-picture-avatar"
+                        imageClassName="profile-avatar-image"
+                    />
+                    {profileImageControl}
+                </div>
                 {!isEditing ? (
                     <div className="profile-header-actions">
                         <button

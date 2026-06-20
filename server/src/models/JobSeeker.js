@@ -14,6 +14,10 @@ const JobSeekerSchema = new mongoose.Schema({
     trim: true,
     lowercase: true
   },
+  profileImage: {
+    type: String,
+    default: ''
+  },
   education: {
     type: mongoose.Schema.Types.Mixed
   },

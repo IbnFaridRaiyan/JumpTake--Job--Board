@@ -1,6 +1,7 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle } from 'react';
 import WithdrawButton from './WithdrawButton';
 import ResumeFilePreview from './ResumeFilePreview';
+import ProfileAvatar from './ProfileAvatar';
 
 const MOBILE_APPLICATIONS_PER_PAGE = 4;
 
@@ -289,7 +290,8 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
                 </div>
 
                 <div className="application-detail-view">
-                    <div className="profile-section">
+                    <div className="profile-section company-profile-summary">
+                        <ProfileAvatar imageSrc={selectedCompany.logo} name={selectedCompany.name} className="application-company-logo" imageClassName="profile-avatar-image" />
                         <h3>{selectedCompany.name}</h3>
                         <p>{selectedCompany.industry || 'Industry not specified'}</p>
                     </div>

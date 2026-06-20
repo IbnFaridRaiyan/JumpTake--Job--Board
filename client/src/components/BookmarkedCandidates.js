@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ContactCandidate from './ContactCandidate';
+import ProfileAvatar from './ProfileAvatar';
 
 const BookmarkedCandidates = ({ userId, onBack, onFooterBack }) => {
     const [bookmarks, setBookmarks] = useState([]);
@@ -233,7 +234,7 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack }) => {
                         <button onClick={() => setSelectedCandidate(null)} className="back-button">Back to Bookmarked Candidates</button>
                     </div>
                     <div className="candidate-header-info">
-                        <div className="candidate-initial">{selectedCandidate.name ? selectedCandidate.name.charAt(0).toUpperCase() : 'C'}</div>
+                        <ProfileAvatar imageSrc={selectedCandidate.profileImage} name={selectedCandidate.name} className="candidate-initial" imageClassName="profile-avatar-image" />
                         <div className="candidate-header-text">
                             <h2>{selectedCandidate.name || 'Unnamed Candidate'}</h2>
                             <p>Public candidate profile</p>
@@ -302,7 +303,7 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack }) => {
                                     </button>
                                 </div>
                                 <button type="button" className="bookmark-star-button active talent-bookmark-button" onClick={(event) => { event.stopPropagation(); removeBookmark(candidate._id); }} />
-                                <div className="candidate-avatar">{candidate.name ? candidate.name.charAt(0).toUpperCase() : 'C'}</div>
+                                <ProfileAvatar imageSrc={candidate.profileImage} name={candidate.name} className="candidate-avatar" imageClassName="profile-avatar-image" />
                                 <div className="candidate-info">
                                     <h3 className="candidate-name">{candidate.name || 'Unnamed Candidate'}</h3>
                                     <p className="candidate-email">{candidate.jumptakeId || 'JumpTake ID unavailable'}</p>

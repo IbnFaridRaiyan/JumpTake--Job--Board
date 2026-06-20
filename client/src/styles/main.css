@@ -26468,3 +26468,276 @@ html[data-theme="light"] .talent-bookmark-button::before {
     box-shadow: 0 10px 22px rgba(110, 84, 44, 0.08) !important;
   }
 }
+.profile-avatar-image,
+.company-avatar-image,
+.portal-sidebar-avatar img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+.resume-playground-editor-document:empty::before {
+  content: none !important;
+}
+
+.resume-playground-editor-actions .secondary-button,
+.resume-playground-editor-actions .secondary-button * {
+  color: #111111 !important;
+}
+
+.resume-playground-open-session {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(99, 192, 184, 0.28);
+  border-radius: 0.9rem;
+  background: rgba(99, 192, 184, 0.08);
+  color: #ffffff;
+}
+
+.resume-playground-open-session .settings-button {
+  margin: 0;
+}
+
+.profile-header {
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.profile-picture-panel,
+.company-logo-editor {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.profile-picture-avatar {
+  width: 112px;
+  height: 112px;
+  flex: 0 0 112px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  background: #59a89f;
+  color: #0d302a;
+  font-size: 2.4rem;
+  font-weight: 700;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+.profile-picture-upload-button,
+.company-logo-upload-button {
+  margin: 0 !important;
+}
+
+.company-logo-editor {
+  flex: 0 0 auto;
+  align-items: flex-start;
+}
+
+.company-title {
+  min-width: 0;
+}
+
+.company-logo-upload-row {
+  display: flex;
+  width: 100%;
+  margin-top: 0.75rem;
+}
+
+.company-avatar {
+  overflow: hidden;
+}
+
+.portal-sidebar-avatar {
+  overflow: hidden;
+}
+
+.company-logo-upload-button,
+.company-logo-upload-button *,
+.company-profile-container .company-logo-upload-button,
+.company-profile-container .company-logo-upload-button * {
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+}
+
+.job-company-logo {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.82);
+  border-radius: 14px;
+  background: #59a89f;
+  color: #102f2a;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.65rem;
+}
+
+.preview-company-logo,
+.application-company-logo {
+  width: 82px;
+  height: 82px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  border-radius: 18px;
+  background: #59a89f;
+  color: #102f2a;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 auto 0.8rem;
+}
+
+.company-profile-summary {
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .resume-playground-open-session {
+    display: none;
+  }
+
+  .profile-picture-panel {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .profile-picture-avatar {
+    width: 82px;
+    height: 82px;
+    flex-basis: 82px;
+    font-size: 1.8rem;
+  }
+
+  .profile-picture-upload-button {
+    width: 100%;
+  }
+
+  .company-logo-editor {
+    align-items: flex-start;
+    width: auto;
+  }
+
+  .company-logo-upload-button {
+    width: 100%;
+    font-size: 0.72rem;
+  }
+
+  .home-page .dashboard-container.mobile-section-open .mobile-dashboard-section-panel.mobile-section-profile.is-open > .profile-container > .profile-header:first-child {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.65rem !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0.55rem !important;
+    background: #000000 !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-picture-panel {
+    display: grid !important;
+    grid-template-columns: 4.75rem minmax(0, 1fr) !important;
+    align-items: center !important;
+    justify-content: stretch !important;
+    gap: 0.65rem !important;
+    width: 100% !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-picture-avatar {
+    width: 4.75rem !important;
+    height: 4.75rem !important;
+    min-width: 4.75rem !important;
+    flex-basis: 4.75rem !important;
+    margin: 0 !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-picture-upload-button,
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-header-actions,
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-header-actions .edit-profile-button,
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-header-actions .upload-resume-button {
+    display: flex !important;
+    width: 100% !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-picture-upload-button,
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-header-actions .edit-profile-button,
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-header-actions .upload-resume-button {
+    min-height: 2.45rem !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-header-actions {
+    flex-direction: row !important;
+    align-items: stretch !important;
+    gap: 0.5rem !important;
+  }
+
+  .mobile-section-company-profile.is-open .company-header {
+    display: grid !important;
+    grid-template-columns: 4.25rem minmax(0, 1fr) !important;
+    align-items: start !important;
+    gap: 0.75rem !important;
+  }
+
+  .mobile-section-company-profile.is-open .company-logo-editor {
+    width: 4.25rem !important;
+  }
+
+  .mobile-section-company-profile.is-open .company-avatar {
+    margin: 0 !important;
+  }
+
+  .mobile-section-company-profile.is-open .company-title {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+  }
+
+  .mobile-section-company-profile.is-open .company-logo-upload-row,
+  .mobile-section-company-profile.is-open .company-logo-upload-button {
+    display: flex !important;
+    width: 100% !important;
+  }
+
+  .mobile-section-company-profile.is-open .company-logo-upload-button {
+    min-height: 2.4rem !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+  }
+
+  .job-company-logo {
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    font-size: 1rem;
+  }
+
+  .preview-company-logo,
+  .application-company-logo {
+    width: 64px;
+    height: 64px;
+    border-radius: 15px;
+    font-size: 1.45rem;
+  }
+}

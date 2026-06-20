@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import ContactCandidate from './ContactCandidate';
+import ProfileAvatar from './ProfileAvatar';
 
 const FriendInvitations = ({ userId }) => {
     const [connections, setConnections] = useState({ incoming: [], outgoing: [], friends: [] });
@@ -72,6 +73,7 @@ const FriendInvitations = ({ userId }) => {
             user: peer.userId || null,
             name: peer.name || 'Candidate',
             email: peer.email || '',
+            profileImage: peer.profileImage || '',
             jumptakeId: peer.jumptakeId || '',
             skills: peer.skills || [],
             education: peer.education || [],
@@ -125,9 +127,7 @@ const FriendInvitations = ({ userId }) => {
 
         return (
             <>
-                <div className="friend-invitation-avatar">
-                    {(candidate.name || 'C').charAt(0).toUpperCase()}
-                </div>
+                <ProfileAvatar imageSrc={candidate.profileImage} name={candidate.name} className="friend-invitation-avatar" imageClassName="profile-avatar-image" />
                 <div className="friend-invitation-copy">
                     <h3>{candidate.name || 'Candidate'}</h3>
                     {candidate.jumptakeId && <p>JumpTake ID: {candidate.jumptakeId}</p>}
@@ -246,7 +246,7 @@ const FriendInvitations = ({ userId }) => {
                         <button onClick={() => setSelectedCandidate(null)} className="back-button">Back to Friends</button>
                     </div>
                     <div className="candidate-header-info">
-                        <div className="candidate-initial">{selectedCandidate.name ? selectedCandidate.name.charAt(0).toUpperCase() : 'C'}</div>
+                        <ProfileAvatar imageSrc={selectedCandidate.profileImage} name={selectedCandidate.name} className="candidate-initial" imageClassName="profile-avatar-image" />
                         <div className="candidate-header-text">
                             <h2>{selectedCandidate.name || 'Unnamed Candidate'}</h2>
                             <p>{selectedCandidate.jumptakeId || 'Connected candidate profile'}</p>

@@ -1,17 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import ProfileAvatar from './ProfileAvatar';
+import { createSquareProfileImage } from '../utils/profileImages';
 
 const CompanyProfile = ({ company, jobStats, onBack, onCompanyUpdated, onFooterBack }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [isProcessingLogo, setIsProcessingLogo] = useState(false);
+    const logoInputRef = useRef(null);
     const [formData, setFormData] = useState({
         name: '',
         industry: '',
         founded: '',
         headquarters: '',
         website: '',
-        description: ''
+        description: '',
+        logo: ''
     });
 
     useEffect(() => {
@@ -22,7 +27,8 @@ const CompanyProfile = ({ company, jobStats, onBack, onCompanyUpdated, onFooterB
                 founded: company.founded || '',
                 headquarters: company.headquarters || '',
                 website: company.website || '',
-                description: company.description || ''
+                description: company.description || '',
+                logo: company.logo || ''
             });
         }
     }, [company]);
@@ -73,7 +79,8 @@ const CompanyProfile = ({ company, jobStats, onBack, onCompanyUpdated, onFooterB
             founded: company.founded || '',
             headquarters: company.headquarters || '',
             website: company.website || '',
-            description: company.description || ''
+            description: company.description || '',
+            logo: company.logo || ''
         });
         setError('');
         setSuccessMessage('');
@@ -131,6 +138,25 @@ const CompanyProfile = ({ company, jobStats, onBack, onCompanyUpdated, onFooterB
         }
     };
 
+    const handleLogoUpload = async (event) => {
+        const file = event.target.files?.[0];
+        event.target.value = '';
+        if (!file) {
+            return;
+        }
+
+        try {
+            setIsProcessingLogo(true);
+            setError('');
+            const logo = await createSquareProfileImage(file);
+            setFormData((current) => ({ ...current, logo }));
+        } catch (logoError) {
+            setError(logoError.message || 'Failed to prepare the company logo.');
+        } finally {
+            setIsProcessingLogo(false);
+        }
+    };
+
     const currentCompany = isEditing ? formData : company;
     const stats = jobStats || {
         activeJobs: 0,
@@ -147,14 +173,39 @@ const CompanyProfile = ({ company, jobStats, onBack, onCompanyUpdated, onFooterB
             <div className="company-profile-content">
                 <div className="company-profile-card">
                     <div className="company-header">
-                        <div className="company-avatar">
-                            {(currentCompany.name || 'C').charAt(0).toUpperCase()}
+                        <div className="company-logo-editor">
+                            <ProfileAvatar
+                                imageSrc={currentCompany.logo}
+                                name={currentCompany.name}
+                                className="company-avatar"
+                                imageClassName="company-avatar-image"
+                                alt={`${currentCompany.name || 'Company'} logo`}
+                            />
                         </div>
                         <div className="company-title">
                             <h3>{currentCompany.name || 'Company name'}</h3>
                             <span className="company-industry">
                                 {currentCompany.industry || 'Industry not specified'}
                             </span>
+                            {isEditing && (
+                                <div className="company-logo-upload-row">
+                                    <input
+                                        ref={logoInputRef}
+                                        type="file"
+                                        className="profile-resume-input"
+                                        accept="image/jpeg,image/png,image/webp,image/gif"
+                                        onChange={handleLogoUpload}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="secondary-button company-logo-upload-button"
+                                        onClick={() => logoInputRef.current?.click()}
+                                        disabled={isProcessingLogo}
+                                    >
+                                        {isProcessingLogo ? 'Preparing Logo...' : 'Upload Company Logo'}
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
 

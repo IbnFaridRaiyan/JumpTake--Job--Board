@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ResumeFilePreview from './ResumeFilePreview';
+import ProfileAvatar from './ProfileAvatar';
 
 const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
     const [applications, setApplications] = useState([]);
@@ -171,7 +172,7 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
                             </button>
                         </div>
                         <div className="candidate-header-info">
-                            <div className="candidate-initial">C</div>
+                            <ProfileAvatar name="Candidate" className="candidate-initial" imageClassName="profile-avatar-image" />
                             <div className="candidate-header-text">
                                 <h2>Candidate Profile Unavailable</h2>
                                 <p>{selectedApplication?.user?.email || 'Email not available'}</p>
@@ -206,9 +207,7 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
                         </button>
                     </div>
                     <div className="candidate-header-info">
-                        <div className="candidate-initial">
-                            {candidate.name ? candidate.name.charAt(0).toUpperCase() : 'C'}
-                        </div>
+                        <ProfileAvatar imageSrc={candidate.profileImage} name={candidate.name} className="candidate-initial" imageClassName="profile-avatar-image" />
                         <div className="candidate-header-text">
                             <h2>{candidate.name || 'Unnamed Candidate'}</h2>
                             <p>{candidate.email || selectedApplication?.user?.email || 'Email not available'}</p>
@@ -420,9 +419,7 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
                         </button>
                     </div>
                     <div className="candidate-header-info">
-                        <div className="candidate-initial">
-                            {candidate?.name ? candidate.name.charAt(0).toUpperCase() : 'A'}
-                        </div>
+                        <ProfileAvatar imageSrc={candidate?.profileImage} name={candidate?.name || 'Application'} className="candidate-initial" imageClassName="profile-avatar-image" />
                         <div className="candidate-header-text">
                             <h2>{selectedApplication.job?.title || 'Application Details'}</h2>
                             <p>{candidate?.name || selectedApplication.user?.email || 'Candidate not available'}</p>

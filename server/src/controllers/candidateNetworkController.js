@@ -88,6 +88,7 @@ const publicCandidate = (candidate, matchSummary, connectionStatus) => ({
     _id: candidate._id,
     user: candidate.user,
     name: candidate.name || 'Candidate',
+    profileImage: candidate.profileImage || '',
     skills: candidate.skills || [],
     education: candidate.education || [],
     degrees: candidate.degrees || [],
@@ -244,7 +245,7 @@ const getConnections = async (req, res) => {
             .select('email jumptakeId');
         const userMap = new Map(relatedUsers.map((user) => [String(user._id), user]));
         const profiles = await JobSeeker.find({ user: { $in: relatedUserIds } })
-            .select('user name email skills education experience achievements interests hobbies');
+            .select('user name email profileImage skills education experience achievements interests hobbies');
         const profileMap = new Map(profiles.map((profile) => [String(profile.user), profile]));
 
         const serialize = (connection) => {
@@ -268,6 +269,7 @@ const getConnections = async (req, res) => {
                     jumptakeId: peerUser?.jumptakeId || peerAccount?.jumptakeId || null,
                     name: profile?.name || fallbackName,
                     email: profile?.email || peerAccount?.email || '',
+                    profileImage: profile?.profileImage || '',
                     skills: profile?.skills || [],
                     education: profile?.education || [],
                     experience: profile?.experience || [],

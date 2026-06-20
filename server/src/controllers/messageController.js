@@ -94,8 +94,8 @@ const stripHtml = (html = '') => (
 );
 
 const populateThread = (query) => query
-    .populate('company', 'name industry')
-    .populate('candidate', 'name email skills education experience')
+    .populate('company', 'name industry logo')
+    .populate('candidate', 'name email profileImage skills education experience')
     .populate('candidateUser', 'email')
     .populate('participantUsers', 'jumptakeId')
     .populate('candidateProfiles', 'name skills education experience achievements interests hobbies user');

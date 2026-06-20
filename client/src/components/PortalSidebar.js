@@ -31,6 +31,7 @@ const PortalSidebar = ({
     userName,
     userSubtitle,
     userInitial = 'U',
+    userImage = '',
     primaryItems = [],
     secondaryItems = [],
     onLogout,
@@ -93,7 +94,9 @@ const PortalSidebar = ({
                         </label>
                     </div>
                     <figure className="portal-sidebar-profile">
-                        <div className="portal-sidebar-avatar">{userInitial}</div>
+                        <div className="portal-sidebar-avatar">
+                            {userImage ? <img src={userImage} alt="" /> : userInitial}
+                        </div>
                         <figcaption>
                             <p className="portal-sidebar-user-id">{userName}</p>
                             <p className="portal-sidebar-user-role">{userSubtitle}</p>

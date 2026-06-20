@@ -39,6 +39,10 @@ const updateCompanyInfo = async (req, res) => {
             website: req.body.website
         };
 
+        if (typeof req.body.logo === 'string') {
+            updates.logo = req.body.logo;
+        }
+
         if (!updates.name || !updates.name.trim()) {
             return res.status(400).json({ error: 'Company name is required' });
         }

@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import ContactCandidate from './ContactCandidate';
+import ProfileAvatar from './ProfileAvatar';
 
 const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employer', currentUserId }) => {
     const [candidates, setCandidates] = useState([]);
@@ -689,9 +690,12 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                             </button>
                         </div>
                         <div className="candidate-header-info">
-                            <div className="candidate-initial">
-                                {selectedCandidate.name ? selectedCandidate.name.charAt(0).toUpperCase() : 'C'}
-                            </div>
+                            <ProfileAvatar
+                                imageSrc={selectedCandidate.profileImage}
+                                name={selectedCandidate.name}
+                                className="candidate-initial"
+                                imageClassName="profile-avatar-image"
+                            />
                         <div className="candidate-header-text">
                             <h2>{selectedCandidate.name || 'Unnamed Candidate'}</h2>
                             <p>{mode === 'candidate' ? 'Public matched profile' : (selectedCandidate.email || 'Email not available')}</p>
@@ -855,30 +859,20 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                                         onClick={(event) => toggleTalentBookmark(candidate, event)}
                                         aria-label={bookmarkedTalentIds.includes(String(candidate._id)) ? 'Remove bookmark' : 'Bookmark talent'}
                                     />
-                                    <div className="candidate-avatar">
-                                        {candidate.name ? candidate.name.charAt(0).toUpperCase() : 'C'}
-                                    </div>
+                                    <ProfileAvatar
+                                        imageSrc={candidate.profileImage}
+                                        name={candidate.name}
+                                        className="candidate-avatar"
+                                        imageClassName="profile-avatar-image"
+                                    />
                                     <div className="candidate-info">
                                         <div className="candidate-name-row">
                                             <h3 className="candidate-name">{candidate.name || 'Unnamed Candidate'}</h3>
                                             {renderLikeButton(candidate)}
                                         </div>
-                                        {mode === 'employer' && <p className="candidate-email">{candidate.email || 'Email not available'}</p>}
-                                        
-                                        {mode === 'candidate' ? (
-                                            <div className="candidate-match-summary candidate-jumptake-meta">
-                                                <span>{candidate.jumptakeId || candidate.jumpTakeId || 'JumpTake ID unavailable'}</span>
-                                            </div>
-                                        ) : (
-                                            <div className="candidate-skills">
-                                                {getSkillList(candidate.skills).slice(0, 3).map((skill, index) => (
-                                                    <span key={index} className="candidate-skill-tag">{skill}</span>
-                                                ))}
-                                                {getSkillList(candidate.skills).length > 3 && (
-                                                    <span className="candidate-skill-tag more">+{getSkillList(candidate.skills).length - 3}</span>
-                                                )}
-                                            </div>
-                                        )}
+                                        <div className="candidate-match-summary candidate-jumptake-meta">
+                                            <span>{candidate.jumptakeId || candidate.jumpTakeId || candidate.user?.jumptakeId || 'JumpTake ID unavailable'}</span>
+                                        </div>
 
                                         {spotlightActive && (
                                             <div className="spotlight-match">

@@ -919,6 +919,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     userName={displayName}
                     userSubtitle={displayEmail}
                     userInitial={displayInitial}
+                    userImage={jobSeekerData?.profileImage || ''}
                     primaryItems={candidatePrimaryNavItems}
                     secondaryItems={candidateSecondaryNavItems}
                     onLogout={handleLogout}

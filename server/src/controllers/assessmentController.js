@@ -124,7 +124,7 @@ const populateAssessment = (query) => query
         select: 'title location jobType salary company',
         populate: {
             path: 'company',
-            select: 'name'
+            select: 'name logo'
         }
     })
     .populate({
@@ -132,7 +132,7 @@ const populateAssessment = (query) => query
         select: 'email jobSeekerId',
         populate: {
             path: 'jobSeekerId',
-            select: 'name email'
+            select: 'name email profileImage'
         }
     })
     .populate({
@@ -150,7 +150,7 @@ const populateAssignment = (query) => query
         select: 'title location jobType salary company',
         populate: {
             path: 'company',
-            select: 'name industry headquarters website founded description'
+            select: 'name industry headquarters website founded description logo'
         }
     })
     .populate({
@@ -158,7 +158,7 @@ const populateAssignment = (query) => query
         select: 'email jobSeekerId',
         populate: {
             path: 'jobSeekerId',
-            select: 'name email'
+            select: 'name email profileImage'
         }
     })
     .populate({

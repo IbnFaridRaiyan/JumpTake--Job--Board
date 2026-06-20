@@ -142,6 +142,7 @@ const buildProfileSnapshot = (profileInput = {}, user = null, fallbackProfile = 
     return {
         name: normalizeString(source.name || baseProfile.name || ''),
         email: normalizeString(source.email || baseProfile.email || user?.email || ''),
+        profileImage: normalizeString(source.profileImage || baseProfile.profileImage || ''),
         skills: normalizeListValue(source.skills ?? baseProfile.skills ?? []),
         interests: normalizeListValue(source.interests ?? baseProfile.interests ?? []),
         hobbies: normalizeListValue(source.hobbies ?? baseProfile.hobbies ?? []),
@@ -216,7 +217,7 @@ const createOrUpdateDraftApplication = async (req, res) => {
             path: 'job',
             populate: {
                 path: 'company',
-                select: 'name industry'
+                select: 'name industry logo'
             }
         });
 
@@ -237,7 +238,7 @@ const getUserDraftApplications = async (req, res) => {
                 path: 'job',
                 populate: {
                     path: 'company',
-                    select: 'name industry'
+                    select: 'name industry logo'
                 }
             })
             .sort({ updatedAt: -1 });
@@ -300,7 +301,7 @@ const getUserJobBookmarks = async (req, res) => {
                 path: 'job',
                 populate: {
                     path: 'company',
-                    select: 'name industry'
+                    select: 'name industry logo'
                 }
             })
             .sort({ createdAt: -1 });
@@ -366,7 +367,7 @@ const getCompanyApplicationBookmarks = async (req, res) => {
                         path: 'job',
                         populate: {
                             path: 'company',
-                            select: 'name'
+                            select: 'name logo'
                         }
                     },
                     {
@@ -435,7 +436,13 @@ const createTalentBookmark = async (req, res) => {
 const getCompanyTalentBookmarks = async (req, res) => {
     try {
         const bookmarks = await TalentBookmark.find({ company: req.params.companyId })
-            .populate('candidate')
+            .populate({
+                path: 'candidate',
+                populate: {
+                    path: 'user',
+                    select: 'jumptakeId'
+                }
+            })
             .sort({ createdAt: -1 });
 
         return res.status(200).json(bookmarks);
@@ -477,7 +484,7 @@ const createCandidateBookmark = async (req, res) => {
             { user: userId, candidate: candidateId },
             { user: userId, candidate: candidateId },
             { new: true, upsert: true, setDefaultsOnInsert: true }
-        ).populate('candidate', 'name skills education degrees experience achievements interests hobbies user');
+        ).populate('candidate', 'name profileImage skills education degrees experience achievements interests hobbies user');
 
         return res.status(201).json(bookmark);
     } catch (error) {
@@ -492,7 +499,7 @@ const createCandidateBookmark = async (req, res) => {
 const getUserCandidateBookmarks = async (req, res) => {
     try {
         const bookmarks = await CandidateBookmark.find({ user: req.params.userId })
-            .populate('candidate', 'name skills education degrees experience achievements interests hobbies user')
+            .populate('candidate', 'name profileImage skills education degrees experience achievements interests hobbies user')
             .sort({ createdAt: -1 });
 
         return res.status(200).json(bookmarks);

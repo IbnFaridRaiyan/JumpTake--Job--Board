@@ -67,7 +67,7 @@ const sendJobInvitations = async (req, res) => {
             return res.status(400).json({ error: 'Company and job are required' });
         }
 
-        const job = await Job.findById(jobId).populate('company', 'name');
+        const job = await Job.findById(jobId).populate('company', 'name logo');
         if (!job) {
             return res.status(404).json({ error: 'Job not found' });
         }
@@ -148,10 +148,10 @@ const getCandidateJobInvitations = async (req, res) => {
                 select: 'title jobNumber location jobType salary description company',
                 populate: {
                     path: 'company',
-                    select: 'name industry headquarters description website'
+                    select: 'name industry headquarters description website logo'
                 }
             })
-            .populate('company', 'name industry')
+            .populate('company', 'name industry logo')
             .sort({ createdAt: -1 });
 
         return res.status(200).json(invitations);

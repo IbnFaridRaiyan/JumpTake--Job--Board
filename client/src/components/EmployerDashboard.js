@@ -768,6 +768,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                     userName={employer?.companyName || 'Company'}
                     userSubtitle={employer?.username || ''}
                     userInitial={(employer?.companyName || 'C').charAt(0).toUpperCase()}
+                    userImage={companyData?.logo || ''}
                     primaryItems={employerPrimaryNavItems}
                     secondaryItems={employerSecondaryNavItems}
                     onLogout={handleLogout}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AnimatedDeleteButton from './AnimatedDeleteButton';
+import ProfileAvatar from './ProfileAvatar';
 
 const BookmarkedApplications = ({ companyId, onBack, onFooterBack }) => {
     const [bookmarks, setBookmarks] = useState([]);
@@ -86,7 +87,7 @@ const BookmarkedApplications = ({ companyId, onBack, onFooterBack }) => {
                         <button onClick={() => setSelectedApplication(null)} className="back-button">Back to Bookmarked Applications</button>
                     </div>
                     <div className="candidate-header-info">
-                        <div className="candidate-initial">{candidate?.name ? candidate.name.charAt(0).toUpperCase() : 'C'}</div>
+                        <ProfileAvatar imageSrc={candidate?.profileImage} name={candidate?.name} className="candidate-initial" imageClassName="profile-avatar-image" />
                         <div className="candidate-header-text">
                             <h2>{candidate?.name || 'Unnamed Candidate'}</h2>
                             <p>{candidate?.email || 'Email not available'}</p>
@@ -115,7 +116,7 @@ const BookmarkedApplications = ({ companyId, onBack, onFooterBack }) => {
                         <button onClick={() => setSelectedApplication(null)} className="back-button">Back to Bookmarked Applications</button>
                     </div>
                     <div className="candidate-header-info">
-                        <div className="candidate-initial">{candidate?.name ? candidate.name.charAt(0).toUpperCase() : 'A'}</div>
+                        <ProfileAvatar imageSrc={candidate?.profileImage} name={candidate?.name || 'Application'} className="candidate-initial" imageClassName="profile-avatar-image" />
                         <div className="candidate-header-text">
                             <h2>{selectedApplication.job?.title || 'Application Details'}</h2>
                             <p>{candidate?.name || selectedApplication.user?.email || 'Candidate not available'}</p>

@@ -72,8 +72,17 @@ router.get('/job-seekers', async (req, res) => {
         if (!payload.companyId) {
             return res.status(403).json({ error: 'The full candidate directory is available only to employers' });
         }
-        const jobSeekers = await JobSeeker.find().sort({ createdAt: -1 });
-        res.json(jobSeekers);
+        const jobSeekers = await JobSeeker.find()
+            .populate('user', 'jumptakeId')
+            .sort({ createdAt: -1 });
+        res.json(jobSeekers.map((candidate) => {
+            const serialized = candidate.toObject();
+            return {
+                ...serialized,
+                user: candidate.user?._id || candidate.user || null,
+                jumptakeId: candidate.user?.jumptakeId || null
+            };
+        }));
     } catch (error) {
         res.status(error.status || 500).json({ error: error.message });
     }

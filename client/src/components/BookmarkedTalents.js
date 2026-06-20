@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ContactCandidate from './ContactCandidate';
+import ProfileAvatar from './ProfileAvatar';
 
 const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
     const [bookmarks, setBookmarks] = useState([]);
@@ -121,10 +122,10 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
                         <button onClick={() => setSelectedCandidate(null)} className="back-button">Back to Bookmarked Talents</button>
                     </div>
                     <div className="candidate-header-info">
-                        <div className="candidate-initial">{selectedCandidate.name ? selectedCandidate.name.charAt(0).toUpperCase() : 'C'}</div>
+                        <ProfileAvatar imageSrc={selectedCandidate.profileImage} name={selectedCandidate.name} className="candidate-initial" imageClassName="profile-avatar-image" />
                         <div className="candidate-header-text">
                             <h2>{selectedCandidate.name || 'Unnamed Candidate'}</h2>
-                            <p>{selectedCandidate.email || 'Email not available'}</p>
+                            <p>{selectedCandidate.user?.jumptakeId || selectedCandidate.jumptakeId || 'JumpTake ID unavailable'}</p>
                         </div>
                     </div>
                 </div>
@@ -160,10 +161,10 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
                         return (
                             <div key={bookmark._id} className="candidate-card" onClick={() => setSelectedCandidate(candidate)}>
                                 <button type="button" className="bookmark-star-button active talent-bookmark-button" onClick={(event) => { event.stopPropagation(); removeBookmark(candidate._id); }} />
-                                <div className="candidate-avatar">{candidate.name ? candidate.name.charAt(0).toUpperCase() : 'C'}</div>
+                                <ProfileAvatar imageSrc={candidate.profileImage} name={candidate.name} className="candidate-avatar" imageClassName="profile-avatar-image" />
                                 <div className="candidate-info">
                                     <h3 className="candidate-name">{candidate.name || 'Unnamed Candidate'}</h3>
-                                    <p className="candidate-email">{candidate.email || 'Email not available'}</p>
+                                    <p className="candidate-email">{candidate.user?.jumptakeId || candidate.jumptakeId || 'JumpTake ID unavailable'}</p>
                                 </div>
                                 <div className="candidate-view-profile">View Profile</div>
                             </div>

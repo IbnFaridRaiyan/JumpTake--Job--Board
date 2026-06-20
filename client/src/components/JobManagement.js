@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import AnimatedDeleteButton from './AnimatedDeleteButton';
 import EditJob from './EditJob';
 import ResumeFilePreview from './ResumeFilePreview';
+import ProfileAvatar from './ProfileAvatar';
 import { sendApplicationStatusEmail } from '../utils/emailVerification';
 
 const createQuestion = (type = 'multiple-choice') => ({
@@ -1156,7 +1157,7 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                         Back to Applicants
                     </button>
                     <div className="candidate-header-info">
-                        <div className="candidate-initial">{candidate?.name ? candidate.name.charAt(0).toUpperCase() : 'C'}</div>
+                        <ProfileAvatar imageSrc={candidate?.profileImage} name={candidate?.name} className="candidate-initial" imageClassName="profile-avatar-image" />
                         <div className="candidate-header-text">
                             <h2>{candidate?.name || 'Unnamed Candidate'}</h2>
                             <p>{getCandidateEmail(selectedApplication)}</p>
@@ -1691,7 +1692,7 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
                     Back
                 </button>
                 <div className="candidate-header-info">
-                    <div className="candidate-initial">{getCandidateName(selectedAssignment).charAt(0).toUpperCase()}</div>
+                    <ProfileAvatar imageSrc={getCandidateProfile(selectedAssignment)?.profileImage} name={getCandidateName(selectedAssignment)} className="candidate-initial" imageClassName="profile-avatar-image" />
                     <div className="candidate-header-text">
                         <h2>{selectedAssignment.title}</h2>
                         <p>{getCandidateName(selectedAssignment)} - {getCandidateNumber(selectedAssignment)}</p>

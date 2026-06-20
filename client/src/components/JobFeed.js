@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import ResumeFilePreview from './ResumeFilePreview';
+import ProfileAvatar from './ProfileAvatar';
 
 const FONT_OPTIONS = [
     { label: 'Share Tech', value: 'Share Tech' },
@@ -114,6 +115,7 @@ const normalizeSkillList = (value) => {
 const createApplicationProfileDraft = (profileData, userData = {}) => ({
     name: profileData?.name || '',
     email: profileData?.email || userData?.email || '',
+    profileImage: profileData?.profileImage || '',
     skills: formatCommaSeparatedValue(profileData?.skills),
     interests: formatCommaSeparatedValue(profileData?.interests),
     hobbies: formatCommaSeparatedValue(profileData?.hobbies),
@@ -125,6 +127,7 @@ const createApplicationProfileDraft = (profileData, userData = {}) => ({
 const prepareApplicationProfileSnapshot = (profileDraft) => ({
     name: profileDraft.name.trim(),
     email: profileDraft.email.trim(),
+    profileImage: profileDraft.profileImage || '',
     skills: splitCommaSeparatedValue(profileDraft.skills),
     interests: splitCommaSeparatedValue(profileDraft.interests),
     hobbies: splitCommaSeparatedValue(profileDraft.hobbies),
@@ -1248,6 +1251,13 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                                     onClick={() => handleJobClick(job)}
                                 >
                                     <div className="job-card-header">
+                                        <ProfileAvatar
+                                            imageSrc={job.company?.logo}
+                                            name={job.company?.name}
+                                            className="job-company-logo"
+                                            imageClassName="profile-avatar-image"
+                                            alt={`${job.company?.name || 'Company'} logo`}
+                                        />
                                         <button
                                             type="button"
                                             className={`bookmark-star-button ${isBookmarked ? 'active' : ''}`}
@@ -1344,6 +1354,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                     <div className="job-preview-modal" ref={previewModalRef} onClick={(e) => e.stopPropagation()}>
                         <div className="job-preview-header">
                             <button className="preview-close-btn" onClick={closePreview}>Ã—</button>
+                            <ProfileAvatar imageSrc={selectedCompany.logo} name={selectedCompany.name} className="preview-company-logo" imageClassName="profile-avatar-image" />
                             <h2>{selectedCompany.name}</h2>
                             <div className="preview-company-info">
                                 <span className="preview-company-name">
@@ -1398,6 +1409,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                 <div className="job-preview-overlay candidate-job-preview-overlay">
                     <div className="job-preview-modal candidate-job-preview-modal" ref={previewModalRef} onClick={(e) => e.stopPropagation()}>
                         <div className="mobile-job-preview-topbar">
+                            <ProfileAvatar imageSrc={previewJob.company?.logo} name={previewJob.company?.name} className="preview-company-logo" imageClassName="profile-avatar-image" />
                             <h2>{previewJob.title}</h2>
                             <button
                                 type="button"
@@ -1410,6 +1422,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                         </div>
                         <div className="job-preview-header">
                             <button className="preview-close-btn" onClick={closePreview}>×</button>
+                            <ProfileAvatar imageSrc={previewJob.company?.logo} name={previewJob.company?.name} className="preview-company-logo" imageClassName="profile-avatar-image" />
                             <h2>{previewJob.title}</h2>
                             <div className="preview-company-info">
                                 <span className="preview-company-name">{previewJob.company.name}</span>

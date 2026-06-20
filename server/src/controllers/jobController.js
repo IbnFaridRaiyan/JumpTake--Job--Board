@@ -13,7 +13,7 @@ const getAllJobs = async (req, res) => {
     try {
        
         const jobs = await Job.find({ active: true })
-            .populate('company', 'name industry headquarters')
+            .populate('company', 'name industry headquarters logo')
             .sort({ createdAt: -1 });
 
         await ensureReferenceNumbers(jobs, Job, 'jobNumber', 'JOB');
@@ -32,7 +32,7 @@ const getAllJobs = async (req, res) => {
 const getJobById = async (req, res) => {
     try {
         const job = await Job.findById(req.params.id)
-            .populate('company', 'name industry headquarters description website');
+            .populate('company', 'name industry headquarters description website logo');
             
         if (!job) {
             return res.status(404).json({ error: 'Job not found' });
@@ -260,7 +260,7 @@ const getRecommendedJobs = async (req, res) => {
         
         // Find active jobs with matching skills
         const jobs = await Job.find({ active: true })
-            .populate('company', 'name industry headquarters')
+            .populate('company', 'name industry headquarters logo')
             .sort({ createdAt: -1 });
 
         await ensureReferenceNumbers(jobs, Job, 'jobNumber', 'JOB');

@@ -19,6 +19,7 @@ const DEFAULT_EDITOR_MARGINS = {
     top: A4_TOP_PADDING,
     left: A4_LEFT_PADDING
 };
+const DEFAULT_TEXT_COLOR = '#000000';
 const MIN_TOP_MARGIN = 24;
 const MAX_TOP_MARGIN = 180;
 const MIN_LEFT_MARGIN = 24;
@@ -283,32 +284,8 @@ const SIGNATURE_STROKE_COLORS = {
     white: '#ffffff'
 };
 
-const createBlankEditorHtml = (name = 'Your Name', email = 'email@example.com') => `
-    <div style="font-family: Arial, sans-serif; color: #111827; padding: 36px 42px; min-height: 100%;">
-        <h1 style="font-size: 30px; margin: 0 0 8px;">${escapeHtml(name)}</h1>
-        <p style="font-size: 14px; color: #111111; margin: 0 0 24px;">${escapeHtml(email)} • Phone • LinkedIn • Location</p>
-        <h2 style="font-size: 16px; letter-spacing: 0.08em; text-transform: uppercase; margin: 28px 0 10px; border-bottom: 2px solid #0f172a; padding-bottom: 6px;">Summary</h2>
-        <p>Write a short professional summary tailored to the role you want.</p>
-        <h2 style="font-size: 16px; letter-spacing: 0.08em; text-transform: uppercase; margin: 28px 0 10px; border-bottom: 2px solid #0f172a; padding-bottom: 6px;">Experience</h2>
-        <p><strong>Job Title</strong> — Company Name</p>
-        <p style="color: #111111;">Date period • Location</p>
-        <ul>
-            <li>Add measurable impact and strong action verbs.</li>
-            <li>Keep achievements concise and easy to scan.</li>
-        </ul>
-        <h2 style="font-size: 16px; letter-spacing: 0.08em; text-transform: uppercase; margin: 28px 0 10px; border-bottom: 2px solid #0f172a; padding-bottom: 6px;">Education</h2>
-        <p><strong>Degree and Field of Study</strong> — School or University</p>
-        <p style="color: #111111;">Date period • Location</p>
-        <h2 style="font-size: 16px; letter-spacing: 0.08em; text-transform: uppercase; margin: 28px 0 10px; border-bottom: 2px solid #0f172a; padding-bottom: 6px;">Skills</h2>
-        <p>Skill • Skill • Skill • Skill</p>
-    </div>
-`;
-
-const createBlankDocumentHtml = () => `
-<div class="resume-template-shell" style="color: #111111;">
-  <p>Start building your document here...</p>
-</div>
-`;
+const createBlankEditorHtml = () => '<p><br></p>';
+const createBlankDocumentHtml = () => '<p><br></p>';
 
 const createTemplateLibrary = (name = 'YOUR NAME', email = 'Email') => {
     const safeName = escapeHtml(name);
@@ -645,6 +622,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
 
     const [activeTab, setActiveTab] = useState('create');
     const [createMode, setCreateMode] = useState('');
+    const [editorSuspended, setEditorSuspended] = useState(false);
     const [savedResumes, setSavedResumes] = useState([]);
     const [editorResume, setEditorResume] = useState(null);
     const [editorPageCount, setEditorPageCount] = useState(1);
@@ -653,6 +631,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [uploading, setUploading] = useState(false);
     const [spellcheckEnabled, setSpellcheckEnabled] = useState(true);
+    const [textColor, setTextColor] = useState(DEFAULT_TEXT_COLOR);
     const [editorMargins, setEditorMargins] = useState(DEFAULT_EDITOR_MARGINS);
     const [atsScanResult, setAtsScanResult] = useState(null);
     const [showAtsDetails, setShowAtsDetails] = useState(false);
@@ -677,7 +656,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         localStorage.setItem(storageKey, JSON.stringify(nextResumes));
     };
 
-    const createResumeRecord = ({ name, html, source = 'scratch', templateId = '', templateCategory: nextCategory = '' }) => {
+    const createResumeRecord = ({ name, html, source = 'scratch', templateId = '', templateCategory: nextCategory = '', textColor: nextTextColor = DEFAULT_TEXT_COLOR }) => {
         const now = new Date().toISOString();
         return {
             id: createResumeId(),
@@ -685,6 +664,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
             html,
             margins: { ...DEFAULT_EDITOR_MARGINS },
             pageMargins: createPageMargins(1),
+            textColor: nextTextColor,
             source,
             templateId,
             templateCategory: nextCategory,
@@ -1171,6 +1151,8 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
 
     const openEditor = (resume, nextTab = 'edit') => {
         setEditorResume(resume);
+        setEditorSuspended(false);
+        setTextColor(resume?.textColor || DEFAULT_TEXT_COLOR);
         setEditorMargins(resume?.margins ? { ...DEFAULT_EDITOR_MARGINS, ...resume.margins } : DEFAULT_EDITOR_MARGINS);
         setEditorPageMargins(
             Array.isArray(resume?.pageMargins) && resume.pageMargins.length
@@ -1220,6 +1202,30 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         selection.addRange(selectionRef.current);
     };
 
+    const applyTextColor = (color = textColor) => {
+        if (!editorResume || typeof document.execCommand !== 'function') {
+            return;
+        }
+
+        document.execCommand('styleWithCSS', false, true);
+        document.execCommand('foreColor', false, color || DEFAULT_TEXT_COLOR);
+    };
+
+    const handleTextColorChange = (color) => {
+        const nextColor = color || DEFAULT_TEXT_COLOR;
+        setTextColor(nextColor);
+        setEditorResume((current) => current ? { ...current, textColor: nextColor } : current);
+        restoreSelection();
+        applyTextColor(nextColor);
+        syncEditorResume();
+    };
+
+    const maintainTextColorForTyping = (event) => {
+        if (event.key === 'Enter' || (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey)) {
+            applyTextColor();
+        }
+    };
+
     const syncEditorResume = () => {
         if (!editorRef.current || !editorResume) {
             return;
@@ -1244,6 +1250,9 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
 
         restoreSelection();
         document.execCommand(command, false, value);
+        if (!['undo', 'redo', 'foreColor'].includes(command)) {
+            applyTextColor();
+        }
         syncEditorResume();
     };
 
@@ -1339,7 +1348,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
             name: `${displayName} ${resourceLabel}`,
             html: isDocumentMode
                 ? createBlankDocumentHtml()
-                : createBlankEditorHtml(displayName, displayEmail || 'email@example.com'),
+                : createBlankEditorHtml(),
             source: 'scratch'
         }), 'create');
     };
@@ -1387,6 +1396,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
             html: currentHtml,
             margins: { ...editorMargins },
             pageMargins: createPageMargins(editorPageCount, editorPageMargins),
+            textColor,
             updatedAt: now
         };
 
@@ -1433,7 +1443,8 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
             html: resume.html,
             source: resume.source,
             templateId: resume.templateId,
-            templateCategory: resume.templateCategory
+            templateCategory: resume.templateCategory,
+            textColor: resume.textColor || DEFAULT_TEXT_COLOR
         });
 
         persistResumes([duplicatedResume, ...savedResumes]);
@@ -1486,9 +1497,23 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
 
     const closeEditor = () => {
         setEditorResume(null);
+        setEditorSuspended(false);
         setAtsScanResult(null);
         setShowAtsDetails(false);
         clearMessages();
+    };
+
+    const handleTabChange = (nextTab) => {
+        setActiveTab(nextTab);
+        clearMessages();
+
+        if (editorResume && !isMobileViewport) {
+            const currentHtml = editorRef.current?.innerHTML;
+            if (currentHtml !== undefined) {
+                setEditorResume((current) => current ? { ...current, html: currentHtml } : current);
+            }
+            setEditorSuspended(true);
+        }
     };
 
     const editorStatusText = spellcheckEnabled
@@ -1574,30 +1599,21 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                 <button
                     type="button"
                     className={activeTab === 'create' ? 'is-active' : ''}
-                    onClick={() => {
-                        setActiveTab('create');
-                        clearMessages();
-                    }}
+                    onClick={() => handleTabChange('create')}
                 >
                     {isDocumentMode ? 'Create Document' : 'Create Resume'}
                 </button>
                 <button
                     type="button"
                     className={activeTab === 'edit' ? 'is-active' : ''}
-                    onClick={() => {
-                        setActiveTab('edit');
-                        clearMessages();
-                    }}
+                    onClick={() => handleTabChange('edit')}
                 >
                     {isDocumentMode ? 'Edit Document' : 'Edit Resume'}
                 </button>
                 <button
                     type="button"
                     className={activeTab === 'saved' ? 'is-active' : ''}
-                    onClick={() => {
-                        setActiveTab('saved');
-                        clearMessages();
-                    }}
+                    onClick={() => handleTabChange('saved')}
                 >
                     {isDocumentMode ? 'Saved Documents' : 'Saved Resumes'}
                 </button>
@@ -1606,7 +1622,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
             {statusMessage && <div className="notification-message success">{statusMessage}</div>}
             {errorMessage && <div className="error-message">{errorMessage}</div>}
 
-            {editorResume ? (
+            {editorResume && !editorSuspended ? (
                 (() => {
                     const atsPanel = !isDocumentMode && (
                         <aside className={`resume-playground-ats-panel ${atsScanResult?.colorClass || ''}${isMobileViewport ? ' resume-playground-ats-panel-mobile' : ''}`}>
@@ -1752,7 +1768,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                                         {renderIconButton('Underline', 'U', () => runCommand('underline'))}
                                         <label className="resume-playground-color-picker" title="Color" aria-label="Color">
                                             <span aria-hidden="true">🎨</span>
-                                            <input type="color" defaultValue="#111111" onInput={(event) => runCommand('foreColor', event.target.value)} onChange={(event) => runCommand('foreColor', event.target.value)} />
+                                            <input type="color" value={textColor} onInput={(event) => handleTextColorChange(event.target.value)} onChange={(event) => handleTextColorChange(event.target.value)} />
                                         </label>
                                         {renderIconButton('Add New Page', '+', insertPageBreak)}
                                         {renderIconButton('Delete Last Page', '−', removeLastPageBreak)}
@@ -1814,7 +1830,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                                             {renderIconButton('Underline', 'U', () => runCommand('underline'))}
                                             <label className="resume-playground-color-picker" title="Color" aria-label="Color">
                                                 <span aria-hidden="true">🎨</span>
-                                                <input type="color" defaultValue="#111111" onChange={(event) => runCommand('foreColor', event.target.value)} />
+                                                <input type="color" value={textColor} onChange={(event) => handleTextColorChange(event.target.value)} />
                                             </label>
                                         </div>
                                     </div>
@@ -1972,10 +1988,13 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                                 spellCheck={spellcheckEnabled}
                                 style={{
                                     minHeight: `${editorDocumentHeight}px`,
-                                    padding: `${editorMargins.top}px ${A4_RIGHT_PADDING}px ${A4_BOTTOM_PADDING}px ${editorMargins.left}px`
+                                    padding: `${editorMargins.top}px ${A4_RIGHT_PADDING}px ${A4_BOTTOM_PADDING}px ${editorMargins.left}px`,
+                                    color: DEFAULT_TEXT_COLOR,
+                                    caretColor: textColor
                                 }}
                                 onInput={syncEditorResume}
                                 onBlur={saveSelection}
+                                onKeyDown={maintainTextColorForTyping}
                                 onKeyUp={saveSelection}
                                 onMouseUp={saveSelection}
                                 onFocus={saveSelection}
@@ -1998,6 +2017,21 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                 })()
             ) : (
                 <>
+                    {editorResume && editorSuspended && !isMobileViewport && (
+                        <div className="resume-playground-open-session">
+                            <span>{`${editorResume.name || resourceLabel} is still open.`}</span>
+                            <button
+                                type="button"
+                                className="settings-button primary"
+                                onClick={() => {
+                                    setEditorSuspended(false);
+                                    clearMessages();
+                                }}
+                            >
+                                {`Return to ${resourceLabel} Editor`}
+                            </button>
+                        </div>
+                    )}
                     {activeTab === 'create' && (
                         <div className="resume-playground-panel">
                             <div className="resume-playground-choice-grid">

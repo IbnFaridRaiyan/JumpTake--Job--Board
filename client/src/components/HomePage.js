@@ -19,6 +19,7 @@ import Notifications from './Notifications';
 import FriendInvitations from './FriendInvitations';
 import FloatingMessenger from './FloatingMessenger';
 import ResumePlayground from './ResumePlayground';
+import PortalHomeFeed from './PortalHomeFeed';
 import logo from './media/logo3.png';
 import logoDark from './media/logo4.png';
 
@@ -46,6 +47,7 @@ const JOB_INTEREST_OPTIONS = [
 ];
 
 const CANDIDATE_SECTION_IDS = new Set([
+    'home',
     'job-feed',
     'notifications',
     'view-candidates',
@@ -66,6 +68,10 @@ const CANDIDATE_SECTION_IDS = new Set([
 
 const CANDIDATE_SECTION_STORAGE_KEY = 'jumptakeCandidateSection';
 
+const normalizeCandidateSection = (section) => (
+    section === 'job-feed' ? 'home' : section
+);
+
 const isMobileViewport = () => (
     typeof window !== 'undefined'
     && window.matchMedia('(max-width: 768px)').matches
@@ -73,17 +79,17 @@ const isMobileViewport = () => (
 
 const getInitialCandidateSection = () => {
     if (typeof window === 'undefined') {
-        return 'job-feed';
+        return 'home';
     }
 
     const hashValue = window.location.hash.replace(/^#/, '');
     const [portal, section] = hashValue.split(':');
     if (portal === 'candidate' && CANDIDATE_SECTION_IDS.has(section)) {
-        return section;
+        return normalizeCandidateSection(section);
     }
 
     const storedSection = sessionStorage.getItem(CANDIDATE_SECTION_STORAGE_KEY);
-    return CANDIDATE_SECTION_IDS.has(storedSection) ? storedSection : 'job-feed';
+    return CANDIDATE_SECTION_IDS.has(storedSection) ? normalizeCandidateSection(storedSection) : 'home';
 };
 
 const normalizeStringList = (value) => {
@@ -149,14 +155,16 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const displayInitial = displayName ? displayName.charAt(0).toUpperCase() : 'U';
 
     const updateActiveSection = (section, { push = true } = {}) => {
-        if (!CANDIDATE_SECTION_IDS.has(section)) {
+        const nextSectionValue = normalizeCandidateSection(section);
+
+        if (!CANDIDATE_SECTION_IDS.has(nextSectionValue)) {
             return;
         }
 
-        setActiveSection(section);
-        sessionStorage.setItem(CANDIDATE_SECTION_STORAGE_KEY, section);
+        setActiveSection(nextSectionValue);
+        sessionStorage.setItem(CANDIDATE_SECTION_STORAGE_KEY, nextSectionValue);
 
-        const nextHash = `#candidate:${section}`;
+        const nextHash = `#candidate:${nextSectionValue}`;
         if (window.location.hash !== nextHash) {
             if (push) {
                 window.history.pushState(null, '', nextHash);
@@ -167,7 +175,8 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     };
 
     const sectionTitles = {
-        'job-feed': 'Job Feed',
+        home: 'Home',
+        'job-feed': 'Home',
         applications: 'My Applications',
         assessments: 'My Assessments',
         'video-interviews': 'Video Interviews',
@@ -236,10 +245,11 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                 return;
             }
 
-            setActiveSection(section);
-            sessionStorage.setItem(CANDIDATE_SECTION_STORAGE_KEY, section);
+            const nextSection = normalizeCandidateSection(section);
+            setActiveSection(nextSection);
+            sessionStorage.setItem(CANDIDATE_SECTION_STORAGE_KEY, nextSection);
             if (isMobileViewport()) {
-                setMobileSectionVisible(section !== 'job-feed');
+                setMobileSectionVisible(nextSection !== 'home');
             }
         };
 
@@ -248,7 +258,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         if (!window.location.hash.startsWith('#candidate:')) {
             window.history.replaceState(null, '', `#candidate:${initialSection}`);
         }
-        if (isMobileViewport() && initialSection !== 'job-feed') {
+        if (isMobileViewport() && initialSection !== 'home') {
             setMobileSectionVisible(true);
         }
 
@@ -555,7 +565,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     };
 
     const candidatePrimaryNavItems = [
-        { id: 'job-feed', label: 'Job Feed', icon: 'briefcase' },
+        { id: 'home', label: 'Home', icon: 'dashboard' },
         { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 },
         { id: 'view-candidates', label: 'View Candidates', icon: 'users' },
         { id: 'friend-invitations', label: 'Friends', icon: 'user-plus' },
@@ -619,7 +629,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         }
 
         sessionStorage.setItem('jumptakeCandidateJobSearch', query);
-        openSection('job-feed');
+        openSection('home');
     };
 
     const handleOpenNotification = (notification) => {
@@ -638,12 +648,13 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             localStorage.setItem('jumptakeActiveJobAction', payload.intent === 'apply' ? 'apply' : 'preview');
         }
 
-        openSection(CANDIDATE_SECTION_IDS.has(nextSection) ? nextSection : 'notifications');
+        const normalizedSection = normalizeCandidateSection(nextSection);
+        openSection(CANDIDATE_SECTION_IDS.has(normalizedSection) ? normalizedSection : 'notifications');
     };
 
     const handleLogoClick = () => {
         sectionHistoryRef.current = [];
-        updateActiveSection('job-feed');
+        updateActiveSection('home');
         setMobileSectionVisible(false);
         resetMobilePanelScroll();
     };
@@ -680,7 +691,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
 
         if (previousSection) {
             updateActiveSection(previousSection);
-            setMobileSectionVisible(!isMobileViewport() || previousSection !== 'job-feed');
+            setMobileSectionVisible(!isMobileViewport() || previousSection !== 'home');
             resetMobilePanelScroll();
             return;
         }
@@ -691,7 +702,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             return;
         }
 
-        updateActiveSection('job-feed');
+        updateActiveSection('home');
         resetMobilePanelScroll();
     };
 
@@ -707,22 +718,33 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     };
 
     const renderContent = () => {
-        if (loading && activeSection === 'job-feed') {
+        if (loading && activeSection === 'home') {
             return (
                 <div className="loading-spinner">Loading job listings...</div>
             );
         }
 
         switch (activeSection) {
+            case 'home':
             case 'job-feed':
-                return <JobFeed
-                    jobs={jobs}
-                    error={error}
-                    userId={user?.id}
-                    onRefresh={refreshData}
-                    jobSeekerData={jobSeekerData}
+                return <PortalHomeFeed
+                    mode="candidate"
                     currentUser={user}
-                    returnToSection={returnToSection}
+                    profileData={jobSeekerData}
+                    jobs={jobs}
+                    jobPosts={(
+                        <JobFeed
+                            jobs={jobs}
+                            error={error}
+                            userId={user?.id}
+                            onRefresh={refreshData}
+                            jobSeekerData={jobSeekerData}
+                            currentUser={user}
+                            returnToSection={returnToSection}
+                            embedded
+                            title="Job Posts"
+                        />
+                    )}
                 />;
             case 'applications':
                 return <MyApplications
@@ -826,14 +848,24 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     onAppModeChange={onAppModeChange}
                 />;
             default:
-                return <JobFeed
-                    jobs={jobs}
-                    error={error}
-                    userId={user?.id}
-                    onRefresh={refreshData}
-                    jobSeekerData={jobSeekerData}
+                return <PortalHomeFeed
+                    mode="candidate"
                     currentUser={user}
-                    returnToSection={returnToSection}
+                    profileData={jobSeekerData}
+                    jobs={jobs}
+                    jobPosts={(
+                        <JobFeed
+                            jobs={jobs}
+                            error={error}
+                            userId={user?.id}
+                            onRefresh={refreshData}
+                            jobSeekerData={jobSeekerData}
+                            currentUser={user}
+                            returnToSection={returnToSection}
+                            embedded
+                            title="Job Posts"
+                        />
+                    )}
                 />;
         }
     };
@@ -847,7 +879,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                             type="button"
                             className="dashboard-logo-button"
                             onClick={handleLogoClick}
-                            aria-label="Go to Job Feed"
+                            aria-label="Go to Home"
                         >
                             <img src={dashboardLogo} alt="JumpTake Logo" className="candidate-dashboard-logo" />
                         </button>
@@ -870,7 +902,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                         type="button"
                         className="dashboard-logo-button"
                         onClick={handleLogoClick}
-                        aria-label="Go to Job Feed"
+                        aria-label="Go to Home"
                     >
                         <img src={dashboardLogo} alt="JumpTake Logo" className="candidate-dashboard-logo" />
                     </button>

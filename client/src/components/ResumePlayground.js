@@ -350,34 +350,34 @@ const buildAtsResumeHtml = (profile, variantIndex = 0) => {
     const contact = [profile.location, profile.phone, profile.email].filter(Boolean).map(escapeHtml).join(' | ');
 
     return `
-        <div style="font-family:${fonts[variantIndex % fonts.length]}; color:#111111; padding:34px 44px; font-size:${variantIndex % 3 === 0 ? '13px' : '14px'}; line-height:1.24;">
-            <div style="text-align:${headerAlign}; margin-bottom:14px;">
-                <div style="font-size:${variantIndex % 2 === 0 ? '27px' : '30px'}; font-weight:700; color:${accent}; letter-spacing:${variantIndex % 2 === 0 ? '0.01em' : '0'};">${safeName}</div>
-                <div style="font-size:12px; margin-top:4px;">${contact || 'Location | Phone | Email'}</div>
+        <div data-resume-template-root="ats" style="font-family:${fonts[variantIndex % fonts.length]}; color:#111111; width:100%; max-width:100%; box-sizing:border-box; padding:0; font-size:${variantIndex % 3 === 0 ? '11px' : '11.5px'}; line-height:1.16; overflow-wrap:break-word;">
+            <div style="text-align:${headerAlign}; margin-bottom:9px;">
+                <div style="font-size:${variantIndex % 2 === 0 ? '21px' : '23px'}; font-weight:700; color:${accent}; letter-spacing:${variantIndex % 2 === 0 ? '0.01em' : '0'};">${safeName}</div>
+                <div style="font-size:10.5px; margin-top:3px;">${contact || 'Location | Phone | Email'}</div>
             </div>
-            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:2px solid ${accent}; margin-top:12px;">Professional Summary</div>
-            <p style="margin:6px 0 10px;">${escapeHtml(profile.summary)}</p>
+            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:1.5px solid ${accent}; margin-top:8px;">Professional Summary</div>
+            <p style="margin:4px 0 7px;">${escapeHtml(profile.summary)}</p>
 
-            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:2px solid ${accent}; margin-top:12px;">Core Skills</div>
-            <p style="margin:6px 0 10px;">${escapeHtml((profile.skills.length ? profile.skills : ['Communication', 'Teamwork', 'Problem Solving']).join(' | '))}</p>
+            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:1.5px solid ${accent}; margin-top:8px;">Core Skills</div>
+            <p style="margin:4px 0 7px;">${escapeHtml((profile.skills.length ? profile.skills : ['Communication', 'Teamwork', 'Problem Solving']).join(' | '))}</p>
 
-            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:2px solid ${accent}; margin-top:12px;">Professional Experience</div>
-            <ul style="margin:6px 0 10px 18px; padding:0;">
+            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:1.5px solid ${accent}; margin-top:8px;">Professional Experience</div>
+            <ul style="margin:4px 0 7px 16px; padding:0;">
                 ${renderResumeBullets(profile.experience, 'Add your recent role, company, dates, responsibilities, and measurable achievements.')}
             </ul>
 
-            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:2px solid ${accent}; margin-top:12px;">Projects & Achievements</div>
-            <ul style="margin:6px 0 10px 18px; padding:0;">
+            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:1.5px solid ${accent}; margin-top:8px;">Projects & Achievements</div>
+            <ul style="margin:4px 0 7px 16px; padding:0;">
                 ${renderResumeBullets(profile.achievements, 'Add measurable achievements, awards, projects, or impact statements.')}
             </ul>
 
-            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:2px solid ${accent}; margin-top:12px;">Education</div>
-            <ul style="margin:6px 0 10px 18px; padding:0;">
+            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:1.5px solid ${accent}; margin-top:8px;">Education</div>
+            <ul style="margin:4px 0 7px 16px; padding:0;">
                 ${renderResumeBullets(profile.education, 'Add your institution, qualification, subjects, dates, and grade if relevant.')}
             </ul>
 
-            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:2px solid ${accent}; margin-top:12px;">Additional</div>
-            <p style="margin:6px 0 0;"><strong>Interests:</strong> ${escapeHtml((profile.interests.length ? profile.interests : ['Relevant interests']).join(', '))}</p>
+            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:1.5px solid ${accent}; margin-top:8px;">Additional</div>
+            <p style="margin:4px 0 0;"><strong>Interests:</strong> ${escapeHtml((profile.interests.length ? profile.interests : ['Relevant interests']).join(', '))}</p>
             <p style="margin:2px 0 0;"><strong>Hobbies:</strong> ${escapeHtml((profile.hobbies.length ? profile.hobbies : ['Relevant hobbies']).join(', '))}</p>
         </div>
     `;
@@ -390,33 +390,33 @@ const buildGeneralResumeHtml = (profile, variantIndex = 0, photo = '') => {
     ];
     const [dark, light] = themes[variantIndex % themes.length];
     const imageMarkup = photo
-        ? `<img src="${photo}" alt="${escapeHtml(profile.name)}" style="width:132px;height:132px;object-fit:cover;border-radius:${variantIndex % 2 ? '24px' : '50%'};border:5px solid #ffffff;margin:0 auto 20px;display:block;" />`
-        : `<div style="width:118px;height:118px;border-radius:${variantIndex % 2 ? '24px' : '50%'};border:5px solid #ffffff;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;background:${light};color:${dark};font-size:44px;font-weight:800;">${escapeHtml(profile.name.charAt(0).toUpperCase() || 'Y')}</div>`;
+        ? `<img src="${photo}" alt="${escapeHtml(profile.name)}" style="width:78px;height:78px;object-fit:cover;border-radius:${variantIndex % 2 ? '16px' : '50%'};border:3px solid #ffffff;margin:0 auto 12px;display:block;" />`
+        : `<div style="width:72px;height:72px;border-radius:${variantIndex % 2 ? '16px' : '50%'};border:3px solid #ffffff;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;background:${light};color:${dark};font-size:26px;font-weight:800;">${escapeHtml(profile.name.charAt(0).toUpperCase() || 'Y')}</div>`;
 
     return `
-        <div style="font-family:Arial, Helvetica, sans-serif; display:grid; grid-template-columns:230px 1fr; min-height:1030px; color:#111827;">
-            <aside style="background:${dark}; color:#ffffff; padding:34px 26px;">
+        <div data-resume-template-root="general" style="font-family:Arial, Helvetica, sans-serif; display:grid; grid-template-columns:165px minmax(0,1fr); width:100%; max-width:100%; box-sizing:border-box; color:#111827; font-size:10.5px; line-height:1.22; overflow:hidden;">
+            <aside style="background:${dark}; color:#ffffff; padding:18px 14px;">
                 ${imageMarkup}
-                <h3 style="letter-spacing:0.18em;font-size:15px;margin:18px 0 10px;">CONTACT</h3>
-                <p style="font-size:12px;line-height:1.55;margin:0 0 18px;">${escapeHtml(profile.phone)}<br />${escapeHtml(profile.email || 'Email')}<br />${escapeHtml(profile.location)}</p>
-                <h3 style="letter-spacing:0.18em;font-size:15px;margin:18px 0 10px;">EDUCATION</h3>
-                <ul style="font-size:12px;line-height:1.45;margin:0 0 18px 16px;padding:0;">${renderResumeBullets(profile.education, 'Add education details')}</ul>
-                <h3 style="letter-spacing:0.18em;font-size:15px;margin:18px 0 10px;">KEY SKILLS</h3>
-                <ul style="font-size:12px;line-height:1.45;margin:0 0 18px 16px;padding:0;">${renderResumeBullets(profile.skills, 'Add key skills')}</ul>
+                <h3 style="letter-spacing:0.16em;font-size:11px;margin:12px 0 6px;">CONTACT</h3>
+                <p style="font-size:9.5px;line-height:1.35;margin:0 0 12px;">${escapeHtml(profile.phone)}<br />${escapeHtml(profile.email || 'Email')}<br />${escapeHtml(profile.location)}</p>
+                <h3 style="letter-spacing:0.16em;font-size:11px;margin:12px 0 6px;">EDUCATION</h3>
+                <ul style="font-size:9.5px;line-height:1.28;margin:0 0 12px 13px;padding:0;">${renderResumeBullets(profile.education, 'Add education details')}</ul>
+                <h3 style="letter-spacing:0.16em;font-size:11px;margin:12px 0 6px;">KEY SKILLS</h3>
+                <ul style="font-size:9.5px;line-height:1.28;margin:0 0 12px 13px;padding:0;">${renderResumeBullets(profile.skills, 'Add key skills')}</ul>
             </aside>
-            <main style="background:#ffffff;padding:50px 34px;">
-                <div style="border-bottom:4px solid ${light};padding-bottom:14px;margin-bottom:18px;">
-                    <h1 style="font-size:42px;line-height:1;margin:0;color:#111827;">${escapeHtml(profile.name)}</h1>
-                    <p style="margin:8px 0 0;font-weight:700;color:${dark};">Professional Resume</p>
+            <main style="background:#ffffff;padding:26px 20px; min-width:0;">
+                <div style="border-bottom:3px solid ${light};padding-bottom:9px;margin-bottom:11px;">
+                    <h1 style="font-size:27px;line-height:1.02;margin:0;color:#111827;">${escapeHtml(profile.name)}</h1>
+                    <p style="margin:5px 0 0;font-weight:700;color:${dark};">Professional Resume</p>
                 </div>
-                <h3 style="letter-spacing:0.18em;font-size:16px;margin:16px 0 8px;color:#111827;">ABOUT ME</h3>
-                <p style="font-size:13px;line-height:1.55;margin:0 0 16px;">${escapeHtml(profile.summary)}</p>
-                <h3 style="letter-spacing:0.18em;font-size:16px;margin:16px 0 8px;color:#111827;">PROFESSIONAL EXPERIENCE</h3>
-                <ul style="font-size:13px;line-height:1.55;margin:0 0 16px 18px;padding:0;">${renderResumeBullets(profile.experience, 'Add professional experience and measurable achievements')}</ul>
-                <h3 style="letter-spacing:0.18em;font-size:16px;margin:16px 0 8px;color:#111827;">ACHIEVEMENTS</h3>
-                <ul style="font-size:13px;line-height:1.55;margin:0 0 16px 18px;padding:0;">${renderResumeBullets(profile.achievements, 'Add achievements, projects, certifications, or awards')}</ul>
-                <h3 style="letter-spacing:0.18em;font-size:16px;margin:16px 0 8px;color:#111827;">INTERESTS</h3>
-                <p style="font-size:13px;line-height:1.55;margin:0;">${escapeHtml([...profile.interests, ...profile.hobbies].join(', ') || 'Add relevant interests and hobbies')}</p>
+                <h3 style="letter-spacing:0.16em;font-size:12px;margin:10px 0 5px;color:#111827;">ABOUT ME</h3>
+                <p style="font-size:10.5px;line-height:1.32;margin:0 0 10px;">${escapeHtml(profile.summary)}</p>
+                <h3 style="letter-spacing:0.16em;font-size:12px;margin:10px 0 5px;color:#111827;">PROFESSIONAL EXPERIENCE</h3>
+                <ul style="font-size:10.5px;line-height:1.32;margin:0 0 10px 15px;padding:0;">${renderResumeBullets(profile.experience, 'Add professional experience and measurable achievements')}</ul>
+                <h3 style="letter-spacing:0.16em;font-size:12px;margin:10px 0 5px;color:#111827;">ACHIEVEMENTS</h3>
+                <ul style="font-size:10.5px;line-height:1.32;margin:0 0 10px 15px;padding:0;">${renderResumeBullets(profile.achievements, 'Add achievements, projects, certifications, or awards')}</ul>
+                <h3 style="letter-spacing:0.16em;font-size:12px;margin:10px 0 5px;color:#111827;">INTERESTS</h3>
+                <p style="font-size:10.5px;line-height:1.32;margin:0;">${escapeHtml([...profile.interests, ...profile.hobbies].join(', ') || 'Add relevant interests and hobbies')}</p>
             </main>
         </div>
     `;
@@ -2522,7 +2522,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                             ))}
                             <div
                                 ref={editorRef}
-                                className={`resume-playground-editor-document${editorResume?.source === 'scratch' || editorResume?.source === 'upload' ? ' is-plain-mode' : ''}`}
+                                className={`resume-playground-editor-document${editorResume?.source === 'scratch' || editorResume?.source === 'upload' ? ' is-plain-mode' : ''}${editorResume?.source === 'ai-tailor' ? ' is-ai-tailor-mode' : ''}`}
                                 contentEditable
                                 suppressContentEditableWarning
                                 spellCheck={spellcheckEnabled}

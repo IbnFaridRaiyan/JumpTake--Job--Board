@@ -26,6 +26,40 @@ const escapeHtml = (value = '') => (
 );
 
 const RESUME_PLAYGROUND_STORAGE_KEY = 'jumptakeResumePlayground:';
+const JOB_REACH_STORAGE_KEY = 'jumptakeJobReachMap';
+
+const readJobReachMap = () => {
+    if (typeof window === 'undefined') {
+        return {};
+    }
+
+    try {
+        const parsed = JSON.parse(localStorage.getItem(JOB_REACH_STORAGE_KEY) || '{}');
+        return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (error) {
+        return {};
+    }
+};
+
+const writeJobReachMap = (value) => {
+    if (typeof window !== 'undefined') {
+        localStorage.setItem(JOB_REACH_STORAGE_KEY, JSON.stringify(value));
+    }
+};
+
+const getJobStatsKey = (job) => String(job?._id || job?.jobNumber || job?.title || 'job');
+
+const normalizeJobApplications = (job) => {
+    if (Array.isArray(job?.applications)) {
+        return job.applications;
+    }
+
+    if (Array.isArray(job?.applicants)) {
+        return job.applicants;
+    }
+
+    return [];
+};
 
 const buildSavedResumePreview = (resumeRecord) => {
     if (!resumeRecord?.html) {
@@ -285,7 +319,7 @@ const RichTextEditor = ({ value, onChange, disabled = false }) => {
     );
 };
 
-const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, returnToSection }) => {
+const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, returnToSection, embedded = false, title = 'Job Feed' }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [applyingToJobId, setApplyingToJobId] = useState(null);
     const [applicationJob, setApplicationJob] = useState(null);
@@ -304,6 +338,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
     const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
     const [activeTab, setActiveTab] = useState('all'); 
     const [currentJobPage, setCurrentJobPage] = useState(1);
+    const [jobReachMap, setJobReachMap] = useState(readJobReachMap);
     const [isDesktopView, setIsDesktopView] = useState(() => (
         typeof window !== 'undefined' ? window.innerWidth > 768 : true
     ));
@@ -666,10 +701,23 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
         }
     }, [currentJobPage, totalJobPages]);
     
+    const recordJobReach = (job) => {
+        const key = getJobStatsKey(job);
+        setJobReachMap((previousMap) => {
+            const nextMap = {
+                ...previousMap,
+                [key]: Number(previousMap[key] || job?.reach || 0) + 1
+            };
+            writeJobReachMap(nextMap);
+            return nextMap;
+        });
+    };
+
     const handleJobClick = (job) => {
         if (applyingToJobId === job._id) {
             return; 
         }
+        recordJobReach(job);
         setPreviewJob(job);
     };
     
@@ -1078,6 +1126,28 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
         return matchingSkills.length;
     };
 
+    const getFitPercentage = (job) => {
+        if (candidateSkills.length === 0 || !Array.isArray(job?.skills) || job.skills.length === 0) {
+            return 0;
+        }
+
+        const jobSkills = job.skills.map((skill) => String(skill).trim()).filter(Boolean);
+        if (jobSkills.length === 0) {
+            return 0;
+        }
+
+        return Math.min(100, Math.round((getMatchScore(job) / jobSkills.length) * 100));
+    };
+
+    const getStatusCount = (job, statusTerms) => {
+        const terms = statusTerms.map((term) => term.toLowerCase());
+
+        return normalizeJobApplications(job).filter((application) => {
+            const status = String(application?.status || application?.candidateStatus || '').toLowerCase();
+            return terms.some((term) => status.includes(term));
+        }).length;
+    };
+
     const formatList = (items) => {
         if (!items || items.length === 0) {
             return <p>None specified</p>;
@@ -1093,10 +1163,10 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
     };
     
     return (
-        <div className="job-feed-container">
+        <div className={`job-feed-container ${embedded ? 'job-feed-container-embedded' : ''}`}>
             <div className="job-feed-header">
                 <div className="job-feed-title">
-                    <h2>Job Feed</h2>
+                    <h2>{title}</h2>
                     {candidateSkills.length > 0 && (
                         <div className="job-feed-tabs">
                             <button 
@@ -1240,6 +1310,9 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                     {displayedJobs.length > 0 ? (
                         pagedJobs.map(job => {
                             const matchScore = getMatchScore(job);
+                            const fitPercentage = getFitPercentage(job);
+                            const applications = normalizeJobApplications(job);
+                            const jobStatsKey = getJobStatsKey(job);
                             const hasMatchScore = activeTab === 'all' && matchScore > 0 && candidateSkills.length > 0;
                             const hasApplied = appliedJobIds.includes(String(job._id));
                             const isBookmarked = bookmarkedJobIds.includes(String(job._id));
@@ -1268,8 +1341,8 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                                         <span className="company-name">{job.company.name}</span>
                                         {hasMatchScore && (
                                             <div className="job-match">
-                                                <span className="match-label">Skills Match</span>
-                                                <span className="match-score">{matchScore}</span>
+                                                <span className="match-label">Fit</span>
+                                                <span className="match-score">{fitPercentage}%</span>
                                             </div>
                                         )}
                                     </div>
@@ -1305,6 +1378,12 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                                                 </div>
                                             </div>
                                         )}
+                                    </div>
+                                    <div className="job-card-stats">
+                                        <span>{Number(jobReachMap[jobStatsKey] || job.reach || 0)} reach</span>
+                                        <span>{Number(job.applicationCount || applications.length || 0)} applicants</span>
+                                        <span>{getStatusCount(job, ['hired'])} hired</span>
+                                        <span>{fitPercentage}% fit for you</span>
                                     </div>
                                     <div className="job-card-footer">
                                         <span className="posted-date">Posted: {new Date(job.createdAt).toLocaleDateString()}</span>

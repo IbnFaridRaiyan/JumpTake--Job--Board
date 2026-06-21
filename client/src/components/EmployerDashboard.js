@@ -15,10 +15,12 @@ import PortalSidebar from './PortalSidebar';
 import Notifications from './Notifications';
 import FloatingMessenger from './FloatingMessenger';
 import ResumePlayground from './ResumePlayground';
+import PortalHomeFeed from './PortalHomeFeed';
 import logo from './media/logo3.png';
 import logoDark from './media/logo4.png';
 
 const EMPLOYER_SECTION_IDS = new Set([
+    'home',
     'dashboard',
     'post-job',
     'manage-jobs',
@@ -36,6 +38,10 @@ const EMPLOYER_SECTION_IDS = new Set([
 
 const EMPLOYER_SECTION_STORAGE_KEY = 'jumptakeEmployerSection';
 
+const normalizeEmployerSection = (section) => (
+    section === 'dashboard' ? 'home' : section
+);
+
 const isMobileViewport = () => (
     typeof window !== 'undefined'
     && window.matchMedia('(max-width: 768px)').matches
@@ -43,17 +49,17 @@ const isMobileViewport = () => (
 
 const getInitialEmployerSection = () => {
     if (typeof window === 'undefined') {
-        return 'dashboard';
+        return 'home';
     }
 
     const hashValue = window.location.hash.replace(/^#/, '');
     const [portal, section] = hashValue.split(':');
     if (portal === 'employer' && EMPLOYER_SECTION_IDS.has(section)) {
-        return section;
+        return normalizeEmployerSection(section);
     }
 
     const storedSection = sessionStorage.getItem(EMPLOYER_SECTION_STORAGE_KEY);
-    return EMPLOYER_SECTION_IDS.has(storedSection) ? storedSection : 'dashboard';
+    return EMPLOYER_SECTION_IDS.has(storedSection) ? normalizeEmployerSection(storedSection) : 'home';
 };
 
 const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
@@ -75,14 +81,16 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     const dashboardLogo = appMode === 'dark' ? logoDark : logo;
 
     const updateActiveSection = (section, { push = true } = {}) => {
-        if (!EMPLOYER_SECTION_IDS.has(section)) {
+        const nextSectionValue = normalizeEmployerSection(section);
+
+        if (!EMPLOYER_SECTION_IDS.has(nextSectionValue)) {
             return;
         }
 
-        setActiveSection(section);
-        sessionStorage.setItem(EMPLOYER_SECTION_STORAGE_KEY, section);
+        setActiveSection(nextSectionValue);
+        sessionStorage.setItem(EMPLOYER_SECTION_STORAGE_KEY, nextSectionValue);
 
-        const nextHash = `#employer:${section}`;
+        const nextHash = `#employer:${nextSectionValue}`;
         if (window.location.hash !== nextHash) {
             if (push) {
                 window.history.pushState(null, '', nextHash);
@@ -93,6 +101,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     };
 
     const sectionTitles = {
+        home: 'Home',
         dashboard: 'Dashboard',
         'post-job': 'Post a Job',
         'manage-jobs': 'Manage Jobs',
@@ -135,10 +144,11 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                 return;
             }
 
-            setActiveSection(section);
-            sessionStorage.setItem(EMPLOYER_SECTION_STORAGE_KEY, section);
+            const nextSection = normalizeEmployerSection(section);
+            setActiveSection(nextSection);
+            sessionStorage.setItem(EMPLOYER_SECTION_STORAGE_KEY, nextSection);
             if (isMobileViewport()) {
-                setMobileSectionVisible(section !== 'dashboard');
+                setMobileSectionVisible(nextSection !== 'home');
             }
         };
 
@@ -147,7 +157,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         if (!window.location.hash.startsWith('#employer:')) {
             window.history.replaceState(null, '', `#employer:${initialSection}`);
         }
-        if (isMobileViewport() && initialSection !== 'dashboard') {
+        if (isMobileViewport() && initialSection !== 'home') {
             setMobileSectionVisible(true);
         }
 
@@ -363,7 +373,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     };
 
     const employerPrimaryNavItems = [
-        { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
+        { id: 'home', label: 'Home', icon: 'dashboard' },
         { id: 'post-job', label: 'Post a Job', icon: 'briefcase' },
         { id: 'manage-jobs', label: 'Manage Jobs', icon: 'briefcase' },
         { id: 'make-assessment', label: 'Make an Assessment', icon: 'assessment' },
@@ -410,7 +420,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
             { section: 'bookmarked-talents', terms: ['bookmarked talent', 'saved candidate'] },
             { section: 'about-jumptake', terms: ['about', 'jumptake', 'help', 'guide'] },
             { section: 'application-tracking', terms: ['tracking', 'ats', 'application tracking', 'performance', 'analytics', 'hiring rate'] },
-            { section: 'dashboard', terms: ['dashboard', 'overview'] }
+            { section: 'home', terms: ['home', 'dashboard', 'overview', 'feed'] }
         ];
 
         const match = directMatches.find(({ terms }) => terms.some((term) => lowerQuery.includes(term)));
@@ -448,13 +458,14 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
             sessionStorage.setItem('jumptakeEmployerTalentSearch', payload.search);
         }
 
-        openSection(EMPLOYER_SECTION_IDS.has(nextSection) ? nextSection : 'notifications');
+        const normalizedSection = normalizeEmployerSection(nextSection);
+        openSection(EMPLOYER_SECTION_IDS.has(normalizedSection) ? normalizedSection : 'notifications');
     };
 
     const handleLogoClick = () => {
         sectionHistoryRef.current = [];
         setIsManagingEmployerJob(false);
-        updateActiveSection('dashboard');
+        updateActiveSection('home');
         setMobileSectionVisible(false);
         resetMobilePanelScroll();
     };
@@ -485,7 +496,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                 setIsManagingEmployerJob(false);
             }
             updateActiveSection(previousSection);
-            setMobileSectionVisible(!isMobileViewport() || previousSection !== 'dashboard');
+            setMobileSectionVisible(!isMobileViewport() || previousSection !== 'home');
             resetMobilePanelScroll();
             return;
         }
@@ -496,13 +507,20 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
             return;
         }
 
-        updateActiveSection('dashboard');
+        updateActiveSection('home');
         setIsManagingEmployerJob(false);
         resetMobilePanelScroll();
     };
 
     const renderContent = () => {
         switch (activeSection) {
+            case 'home':
+                return <PortalHomeFeed
+                    mode="employer"
+                    currentUser={employer}
+                    companyData={companyData}
+                    jobs={jobs}
+                />;
             case 'post-job':
                 return <PostJob
                     companyId={employer?.companyId}
@@ -728,7 +746,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                             type="button"
                             className="dashboard-logo-button"
                             onClick={handleLogoClick}
-                            aria-label="Go to Dashboard"
+                            aria-label="Go to Home"
                         >
                             <img src={dashboardLogo} alt="JumpTake" className="employer-dashboard-logo" />
                         </button>
@@ -751,7 +769,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                         type="button"
                         className="dashboard-logo-button"
                         onClick={handleLogoClick}
-                        aria-label="Go to Dashboard"
+                        aria-label="Go to Home"
                     >
                         <img src={dashboardLogo} alt="JumpTake" className="employer-dashboard-logo" />
                     </button>

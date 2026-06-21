@@ -30764,3 +30764,377 @@ html[data-theme="light"] .home-page .floating-messenger-trigger {
     grid-template-columns: 1fr;
   }
 }
+
+/* Final requested polish: icon-first actions, square mobile sidebar profile, job bookmarks. */
+.portal-candidate-job-card {
+  position: relative !important;
+  padding-right: 3.1rem !important;
+}
+
+.portal-job-bookmark-toggle {
+  position: absolute;
+  top: 0.95rem;
+  right: 0.95rem;
+  z-index: 2;
+  display: inline-grid;
+  place-items: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  padding: 0;
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: rgba(255, 255, 255, 0.44);
+  cursor: pointer;
+}
+
+.portal-job-bookmark-toggle svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.portal-job-bookmark-toggle:hover,
+.portal-job-bookmark-toggle:focus-visible,
+.portal-job-bookmark-toggle.active {
+  color: #facc15 !important;
+}
+
+.portal-home-job-pagination {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0.35rem 0 !important;
+}
+
+.portal-home-page-button {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0.16rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #72d9cf !important;
+  line-height: 1 !important;
+}
+
+.portal-home-page-button svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.portal-home-page-button-next:not(:disabled) {
+  color: #3b82f6 !important;
+}
+
+.portal-home-page-button:disabled {
+  opacity: 0.28 !important;
+}
+
+.notification-icon-action {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.34rem !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0.08rem 0 !important;
+  color: #7dd3fc !important;
+  font: inherit !important;
+  font-weight: 900 !important;
+}
+
+.notification-icon-action svg {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 1rem;
+}
+
+.notification-mark-all-button {
+  color: #86efac !important;
+  cursor: pointer;
+}
+
+.notification-mark-all-button:disabled {
+  opacity: 0.42 !important;
+  cursor: not-allowed;
+}
+
+.notifications-page .notification-action {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 768px) {
+  .home-page .portal-vertical-sidebar.is-expanded,
+  .home-page .portal-vertical-sidebar.is-expanded.sidebar,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded.sidebar,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded.sidebar {
+    width: min(11.4rem, 52vw) !important;
+    min-width: min(11.4rem, 52vw) !important;
+    max-width: min(11.4rem, 52vw) !important;
+    padding-left: 0.18rem !important;
+    padding-right: 0.22rem !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-expanded .portal-sidebar-profile,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .portal-sidebar-profile,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded .portal-sidebar-profile {
+    width: min(6.9rem, calc(100% - 2.1rem)) !important;
+    min-height: 6.9rem !important;
+    aspect-ratio: 1 / 1 !important;
+    margin: 0.32rem auto 0.55rem 0.35rem !important;
+    padding: 0.54rem 0.36rem !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.24rem !important;
+    text-align: center !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-expanded .portal-sidebar-avatar,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .portal-sidebar-avatar,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded .portal-sidebar-avatar {
+    width: 2.35rem !important;
+    height: 2.35rem !important;
+    min-width: 2.35rem !important;
+    min-height: 2.35rem !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-expanded figcaption,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded figcaption,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded figcaption {
+    max-width: 100% !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-expanded .portal-sidebar-user-id,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .portal-sidebar-user-id,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded .portal-sidebar-user-id,
+  .home-page .portal-vertical-sidebar.is-expanded .portal-sidebar-user-role,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .portal-sidebar-user-role,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded .portal-sidebar-user-role {
+    max-width: 100% !important;
+    text-align: center !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-expanded .sidebar__toggle-container,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .sidebar__toggle-container,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded .sidebar__toggle-container {
+    top: 0.44rem !important;
+    right: 0.28rem !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-expanded .nav__toggle,
+  .home-page .portal-vertical-sidebar.is-expanded .nav__toggle:hover,
+  .home-page .portal-vertical-sidebar.is-expanded .nav__toggle:focus-visible,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .nav__toggle,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .nav__toggle:hover,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .nav__toggle:focus-visible,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded .nav__toggle,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded .nav__toggle:hover,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded .nav__toggle:focus-visible {
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: 0 !important;
+  }
+
+  .portal-job-bookmark-toggle {
+    top: 0.68rem;
+    right: 0.68rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .portal-job-bookmark-toggle svg {
+    width: 0.95rem;
+    height: 0.95rem;
+  }
+
+  .notification-icon-action {
+    gap: 0.24rem !important;
+    font-size: 0.75rem !important;
+  }
+}
+
+/* Final mobile/profile/action polish requested 2026-06-21 */
+@media (max-width: 768px) {
+  .home-page .portal-vertical-sidebar.is-expanded,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded {
+    width: min(12.6rem, 58vw) !important;
+    max-width: min(12.6rem, 58vw) !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-expanded .portal-sidebar-header,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .portal-sidebar-header,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded .portal-sidebar-header {
+    min-height: 8.1rem !important;
+    padding: 0.35rem 0.25rem 0.28rem !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    position: relative !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-expanded .portal-sidebar-profile,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .portal-sidebar-profile,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded .portal-sidebar-profile {
+    width: 7.35rem !important;
+    height: 7.35rem !important;
+    min-height: 7.35rem !important;
+    max-height: 7.35rem !important;
+    aspect-ratio: 1 / 1 !important;
+    margin: 0.28rem 0 0.45rem 0.45rem !important;
+    padding: 0.5rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.22rem !important;
+    overflow: hidden !important;
+    text-align: center !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-expanded .portal-sidebar-avatar,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .portal-sidebar-avatar,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded .portal-sidebar-avatar {
+    width: 2.75rem !important;
+    height: 2.75rem !important;
+    min-width: 2.75rem !important;
+    flex: 0 0 2.75rem !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-expanded .portal-sidebar-avatar img,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .portal-sidebar-avatar img,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded .portal-sidebar-avatar img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-expanded .portal-sidebar-profile figcaption,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .portal-sidebar-profile figcaption,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded .portal-sidebar-profile figcaption {
+    width: 100% !important;
+    min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 0.08rem !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-expanded .portal-sidebar-user-id,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .portal-sidebar-user-id,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded .portal-sidebar-user-id {
+    max-width: 100% !important;
+    font-size: 0.68rem !important;
+    line-height: 1.05 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-expanded .portal-sidebar-user-role,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .portal-sidebar-user-role,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded .portal-sidebar-user-role {
+    max-width: 100% !important;
+    font-size: 0.5rem !important;
+    line-height: 1.05 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-expanded .sidebar__toggle-container,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .sidebar__toggle-container,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded .sidebar__toggle-container {
+    position: absolute !important;
+    top: 0.55rem !important;
+    right: 0.45rem !important;
+    width: auto !important;
+    height: auto !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-expanded .nav__toggle,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .nav__toggle,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded .nav__toggle,
+  .home-page .portal-vertical-sidebar.is-expanded .nav__toggle:hover,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .nav__toggle:hover,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded .nav__toggle:hover {
+    width: 1.35rem !important;
+    height: 1.35rem !important;
+    min-width: 1.35rem !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: #f8ffff !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-expanded .toggle-svg-icon,
+  .dashboard-container.mobile-section-open .portal-vertical-sidebar.is-expanded .toggle-svg-icon,
+  .dashboard-container:not(.mobile-section-open) .portal-vertical-sidebar.is-expanded .toggle-svg-icon {
+    width: 1.05rem !important;
+    height: 1.05rem !important;
+  }
+}
+
+.notifications-page .notification-icon-action,
+.notifications-page button.notification-icon-action,
+.notifications-page .notification-action.notification-icon-action,
+.notifications-page .notification-mark-all-button.notification-icon-action {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+.notifications-page .notification-mark-all-button.notification-icon-action {
+  color: #bdfbd5 !important;
+  padding: 0 !important;
+}
+
+.notifications-page .notification-mark-all-button.notification-icon-action svg {
+  color: #86efac !important;
+}
+
+.notifications-page .notification-action.notification-icon-action {
+  color: #dff8ff !important;
+  padding: 0 !important;
+}
+
+.notifications-page .notification-action.notification-icon-action svg {
+  color: #3b82f6 !important;
+}
+
+.portal-candidate-job-card .portal-job-bookmark-toggle,
+.portal-job-bookmark-toggle {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+
+.portal-candidate-job-card .portal-job-bookmark-toggle.active,
+.portal-job-bookmark-toggle.active {
+  color: #facc15 !important;
+  filter: drop-shadow(0 0 7px rgba(250, 204, 21, 0.45));
+}

@@ -695,9 +695,33 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             return;
         }
 
-        if (nextSection === 'job-feed' && payload.jobId) {
-            localStorage.setItem('jumptakeActiveJobId', String(payload.jobId));
-            localStorage.setItem('jumptakeActiveJobAction', payload.intent === 'apply' ? 'apply' : 'preview');
+        if (nextSection === 'job-feed') {
+            const rawPayloadJob = payload.job;
+            const notificationJobId = (
+                payload.jobId
+                || (typeof rawPayloadJob === 'string' ? rawPayloadJob : rawPayloadJob?._id || rawPayloadJob?.id)
+                || payload.recordId
+                || payload.entityId
+                || payload.targetId
+                || payload.id
+                || notification?.jobId
+            );
+            const homeFeedRequest = {
+                mode: 'candidate',
+                tab: 'job-posts',
+                jobId: notificationJobId,
+                action: payload.intent === 'apply' ? 'apply' : 'preview'
+            };
+
+            if (homeFeedRequest.jobId) {
+                localStorage.setItem('jumptakeActiveJobId', String(homeFeedRequest.jobId));
+                localStorage.setItem('jumptakeActiveJobAction', homeFeedRequest.action);
+            }
+
+            sessionStorage.setItem('jumptakeHomeFeedRequest', JSON.stringify(homeFeedRequest));
+            window.dispatchEvent(new CustomEvent('jumptake-home-feed-request', { detail: homeFeedRequest }));
+            openSection('home');
+            return;
         }
 
         const normalizedSection = normalizeCandidateSection(nextSection);

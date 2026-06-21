@@ -13,6 +13,34 @@ const formatNotificationTime = (dateString) => {
     });
 };
 
+const notificationIconPaths = {
+    checkAll: 'M8.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L2.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093L8.95 4.992zm-.92 5.14.92.92a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 1 0-1.091-1.028L9.477 9.417l-.485-.486z',
+    postcard: 'M11 8h2V6h-2zM0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm8.5.5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0zM2 5.5a.5.5 0 0 0 .5.5H6a.5.5 0 0 0 0-1H2.5a.5.5 0 0 0-.5.5M2.5 7a.5.5 0 0 0 0 1H6a.5.5 0 0 0 0-1zM2 9.5a.5.5 0 0 0 .5.5H6a.5.5 0 0 0 0-1H2.5a.5.5 0 0 0-.5.5m8-4v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5',
+    cardText: 'M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2zM3 5.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3 8a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 8m0 2.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5',
+    boxArrowLeft: 'M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708z'
+};
+
+const NotificationIcon = ({ name }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+        <path fillRule={name === 'boxArrowLeft' ? 'evenodd' : undefined} d={notificationIconPaths[name] || notificationIconPaths.postcard} />
+    </svg>
+);
+
+const getNotificationActionIcon = (notification) => {
+    const label = String(notification?.actionLabel || '').toLowerCase();
+    const section = String(notification?.section || '').toLowerCase();
+
+    if (label.includes('assessment') || section.includes('assessment')) {
+        return 'cardText';
+    }
+
+    if (label.includes('back')) {
+        return 'boxArrowLeft';
+    }
+
+    return 'postcard';
+};
+
 const Notifications = ({ mode, recipientId, onOpenNotification, onUnreadCountChange }) => {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -133,8 +161,9 @@ const Notifications = ({ mode, recipientId, onOpenNotification, onUnreadCountCha
                             : 'Messages, assessment invitations, interview dates, job invitations, and new roles are collected here.'}
                     </p>
                 </div>
-                <button className="secondary-button" onClick={markAllRead} disabled={!unreadCount}>
-                    Mark all read
+                <button className="notification-icon-action notification-mark-all-button" onClick={markAllRead} disabled={!unreadCount}>
+                    <NotificationIcon name="checkAll" />
+                    <span>Mark all read</span>
                 </button>
             </div>
 
@@ -162,7 +191,10 @@ const Notifications = ({ mode, recipientId, onOpenNotification, onUnreadCountCha
                                 <p>{notification.message}</p>
                                 <time>{formatNotificationTime(notification.createdAt)}</time>
                             </div>
-                            <span className="notification-action">{notification.actionLabel || 'Open'}</span>
+                            <span className="notification-action notification-icon-action">
+                                <NotificationIcon name={getNotificationActionIcon(notification)} />
+                                <span>{notification.actionLabel || 'Open'}</span>
+                            </span>
                         </button>
                     ))}
                 </div>

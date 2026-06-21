@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import ResumeFilePreview from './ResumeFilePreview';
 import ProfileAvatar from './ProfileAvatar';
@@ -132,6 +132,7 @@ const splitMultilineValue = (value = '') => (
 const normalizeSkillList = (value) => {
     if (Array.isArray(value)) {
         return value
+            .flatMap((item) => normalizeSkillList(item))
             .map((item) => String(item).trim())
             .filter(Boolean);
     }
@@ -144,6 +145,33 @@ const normalizeSkillList = (value) => {
     }
 
     return [];
+};
+
+const safeParseStoredUser = () => {
+    if (typeof window === 'undefined') {
+        return {};
+    }
+
+    try {
+        const parsed = JSON.parse(localStorage.getItem('user') || '{}');
+        return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (error) {
+        return {};
+    }
+};
+
+const getJobSkills = (job) => normalizeSkillList(job?.skills);
+
+const asDisplayText = (value, fallback = '') => {
+    if (value === null || value === undefined) {
+        return fallback;
+    }
+
+    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+        return String(value);
+    }
+
+    return fallback;
 };
 
 const createApplicationProfileDraft = (profileData, userData = {}) => ({
@@ -319,7 +347,11 @@ const RichTextEditor = ({ value, onChange, disabled = false }) => {
     );
 };
 
-const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, returnToSection, embedded = false, title = 'Job Feed' }) => {
+const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUser, returnToSection, embedded = false, title = 'Job Feed' }) => {
+    const safeJobs = useMemo(
+        () => (Array.isArray(jobs) ? jobs.filter((job) => job && typeof job === 'object') : []),
+        [jobs]
+    );
     const [searchTerm, setSearchTerm] = useState('');
     const [applyingToJobId, setApplyingToJobId] = useState(null);
     const [applicationJob, setApplicationJob] = useState(null);
@@ -383,7 +415,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
     const [selectedCompany, setSelectedCompany] = useState(null);
     const [companyLoading, setCompanyLoading] = useState(false);
     const [companyError, setCompanyError] = useState('');
-    const resolvedUser = currentUser || JSON.parse(localStorage.getItem('user') || '{}');
+    const resolvedUser = currentUser || safeParseStoredUser();
     const candidateSkills = normalizeSkillList(jobSeekerData?.skills);
 
     useEffect(() => {
@@ -397,26 +429,21 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
     }, []);
     
     useEffect(() => {
-        if (jobs && jobs.length > 0) {
+        if (safeJobs.length > 0) {
           
-            const locations = [...new Set(jobs.map(job => job.location))];
+            const locations = [...new Set(safeJobs.map(job => asDisplayText(job.location)).filter(Boolean))];
             setAvailableLocations(locations);
 
            
-            const jobTypes = [...new Set(jobs.map(job => job.jobType))];
+            const jobTypes = [...new Set(safeJobs.map(job => asDisplayText(job.jobType)).filter(Boolean))];
             setAvailableJobTypes(jobTypes);
 
            
-            const allSkills = jobs.reduce((acc, job) => {
-                if (job.skills && Array.isArray(job.skills)) {
-                    return [...acc, ...job.skills];
-                }
-                return acc;
-            }, []);
+            const allSkills = safeJobs.flatMap((job) => getJobSkills(job));
             const uniqueSkills = [...new Set(allSkills)];
             setAvailableSkills(uniqueSkills);
         }
-    }, [jobs]);
+    }, [safeJobs]);
 
    
     useEffect(() => {
@@ -424,7 +451,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
             fetchRecommendedJobs();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [candidateSkills.length, jobSeekerData, jobs]);
+    }, [candidateSkills.length, jobSeekerData, safeJobs]);
 
     useEffect(() => {
         if (!userId) {
@@ -436,10 +463,10 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
         fetchAppliedJobs();
         fetchJobBookmarks();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [userId, jobs]);
+    }, [userId, safeJobs]);
 
     useEffect(() => {
-        if (!userId || jobs.length === 0) {
+        if (!userId || safeJobs.length === 0) {
             return;
         }
 
@@ -459,7 +486,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
         }
 
         if (activeJobId) {
-            const matchingJob = jobs.find((job) => String(job._id) === String(activeJobId));
+            const matchingJob = safeJobs.find((job) => String(job._id) === String(activeJobId));
             if (matchingJob) {
                 if (activeJobAction === 'apply') {
                     handleApplyClick(matchingJob);
@@ -472,7 +499,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
             localStorage.removeItem('jumptakeActiveJobAction');
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [userId, jobs]);
+    }, [userId, safeJobs]);
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -645,28 +672,29 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
         });
     };
 
-    const filteredJobs = jobs.filter(job => {
+    const filteredJobs = safeJobs.filter(job => {
+        const jobSkills = getJobSkills(job);
       
         const searchLower = searchTerm.toLowerCase();
         const matchesSearch = (
-            job.title.toLowerCase().includes(searchLower) ||
-            job.company.name.toLowerCase().includes(searchLower) ||
-            (job.jobNumber && job.jobNumber.toLowerCase().includes(searchLower)) ||
-            job.location.toLowerCase().includes(searchLower) ||
-            job.description.toLowerCase().includes(searchLower) ||
-            (job.skills && job.skills.some(skill => skill.toLowerCase().includes(searchLower)))
+            asDisplayText(job.title).toLowerCase().includes(searchLower) ||
+            asDisplayText(job.company?.name).toLowerCase().includes(searchLower) ||
+            (job.jobNumber && String(job.jobNumber).toLowerCase().includes(searchLower)) ||
+            asDisplayText(job.location).toLowerCase().includes(searchLower) ||
+            asDisplayText(job.description).toLowerCase().includes(searchLower) ||
+            jobSkills.some(skill => skill.toLowerCase().includes(searchLower))
         );
 
         if (!matchesSearch) return false;
 
        
-        if (filters.jobType && job.jobType !== filters.jobType) return false;
-        if (filters.location && job.location !== filters.location) return false;
+        if (filters.jobType && asDisplayText(job.jobType) !== filters.jobType) return false;
+        if (filters.location && asDisplayText(job.location) !== filters.location) return false;
         
         
         if (filters.salary && job.salary) {
             const salaryFilter = parseInt(filters.salary.replace(/[^0-9]/g, ''));
-            const jobSalary = job.salary.match(/\d+/g);
+            const jobSalary = String(job.salary).match(/\d+/g);
             if (jobSalary) {
                 const averageSalary = jobSalary.reduce((a, b) => parseInt(a) + parseInt(b), 0) / jobSalary.length;
                 if (averageSalary < salaryFilter) return false;
@@ -675,10 +703,10 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
 
       
         if (filters.skills.length > 0) {
-            if (!job.skills || !Array.isArray(job.skills)) return false;
+            if (jobSkills.length === 0) return false;
             
             return filters.skills.every(skill => 
-                job.skills.some(jobSkill => jobSkill.toLowerCase() === skill.toLowerCase())
+                jobSkills.some(jobSkill => jobSkill.toLowerCase() === skill.toLowerCase())
             );
         }
 
@@ -686,7 +714,12 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
     });
 
     
-    const displayedJobs = activeTab === 'recommended' ? recommendedJobs : filteredJobs;
+    const matchedJobs = filteredJobs.filter((job) => getMatchScore(job) > 0);
+    const displayedJobs = activeTab === 'recommended'
+        ? recommendedJobs
+        : activeTab === 'matched'
+            ? matchedJobs
+            : filteredJobs;
     const jobsPerPage = isDesktopView ? 5 : 3;
     const totalJobPages = Math.max(1, Math.ceil(displayedJobs.length / jobsPerPage));
     const pagedJobs = displayedJobs.slice((currentJobPage - 1) * jobsPerPage, currentJobPage * jobsPerPage);
@@ -1112,10 +1145,10 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
     };
 
     const getMatchScore = (job) => {
-        if (candidateSkills.length === 0 || !Array.isArray(job?.skills)) return 0;
+        const jobSkills = getJobSkills(job);
+        if (candidateSkills.length === 0 || jobSkills.length === 0) return 0;
         
         const userSkills = candidateSkills;
-        const jobSkills = job.skills.map((skill) => String(skill).trim()).filter(Boolean);
         
         const matchingSkills = userSkills.filter(skill => 
             jobSkills.some(jobSkill => 
@@ -1127,12 +1160,8 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
     };
 
     const getFitPercentage = (job) => {
-        if (candidateSkills.length === 0 || !Array.isArray(job?.skills) || job.skills.length === 0) {
-            return 0;
-        }
-
-        const jobSkills = job.skills.map((skill) => String(skill).trim()).filter(Boolean);
-        if (jobSkills.length === 0) {
+        const jobSkills = getJobSkills(job);
+        if (candidateSkills.length === 0 || jobSkills.length === 0) {
             return 0;
         }
 
@@ -1182,6 +1211,15 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                                 Recommended For You
                                 {recommendedJobs.length > 0 && (
                                     <span className="recommendation-count">{recommendedJobs.length}</span>
+                                )}
+                            </button>
+                            <button
+                                className={`tab-button ${activeTab === 'matched' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('matched')}
+                            >
+                                Match Jobs
+                                {matchedJobs.length > 0 && (
+                                    <span className="recommendation-count">{matchedJobs.length}</span>
                                 )}
                             </button>
                         </div>
@@ -1313,7 +1351,8 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                             const fitPercentage = getFitPercentage(job);
                             const applications = normalizeJobApplications(job);
                             const jobStatsKey = getJobStatsKey(job);
-                            const hasMatchScore = activeTab === 'all' && matchScore > 0 && candidateSkills.length > 0;
+                            const jobSkillList = getJobSkills(job);
+                            const hasMatchScore = (activeTab === 'all' || activeTab === 'matched') && matchScore > 0 && candidateSkills.length > 0;
                             const hasApplied = appliedJobIds.includes(String(job._id));
                             const isBookmarked = bookmarkedJobIds.includes(String(job._id));
                             
@@ -1337,8 +1376,8 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                                             onClick={(event) => handleToggleBookmark(job, event)}
                                             aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark job'}
                                         />
-                                        <h3>{job.title}</h3>
-                                        <span className="company-name">{job.company.name}</span>
+                                        <h3>{asDisplayText(job.title, 'Untitled job')}</h3>
+                                        <span className="company-name">{asDisplayText(job.company?.name, 'Company unavailable')}</span>
                                         {hasMatchScore && (
                                             <div className="job-match">
                                                 <span className="match-label">Fit</span>
@@ -1348,16 +1387,16 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                                     </div>
                                     <div className="job-card-body">
                                         <p className="job-number">Job Number: {job.jobNumber || 'Generating...'}</p>
-                                        <p className="job-location">{job.location}</p>
-                                        <p className="job-type">{job.jobType}</p>
-                                        {job.salary && <p className="job-salary">{job.salary}</p>}
-                                        <p className="job-description">{job.description.substring(0, 150)}...</p>
+                                        <p className="job-location">{asDisplayText(job.location, 'Location not specified')}</p>
+                                        <p className="job-type">{asDisplayText(job.jobType, 'Type not specified')}</p>
+                                        {job.salary && <p className="job-salary">{asDisplayText(job.salary)}</p>}
+                                        <p className="job-description">{asDisplayText(job.description).substring(0, 150)}...</p>
                                         
-                                        {job.skills && job.skills.length > 0 && (
+                                        {jobSkillList.length > 0 && (
                                             <div className="job-skills">
                                                 <strong>Skills:</strong> 
                                                 <div className="skill-tags">
-                                                    {job.skills.slice(0, 3).map((skill, index) => {
+                                                    {jobSkillList.slice(0, 3).map((skill, index) => {
                                                         const isMatch = candidateSkills.some(s => 
                                                                 s.toLowerCase() === skill.toLowerCase()
                                                         );
@@ -1372,7 +1411,7 @@ const JobFeed = ({ jobs, error, userId, onRefresh, jobSeekerData, currentUser, r
                                                             </span>
                                                         );
                                                     })}
-                                                    {job.skills.length > 3 && (
+                                                    {jobSkillList.length > 3 && (
                                                         <span className="skill-tag skill-tag-more">+ more</span>
                                                     )}
                                                 </div>

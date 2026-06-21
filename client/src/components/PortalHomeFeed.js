@@ -11,7 +11,9 @@ const readStoredArray = (key) => {
 
     try {
         const parsed = JSON.parse(localStorage.getItem(key) || '[]');
-        return Array.isArray(parsed) ? parsed : [];
+        return Array.isArray(parsed)
+            ? parsed.filter((item) => item && typeof item === 'object')
+            : [];
     } catch (error) {
         return [];
     }
@@ -80,6 +82,78 @@ const countApplicationsByStatus = (job, statusTerms) => {
 
 const getJobKey = (job) => String(job?._id || job?.jobNumber || job?.title || 'job');
 
+const getPostKey = (post, fallbackIndex = 0) => String(post?.id || post?._id || `post-${fallbackIndex}`);
+
+const asDisplayText = (value, fallback = '') => {
+    if (value === null || value === undefined) {
+        return fallback;
+    }
+
+    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+        return String(value);
+    }
+
+    return fallback;
+};
+
+const normalizePostComments = (comments) => (
+    Array.isArray(comments)
+        ? comments.filter((comment) => comment && typeof comment === 'object')
+        : []
+);
+
+const safeDateLabel = (value) => {
+    const date = new Date(value || Date.now());
+    return Number.isNaN(date.getTime())
+        ? new Date().toLocaleDateString()
+        : date.toLocaleDateString();
+};
+
+const normalizePostMedia = (media) => {
+    if (!media || typeof media !== 'object' || typeof media.dataUrl !== 'string' || !media.dataUrl) {
+        return null;
+    }
+
+    return {
+        dataUrl: media.dataUrl,
+        type: media.type === 'video' ? 'video' : 'image',
+        name: asDisplayText(media.name, 'Post attachment')
+    };
+};
+
+const normalizePostForDisplay = (post, index = 0) => {
+    const normalizedComments = normalizePostComments(post.comments).map((comment, commentIndex) => ({
+        ...comment,
+        id: asDisplayText(comment.id, `comment-${commentIndex}`),
+        authorId: asDisplayText(comment.authorId, ''),
+        authorName: asDisplayText(comment.authorName, 'User'),
+        authorType: comment.authorType === 'employer' ? 'employer' : 'candidate',
+        authorAvatar: typeof comment.authorAvatar === 'string' ? comment.authorAvatar : '',
+        text: asDisplayText(comment.text),
+        mentions: Array.isArray(comment.mentions)
+            ? comment.mentions.map((mention) => asDisplayText(mention)).filter(Boolean)
+            : [],
+        createdAt: comment.createdAt
+    }));
+
+    return {
+        ...post,
+        id: getPostKey(post, index),
+        body: asDisplayText(post.body),
+        authorId: asDisplayText(post.authorId, ''),
+        authorName: asDisplayText(post.authorName, 'Unknown author'),
+        authorType: post.authorType === 'employer' ? 'employer' : 'candidate',
+        authorAvatar: typeof post.authorAvatar === 'string' ? post.authorAvatar : '',
+        audience: ['everyone', 'friends', 'only-me'].includes(post.audience) ? post.audience : 'everyone',
+        reach: Number(post.reach || 0) || 0,
+        hiddenBy: Array.isArray(post.hiddenBy) ? post.hiddenBy.map(String) : [],
+        reactions: post.reactions && typeof post.reactions === 'object' ? post.reactions : {},
+        reactionsByUser: post.reactionsByUser && typeof post.reactionsByUser === 'object' ? post.reactionsByUser : {},
+        media: normalizePostMedia(post.media),
+        comments: normalizedComments
+    };
+};
+
 const readFileAsDataUrl = (file) => new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onerror = () => reject(new Error('Could not read selected media.'));
@@ -87,7 +161,7 @@ const readFileAsDataUrl = (file) => new Promise((resolve, reject) => {
     reader.readAsDataURL(file);
 });
 
-const createPost = ({ type, body, viewerId, authorName, authorType, authorAvatar, media = null }) => ({
+const createPost = ({ type, body, viewerId, authorName, authorType, authorAvatar, media = null, audience = 'everyone' }) => ({
     id: `${type}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     type,
     body,
@@ -95,6 +169,7 @@ const createPost = ({ type, body, viewerId, authorName, authorType, authorAvatar
     authorType,
     authorName,
     authorAvatar: authorAvatar || '',
+    audience,
     createdAt: new Date().toISOString(),
     reach: 1,
     seenBy: [viewerId],
@@ -105,8 +180,8 @@ const createPost = ({ type, body, viewerId, authorName, authorType, authorAvatar
 });
 
 const reactionLabels = {
-    work: ['Like', 'Appreciate', 'Sad', 'Bad'],
-    talent: ['Like', 'Appreciate', 'Love', 'Empower', 'Congratulate', 'Motivate', 'Angry', 'Sad', 'Bad']
+    work: ['Like', 'Appreciate', 'Sad', 'Bad', 'Hide'],
+    talent: ['Like', 'Appreciate', 'Love', 'Empower', 'Congratulate', 'Motivate', 'Angry', 'Sad', 'Bad', 'Hide']
 };
 
 const reactionIconPaths = {
@@ -119,7 +194,8 @@ const reactionIconPaths = {
     Motivate: 'M12.17 9.53c2.307-2.592 3.278-4.684 3.641-6.218.21-.887.214-1.58.16-2.065a3.6 3.6 0 0 0-.108-.563 2 2 0 0 0-.078-.23V.453c-.073-.164-.168-.234-.352-.295a2 2 0 0 0-.16-.045 4 4 0 0 0-.57-.093c-.49-.044-1.19-.03-2.08.188-1.536.374-3.618 1.343-6.161 3.604l-2.4.238h-.006a2.55 2.55 0 0 0-1.524.734L.15 7.17a.512.512 0 0 0 .433.868l1.896-.271c.28-.04.592.013.955.132.232.076.437.16.655.248l.203.083c.196.816.66 1.58 1.275 2.195.613.614 1.376 1.08 2.191 1.277l.082.202c.089.218.173.424.249.657.118.363.172.676.132.956l-.271 1.9a.512.512 0 0 0 .867.433l2.382-2.386c.41-.41.668-.949.732-1.526zm.11-3.699c-.797.8-1.93.961-2.528.362-.598-.6-.436-1.733.361-2.532.798-.799 1.93-.96 2.528-.361s.437 1.732-.36 2.531ZM5.205 10.787a7.6 7.6 0 0 0 1.804 1.352c-1.118 1.007-4.929 2.028-5.054 1.903-.126-.127.737-4.189 1.839-5.18.346.69.837 1.35 1.411 1.925',
     Angry: 'M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353zm-6.106 4.5L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708',
     Sad: 'M8.867 14.41c13.308-9.322 4.79-16.563.064-13.824L7 3l1.5 4-2 3L8 15a38 38 0 0 0 .867-.59m-.303-1.01-.971-3.237 1.74-2.608a1 1 0 0 0 .103-.906l-1.3-3.468 1.45-1.813c1.861-.948 4.446.002 5.197 2.11.691 1.94-.055 5.521-6.219 9.922m-1.25 1.137a36 36 0 0 1-1.522-1.116C-5.077 4.97 1.842-1.472 6.454.293c.314.12.618.279.904.477L5.5 3 7 7l-1.5 3zm-2.3-3.06-.442-1.106a1 1 0 0 1 .034-.818l1.305-2.61L4.564 3.35a1 1 0 0 1 .168-.991l1.032-1.24c-1.688-.449-3.7.398-4.456 2.128-.711 1.627-.413 4.55 3.706 8.229Z',
-    Bad: 'M15 8a6.97 6.97 0 0 0-1.71-4.584l-9.874 9.875A7 7 0 0 0 15 8M2.71 12.584l9.874-9.875a7 7 0 0 0-9.874 9.874ZM16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0'
+    Bad: 'M15 8a6.97 6.97 0 0 0-1.71-4.584l-9.874 9.875A7 7 0 0 0 15 8M2.71 12.584l9.874-9.875a7 7 0 0 0-9.874 9.874ZM16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0',
+    Hide: 'm10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7 7 0 0 0 2.79-.588M5.21 3.088A7 7 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474zM5.525 7.646a2.5 2.5 0 0 0 2.829 2.829zm4.95.708-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6-12-12 .708-.708 12 12z'
 };
 
 const tabIconPaths = {
@@ -193,10 +269,10 @@ const getViewerReaction = (post, viewerId) => (
 
 const normalizeViewerReactions = (value) => {
     if (Array.isArray(value)) {
-        return value.filter(Boolean).slice(0, 3);
+        return value.filter(Boolean).filter((reaction) => reaction !== 'Hide').slice(0, 3);
     }
 
-    return value ? [value] : [];
+    return value && value !== 'Hide' ? [value] : [];
 };
 
 const adjustReactionCounts = (reactions = {}, previousReactions, selectedReactions) => {
@@ -227,6 +303,10 @@ const PortalHomeFeed = ({
     jobs = [],
     jobPosts = null
 }) => {
+    const safeJobs = useMemo(
+        () => (Array.isArray(jobs) ? jobs.filter((job) => job && typeof job === 'object') : []),
+        [jobs]
+    );
     const candidateTabs = [
         { id: 'work-news', label: 'Work News' },
         { id: 'job-posts', label: 'Job Posts' },
@@ -242,11 +322,13 @@ const PortalHomeFeed = ({
         { id: 'my-job-posts', label: 'My Job Posts' }
     ];
     const tabs = mode === 'employer' ? employerTabs : candidateTabs;
-    const [activeTab, setActiveTab] = useState(mode === 'employer' ? 'talent-stories' : 'job-posts');
+    const defaultTab = mode === 'employer' ? 'talent-stories' : 'work-news';
+    const [activeTab, setActiveTab] = useState(defaultTab);
     const [workNewsPosts, setWorkNewsPosts] = useState(() => readStoredArray(WORK_NEWS_STORAGE_KEY));
     const [talentStories, setTalentStories] = useState(() => readStoredArray(TALENT_STORIES_STORAGE_KEY));
     const [composerText, setComposerText] = useState('');
     const [composerMedia, setComposerMedia] = useState(null);
+    const [composerAudience, setComposerAudience] = useState('everyone');
     const [commentDrafts, setCommentDrafts] = useState({});
     const [expandedJobId, setExpandedJobId] = useState('');
     const [jobReachMap] = useState(readJobReachMap);
@@ -264,6 +346,59 @@ const PortalHomeFeed = ({
         : profileData?.profileImage;
 
     useEffect(() => {
+        setActiveTab(defaultTab);
+    }, [defaultTab]);
+
+    const friendIds = useMemo(() => {
+        if (typeof window === 'undefined') {
+            return [];
+        }
+
+        const possibleKeys = [
+            'jumptakeFriends',
+            `jumptakeFriends:${viewerId}`,
+            'jumptakeCandidateFriends'
+        ];
+
+        return possibleKeys.flatMap((key) => {
+            try {
+                const value = JSON.parse(localStorage.getItem(key) || '[]');
+                return Array.isArray(value)
+                    ? value.map((item) => String(item?.id || item?._id || item?.userId || item)).filter(Boolean)
+                    : [];
+            } catch (error) {
+                return [];
+            }
+        });
+    }, [viewerId]);
+
+    const canViewPost = (post) => {
+        if (!post || typeof post !== 'object') {
+            return false;
+        }
+
+        const hiddenBy = Array.isArray(post.hiddenBy) ? post.hiddenBy : [];
+        if (hiddenBy.includes(viewerId)) {
+            return false;
+        }
+
+        if (String(post.authorId) === viewerId) {
+            return true;
+        }
+
+        const audience = post.audience || 'everyone';
+        if (audience === 'only-me') {
+            return false;
+        }
+
+        if (audience === 'friends') {
+            return friendIds.includes(String(post.authorId));
+        }
+
+        return true;
+    };
+
+    useEffect(() => {
         const key = activeTab === 'work-news' || activeTab === 'my-company-posts'
             ? WORK_NEWS_STORAGE_KEY
             : activeTab === 'talent-stories' || activeTab === 'my-feed'
@@ -276,7 +411,7 @@ const PortalHomeFeed = ({
 
         const sourcePosts = key === WORK_NEWS_STORAGE_KEY ? workNewsPosts : talentStories;
         let changed = false;
-        const nextPosts = sourcePosts.map((post) => {
+        const nextPosts = sourcePosts.filter((post) => post && typeof post === 'object').map((post) => {
             const seenBy = Array.isArray(post.seenBy) ? post.seenBy : [];
             if (seenBy.includes(viewerId)) {
                 return post;
@@ -345,18 +480,45 @@ const PortalHomeFeed = ({
             authorName,
             authorType: mode,
             authorAvatar,
-            media: composerMedia
+            media: composerMedia,
+            audience: composerAudience
         });
 
         updatePosts(key, (posts) => [nextPost, ...posts]);
         setComposerText('');
         setComposerMedia(null);
+        setComposerAudience('everyone');
         setActiveTab(isCompanyPost ? 'my-company-posts' : 'my-feed');
     };
 
     const handleReact = (key, postId, reaction) => {
+        if (reaction === 'Hide') {
+            updatePosts(key, (posts) => posts.map((post) => (
+                getPostKey(post) === postId
+                    ? {
+                        ...post,
+                        hiddenBy: [...new Set([...(Array.isArray(post.hiddenBy) ? post.hiddenBy : []), viewerId])]
+                    }
+                    : post
+            )));
+
+            const undo = window.confirm('Post hidden from your feed. Undo hide?');
+            if (undo) {
+                updatePosts(key, (posts) => posts.map((post) => (
+                    getPostKey(post) === postId
+                        ? {
+                            ...post,
+                            hiddenBy: (Array.isArray(post.hiddenBy) ? post.hiddenBy : []).filter((id) => id !== viewerId)
+                        }
+                        : post
+                )));
+            }
+
+            return;
+        }
+
         updatePosts(key, (posts) => posts.map((post) => (
-            post.id === postId
+            getPostKey(post) === postId
                 ? (() => {
                     const previousReactions = normalizeViewerReactions(getViewerReaction(post, viewerId));
                     const hasReaction = previousReactions.includes(reaction);
@@ -389,7 +551,7 @@ const PortalHomeFeed = ({
 
         const mentions = Array.from(text.matchAll(/@([\w.-]+)/g)).map((match) => match[1]);
         updatePosts(key, (posts) => posts.map((post) => (
-            post.id === postId
+            getPostKey(post) === postId
                 ? {
                     ...post,
                     reach: Number(post.reach || 0) + mentions.length,
@@ -397,7 +559,10 @@ const PortalHomeFeed = ({
                         ...(Array.isArray(post.comments) ? post.comments : []),
                         {
                             id: `comment-${Date.now()}`,
+                            authorId: viewerId,
                             authorName,
+                            authorType: mode,
+                            authorAvatar,
                             text,
                             mentions,
                             createdAt: new Date().toISOString()
@@ -416,7 +581,7 @@ const PortalHomeFeed = ({
         }
 
         updatePosts(WORK_NEWS_STORAGE_KEY, (posts) => posts.map((post) => (
-            post.id === postId
+            getPostKey(post) === postId
                 ? {
                     ...post,
                     reach: Number(post.reach || 0) + 1,
@@ -424,7 +589,10 @@ const PortalHomeFeed = ({
                         ...(Array.isArray(post.comments) ? post.comments : []),
                         {
                             id: `share-${Date.now()}`,
+                            authorId: viewerId,
                             authorName,
+                            authorType: mode,
+                            authorAvatar,
                             text: `Shared with @${target.trim()}`,
                             mentions: [target.trim()],
                             createdAt: new Date().toISOString()
@@ -436,7 +604,14 @@ const PortalHomeFeed = ({
     };
 
     const renderPostList = (posts, key, kind) => {
-        if (!posts.length) {
+        const safePosts = Array.isArray(posts)
+            ? posts
+                .filter((post) => post && typeof post === 'object')
+                .map((post, index) => normalizePostForDisplay(post, index))
+            : [];
+        const visiblePosts = safePosts.filter(canViewPost);
+
+        if (!visiblePosts.length) {
             return (
                 <div className="portal-feed-empty">
                     No posts here yet. The feed will fill up when people start sharing updates.
@@ -446,29 +621,36 @@ const PortalHomeFeed = ({
 
         return (
             <div className="portal-social-list">
-                {posts.map((post) => (
-                    <article key={post.id} className="portal-social-post-card">
+                {visiblePosts.map((post, postIndex) => {
+                    const postKey = getPostKey(post, postIndex);
+                    const postComments = post.comments;
+
+                    return (
+                    <article key={postKey} className="portal-social-post-card">
                         <div className="portal-social-post-header">
                             <div className="portal-post-avatar">
                                 {post.authorAvatar ? (
-                                    <img src={post.authorAvatar} alt={post.authorName} />
+                                    <img src={post.authorAvatar} alt={asDisplayText(post.authorName, 'Post author')} />
                                 ) : (
-                                    <span>{String(post.authorName || 'J').charAt(0).toUpperCase()}</span>
+                                    <span>{asDisplayText(post.authorName, 'J').charAt(0).toUpperCase()}</span>
                                 )}
                             </div>
                             <div>
-                                <h3>{post.authorName}</h3>
-                                <p>{post.authorType === 'employer' ? 'Company update' : 'Talent story'} - {new Date(post.createdAt).toLocaleDateString()}</p>
+                                <h3 className="portal-post-author-name">{asDisplayText(post.authorName, 'Unknown author')}</h3>
+                                <p>{post.authorType === 'employer' ? 'Company update' : 'Talent story'} - {safeDateLabel(post.createdAt)}</p>
+                                {post.audience && post.audience !== 'everyone' && (
+                                    <small className="portal-audience-pill">{post.audience === 'only-me' ? 'Only me' : 'Friends only'}</small>
+                                )}
                             </div>
                             <span className="portal-post-reach">{Number(post.reach || 0)} reach</span>
                         </div>
-                        {post.body && <p className="portal-post-body">{post.body}</p>}
+                        {asDisplayText(post.body) && <p className="portal-post-body">{asDisplayText(post.body)}</p>}
                         {post.media?.dataUrl && (
                             <div className="portal-post-media">
                                 {post.media.type === 'video' ? (
                                     <video src={post.media.dataUrl} controls playsInline />
                                 ) : (
-                                    <img src={post.media.dataUrl} alt={post.media.name || 'Post attachment'} />
+                                    <img src={post.media.dataUrl} alt={post.media.name} />
                                 )}
                             </div>
                         )}
@@ -481,7 +663,7 @@ const PortalHomeFeed = ({
                                         key={reaction}
                                         type="button"
                                         className={`portal-reaction-button reaction-${reaction.toLowerCase()} ${isActiveReaction ? 'active' : ''}`}
-                                        onClick={() => handleReact(key, post.id, reaction)}
+                                        onClick={() => handleReact(key, postKey, reaction)}
                                         aria-pressed={isActiveReaction}
                                         aria-label={`${reaction} reaction`}
                                     >
@@ -495,33 +677,43 @@ const PortalHomeFeed = ({
                                 <button
                                     type="button"
                                     className="portal-glass-mini-button"
-                                    onClick={() => handleShare(post.id)}
+                                    onClick={() => handleShare(postKey)}
                                 >
                                     Share with friend
                                 </button>
                             )}
                         </div>
                         <div className="portal-post-comments">
-                            {(post.comments || []).slice(-3).map((comment) => (
-                                <p key={comment.id}>
-                                    <strong>{comment.authorName}:</strong> {comment.text}
-                                </p>
+                            {postComments.slice(-3).map((comment, commentIndex) => (
+                                <div key={comment.id || `comment-${commentIndex}`} className="portal-comment-item">
+                                    <div className="portal-comment-avatar">
+                                        {comment.authorAvatar ? (
+                                            <img src={comment.authorAvatar} alt={asDisplayText(comment.authorName, 'Comment author')} />
+                                        ) : (
+                                            <span>{asDisplayText(comment.authorName, 'J').charAt(0).toUpperCase()}</span>
+                                        )}
+                                    </div>
+                                    <p>
+                                        <strong className="portal-comment-name">{asDisplayText(comment.authorName, 'User')}</strong>: {asDisplayText(comment.text)}
+                                    </p>
+                                </div>
                             ))}
                             <div className="portal-comment-row">
                                 <input
                                     type="text"
-                                    value={commentDrafts[post.id] || ''}
+                                    value={commentDrafts[postKey] || ''}
                                     placeholder="Comment or mention with @JumpTakeID..."
-                                    onChange={(event) => setCommentDrafts((drafts) => ({ ...drafts, [post.id]: event.target.value }))}
+                                    onChange={(event) => setCommentDrafts((drafts) => ({ ...drafts, [postKey]: event.target.value }))}
                                 />
-                                <button type="button" className="portal-comment-button" onClick={() => handleComment(key, post.id)} aria-label="Comment">
+                                <button type="button" className="portal-comment-button" onClick={() => handleComment(key, postKey)} aria-label="Comment">
                                     <ReactionIcon name="Comment" />
                                     <span>Comment</span>
                                 </button>
                             </div>
                         </div>
                     </article>
-                ))}
+                );
+                })}
             </div>
         );
     };
@@ -539,6 +731,14 @@ const PortalHomeFeed = ({
                 onChange={(event) => setComposerText(event.target.value)}
                 placeholder="Write your post..."
             />
+            <label className="portal-audience-select">
+                Audience
+                <select value={composerAudience} onChange={(event) => setComposerAudience(event.target.value)}>
+                    <option value="everyone">Everyone</option>
+                    <option value="friends">Friends only</option>
+                    <option value="only-me">Only me</option>
+                </select>
+            </label>
             <div className="portal-post-media-picker">
                 <label>
                     Add picture or video
@@ -567,9 +767,9 @@ const PortalHomeFeed = ({
 
     const renderMyJobPosts = () => (
         <div className="portal-job-posts-summary">
-            {jobs.length === 0 ? (
+            {safeJobs.length === 0 ? (
                 <div className="portal-feed-empty">No company job posts yet.</div>
-            ) : jobs.map((job) => {
+            ) : safeJobs.map((job) => {
                 const applications = normalizeJobApplications(job);
                 const key = getJobKey(job);
                 const isExpanded = expandedJobId === key;
@@ -585,8 +785,8 @@ const PortalHomeFeed = ({
                 return (
                     <article key={key} className="portal-job-summary-card">
                         <div>
-                            <h3>{job.title || 'Untitled job'}</h3>
-                            <p>{job.location || 'Location not set'} - {job.jobType || 'Job type not set'}</p>
+                            <h3>{asDisplayText(job.title, 'Untitled job')}</h3>
+                            <p>{asDisplayText(job.location, 'Location not set')} - {asDisplayText(job.jobType, 'Job type not set')}</p>
                             <button
                                 type="button"
                                 className="portal-view-job-button"
@@ -606,9 +806,9 @@ const PortalHomeFeed = ({
                         </div>
                         {isExpanded && (
                             <div className="portal-job-expanded-details">
-                                <p><strong>Job Number:</strong> {job.jobNumber || 'Not assigned'}</p>
-                                <p><strong>Salary:</strong> {job.salary || 'Not specified'}</p>
-                                <p><strong>Description:</strong> {job.description || 'No description added.'}</p>
+                                <p><strong>Job Number:</strong> {asDisplayText(job.jobNumber, 'Not assigned')}</p>
+                                <p><strong>Salary:</strong> {asDisplayText(job.salary, 'Not specified')}</p>
+                                <p><strong>Description:</strong> {asDisplayText(job.description, 'No description added.')}</p>
                                 {Array.isArray(job.skills) && job.skills.length > 0 && (
                                     <p><strong>Skills:</strong> {job.skills.join(', ')}</p>
                                 )}
@@ -625,7 +825,6 @@ const PortalHomeFeed = ({
 
     const ownTalentStories = talentStories.filter((post) => String(post.authorId) === viewerId);
     const ownCompanyPosts = workNewsPosts.filter((post) => String(post.authorId) === viewerId);
-
     return (
         <div className={`portal-home-feed portal-home-feed-${mode}`}>
             <div className="portal-home-tabs" aria-label={`${mode} home sections`}>

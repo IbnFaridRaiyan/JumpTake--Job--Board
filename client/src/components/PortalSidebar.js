@@ -27,6 +27,11 @@ const PortalIcon = ({ name = 'dashboard' }) => (
     </svg>
 );
 
+const shouldStartCollapsed = () => (
+    typeof window !== 'undefined'
+    && window.matchMedia('(max-width: 768px)').matches
+);
+
 const PortalSidebar = ({
     userName,
     userSubtitle,
@@ -37,12 +42,14 @@ const PortalSidebar = ({
     onLogout,
     mobileSectionOpen = false
 }) => {
-    const [expanded, setExpanded] = useState(true);
+    const [expanded, setExpanded] = useState(() => !shouldStartCollapsed());
     const toggleIdRef = useRef(`portal-sidebar-toggle-${Math.random().toString(36).slice(2)}`);
     const toggleId = toggleIdRef.current;
 
     useEffect(() => {
-        setExpanded(!mobileSectionOpen);
+        if (mobileSectionOpen) {
+            setExpanded(false);
+        }
     }, [mobileSectionOpen]);
 
     const renderItem = (item) => (

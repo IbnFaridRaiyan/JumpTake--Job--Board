@@ -77,6 +77,48 @@ const isMobileViewport = () => (
     && window.matchMedia('(max-width: 768px)').matches
 );
 
+class CandidatePortalErrorBoundary extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false };
+    }
+
+    static getDerivedStateFromError() {
+        return { hasError: true };
+    }
+
+    componentDidCatch(error, info) {
+        console.error('Candidate portal section failed:', error, info);
+    }
+
+    componentDidUpdate(previousProps) {
+        if (previousProps.resetKey !== this.props.resetKey && this.state.hasError) {
+            this.setState({ hasError: false });
+        }
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return (
+                <div className="candidate-section-error">
+                    <h3>We could not load this section.</h3>
+                    <p>One of the records returned unexpected data. Try refreshing, or go back home.</p>
+                    <div className="candidate-section-error-actions">
+                        <button type="button" onClick={() => window.location.reload()}>
+                            Refresh
+                        </button>
+                        <button type="button" onClick={this.props.onHome}>
+                            Go Home
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        return this.props.children;
+    }
+}
+
 const getInitialCandidateSection = () => {
     if (typeof window === 'undefined') {
         return 'home';
@@ -88,8 +130,7 @@ const getInitialCandidateSection = () => {
         return normalizeCandidateSection(section);
     }
 
-    const storedSection = sessionStorage.getItem(CANDIDATE_SECTION_STORAGE_KEY);
-    return CANDIDATE_SECTION_IDS.has(storedSection) ? normalizeCandidateSection(storedSection) : 'home';
+    return 'home';
 };
 
 const normalizeStringList = (value) => {
@@ -130,6 +171,7 @@ const normalizeCandidateProfile = (profile) => {
 
 const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const [activeSection, setActiveSection] = useState(getInitialCandidateSection);
+    const [sectionErrorResetKey, setSectionErrorResetKey] = useState(0);
     const sectionHistoryRef = useRef([]);
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -161,6 +203,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             return;
         }
 
+        setSectionErrorResetKey((key) => key + 1);
         setActiveSection(nextSectionValue);
         sessionStorage.setItem(CANDIDATE_SECTION_STORAGE_KEY, nextSectionValue);
 
@@ -202,11 +245,21 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             return;
         }
 
-        const parsedUser = JSON.parse(userData);
+        let parsedUser;
+        try {
+            parsedUser = JSON.parse(userData);
+        } catch (error) {
+            console.error('Could not restore candidate session:', error);
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+            sessionStorage.removeItem(CANDIDATE_SECTION_STORAGE_KEY);
+            navigate('/job-seeker');
+            return;
+        }
         setUser(parsedUser);
         const savedInterests = Array.isArray(parsedUser.jobInterests) ? parsedUser.jobInterests : [];
         setSelectedJobInterests(savedInterests);
-        setShowInterestPopup(savedInterests.length < 4);
+        setShowInterestPopup(false);
 
         fetchJobs();
         fetchCandidateNotifications(parsedUser.id);
@@ -970,7 +1023,16 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                             <h2>{sectionTitles[activeSection] || 'Dashboard Section'}</h2>
                         </div>
                     )}
-                    {renderContent()}
+                    <CandidatePortalErrorBoundary
+                        resetKey={`${activeSection}:${sectionErrorResetKey}`}
+                        onHome={() => {
+                            setSectionErrorResetKey((key) => key + 1);
+                            updateActiveSection('home', { push: false });
+                            setMobileSectionVisible(false);
+                        }}
+                    >
+                        {renderContent()}
+                    </CandidatePortalErrorBoundary>
                     {mobileSectionVisible && ['notifications', 'about-jumptake', 'progress-check'].includes(activeSection) && (
                         <div className="page-footer-actions mobile-section-fallback-footer">
                             <button type="button" className="back-button responsive-back-button mobile-bottom-back-button" onClick={goToPreviousSection}>

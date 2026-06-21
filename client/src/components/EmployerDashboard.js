@@ -58,8 +58,7 @@ const getInitialEmployerSection = () => {
         return normalizeEmployerSection(section);
     }
 
-    const storedSection = sessionStorage.getItem(EMPLOYER_SECTION_STORAGE_KEY);
-    return EMPLOYER_SECTION_IDS.has(storedSection) ? normalizeEmployerSection(storedSection) : 'home';
+    return 'home';
 };
 
 const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {

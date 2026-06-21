@@ -586,6 +586,20 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         return <p>{items}</p>;
     };
 
+    const getCandidateTalentStories = (candidate) => {
+        try {
+            const storedPosts = JSON.parse(localStorage.getItem('jumptakeTalentStoriesPosts') || '[]');
+            return Array.isArray(storedPosts)
+                ? storedPosts.filter((post) => (
+                    String(post.authorId || '') === String(candidate?._id || candidate?.id || '')
+                    || String(post.authorName || '').toLowerCase() === String(candidate?.name || '').toLowerCase()
+                ))
+                : [];
+        } catch (error) {
+            return [];
+        }
+    };
+
     return (
         <div ref={talentPoolRef} className={`talent-pool-container ${mode === 'candidate' ? 'candidate-view-candidates' : ''}`}>
             <div className="talent-pool-header">
@@ -710,6 +724,10 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                             mode={mode}
                             currentUserId={currentUserId}
                         />
+                        <div className="candidate-profile-quick-actions">
+                            <button type="button" className="secondary-button">View Profile</button>
+                            <button type="button" className="secondary-button">My Feed</button>
+                        </div>
 
                         <div className="profile-section">
                             <h3>Skills</h3>
@@ -755,7 +773,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                             </div>
                         )}
 
-                    {(selectedCandidate.interests || selectedCandidate.hobbies) && (
+                        {(selectedCandidate.interests || selectedCandidate.hobbies) && (
                         <div className="profile-section">
                             <h3>Interests & Hobbies</h3>
                                 {selectedCandidate.interests && (
@@ -772,6 +790,20 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                                 )}
                             </div>
                         )}
+
+                        <div className="profile-section candidate-profile-feed-preview">
+                            <h3>My feed / Talent stories</h3>
+                            {getCandidateTalentStories(selectedCandidate).length > 0 ? (
+                                getCandidateTalentStories(selectedCandidate).slice(0, 3).map((post) => (
+                                    <article className="candidate-profile-feed-card" key={post.id}>
+                                        <p>{post.body || 'Talent story post'}</p>
+                                        <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                                    </article>
+                                ))
+                            ) : (
+                                <p className="empty-info">No visible talent stories yet.</p>
+                            )}
+                        </div>
 
                         <div className="section-footer-nav">
                             <button className="back-button" onClick={handleCloseProfile}>

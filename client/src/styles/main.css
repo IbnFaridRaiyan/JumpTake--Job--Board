@@ -27927,8 +27927,8 @@ html[data-theme="light"] .resume-playground-saved-actions .secondary-button {
   .portal-home-tabs {
     display: flex;
     flex-wrap: nowrap;
-    gap: 0.1rem;
-    padding: 0.36rem 0.42rem;
+    gap: 0.12rem;
+    padding: 0.34rem 0.36rem;
     margin-top: 0.25rem;
     border-radius: 1.25rem;
   }
@@ -27936,23 +27936,29 @@ html[data-theme="light"] .resume-playground-saved-actions .secondary-button {
   .portal-home-tab {
     flex: 1 1 0;
     min-width: 0;
-    min-height: 2.05rem;
-    padding: 0.28rem 0.12rem;
-    gap: 0;
+    min-height: 2.35rem;
+    padding: 0.22rem 0.06rem 0.3rem;
+    gap: 0.12rem;
+    flex-direction: column;
   }
 
   .portal-home-tab svg {
-    width: 0.92rem;
-    height: 0.92rem;
+    width: 0.72rem;
+    height: 0.72rem;
   }
 
   .portal-home-tab span {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+    max-width: 3.1rem;
+    font-size: clamp(0.43rem, 1.45vw, 0.55rem);
+    line-height: 0.92;
+    text-align: center;
+    letter-spacing: -0.025em;
   }
 
   .portal-home-tab.active::before {
@@ -27965,26 +27971,62 @@ html[data-theme="light"] .resume-playground-saved-actions .secondary-button {
   .portal-post-composer,
   .portal-job-summary-card,
   .portal-feed-empty {
-    padding: 0.75rem;
-    border-radius: 0.9rem;
+    padding: 0.7rem;
+    border-radius: 1rem;
+  }
+
+  .portal-social-post-card {
+    margin: 0.35rem 0.12rem 0;
+    background:
+      linear-gradient(145deg, rgba(8, 22, 19, 0.86), rgba(0, 0, 0, 0.8)),
+      rgba(0, 0, 0, 0.68);
+    border-color: rgba(99, 192, 184, 0.28);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 14px 32px rgba(0, 0, 0, 0.22);
   }
 
   .portal-social-post-header,
   .portal-job-summary-card {
     grid-template-columns: 1fr;
+    gap: 0.4rem;
   }
 
   .portal-post-avatar {
-    width: 2.55rem;
-    height: 2.55rem;
+    width: 2.45rem;
+    height: 2.45rem;
   }
 
   .portal-post-reach {
     width: max-content;
+    padding: 0.28rem 0.55rem;
+    font-size: 0.72rem;
+  }
+
+  .portal-social-post-header h3 {
+    font-size: 0.95rem;
+  }
+
+  .portal-social-post-header p,
+  .portal-post-body,
+  .portal-post-comments p {
+    font-size: 0.74rem;
+  }
+
+  .portal-post-body {
+    margin: 0.6rem 0 0.7rem;
+    line-height: 1.35;
   }
 
   .portal-comment-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .portal-comment-row input {
+    min-height: 2.05rem;
+    padding: 0.52rem 0.62rem;
+    border-radius: 0.65rem;
+    font-size: 0.78rem;
   }
 
   .portal-job-stats-grid,
@@ -27994,45 +28036,59 @@ html[data-theme="light"] .resume-playground-saved-actions .secondary-button {
   }
 
   .portal-post-reactions {
-    flex-wrap: nowrap;
-    gap: 0.18rem;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    flex-wrap: initial;
+    gap: 0.18rem 0.28rem;
     overflow: hidden;
-    padding: 0.08rem 0 0.18rem;
+    padding: 0.08rem 0 0.26rem;
     width: 100%;
   }
 
   .portal-reaction-button {
-    flex: 0 1 auto;
-    min-height: 1.35rem;
-    gap: 0.1rem;
-    padding: 0.08rem 0.02rem;
-    font-size: 0.62rem;
+    width: 100%;
+    min-height: 1.25rem;
+    gap: 0.08rem;
+    padding: 0.04rem 0;
+    font-size: 0.53rem;
+    line-height: 1;
+    justify-content: flex-start;
   }
 
   .portal-reaction-button svg {
-    width: 0.78rem;
-    height: 0.78rem;
+    width: 0.66rem;
+    height: 0.66rem;
   }
 
   .portal-reaction-label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
     white-space: nowrap;
+    font-size: 0.5rem;
+    letter-spacing: -0.035em;
   }
 
   .portal-reaction-count {
-    font-size: 0.58rem;
+    font-size: 0.5rem;
   }
 
   .portal-comment-button {
-    min-height: 2rem;
-    justify-content: center;
-    gap: 0.35rem;
+    order: -1;
+    min-height: 1.9rem;
+    justify-content: flex-start;
+    gap: 0.25rem;
+    padding: 0.12rem 0.15rem;
+    font-size: 0.72rem;
     border: 0 !important;
     background: transparent !important;
+  }
+
+  .portal-comment-button svg {
+    width: 0.85rem;
+    height: 0.85rem;
   }
 
   .portal-post-media img,

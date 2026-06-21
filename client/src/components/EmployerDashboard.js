@@ -519,6 +519,8 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                     currentUser={employer}
                     companyData={companyData}
                     jobs={jobs}
+                    switchSection={switchSection}
+                    onRefresh={refreshJobs}
                 />;
             case 'post-job':
                 return <PostJob

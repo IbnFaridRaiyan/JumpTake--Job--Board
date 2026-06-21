@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import JobFeed from './JobFeed';
 import MyApplications from './MyApplications';
 import MyAssessments from './MyAssessments';
 import VideoInterviews from './VideoInterviews';
@@ -175,7 +174,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const sectionHistoryRef = useRef([]);
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [, setError] = useState(null);
     const [user, setUser] = useState(null);
     const [jobSeekerData, setJobSeekerData] = useState(null);
     const [pendingAssessmentCount, setPendingAssessmentCount] = useState(0);
@@ -759,17 +758,6 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         resetMobilePanelScroll();
     };
 
-    const returnToSection = (section) => {
-        if (!CANDIDATE_SECTION_IDS.has(section)) {
-            return;
-        }
-
-        sectionHistoryRef.current = sectionHistoryRef.current.filter((item) => item !== section);
-        updateActiveSection(section);
-        setMobileSectionVisible(true);
-        resetMobilePanelScroll();
-    };
-
     const renderContent = () => {
         if (loading && activeSection === 'home') {
             return (
@@ -785,19 +773,8 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     currentUser={user}
                     profileData={jobSeekerData}
                     jobs={jobs}
-                    jobPosts={(
-                        <JobFeed
-                            jobs={jobs}
-                            error={error}
-                            userId={user?.id}
-                            onRefresh={refreshData}
-                            jobSeekerData={jobSeekerData}
-                            currentUser={user}
-                            returnToSection={returnToSection}
-                            embedded
-                            title="Job Posts"
-                        />
-                    )}
+                    switchSection={switchSection}
+                    onRefresh={refreshData}
                 />;
             case 'applications':
                 return <MyApplications
@@ -906,19 +883,8 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     currentUser={user}
                     profileData={jobSeekerData}
                     jobs={jobs}
-                    jobPosts={(
-                        <JobFeed
-                            jobs={jobs}
-                            error={error}
-                            userId={user?.id}
-                            onRefresh={refreshData}
-                            jobSeekerData={jobSeekerData}
-                            currentUser={user}
-                            returnToSection={returnToSection}
-                            embedded
-                            title="Job Posts"
-                        />
-                    )}
+                    switchSection={switchSection}
+                    onRefresh={refreshData}
                 />;
         }
     };

@@ -133,7 +133,7 @@ const normalizeSkillList = (value) => {
     if (Array.isArray(value)) {
         return value
             .flatMap((item) => normalizeSkillList(item))
-            .map((item) => String(item).trim())
+            .map((item) => asDisplayText(item).trim())
             .filter(Boolean);
     }
 
@@ -141,6 +141,13 @@ const normalizeSkillList = (value) => {
         return value
             .split(/[\n,;|]+/)
             .map((item) => item.trim())
+            .filter(Boolean);
+    }
+
+    if (value && typeof value === 'object') {
+        return Object.values(value)
+            .flatMap((item) => normalizeSkillList(item))
+            .map((item) => asDisplayText(item).trim())
             .filter(Boolean);
     }
 
@@ -172,6 +179,48 @@ const asDisplayText = (value, fallback = '') => {
     }
 
     return fallback;
+};
+
+const normalizeTextList = (value) => {
+    if (!Array.isArray(value)) {
+        return [];
+    }
+
+    return value
+        .flatMap((item) => Array.isArray(item) ? item : [item])
+        .map((item) => asDisplayText(item))
+        .filter(Boolean);
+};
+
+const normalizeJobForDisplay = (job = {}, index = 0) => {
+    const company = job.company && typeof job.company === 'object' ? job.company : {};
+    const id = asDisplayText(job._id, asDisplayText(job.id, `job-${index}`));
+    const createdAtDate = new Date(job.createdAt || job.postedAt || Date.now());
+
+    return {
+        ...job,
+        _id: id,
+        title: asDisplayText(job.title, 'Untitled job'),
+        jobNumber: asDisplayText(job.jobNumber, 'Generating...'),
+        location: asDisplayText(job.location, 'Location not specified'),
+        jobType: asDisplayText(job.jobType, 'Type not specified'),
+        salary: asDisplayText(job.salary),
+        description: asDisplayText(job.description, 'No description added.'),
+        requirements: normalizeTextList(job.requirements),
+        responsibilities: normalizeTextList(job.responsibilities),
+        skills: getJobSkills(job),
+        createdAt: Number.isNaN(createdAtDate.getTime()) ? new Date().toISOString() : createdAtDate.toISOString(),
+        company: {
+            ...company,
+            _id: asDisplayText(company._id, ''),
+            name: asDisplayText(company.name, 'Company unavailable'),
+            logo: typeof company.logo === 'string' ? company.logo : '',
+            industry: asDisplayText(company.industry),
+            description: asDisplayText(company.description),
+            headquarters: asDisplayText(company.headquarters),
+            website: asDisplayText(company.website)
+        }
+    };
 };
 
 const createApplicationProfileDraft = (profileData, userData = {}) => ({
@@ -212,7 +261,7 @@ const createCoverLetterTemplate = (profileData, job, userData = {}) => {
 
     return [
         `<p>Dear Hiring Team,</p>`,
-        `<p>I am excited to apply for the ${escapeHtml(jobTitle)} role at ${escapeHtml(companyName)}. My experience and skills align well with the opportunity, and I would love to contribute to your team.</p>`,
+        `<p>I am excited to apply for the ${escapeHtml(asDisplayText(jobTitle, 'this role'))} role at ${escapeHtml(asDisplayText(companyName, 'your team'))}. My experience and skills align well with the opportunity, and I would love to contribute to your team.</p>`,
         `<p>Thank you for your time and consideration.</p>`,
         `<p>Sincerely,</p>`,
         `<p>${escapeHtml(applicantName)}</p>`
@@ -349,7 +398,11 @@ const RichTextEditor = ({ value, onChange, disabled = false }) => {
 
 const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUser, returnToSection, embedded = false, title = 'Job Feed' }) => {
     const safeJobs = useMemo(
-        () => (Array.isArray(jobs) ? jobs.filter((job) => job && typeof job === 'object') : []),
+        () => (Array.isArray(jobs)
+            ? jobs
+                .filter((job) => job && typeof job === 'object')
+                .map((job, index) => normalizeJobForDisplay(job, index))
+            : []),
         [jobs]
     );
     const [searchTerm, setSearchTerm] = useState('');
@@ -1185,7 +1238,7 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
         return (
             <ul className="job-detail-list">
                 {items.map((item, index) => (
-                    <li key={index}>{item}</li>
+                    <li key={index}>{asDisplayText(item)}</li>
                 ))}
             </ul>
         );
@@ -1323,7 +1376,7 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                 </div>
             )}
 
-            {error && <div className="error-message">{error}</div>}
+            {error && <div className="error-message">{asDisplayText(error?.message || error, 'Unable to load jobs right now.')}</div>}
 
             {isLoadingRecommendations && activeTab === 'recommended' ? (
                 <div className="loading-recommendations">
@@ -1386,7 +1439,7 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                                         )}
                                     </div>
                                     <div className="job-card-body">
-                                        <p className="job-number">Job Number: {job.jobNumber || 'Generating...'}</p>
+                                        <p className="job-number">Job Number: {asDisplayText(job.jobNumber, 'Generating...')}</p>
                                         <p className="job-location">{asDisplayText(job.location, 'Location not specified')}</p>
                                         <p className="job-type">{asDisplayText(job.jobType, 'Type not specified')}</p>
                                         {job.salary && <p className="job-salary">{asDisplayText(job.salary)}</p>}
@@ -1528,7 +1581,7 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                     <div className="job-preview-modal candidate-job-preview-modal" ref={previewModalRef} onClick={(e) => e.stopPropagation()}>
                         <div className="mobile-job-preview-topbar">
                             <ProfileAvatar imageSrc={previewJob.company?.logo} name={previewJob.company?.name} className="preview-company-logo" imageClassName="profile-avatar-image" />
-                            <h2>{previewJob.title}</h2>
+                            <h2>{asDisplayText(previewJob.title, 'Untitled job')}</h2>
                             <button
                                 type="button"
                                 className="mobile-job-preview-close"
@@ -1541,26 +1594,26 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                         <div className="job-preview-header">
                             <button className="preview-close-btn" onClick={closePreview}>×</button>
                             <ProfileAvatar imageSrc={previewJob.company?.logo} name={previewJob.company?.name} className="preview-company-logo" imageClassName="profile-avatar-image" />
-                            <h2>{previewJob.title}</h2>
+                            <h2>{asDisplayText(previewJob.title, 'Untitled job')}</h2>
                             <div className="preview-company-info">
-                                <span className="preview-company-name">{previewJob.company.name}</span>
+                                <span className="preview-company-name">{asDisplayText(previewJob.company?.name, 'Company unavailable')}</span>
                                 {previewJob.company.industry && (
-                                    <span className="preview-company-industry">{previewJob.company.industry}</span>
+                                    <span className="preview-company-industry">{asDisplayText(previewJob.company.industry)}</span>
                                 )}
                             </div>
                             <div className="preview-job-meta">
                                 <span className="preview-job-number">
-                                    <i className="type-icon">#</i> {previewJob.jobNumber || 'Generating...'}
+                                    <i className="type-icon">#</i> {asDisplayText(previewJob.jobNumber, 'Generating...')}
                                 </span>
                                 <span className="preview-job-location">
-                                    <i className="location-icon">📍</i> {previewJob.location}
+                                    <i className="location-icon">📍</i> {asDisplayText(previewJob.location, 'Location not specified')}
                                 </span>
                                 <span className="preview-job-type">
-                                    <i className="type-icon">🕒</i> {previewJob.jobType}
+                                    <i className="type-icon">🕒</i> {asDisplayText(previewJob.jobType, 'Type not specified')}
                                 </span>
                                 {previewJob.salary && (
                                     <span className="preview-job-salary">
-                                        <i className="salary-icon">💰</i> {previewJob.salary}
+                                        <i className="salary-icon">💰</i> {asDisplayText(previewJob.salary)}
                                     </span>
                                 )}
                             </div>
@@ -1569,15 +1622,15 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                         <div className="job-preview-content">
                             <div className="candidate-job-preview-scroll-area">
                                 <div className="candidate-job-preview-mobile-meta">
-                                    <span><strong>Job Number:</strong> {previewJob.jobNumber || 'Generating...'}</span>
-                                    <span><strong>Company:</strong> {previewJob.company.name}</span>
-                                    <span><strong>Location:</strong> {previewJob.location || 'Not specified'}</span>
-                                    <span><strong>Type:</strong> {previewJob.jobType || 'Not specified'}</span>
-                                    {previewJob.salary && <span><strong>Salary:</strong> {previewJob.salary}</span>}
+                                    <span><strong>Job Number:</strong> {asDisplayText(previewJob.jobNumber, 'Generating...')}</span>
+                                    <span><strong>Company:</strong> {asDisplayText(previewJob.company?.name, 'Company unavailable')}</span>
+                                    <span><strong>Location:</strong> {asDisplayText(previewJob.location, 'Not specified')}</span>
+                                    <span><strong>Type:</strong> {asDisplayText(previewJob.jobType, 'Not specified')}</span>
+                                    {previewJob.salary && <span><strong>Salary:</strong> {asDisplayText(previewJob.salary)}</span>}
                                 </div>
                             <div className="preview-section">
                                 <h3>Description</h3>
-                                <p>{previewJob.description}</p>
+                                <p>{asDisplayText(previewJob.description, 'No description added.')}</p>
                             </div>
 
                             {previewJob.requirements && previewJob.requirements.length > 0 && (
@@ -1594,11 +1647,11 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                                 </div>
                             )}
                             
-                            {previewJob.skills && previewJob.skills.length > 0 && (
+                            {getJobSkills(previewJob).length > 0 && (
                                 <div className="preview-section">
                                     <h3>Skills</h3>
                                     <div className="preview-skills">
-                                        {previewJob.skills.map((skill, index) => {
+                                        {getJobSkills(previewJob).map((skill, index) => {
                                             const isMatch = candidateSkills.some(s => 
                                                     s.toLowerCase() === skill.toLowerCase()
                                             );
@@ -1621,10 +1674,10 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                                 <h3>About the Company</h3>
                                 <p>
                                     {previewJob.company.description || 
-                                     `${previewJob.company.name} is currently hiring for this position.`}
+                                     `${asDisplayText(previewJob.company?.name, 'This company')} is currently hiring for this position.`}
                                 </p>
                                 {previewJob.company.headquarters && (
-                                    <p><strong>Headquarters:</strong> {previewJob.company.headquarters}</p>
+                                    <p><strong>Headquarters:</strong> {asDisplayText(previewJob.company.headquarters)}</p>
                                 )}
                                 {previewJob.company.website && (
                                     <p>
@@ -1637,7 +1690,7 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                                             rel="noopener noreferrer"
                                             className="company-website-link"
                                         >
-                                            {previewJob.company.website}
+                                            {asDisplayText(previewJob.company.website)}
                                         </a>
                                     </p>
                                 )}
@@ -1668,7 +1721,7 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                                     </button>
                                 </div>
                                 <div className="preview-post-date">
-                                    Posted: {new Date(previewJob.createdAt).toLocaleDateString()}
+                                    Posted: {new Date(previewJob.createdAt || Date.now()).toLocaleDateString()}
                                 </div>
                             </div>
                         </div>
@@ -1680,8 +1733,8 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                     <div className="application-workspace-modal" ref={applicationModalRef} onClick={(event) => event.stopPropagation()}>
                         <div className="application-workspace-header">
                             <div>
-                                <h3>Apply to: {applicationJob.title}</h3>
-                                <p>{applicationJob.company?.name || 'Company unavailable'}</p>
+                                <h3>Apply to: {asDisplayText(applicationJob.title, 'Untitled job')}</h3>
+                                <p>{asDisplayText(applicationJob.company?.name, 'Company unavailable')}</p>
                             </div>
                             <button type="button" className="preview-close-btn" onClick={handleCancelApplication}>×</button>
                         </div>

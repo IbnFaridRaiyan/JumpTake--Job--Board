@@ -47,6 +47,18 @@ const PortalSidebar = ({
     const toggleId = toggleIdRef.current;
 
     useEffect(() => {
+        const collapseForMobile = () => {
+            if (shouldStartCollapsed()) {
+                setExpanded(false);
+            }
+        };
+
+        collapseForMobile();
+        window.addEventListener('resize', collapseForMobile);
+        return () => window.removeEventListener('resize', collapseForMobile);
+    }, []);
+
+    useEffect(() => {
         if (mobileSectionOpen) {
             setExpanded(false);
         }

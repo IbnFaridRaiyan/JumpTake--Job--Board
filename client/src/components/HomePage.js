@@ -19,6 +19,7 @@ import FriendInvitations from './FriendInvitations';
 import FloatingMessenger from './FloatingMessenger';
 import ResumePlayground from './ResumePlayground';
 import PortalHomeFeed from './PortalHomeFeed';
+import PortalDefaultLanding from './PortalDefaultLanding';
 import logo from './media/logo3.png';
 import logoDark from './media/logo4.png';
 
@@ -67,9 +68,7 @@ const CANDIDATE_SECTION_IDS = new Set([
 
 const CANDIDATE_SECTION_STORAGE_KEY = 'jumptakeCandidateSection';
 
-const normalizeCandidateSection = (section) => (
-    section === 'job-feed' ? 'home' : section
-);
+const normalizeCandidateSection = (section) => section;
 
 const isMobileViewport = () => (
     typeof window !== 'undefined'
@@ -118,20 +117,6 @@ class CandidatePortalErrorBoundary extends React.Component {
     }
 }
 
-const getInitialCandidateSection = () => {
-    if (typeof window === 'undefined') {
-        return 'home';
-    }
-
-    const hashValue = window.location.hash.replace(/^#/, '');
-    const [portal, section] = hashValue.split(':');
-    if (portal === 'candidate' && CANDIDATE_SECTION_IDS.has(section)) {
-        return normalizeCandidateSection(section);
-    }
-
-    return 'home';
-};
-
 const normalizeStringList = (value) => {
     if (Array.isArray(value)) {
         return value
@@ -169,7 +154,7 @@ const normalizeCandidateProfile = (profile) => {
 };
 
 const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
-    const [activeSection, setActiveSection] = useState(getInitialCandidateSection);
+    const [activeSection, setActiveSection] = useState('home');
     const [sectionErrorResetKey, setSectionErrorResetKey] = useState(0);
     const sectionHistoryRef = useRef([]);
     const [jobs, setJobs] = useState([]);
@@ -305,7 +290,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             }
         };
 
-        const initialSection = getInitialCandidateSection();
+        const initialSection = 'home';
         sessionStorage.setItem(CANDIDATE_SECTION_STORAGE_KEY, initialSection);
         sessionStorage.removeItem('jumptakeHomeFeedRequest');
         sessionStorage.removeItem('jumptakeCandidateJobSearch');
@@ -584,7 +569,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
 
     const switchSection = (nextSection) => {
         if (!nextSection || nextSection === activeSection) {
-            setMobileSectionVisible(true);
+            setMobileSectionVisible(!isMobileViewport() || nextSection !== 'home');
             resetMobilePanelScroll();
             return;
         }
@@ -594,7 +579,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             ? []
             : [...sectionHistoryRef.current, activeSection];
         updateActiveSection(nextSection);
-        setMobileSectionVisible(true);
+        setMobileSectionVisible(!isMobileViewport() || nextSection !== 'home');
         resetMobilePanelScroll();
     };
 
@@ -608,7 +593,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         }
 
         if (nextSection === activeSection) {
-            setMobileSectionVisible(true);
+            setMobileSectionVisible(!isMobileViewport() || nextSection !== 'home');
             return;
         }
 
@@ -630,7 +615,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         { id: 'resume-playground', label: 'Resume Playground', icon: 'draft' }
     ].map((item) => ({
         ...item,
-        active: activeSection === item.id,
+        active: item.id === 'home' ? ['home', 'job-feed'].includes(activeSection) : activeSection === item.id,
         onClick: () => openSection(item.id)
     }));
 
@@ -680,7 +665,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         }
 
         sessionStorage.setItem('jumptakeCandidateJobSearch', query);
-        openSection('home');
+        openSection('job-feed');
     };
 
     const handleOpenNotification = (notification) => {
@@ -719,19 +704,12 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
 
             sessionStorage.setItem('jumptakeHomeFeedRequest', JSON.stringify(homeFeedRequest));
             window.dispatchEvent(new CustomEvent('jumptake-home-feed-request', { detail: homeFeedRequest }));
-            openSection('home');
+            openSection('job-feed');
             return;
         }
 
         const normalizedSection = normalizeCandidateSection(nextSection);
         openSection(CANDIDATE_SECTION_IDS.has(normalizedSection) ? normalizedSection : 'notifications');
-    };
-
-    const handleLogoClick = () => {
-        sectionHistoryRef.current = [];
-        updateActiveSection('home');
-        setMobileSectionVisible(false);
-        resetMobilePanelScroll();
     };
 
     const resetMobilePanelScroll = () => {
@@ -790,6 +768,16 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
 
         switch (activeSection) {
             case 'home':
+                return <PortalDefaultLanding
+                    mode="candidate"
+                    displayName={displayName}
+                    jobs={jobs}
+                    notificationCount={pendingNotificationCount}
+                    inboxCount={pendingInboxCount}
+                    assessmentCount={pendingAssessmentCount}
+                    videoInterviewCount={pendingVideoInterviewCount}
+                    switchSection={switchSection}
+                />;
             case 'job-feed':
                 return <PortalHomeFeed
                     mode="candidate"
@@ -912,19 +900,19 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         }
     };
 
+    const showSectionTitle = !['home', 'job-feed'].includes(activeSection);
+
     if (loading && !jobSeekerData) {
         return (
             <div className="loading-container">
                 <div className="dashboard-header candidate-dashboard-header">
                     <div className="candidate-dashboard-brand">
-                        <button
-                            type="button"
-                            className="dashboard-logo-button"
-                            onClick={handleLogoClick}
-                            aria-label="Go to Home"
+                        <div
+                            className="dashboard-logo-button dashboard-logo-static"
+                            aria-label="JumpTake"
                         >
                             <img src={dashboardLogo} alt="JumpTake Logo" className="candidate-dashboard-logo" />
-                        </button>
+                        </div>
                     </div>
                     <div className="dashboard-title candidate-dashboard-title">
                         <h1>Candidate Portal</h1>
@@ -940,14 +928,12 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         <div className="home-page">
             <div className="dashboard-header candidate-dashboard-header">
                 <div className="candidate-dashboard-brand">
-                    <button
-                        type="button"
-                        className="dashboard-logo-button"
-                        onClick={handleLogoClick}
-                        aria-label="Go to Home"
+                    <div
+                        className="dashboard-logo-button dashboard-logo-static"
+                        aria-label="JumpTake"
                     >
                         <img src={dashboardLogo} alt="JumpTake Logo" className="candidate-dashboard-logo" />
-                    </button>
+                    </div>
                 </div>
                 <div className="dashboard-title candidate-dashboard-title">
                     <h1>Candidate Portal</h1>
@@ -1001,10 +987,12 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                 />
 
                 <main ref={mobilePanelRef} className={`main-content mobile-dashboard-section-panel mobile-section-${activeSection} ${mobileSectionVisible ? 'is-open' : ''}`}>
-                    <div className="dashboard-section-title">
-                        <h2><span key={`desktop-${activeSection}`} className="portal-title-jello-text">{sectionTitles[activeSection] || 'Dashboard Section'}</span></h2>
-                    </div>
-                    {mobileSectionVisible && (
+                    {showSectionTitle && (
+                        <div className="dashboard-section-title">
+                            <h2><span key={`desktop-${activeSection}`} className="portal-title-jello-text">{sectionTitles[activeSection] || 'Dashboard Section'}</span></h2>
+                        </div>
+                    )}
+                    {showSectionTitle && mobileSectionVisible && (
                         <div className="mobile-section-panel-header">
                             <button type="button" className="back-button" onClick={closeMobileSectionPanel}>
                                 Back

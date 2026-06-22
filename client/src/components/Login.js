@@ -53,7 +53,7 @@ const Login = ({ onClose }) => {
 
             setTimeout(() => {
                 onClose();
-                navigate('/home');
+                navigate('/home#candidate:home', { replace: true });
             }, 1500);
         } catch (error) {
             console.error('Login error:', error);

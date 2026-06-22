@@ -33732,6 +33732,348 @@ html[data-theme="light"] .home-page .dashboard-section-title {
   }
 }
 
+/* Animated menu control and smooth expanding label rail. */
+.home-page .portal-uiverse-sidebar,
+.home-page .portal-uiverse-sidebar.sidebar,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar.sidebar,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.sidebar {
+  transition:
+    width 360ms cubic-bezier(.22, 1, .36, 1),
+    min-width 360ms cubic-bezier(.22, 1, .36, 1),
+    max-width 360ms cubic-bezier(.22, 1, .36, 1),
+    inline-size 360ms cubic-bezier(.22, 1, .36, 1),
+    flex-basis 360ms cubic-bezier(.22, 1, .36, 1) !important;
+  will-change: width, inline-size, flex-basis !important;
+}
+
+.home-page .portal-uiverse-sidebar.is-expanded,
+.home-page .portal-uiverse-sidebar.is-expanded.sidebar,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded.sidebar,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded.sidebar {
+  width: 15.5rem !important;
+  min-width: 15.5rem !important;
+  max-width: 15.5rem !important;
+  inline-size: 15.5rem !important;
+  min-inline-size: 15.5rem !important;
+  max-inline-size: 15.5rem !important;
+  flex-basis: 15.5rem !important;
+}
+
+.home-page .portal-uiverse-sidebar .portal-sidebar-nav,
+.home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+  transition:
+    width 360ms cubic-bezier(.22, 1, .36, 1),
+    min-width 360ms cubic-bezier(.22, 1, .36, 1),
+    max-width 360ms cubic-bezier(.22, 1, .36, 1),
+    padding 360ms cubic-bezier(.22, 1, .36, 1) !important;
+}
+
+.home-page .portal-uiverse-sidebar.is-expanded .portal-sidebar-nav,
+.home-page .portal-uiverse-sidebar.is-expanded .portal-uiverse-rail {
+  width: 15rem !important;
+  min-width: 15rem !important;
+  max-width: 15rem !important;
+}
+
+.home-page .portal-uiverse-sidebar.is-expanded .portal-uiverse-rail {
+  align-items: stretch !important;
+  padding: 0.45rem !important;
+}
+
+.home-page .portal-uiverse-sidebar .portal-sidebar-menu-icon {
+  position: relative !important;
+  display: block !important;
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  height: 3.1rem !important;
+  margin: 0 0 0.25rem !important;
+  padding: 0.82rem 0.68rem !important;
+  cursor: pointer !important;
+  background: #000 !important;
+  border: 1px solid transparent !important;
+  border-radius: 0.85rem !important;
+}
+
+.home-page .portal-uiverse-sidebar .portal-sidebar-menu-icon input {
+  display: none !important;
+}
+
+.home-page .portal-uiverse-sidebar .portal-sidebar-menu-icon span {
+  display: block !important;
+  position: relative !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 3px !important;
+  margin-bottom: 24% !important;
+  opacity: 1 !important;
+  background: #fff !important;
+  border-radius: 10px !important;
+  transform-origin: left center !important;
+  transition: 0.3s ease-in-out !important;
+}
+
+.home-page .portal-uiverse-sidebar .portal-sidebar-menu-icon input:checked ~ span {
+  left: 5px !important;
+  margin-bottom: 28% !important;
+  background: #ef4444 !important;
+}
+
+.home-page .portal-uiverse-sidebar .portal-sidebar-menu-icon input:checked ~ span:nth-of-type(1) {
+  transform: rotate(45deg) !important;
+}
+
+.home-page .portal-uiverse-sidebar .portal-sidebar-menu-icon input:checked ~ span:nth-of-type(2) {
+  opacity: 0 !important;
+}
+
+.home-page .portal-uiverse-sidebar .portal-sidebar-menu-icon input:checked ~ span:nth-of-type(3) {
+  transform: rotate(-45deg) !important;
+}
+
+.home-page .portal-uiverse-sidebar.is-expanded .sidebar__list,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded .sidebar__list {
+  align-items: stretch !important;
+}
+
+.home-page .portal-uiverse-sidebar.is-expanded .sidebar__item,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded .sidebar__item {
+  height: 3.15rem !important;
+  min-height: 3.15rem !important;
+}
+
+.home-page .portal-uiverse-sidebar.is-expanded .sidebar__link,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded .sidebar__link,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded .sidebar__link {
+  justify-content: flex-start !important;
+  gap: 0.8rem !important;
+  height: 3rem !important;
+  min-height: 3rem !important;
+  padding: 0 0.85rem !important;
+}
+
+.home-page .portal-uiverse-sidebar.is-expanded .sidebar__link .icon,
+.home-page .portal-uiverse-sidebar.is-expanded .sidebar__link .icon svg,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded .sidebar__link .icon,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded .sidebar__link .icon svg {
+  width: 1.18rem !important;
+  min-width: 1.18rem !important;
+  height: 1.18rem !important;
+}
+
+.home-page .portal-uiverse-sidebar.is-expanded .text,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded .text {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: auto !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+  color: currentColor !important;
+  font-size: 0.82rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  opacity: 1 !important;
+  transform: translateX(0) !important;
+  transition: opacity 240ms ease 90ms, transform 240ms ease 90ms !important;
+  text-overflow: ellipsis !important;
+}
+
+.home-page .portal-uiverse-sidebar.is-expanded [data-tooltip]::before {
+  display: none !important;
+}
+
+.portal-default-home-action {
+  grid-column: 1 / -1;
+  justify-self: center;
+  min-width: min(18rem, 100%);
+}
+
+@media (max-width: 768px) {
+  .home-page .portal-uiverse-sidebar.is-expanded,
+  .home-page .portal-uiverse-sidebar.is-expanded.sidebar,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded.sidebar,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded.sidebar {
+    width: min(68vw, 15.5rem) !important;
+    min-width: min(68vw, 15.5rem) !important;
+    max-width: min(68vw, 15.5rem) !important;
+    inline-size: min(68vw, 15.5rem) !important;
+    min-inline-size: min(68vw, 15.5rem) !important;
+    max-inline-size: min(68vw, 15.5rem) !important;
+    flex-basis: min(68vw, 15.5rem) !important;
+  }
+
+  .home-page .portal-uiverse-sidebar.is-expanded .portal-sidebar-nav,
+  .home-page .portal-uiverse-sidebar.is-expanded .portal-uiverse-rail {
+    width: min(calc(68vw - 0.5rem), 15rem) !important;
+    min-width: min(calc(68vw - 0.5rem), 15rem) !important;
+    max-width: min(calc(68vw - 0.5rem), 15rem) !important;
+  }
+
+  .home-page .portal-uiverse-sidebar.is-expanded .portal-sidebar-menu-icon {
+    height: 3rem !important;
+  }
+}
+
+/* New default landing page for both portal home screens. */
+.portal-default-landing {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+  min-height: clamp(28rem, 62vh, 42rem);
+  padding: clamp(1rem, 2vw, 1.4rem);
+  color: #f8fafc;
+  background:
+    radial-gradient(circle at top left, rgba(94, 234, 212, 0.12), transparent 34%),
+    linear-gradient(145deg, rgba(6, 23, 20, 0.96), rgba(0, 0, 0, 0.98));
+  border: 1px solid rgba(94, 234, 212, 0.28);
+  border-radius: 1rem;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03), 0 18px 45px rgba(0, 0, 0, 0.32);
+}
+
+.portal-default-hero {
+  align-self: end;
+  max-width: 46rem;
+}
+
+.portal-default-kicker {
+  margin: 0 0 0.35rem;
+  color: #7dd3fc;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.portal-default-hero h3 {
+  margin: 0;
+  color: #fff;
+  font-family: "Chewy", system-ui, sans-serif;
+  font-size: clamp(2rem, 4vw, 3.65rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: 0;
+}
+
+.portal-default-hero p:not(.portal-default-kicker) {
+  max-width: 42rem;
+  margin: 0.75rem 0 0;
+  color: rgba(248, 250, 252, 0.82);
+  font-size: clamp(0.95rem, 1.2vw, 1.08rem);
+  line-height: 1.55;
+}
+
+.portal-default-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.portal-default-stat {
+  display: grid;
+  gap: 0.12rem;
+  min-height: 5.4rem;
+  padding: 0.9rem;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(94, 234, 212, 0.24);
+  border-radius: 0.8rem;
+}
+
+.portal-default-stat strong {
+  color: #99f6e4;
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.portal-default-stat span {
+  color: rgba(248, 250, 252, 0.78);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.portal-default-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  align-self: start;
+}
+
+.portal-default-action {
+  min-height: 3.25rem;
+  padding: 0.75rem 0.9rem;
+  color: #f8fafc;
+  font-weight: 900;
+  background: rgba(13, 37, 33, 0.88);
+  border: 1px solid rgba(94, 234, 212, 0.45);
+  border-radius: 999px;
+  transition: transform 180ms ease, border-color 180ms ease, background-color 180ms ease;
+}
+
+.portal-default-action:hover,
+.portal-default-action:focus-visible {
+  transform: translateY(-2px);
+  background: rgba(20, 83, 75, 0.92);
+  border-color: rgba(153, 246, 228, 0.86);
+}
+
+.portal-default-action.is-primary {
+  color: #001411;
+  background: #99f6e4;
+  border-color: #99f6e4;
+}
+
+@media (max-width: 768px) {
+  .portal-default-landing {
+    min-height: calc(100dvh - 9rem);
+    padding: 0.9rem;
+    gap: 0.85rem;
+    border-radius: 0.9rem;
+  }
+
+  .portal-default-hero h3 {
+    font-size: 2.15rem;
+  }
+
+  .portal-default-hero p:not(.portal-default-kicker) {
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+
+  .portal-default-stats,
+  .portal-default-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
+
+  .portal-default-stat {
+    min-height: 4.7rem;
+    padding: 0.72rem;
+  }
+
+  .portal-default-stat strong {
+    font-size: 1.42rem;
+  }
+
+  .portal-default-stat span {
+    font-size: 0.74rem;
+  }
+
+  .portal-default-action {
+    min-height: 2.85rem;
+    padding: 0.58rem 0.65rem;
+    font-size: 0.82rem;
+  }
+}
+
 /* Final hard reset for mobile portal shell, pagination, and bookmark corners. */
 @media (max-width: 768px) {
   .home-page > .dashboard-container,
@@ -33988,4 +34330,1161 @@ html[data-theme="light"] .home-page .dashboard-section-title {
 .job-card > .job-card-bookmark-action.active,
 .bookmarked-job-card > .bookmarked-job-star-button {
   color: #facc15 !important;
+}
+
+/* Final mobile rail/title tuning: left-shifted icons and smooth open/close. */
+.portal-home-job-pagination button:first-child::before,
+.portal-list-pagination button:first-child::before,
+.mobile-list-pagination button:first-child::before,
+.candidate-list-pagination button:first-child::before,
+.job-feed-pagination button:first-child::before {
+  content: "\2039" !important;
+}
+
+.portal-home-job-pagination button:last-child::before,
+.portal-list-pagination button:last-child::before,
+.mobile-list-pagination button:last-child::before,
+.candidate-list-pagination button:last-child::before,
+.job-feed-pagination button:last-child::before {
+  content: "\203A" !important;
+}
+
+.job-card > .job-card-bookmark-action::before {
+  content: "\2605" !important;
+}
+
+@media (max-width: 768px) {
+  .home-page .portal-vertical-sidebar,
+  .home-page .portal-vertical-sidebar.sidebar,
+  .home-page .portal-vertical-sidebar.is-collapsed,
+  .home-page .portal-vertical-sidebar.is-collapsed.sidebar {
+    --collapsed: 2.72rem !important;
+    --expanded: min(72vw, 17.25rem) !important;
+    left: 0 !important;
+    right: auto !important;
+    width: var(--collapsed) !important;
+    min-width: var(--collapsed) !important;
+    max-width: var(--collapsed) !important;
+    inline-size: var(--collapsed) !important;
+    min-inline-size: var(--collapsed) !important;
+    max-inline-size: var(--collapsed) !important;
+    flex: 0 0 var(--collapsed) !important;
+    transition:
+      width 320ms cubic-bezier(.22, 1, .36, 1),
+      min-width 320ms cubic-bezier(.22, 1, .36, 1),
+      max-width 320ms cubic-bezier(.22, 1, .36, 1),
+      inline-size 320ms cubic-bezier(.22, 1, .36, 1),
+      min-inline-size 320ms cubic-bezier(.22, 1, .36, 1),
+      max-inline-size 320ms cubic-bezier(.22, 1, .36, 1),
+      flex-basis 320ms cubic-bezier(.22, 1, .36, 1),
+      box-shadow 320ms ease !important;
+    will-change: width, inline-size, max-width !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-expanded,
+  .home-page .portal-vertical-sidebar.is-expanded.sidebar {
+    width: var(--expanded) !important;
+    min-width: var(--expanded) !important;
+    max-width: var(--expanded) !important;
+    inline-size: var(--expanded) !important;
+    min-inline-size: var(--expanded) !important;
+    max-inline-size: var(--expanded) !important;
+    flex: 0 0 var(--expanded) !important;
+  }
+
+  .home-page .portal-vertical-sidebar .portal-sidebar-nav {
+    padding-left: 0.18rem !important;
+    padding-right: 0.24rem !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-collapsed .portal-sidebar-header {
+    display: grid !important;
+    place-items: center !important;
+    height: 2.55rem !important;
+    min-height: 2.55rem !important;
+    padding: 0.2rem 0 !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-collapsed .sidebar__toggle-container,
+  .home-page .portal-vertical-sidebar.is-collapsed .nav__toggle {
+    display: grid !important;
+    place-items: center !important;
+    width: 2.15rem !important;
+    min-width: 2.15rem !important;
+    height: 2.15rem !important;
+    min-height: 2.15rem !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-collapsed .sidebar__wrapper {
+    padding-top: 0.18rem !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-collapsed .sidebar__list {
+    align-items: start !important;
+    gap: 0.32rem !important;
+    justify-items: start !important;
+    padding-left: 0 !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-collapsed .sidebar__item {
+    justify-items: start !important;
+    width: 2.28rem !important;
+    min-width: 2.28rem !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-collapsed .sidebar__link {
+    margin: 0 !important;
+    width: 2.24rem !important;
+    min-width: 2.24rem !important;
+    height: 2.24rem !important;
+    min-height: 2.24rem !important;
+  }
+
+  .home-page .main-content,
+  .home-page .mobile-dashboard-section-panel,
+  .home-page .mobile-dashboard-section-panel.is-open,
+  .home-page .mobile-job-management-section-panel,
+  .home-page .mobile-job-management-section-panel.is-open,
+  .home-page .dashboard-container.mobile-section-open .mobile-dashboard-section-panel.is-open,
+  .home-page .dashboard-container.mobile-section-open .mobile-job-management-section-panel.is-open {
+    padding-left: 3.25rem !important;
+  }
+
+  .home-page .dashboard-section-title,
+  .home-page .main-content > .dashboard-section-title,
+  .home-page .mobile-dashboard-section-panel > .dashboard-section-title {
+    position: relative !important;
+    inset: auto !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    width: 100% !important;
+    min-height: 2.65rem !important;
+    margin: 0 0 0.55rem !important;
+    padding: 0 !important;
+    text-align: right !important;
+    z-index: 2 !important;
+  }
+
+  .home-page .dashboard-section-title h2,
+  .home-page .main-content > .dashboard-section-title h2,
+  .home-page .mobile-dashboard-section-panel > .dashboard-section-title h2 {
+    margin-left: auto !important;
+    margin-right: 0.35rem !important;
+    transform: none !important;
+    writing-mode: horizontal-tb !important;
+    text-align: center !important;
+  }
+}
+
+/* Final mobile rail nudge: keep collapsed portal icons fully inside the slim rail. */
+.dashboard-logo-button.dashboard-logo-static {
+  cursor: default !important;
+  pointer-events: none !important;
+}
+
+@media (max-width: 768px) {
+  .home-page .portal-vertical-sidebar,
+  .home-page .portal-vertical-sidebar.sidebar,
+  .home-page .portal-vertical-sidebar.is-collapsed,
+  .home-page .portal-vertical-sidebar.is-collapsed.sidebar {
+    --collapsed: 2.58rem !important;
+  }
+
+  .home-page .portal-vertical-sidebar .portal-sidebar-nav {
+    padding-left: 0.04rem !important;
+    padding-right: 0.12rem !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-collapsed .portal-sidebar-header {
+    justify-items: start !important;
+    padding-left: 0.08rem !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-collapsed .sidebar__list {
+    align-items: start !important;
+    justify-items: start !important;
+    padding-left: 0 !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-collapsed .sidebar__item {
+    width: 2.12rem !important;
+    min-width: 2.12rem !important;
+    justify-items: start !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-collapsed .sidebar__link {
+    width: 2.08rem !important;
+    min-width: 2.08rem !important;
+    transform: translateX(-0.1rem) !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-collapsed .sidebar__link .icon {
+    width: 1.05rem !important;
+    min-width: 1.05rem !important;
+    height: 1.05rem !important;
+  }
+
+  .home-page .portal-vertical-sidebar.is-collapsed .sidebar__link .icon svg {
+    width: 1.05rem !important;
+    height: 1.05rem !important;
+  }
+
+  .home-page .main-content,
+  .home-page .mobile-dashboard-section-panel,
+  .home-page .mobile-dashboard-section-panel.is-open,
+  .home-page .mobile-job-management-section-panel,
+  .home-page .mobile-job-management-section-panel.is-open,
+  .home-page .dashboard-container.mobile-section-open .mobile-dashboard-section-panel.is-open,
+  .home-page .dashboard-container.mobile-section-open .mobile-job-management-section-panel.is-open {
+    padding-left: 3.08rem !important;
+  }
+}
+
+/* Uiverse-style portal sidebar rail: black shell, white icons, existing portal actions. */
+.home-page .portal-uiverse-sidebar,
+.home-page .portal-uiverse-sidebar.sidebar,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar.sidebar,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.sidebar {
+  position: sticky !important;
+  top: 0.75rem !important;
+  left: 0 !important;
+  z-index: 140 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+  width: 4rem !important;
+  min-width: 4rem !important;
+  max-width: 4rem !important;
+  inline-size: 4rem !important;
+  min-inline-size: 4rem !important;
+  max-inline-size: 4rem !important;
+  flex: 0 0 4rem !important;
+  height: calc(100dvh - 1.5rem) !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+.home-page .portal-uiverse-sidebar .checkbox-input,
+.home-page .portal-uiverse-sidebar .portal-sidebar-header,
+.home-page .portal-uiverse-sidebar .sidebar__toggle-container,
+.home-page .portal-uiverse-sidebar .nav__toggle,
+.home-page .portal-uiverse-sidebar .portal-sidebar-profile,
+.home-page .portal-uiverse-sidebar .portal-space-animation,
+.home-page .portal-uiverse-sidebar .item--heading,
+.home-page .portal-uiverse-sidebar .sidebar__item--heading {
+  display: none !important;
+}
+
+.home-page .portal-uiverse-sidebar .portal-sidebar-nav {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: stretch !important;
+  width: 4rem !important;
+  min-width: 4rem !important;
+  max-width: 4rem !important;
+  height: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  width: 3.55rem !important;
+  max-width: 3.55rem !important;
+  height: 100% !important;
+  padding: 0.35rem 0.25rem !important;
+  overflow-y: auto !important;
+  overflow-x: visible !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent !important;
+  background: #000 !important;
+  border: 1px solid rgba(107, 114, 128, 0.72) !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45) !important;
+}
+
+.home-page .portal-uiverse-sidebar .portal-uiverse-rail::-webkit-scrollbar {
+  width: 0.18rem !important;
+}
+
+.home-page .portal-uiverse-sidebar .portal-uiverse-rail::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-radius: 999px !important;
+}
+
+.home-page .portal-uiverse-sidebar .sidebar__wrapper,
+.home-page .portal-uiverse-sidebar .sidebar__list,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar .sidebar__list {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-items: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  list-style: none !important;
+  overflow: visible !important;
+}
+
+.home-page .portal-uiverse-sidebar .list--secondary {
+  margin-top: 0.15rem !important;
+}
+
+.home-page .portal-uiverse-sidebar .sidebar__item,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar .sidebar__item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 3.6rem !important;
+  min-height: 3.6rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.home-page .portal-uiverse-sidebar .sidebar__link,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar .sidebar__link,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .sidebar__link {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  height: 3.45rem !important;
+  min-height: 3.45rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #fff !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 0.85rem !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition:
+    transform 300ms ease,
+    color 300ms ease,
+    border-color 300ms ease,
+    box-shadow 300ms ease,
+    background-color 300ms ease !important;
+}
+
+.home-page .portal-uiverse-sidebar .sidebar__link:hover,
+.home-page .portal-uiverse-sidebar .sidebar__link:focus-visible,
+.home-page .portal-uiverse-sidebar .sidebar__link.is-active {
+  color: #60a5fa !important;
+  fill: #60a5fa !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.38) !important;
+}
+
+.home-page .portal-uiverse-sidebar .sidebar__link:hover .icon,
+.home-page .portal-uiverse-sidebar .sidebar__link:focus-visible .icon,
+.home-page .portal-uiverse-sidebar .sidebar__link.is-active .icon {
+  transform: scale(1.22) !important;
+}
+
+.home-page .portal-uiverse-sidebar .sidebar__link.is-danger {
+  color: #fff !important;
+}
+
+.home-page .portal-uiverse-sidebar .sidebar__link.is-danger:hover,
+.home-page .portal-uiverse-sidebar .sidebar__link.is-danger:focus-visible {
+  color: #f87171 !important;
+  fill: #f87171 !important;
+}
+
+.home-page .portal-uiverse-sidebar .icon,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar .icon {
+  display: grid !important;
+  place-items: center !important;
+  width: 1.35rem !important;
+  min-width: 1.35rem !important;
+  height: 1.35rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: currentColor !important;
+  fill: currentColor !important;
+  transition: transform 300ms ease, color 300ms ease, fill 300ms ease !important;
+}
+
+.home-page .portal-uiverse-sidebar .icon svg,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar .icon svg {
+  display: block !important;
+  width: 1.35rem !important;
+  height: 1.35rem !important;
+  color: currentColor !important;
+  fill: currentColor !important;
+}
+
+.home-page .portal-uiverse-sidebar .text,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar .text {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.home-page .portal-uiverse-sidebar .nav-notification-dot {
+  position: absolute !important;
+  top: 0.8rem !important;
+  right: 0.65rem !important;
+  width: 0.48rem !important;
+  height: 0.48rem !important;
+  margin: 0 !important;
+  background: #fb7185 !important;
+  border: 2px solid #000 !important;
+  box-shadow: 0 0 0.55rem rgba(251, 113, 133, 0.75) !important;
+}
+
+.home-page .portal-uiverse-sidebar [data-tooltip]::before {
+  left: calc(100% + 0.65rem) !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  z-index: 999 !important;
+  padding: 0.32rem 0.5rem !important;
+  color: #fff !important;
+  background: rgba(0, 0, 0, 0.88) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border-radius: 0.45rem !important;
+}
+
+.home-page .portal-uiverse-sidebar .sidebar__link:hover::before,
+.home-page .portal-uiverse-sidebar .sidebar__link:focus-visible::before {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.home-page .dashboard-container {
+  gap: 0.8rem !important;
+}
+
+.home-page .main-content,
+.home-page .mobile-dashboard-section-panel,
+.home-page .mobile-dashboard-section-panel.is-open,
+.home-page .mobile-job-management-section-panel,
+.home-page .mobile-job-management-section-panel.is-open,
+.home-page .dashboard-container.mobile-section-open .mobile-dashboard-section-panel.is-open,
+.home-page .dashboard-container.mobile-section-open .mobile-job-management-section-panel.is-open {
+  padding-left: 0 !important;
+}
+
+html[data-theme="light"] .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+  background: #000 !important;
+  border-color: rgba(107, 114, 128, 0.72) !important;
+}
+
+html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link,
+html[data-theme="light"] .home-page .portal-uiverse-sidebar .icon svg {
+  color: #fff !important;
+  fill: currentColor !important;
+}
+
+html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link:hover,
+html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link:focus-visible,
+html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-active {
+  color: #60a5fa !important;
+  fill: #60a5fa !important;
+}
+
+@media (max-width: 768px) {
+  .home-page .portal-uiverse-sidebar,
+  .home-page .portal-uiverse-sidebar.sidebar,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar.sidebar,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.sidebar {
+    position: sticky !important;
+    top: 0.35rem !important;
+    width: 3.25rem !important;
+    min-width: 3.25rem !important;
+    max-width: 3.25rem !important;
+    inline-size: 3.25rem !important;
+    min-inline-size: 3.25rem !important;
+    max-inline-size: 3.25rem !important;
+    flex-basis: 3.25rem !important;
+    height: calc(100dvh - 0.7rem) !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .portal-sidebar-nav {
+    width: 3.25rem !important;
+    min-width: 3.25rem !important;
+    max-width: 3.25rem !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+    width: 2.92rem !important;
+    max-width: 2.92rem !important;
+    padding: 0.28rem 0.18rem !important;
+    border-radius: 0.85rem !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .sidebar__item,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar .sidebar__item {
+    height: 3.1rem !important;
+    min-height: 3.1rem !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .sidebar__link,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar .sidebar__link,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .sidebar__link {
+    height: 2.95rem !important;
+    min-height: 2.95rem !important;
+    border-radius: 0.72rem !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .icon,
+  .home-page .portal-uiverse-sidebar .icon svg,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar .icon,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar .icon svg {
+    width: 1.15rem !important;
+    min-width: 1.15rem !important;
+    height: 1.15rem !important;
+  }
+}
+
+/* Final winner for the animated portal rail expanded state. */
+.home-page .portal-uiverse-sidebar.is-expanded,
+.home-page .portal-uiverse-sidebar.is-expanded.sidebar,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded.sidebar,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded.sidebar {
+  width: 15.5rem !important;
+  min-width: 15.5rem !important;
+  max-width: 15.5rem !important;
+  inline-size: 15.5rem !important;
+  min-inline-size: 15.5rem !important;
+  max-inline-size: 15.5rem !important;
+  flex-basis: 15.5rem !important;
+}
+
+.home-page .portal-uiverse-sidebar.is-expanded .portal-sidebar-nav,
+.home-page .portal-uiverse-sidebar.is-expanded .portal-uiverse-rail {
+  width: 15rem !important;
+  min-width: 15rem !important;
+  max-width: 15rem !important;
+}
+
+.home-page .portal-uiverse-sidebar.is-expanded .text,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded .text,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded .text {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  clip: auto !important;
+  white-space: nowrap !important;
+  opacity: 1 !important;
+  color: currentColor !important;
+}
+
+@media (max-width: 768px) {
+  .home-page .portal-uiverse-sidebar.is-expanded,
+  .home-page .portal-uiverse-sidebar.is-expanded.sidebar,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded.sidebar,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded.sidebar {
+    width: min(68vw, 15.5rem) !important;
+    min-width: min(68vw, 15.5rem) !important;
+    max-width: min(68vw, 15.5rem) !important;
+    inline-size: min(68vw, 15.5rem) !important;
+    min-inline-size: min(68vw, 15.5rem) !important;
+    max-inline-size: min(68vw, 15.5rem) !important;
+    flex-basis: min(68vw, 15.5rem) !important;
+  }
+
+  .home-page .portal-uiverse-sidebar.is-expanded .portal-sidebar-nav,
+  .home-page .portal-uiverse-sidebar.is-expanded .portal-uiverse-rail {
+    width: min(calc(68vw - 0.5rem), 15rem) !important;
+    min-width: min(calc(68vw - 0.5rem), 15rem) !important;
+    max-width: min(calc(68vw - 0.5rem), 15rem) !important;
+  }
+}
+
+/* Portal nav layout fix: overlay rail, smaller toggle, permanent left gutter. */
+.home-page > .dashboard-container,
+.home-page .dashboard-container,
+.home-page .dashboard-container.mobile-section-open {
+  position: relative !important;
+  display: block !important;
+  width: min(100%, 1720px) !important;
+  min-height: calc(100dvh - 9rem) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 4.6rem !important;
+  overflow: visible !important;
+}
+
+.home-page .portal-uiverse-sidebar,
+.home-page .portal-uiverse-sidebar.sidebar,
+.home-page .portal-uiverse-sidebar.is-collapsed,
+.home-page .portal-uiverse-sidebar.is-collapsed.sidebar,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar.sidebar,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.sidebar {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0.5rem !important;
+  z-index: 900 !important;
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  width: 3.45rem !important;
+  min-width: 3.45rem !important;
+  max-width: 3.45rem !important;
+  inline-size: 3.45rem !important;
+  min-inline-size: 3.45rem !important;
+  max-inline-size: 3.45rem !important;
+  flex: none !important;
+  height: calc(100dvh - 10rem) !important;
+  min-height: 32rem !important;
+  margin: 0 !important;
+  transform: none !important;
+}
+
+.home-page .portal-uiverse-sidebar.is-expanded,
+.home-page .portal-uiverse-sidebar.is-expanded.sidebar,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded.sidebar,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded.sidebar {
+  width: 15rem !important;
+  min-width: 15rem !important;
+  max-width: 15rem !important;
+  inline-size: 15rem !important;
+  min-inline-size: 15rem !important;
+  max-inline-size: 15rem !important;
+  flex: none !important;
+}
+
+.home-page .portal-uiverse-sidebar .portal-sidebar-nav,
+.home-page .portal-uiverse-sidebar.is-collapsed .portal-sidebar-nav,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar .portal-sidebar-nav {
+  width: 3.45rem !important;
+  min-width: 3.45rem !important;
+  max-width: 3.45rem !important;
+  height: 100% !important;
+}
+
+.home-page .portal-uiverse-sidebar .portal-uiverse-rail,
+.home-page .portal-uiverse-sidebar.is-collapsed .portal-uiverse-rail,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar .portal-uiverse-rail {
+  align-items: center !important;
+  width: 3.1rem !important;
+  min-width: 3.1rem !important;
+  max-width: 3.1rem !important;
+  height: 100% !important;
+  padding: 0.28rem 0.16rem !important;
+  border-radius: 0.85rem !important;
+}
+
+.home-page .portal-uiverse-sidebar.is-expanded .portal-sidebar-nav,
+.home-page .portal-uiverse-sidebar.is-expanded .portal-uiverse-rail {
+  width: 14.5rem !important;
+  min-width: 14.5rem !important;
+  max-width: 14.5rem !important;
+}
+
+.home-page .portal-uiverse-sidebar.is-expanded .portal-uiverse-rail {
+  align-items: stretch !important;
+  padding: 0.38rem !important;
+}
+
+.home-page .portal-uiverse-sidebar .portal-sidebar-menu-icon,
+.home-page .portal-uiverse-sidebar.is-expanded .portal-sidebar-menu-icon {
+  align-self: center !important;
+  width: 2.15rem !important;
+  min-width: 2.15rem !important;
+  max-width: 2.15rem !important;
+  height: 2.05rem !important;
+  min-height: 2.05rem !important;
+  max-height: 2.05rem !important;
+  margin: 0.08rem auto 0.35rem !important;
+  padding: 0.46rem 0.38rem !important;
+  background: #000 !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border-radius: 0.5rem !important;
+}
+
+.home-page .portal-uiverse-sidebar .portal-sidebar-menu-icon span {
+  width: 100% !important;
+  height: 2px !important;
+  margin-bottom: 0.32rem !important;
+}
+
+.home-page .portal-uiverse-sidebar .portal-sidebar-menu-icon input:checked ~ span {
+  left: 0.12rem !important;
+  margin-bottom: 0.36rem !important;
+}
+
+.home-page .portal-uiverse-sidebar .sidebar__item,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar .sidebar__item {
+  width: 100% !important;
+  height: 2.72rem !important;
+  min-height: 2.72rem !important;
+}
+
+.home-page .portal-uiverse-sidebar .sidebar__link,
+.home-page .portal-uiverse-sidebar.is-collapsed .sidebar__link,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar .sidebar__link,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .sidebar__link {
+  justify-content: center !important;
+  width: 2.6rem !important;
+  min-width: 2.6rem !important;
+  max-width: 2.6rem !important;
+  height: 2.58rem !important;
+  min-height: 2.58rem !important;
+  padding: 0 !important;
+  border-radius: 0.68rem !important;
+}
+
+.home-page .portal-uiverse-sidebar.is-expanded .sidebar__link,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded .sidebar__link,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded .sidebar__link {
+  justify-content: flex-start !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  gap: 0.72rem !important;
+  padding: 0 0.72rem !important;
+}
+
+.home-page .portal-uiverse-sidebar .icon,
+.home-page .portal-uiverse-sidebar .icon svg,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar .icon,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar .icon svg {
+  width: 1rem !important;
+  min-width: 1rem !important;
+  height: 1rem !important;
+}
+
+.home-page .portal-uiverse-sidebar.is-expanded .icon,
+.home-page .portal-uiverse-sidebar.is-expanded .icon svg {
+  width: 1.05rem !important;
+  min-width: 1.05rem !important;
+  height: 1.05rem !important;
+}
+
+.home-page .main-content,
+.home-page .mobile-dashboard-section-panel,
+.home-page .mobile-dashboard-section-panel.is-open,
+.home-page .mobile-job-management-section-panel,
+.home-page .mobile-job-management-section-panel.is-open,
+.home-page .dashboard-container.mobile-section-open .mobile-dashboard-section-panel.is-open,
+.home-page .dashboard-container.mobile-section-open .mobile-job-management-section-panel.is-open {
+  position: relative !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+  overflow-x: hidden !important;
+}
+
+.portal-default-landing {
+  align-content: center !important;
+}
+
+.portal-default-actions {
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)) !important;
+}
+
+@media (max-width: 768px) {
+  .home-page > .dashboard-container,
+  .home-page .dashboard-container,
+  .home-page .dashboard-container.mobile-section-open {
+    width: 100% !important;
+    min-height: calc(100dvh - 7.5rem) !important;
+    padding-left: 3.25rem !important;
+  }
+
+  .home-page .portal-uiverse-sidebar,
+  .home-page .portal-uiverse-sidebar.sidebar,
+  .home-page .portal-uiverse-sidebar.is-collapsed,
+  .home-page .portal-uiverse-sidebar.is-collapsed.sidebar,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar.sidebar,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.sidebar {
+    left: 0 !important;
+    width: 2.95rem !important;
+    min-width: 2.95rem !important;
+    max-width: 2.95rem !important;
+    inline-size: 2.95rem !important;
+    min-inline-size: 2.95rem !important;
+    max-inline-size: 2.95rem !important;
+    height: calc(100dvh - 7.8rem) !important;
+    min-height: 29rem !important;
+  }
+
+  .home-page .portal-uiverse-sidebar.is-expanded,
+  .home-page .portal-uiverse-sidebar.is-expanded.sidebar,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded.sidebar,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded.sidebar {
+    width: min(64vw, 13.75rem) !important;
+    min-width: min(64vw, 13.75rem) !important;
+    max-width: min(64vw, 13.75rem) !important;
+    inline-size: min(64vw, 13.75rem) !important;
+    min-inline-size: min(64vw, 13.75rem) !important;
+    max-inline-size: min(64vw, 13.75rem) !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .portal-sidebar-nav,
+  .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+    width: 2.72rem !important;
+    min-width: 2.72rem !important;
+    max-width: 2.72rem !important;
+  }
+
+  .home-page .portal-uiverse-sidebar.is-expanded .portal-sidebar-nav,
+  .home-page .portal-uiverse-sidebar.is-expanded .portal-uiverse-rail {
+    width: min(calc(64vw - 0.35rem), 13.4rem) !important;
+    min-width: min(calc(64vw - 0.35rem), 13.4rem) !important;
+    max-width: min(calc(64vw - 0.35rem), 13.4rem) !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .portal-sidebar-menu-icon,
+  .home-page .portal-uiverse-sidebar.is-expanded .portal-sidebar-menu-icon {
+    width: 1.95rem !important;
+    min-width: 1.95rem !important;
+    height: 1.9rem !important;
+    min-height: 1.9rem !important;
+    padding: 0.42rem 0.34rem !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .sidebar__item,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar .sidebar__item {
+    height: 2.58rem !important;
+    min-height: 2.58rem !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .sidebar__link,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar .sidebar__link,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .sidebar__link {
+    width: 2.28rem !important;
+    min-width: 2.28rem !important;
+    max-width: 2.28rem !important;
+    height: 2.36rem !important;
+    min-height: 2.36rem !important;
+  }
+
+  .home-page .portal-uiverse-sidebar.is-expanded .sidebar__link,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded .sidebar__link,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded .sidebar__link {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .portal-default-landing {
+    min-height: calc(100dvh - 8.5rem) !important;
+    padding: 0.85rem !important;
+  }
+
+  .portal-default-hero h3 {
+    font-size: clamp(1.55rem, 9vw, 2.15rem) !important;
+  }
+
+  .portal-default-stats,
+  .portal-default-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* True final mobile portal alignment: match screenshot 160 and keep expanded nav on-screen. */
+@media (max-width: 768px) {
+  .home-page > .dashboard-container,
+  .home-page .dashboard-container,
+  .home-page .dashboard-container.mobile-section-open {
+    position: relative !important;
+    display: block !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: calc(100dvh - 6.35rem) !important;
+    min-height: calc(100dvh - 6.35rem) !important;
+    margin: 0 !important;
+    padding: 0 0.25rem 0 3.45rem !important;
+    overflow: visible !important;
+    background: #000 !important;
+  }
+
+  .home-page .portal-uiverse-sidebar,
+  .home-page .portal-uiverse-sidebar.sidebar,
+  .home-page .portal-uiverse-sidebar.is-collapsed,
+  .home-page .portal-uiverse-sidebar.is-collapsed.sidebar,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar.sidebar,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.sidebar {
+    position: fixed !important;
+    top: 6.35rem !important;
+    left: 0 !important;
+    z-index: 5000 !important;
+    display: flex !important;
+    width: 3.35rem !important;
+    min-width: 3.35rem !important;
+    max-width: 3.35rem !important;
+    inline-size: 3.35rem !important;
+    min-inline-size: 3.35rem !important;
+    max-inline-size: 3.35rem !important;
+    height: calc(100dvh - 6.35rem) !important;
+    min-height: 0 !important;
+    max-height: calc(100dvh - 6.35rem) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: none !important;
+  }
+
+  .home-page .portal-uiverse-sidebar.is-expanded,
+  .home-page .portal-uiverse-sidebar.is-expanded.sidebar,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded.sidebar,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded.sidebar {
+    top: 6.35rem !important;
+    left: 0 !important;
+    z-index: 7000 !important;
+    width: min(76vw, 15rem) !important;
+    min-width: min(76vw, 15rem) !important;
+    max-width: min(76vw, 15rem) !important;
+    inline-size: min(76vw, 15rem) !important;
+    min-inline-size: min(76vw, 15rem) !important;
+    max-inline-size: min(76vw, 15rem) !important;
+    height: calc(100dvh - 6.35rem) !important;
+    max-height: calc(100dvh - 6.35rem) !important;
+    box-shadow: 18px 0 42px rgba(0, 0, 0, 0.55) !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .portal-sidebar-nav,
+  .home-page .portal-uiverse-sidebar .portal-uiverse-rail,
+  .home-page .portal-uiverse-sidebar.is-collapsed .portal-sidebar-nav,
+  .home-page .portal-uiverse-sidebar.is-collapsed .portal-uiverse-rail {
+    width: 3.05rem !important;
+    min-width: 3.05rem !important;
+    max-width: 3.05rem !important;
+    height: 100% !important;
+    max-height: 100% !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+    align-items: center !important;
+    padding: 0.25rem 0.15rem !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    border-radius: 0.85rem !important;
+  }
+
+  .home-page .portal-uiverse-sidebar.is-expanded .portal-sidebar-nav,
+  .home-page .portal-uiverse-sidebar.is-expanded .portal-uiverse-rail {
+    width: min(calc(76vw - 0.45rem), 14.55rem) !important;
+    min-width: min(calc(76vw - 0.45rem), 14.55rem) !important;
+    max-width: min(calc(76vw - 0.45rem), 14.55rem) !important;
+  }
+
+  .home-page .portal-uiverse-sidebar.is-expanded .portal-uiverse-rail {
+    align-items: stretch !important;
+    padding: 0.36rem !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .portal-sidebar-menu-icon,
+  .home-page .portal-uiverse-sidebar.is-expanded .portal-sidebar-menu-icon {
+    display: block !important;
+    align-self: center !important;
+    width: 2rem !important;
+    min-width: 2rem !important;
+    max-width: 2rem !important;
+    height: 1.9rem !important;
+    min-height: 1.9rem !important;
+    max-height: 1.9rem !important;
+    margin: 0.06rem auto 0.42rem !important;
+    padding: 0.42rem 0.34rem !important;
+    background: #000 !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    border-radius: 0.45rem !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .portal-sidebar-menu-icon span {
+    display: block !important;
+    height: 2px !important;
+    width: 100% !important;
+    margin-bottom: 0.25rem !important;
+    background: #fff !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .portal-sidebar-menu-icon input:checked ~ span {
+    left: 0.08rem !important;
+    margin-bottom: 0.28rem !important;
+    background: #ef4444 !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .sidebar__item,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar .sidebar__item {
+    height: 2.58rem !important;
+    min-height: 2.58rem !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .sidebar__link,
+  .home-page .portal-uiverse-sidebar.is-collapsed .sidebar__link,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar .sidebar__link,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .sidebar__link {
+    justify-content: center !important;
+    width: 2.42rem !important;
+    min-width: 2.42rem !important;
+    max-width: 2.42rem !important;
+    height: 2.42rem !important;
+    min-height: 2.42rem !important;
+    padding: 0 !important;
+    border-radius: 0.66rem !important;
+  }
+
+  .home-page .portal-uiverse-sidebar.is-expanded .sidebar__link,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded .sidebar__link,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded .sidebar__link {
+    justify-content: flex-start !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    gap: 0.72rem !important;
+    padding: 0 0.72rem !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .icon,
+  .home-page .portal-uiverse-sidebar .icon svg,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar .icon,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar .icon svg {
+    width: 1rem !important;
+    min-width: 1rem !important;
+    height: 1rem !important;
+  }
+
+  .home-page .main-content,
+  .home-page .mobile-dashboard-section-panel,
+  .home-page .mobile-dashboard-section-panel.is-open,
+  .home-page .dashboard-container.mobile-section-open .mobile-dashboard-section-panel.is-open,
+  .home-page .dashboard-container.mobile-section-open .mobile-job-management-section-panel.is-open {
+    position: relative !important;
+    inset: auto !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    background: transparent !important;
+  }
+
+  .home-page .main-content > .dashboard-section-title,
+  .home-page .mobile-dashboard-section-panel > .dashboard-section-title,
+  .home-page .mobile-dashboard-section-panel.is-open > .dashboard-section-title {
+    position: relative !important;
+    inset: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    width: 100% !important;
+    min-height: 3.3rem !important;
+    margin: 0 0 0.6rem !important;
+    padding: 0 0.65rem 0 0 !important;
+    background: transparent !important;
+    transform: none !important;
+    text-align: right !important;
+  }
+
+  .home-page .main-content > .dashboard-section-title h2,
+  .home-page .mobile-dashboard-section-panel > .dashboard-section-title h2,
+  .home-page .mobile-dashboard-section-panel.is-open > .dashboard-section-title h2 {
+    margin: 0 !important;
+    transform: none !important;
+    writing-mode: horizontal-tb !important;
+  }
+
+  .portal-default-landing {
+    width: 100% !important;
+    max-width: none !important;
+    min-height: calc(100dvh - 12.4rem) !important;
+    padding: 0.82rem !important;
+    align-content: center !important;
+    border-radius: 0.72rem !important;
+  }
+
+  .portal-default-hero h3 {
+    max-width: 100% !important;
+    font-size: clamp(1.85rem, 9.6vw, 2.45rem) !important;
+    line-height: 1.02 !important;
+  }
+
+  .portal-default-hero p:not(.portal-default-kicker) {
+    font-size: 0.86rem !important;
+    line-height: 1.42 !important;
+  }
+
+  .portal-default-stats,
+  .portal-default-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.55rem !important;
+  }
+
+  .portal-default-action {
+    min-width: 0 !important;
+    width: 100% !important;
+    min-height: 2.85rem !important;
+    padding: 0.55rem 0.5rem !important;
+    font-size: 0.82rem !important;
+    line-height: 1.12 !important;
+    white-space: normal !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  .portal-default-home-action {
+    grid-column: 1 / -1 !important;
+  }
 }

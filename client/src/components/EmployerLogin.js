@@ -52,7 +52,7 @@ const EmployerLogin = ({ onClose }) => {
 
             setTimeout(() => {
                 onClose();
-                navigate('/employer-dashboard');
+                navigate('/employer-dashboard#employer:home', { replace: true });
             }, 1500);
         } catch (error) {
             console.error('Login error:', error);

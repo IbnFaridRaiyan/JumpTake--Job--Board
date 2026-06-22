@@ -1,5 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import PortalSpaceAnimation from './PortalSpaceAnimation';
+import React, { useState } from 'react';
 
 const ICON_PATHS = {
     dashboard: 'M3 13h8V3H3v10Zm0 8h8v-6H3v6Zm10 0h8V11h-8v10Zm0-18v6h8V3h-8Z',
@@ -27,43 +26,12 @@ const PortalIcon = ({ name = 'dashboard' }) => (
     </svg>
 );
 
-const shouldStartCollapsed = () => (
-    typeof window !== 'undefined'
-    && window.matchMedia('(max-width: 768px)').matches
-);
-
 const PortalSidebar = ({
-    userName,
-    userSubtitle,
-    userInitial = 'U',
-    userImage = '',
     primaryItems = [],
     secondaryItems = [],
-    onLogout,
-    mobileSectionOpen = false
+    onLogout
 }) => {
     const [expanded, setExpanded] = useState(false);
-    const toggleIdRef = useRef(`portal-sidebar-toggle-${Math.random().toString(36).slice(2)}`);
-    const toggleId = toggleIdRef.current;
-
-    useLayoutEffect(() => {
-        setExpanded(!shouldStartCollapsed());
-    }, []);
-
-    useEffect(() => {
-        const syncForViewport = () => {
-            setExpanded(!shouldStartCollapsed());
-        };
-
-        window.addEventListener('resize', syncForViewport);
-        return () => window.removeEventListener('resize', syncForViewport);
-    }, []);
-
-    useEffect(() => {
-        if (mobileSectionOpen) {
-            setExpanded(false);
-        }
-    }, [mobileSectionOpen]);
 
     const renderItem = (item) => (
         <li key={item.id || item.label} className="sidebar__item">
@@ -73,11 +41,9 @@ const PortalSidebar = ({
                 data-tooltip={item.label}
                 onClick={() => {
                     item.onClick?.();
-                    if (mobileSectionOpen) {
-                        setExpanded(false);
-                    }
                 }}
                 aria-current={item.active ? 'page' : undefined}
+                aria-label={item.label}
             >
                 <span className="icon">
                     <PortalIcon name={item.icon} />
@@ -89,51 +55,23 @@ const PortalSidebar = ({
     );
 
     return (
-        <aside className={`sidebar vertical-sidebar portal-vertical-sidebar ${expanded ? 'is-expanded' : 'is-collapsed'}`}>
-            <input
-                type="checkbox"
-                role="switch"
-                id={toggleId}
-                className="checkbox-input"
-                checked={expanded}
-                onChange={(event) => setExpanded(event.target.checked)}
-                aria-label="Toggle portal navigation"
-            />
-            <nav className="portal-sidebar-nav">
-                <header className="portal-sidebar-header">
-                    <div className="sidebar__toggle-container">
-                        <label tabIndex="0" htmlFor={toggleId} className="nav__toggle">
-                            <span className="toggle--icons" aria-hidden="true">
-                                <svg width="24" height="24" viewBox="0 0 24 24" className="toggle-svg-icon toggle--open">
-                                    <path d="M3 5a1 1 0 1 0 0 2h18a1 1 0 1 0 0-2zM2 12a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1M2 18a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1" />
-                                </svg>
-                                <svg width="24" height="24" viewBox="0 0 24 24" className="toggle-svg-icon toggle--close">
-                                    <path d="M18.707 6.707a1 1 0 0 0-1.414-1.414L12 10.586 6.707 5.293a1 1 0 0 0-1.414 1.414L10.586 12l-5.293 5.293a1 1 0 1 0 1.414 1.414L12 13.414l5.293 5.293a1 1 0 0 0 1.414-1.414L13.414 12z" />
-                                </svg>
-                            </span>
-                        </label>
-                    </div>
-                    <figure className="portal-sidebar-profile">
-                        <div className="portal-sidebar-avatar">
-                            {userImage ? <img src={userImage} alt="" /> : userInitial}
-                        </div>
-                        <figcaption>
-                            <p className="portal-sidebar-user-id">{userName}</p>
-                            <p className="portal-sidebar-user-role">{userSubtitle}</p>
-                        </figcaption>
-                    </figure>
-                </header>
-                <section className="sidebar__wrapper">
+        <aside className={`sidebar vertical-sidebar portal-vertical-sidebar portal-uiverse-sidebar ${expanded ? 'is-expanded' : 'is-collapsed'}`}>
+            <nav className="portal-sidebar-nav" aria-label="Portal navigation">
+                <article className="portal-uiverse-rail">
+                    <label className="menu-icon portal-sidebar-menu-icon" aria-label="Toggle portal navigation">
+                        <input
+                            type="checkbox"
+                            checked={expanded}
+                            onChange={(event) => setExpanded(event.target.checked)}
+                        />
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </label>
                     <ul className="sidebar__list list--primary">
-                        <li className="sidebar__item item--heading">
-                            <h2 className="sidebar__item--heading">Workspace</h2>
-                        </li>
                         {primaryItems.map(renderItem)}
                     </ul>
                     <ul className="sidebar__list list--secondary">
-                        <li className="sidebar__item item--heading">
-                            <h2 className="sidebar__item--heading">Account</h2>
-                        </li>
                         {secondaryItems.map(renderItem)}
                         <li className="sidebar__item">
                             <button
@@ -141,6 +79,7 @@ const PortalSidebar = ({
                                 className="sidebar__link is-danger"
                                 data-tooltip="Log Out"
                                 onClick={onLogout}
+                                aria-label="Log Out"
                             >
                                 <span className="icon">
                                     <PortalIcon name="logout" />
@@ -149,8 +88,7 @@ const PortalSidebar = ({
                             </button>
                         </li>
                     </ul>
-                    <PortalSpaceAnimation />
-                </section>
+                </article>
             </nav>
         </aside>
     );

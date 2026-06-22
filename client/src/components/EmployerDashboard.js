@@ -16,11 +16,13 @@ import Notifications from './Notifications';
 import FloatingMessenger from './FloatingMessenger';
 import ResumePlayground from './ResumePlayground';
 import PortalHomeFeed from './PortalHomeFeed';
+import PortalDefaultLanding from './PortalDefaultLanding';
 import logo from './media/logo3.png';
 import logoDark from './media/logo4.png';
 
 const EMPLOYER_SECTION_IDS = new Set([
     'home',
+    'home-feed',
     'dashboard',
     'post-job',
     'manage-jobs',
@@ -47,24 +49,10 @@ const isMobileViewport = () => (
     && window.matchMedia('(max-width: 768px)').matches
 );
 
-const getInitialEmployerSection = () => {
-    if (typeof window === 'undefined') {
-        return 'home';
-    }
-
-    const hashValue = window.location.hash.replace(/^#/, '');
-    const [portal, section] = hashValue.split(':');
-    if (portal === 'employer' && EMPLOYER_SECTION_IDS.has(section)) {
-        return normalizeEmployerSection(section);
-    }
-
-    return 'home';
-};
-
 const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     const [employer, setEmployer] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [activeSection, setActiveSection] = useState(getInitialEmployerSection);
+    const [activeSection, setActiveSection] = useState('home');
     const sectionHistoryRef = useRef([]);
     const manageJobsRef = useRef(null);
     const generalAssessmentsRef = useRef(null);
@@ -101,6 +89,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
 
     const sectionTitles = {
         home: 'Home',
+        'home-feed': 'Home',
         dashboard: 'Dashboard',
         'post-job': 'Post a Job',
         'manage-jobs': 'Manage Jobs',
@@ -151,7 +140,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
             }
         };
 
-        const initialSection = getInitialEmployerSection();
+        const initialSection = 'home';
         sessionStorage.setItem(EMPLOYER_SECTION_STORAGE_KEY, initialSection);
         sessionStorage.removeItem('jumptakeHomeFeedRequest');
         sessionStorage.removeItem('jumptakeEmployerJobSearch');
@@ -337,7 +326,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
 
     const switchSection = (nextSection) => {
         if (!nextSection || nextSection === activeSection) {
-            setMobileSectionVisible(true);
+            setMobileSectionVisible(!isMobileViewport() || nextSection !== 'home');
             resetMobilePanelScroll();
             return;
         }
@@ -350,7 +339,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
             setIsManagingEmployerJob(false);
         }
         updateActiveSection(nextSection);
-        setMobileSectionVisible(true);
+        setMobileSectionVisible(!isMobileViewport() || nextSection !== 'home');
         resetMobilePanelScroll();
     };
 
@@ -364,7 +353,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         }
 
         if (nextSection === activeSection) {
-            setMobileSectionVisible(true);
+            setMobileSectionVisible(!isMobileViewport() || nextSection !== 'home');
             return;
         }
 
@@ -383,7 +372,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         { id: 'create-document', label: 'Create Document', icon: 'profile' }
     ].map((item) => ({
         ...item,
-        active: activeSection === item.id,
+        active: item.id === 'home' ? ['home', 'home-feed'].includes(activeSection) : activeSection === item.id,
         onClick: () => openSection(item.id)
     }));
 
@@ -461,14 +450,6 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         openSection(EMPLOYER_SECTION_IDS.has(normalizedSection) ? normalizedSection : 'notifications');
     };
 
-    const handleLogoClick = () => {
-        sectionHistoryRef.current = [];
-        setIsManagingEmployerJob(false);
-        updateActiveSection('home');
-        setMobileSectionVisible(false);
-        resetMobilePanelScroll();
-    };
-
     const resetMobilePanelScroll = () => {
         window.requestAnimationFrame(() => {
             if (mobilePanelRef.current) {
@@ -514,6 +495,16 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     const renderContent = () => {
         switch (activeSection) {
             case 'home':
+                return <PortalDefaultLanding
+                    mode="employer"
+                    displayName={employer?.companyName || employer?.username || 'Employer'}
+                    jobs={jobs}
+                    applicationCount={applicationCount}
+                    notificationCount={pendingNotificationCount}
+                    inboxCount={pendingInboxCount}
+                    switchSection={switchSection}
+                />;
+            case 'home-feed':
                 return <PortalHomeFeed
                     mode="employer"
                     currentUser={employer}
@@ -738,19 +729,19 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         }
     };
 
+    const showSectionTitle = !['home', 'home-feed'].includes(activeSection);
+
     if (loading) {
         return (
             <div className="loading-container">
                 <div className="dashboard-header employer-dashboard-header">
                     <div className="employer-dashboard-brand">
-                        <button
-                            type="button"
-                            className="dashboard-logo-button"
-                            onClick={handleLogoClick}
-                            aria-label="Go to Home"
+                        <div
+                            className="dashboard-logo-button dashboard-logo-static"
+                            aria-label="JumpTake"
                         >
                             <img src={dashboardLogo} alt="JumpTake" className="employer-dashboard-logo" />
-                        </button>
+                        </div>
                     </div>
                     <div className="dashboard-title employer-dashboard-title">
                         <h1>Employer Portal</h1>
@@ -766,14 +757,12 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         <div className="home-page">
             <div className="dashboard-header employer-dashboard-header">
                 <div className="employer-dashboard-brand">
-                    <button
-                        type="button"
-                        className="dashboard-logo-button"
-                        onClick={handleLogoClick}
-                        aria-label="Go to Home"
+                    <div
+                        className="dashboard-logo-button dashboard-logo-static"
+                        aria-label="JumpTake"
                     >
                         <img src={dashboardLogo} alt="JumpTake" className="employer-dashboard-logo" />
-                    </button>
+                    </div>
                 </div>
                 <div className="dashboard-title employer-dashboard-title">
                     <h1>Employer Portal</h1>
@@ -795,10 +784,12 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                 />
 
                 <main ref={mobilePanelRef} className={`main-content mobile-dashboard-section-panel mobile-section-${activeSection} ${mobileSectionVisible ? 'is-open' : ''}`}>
-                    <div className="dashboard-section-title">
-                        <h2><span key={`desktop-${activeSection}`} className="portal-title-jello-text">{sectionTitles[activeSection] || 'Dashboard Section'}</span></h2>
-                    </div>
-                    {mobileSectionVisible && (
+                    {showSectionTitle && (
+                        <div className="dashboard-section-title">
+                            <h2><span key={`desktop-${activeSection}`} className="portal-title-jello-text">{sectionTitles[activeSection] || 'Dashboard Section'}</span></h2>
+                        </div>
+                    )}
+                    {showSectionTitle && mobileSectionVisible && (
                         <div className="mobile-section-panel-header">
                             <button type="button" className="back-button" onClick={goToPreviousSection}>
                                 {activeSection === 'manage-jobs' && isManagingEmployerJob ? 'Back to Manage Jobs' : 'Back'}

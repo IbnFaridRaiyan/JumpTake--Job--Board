@@ -2217,21 +2217,38 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                     className={activeTab === 'create' ? 'is-active' : ''}
                     onClick={() => handleTabChange('create')}
                 >
-                    {isDocumentMode ? 'Create Document' : 'Create Resume'}
+                    <span className="resume-playground-tab-icon resume-playground-tab-icon-create" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" focusable="false">
+                            <path fillRule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z" />
+                            <path fillRule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z" />
+                        </svg>
+                    </span>
+                    <span>{isDocumentMode ? 'Create Document' : 'Create Resume'}</span>
                 </button>
                 <button
                     type="button"
                     className={activeTab === 'edit' ? 'is-active' : ''}
                     onClick={() => handleTabChange('edit')}
                 >
-                    {isDocumentMode ? 'Edit Document' : 'Edit Resume'}
+                    <span className="resume-playground-tab-icon resume-playground-tab-icon-edit" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" focusable="false">
+                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                            <path fillRule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                        </svg>
+                    </span>
+                    <span>{isDocumentMode ? 'Edit Document' : 'Edit Resume'}</span>
                 </button>
                 <button
                     type="button"
                     className={activeTab === 'saved' ? 'is-active' : ''}
                     onClick={() => handleTabChange('saved')}
                 >
-                    {isDocumentMode ? 'Saved Documents' : 'Saved Resumes'}
+                    <span className="resume-playground-tab-icon resume-playground-tab-icon-saved" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" focusable="false">
+                            <path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v7a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 12.5zM2.5 3a.5.5 0 0 0-.5.5V6h12v-.5a.5.5 0 0 0-.5-.5H9c-.964 0-1.71-.629-2.174-1.154C6.374 3.334 5.82 3 5.264 3zM14 7H2v5.5a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5z" />
+                        </svg>
+                    </span>
+                    <span>{isDocumentMode ? 'Saved Documents' : 'Saved Resumes'}</span>
                 </button>
             </div>
 

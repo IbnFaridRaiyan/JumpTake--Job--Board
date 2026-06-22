@@ -3,7 +3,7 @@ import WithdrawButton from './WithdrawButton';
 import ResumeFilePreview from './ResumeFilePreview';
 import ProfileAvatar from './ProfileAvatar';
 
-const MOBILE_APPLICATIONS_PER_PAGE = 4;
+const APPLICATIONS_PER_PAGE = 4;
 
 const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterBack }, ref) => {
     const [applications, setApplications] = useState([]);
@@ -114,16 +114,13 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
         }
     };
 
-    const totalPages = isMobileView
-        ? Math.max(1, Math.ceil(applications.length / MOBILE_APPLICATIONS_PER_PAGE))
-        : 1;
+    const totalPages = Math.max(1, Math.ceil(applications.length / APPLICATIONS_PER_PAGE));
+    const safeCurrentPage = Math.min(currentPage, totalPages);
 
-    const visibleApplications = isMobileView
-        ? applications.slice(
-            (currentPage - 1) * MOBILE_APPLICATIONS_PER_PAGE,
-            currentPage * MOBILE_APPLICATIONS_PER_PAGE
-        )
-        : applications;
+    const visibleApplications = applications.slice(
+        (safeCurrentPage - 1) * APPLICATIONS_PER_PAGE,
+        safeCurrentPage * APPLICATIONS_PER_PAGE
+    );
 
     const changePage = (nextPage) => {
         setCurrentPage(nextPage);
@@ -492,22 +489,22 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
                 </div>
             )}
 
-            {isMobileView && applications.length > 0 && totalPages > 1 && !selectedApplication && !selectedCompany && (
-                <div className="mobile-list-pagination" aria-label="My applications pages">
+            {applications.length > 0 && totalPages > 1 && !selectedApplication && !selectedCompany && (
+                <div className="mobile-list-pagination portal-list-pagination" aria-label="My applications pages">
                     <button
                         type="button"
-                        className="secondary-button"
-                        onClick={() => changePage(Math.max(1, currentPage - 1))}
-                        disabled={currentPage === 1}
+                        className="secondary-button portal-home-page-button"
+                        onClick={() => changePage(Math.max(1, safeCurrentPage - 1))}
+                        disabled={safeCurrentPage === 1}
                     >
                         Previous
                     </button>
-                    <span>Page {currentPage} of {totalPages}</span>
+                    <span>Page {safeCurrentPage} of {totalPages}</span>
                     <button
                         type="button"
-                        className="secondary-button"
-                        onClick={() => changePage(Math.min(totalPages, currentPage + 1))}
-                        disabled={currentPage === totalPages}
+                        className="secondary-button portal-home-page-button portal-home-page-button-next"
+                        onClick={() => changePage(Math.min(totalPages, safeCurrentPage + 1))}
+                        disabled={safeCurrentPage === totalPages}
                     >
                         Next
                     </button>

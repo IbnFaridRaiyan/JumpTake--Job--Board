@@ -31339,3 +31339,948 @@ html[data-theme="light"] .home-page .dashboard-section-title {
     text-overflow: ellipsis !important;
   }
 }
+
+/* Requested replaying section titles, compact glass title pills, friend tabs, and animated card borders. */
+.portal-title-jello-text {
+  animation: jumptake-title-jello 0.8s both;
+}
+
+.home-page .dashboard-section-title {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: fit-content !important;
+  max-width: min(100%, 36rem) !important;
+  min-height: 3rem !important;
+  padding: 0.48rem 1rem !important;
+  background: rgba(255, 255, 255, 0.09) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(34px) saturate(185%) !important;
+  -webkit-backdrop-filter: blur(34px) saturate(185%) !important;
+}
+
+.home-page .dashboard-section-title h2 {
+  width: auto !important;
+  max-width: 100% !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 768px) {
+  .home-page .dashboard-container.mobile-section-open .mobile-dashboard-section-panel.is-open > .mobile-section-panel-header h2,
+  .home-page .dashboard-container.mobile-section-open .mobile-job-management-section-panel.is-open > .mobile-section-panel-header h2,
+  .mobile-dashboard-section-panel.is-open > .mobile-section-panel-header h2,
+  .mobile-job-management-section-panel.is-open > .mobile-section-panel-header h2 {
+    backdrop-filter: blur(34px) saturate(185%) !important;
+    -webkit-backdrop-filter: blur(34px) saturate(185%) !important;
+  }
+}
+
+.notifications-hero,
+.candidate-community-note,
+.fresh-application-card,
+.application-card,
+.assessment-card,
+.assessment-summary-card,
+.assessment-question-card,
+.video-interviews-container .application-detail-view > .profile-section,
+.candidate-assessment-detail .profile-section,
+.home-page .settings-card,
+.home-page .notification-card,
+.home-page .app-mode-card,
+.home-page .interested-job-card,
+.home-page .job-card,
+.job-management-workspace .profile-section,
+.job-management-workspace .assessment-card,
+.job-management-workspace .application-card,
+.manage-applications-container .application-card,
+.bookmarked-jobs-container .application-card,
+.bookmarked-candidate-profile .profile-section,
+.talent-pool-container .profile-section,
+.company-profile-container .company-profile-summary,
+.company-profile-container .company-profile-details,
+.company-profile-container .company-profile-stats {
+  --animated-border-mask: #111614;
+  position: relative !important;
+  isolation: isolate !important;
+  overflow: hidden !important;
+  border: 2px solid rgba(254, 254, 254, 0.32) !important;
+}
+
+.notifications-hero > *,
+.candidate-community-note > *,
+.fresh-application-card > *,
+.application-card > *,
+.assessment-card > *,
+.assessment-summary-card > *,
+.assessment-question-card > *,
+.video-interviews-container .application-detail-view > .profile-section > *,
+.candidate-assessment-detail .profile-section > *,
+.home-page .settings-card > *,
+.home-page .notification-card > *,
+.home-page .app-mode-card > *,
+.home-page .interested-job-card > *,
+.home-page .job-card > *,
+.job-management-workspace .profile-section > *,
+.job-management-workspace .assessment-card > *,
+.job-management-workspace .application-card > *,
+.manage-applications-container .application-card > *,
+.bookmarked-jobs-container .application-card > *,
+.bookmarked-candidate-profile .profile-section > *,
+.talent-pool-container .profile-section > *,
+.company-profile-container .company-profile-summary > *,
+.company-profile-container .company-profile-details > *,
+.company-profile-container .company-profile-stats > * {
+  position: relative;
+  z-index: 3;
+}
+
+.notifications-hero::before,
+.candidate-community-note::before,
+.fresh-application-card::before,
+.application-card::before,
+.assessment-card::before,
+.assessment-summary-card::before,
+.assessment-question-card::before,
+.video-interviews-container .application-detail-view > .profile-section::before,
+.candidate-assessment-detail .profile-section::before,
+.home-page .settings-card::before,
+.home-page .notification-card::before,
+.home-page .app-mode-card::before,
+.home-page .interested-job-card::before,
+.home-page .job-card::before,
+.job-management-workspace .profile-section::before,
+.job-management-workspace .assessment-card::before,
+.job-management-workspace .application-card::before,
+.manage-applications-container .application-card::before,
+.bookmarked-jobs-container .application-card::before,
+.bookmarked-candidate-profile .profile-section::before,
+.talent-pool-container .profile-section::before,
+.company-profile-container .company-profile-summary::before,
+.company-profile-container .company-profile-details::before,
+.company-profile-container .company-profile-stats::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 6px !important;
+  left: -2px !important;
+  z-index: 2 !important;
+  width: calc(100% + 4px) !important;
+  height: calc(100% - 12px) !important;
+  background: var(--animated-border-mask) !important;
+  pointer-events: none !important;
+  transform: scaleY(1) !important;
+  transition: transform 0.3s ease-in-out !important;
+}
+
+.notifications-hero::after,
+.candidate-community-note::after,
+.fresh-application-card::after,
+.application-card::after,
+.assessment-card::after,
+.assessment-summary-card::after,
+.assessment-question-card::after,
+.video-interviews-container .application-detail-view > .profile-section::after,
+.candidate-assessment-detail .profile-section::after,
+.home-page .settings-card::after,
+.home-page .notification-card::after,
+.home-page .app-mode-card::after,
+.home-page .interested-job-card::after,
+.home-page .job-card::after,
+.job-management-workspace .profile-section::after,
+.job-management-workspace .assessment-card::after,
+.job-management-workspace .application-card::after,
+.manage-applications-container .application-card::after,
+.bookmarked-jobs-container .application-card::after,
+.bookmarked-candidate-profile .profile-section::after,
+.talent-pool-container .profile-section::after,
+.company-profile-container .company-profile-summary::after,
+.company-profile-container .company-profile-details::after,
+.company-profile-container .company-profile-stats::after {
+  content: '' !important;
+  position: absolute !important;
+  left: 6px !important;
+  top: -2px !important;
+  z-index: 2 !important;
+  height: calc(100% + 4px) !important;
+  width: calc(100% - 12px) !important;
+  background: var(--animated-border-mask) !important;
+  pointer-events: none !important;
+  transform: scaleX(1) !important;
+  transition: transform 0.3s ease-in-out 0.5s !important;
+}
+
+.notifications-hero:hover::before,
+.notifications-hero:focus-within::before,
+.candidate-community-note:hover::before,
+.candidate-community-note:focus-within::before,
+.fresh-application-card:hover::before,
+.fresh-application-card:focus-within::before,
+.application-card:hover::before,
+.application-card:focus-within::before,
+.assessment-card:hover::before,
+.assessment-card:focus-within::before,
+.assessment-summary-card:hover::before,
+.assessment-summary-card:focus-within::before,
+.assessment-question-card:hover::before,
+.assessment-question-card:focus-within::before,
+.video-interviews-container .application-detail-view > .profile-section:hover::before,
+.video-interviews-container .application-detail-view > .profile-section:focus-within::before,
+.candidate-assessment-detail .profile-section:hover::before,
+.candidate-assessment-detail .profile-section:focus-within::before,
+.home-page .settings-card:hover::before,
+.home-page .settings-card:focus-within::before,
+.home-page .notification-card:hover::before,
+.home-page .notification-card:focus-within::before,
+.home-page .app-mode-card:hover::before,
+.home-page .app-mode-card:focus-within::before,
+.home-page .interested-job-card:hover::before,
+.home-page .interested-job-card:focus-within::before,
+.home-page .job-card:hover::before,
+.home-page .job-card:focus-within::before,
+.job-management-workspace .profile-section:hover::before,
+.job-management-workspace .profile-section:focus-within::before,
+.job-management-workspace .assessment-card:hover::before,
+.job-management-workspace .assessment-card:focus-within::before,
+.job-management-workspace .application-card:hover::before,
+.job-management-workspace .application-card:focus-within::before,
+.manage-applications-container .application-card:hover::before,
+.manage-applications-container .application-card:focus-within::before,
+.bookmarked-jobs-container .application-card:hover::before,
+.bookmarked-jobs-container .application-card:focus-within::before,
+.bookmarked-candidate-profile .profile-section:hover::before,
+.bookmarked-candidate-profile .profile-section:focus-within::before,
+.talent-pool-container .profile-section:hover::before,
+.talent-pool-container .profile-section:focus-within::before,
+.company-profile-container .company-profile-summary:hover::before,
+.company-profile-container .company-profile-summary:focus-within::before,
+.company-profile-container .company-profile-details:hover::before,
+.company-profile-container .company-profile-details:focus-within::before,
+.company-profile-container .company-profile-stats:hover::before,
+.company-profile-container .company-profile-stats:focus-within::before {
+  transform: scaleY(0) !important;
+}
+
+.notifications-hero:hover::after,
+.notifications-hero:focus-within::after,
+.candidate-community-note:hover::after,
+.candidate-community-note:focus-within::after,
+.fresh-application-card:hover::after,
+.fresh-application-card:focus-within::after,
+.application-card:hover::after,
+.application-card:focus-within::after,
+.assessment-card:hover::after,
+.assessment-card:focus-within::after,
+.assessment-summary-card:hover::after,
+.assessment-summary-card:focus-within::after,
+.assessment-question-card:hover::after,
+.assessment-question-card:focus-within::after,
+.video-interviews-container .application-detail-view > .profile-section:hover::after,
+.video-interviews-container .application-detail-view > .profile-section:focus-within::after,
+.candidate-assessment-detail .profile-section:hover::after,
+.candidate-assessment-detail .profile-section:focus-within::after,
+.home-page .settings-card:hover::after,
+.home-page .settings-card:focus-within::after,
+.home-page .notification-card:hover::after,
+.home-page .notification-card:focus-within::after,
+.home-page .app-mode-card:hover::after,
+.home-page .app-mode-card:focus-within::after,
+.home-page .interested-job-card:hover::after,
+.home-page .interested-job-card:focus-within::after,
+.home-page .job-card:hover::after,
+.home-page .job-card:focus-within::after,
+.job-management-workspace .profile-section:hover::after,
+.job-management-workspace .profile-section:focus-within::after,
+.job-management-workspace .assessment-card:hover::after,
+.job-management-workspace .assessment-card:focus-within::after,
+.job-management-workspace .application-card:hover::after,
+.job-management-workspace .application-card:focus-within::after,
+.manage-applications-container .application-card:hover::after,
+.manage-applications-container .application-card:focus-within::after,
+.bookmarked-jobs-container .application-card:hover::after,
+.bookmarked-jobs-container .application-card:focus-within::after,
+.bookmarked-candidate-profile .profile-section:hover::after,
+.bookmarked-candidate-profile .profile-section:focus-within::after,
+.talent-pool-container .profile-section:hover::after,
+.talent-pool-container .profile-section:focus-within::after,
+.company-profile-container .company-profile-summary:hover::after,
+.company-profile-container .company-profile-summary:focus-within::after,
+.company-profile-container .company-profile-details:hover::after,
+.company-profile-container .company-profile-details:focus-within::after,
+.company-profile-container .company-profile-stats:hover::after,
+.company-profile-container .company-profile-stats:focus-within::after {
+  transform: scaleX(0) !important;
+}
+
+.notifications-hero {
+  --animated-border-mask: #17201d;
+}
+
+.candidate-community-note {
+  --animated-border-mask: #06120f;
+}
+
+.fresh-application-card,
+.application-card,
+.assessment-card,
+.assessment-summary-card,
+.assessment-question-card {
+  --animated-border-mask: #050505;
+}
+
+.profile-section,
+.settings-card,
+.notification-card,
+.app-mode-card,
+.interested-job-card,
+.job-card {
+  --animated-border-mask: #101412;
+}
+
+.friend-invitation-tabs {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.55rem !important;
+  padding: 0.55rem !important;
+  border: 1px solid rgba(99, 192, 184, 0.24) !important;
+  border-radius: 1.2rem !important;
+  background: rgba(10, 17, 18, 0.92) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+
+.friend-invitation-tab {
+  position: relative !important;
+  flex: 1 1 0 !important;
+  min-height: 2.45rem !important;
+  padding: 0.42rem 0.7rem !important;
+  border: 0 !important;
+  border-radius: 0.9rem !important;
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.72) !important;
+  box-shadow: none !important;
+  font-family: 'Lexend', 'Share Tech', system-ui, sans-serif !important;
+  font-size: 0.86rem !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+  cursor: pointer !important;
+}
+
+.friend-invitation-tab::after {
+  content: '' !important;
+  position: absolute !important;
+  left: 14% !important;
+  right: 14% !important;
+  bottom: 0.22rem !important;
+  height: 2px !important;
+  border-radius: 999px !important;
+  background: #63c0b8 !important;
+  transform: scaleX(0) !important;
+  transform-origin: center !important;
+  transition: transform 0.22s ease !important;
+}
+
+.friend-invitation-tab:hover,
+.friend-invitation-tab.is-active {
+  color: #ffffff !important;
+}
+
+.friend-invitation-tab.is-active::after,
+.friend-invitation-tab:hover::after {
+  transform: scaleX(1) !important;
+}
+
+@media (max-width: 768px) {
+  .friend-invitation-tabs {
+    gap: 0.25rem !important;
+    padding: 0.38rem !important;
+    border-radius: 1rem !important;
+  }
+
+  .friend-invitation-tab {
+    min-height: 2.2rem !important;
+    padding: 0.32rem 0.34rem !important;
+    font-size: 0.68rem !important;
+    line-height: 1.05 !important;
+  }
+}
+
+/* Screenshot 83-89 polish: mobile job stars, icon rails, compact preferences, bookmarked stars, centered desktop job modal. */
+@media (max-width: 768px) {
+  .portal-candidate-job-card {
+    padding-left: 0.9rem !important;
+    padding-right: 0.9rem !important;
+  }
+
+  .portal-candidate-job-card .portal-job-bookmark-toggle,
+  .portal-job-bookmark-toggle {
+    top: 0.72rem !important;
+    right: 0.72rem !important;
+    left: auto !important;
+  }
+
+  .portal-candidate-job-card .portal-candidate-job-header {
+    padding-right: 2.1rem !important;
+  }
+}
+
+.friend-invitation-tabs,
+.resume-playground-tabs {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  align-items: stretch !important;
+  gap: 0.55rem !important;
+  width: 100% !important;
+  padding: 0.55rem !important;
+  border: 1px solid rgba(99, 192, 184, 0.24) !important;
+  border-radius: 1.2rem !important;
+  background: rgba(10, 17, 18, 0.92) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+
+.friend-invitation-tab,
+.resume-playground-tabs button {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.45rem !important;
+  min-width: 0 !important;
+  min-height: 2.45rem !important;
+  padding: 0.42rem 0.7rem !important;
+  border: 0 !important;
+  border-radius: 0.9rem !important;
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.72) !important;
+  box-shadow: none !important;
+  font-family: 'Lexend', 'Share Tech', system-ui, sans-serif !important;
+  font-size: 0.86rem !important;
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
+  text-align: center !important;
+  white-space: normal !important;
+  cursor: pointer !important;
+}
+
+.friend-invitation-tab::after,
+.resume-playground-tabs button::after {
+  content: '' !important;
+  position: absolute !important;
+  left: 14% !important;
+  right: 14% !important;
+  bottom: 0.22rem !important;
+  height: 2px !important;
+  border-radius: 999px !important;
+  background: currentColor !important;
+  transform: scaleX(0) !important;
+  transform-origin: center !important;
+  transition: transform 0.22s ease !important;
+}
+
+.friend-invitation-tab-icon,
+.resume-playground-tab-icon {
+  display: inline-grid !important;
+  flex: 0 0 auto !important;
+  place-items: center !important;
+  width: 1.05rem !important;
+  height: 1.05rem !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+
+.friend-invitation-tab-icon svg,
+.resume-playground-tab-icon svg {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  fill: currentColor !important;
+}
+
+.friend-invitation-tab-label,
+.resume-playground-tabs button > span:last-child {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.friend-invitation-tab:hover,
+.friend-invitation-tab.is-active,
+.resume-playground-tabs button:hover,
+.resume-playground-tabs button.is-active {
+  color: #ffffff !important;
+}
+
+.friend-invitation-tab.is-active::after,
+.friend-invitation-tab:hover::after,
+.resume-playground-tabs button.is-active::after,
+.resume-playground-tabs button:hover::after {
+  transform: scaleX(1) !important;
+}
+
+.friend-invitation-tab.is-active .friend-tab-icon-incoming {
+  color: #facc15 !important;
+}
+
+.friend-invitation-tab.is-active .friend-tab-icon-outgoing,
+.resume-playground-tabs button.is-active .resume-playground-tab-icon-create {
+  color: #3b82f6 !important;
+}
+
+.friend-invitation-tab.is-active .friend-tab-icon-friends,
+.resume-playground-tabs button.is-active .resume-playground-tab-icon-edit {
+  color: #22c55e !important;
+}
+
+.resume-playground-tabs button.is-active .resume-playground-tab-icon-saved {
+  color: #c084fc !important;
+}
+
+@media (max-width: 768px) {
+  .friend-invitation-tabs,
+  .resume-playground-tabs {
+    gap: 0.25rem !important;
+    padding: 0.38rem !important;
+    border-radius: 1rem !important;
+  }
+
+  .friend-invitation-tab,
+  .resume-playground-tabs button {
+    flex-direction: column !important;
+    gap: 0.22rem !important;
+    min-height: 3rem !important;
+    padding: 0.34rem 0.22rem !important;
+    font-size: 0.58rem !important;
+    line-height: 1.05 !important;
+  }
+
+  .friend-invitation-tab-icon,
+  .resume-playground-tab-icon {
+    width: 1rem !important;
+    height: 1rem !important;
+  }
+
+  .friend-invitation-tab-label,
+  .resume-playground-tabs button > span:last-child {
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+    white-space: normal !important;
+  }
+}
+
+.bookmarked-job-card {
+  position: relative !important;
+  padding-top: 1.35rem !important;
+}
+
+.bookmarked-job-card .application-card-header {
+  padding-right: 2.6rem !important;
+}
+
+.bookmarked-job-star-button {
+  position: absolute !important;
+  top: 0.9rem !important;
+  right: 0.9rem !important;
+  z-index: 5 !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 2rem !important;
+  height: 2rem !important;
+  min-width: 2rem !important;
+  min-height: 2rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #facc15 !important;
+  filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.5));
+  cursor: pointer !important;
+}
+
+.bookmarked-job-star-button svg {
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+  fill: currentColor !important;
+}
+
+.bookmarked-job-star-button:hover,
+.bookmarked-job-star-button:focus-visible {
+  transform: scale(1.08);
+}
+
+.bookmarked-job-star-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed !important;
+}
+
+@media (max-width: 768px) {
+  .mobile-section-interested-jobs.is-open .interested-job-suggestion-section,
+  .mobile-section-interested-jobs.is-open .settings-card.interested-job-card {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.55rem !important;
+    min-height: 0 !important;
+  }
+
+  .mobile-section-interested-jobs.is-open .settings-card.interested-job-card {
+    padding: 0.85rem !important;
+  }
+
+  .mobile-section-interested-jobs.is-open .interested-job-card h3,
+  .job-interest-modal h2 {
+    margin: 0 0 0.2rem !important;
+    font-size: 1rem !important;
+    line-height: 1.12 !important;
+  }
+
+  .mobile-section-interested-jobs.is-open .interested-job-card p,
+  .job-interest-modal p {
+    margin: 0 !important;
+    font-size: 0.78rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .mobile-section-interested-jobs.is-open .job-interest-grid,
+  .job-interest-modal .job-interest-grid {
+    flex: 1 1 auto !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 0.45rem !important;
+    min-height: 0 !important;
+    margin: 0.45rem 0 !important;
+    overflow-y: auto !important;
+    padding-right: 0.15rem !important;
+  }
+
+  .mobile-section-interested-jobs.is-open .job-interest-grid button,
+  .job-interest-modal .job-interest-grid button {
+    min-height: 2.25rem !important;
+    padding: 0.42rem 0.7rem !important;
+    border-radius: 0.7rem !important;
+    font-size: 0.78rem !important;
+    line-height: 1.1 !important;
+  }
+
+  .job-interest-modal {
+    width: min(23rem, calc(100vw - 1rem)) !important;
+    max-height: calc(100dvh - 1rem) !important;
+    padding: 0.85rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.55rem !important;
+    overflow: hidden !important;
+  }
+
+  .job-interest-modal .modal-header {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .job-interest-modal .message-compose-actions {
+    margin-top: 0 !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .portal-job-modal-backdrop {
+    align-items: center !important;
+    justify-items: center !important;
+    place-items: center !important;
+    padding: 1rem !important;
+    overflow: auto !important;
+  }
+
+  .portal-job-modal {
+    margin: auto !important;
+  }
+}
+
+/* Final portal behavior pass: quieter title motion, fixed desktop sidebars, compact rails/stars/pagination. */
+@keyframes jumptake-title-jello {
+  0%,
+  11.1%,
+  100% {
+    transform: translateZ(0);
+  }
+
+  22.2% {
+    transform: skewX(-6deg) skewY(-5deg);
+  }
+
+  33.3% {
+    transform: skewX(3deg) skewY(2.5deg);
+  }
+
+  44.4% {
+    transform: skewX(-1.5deg) skewY(-1.4deg);
+  }
+
+  55.5% {
+    transform: skewX(0.8deg) skewY(0.7deg);
+  }
+
+  66.6% {
+    transform: skewX(-0.4deg) skewY(-0.35deg);
+  }
+
+  77.7% {
+    transform: skewX(0.2deg) skewY(0.18deg);
+  }
+
+  88.8% {
+    transform: skewX(-0.1deg) skewY(-0.08deg);
+  }
+}
+
+@media (min-width: 769px) {
+  .home-page {
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .home-page > .dashboard-header {
+    flex: 0 0 auto !important;
+  }
+
+  .home-page > .dashboard-container {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .home-page .portal-vertical-sidebar {
+    flex: 0 0 auto !important;
+    align-self: stretch !important;
+    max-height: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .home-page .main-content,
+  .home-page .dashboard-main,
+  .home-page .mobile-dashboard-section-panel,
+  .home-page .mobile-job-management-section-panel {
+    min-height: 0 !important;
+    height: 100% !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    overscroll-behavior: contain !important;
+  }
+}
+
+.portal-candidate-job-card .portal-job-bookmark-toggle,
+.portal-job-bookmark-toggle,
+.bookmarked-job-star-button {
+  border: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  border-radius: 0 !important;
+}
+
+.portal-candidate-job-card .portal-job-bookmark-toggle,
+.portal-job-bookmark-toggle {
+  top: 0.72rem !important;
+  right: 0.46rem !important;
+  left: auto !important;
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+}
+
+.portal-job-bookmark-toggle svg {
+  width: 1.02rem !important;
+  height: 1.02rem !important;
+}
+
+.bookmarked-job-star-button {
+  top: 0.75rem !important;
+  right: 0.48rem !important;
+  width: 1.35rem !important;
+  height: 1.35rem !important;
+}
+
+.bookmarked-job-star-button svg {
+  width: 1.05rem !important;
+  height: 1.05rem !important;
+}
+
+@media (max-width: 768px) {
+  .portal-candidate-job-card .portal-job-bookmark-toggle,
+  .portal-job-bookmark-toggle {
+    top: 0.7rem !important;
+    right: 0.42rem !important;
+    left: auto !important;
+  }
+
+  .portal-candidate-job-card .portal-candidate-job-header {
+    padding-right: 1.6rem !important;
+  }
+
+  .bookmarked-job-card .application-card-header {
+    padding-right: 1.65rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobile-section-friend-invitations.is-open .friend-invitation-tabs,
+  .mobile-section-friends.is-open .friend-invitation-tabs {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.22rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0.34rem 0.2rem !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  .mobile-section-friend-invitations.is-open .friend-invitation-tab,
+  .mobile-section-friends.is-open .friend-invitation-tab,
+  .resume-playground-tabs button {
+    flex: initial !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 2.55rem !important;
+    padding: 0.25rem 0.1rem !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .mobile-section-friend-invitations.is-open .friend-invitation-tab-icon,
+  .mobile-section-friends.is-open .friend-invitation-tab-icon,
+  .resume-playground-tab-icon {
+    width: 0.92rem !important;
+    height: 0.92rem !important;
+  }
+
+  .mobile-section-friend-invitations.is-open .friend-invitation-tab-label,
+  .mobile-section-friends.is-open .friend-invitation-tab-label,
+  .resume-playground-tabs button > span:last-child {
+    font-size: 0.58rem !important;
+    line-height: 1.05 !important;
+  }
+}
+
+.portal-home-job-pagination,
+.portal-list-pagination,
+.mobile-list-pagination,
+.candidate-list-pagination,
+.job-feed-pagination {
+  display: grid !important;
+  grid-template-columns: 2.2rem max-content 2.2rem !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.28rem !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  margin: 0.8rem auto 0 !important;
+  padding: 0.38rem 0.46rem !important;
+  border: 1px solid rgba(111, 198, 189, 0.24) !important;
+  border-radius: 0.85rem !important;
+  background: rgba(5, 28, 24, 0.42) !important;
+  color: rgba(246, 255, 251, 0.88) !important;
+}
+
+.portal-home-job-pagination span,
+.portal-list-pagination span,
+.mobile-list-pagination span,
+.candidate-list-pagination span,
+.job-feed-pagination span {
+  display: inline-block !important;
+  min-width: max-content !important;
+  width: auto !important;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+  text-align: center !important;
+  font-size: 0.72rem !important;
+  line-height: 1 !important;
+}
+
+.portal-home-job-pagination button,
+.portal-list-pagination button,
+.mobile-list-pagination button,
+.candidate-list-pagination button,
+.job-feed-pagination button,
+.portal-home-page-button {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 2.2rem !important;
+  min-width: 2.2rem !important;
+  max-width: 2.2rem !important;
+  height: 2rem !important;
+  min-height: 2rem !important;
+  padding: 0 !important;
+  border-radius: 0.65rem !important;
+  font-size: 0 !important;
+  line-height: 1 !important;
+}
+
+.portal-home-job-pagination button:first-child::before,
+.portal-list-pagination button:first-child::before,
+.mobile-list-pagination button:first-child::before,
+.candidate-list-pagination button:first-child::before,
+.job-feed-pagination button:first-child::before {
+  content: '‹';
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.portal-home-job-pagination button:last-child::before,
+.portal-list-pagination button:last-child::before,
+.mobile-list-pagination button:last-child::before,
+.candidate-list-pagination button:last-child::before,
+.job-feed-pagination button:last-child::before {
+  content: '›';
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.portal-home-job-pagination button:has(svg)::before,
+.portal-list-pagination button:has(svg)::before,
+.mobile-list-pagination button:has(svg)::before,
+.candidate-list-pagination button:has(svg)::before,
+.job-feed-pagination button:has(svg)::before {
+  content: none !important;
+}
+
+.portal-home-job-pagination button svg,
+.portal-list-pagination button svg,
+.mobile-list-pagination button svg,
+.candidate-list-pagination button svg,
+.job-feed-pagination button svg {
+  width: 1rem !important;
+  height: 1rem !important;
+}
+
+@media (max-width: 768px) {
+  .portal-home-job-pagination,
+  .portal-list-pagination,
+  .mobile-list-pagination,
+  .candidate-list-pagination,
+  .job-feed-pagination {
+    grid-template-columns: 1.95rem max-content 1.95rem !important;
+    gap: 0.2rem !important;
+    padding: 0.32rem 0.36rem !important;
+  }
+
+  .portal-home-job-pagination button,
+  .portal-list-pagination button,
+  .mobile-list-pagination button,
+  .candidate-list-pagination button,
+  .job-feed-pagination button,
+  .portal-home-page-button {
+    width: 1.95rem !important;
+    min-width: 1.95rem !important;
+    max-width: 1.95rem !important;
+    height: 1.8rem !important;
+    min-height: 1.8rem !important;
+  }
+}

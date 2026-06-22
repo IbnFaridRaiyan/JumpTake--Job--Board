@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
+const NOTIFICATIONS_PER_PAGE = 8;
+
 const formatNotificationTime = (dateString) => {
     if (!dateString) {
         return '';
@@ -45,6 +47,7 @@ const Notifications = ({ mode, recipientId, onOpenNotification, onUnreadCountCha
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
 
     const isEmployer = mode === 'employer';
 
@@ -60,6 +63,28 @@ const Notifications = ({ mode, recipientId, onOpenNotification, onUnreadCountCha
         fetchNotifications();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [mode, recipientId]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [notifications.length, mode, recipientId]);
+
+    const totalPages = Math.max(1, Math.ceil(notifications.length / NOTIFICATIONS_PER_PAGE));
+    const safeCurrentPage = Math.min(currentPage, totalPages);
+    const visibleNotifications = notifications.slice(
+        (safeCurrentPage - 1) * NOTIFICATIONS_PER_PAGE,
+        safeCurrentPage * NOTIFICATIONS_PER_PAGE
+    );
+
+    const changePage = (nextPage) => {
+        setCurrentPage(nextPage);
+        window.requestAnimationFrame(() => {
+            const container = document.querySelector('.notifications-page');
+            const scrollParent = container?.closest('.mobile-dashboard-section-panel, .main-content');
+            if (scrollParent) {
+                scrollParent.scrollTop = 0;
+            }
+        });
+    };
 
     const fetchNotifications = async () => {
         if (!recipientId) {
@@ -178,7 +203,7 @@ const Notifications = ({ mode, recipientId, onOpenNotification, onUnreadCountCha
                 </div>
             ) : (
                 <div className="notifications-list">
-                    {notifications.map((notification) => (
+                    {visibleNotifications.map((notification) => (
                         <button
                             key={notification._id}
                             type="button"
@@ -197,6 +222,28 @@ const Notifications = ({ mode, recipientId, onOpenNotification, onUnreadCountCha
                             </span>
                         </button>
                     ))}
+                </div>
+            )}
+
+            {!loading && notifications.length > 0 && totalPages > 1 && (
+                <div className="portal-list-pagination" aria-label="Notification pages">
+                    <button
+                        type="button"
+                        className="portal-home-page-button"
+                        onClick={() => changePage(Math.max(1, safeCurrentPage - 1))}
+                        disabled={safeCurrentPage === 1}
+                    >
+                        Previous
+                    </button>
+                    <span>Page {safeCurrentPage} of {totalPages}</span>
+                    <button
+                        type="button"
+                        className="portal-home-page-button portal-home-page-button-next"
+                        onClick={() => changePage(Math.min(totalPages, safeCurrentPage + 1))}
+                        disabled={safeCurrentPage === totalPages}
+                    >
+                        Next
+                    </button>
                 </div>
             )}
         </div>

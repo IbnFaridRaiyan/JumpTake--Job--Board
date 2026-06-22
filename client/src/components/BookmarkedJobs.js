@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import AnimatedDeleteButton from './AnimatedDeleteButton';
+
+const BOOKMARKED_JOBS_PER_PAGE = 4;
 
 const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
     const [bookmarks, setBookmarks] = useState([]);
@@ -7,12 +8,35 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
         fetchBookmarks();
         fetchAppliedJobs();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userId]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [bookmarks.length]);
+
+    const totalPages = Math.max(1, Math.ceil(bookmarks.length / BOOKMARKED_JOBS_PER_PAGE));
+    const safeCurrentPage = Math.min(currentPage, totalPages);
+    const visibleBookmarks = bookmarks.slice(
+        (safeCurrentPage - 1) * BOOKMARKED_JOBS_PER_PAGE,
+        safeCurrentPage * BOOKMARKED_JOBS_PER_PAGE
+    );
+
+    const changePage = (nextPage) => {
+        setCurrentPage(nextPage);
+        window.requestAnimationFrame(() => {
+            const container = document.querySelector('.applications-container');
+            const scrollParent = container?.closest('.mobile-dashboard-section-panel, .main-content');
+            if (scrollParent) {
+                scrollParent.scrollTop = 0;
+            }
+        });
+    };
 
     const fetchBookmarks = async () => {
         try {
@@ -151,18 +175,29 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
                 </div>
             ) : (
                 <div className="applications-list">
-                    {bookmarks.map((bookmark) => {
+                    {visibleBookmarks.map((bookmark) => {
                         const job = bookmark.job;
                         const hasApplied = appliedJobIds.includes(String(job?._id));
 
                         return (
-                            <div className="application-card" key={bookmark._id}>
+                            <div className="application-card bookmarked-job-card" key={bookmark._id}>
+                                <button
+                                    type="button"
+                                    className="bookmarked-job-star-button active"
+                                    onClick={() => removeBookmark(job?._id)}
+                                    aria-label="Remove bookmark"
+                                    title="Remove bookmark"
+                                    disabled={!job?._id}
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                                        <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187z" />
+                                    </svg>
+                                </button>
                                 <div className="application-card-header">
                                     <div>
                                         <h3>{job?.title || 'Saved Job'}</h3>
                                         <p>{job?.company?.name || 'Company unavailable'}</p>
                                     </div>
-                                    <span className="status-badge accepted">Bookmarked</span>
                                 </div>
                                 <div className="application-job-summary">
                                     <strong>{job?.location || 'Location not specified'}</strong>
@@ -170,10 +205,6 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
                                     {job?.salary && <span>{job.salary}</span>}
                                 </div>
                                 <div className="application-card-actions">
-                                    <AnimatedDeleteButton
-                                        onClick={() => removeBookmark(job?._id)}
-                                        title="Remove bookmark"
-                                    />
                                     <button className="view-profile-btn secondary-action" onClick={() => openJob(job?._id, 'preview')}>
                                         Open Job
                                     </button>
@@ -184,6 +215,28 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
                             </div>
                         );
                     })}
+                </div>
+            )}
+
+            {bookmarks.length > 0 && totalPages > 1 && (
+                <div className="mobile-list-pagination portal-list-pagination" aria-label="Bookmarked job pages">
+                    <button
+                        type="button"
+                        className="secondary-button portal-home-page-button"
+                        onClick={() => changePage(Math.max(1, safeCurrentPage - 1))}
+                        disabled={safeCurrentPage === 1}
+                    >
+                        Previous
+                    </button>
+                    <span>Page {safeCurrentPage} of {totalPages}</span>
+                    <button
+                        type="button"
+                        className="secondary-button portal-home-page-button portal-home-page-button-next"
+                        onClick={() => changePage(Math.min(totalPages, safeCurrentPage + 1))}
+                        disabled={safeCurrentPage === totalPages}
+                    >
+                        Next
+                    </button>
                 </div>
             )}
 

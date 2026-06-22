@@ -35488,3 +35488,143 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
     grid-column: 1 / -1 !important;
   }
 }
+
+/* Final landing quick-action style: borderless icon/text buttons, no extra Home pill. */
+.portal-default-actions {
+  align-items: center !important;
+}
+
+.portal-default-action,
+.portal-default-action.is-primary,
+.portal-default-action.portal-default-home-action {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.45rem !important;
+  min-height: 2.9rem !important;
+  width: auto !important;
+  min-width: 0 !important;
+  padding: 0.35rem 0.45rem !important;
+  color: #f8fafc !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  text-align: center !important;
+  transform: none !important;
+}
+
+.portal-default-action:hover,
+.portal-default-action:focus-visible,
+.portal-default-action.is-primary:hover,
+.portal-default-action.is-primary:focus-visible {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  transform: translateY(-1px) !important;
+}
+
+.portal-default-action-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+  width: 1.12rem !important;
+  height: 1.12rem !important;
+  line-height: 1 !important;
+  color: currentColor !important;
+}
+
+.portal-default-action-icon svg {
+  display: block !important;
+  width: 1.12rem !important;
+  height: 1.12rem !important;
+  fill: currentColor !important;
+}
+
+.portal-default-action-label {
+  color: #f8fafc !important;
+  font-weight: 900 !important;
+  line-height: 1.12 !important;
+}
+
+.portal-default-action-home .portal-default-action-icon {
+  color: #22c55e !important;
+}
+
+.portal-default-action-home:hover .portal-default-action-icon,
+.portal-default-action-home:focus-visible .portal-default-action-icon,
+.portal-default-action-home:active .portal-default-action-icon {
+  color: #fff !important;
+}
+
+.portal-default-action-applications .portal-default-action-icon {
+  color: #fff !important;
+}
+
+.portal-default-action-applications:hover .portal-default-action-icon,
+.portal-default-action-applications:focus-visible .portal-default-action-icon,
+.portal-default-action-applications:active .portal-default-action-icon {
+  color: #3b82f6 !important;
+}
+
+.portal-default-action-resume .portal-default-action-icon,
+.portal-default-action-manageJobs .portal-default-action-icon {
+  color: #f97316 !important;
+}
+
+.portal-default-action-resume:hover .portal-default-action-icon,
+.portal-default-action-resume:focus-visible .portal-default-action-icon,
+.portal-default-action-resume:active .portal-default-action-icon,
+.portal-default-action-manageJobs:hover .portal-default-action-icon,
+.portal-default-action-manageJobs:focus-visible .portal-default-action-icon,
+.portal-default-action-manageJobs:active .portal-default-action-icon {
+  color: #fff !important;
+}
+
+.portal-default-action-profile .portal-default-action-icon {
+  color: #5eead4 !important;
+}
+
+.portal-default-action-profile:hover .portal-default-action-icon,
+.portal-default-action-profile:focus-visible .portal-default-action-icon,
+.portal-default-action-profile:active .portal-default-action-icon {
+  color: #fff !important;
+}
+
+.portal-default-action-postJob .portal-default-action-icon {
+  color: #38bdf8 !important;
+}
+
+.portal-default-action-postJob:hover .portal-default-action-icon,
+.portal-default-action-postJob:focus-visible .portal-default-action-icon,
+.portal-default-action-postJob:active .portal-default-action-icon {
+  color: #fff !important;
+}
+
+.portal-default-action-talentPool .portal-default-action-icon {
+  color: #facc15 !important;
+}
+
+.portal-default-action-talentPool:hover .portal-default-action-icon,
+.portal-default-action-talentPool:focus-visible .portal-default-action-icon,
+.portal-default-action-talentPool:active .portal-default-action-icon {
+  color: #fff !important;
+}
+
+@media (max-width: 768px) {
+  .portal-default-action,
+  .portal-default-action.is-primary {
+    min-height: 2.35rem !important;
+    padding: 0.28rem 0.25rem !important;
+    gap: 0.32rem !important;
+    font-size: 0.82rem !important;
+  }
+
+  .portal-default-action-icon,
+  .portal-default-action-icon svg {
+    width: 1rem !important;
+    height: 1rem !important;
+  }
+}

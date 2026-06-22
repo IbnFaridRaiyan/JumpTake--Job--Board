@@ -35734,3 +35734,33 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
     z-index: 9000 !important;
   }
 }
+
+/* Remove the transparent top gap inside the mobile navigation panel. */
+@media (max-width: 768px) {
+  .home-page .portal-uiverse-sidebar .portal-sidebar-nav,
+  .home-page .portal-uiverse-sidebar .portal-uiverse-rail,
+  .home-page .portal-uiverse-sidebar.is-expanded .portal-sidebar-nav,
+  .home-page .portal-uiverse-sidebar.is-expanded .portal-uiverse-rail,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar .portal-sidebar-nav,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar .portal-uiverse-rail,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .portal-sidebar-nav,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .portal-uiverse-rail {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .portal-sidebar-menu-icon,
+  .home-page .portal-uiverse-sidebar.is-expanded .portal-sidebar-menu-icon,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar .portal-sidebar-menu-icon,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .portal-sidebar-menu-icon {
+    margin-top: 0 !important;
+    margin-bottom: 0.28rem !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .sidebar__list:first-of-type,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar .sidebar__list:first-of-type,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .sidebar__list:first-of-type {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+}

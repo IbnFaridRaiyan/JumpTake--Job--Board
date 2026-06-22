@@ -36102,3 +36102,348 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
     width: 1.75rem !important;
   }
 }
+
+/* Final pass: compact black landing search, softer independent text buttons, unified job reactions. */
+@keyframes jumptake-soft-title-wobble {
+  0%, 82%, 100% {
+    transform: translateZ(0);
+  }
+  86% {
+    transform: skewX(-3deg) skewY(-1deg);
+  }
+  90% {
+    transform: skewX(2deg) skewY(0.8deg);
+  }
+  94% {
+    transform: skewX(-1deg) skewY(-0.4deg);
+  }
+}
+
+.portal-default-search-container,
+.portal-default-search-mainbox,
+.portal-default-search-icon-container {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+.portal-default-search-mainbox {
+  width: 7.6rem !important;
+  height: 1.55rem !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.portal-default-search-input {
+  width: 4.9rem !important;
+  height: 1.55rem !important;
+  padding: 0 0.45rem !important;
+  color: #fff !important;
+  background: #000 !important;
+  background-color: #000 !important;
+  background-image: linear-gradient(#000, #000) !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: inset 0 0 0 999px #000 !important;
+  -webkit-box-shadow: inset 0 0 0 999px #000 !important;
+  font-size: 0.72rem !important;
+}
+
+.portal-default-search-input:focus,
+.portal-default-search-input:active,
+.portal-default-search-input:hover {
+  background: #000 !important;
+  background-color: #000 !important;
+  background-image: linear-gradient(#000, #000) !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: inset 0 0 0 999px #000 !important;
+  -webkit-box-shadow: inset 0 0 0 999px #000 !important;
+}
+
+.portal-default-search-icon-container {
+  background: transparent !important;
+  background-color: transparent !important;
+  padding: 0 !important;
+}
+
+.portal-default-search-icon {
+  width: 0.95rem !important;
+  height: 0.95rem !important;
+}
+
+.portal-default-search-checkbox {
+  top: -0.08rem !important;
+  right: 0 !important;
+  width: 1.55rem !important;
+  height: 1.55rem !important;
+}
+
+.portal-default-search-checkbox:checked ~ .portal-default-search-mainbox {
+  width: 1.55rem !important;
+}
+
+.landing-content .button-container {
+  width: min(100%, 17rem) !important;
+  max-width: 17rem !important;
+  margin-inline: auto !important;
+  overflow: visible !important;
+}
+
+.landing-content .role-button,
+.landing-content .job-seeker-button,
+.landing-content .company-button {
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  margin-inline: auto !important;
+  padding: 0.2rem 0.45rem !important;
+  color: #fff !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  animation: jumptake-soft-title-wobble 10.5s infinite both !important;
+}
+
+.landing-content .job-seeker-button {
+  animation-delay: -1.7s !important;
+  animation-duration: 11.4s !important;
+}
+
+.landing-content .company-button {
+  animation-delay: -5.2s !important;
+  animation-duration: 12.6s !important;
+}
+
+.job-seeker-page .candidate-login-button,
+.job-seeker-page .demo-cv-button,
+.job-seeker-page .submit-button,
+.job-seeker-page .back-button,
+.company-page .search-button,
+.company-page .candidate-login-button,
+.company-page .submit-button,
+.company-page .back-button {
+  animation: jumptake-soft-title-wobble 11.8s infinite both !important;
+}
+
+.job-seeker-page .demo-cv-button,
+.company-page .candidate-login-button:nth-of-type(2) {
+  animation-delay: -3.6s !important;
+  animation-duration: 13.2s !important;
+}
+
+.job-seeker-page .submit-button,
+.company-page .search-button {
+  animation-delay: -6.1s !important;
+  animation-duration: 12.4s !important;
+}
+
+.job-seeker-page .back-button,
+.company-page .back-button {
+  animation-delay: -8.4s !important;
+  animation-duration: 14s !important;
+}
+
+.job-card > .bookmark-star-button:not(.job-card-bookmark-action),
+.bookmarked-job-card > .bookmarked-job-star-button {
+  display: none !important;
+}
+
+.job-card-reactions,
+.portal-candidate-job-reactions,
+.bookmarked-job-reactions {
+  position: static !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 1rem !important;
+  width: 100% !important;
+  margin: 0.85rem 0 !important;
+  padding: 0 !important;
+  clear: both !important;
+}
+
+.job-card-reactions .job-card-like-button,
+.job-card-reactions .bookmark-star-button,
+.portal-candidate-job-reactions .portal-job-bookmark-toggle,
+.portal-candidate-job-reactions .portal-job-like-toggle {
+  position: static !important;
+  inset: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.35rem !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0.2rem 0.25rem !important;
+  color: rgba(248, 250, 252, 0.88) !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  transform: none !important;
+}
+
+.job-card-reactions .bookmark-star-button::before {
+  position: static !important;
+  display: inline-block !important;
+  content: "★" !important;
+  color: currentColor !important;
+  font-size: 1.05rem !important;
+  line-height: 1 !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+.job-card-reactions .bookmark-star-button::after,
+.job-card-reactions .job-card-like-button::before,
+.job-card-reactions .job-card-like-button::after {
+  display: none !important;
+  content: none !important;
+}
+
+.job-card-reactions .bookmark-star-button.active,
+.portal-candidate-job-reactions .portal-job-bookmark-toggle.active {
+  color: #facc15 !important;
+  filter: drop-shadow(0 0 0.42rem rgba(250, 204, 21, 0.55)) !important;
+}
+
+.job-card-reactions .job-card-like-button.active,
+.portal-candidate-job-reactions .portal-job-like-toggle.active {
+  color: #93c5fd !important;
+}
+
+.job-card-reactions .bookmark-star-button span,
+.job-card-reactions .job-card-like-button span,
+.job-card-reactions .job-card-like-button strong {
+  color: currentColor !important;
+  font-weight: 900 !important;
+}
+
+@media (max-width: 768px) {
+  .portal-default-search-mainbox {
+    width: 6.5rem !important;
+    height: 1.45rem !important;
+  }
+
+  .portal-default-search-input {
+    width: 4.2rem !important;
+    height: 1.45rem !important;
+    font-size: 0.66rem !important;
+  }
+
+  .portal-default-search-checkbox,
+  .portal-default-search-checkbox:checked ~ .portal-default-search-mainbox {
+    width: 1.45rem !important;
+  }
+
+  .portal-default-search-checkbox {
+    height: 1.45rem !important;
+  }
+
+  .landing-content .button-container {
+    width: min(100%, 18rem) !important;
+  }
+
+  .landing-content .role-button,
+  .landing-content .job-seeker-button,
+  .landing-content .company-button {
+    padding: 0.18rem 0.35rem !important;
+  }
+
+  .job-card-reactions,
+  .portal-candidate-job-reactions,
+  .bookmarked-job-reactions {
+    gap: 0.75rem !important;
+    margin: 0.72rem 0 !important;
+  }
+}
+
+/* Final public landing sizing: larger mobile role text, more frequent gentle motion, square desktop card. */
+@media (min-width: 769px) {
+  .landing-page-container .landing-container {
+    width: min(52vh, 28rem) !important;
+    height: min(52vh, 28rem) !important;
+    min-height: min(52vh, 28rem) !important;
+    aspect-ratio: 1 / 1 !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .landing-page-container .landing-content {
+    width: 100% !important;
+    max-width: 20rem !important;
+  }
+}
+
+.landing-content .role-button,
+.landing-content .job-seeker-button,
+.landing-content .company-button,
+.job-seeker-page .candidate-login-button,
+.job-seeker-page .demo-cv-button,
+.job-seeker-page .submit-button,
+.job-seeker-page .back-button,
+.company-page .search-button,
+.company-page .candidate-login-button,
+.company-page .submit-button,
+.company-page .back-button {
+  animation-name: jumptake-soft-title-wobble !important;
+  animation-iteration-count: infinite !important;
+  animation-fill-mode: both !important;
+}
+
+.landing-content .job-seeker-button {
+  animation-duration: 6.8s !important;
+  animation-delay: -1.1s !important;
+}
+
+.landing-content .company-button {
+  animation-duration: 7.6s !important;
+  animation-delay: -3.4s !important;
+}
+
+.job-seeker-page .candidate-login-button,
+.company-page .candidate-login-button:first-of-type {
+  animation-duration: 7.1s !important;
+  animation-delay: -0.8s !important;
+}
+
+.job-seeker-page .demo-cv-button,
+.company-page .candidate-login-button:nth-of-type(2) {
+  animation-duration: 8.2s !important;
+  animation-delay: -2.9s !important;
+}
+
+.job-seeker-page .submit-button,
+.company-page .search-button {
+  animation-duration: 7.7s !important;
+  animation-delay: -4.2s !important;
+}
+
+.job-seeker-page .back-button,
+.company-page .back-button {
+  animation-duration: 8.8s !important;
+  animation-delay: -5.5s !important;
+}
+
+@media (max-width: 768px) {
+  .landing-content .role-button,
+  .landing-content .job-seeker-button,
+  .landing-content .company-button {
+    font-size: clamp(1.25rem, 5.2vw, 1.55rem) !important;
+    line-height: 1.1 !important;
+  }
+
+  .landing-content .button-separator {
+    font-size: clamp(0.72rem, 2.8vw, 0.9rem) !important;
+    letter-spacing: 0.12em !important;
+  }
+}

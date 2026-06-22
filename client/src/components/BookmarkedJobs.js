@@ -1,6 +1,22 @@
 import React, { useEffect, useState } from 'react';
 
 const BOOKMARKED_JOBS_PER_PAGE = 4;
+const BOOKMARKED_JOB_LIKE_STORAGE_KEY = 'jumptakeBookmarkedJobLikeMap';
+
+const readBookmarkedJobLikeMap = () => {
+    if (typeof window === 'undefined') {
+        return {};
+    }
+
+    try {
+        const parsed = JSON.parse(localStorage.getItem(BOOKMARKED_JOB_LIKE_STORAGE_KEY) || '{}');
+        return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (error) {
+        return {};
+    }
+};
+
+const getBookmarkedJobKey = (job) => String(job?._id || job?.jobNumber || job?.title || 'job');
 
 const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
     const [bookmarks, setBookmarks] = useState([]);
@@ -9,6 +25,7 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+    const [jobLikeMap, setJobLikeMap] = useState(readBookmarkedJobLikeMap);
 
     useEffect(() => {
         fetchBookmarks();
@@ -113,6 +130,50 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
         }
     };
 
+    const viewerLikeId = String(userId || 'candidate-guest');
+
+    const getJobLikeEntry = (job) => {
+        const key = getBookmarkedJobKey(job);
+        const entry = jobLikeMap[key];
+        return entry && typeof entry === 'object' ? entry : { count: 0, likedBy: [] };
+    };
+
+    const isJobLiked = (job) => {
+        const entry = getJobLikeEntry(job);
+        return Array.isArray(entry.likedBy) && entry.likedBy.map(String).includes(viewerLikeId);
+    };
+
+    const getJobLikeCount = (job) => Number(getJobLikeEntry(job).count || 0) || 0;
+
+    const toggleJobLike = (job) => {
+        const key = getBookmarkedJobKey(job);
+        setJobLikeMap((previousMap) => {
+            const previousEntry = previousMap[key] && typeof previousMap[key] === 'object'
+                ? previousMap[key]
+                : { count: 0, likedBy: [] };
+            const previousLikedBy = Array.isArray(previousEntry.likedBy)
+                ? previousEntry.likedBy.map(String)
+                : [];
+            const alreadyLiked = previousLikedBy.includes(viewerLikeId);
+            const nextLikedBy = alreadyLiked
+                ? previousLikedBy.filter((id) => id !== viewerLikeId)
+                : [...previousLikedBy, viewerLikeId];
+            const nextMap = {
+                ...previousMap,
+                [key]: {
+                    count: Math.max(0, Number(previousEntry.count || 0) + (alreadyLiked ? -1 : 1)),
+                    likedBy: nextLikedBy
+                }
+            };
+
+            if (typeof window !== 'undefined') {
+                localStorage.setItem(BOOKMARKED_JOB_LIKE_STORAGE_KEY, JSON.stringify(nextMap));
+            }
+
+            return nextMap;
+        });
+    };
+
     const fetchAppliedJobs = async () => {
         if (!userId) {
             setAppliedJobIds([]);
@@ -181,18 +242,6 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
 
                         return (
                             <div className="application-card bookmarked-job-card" key={bookmark._id}>
-                                <button
-                                    type="button"
-                                    className="bookmarked-job-star-button active"
-                                    onClick={() => removeBookmark(job?._id)}
-                                    aria-label="Remove bookmark"
-                                    title="Remove bookmark"
-                                    disabled={!job?._id}
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-                                        <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187z" />
-                                    </svg>
-                                </button>
                                 <div className="application-card-header">
                                     <div>
                                         <h3>{job?.title || 'Saved Job'}</h3>
@@ -203,6 +252,30 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
                                     <strong>{job?.location || 'Location not specified'}</strong>
                                     <span>{job?.jobType || 'Type not specified'}</span>
                                     {job?.salary && <span>{job.salary}</span>}
+                                </div>
+                                <div className="job-card-reactions bookmarked-job-reactions">
+                                    <button
+                                        type="button"
+                                        className={`job-card-like-button ${isJobLiked(job) ? 'active' : ''}`}
+                                        onClick={() => toggleJobLike(job)}
+                                        aria-pressed={isJobLiked(job)}
+                                        aria-label="Like bookmarked job"
+                                    >
+                                        <span aria-hidden="true">👍</span>
+                                        <span>Like</span>
+                                        <strong>{getJobLikeCount(job)}</strong>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="bookmark-star-button job-card-bookmark-action active"
+                                        onClick={() => removeBookmark(job?._id)}
+                                        aria-pressed="true"
+                                        aria-label="Remove bookmark"
+                                        title="Remove bookmark"
+                                        disabled={!job?._id}
+                                    >
+                                        <span>Bookmark</span>
+                                    </button>
                                 </div>
                                 <div className="application-card-actions">
                                     <button className="view-profile-btn secondary-action" onClick={() => openJob(job?._id, 'preview')}>

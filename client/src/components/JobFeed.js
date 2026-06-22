@@ -27,6 +27,7 @@ const escapeHtml = (value = '') => (
 
 const RESUME_PLAYGROUND_STORAGE_KEY = 'jumptakeResumePlayground:';
 const JOB_REACH_STORAGE_KEY = 'jumptakeJobReachMap';
+const JOB_FEED_LIKE_STORAGE_KEY = 'jumptakeJobFeedLikeMap';
 
 const readJobReachMap = () => {
     if (typeof window === 'undefined') {
@@ -35,6 +36,19 @@ const readJobReachMap = () => {
 
     try {
         const parsed = JSON.parse(localStorage.getItem(JOB_REACH_STORAGE_KEY) || '{}');
+        return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (error) {
+        return {};
+    }
+};
+
+const readJobLikeMap = () => {
+    if (typeof window === 'undefined') {
+        return {};
+    }
+
+    try {
+        const parsed = JSON.parse(localStorage.getItem(JOB_FEED_LIKE_STORAGE_KEY) || '{}');
         return parsed && typeof parsed === 'object' ? parsed : {};
     } catch (error) {
         return {};
@@ -424,6 +438,7 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
     const [activeTab, setActiveTab] = useState('all'); 
     const [currentJobPage, setCurrentJobPage] = useState(1);
     const [jobReachMap, setJobReachMap] = useState(readJobReachMap);
+    const [jobLikeMap, setJobLikeMap] = useState(readJobLikeMap);
     const [isDesktopView, setIsDesktopView] = useState(() => (
         typeof window !== 'undefined' ? window.innerWidth > 768 : true
     ));
@@ -1197,6 +1212,54 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
         }
     };
 
+    const viewerLikeId = String(userId || currentUser?.id || currentUser?._id || currentUser?.email || 'candidate-guest');
+
+    const getJobLikeEntry = (job) => {
+        const key = getJobStatsKey(job);
+        const entry = jobLikeMap[key];
+        return entry && typeof entry === 'object' ? entry : { count: 0, likedBy: [] };
+    };
+
+    const isJobLiked = (job) => {
+        const entry = getJobLikeEntry(job);
+        return Array.isArray(entry.likedBy) && entry.likedBy.map(String).includes(viewerLikeId);
+    };
+
+    const getJobLikeCount = (job) => Number(getJobLikeEntry(job).count || 0) || 0;
+
+    const handleToggleJobLike = (job, event) => {
+        if (event) {
+            event.stopPropagation();
+        }
+
+        const key = getJobStatsKey(job);
+        setJobLikeMap((previousMap) => {
+            const previousEntry = previousMap[key] && typeof previousMap[key] === 'object'
+                ? previousMap[key]
+                : { count: 0, likedBy: [] };
+            const previousLikedBy = Array.isArray(previousEntry.likedBy)
+                ? previousEntry.likedBy.map(String)
+                : [];
+            const alreadyLiked = previousLikedBy.includes(viewerLikeId);
+            const nextLikedBy = alreadyLiked
+                ? previousLikedBy.filter((id) => id !== viewerLikeId)
+                : [...previousLikedBy, viewerLikeId];
+            const nextMap = {
+                ...previousMap,
+                [key]: {
+                    count: Math.max(0, Number(previousEntry.count || 0) + (alreadyLiked ? -1 : 1)),
+                    likedBy: nextLikedBy
+                }
+            };
+
+            if (typeof window !== 'undefined') {
+                localStorage.setItem(JOB_FEED_LIKE_STORAGE_KEY, JSON.stringify(nextMap));
+            }
+
+            return nextMap;
+        });
+    };
+
     const getMatchScore = (job) => {
         const jobSkills = getJobSkills(job);
         if (candidateSkills.length === 0 || jobSkills.length === 0) return 0;
@@ -1415,12 +1478,6 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                                     key={job._id}
                                     onClick={() => handleJobClick(job)}
                                 >
-                                    <button
-                                        type="button"
-                                        className={`bookmark-star-button job-card-bookmark-action ${isBookmarked ? 'active' : ''}`}
-                                        onClick={(event) => handleToggleBookmark(job, event)}
-                                        aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark job'}
-                                    />
                                     <div className="job-card-header">
                                         <ProfileAvatar
                                             imageSrc={job.company?.logo}
@@ -1476,6 +1533,28 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                                         <span>{Number(job.applicationCount || applications.length || 0)} applicants</span>
                                         <span>{getStatusCount(job, ['hired'])} hired</span>
                                         <span>{fitPercentage}% fit for you</span>
+                                    </div>
+                                    <div className="job-card-reactions">
+                                        <button
+                                            type="button"
+                                            className={`job-card-like-button ${isJobLiked(job) ? 'active' : ''}`}
+                                            onClick={(event) => handleToggleJobLike(job, event)}
+                                            aria-pressed={isJobLiked(job)}
+                                            aria-label="Like job post"
+                                        >
+                                            <span aria-hidden="true">👍</span>
+                                            <span>Like</span>
+                                            <strong>{getJobLikeCount(job)}</strong>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className={`bookmark-star-button job-card-bookmark-action ${isBookmarked ? 'active' : ''}`}
+                                            onClick={(event) => handleToggleBookmark(job, event)}
+                                            aria-pressed={isBookmarked}
+                                            aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark job'}
+                                        >
+                                            <span>Bookmark</span>
+                                        </button>
                                     </div>
                                     <div className="job-card-footer">
                                         <span className="posted-date">Posted: {new Date(job.createdAt).toLocaleDateString()}</span>

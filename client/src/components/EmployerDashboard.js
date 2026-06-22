@@ -796,14 +796,14 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
 
                 <main ref={mobilePanelRef} className={`main-content mobile-dashboard-section-panel mobile-section-${activeSection} ${mobileSectionVisible ? 'is-open' : ''}`}>
                     <div className="dashboard-section-title">
-                        <h2>{sectionTitles[activeSection] || 'Dashboard Section'}</h2>
+                        <h2><span className="portal-title-jello-text">{sectionTitles[activeSection] || 'Dashboard Section'}</span></h2>
                     </div>
                     {mobileSectionVisible && (
                         <div className="mobile-section-panel-header">
                             <button type="button" className="back-button" onClick={goToPreviousSection}>
                                 {activeSection === 'manage-jobs' && isManagingEmployerJob ? 'Back to Manage Jobs' : 'Back'}
                             </button>
-                            <h2>{sectionTitles[activeSection] || 'Dashboard Section'}</h2>
+                            <h2><span className="portal-title-jello-text">{sectionTitles[activeSection] || 'Dashboard Section'}</span></h2>
                         </div>
                     )}
                     {renderContent()}

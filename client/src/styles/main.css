@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Share+Tech&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Chewy&family=Lexend:wght@400;500;600;700&family=Share+Tech&display=swap');
 
 :root {
   
@@ -31137,4 +31137,205 @@ html[data-theme="light"] .home-page .floating-messenger-trigger {
 .portal-job-bookmark-toggle.active {
   color: #facc15 !important;
   filter: drop-shadow(0 0 7px rgba(250, 204, 21, 0.45));
+}
+
+/* Requested portal title animation + candidate home job bookmark placement. */
+@keyframes jumptake-title-jello {
+  0%,
+  11.1%,
+  100% {
+    transform: translateZ(0);
+  }
+
+  22.2% {
+    transform: skewX(-12.5deg) skewY(-12.5deg);
+  }
+
+  33.3% {
+    transform: skewX(6.25deg) skewY(6.25deg);
+  }
+
+  44.4% {
+    transform: skewX(-3.125deg) skewY(-3.125deg);
+  }
+
+  55.5% {
+    transform: skewX(1.5625deg) skewY(1.5625deg);
+  }
+
+  66.6% {
+    transform: skewX(-0.78125deg) skewY(-0.78125deg);
+  }
+
+  77.7% {
+    transform: skewX(0.390625deg) skewY(0.390625deg);
+  }
+
+  88.8% {
+    transform: skewX(-0.1953125deg) skewY(-0.1953125deg);
+  }
+}
+
+.portal-title-jello-text {
+  display: inline-block;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-family: 'Chewy', 'Lexend', 'Share Tech', system-ui, sans-serif !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.02em;
+  line-height: 1.05;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.dashboard-section-title h2:hover .portal-title-jello-text,
+.dashboard-section-title h2:focus-within .portal-title-jello-text,
+.mobile-section-panel-header h2:hover .portal-title-jello-text,
+.mobile-section-panel-header h2:focus-within .portal-title-jello-text,
+.dashboard-title h1:hover,
+.dashboard-title h1:focus-visible {
+  animation: jumptake-title-jello 0.8s both;
+}
+
+.dashboard-title h1 {
+  font-family: 'Chewy', 'Lexend', 'Share Tech', system-ui, sans-serif !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.02em;
+  transform-origin: center;
+}
+
+.home-page .dashboard-section-title {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  border-radius: 16px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 10px 24px rgba(0, 0, 0, 0.16) !important;
+  color: #ffffff !important;
+}
+
+.home-page .dashboard-section-title h2 {
+  color: #ffffff !important;
+}
+
+.portal-candidate-job-card {
+  padding-left: 3.25rem !important;
+  padding-right: 1.35rem !important;
+}
+
+.portal-candidate-job-card .portal-job-bookmark-toggle,
+.portal-job-bookmark-toggle {
+  top: 0.95rem !important;
+  left: 0.95rem !important;
+  right: auto !important;
+}
+
+.portal-candidate-job-header > div:last-child {
+  min-width: 0;
+}
+
+.portal-candidate-job-header h3,
+.portal-candidate-job-header p {
+  overflow-wrap: anywhere;
+}
+
+html[data-theme="light"] .home-page .dashboard-section-title {
+  background: rgba(255, 255, 255, 0.46) !important;
+  border-color: rgba(59, 59, 59, 0.18) !important;
+  color: var(--cream-ink) !important;
+}
+
+@media (max-width: 768px) {
+  .mobile-dashboard-section-panel.is-open > .mobile-section-panel-header,
+  .mobile-job-management-section-panel.is-open > .mobile-section-panel-header {
+    background: rgba(0, 0, 0, 0.88) !important;
+    border-bottom: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .mobile-dashboard-section-panel.is-open > .mobile-section-panel-header h2,
+  .mobile-job-management-section-panel.is-open > .mobile-section-panel-header h2 {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    max-width: min(68vw, 22rem) !important;
+    min-height: 2.55rem !important;
+    margin: 0 !important;
+    padding: 0.46rem 1rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 999px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+    font-size: clamp(1.05rem, 5.4vw, 1.45rem) !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .mobile-dashboard-section-panel.is-open > .mobile-section-panel-header h2 .portal-title-jello-text,
+  .mobile-job-management-section-panel.is-open > .mobile-section-panel-header h2 .portal-title-jello-text {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    animation: jumptake-title-jello 0.8s both;
+  }
+
+  .mobile-dashboard-section-panel.is-open > .mobile-section-panel-header .back-button,
+  .mobile-job-management-section-panel.is-open > .mobile-section-panel-header .back-button {
+    align-self: center !important;
+  }
+
+  .portal-candidate-job-card {
+    padding-left: 2.8rem !important;
+    padding-right: 0.95rem !important;
+  }
+
+  .portal-candidate-job-card .portal-job-bookmark-toggle,
+  .portal-job-bookmark-toggle {
+    top: 0.72rem !important;
+    left: 0.72rem !important;
+    right: auto !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-page .dashboard-container.mobile-section-open .mobile-dashboard-section-panel.is-open > .mobile-section-panel-header,
+  .home-page .dashboard-container.mobile-section-open .mobile-job-management-section-panel.is-open > .mobile-section-panel-header {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    justify-content: flex-end !important;
+  }
+
+  .home-page .dashboard-container.mobile-section-open .mobile-dashboard-section-panel.is-open > .mobile-section-panel-header h2,
+  .home-page .dashboard-container.mobile-section-open .mobile-job-management-section-panel.is-open > .mobile-section-panel-header h2 {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    max-width: min(68vw, 22rem) !important;
+    min-height: 2.55rem !important;
+    margin: 0 !important;
+    padding: 0.46rem 1rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 999px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+    font-family: 'Chewy', 'Lexend', 'Share Tech', system-ui, sans-serif !important;
+    font-size: clamp(1.05rem, 5.4vw, 1.45rem) !important;
+    font-weight: 400 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
 }

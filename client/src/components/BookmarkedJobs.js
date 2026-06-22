@@ -40,11 +40,29 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
     };
 
     const openJob = (jobId, action = 'preview') => {
+        if (!jobId) {
+            return;
+        }
+
+        const homeFeedRequest = {
+            mode: 'candidate',
+            tab: 'job-posts',
+            jobId: String(jobId),
+            action
+        };
+
         localStorage.setItem('jumptakeActiveJobId', String(jobId));
         localStorage.setItem('jumptakeActiveJobAction', action);
         localStorage.setItem('jumptakeActiveJobReturnSection', 'bookmarked-jobs');
+        sessionStorage.setItem('jumptakeHomeFeedRequest', JSON.stringify(homeFeedRequest));
         if (switchSection) {
-            switchSection('job-feed');
+            switchSection('home');
+        }
+
+        if (typeof window !== 'undefined') {
+            window.setTimeout(() => {
+                window.dispatchEvent(new CustomEvent('jumptake-home-feed-request', { detail: homeFeedRequest }));
+            }, 0);
         }
     };
 

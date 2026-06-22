@@ -307,12 +307,11 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
 
         const initialSection = getInitialCandidateSection();
         sessionStorage.setItem(CANDIDATE_SECTION_STORAGE_KEY, initialSection);
-        if (!window.location.hash.startsWith('#candidate:')) {
-            window.history.replaceState(null, '', `#candidate:${initialSection}`);
-        }
-        if (isMobileViewport() && initialSection !== 'home') {
-            setMobileSectionVisible(true);
-        }
+        sessionStorage.removeItem('jumptakeHomeFeedRequest');
+        sessionStorage.removeItem('jumptakeCandidateJobSearch');
+        window.history.replaceState(null, '', `#candidate:${initialSection}`);
+        setMobileSectionVisible(false);
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
 
         window.addEventListener('hashchange', applyHashSection);
         return () => window.removeEventListener('hashchange', applyHashSection);

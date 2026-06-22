@@ -2519,8 +2519,18 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
 
                     {!isDocumentMode && showAtsDetails && atsScanResult && (
                         <div className="resume-playground-ats-details">
-                            <div className="resume-playground-ats-details-section">
+                            <div className="resume-playground-ats-details-header">
                                 <h4>ATS score summary</h4>
+                                <button
+                                    type="button"
+                                    className="resume-playground-ats-details-close"
+                                    onClick={() => setShowAtsDetails(false)}
+                                    aria-label="Close ATS score summary"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                            <div className="resume-playground-ats-details-section">
                                 <p>
                                     {atsScanResult.score}% — {atsScanResult.label}
                                 </p>

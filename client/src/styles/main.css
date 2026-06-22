@@ -32284,3 +32284,140 @@ html[data-theme="light"] .home-page .dashboard-section-title {
     min-height: 1.8rem !important;
   }
 }
+
+/* Follow-up portal polish: default feed landing, icon-only bookmark stars, and mobile resume editor scroll. */
+.portal-candidate-job-card .portal-job-bookmark-toggle,
+.portal-candidate-job-card .portal-job-bookmark-toggle:hover,
+.portal-candidate-job-card .portal-job-bookmark-toggle:focus,
+.portal-candidate-job-card .portal-job-bookmark-toggle:focus-visible,
+.portal-candidate-job-card .portal-job-bookmark-toggle:active,
+.portal-candidate-job-card .portal-job-bookmark-toggle.active,
+.portal-job-bookmark-toggle,
+.portal-job-bookmark-toggle:hover,
+.portal-job-bookmark-toggle:focus,
+.portal-job-bookmark-toggle:focus-visible,
+.portal-job-bookmark-toggle:active,
+.portal-job-bookmark-toggle.active,
+.bookmarked-job-star-button,
+.bookmarked-job-star-button:hover,
+.bookmarked-job-star-button:focus,
+.bookmarked-job-star-button:focus-visible,
+.bookmarked-job-star-button:active {
+  position: absolute !important;
+  top: 0.68rem !important;
+  right: 0.42rem !important;
+  left: auto !important;
+  z-index: 8 !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 1.2rem !important;
+  height: 1.2rem !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  transform: none !important;
+}
+
+.portal-job-bookmark-toggle::before,
+.portal-job-bookmark-toggle::after,
+.bookmarked-job-star-button::before,
+.bookmarked-job-star-button::after {
+  display: none !important;
+  content: none !important;
+}
+
+.portal-job-bookmark-toggle svg,
+.bookmarked-job-star-button svg {
+  display: block !important;
+  width: 1.05rem !important;
+  height: 1.05rem !important;
+  fill: currentColor !important;
+  filter: drop-shadow(0 0 6px rgba(250, 204, 21, 0.44)) !important;
+}
+
+.portal-candidate-job-card .portal-candidate-job-header {
+  padding-right: 1.55rem !important;
+}
+
+.bookmarked-job-card .application-card-header {
+  padding-right: 1.55rem !important;
+}
+
+.resume-playground-ats-details-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 0.75rem !important;
+}
+
+.resume-playground-ats-details-header h4 {
+  margin: 0 !important;
+  color: #ffffff !important;
+  font-size: 1rem !important;
+}
+
+.resume-playground-ats-details-close {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 2rem !important;
+  padding: 0.35rem 0.75rem !important;
+  border: 1px solid rgba(248, 113, 113, 0.55) !important;
+  border-radius: 0.6rem !important;
+  background: rgba(127, 29, 29, 0.55) !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  cursor: pointer !important;
+}
+
+.resume-playground-ats-details-close:hover,
+.resume-playground-ats-details-close:focus-visible {
+  filter: brightness(1.08) !important;
+}
+
+@media (max-width: 768px) {
+  .resume-playground-editor-mobile-overlay {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+  }
+
+  .resume-playground-editor-mobile-overlay .resume-playground-editor-shell {
+    min-height: 100dvh !important;
+    overflow: visible !important;
+    padding-bottom: max(2rem, env(safe-area-inset-bottom)) !important;
+  }
+
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-shell {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar {
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row,
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-scroll {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .resume-playground-editor-mobile-overlay .resume-playground-ats-details {
+    margin-bottom: 0.75rem !important;
+  }
+}

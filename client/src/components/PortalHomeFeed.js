@@ -5,6 +5,7 @@ import ResumeFilePreview from './ResumeFilePreview';
 const WORK_NEWS_STORAGE_KEY = 'jumptakeWorkNewsPosts';
 const TALENT_STORIES_STORAGE_KEY = 'jumptakeTalentStoriesPosts';
 const JOB_REACH_STORAGE_KEY = 'jumptakeJobReachMap';
+const HOME_JOB_LIKE_STORAGE_KEY = 'jumptakeHomeJobLikeMap';
 const RESUME_PLAYGROUND_STORAGE_KEY = 'jumptakeResumePlayground:';
 const HOME_JOB_PAGE_SIZE = 7;
 
@@ -47,6 +48,19 @@ const readJobReachMap = () => {
 
     try {
         const parsed = JSON.parse(localStorage.getItem(JOB_REACH_STORAGE_KEY) || '{}');
+        return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (error) {
+        return {};
+    }
+};
+
+const readHomeJobLikeMap = () => {
+    if (typeof window === 'undefined') {
+        return {};
+    }
+
+    try {
+        const parsed = JSON.parse(localStorage.getItem(HOME_JOB_LIKE_STORAGE_KEY) || '{}');
         return parsed && typeof parsed === 'object' ? parsed : {};
     } catch (error) {
         return {};
@@ -617,6 +631,7 @@ const PortalHomeFeed = ({
     const [composerAudience, setComposerAudience] = useState('everyone');
     const [commentDrafts, setCommentDrafts] = useState({});
     const [jobReachMap, setJobReachMap] = useState(readJobReachMap);
+    const [homeJobLikeMap, setHomeJobLikeMap] = useState(readHomeJobLikeMap);
     const [selectedJob, setSelectedJob] = useState(null);
     const [selectedJobMode, setSelectedJobMode] = useState(mode);
     const [applyingHomeJobId, setApplyingHomeJobId] = useState('');
@@ -953,6 +968,57 @@ const PortalHomeFeed = ({
         ].filter(Boolean);
 
         return possibleIds.some((id) => bookmarkedHomeJobIds.includes(id));
+    };
+
+    const getHomeJobLikeEntry = (job) => {
+        const key = getJobKey(job);
+        const entry = homeJobLikeMap[key];
+        return entry && typeof entry === 'object' ? entry : { count: 0, likedBy: [] };
+    };
+
+    const isHomeJobLiked = (job) => {
+        const entry = getHomeJobLikeEntry(job);
+        return Array.isArray(entry.likedBy) && entry.likedBy.map(String).includes(viewerId);
+    };
+
+    const getHomeJobLikeCount = (job) => {
+        const entry = getHomeJobLikeEntry(job);
+        return Number(entry.count || 0) || 0;
+    };
+
+    const handleToggleHomeJobLike = (job, event) => {
+        event?.stopPropagation();
+        const key = getJobKey(job);
+
+        if (!key) {
+            return;
+        }
+
+        setHomeJobLikeMap((previousMap) => {
+            const previousEntry = previousMap[key] && typeof previousMap[key] === 'object'
+                ? previousMap[key]
+                : { count: 0, likedBy: [] };
+            const previousLikedBy = Array.isArray(previousEntry.likedBy)
+                ? previousEntry.likedBy.map(String)
+                : [];
+            const alreadyLiked = previousLikedBy.includes(viewerId);
+            const nextLikedBy = alreadyLiked
+                ? previousLikedBy.filter((id) => id !== viewerId)
+                : [...previousLikedBy, viewerId];
+            const nextMap = {
+                ...previousMap,
+                [key]: {
+                    count: Math.max(0, Number(previousEntry.count || 0) + (alreadyLiked ? -1 : 1)),
+                    likedBy: nextLikedBy
+                }
+            };
+
+            if (typeof window !== 'undefined') {
+                localStorage.setItem(HOME_JOB_LIKE_STORAGE_KEY, JSON.stringify(nextMap));
+            }
+
+            return nextMap;
+        });
     };
 
     const handleToggleHomeJobBookmark = async (job, event) => {
@@ -1601,15 +1667,6 @@ const PortalHomeFeed = ({
                             }
                         }}
                     >
-                        <button
-                            type="button"
-                            className={`portal-job-bookmark-toggle ${bookmarked ? 'active' : ''}`}
-                            onClick={(event) => handleToggleHomeJobBookmark(job, event)}
-                            aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark job'}
-                            title={bookmarked ? 'Remove bookmark' : 'Bookmark job'}
-                        >
-                            <SimpleIcon path={utilityIconPaths.starFill} />
-                        </button>
                         <div className="portal-candidate-job-header">
                             <div className="portal-job-company-avatar">
                                 {job.companyLogo ? (
@@ -1643,6 +1700,31 @@ const PortalHomeFeed = ({
                                     {item.label}
                                 </span>
                             ))}
+                        </div>
+
+                        <div className="portal-candidate-job-reactions">
+                            <button
+                                type="button"
+                                className={`portal-job-like-toggle ${isHomeJobLiked(job) ? 'active' : ''}`}
+                                onClick={(event) => handleToggleHomeJobLike(job, event)}
+                                aria-pressed={isHomeJobLiked(job)}
+                                aria-label="Like job post"
+                            >
+                                <ReactionIcon name="Like" />
+                                <span>Like</span>
+                                <strong>{getHomeJobLikeCount(job)}</strong>
+                            </button>
+                            <button
+                                type="button"
+                                className={`portal-job-bookmark-toggle ${bookmarked ? 'active' : ''}`}
+                                onClick={(event) => handleToggleHomeJobBookmark(job, event)}
+                                aria-pressed={bookmarked}
+                                aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark job'}
+                                title={bookmarked ? 'Remove bookmark' : 'Bookmark job'}
+                            >
+                                <SimpleIcon path={utilityIconPaths.starFill} />
+                                <span>Bookmark</span>
+                            </button>
                         </div>
 
                         <div className="portal-candidate-job-footer">

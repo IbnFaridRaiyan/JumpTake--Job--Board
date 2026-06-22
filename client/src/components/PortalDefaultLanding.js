@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const QUICK_ACTION_ICONS = {
     home: (
@@ -51,10 +51,21 @@ const PortalDefaultLanding = ({
     inboxCount = 0,
     assessmentCount = 0,
     videoInterviewCount = 0,
-    switchSection
+    switchSection,
+    onSearch
 }) => {
     const isEmployer = mode === 'employer';
     const name = displayName || (isEmployer ? 'Employer' : 'Candidate');
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const submitLandingSearch = (event) => {
+        event.preventDefault();
+        const cleanQuery = searchQuery.trim();
+        if (!cleanQuery || typeof onSearch !== 'function') {
+            return;
+        }
+        onSearch(cleanQuery);
+    };
 
     const stats = isEmployer
         ? [
@@ -86,9 +97,39 @@ const PortalDefaultLanding = ({
 
     return (
         <section className={`portal-default-landing ${isEmployer ? 'is-employer' : 'is-candidate'}`}>
+            <form className="portal-default-search-container" onSubmit={submitLandingSearch}>
+                <input className="portal-default-search-checkbox" type="checkbox" defaultChecked aria-label="Toggle landing search" />
+                <div className="portal-default-search-mainbox">
+                    <div className="portal-default-search-icon-container">
+                        <svg viewBox="0 0 512 512" height="1em" xmlns="http://www.w3.org/2000/svg" className="portal-default-search-icon" aria-hidden="true">
+                            <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0s208 93.1 208 208M208 352a144 144 0 1 0 0-288 144 144 0 0 0 0 288" />
+                        </svg>
+                    </div>
+                    <input
+                        className="portal-default-search-input"
+                        placeholder="search"
+                        type="search"
+                        value={searchQuery}
+                        onChange={(event) => setSearchQuery(event.target.value)}
+                    />
+                </div>
+            </form>
             <div className="portal-default-hero">
                 <p className="portal-default-kicker">{isEmployer ? 'Employer workspace' : 'Candidate workspace'}</p>
-                <h3>{isEmployer ? 'Start hiring with JumpTake' : 'Start your JumpTake day'}</h3>
+                <h3 className="portal-default-title-animated">
+                    {isEmployer ? (
+                        <>
+                            <span>Start hiring with </span>
+                            <span className="portal-default-title-brand">JumpTake</span>
+                        </>
+                    ) : (
+                        <>
+                            <span>Start your </span>
+                            <span className="portal-default-title-brand">JumpTake</span>
+                            <span> day</span>
+                        </>
+                    )}
+                </h3>
                 <p>
                     {isEmployer
                         ? `Welcome back, ${name}. Jump into hiring, talent discovery, and application tracking from one clean starting point.`

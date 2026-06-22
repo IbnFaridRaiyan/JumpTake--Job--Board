@@ -35764,3 +35764,341 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
     margin-top: 0 !important;
   }
 }
+
+/* Final landing title/search polish and job-post bottom reactions. */
+.portal-default-landing {
+  position: relative !important;
+}
+
+.portal-default-kicker {
+  color: #facc15 !important;
+}
+
+.portal-default-title-animated {
+  display: block !important;
+  animation: jumptake-title-jello 0.8s both !important;
+  transform-origin: center !important;
+}
+
+.portal-default-title-brand {
+  color: #38bdf8 !important;
+}
+
+.portal-default-search-container {
+  position: absolute !important;
+  top: 1rem !important;
+  right: 1rem !important;
+  z-index: 4 !important;
+  box-sizing: border-box !important;
+  width: fit-content !important;
+}
+
+.portal-default-search-mainbox {
+  box-sizing: border-box !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: row-reverse !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 230px !important;
+  height: 50px !important;
+  background-color: #000 !important;
+  border: 1px solid rgba(94, 234, 212, 0.28) !important;
+  border-radius: 160px !important;
+  transition: all 0.3s ease !important;
+}
+
+.portal-default-search-checkbox {
+  box-sizing: border-box !important;
+  position: absolute !important;
+  top: 10px !important;
+  right: 17px !important;
+  z-index: 9 !important;
+  width: 30px !important;
+  height: 30px !important;
+  cursor: pointer !important;
+  appearance: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+}
+
+.portal-default-search-checkbox:checked {
+  right: 10px !important;
+}
+
+.portal-default-search-checkbox:checked ~ .portal-default-search-mainbox {
+  width: 50px !important;
+}
+
+.portal-default-search-checkbox:checked ~ .portal-default-search-mainbox .portal-default-search-input {
+  width: 0 !important;
+  height: 0 !important;
+  padding-left: 0 !important;
+  opacity: 0 !important;
+}
+
+.portal-default-search-checkbox:checked ~ .portal-default-search-mainbox .portal-default-search-icon-container {
+  padding-right: 8px !important;
+}
+
+.portal-default-search-input {
+  box-sizing: border-box !important;
+  width: 170px !important;
+  height: 100% !important;
+  padding-left: 10px !important;
+  padding-bottom: 4px !important;
+  color: #fff !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  font: 700 1em system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  transition: all 0.3s ease !important;
+}
+
+.portal-default-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.78) !important;
+}
+
+.portal-default-search-icon-container {
+  box-sizing: border-box !important;
+  width: fit-content !important;
+  padding-top: 5px !important;
+  transition: all 0.3s ease !important;
+}
+
+.portal-default-search-icon {
+  box-sizing: border-box !important;
+  fill: #fff !important;
+  font-size: 1.3em !important;
+}
+
+.portal-candidate-job-card > .portal-job-bookmark-toggle {
+  display: none !important;
+}
+
+.portal-candidate-job-reactions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.9rem !important;
+  flex-wrap: wrap !important;
+  margin: 0.78rem 0 0.62rem !important;
+  padding: 0 !important;
+}
+
+.portal-job-like-toggle,
+.portal-candidate-job-reactions .portal-job-bookmark-toggle {
+  position: static !important;
+  inset: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.35rem !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0.22rem 0.1rem !important;
+  color: rgba(248, 250, 252, 0.9) !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  text-shadow: none !important;
+  transform: none !important;
+}
+
+.portal-job-like-toggle:hover,
+.portal-job-like-toggle:focus-visible,
+.portal-candidate-job-reactions .portal-job-bookmark-toggle:hover,
+.portal-candidate-job-reactions .portal-job-bookmark-toggle:focus-visible {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  transform: translateY(-1px) !important;
+}
+
+.portal-job-like-toggle.active {
+  color: #93c5fd !important;
+}
+
+.portal-candidate-job-reactions .portal-job-bookmark-toggle {
+  color: rgba(248, 250, 252, 0.78) !important;
+}
+
+.portal-candidate-job-reactions .portal-job-bookmark-toggle.active {
+  color: #facc15 !important;
+  filter: drop-shadow(0 0 0.45rem rgba(250, 204, 21, 0.58)) !important;
+}
+
+.portal-job-like-toggle::before,
+.portal-job-like-toggle::after,
+.portal-candidate-job-reactions .portal-job-bookmark-toggle::before,
+.portal-candidate-job-reactions .portal-job-bookmark-toggle::after {
+  display: none !important;
+  content: none !important;
+}
+
+.portal-job-like-toggle svg,
+.portal-candidate-job-reactions .portal-job-bookmark-toggle svg {
+  display: block !important;
+  width: 1.08rem !important;
+  height: 1.08rem !important;
+  fill: currentColor !important;
+}
+
+.portal-job-like-toggle span,
+.portal-job-like-toggle strong,
+.portal-candidate-job-reactions .portal-job-bookmark-toggle span {
+  color: currentColor !important;
+  font-weight: 900 !important;
+}
+
+@media (max-width: 768px) {
+  .portal-default-search-container {
+    top: 0.72rem !important;
+    right: 0.72rem !important;
+  }
+
+  .portal-default-search-mainbox {
+    width: min(10.5rem, 42vw) !important;
+    height: 2.35rem !important;
+  }
+
+  .portal-default-search-checkbox {
+    top: 0.28rem !important;
+    right: 0.38rem !important;
+    width: 1.8rem !important;
+    height: 1.8rem !important;
+  }
+
+  .portal-default-search-checkbox:checked ~ .portal-default-search-mainbox {
+    width: 2.35rem !important;
+  }
+
+  .portal-default-search-input {
+    width: min(7.4rem, 29vw) !important;
+    font-size: 0.82rem !important;
+  }
+
+  .portal-default-search-icon {
+    font-size: 1.05em !important;
+  }
+
+  .portal-candidate-job-reactions {
+    gap: 0.72rem !important;
+    margin: 0.7rem 0 0.55rem !important;
+  }
+
+  .portal-job-like-toggle,
+  .portal-candidate-job-reactions .portal-job-bookmark-toggle {
+    font-size: 0.82rem !important;
+  }
+}
+
+/* Tighten landing hero/search spacing and keep the search input compact black. */
+.portal-default-landing {
+  align-content: start !important;
+}
+
+.portal-default-hero {
+  align-self: start !important;
+  padding-top: clamp(3.15rem, 5vw, 4.35rem) !important;
+}
+
+.portal-default-search-container {
+  top: clamp(1.45rem, 2.2vw, 2rem) !important;
+  right: clamp(1rem, 2vw, 1.45rem) !important;
+}
+
+.portal-default-search-mainbox {
+  width: 10.25rem !important;
+  height: 1.95rem !important;
+  background: #000 !important;
+  background-color: #000 !important;
+}
+
+.portal-default-search-input {
+  width: 7.55rem !important;
+  height: 1.95rem !important;
+  min-height: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-left: 0.65rem !important;
+  background: #000 !important;
+  background-color: #000 !important;
+  color: #fff !important;
+  border-radius: 999px !important;
+  font-size: 0.82rem !important;
+  box-shadow: inset 0 0 0 999px #000 !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+}
+
+.portal-default-search-input:focus,
+.portal-default-search-input:active {
+  background: #000 !important;
+  background-color: #000 !important;
+  color: #fff !important;
+  box-shadow: inset 0 0 0 999px #000 !important;
+}
+
+.portal-default-search-input:-webkit-autofill,
+.portal-default-search-input:-webkit-autofill:hover,
+.portal-default-search-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #fff !important;
+  box-shadow: inset 0 0 0 999px #000 !important;
+  -webkit-box-shadow: inset 0 0 0 999px #000 !important;
+  caret-color: #fff !important;
+}
+
+.portal-default-search-checkbox {
+  top: 0.08rem !important;
+  right: 0.25rem !important;
+  width: 1.75rem !important;
+  height: 1.75rem !important;
+}
+
+.portal-default-search-icon-container {
+  padding-top: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+@media (max-width: 768px) {
+  .portal-default-hero {
+    padding-top: 3rem !important;
+  }
+
+  .portal-default-search-container {
+    top: 0.7rem !important;
+    right: 0.65rem !important;
+  }
+
+  .portal-default-search-mainbox,
+  .portal-default-search-input {
+    height: 1.75rem !important;
+  }
+
+  .portal-default-search-mainbox {
+    width: min(8.2rem, 34vw) !important;
+  }
+
+  .portal-default-search-input {
+    width: min(5.75rem, 23vw) !important;
+    padding-left: 0.52rem !important;
+    font-size: 0.74rem !important;
+  }
+
+  .portal-default-search-checkbox {
+    top: 0.02rem !important;
+    right: 0.14rem !important;
+    width: 1.65rem !important;
+    height: 1.65rem !important;
+  }
+
+  .portal-default-search-checkbox:checked ~ .portal-default-search-mainbox {
+    width: 1.75rem !important;
+  }
+}

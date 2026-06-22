@@ -630,6 +630,13 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         onClick: () => openSection(item.id)
     }));
 
+    const openCandidateHomeFeedTab = (tab) => {
+        const homeFeedRequest = { mode: 'candidate', tab };
+        sessionStorage.setItem('jumptakeHomeFeedRequest', JSON.stringify(homeFeedRequest));
+        window.dispatchEvent(new CustomEvent('jumptake-home-feed-request', { detail: homeFeedRequest }));
+        openSection('job-feed');
+    };
+
     const handleDashboardSearch = (query) => {
         const lowerQuery = query.toLowerCase();
 
@@ -637,6 +644,20 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             setPendingInboxCount(0);
             localStorage.setItem('jumptakeCandidateInboxSeenAt', String(Date.now()));
             window.dispatchEvent(new CustomEvent('jumptake-open-candidate-messenger'));
+            return;
+        }
+
+        const homeFeedTabMatches = [
+            { tab: 'work-news', terms: ['work news', 'news', 'company update', 'company updates'] },
+            { tab: 'job-posts', terms: ['job post', 'job posts', 'job feed', 'open job feed', 'jobs', 'find job'] },
+            { tab: 'talent-stories', terms: ['talent story', 'talent stories', 'story', 'stories'] },
+            { tab: 'create-story', terms: ['create story', 'write story', 'post story'] },
+            { tab: 'my-feed', terms: ['my feed', 'feed'] },
+            { tab: 'work-news', terms: ['home', 'dashboard', 'overview'] }
+        ];
+        const homeFeedTabMatch = homeFeedTabMatches.find(({ terms }) => terms.some((term) => lowerQuery.includes(term)));
+        if (homeFeedTabMatch) {
+            openCandidateHomeFeedTab(homeFeedTabMatch.tab);
             return;
         }
 
@@ -777,6 +798,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     assessmentCount={pendingAssessmentCount}
                     videoInterviewCount={pendingVideoInterviewCount}
                     switchSection={switchSection}
+                    onSearch={handleDashboardSearch}
                 />;
             case 'job-feed':
                 return <PortalHomeFeed
@@ -915,7 +937,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                         </div>
                     </div>
                     <div className="dashboard-title candidate-dashboard-title">
-                        <h1>Candidate Portal</h1>
+                        <h1>Candidate</h1>
                         <p>Welcome back, {displayName}</p>
                     </div>
                 </div>
@@ -936,7 +958,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     </div>
                 </div>
                 <div className="dashboard-title candidate-dashboard-title">
-                    <h1>Candidate Portal</h1>
+                    <h1>Candidate</h1>
                     <p>Welcome back, {displayName}</p>
                 </div>
                 <DashboardSearch onSearch={handleDashboardSearch} />

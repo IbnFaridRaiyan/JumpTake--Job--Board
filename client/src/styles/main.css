@@ -36447,3 +36447,200 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
     letter-spacing: 0.12em !important;
   }
 }
+
+/* Final auth modal pass: compact login cards with the animated title-button font. */
+.modal-overlay .login-modal {
+  width: min(300px, calc(100vw - 2.25rem)) !important;
+  padding: 1.2rem 1.45rem 1.35rem !important;
+  min-height: 0 !important;
+}
+
+.login-header h2,
+.login-signup button {
+  font-family: "Chewy", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  font-weight: 900 !important;
+  letter-spacing: 0 !important;
+  animation-name: jumptake-soft-title-wobble !important;
+  animation-duration: 6.9s !important;
+  animation-delay: -1.3s !important;
+  animation-iteration-count: infinite !important;
+  animation-fill-mode: both !important;
+}
+
+.login-header h2 {
+  font-size: 1.45rem !important;
+  line-height: 1.25 !important;
+}
+
+.login-modal form,
+.login-modal .modern-login-form {
+  margin-top: 0.95rem !important;
+  gap: 0.45rem !important;
+}
+
+.login-modal .form-group {
+  display: grid !important;
+  gap: 0.28rem !important;
+}
+
+.login-modal label {
+  margin: 0 !important;
+  font-size: 0.78rem !important;
+  line-height: 1.05 !important;
+}
+
+.login-input,
+.login-input:focus {
+  min-height: 2.45rem !important;
+  padding: 0.55rem 0.82rem !important;
+}
+
+.login-link-button {
+  margin: 0.42rem 0 0.55rem !important;
+  font-size: 0.72rem !important;
+}
+
+.login-submit-button {
+  min-height: 2.55rem !important;
+  padding: 0.58rem 0.75rem !important;
+}
+
+.login-signup {
+  margin: 0.62rem 0 0 !important;
+  line-height: 1.1 !important;
+}
+
+.login-signup button {
+  padding: 0 !important;
+  font-size: 1.02rem !important;
+  color: #111111 !important;
+  animation-duration: 7.7s !important;
+  animation-delay: -3.8s !important;
+}
+
+.login-modal .login-message,
+.login-modal .login-helper-text {
+  margin: 0.35rem 0 0 !important;
+  padding: 0.45rem 0.55rem !important;
+  font-size: 0.72rem !important;
+}
+
+.login-modal .login-link-button-secondary {
+  justify-self: center !important;
+  margin: 0.55rem 0 0 !important;
+}
+
+@media (max-width: 768px) {
+  .modal-overlay .login-modal {
+    width: min(320px, calc(100vw - 2.1rem)) !important;
+    padding: 1.05rem 1.25rem 1.15rem !important;
+  }
+
+  .login-header h2 {
+    font-size: 1.36rem !important;
+  }
+
+  .login-modal form,
+  .login-modal .modern-login-form {
+    margin-top: 0.78rem !important;
+    gap: 0.38rem !important;
+  }
+
+  .login-input,
+  .login-input:focus {
+    min-height: 2.25rem !important;
+    padding-block: 0.48rem !important;
+  }
+
+  .login-link-button {
+    margin: 0.34rem 0 0.48rem !important;
+  }
+
+  .login-submit-button {
+    min-height: 2.38rem !important;
+  }
+
+  .login-signup {
+    margin-top: 0.52rem !important;
+  }
+}
+
+/* Final repair: keep the public landing hero centered on desktop and make auth titles black. */
+.login-header h2 {
+  color: #111111 !important;
+}
+
+@media (min-width: 769px) {
+  .landing-page-container {
+    height: 100vh !important;
+    overflow-y: auto !important;
+  }
+
+  .landing-page-container .landing-container {
+    width: 100% !important;
+    min-width: 100% !important;
+    height: auto !important;
+    min-height: 100dvh !important;
+    aspect-ratio: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 3rem 1.5rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .landing-page-container .landing-content {
+    width: min(28rem, calc(100vw - 3rem)) !important;
+    max-width: min(28rem, calc(100vw - 3rem)) !important;
+    min-height: min(28rem, calc(100vw - 3rem)) !important;
+    aspect-ratio: 1 / 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 1rem !important;
+    padding: 2.25rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .landing-page-container .logo-container {
+    margin: 0 0 1rem !important;
+    transform: none !important;
+  }
+
+  .landing-page-container .landing-subtitle {
+    margin: 0 !important;
+    max-width: 19rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .landing-page-container .button-container {
+    width: min(100%, 20rem) !important;
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr !important;
+    align-items: center !important;
+    gap: 0.55rem !important;
+    margin: 0.25rem 0 0 !important;
+  }
+
+  .landing-page-container .role-button,
+  .landing-page-container .job-seeker-button,
+  .landing-page-container .company-button {
+    white-space: nowrap !important;
+    min-height: 2.25rem !important;
+    font-size: clamp(1.35rem, 1.75vw, 1.65rem) !important;
+  }
+
+  .landing-page-container .learn-more-links {
+    margin-top: 0.65rem !important;
+  }
+
+  .landing-page-container .about-button {
+    margin: 0 !important;
+  }
+
+  .landing-page-container .copyright {
+    bottom: 1rem !important;
+    pointer-events: none !important;
+  }
+}

@@ -14,6 +14,9 @@ const AppModeCard = ({ appMode = 'dark', onAppModeChange }) => {
             <div className="app-mode-copy">
                 <h3>App Mode</h3>
                 <p>Switch between the current dark mode and a clean light mode across JumpTake.</p>
+                <p className="app-mode-development-note">
+                    Light mode is still under development. It is advised not to visit right now. Thanks :D
+                </p>
             </div>
             <label className="app-mode-switch">
                 <input

@@ -178,6 +178,19 @@ const Login = ({ onClose }) => {
                             {isLoading ? 'Logging in...' : 'Login'}
                         </button>
 
+                        <p className="login-signup">
+                            Don't have an account?{' '}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    onClose();
+                                    navigate('/job-seeker');
+                                }}
+                            >
+                                Sign up
+                            </button>
+                        </p>
+
                         {message && (
                             <div className={`login-message ${isSuccess ? 'success' : 'error'}`}>
                                 {message}
@@ -229,6 +242,9 @@ const Login = ({ onClose }) => {
                         )}
                     </form>
                 )}
+                <button type="button" className="login-bottom-close" onClick={onClose}>
+                    Close
+                </button>
             </div>
         </div>
     );

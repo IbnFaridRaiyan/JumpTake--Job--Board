@@ -176,6 +176,19 @@ const EmployerLogin = ({ onClose }) => {
                             {isLoading ? 'Logging in...' : 'Login'}
                         </button>
 
+                        <p className="login-signup">
+                            Don't have an account?{' '}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    onClose();
+                                    navigate('/company');
+                                }}
+                            >
+                                Sign up
+                            </button>
+                        </p>
+
                         {message && (
                             <div className={`login-message ${isSuccess ? 'success' : 'error'}`}>
                                 {message}
@@ -227,6 +240,9 @@ const EmployerLogin = ({ onClose }) => {
                         )}
                     </form>
                 )}
+                <button type="button" className="login-bottom-close" onClick={onClose}>
+                    Close
+                </button>
             </div>
         </div>
     );

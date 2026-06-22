@@ -1415,6 +1415,12 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                                     key={job._id}
                                     onClick={() => handleJobClick(job)}
                                 >
+                                    <button
+                                        type="button"
+                                        className={`bookmark-star-button job-card-bookmark-action ${isBookmarked ? 'active' : ''}`}
+                                        onClick={(event) => handleToggleBookmark(job, event)}
+                                        aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark job'}
+                                    />
                                     <div className="job-card-header">
                                         <ProfileAvatar
                                             imageSrc={job.company?.logo}
@@ -1422,12 +1428,6 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                                             className="job-company-logo"
                                             imageClassName="profile-avatar-image"
                                             alt={`${job.company?.name || 'Company'} logo`}
-                                        />
-                                        <button
-                                            type="button"
-                                            className={`bookmark-star-button ${isBookmarked ? 'active' : ''}`}
-                                            onClick={(event) => handleToggleBookmark(job, event)}
-                                            aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark job'}
                                         />
                                         <h3>{asDisplayText(job.title, 'Untitled job')}</h3>
                                         <span className="company-name">{asDisplayText(job.company?.name, 'Company unavailable')}</span>

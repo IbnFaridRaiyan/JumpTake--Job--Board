@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import PortalSpaceAnimation from './PortalSpaceAnimation';
 
 const ICON_PATHS = {
@@ -42,20 +42,21 @@ const PortalSidebar = ({
     onLogout,
     mobileSectionOpen = false
 }) => {
-    const [expanded, setExpanded] = useState(() => !shouldStartCollapsed());
+    const [expanded, setExpanded] = useState(false);
     const toggleIdRef = useRef(`portal-sidebar-toggle-${Math.random().toString(36).slice(2)}`);
     const toggleId = toggleIdRef.current;
 
+    useLayoutEffect(() => {
+        setExpanded(!shouldStartCollapsed());
+    }, []);
+
     useEffect(() => {
-        const collapseForMobile = () => {
-            if (shouldStartCollapsed()) {
-                setExpanded(false);
-            }
+        const syncForViewport = () => {
+            setExpanded(!shouldStartCollapsed());
         };
 
-        collapseForMobile();
-        window.addEventListener('resize', collapseForMobile);
-        return () => window.removeEventListener('resize', collapseForMobile);
+        window.addEventListener('resize', syncForViewport);
+        return () => window.removeEventListener('resize', syncForViewport);
     }, []);
 
     useEffect(() => {

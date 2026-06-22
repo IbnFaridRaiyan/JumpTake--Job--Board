@@ -35628,3 +35628,44 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
     height: 1rem !important;
   }
 }
+
+/* Keep the mobile portal nav controls pinned to the top of the rail, just below the header. */
+@media (max-width: 768px) {
+  .home-page .portal-uiverse-sidebar,
+  .home-page .portal-uiverse-sidebar.sidebar,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar.sidebar,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.sidebar {
+    top: 6.35rem !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .portal-sidebar-nav,
+  .home-page .portal-uiverse-sidebar .portal-uiverse-rail,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar .portal-sidebar-nav,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar .portal-uiverse-rail,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .portal-sidebar-nav,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .portal-uiverse-rail {
+    align-items: center !important;
+    justify-content: flex-start !important;
+    align-content: flex-start !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .sidebar__list,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar .sidebar__list,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .sidebar__list {
+    align-items: center !important;
+    justify-content: flex-start !important;
+    align-content: flex-start !important;
+    margin-top: 0 !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .portal-sidebar-menu-icon,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar .portal-sidebar-menu-icon,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .portal-sidebar-menu-icon {
+    flex: 0 0 auto !important;
+    margin-top: 0.08rem !important;
+  }
+}

@@ -9,6 +9,8 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+    const [likedCandidateIds, setLikedCandidateIds] = useState([]);
+    const [candidateLikeCounts, setCandidateLikeCounts] = useState({});
     const [isMobileView, setIsMobileView] = useState(() => (
         typeof window !== 'undefined' ? window.innerWidth <= 768 : false
     ));
@@ -16,6 +18,7 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
 
     useEffect(() => {
         fetchBookmarks();
+        fetchCandidateLikes();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [companyId]);
 
@@ -91,6 +94,71 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
         }
     };
 
+    const fetchCandidateLikes = async () => {
+        if (!companyId) {
+            return;
+        }
+
+        try {
+            const params = new URLSearchParams({
+                actorType: 'employer',
+                actorKey: String(companyId)
+            });
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/candidate-likes?${params.toString()}`, {
+                headers: { Authorization: `Bearer ${localStorage.getItem('employerToken')}` }
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to load candidate likes');
+            }
+
+            const counts = {};
+            (data.counts || []).forEach((item) => {
+                counts[String(item.candidateId)] = item.count;
+            });
+            setCandidateLikeCounts(counts);
+            setLikedCandidateIds((data.likedCandidateIds || []).map(String));
+        } catch (likeError) {
+            console.error('Error fetching bookmarked talent likes:', likeError);
+        }
+    };
+
+    const toggleCandidateLike = async (candidate, event) => {
+        event.stopPropagation();
+        if (!candidate?._id || !companyId) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/candidate-likes/toggle`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('employerToken')}`
+                },
+                body: JSON.stringify({
+                    candidateId: candidate._id,
+                    actorType: 'employer',
+                    actorKey: String(companyId)
+                })
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to update candidate like');
+            }
+
+            const candidateId = String(candidate._id);
+            setCandidateLikeCounts((current) => ({ ...current, [candidateId]: data.count }));
+            setLikedCandidateIds((current) => (
+                data.liked
+                    ? [...new Set([...current, candidateId])]
+                    : current.filter((id) => id !== candidateId)
+            ));
+        } catch (likeError) {
+            setMessage(`Error: ${likeError.message}`);
+        }
+    };
+
     const changePage = (nextPage) => {
         setCurrentPage(nextPage);
         window.requestAnimationFrame(() => {
@@ -147,7 +215,7 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
                 <h2>Bookmarked Talents</h2>
             </div>
 
-            {message && <div className={`notification-message ${message.includes('Error') ? 'error' : 'success'}`}>{message}</div>}
+            {message.includes('Error') && <div className="notification-message error">{message}</div>}
             {error && <div className="error-message">{error}</div>}
 
             {loading ? (
@@ -159,14 +227,30 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
                     {pagedBookmarks.map((bookmark) => {
                         const candidate = bookmark.candidate;
                         return (
-                            <div key={bookmark._id} className="candidate-card" onClick={() => setSelectedCandidate(candidate)}>
-                                <button type="button" className="bookmark-star-button active talent-bookmark-button" onClick={(event) => { event.stopPropagation(); removeBookmark(candidate._id); }} />
-                                <ProfileAvatar imageSrc={candidate.profileImage} name={candidate.name} className="candidate-avatar" imageClassName="profile-avatar-image" />
+                            <div key={bookmark._id} className="candidate-card uiverse-profile-card" onClick={() => setSelectedCandidate(candidate)}>
+                                <ProfileAvatar imageSrc={candidate.profileImage} name={candidate.name} className="candidate-avatar profileimage" imageClassName="profile-avatar-image" useProfileIconFallback />
                                 <div className="candidate-info">
-                                    <h3 className="candidate-name">{candidate.name || 'Unnamed Candidate'}</h3>
+                                    <h3 className="candidate-name Name">{candidate.name || 'Unnamed Candidate'}</h3>
                                     <p className="candidate-email">{candidate.user?.jumptakeId || candidate.jumptakeId || 'JumpTake ID unavailable'}</p>
                                 </div>
-                                <div className="candidate-view-profile">View Profile</div>
+                                <div className="candidate-card-socialbar socialbar">
+                                    <button
+                                        type="button"
+                                        className={`candidate-card-action candidate-card-like-action ${likedCandidateIds.includes(String(candidate._id)) ? 'active' : ''}`}
+                                        onClick={(event) => toggleCandidateLike(candidate, event)}
+                                        aria-label="Like candidate"
+                                        title="Like candidate"
+                                    >
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3v11Zm2 0V11l4.7-8.5c.5-.9 1.8-.6 1.9.4l.3 3.1c.1 1-.2 2-.8 2.8h4.1c1.8 0 3.1 1.7 2.7 3.4l-1.4 6.6A4 4 0 0 1 16.6 22H9Z" /></svg>
+                                        <span>{candidateLikeCounts[String(candidate._id)] || 0}</span>
+                                    </button>
+                                    <button type="button" className="candidate-card-action candidate-card-message-action" onClick={(event) => { event.stopPropagation(); setSelectedCandidate(candidate); }} aria-label="Message candidate" title="Message candidate">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-5 4v-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm0 2v10h1v1.84L7.3 16H20V6H4Z" /></svg>
+                                    </button>
+                                    <button type="button" className="bookmark-star-button active talent-bookmark-button candidate-card-action" onClick={(event) => { event.stopPropagation(); removeBookmark(candidate._id); }} aria-label="Remove bookmarked talent" title="Remove bookmark">
+                                        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187z" /></svg>
+                                    </button>
+                                </div>
                             </div>
                         );
                     })}

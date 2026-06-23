@@ -9,7 +9,6 @@ import TalentPool from './TalentPool';
 import BookmarkedTalents from './BookmarkedTalents';
 import EmployerSettings from './EmployerSettings';
 import AboutJumpTake from './AboutJumpTake';
-import DashboardSearch from './DashboardSearch';
 import PerformanceAnalytics from './PerformanceAnalytics';
 import PortalSidebar from './PortalSidebar';
 import Notifications from './Notifications';
@@ -756,17 +755,13 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         return (
             <div className="loading-container">
                 <div className="dashboard-header employer-dashboard-header">
-                    <div className="employer-dashboard-brand">
+                    <div className="portal-dashboard-identity employer-dashboard-identity">
                         <div
                             className="dashboard-logo-button dashboard-logo-static"
                             aria-label="JumpTake"
                         >
                             <img src={dashboardLogo} alt="JumpTake" className="employer-dashboard-logo" />
                         </div>
-                    </div>
-                    <div className="dashboard-title employer-dashboard-title">
-                        <h1>Employer</h1>
-                        <p>Welcome, {employer?.companyName || 'Employer'}</p>
                     </div>
                 </div>
                 <div className="loading-spinner">Loading...</div>
@@ -777,7 +772,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     return (
         <div className="home-page">
             <div className="dashboard-header employer-dashboard-header">
-                <div className="employer-dashboard-brand">
+                <div className="portal-dashboard-identity employer-dashboard-identity">
                     <div
                         className="dashboard-logo-button dashboard-logo-static"
                         aria-label="JumpTake"
@@ -785,11 +780,6 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                         <img src={dashboardLogo} alt="JumpTake" className="employer-dashboard-logo" />
                     </div>
                 </div>
-                <div className="dashboard-title employer-dashboard-title">
-                    <h1>Employer</h1>
-                    <p>Welcome, {employer?.companyName || 'Employer'}</p>
-                </div>
-                <DashboardSearch onSearch={handleDashboardSearch} />
             </div>
 
             <div className={`dashboard-container ${mobileSectionVisible ? 'mobile-section-open' : ''}`}>

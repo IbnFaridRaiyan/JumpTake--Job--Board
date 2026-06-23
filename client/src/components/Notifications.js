@@ -176,16 +176,12 @@ const Notifications = ({ mode, recipientId, onOpenNotification, onUnreadCountCha
 
     return (
         <div className="notifications-page">
-            <div className="notifications-hero">
-                <div>
-                    <span className="notifications-eyebrow">Activity Center</span>
-                    <h2>Notifications</h2>
-                    <p>
-                        {isEmployer
-                            ? 'Applications, assessments, interviews, talent updates, and messages are collected here.'
-                            : 'Messages, assessment invitations, interview dates, job invitations, and new roles are collected here.'}
-                    </p>
-                </div>
+            <div className="notifications-activity-intro">
+                <p className="notifications-activity-copy">
+                    Check your newest <span className="notifications-activities-word">Activities</span>, might find something Interesting here...
+                    <br />
+                    <span className="notifications-missing-copy">are you missing anything?</span>
+                </p>
                 <button className="notification-icon-action notification-mark-all-button" onClick={markAllRead} disabled={!unreadCount}>
                     <NotificationIcon name="checkAll" />
                     <span>Mark all read</span>

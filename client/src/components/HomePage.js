@@ -11,7 +11,6 @@ import UserSettings from './UserSettings';
 import TalentPool from './TalentPool';
 import InterestedJobSuggestion from './InterestedJobSuggestion';
 import AboutJumpTake from './AboutJumpTake';
-import DashboardSearch from './DashboardSearch';
 import PerformanceAnalytics from './PerformanceAnalytics';
 import PortalSidebar from './PortalSidebar';
 import Notifications from './Notifications';
@@ -928,17 +927,13 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         return (
             <div className="loading-container">
                 <div className="dashboard-header candidate-dashboard-header">
-                    <div className="candidate-dashboard-brand">
+                    <div className="portal-dashboard-identity candidate-dashboard-identity">
                         <div
                             className="dashboard-logo-button dashboard-logo-static"
                             aria-label="JumpTake"
                         >
                             <img src={dashboardLogo} alt="JumpTake Logo" className="candidate-dashboard-logo" />
                         </div>
-                    </div>
-                    <div className="dashboard-title candidate-dashboard-title">
-                        <h1>Candidate</h1>
-                        <p>Welcome back, {displayName}</p>
                     </div>
                 </div>
                 <div className="loading-spinner">Loading your dashboard...</div>
@@ -949,7 +944,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     return (
         <div className="home-page">
             <div className="dashboard-header candidate-dashboard-header">
-                <div className="candidate-dashboard-brand">
+                <div className="portal-dashboard-identity candidate-dashboard-identity">
                     <div
                         className="dashboard-logo-button dashboard-logo-static"
                         aria-label="JumpTake"
@@ -957,11 +952,6 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                         <img src={dashboardLogo} alt="JumpTake Logo" className="candidate-dashboard-logo" />
                     </div>
                 </div>
-                <div className="dashboard-title candidate-dashboard-title">
-                    <h1>Candidate</h1>
-                    <p>Welcome back, {displayName}</p>
-                </div>
-                <DashboardSearch onSearch={handleDashboardSearch} />
             </div>
 
             {showInterestPopup && (

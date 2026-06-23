@@ -15,10 +15,13 @@ const messageController = require('../controllers/messageController');
 const notificationController = require('../controllers/notificationController');
 const jobInvitationController = require('../controllers/jobInvitationController');
 const candidateNetworkController = require('../controllers/candidateNetworkController');
+const adminRoutes = require('./admin');
 const User = require('../models/User');
 const { getAuthenticatedPayload } = require('../utils/candidateAuth');
 
 
+
+router.use('/admin', adminRoutes);
 
 
 router.post('/upload', resumeController.handleResume);

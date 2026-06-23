@@ -36644,3 +36644,1416 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
     pointer-events: none !important;
   }
 }
+
+/* Admin owner console */
+.admin-panel {
+  min-height: 100vh;
+  padding: clamp(1rem, 2vw, 2rem);
+  background:
+    radial-gradient(circle at 15% 10%, rgba(81, 219, 207, 0.12), transparent 32rem),
+    #020504;
+  color: #f8fafc;
+  font-family: 'Lexend', system-ui, sans-serif;
+}
+
+.admin-panel-login {
+  display: grid;
+  place-items: center;
+}
+
+.admin-login-card,
+.admin-shell-header,
+.admin-sidebar,
+.admin-content,
+.admin-record-card,
+.admin-create-job {
+  border: 1px solid rgba(125, 239, 229, 0.24);
+  border-radius: 0.9rem;
+  background: rgba(2, 8, 7, 0.9);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+}
+
+.admin-login-card {
+  width: min(420px, calc(100vw - 2rem));
+  padding: 1.5rem;
+}
+
+.admin-kicker {
+  margin: 0 0 0.35rem;
+  color: #facc15;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.admin-panel h1,
+.admin-panel h2,
+.admin-panel h3 {
+  margin: 0;
+  color: #ffffff;
+  font-weight: 900;
+}
+
+.admin-panel h1 {
+  font-size: clamp(1.8rem, 3vw, 3rem);
+}
+
+.admin-panel p {
+  color: rgba(248, 250, 252, 0.78);
+}
+
+.admin-panel input,
+.admin-panel select,
+.admin-panel textarea {
+  width: 100%;
+  border: 1px solid rgba(125, 239, 229, 0.26);
+  border-radius: 0.65rem;
+  background: #000000;
+  color: #ffffff;
+  padding: 0.72rem 0.85rem;
+  font: inherit;
+  box-sizing: border-box;
+}
+
+.admin-panel textarea {
+  min-height: 5rem;
+  resize: vertical;
+}
+
+.admin-panel button {
+  border: 1px solid rgba(125, 239, 229, 0.36);
+  border-radius: 0.65rem;
+  background: rgba(6, 48, 43, 0.92);
+  color: #ffffff;
+  padding: 0.68rem 0.95rem;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.admin-panel button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.admin-panel .admin-danger-button {
+  border-color: rgba(248, 113, 113, 0.5);
+  background: rgba(127, 29, 29, 0.72);
+}
+
+.admin-ghost-button {
+  margin-top: 0.8rem;
+  background: transparent !important;
+}
+
+.admin-login-card form {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.admin-shell-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.admin-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.admin-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.admin-sidebar {
+  align-self: start;
+  position: sticky;
+  top: 1rem;
+  display: grid;
+  gap: 0.5rem;
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  padding: 0.9rem;
+}
+
+.admin-sidebar h2 {
+  margin-bottom: 0.35rem;
+  font-size: 1rem;
+}
+
+.admin-sidebar button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  text-align: left;
+}
+
+.admin-sidebar button.is-active {
+  border-color: #7df1e8;
+  background: rgba(13, 91, 82, 0.72);
+}
+
+.admin-sidebar button strong {
+  color: #9ff3eb;
+}
+
+.admin-content {
+  padding: 1rem;
+  min-width: 0;
+}
+
+.admin-content-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.admin-content-header p {
+  margin: 0.25rem 0 0;
+}
+
+.admin-search-form {
+  display: flex;
+  gap: 0.5rem;
+  width: min(430px, 100%);
+}
+
+.admin-create-job {
+  display: grid;
+  gap: 0.7rem;
+  margin-bottom: 1rem;
+  padding: 0.9rem;
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.admin-records {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.admin-record-card {
+  padding: 0.9rem;
+}
+
+.admin-record-card-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.admin-record-card-header p {
+  margin: 0.22rem 0 0;
+  color: rgba(248, 250, 252, 0.5);
+  font-size: 0.75rem;
+  word-break: break-all;
+}
+
+.admin-record-card dl {
+  display: grid;
+  grid-template-columns: minmax(8rem, 0.35fr) minmax(0, 1fr);
+  gap: 0.45rem 0.8rem;
+  margin: 0.8rem 0 0;
+}
+
+.admin-record-card dt {
+  color: #7df1e8;
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.admin-record-card dd {
+  min-width: 0;
+  margin: 0;
+  color: rgba(248, 250, 252, 0.86);
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.admin-message,
+.admin-empty {
+  border: 1px solid rgba(125, 239, 229, 0.2);
+  border-radius: 0.7rem;
+  background: rgba(125, 239, 229, 0.08);
+  color: #ffffff;
+  padding: 0.7rem 0.85rem;
+}
+
+.admin-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 820px) {
+  .admin-shell-header,
+  .admin-content-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-sidebar {
+    position: static;
+    max-height: none;
+  }
+
+  .admin-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-search-form {
+    flex-direction: column;
+  }
+
+  .admin-record-card dl {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Match both portal identity headers to the black workspace-card surface. */
+.home-page > .dashboard-header.candidate-dashboard-header,
+.home-page > .dashboard-header.employer-dashboard-header,
+.loading-container > .dashboard-header.candidate-dashboard-header,
+.loading-container > .dashboard-header.employer-dashboard-header {
+  border: 1px solid rgba(94, 234, 212, 0.28) !important;
+  border-radius: 1rem !important;
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 18px 45px rgba(0, 0, 0, 0.32) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.home-page > .dashboard-header.candidate-dashboard-header::before,
+.home-page > .dashboard-header.candidate-dashboard-header::after,
+.home-page > .dashboard-header.employer-dashboard-header::before,
+.home-page > .dashboard-header.employer-dashboard-header::after,
+.loading-container > .dashboard-header.candidate-dashboard-header::before,
+.loading-container > .dashboard-header.candidate-dashboard-header::after,
+.loading-container > .dashboard-header.employer-dashboard-header::before,
+.loading-container > .dashboard-header.employer-dashboard-header::after {
+  display: none !important;
+  content: none !important;
+}
+
+html[data-theme="light"] .home-page > .dashboard-header.candidate-dashboard-header,
+html[data-theme="light"] .home-page > .dashboard-header.employer-dashboard-header,
+html[data-theme="light"] .loading-container > .dashboard-header.candidate-dashboard-header,
+html[data-theme="light"] .loading-container > .dashboard-header.employer-dashboard-header {
+  border-color: rgba(94, 234, 212, 0.28) !important;
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="light"] .candidate-dashboard-header .dashboard-title h1,
+html[data-theme="light"] .candidate-dashboard-header .dashboard-title p,
+html[data-theme="light"] .employer-dashboard-header .dashboard-title h1,
+html[data-theme="light"] .employer-dashboard-header .dashboard-title p {
+  color: #ffffff !important;
+}
+
+/* Portal header identity: logo replaces the removed Candidate/Employer title. */
+.home-page > .dashboard-header.candidate-dashboard-header,
+.home-page > .dashboard-header.employer-dashboard-header,
+.loading-container > .dashboard-header.candidate-dashboard-header,
+.loading-container > .dashboard-header.employer-dashboard-header {
+  width: min(calc(100% - 1rem), 1100px) !important;
+  max-width: min(calc(100% - 1rem), 1100px) !important;
+  margin: 0.35rem auto 0.55rem !important;
+  padding: clamp(0.7rem, 1.4vw, 1rem) clamp(0.85rem, 2vw, 1.5rem) !important;
+  box-sizing: border-box !important;
+  justify-content: flex-end !important;
+}
+
+.portal-dashboard-identity {
+  order: 1;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-left: auto;
+  text-align: right;
+}
+
+.portal-dashboard-identity .dashboard-logo-button {
+  display: inline-flex !important;
+  width: auto !important;
+  max-width: none !important;
+  padding: 0 !important;
+  pointer-events: none;
+}
+
+.portal-dashboard-identity .candidate-dashboard-logo,
+.portal-dashboard-identity .employer-dashboard-logo {
+  width: clamp(6rem, 7vw, 7.25rem) !important;
+  max-width: none !important;
+  height: auto !important;
+}
+
+@media (max-width: 768px) {
+  .home-page > .dashboard-header.candidate-dashboard-header,
+  .home-page > .dashboard-header.employer-dashboard-header,
+  .loading-container > .dashboard-header.candidate-dashboard-header,
+  .loading-container > .dashboard-header.employer-dashboard-header {
+    width: calc(100% - 0.3rem) !important;
+    max-width: calc(100% - 0.3rem) !important;
+    min-height: 4.5rem !important;
+    margin: 0.2rem 0.15rem 0.45rem !important;
+    padding: 0.55rem 0.75rem !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 0.5rem !important;
+  }
+
+  .portal-dashboard-identity {
+    width: auto !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+    gap: 0.12rem !important;
+    margin-left: auto !important;
+    text-align: right !important;
+  }
+
+  .portal-dashboard-identity .candidate-dashboard-logo,
+  .portal-dashboard-identity .employer-dashboard-logo {
+    width: clamp(4.8rem, 22vw, 5.8rem) !important;
+  }
+}
+
+/* Desktop portal header follows the same centered width as the portal content shell. */
+@media (min-width: 769px) {
+  .home-page > .dashboard-header.candidate-dashboard-header,
+  .home-page > .dashboard-header.employer-dashboard-header,
+  .loading-container > .dashboard-header.candidate-dashboard-header,
+  .loading-container > .dashboard-header.employer-dashboard-header {
+    width: min(calc(100% - 1rem), 1720px) !important;
+    max-width: min(calc(100% - 1rem), 1720px) !important;
+  }
+}
+
+/* Notifications intro is unboxed copy with an animated Activities word. */
+.notifications-page .notifications-hero {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 1rem !important;
+  min-height: 0 !important;
+  margin: 0 0 0.85rem !important;
+  padding: 0.3rem 0.2rem !important;
+  overflow: visible !important;
+  color: #ffffff !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.notifications-page .notifications-hero::before,
+.notifications-page .notifications-hero::after {
+  display: none !important;
+  content: none !important;
+}
+
+.notifications-page .notifications-hero > * {
+  position: relative !important;
+  z-index: auto !important;
+}
+
+.notifications-activity-copy {
+  max-width: 48rem !important;
+  margin: 0 !important;
+  color: rgba(248, 250, 252, 0.9) !important;
+  font-size: clamp(0.88rem, 1.15vw, 1.02rem) !important;
+  font-weight: 700 !important;
+  line-height: 1.5 !important;
+}
+
+.notifications-activities-word {
+  display: inline-block !important;
+  color: #facc15 !important;
+  font-family: "Chewy", "Lexend", system-ui, sans-serif !important;
+  font-size: 1.38em !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  line-height: 1 !important;
+  transform-origin: center !important;
+  animation: jumptake-soft-title-wobble 6.8s infinite both !important;
+  will-change: transform;
+}
+
+.notifications-page .notification-mark-all-button {
+  flex: 0 0 auto !important;
+}
+
+@media (max-width: 768px) {
+  .notifications-page .notifications-hero {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+    gap: 0.45rem !important;
+    padding: 0.2rem 0.1rem !important;
+  }
+
+  .notifications-activity-copy {
+    font-size: 0.8rem !important;
+    line-height: 1.42 !important;
+  }
+
+  .notifications-activities-word {
+    font-size: 1.45em !important;
+  }
+}
+
+/* Fresh notification intro class avoids all legacy hero-card backgrounds. */
+@keyframes jumptake-activities-loop {
+  0%,
+  1%,
+  14%,
+  100% {
+    transform: translateZ(0);
+  }
+
+  3% {
+    transform: skewX(-7deg) skewY(-5deg);
+  }
+
+  5% {
+    transform: skewX(3.5deg) skewY(2.5deg);
+  }
+
+  7% {
+    transform: skewX(-1.8deg) skewY(-1.2deg);
+  }
+
+  9% {
+    transform: skewX(0.9deg) skewY(0.6deg);
+  }
+
+  11% {
+    transform: skewX(-0.35deg) skewY(-0.25deg);
+  }
+}
+
+.home-page .notifications-page .notifications-activity-intro,
+.notifications-page .notifications-activity-intro {
+  position: static !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 1rem !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  margin: 0 0 1rem !important;
+  padding: 0.25rem 0 !important;
+  overflow: visible !important;
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.notifications-activity-intro::before,
+.notifications-activity-intro::after {
+  display: none !important;
+  content: none !important;
+}
+
+.notifications-activity-intro .notifications-activity-copy {
+  max-width: 54rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: rgba(248, 250, 252, 0.94) !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  font-size: clamp(1.12rem, 1.45vw, 1.35rem) !important;
+  font-weight: 700 !important;
+  line-height: 1.48 !important;
+}
+
+.notifications-activity-intro .notifications-activities-word {
+  display: inline-block !important;
+  color: #facc15 !important;
+  font-family: "Chewy", "Lexend", system-ui, sans-serif !important;
+  font-size: 1.55em !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  line-height: 0.9 !important;
+  transform-origin: center !important;
+  animation: jumptake-activities-loop 7.5s infinite both !important;
+  will-change: transform;
+}
+
+.notifications-activity-intro .notification-mark-all-button,
+.notifications-activity-intro .notification-mark-all-button:hover,
+.notifications-activity-intro .notification-mark-all-button:focus {
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  background: none !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 768px) {
+  .home-page .notifications-page .notifications-activity-intro,
+  .notifications-page .notifications-activity-intro {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+    gap: 0.55rem !important;
+    margin-bottom: 0.8rem !important;
+    padding: 0.2rem 0 !important;
+  }
+
+  .notifications-activity-intro .notifications-activity-copy {
+    font-size: clamp(1rem, 4.5vw, 1.12rem) !important;
+    line-height: 1.42 !important;
+  }
+
+  .notifications-activity-intro .notifications-activities-word {
+    font-size: 1.62em !important;
+  }
+}
+
+/* Unified Uiverse candidate/talent cards; existing actions and profile navigation remain functional. */
+.talent-pool-container .candidates-grid,
+.candidate-bookmarked-container .candidates-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 230px)) !important;
+  justify-content: start !important;
+  align-items: start !important;
+  gap: 1.35rem !important;
+}
+
+.talent-pool-container .candidate-card.uiverse-profile-card,
+.candidate-bookmarked-container .candidate-card.uiverse-profile-card {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: 230px !important;
+  min-width: 230px !important;
+  max-width: 230px !important;
+  height: 280px !important;
+  min-height: 280px !important;
+  max-height: 280px !important;
+  padding: 10px !important;
+  overflow: hidden !important;
+  color: #ffffff !important;
+  background: #191919 !important;
+  background-color: #191919 !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 2em !important;
+  box-shadow:
+    5px 5px 30px rgb(4, 4, 4),
+    -5px -5px 30px rgb(57, 57, 57) !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+  transform: none !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+.talent-pool-container .candidate-card.uiverse-profile-card::before,
+.talent-pool-container .candidate-card.uiverse-profile-card::after,
+.candidate-bookmarked-container .candidate-card.uiverse-profile-card::before,
+.candidate-bookmarked-container .candidate-card.uiverse-profile-card::after {
+  display: none !important;
+  content: none !important;
+}
+
+.talent-pool-container .candidate-card.uiverse-profile-card:hover,
+.candidate-bookmarked-container .candidate-card.uiverse-profile-card:hover {
+  border: 0 !important;
+  background: #191919 !important;
+  box-shadow:
+    7px 7px 34px rgb(2, 2, 2),
+    -5px -5px 30px rgb(63, 63, 63) !important;
+  transform: translateY(-3px) !important;
+}
+
+.uiverse-profile-card .profileimage,
+.uiverse-profile-card .candidate-avatar.profileimage {
+  position: relative !important;
+  inset: auto !important;
+  display: grid !important;
+  place-items: center !important;
+  flex: 0 0 100px !important;
+  width: 100px !important;
+  min-width: 100px !important;
+  max-width: 100px !important;
+  height: 100px !important;
+  min-height: 100px !important;
+  max-height: 100px !important;
+  margin: 12px 0 0 !important;
+  overflow: hidden !important;
+  color: #ffffff !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.uiverse-profile-card .profile-avatar-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+}
+
+.uiverse-profile-card .candidate-profile-fallback-icon {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  fill: #ffffff !important;
+}
+
+.uiverse-profile-card .candidate-info {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: center !important;
+}
+
+.uiverse-profile-card .candidate-name.Name,
+.uiverse-profile-card .candidate-name {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 10px 4px 3px !important;
+  overflow: hidden !important;
+  color: #ffffff !important;
+  font-family: "Lucida Sans", "Lucida Grande", Geneva, Verdana, sans-serif !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  line-height: 1.15 !important;
+  text-align: center !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.uiverse-profile-card .candidate-email,
+.uiverse-profile-card .candidate-match-summary,
+.uiverse-profile-card .candidate-jumptake-meta {
+  display: block !important;
+  width: 100% !important;
+  min-height: 1rem !important;
+  margin: 0 !important;
+  padding: 0 4px !important;
+  overflow: hidden !important;
+  color: rgba(255, 255, 255, 0.68) !important;
+  font-size: 0.68rem !important;
+  line-height: 1.25 !important;
+  text-align: center !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.uiverse-profile-card .spotlight-match,
+.uiverse-profile-card .spotlight-skills {
+  display: none !important;
+}
+
+.uiverse-profile-card .candidate-card-socialbar.socialbar {
+  position: static !important;
+  inset: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-evenly !important;
+  gap: 0.35rem !important;
+  flex: 0 0 auto !important;
+  width: 90% !important;
+  min-height: 48px !important;
+  margin: 10px auto 4px !important;
+  padding: 8px 9px !important;
+  color: #ffffff !important;
+  background: #191919 !important;
+  border: 0 !important;
+  border-radius: 3em !important;
+  box-shadow:
+    3px 3px 15px rgb(0, 0, 0),
+    -3px -3px 15px rgb(58, 58, 58) !important;
+  box-sizing: border-box !important;
+}
+
+.uiverse-profile-card .candidate-card-action,
+.uiverse-profile-card .candidate-like-button,
+.uiverse-profile-card .candidate-card-socialbar .talent-bookmark-button,
+.uiverse-profile-card .candidate-card-socialbar .bookmark-star-button {
+  position: static !important;
+  inset: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.16rem !important;
+  width: 30px !important;
+  min-width: 30px !important;
+  max-width: 30px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  max-height: 30px !important;
+  margin: 0 !important;
+  padding: 4px !important;
+  color: #ffffff !important;
+  fill: currentColor !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+}
+
+.uiverse-profile-card .candidate-card-action:hover,
+.uiverse-profile-card .candidate-card-action:focus-visible,
+.uiverse-profile-card .candidate-like-button:hover,
+.uiverse-profile-card .candidate-like-button:focus-visible {
+  color: #5eead4 !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  transform: scale(1.08) !important;
+}
+
+.uiverse-profile-card .candidate-card-action:disabled {
+  cursor: default !important;
+  opacity: 0.58 !important;
+}
+
+.uiverse-profile-card .candidate-card-action svg,
+.uiverse-profile-card .candidate-like-button .like,
+.uiverse-profile-card .candidate-card-socialbar .talent-bookmark-button svg {
+  display: block !important;
+  width: 17px !important;
+  height: 17px !important;
+  fill: currentColor !important;
+  stroke: none !important;
+}
+
+.uiverse-profile-card .candidate-card-like-action span,
+.uiverse-profile-card .candidate-like-count {
+  color: currentColor !important;
+  font-size: 0.58rem !important;
+  font-weight: 900 !important;
+}
+
+.uiverse-profile-card .candidate-like-button {
+  width: 38px !important;
+  max-width: 38px !important;
+}
+
+.uiverse-profile-card .candidate-like-button .like-animation-wrap {
+  display: inline-flex !important;
+  width: 17px !important;
+  height: 17px !important;
+}
+
+.uiverse-profile-card .candidate-like-button input,
+.uiverse-profile-card .candidate-like-button .celebrate {
+  display: none !important;
+}
+
+.uiverse-profile-card .candidate-card-like-action.active,
+.uiverse-profile-card .candidate-like-button.active {
+  color: #60a5fa !important;
+}
+
+.uiverse-profile-card .candidate-card-friend-action.accepted {
+  color: #34d399 !important;
+}
+
+.uiverse-profile-card .candidate-card-friend-action.pending {
+  color: #facc15 !important;
+}
+
+.uiverse-profile-card .candidate-card-message-action {
+  color: #c4b5fd !important;
+}
+
+.uiverse-profile-card .candidate-card-socialbar .talent-bookmark-button.active,
+.uiverse-profile-card .candidate-card-socialbar .bookmark-star-button.active {
+  color: #facc15 !important;
+  filter: drop-shadow(0 0 0.35rem rgba(250, 204, 21, 0.45)) !important;
+}
+
+.uiverse-profile-card .candidate-card-socialbar .talent-bookmark-button::before,
+.uiverse-profile-card .candidate-card-socialbar .talent-bookmark-button::after,
+.uiverse-profile-card .candidate-card-socialbar .bookmark-star-button::before,
+.uiverse-profile-card .candidate-card-socialbar .bookmark-star-button::after {
+  display: none !important;
+  content: none !important;
+}
+
+@media (max-width: 768px) {
+  .talent-pool-container .candidates-grid,
+  .candidate-bookmarked-container .candidates-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+
+  .talent-pool-container .candidate-card.uiverse-profile-card,
+  .candidate-bookmarked-container .candidate-card.uiverse-profile-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 252px !important;
+    min-height: 252px !important;
+    max-height: 252px !important;
+    padding: 8px 5px !important;
+    border-radius: 1.35rem !important;
+  }
+
+  .uiverse-profile-card .profileimage,
+  .uiverse-profile-card .candidate-avatar.profileimage {
+    flex-basis: 76px !important;
+    width: 76px !important;
+    min-width: 76px !important;
+    max-width: 76px !important;
+    height: 76px !important;
+    min-height: 76px !important;
+    max-height: 76px !important;
+    margin-top: 8px !important;
+  }
+
+  .uiverse-profile-card .candidate-name.Name,
+  .uiverse-profile-card .candidate-name {
+    padding-top: 8px !important;
+    font-size: 0.78rem !important;
+  }
+
+  .uiverse-profile-card .candidate-email,
+  .uiverse-profile-card .candidate-match-summary,
+  .uiverse-profile-card .candidate-jumptake-meta {
+    font-size: 0.58rem !important;
+  }
+
+  .uiverse-profile-card .candidate-card-socialbar.socialbar {
+    width: 94% !important;
+    min-height: 43px !important;
+    gap: 0.1rem !important;
+    margin-top: 7px !important;
+    padding: 6px 4px !important;
+  }
+
+  .uiverse-profile-card .candidate-card-action,
+  .uiverse-profile-card .candidate-like-button,
+  .uiverse-profile-card .candidate-card-socialbar .talent-bookmark-button,
+  .uiverse-profile-card .candidate-card-socialbar .bookmark-star-button {
+    width: 27px !important;
+    min-width: 27px !important;
+    max-width: 27px !important;
+    height: 27px !important;
+    min-height: 27px !important;
+    max-height: 27px !important;
+    padding: 4px !important;
+  }
+
+  .uiverse-profile-card .candidate-like-button {
+    width: 35px !important;
+    max-width: 35px !important;
+  }
+}
+
+/* Candidate card alignment follow-up: equal action slots and cleaner desktop cards. */
+@media (min-width: 769px) {
+  .talent-pool-container .candidate-card.uiverse-profile-card,
+  .candidate-bookmarked-container .candidate-card.uiverse-profile-card,
+  .talent-pool-container .candidate-card.uiverse-profile-card:hover,
+  .candidate-bookmarked-container .candidate-card.uiverse-profile-card:hover {
+    box-shadow: none !important;
+  }
+}
+
+.uiverse-profile-card .candidate-card-socialbar.socialbar {
+  display: grid !important;
+  grid-auto-flow: column !important;
+  grid-auto-columns: minmax(0, 1fr) !important;
+  align-items: center !important;
+  justify-items: center !important;
+}
+
+.uiverse-profile-card .candidate-card-socialbar .candidate-card-action,
+.uiverse-profile-card .candidate-card-socialbar .candidate-like-button,
+.uiverse-profile-card .candidate-card-socialbar .talent-bookmark-button,
+.uiverse-profile-card .candidate-card-socialbar .bookmark-star-button {
+  justify-self: center !important;
+  overflow: visible !important;
+}
+
+.uiverse-profile-card .candidate-card-friend-action svg,
+.uiverse-profile-card .candidate-card-message-action svg {
+  display: block !important;
+  width: 19px !important;
+  min-width: 19px !important;
+  height: 19px !important;
+  min-height: 19px !important;
+  color: currentColor !important;
+  fill: currentColor !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 768px) {
+  .talent-pool-container .candidate-card.uiverse-profile-card,
+  .candidate-bookmarked-container .candidate-card.uiverse-profile-card {
+    height: 224px !important;
+    min-height: 224px !important;
+    max-height: 224px !important;
+    padding: 5px 4px !important;
+  }
+
+  .uiverse-profile-card .profileimage,
+  .uiverse-profile-card .candidate-avatar.profileimage {
+    flex-basis: 68px !important;
+    width: 68px !important;
+    min-width: 68px !important;
+    max-width: 68px !important;
+    height: 68px !important;
+    min-height: 68px !important;
+    max-height: 68px !important;
+    margin-top: 5px !important;
+  }
+
+  .uiverse-profile-card .candidate-info {
+    flex: 0 1 auto !important;
+  }
+
+  .uiverse-profile-card .candidate-name.Name,
+  .uiverse-profile-card .candidate-name {
+    padding: 6px 2px 2px !important;
+    font-size: 0.74rem !important;
+  }
+
+  .uiverse-profile-card .candidate-email,
+  .uiverse-profile-card .candidate-match-summary,
+  .uiverse-profile-card .candidate-jumptake-meta {
+    min-height: 0.8rem !important;
+    padding: 0 2px !important;
+    font-size: 0.54rem !important;
+  }
+
+  .uiverse-profile-card .candidate-card-socialbar.socialbar {
+    width: calc(100% - 6px) !important;
+    min-height: 38px !important;
+    height: 38px !important;
+    margin: auto 3px 3px !important;
+    padding: 4px 2px !important;
+    gap: 0 !important;
+    border-radius: 1.5rem !important;
+  }
+
+  .uiverse-profile-card .candidate-card-socialbar .candidate-card-action,
+  .uiverse-profile-card .candidate-card-socialbar .candidate-like-button,
+  .uiverse-profile-card .candidate-card-socialbar .talent-bookmark-button,
+  .uiverse-profile-card .candidate-card-socialbar .bookmark-star-button {
+    width: 26px !important;
+    min-width: 26px !important;
+    max-width: 26px !important;
+    height: 26px !important;
+    min-height: 26px !important;
+    max-height: 26px !important;
+    padding: 3px !important;
+  }
+
+  .uiverse-profile-card .candidate-card-socialbar .candidate-like-button {
+    width: 34px !important;
+    min-width: 34px !important;
+    max-width: 34px !important;
+  }
+
+  .uiverse-profile-card .candidate-card-action svg,
+  .uiverse-profile-card .candidate-card-friend-action svg,
+  .uiverse-profile-card .candidate-card-message-action svg,
+  .uiverse-profile-card .candidate-like-button .like,
+  .uiverse-profile-card .candidate-card-socialbar .talent-bookmark-button svg {
+    width: 16px !important;
+    min-width: 16px !important;
+    height: 16px !important;
+    min-height: 16px !important;
+    opacity: 1 !important;
+  }
+
+  .uiverse-profile-card .candidate-card-like-action span,
+  .uiverse-profile-card .candidate-like-count {
+    font-size: 0.52rem !important;
+  }
+}
+
+/* Candidate community intro mirrors the notification copy without a card background. */
+.candidate-community-intro {
+  width: 100% !important;
+  margin: 0 0 0.9rem !important;
+  padding: 0.2rem 0 !important;
+  color: #ffffff !important;
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.candidate-community-intro::before,
+.candidate-community-intro::after {
+  display: none !important;
+  content: none !important;
+}
+
+.candidate-community-copy {
+  max-width: 58rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: rgba(248, 250, 252, 0.94) !important;
+  font-size: clamp(1.05rem, 1.35vw, 1.25rem) !important;
+  font-weight: 700 !important;
+  line-height: 1.48 !important;
+}
+
+.candidate-grow-together {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.32em !important;
+  color: #0f5f2d !important;
+  font-family: "Chewy", "Lexend", system-ui, sans-serif !important;
+  font-size: 1.52em !important;
+  font-weight: 400 !important;
+  line-height: 0.9 !important;
+  text-shadow: 0 0 0.32rem rgba(34, 197, 94, 0.38) !important;
+  transform-origin: center !important;
+  animation: jumptake-activities-loop 7.9s -2.1s infinite both !important;
+  will-change: transform;
+}
+
+.candidate-grow-icon {
+  display: block !important;
+  flex: 0 0 auto !important;
+  width: 0.92em !important;
+  height: 0.92em !important;
+  color: #4ade80 !important;
+  fill: currentColor !important;
+  filter:
+    drop-shadow(0 0 0.2rem rgba(74, 222, 128, 0.95))
+    drop-shadow(0 0 0.48rem rgba(34, 197, 94, 0.7)) !important;
+}
+
+.candidate-community-description {
+  display: inline-block !important;
+  margin-top: 0.3rem !important;
+  font-family: "Share Tech", "Segoe UI", sans-serif !important;
+  font-size: 0.66em !important;
+  font-weight: 600 !important;
+  line-height: 1.45 !important;
+}
+
+.notifications-missing-copy {
+  display: inline-block !important;
+  margin-top: 0.18rem !important;
+  font-family: "Share Tech", "Segoe UI", sans-serif !important;
+  font-size: 0.68em !important;
+  font-weight: 600 !important;
+  line-height: 1.35 !important;
+}
+
+.candidate-community-copy .candidate-grow-together,
+.candidate-community-copy .candidate-grow-together > span {
+  color: #facc15 !important;
+}
+
+@media (max-width: 768px) {
+  .uiverse-profile-card .candidate-card-socialbar.socialbar {
+    margin: auto 3px 15px !important;
+    transform: translateY(-7px) !important;
+  }
+}
+
+/* Bookmarked Candidates keeps its bookmark control at the card's top-right corner. */
+.candidate-bookmarked-container .candidate-card.uiverse-profile-card {
+  position: relative !important;
+}
+
+.candidate-bookmarked-container .candidate-card.uiverse-profile-card .candidate-card-socialbar .talent-bookmark-button {
+  position: absolute !important;
+  top: 0.72rem !important;
+  right: 0.72rem !important;
+  left: auto !important;
+  z-index: 8 !important;
+  width: 1.65rem !important;
+  min-width: 1.65rem !important;
+  max-width: 1.65rem !important;
+  height: 1.65rem !important;
+  min-height: 1.65rem !important;
+  max-height: 1.65rem !important;
+  padding: 0.2rem !important;
+  color: #facc15 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.candidate-bookmarked-container .candidate-card.uiverse-profile-card .candidate-card-socialbar .talent-bookmark-button svg {
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+}
+
+@media (max-width: 768px) {
+  .candidate-bookmarked-container .candidate-card.uiverse-profile-card .candidate-card-socialbar .talent-bookmark-button {
+    top: 0.58rem !important;
+    right: 0.58rem !important;
+  }
+}
+
+.candidate-bookmarked-container .candidate-card.uiverse-profile-card .candidate-card-corner-bookmark,
+.candidate-bookmarked-container .candidate-card.uiverse-profile-card .candidate-card-corner-bookmark:hover,
+.candidate-bookmarked-container .candidate-card.uiverse-profile-card .candidate-card-corner-bookmark:focus {
+  position: absolute !important;
+  top: 0.72rem !important;
+  right: 0.72rem !important;
+  bottom: auto !important;
+  left: auto !important;
+  z-index: 12 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 1.65rem !important;
+  min-width: 1.65rem !important;
+  max-width: 1.65rem !important;
+  height: 1.65rem !important;
+  min-height: 1.65rem !important;
+  max-height: 1.65rem !important;
+  margin: 0 !important;
+  padding: 0.18rem !important;
+  color: #facc15 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 0 0.35rem rgba(250, 204, 21, 0.5)) !important;
+  transform: none !important;
+}
+
+.candidate-bookmarked-container .candidate-card.uiverse-profile-card .candidate-card-corner-bookmark::before,
+.candidate-bookmarked-container .candidate-card.uiverse-profile-card .candidate-card-corner-bookmark::after {
+  display: none !important;
+  content: none !important;
+}
+
+.candidate-bookmarked-container .candidate-card.uiverse-profile-card .candidate-card-corner-bookmark svg {
+  display: block !important;
+  width: 1.2rem !important;
+  height: 1.2rem !important;
+  fill: currentColor !important;
+}
+
+@media (max-width: 768px) {
+  .candidate-bookmarked-container .candidate-card.uiverse-profile-card .candidate-card-corner-bookmark,
+  .candidate-bookmarked-container .candidate-card.uiverse-profile-card .candidate-card-corner-bookmark:hover,
+  .candidate-bookmarked-container .candidate-card.uiverse-profile-card .candidate-card-corner-bookmark:focus {
+    top: 0.52rem !important;
+    right: 0.52rem !important;
+  }
+
+  .candidate-view-candidates .uiverse-profile-card .candidate-card-socialbar.socialbar,
+  .talent-pool-container:not(.candidate-bookmarked-container) .uiverse-profile-card .candidate-card-socialbar.socialbar {
+    position: relative !important;
+    margin-bottom: 20px !important;
+    transform: translateY(-10px) !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    isolation: isolate !important;
+  }
+
+  .candidate-view-candidates .uiverse-profile-card .candidate-card-socialbar.socialbar::before,
+  .talent-pool-container:not(.candidate-bookmarked-container) .uiverse-profile-card .candidate-card-socialbar.socialbar::before {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: -1 !important;
+    display: block !important;
+    content: "" !important;
+    background: #191919 !important;
+    border: 0 !important;
+    border-radius: 1.5rem !important;
+    box-shadow:
+      3px 3px 15px rgb(0, 0, 0),
+      -3px -3px 15px rgb(58, 58, 58) !important;
+    transform: translateY(15px) !important;
+  }
+
+  .candidate-view-candidates .uiverse-profile-card .candidate-card-socialbar.socialbar > *,
+  .talent-pool-container:not(.candidate-bookmarked-container) .uiverse-profile-card .candidate-card-socialbar.socialbar > * {
+    transform: translateY(15px) !important;
+  }
+}
+
+/* All portal pagination is text/arrows only, with no surrounding green capsule. */
+.home-page .portal-home-job-pagination,
+.home-page .portal-list-pagination,
+.home-page .mobile-list-pagination,
+.home-page .candidate-list-pagination,
+.home-page .job-feed-pagination,
+.portal-home-job-pagination,
+.portal-list-pagination,
+.mobile-list-pagination,
+.candidate-list-pagination,
+.job-feed-pagination {
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  padding: 0.25rem 0 !important;
+}
+
+.home-page .portal-home-job-pagination::before,
+.home-page .portal-home-job-pagination::after,
+.home-page .portal-list-pagination::before,
+.home-page .portal-list-pagination::after,
+.home-page .mobile-list-pagination::before,
+.home-page .mobile-list-pagination::after,
+.home-page .candidate-list-pagination::before,
+.home-page .candidate-list-pagination::after,
+.home-page .job-feed-pagination::before,
+.home-page .job-feed-pagination::after {
+  display: none !important;
+  content: none !important;
+}
+
+.home-page .portal-home-job-pagination button,
+.home-page .portal-list-pagination button,
+.home-page .mobile-list-pagination button,
+.home-page .candidate-list-pagination button,
+.home-page .job-feed-pagination button,
+.home-page .portal-home-page-button,
+.portal-home-job-pagination button,
+.portal-list-pagination button,
+.mobile-list-pagination button,
+.candidate-list-pagination button,
+.job-feed-pagination button,
+.portal-home-page-button {
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+@media (max-width: 768px) {
+  .candidate-community-copy {
+    font-size: clamp(0.94rem, 4.2vw, 1.05rem) !important;
+    line-height: 1.42 !important;
+  }
+
+  .candidate-grow-together {
+    font-size: 1.58em !important;
+  }
+
+  .uiverse-profile-card .candidate-card-socialbar.socialbar {
+    transform: translateY(-4px) !important;
+  }
+}
+
+/* Final mobile action-rail alignment: one real cylinder with centered controls. */
+@media (max-width: 768px) {
+  .candidate-view-candidates .uiverse-profile-card .candidate-card-socialbar.socialbar,
+  .talent-pool-container:not(.candidate-bookmarked-container) .uiverse-profile-card .candidate-card-socialbar.socialbar {
+    position: relative !important;
+    display: grid !important;
+    grid-auto-flow: column !important;
+    grid-auto-columns: minmax(0, 1fr) !important;
+    align-items: center !important;
+    justify-items: center !important;
+    width: calc(100% - 6px) !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    margin: auto 3px 5px !important;
+    padding: 4px 3px !important;
+    background: #191919 !important;
+    border: 0 !important;
+    border-radius: 1.5rem !important;
+    box-shadow:
+      3px 3px 15px rgb(0, 0, 0),
+      -3px -3px 15px rgb(58, 58, 58) !important;
+    isolation: auto !important;
+    transform: none !important;
+  }
+
+  .candidate-view-candidates .uiverse-profile-card .candidate-card-socialbar.socialbar::before,
+  .talent-pool-container:not(.candidate-bookmarked-container) .uiverse-profile-card .candidate-card-socialbar.socialbar::before {
+    display: none !important;
+    content: none !important;
+  }
+
+  .candidate-view-candidates .uiverse-profile-card .candidate-card-socialbar.socialbar > *,
+  .talent-pool-container:not(.candidate-bookmarked-container) .uiverse-profile-card .candidate-card-socialbar.socialbar > * {
+    position: static !important;
+    top: auto !important;
+    bottom: auto !important;
+    align-self: center !important;
+    justify-self: center !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+}

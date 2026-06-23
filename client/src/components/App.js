@@ -7,8 +7,10 @@ import HomePage from './HomePage';
 import EmployerDashboard from './EmployerDashboard';
 import JobSeeker from './JobSeeker'; 
 import ResetPasswordPage from './ResetPasswordPage';
+import AdminPanel from './AdminPanel';
 
 const APP_MODE_STORAGE_KEY = 'jumptakeAppMode';
+const ADMIN_PANEL_PATH = process.env.REACT_APP_ADMIN_PANEL_PATH || '/jt-owner-console-9x4k2-admin';
 
 const getInitialAppMode = () => {
   if (typeof window === 'undefined') {
@@ -48,6 +50,7 @@ function App() {
           <Route path="/home" element={<HomePage appMode={appMode} onAppModeChange={setAppMode} />} />
           <Route path="/employer-dashboard" element={<EmployerDashboard appMode={appMode} onAppModeChange={setAppMode} />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path={ADMIN_PANEL_PATH} element={<AdminPanel />} />
         </Routes>
       </div>
     </BrowserRouter>

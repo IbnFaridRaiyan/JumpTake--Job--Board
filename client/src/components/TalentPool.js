@@ -635,14 +635,25 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
             )}
 
             {mode === 'candidate' && (
-                <div className="candidate-community-note">
-                    <strong>Connect, learn, and grow together.</strong>
-                    <p>Discover candidates with similar skills and experience, exchange career guidance, and learn from one another while keeping personal contact details private.</p>
+                <div className="candidate-community-intro">
+                    <p className="candidate-community-copy">
+                        Connect, learn, and{' '}
+                        <span className="candidate-grow-together">
+                            <span>grow together</span>
+                            <svg className="candidate-grow-icon" viewBox="0 0 16 16" aria-hidden="true">
+                                <path fillRule="evenodd" d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5" />
+                            </svg>
+                        </span>
+                        <br />
+                        <span className="candidate-community-description">
+                            Discover candidates with similar skills and experience, exchange career guidance, and learn from one another while keeping personal contact details private.
+                        </span>
+                    </p>
                 </div>
             )}
 
-            {friendNotice && (
-                <div className={`notification-message ${friendNotice.startsWith('Error:') ? 'error' : 'success'}`}>
+            {friendNotice.startsWith('Error:') && (
+                <div className="notification-message error">
                     {friendNotice}
                 </div>
             )}
@@ -840,72 +851,16 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                         <div className="candidates-grid">
                             {pagedCandidateRows.map(({ candidate, spotlight }) => {
                                 return (
-                                <div key={candidate._id} className="candidate-card" onClick={() => handleViewProfile(candidate)}>
-                                    {mode === 'candidate' && (
-                                        <div className="candidate-connection-corner-anchor">
-                                            <button
-                                                type="button"
-                                                className={`candidate-connection-corner-button ${candidate.connectionStatus?.status || 'is-new'}`}
-                                                onClick={(event) => {
-                                                    event.stopPropagation();
-                                                    if (!candidate.connectionStatus) {
-                                                        sendFriendRequest({ candidateId: candidate._id });
-                                                    } else if (candidate.connectionStatus.status === 'pending' && candidate.connectionStatus.direction === 'outgoing') {
-                                                        cancelFriendRequest(candidate);
-                                                    }
-                                                }}
-                                                disabled={sendingFriendRequest || candidate.connectionStatus?.status === 'accepted' || (candidate.connectionStatus?.status === 'pending' && candidate.connectionStatus?.direction !== 'outgoing')}
-                                                aria-label={candidate.connectionStatus?.status === 'accepted'
-                                                    ? 'Already friends'
-                                                    : candidate.connectionStatus?.status === 'pending'
-                                                        ? (candidate.connectionStatus?.direction === 'outgoing' ? 'Unsend friend invitation' : 'Friend invitation pending')
-                                                        : `Add ${candidate.name || 'candidate'} as a friend`}
-                                                title={candidate.connectionStatus?.status === 'accepted'
-                                                    ? 'Friends'
-                                                    : candidate.connectionStatus?.status === 'pending'
-                                                        ? (candidate.connectionStatus?.direction === 'outgoing' ? 'Unsend invitation' : 'Invitation pending')
-                                                        : 'Add friend'}
-                                            >
-                                                {candidate.connectionStatus?.status === 'accepted' ? (
-                                                    <span className="candidate-connection-corner-state" aria-hidden="true">&#10003;</span>
-                                                ) : candidate.connectionStatus?.status === 'pending' ? (
-                                                    <span className="candidate-connection-corner-state" aria-hidden="true">&#8230;</span>
-                                                ) : (
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        viewBox="0 0 24 24"
-                                                        className="candidate-connection-corner-icon"
-                                                        aria-hidden="true"
-                                                    >
-                                                        <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" strokeWidth="1.5"></path>
-                                                        <path d="M8 12H16" strokeWidth="1.5"></path>
-                                                        <path d="M12 16V8" strokeWidth="1.5"></path>
-                                                    </svg>
-                                                )}
-                                            </button>
-                                        </div>
-                                    )}
-                                    <button
-                                        type="button"
-                                        className={`bookmark-star-button talent-bookmark-button ${bookmarkedTalentIds.includes(String(candidate._id)) ? 'active' : ''}`}
-                                        onClick={(event) => toggleTalentBookmark(candidate, event)}
-                                        aria-label={bookmarkedTalentIds.includes(String(candidate._id)) ? 'Remove bookmark' : 'Bookmark talent'}
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-                                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-                                        </svg>
-                                    </button>
+                                <div key={candidate._id} className="candidate-card uiverse-profile-card" onClick={() => handleViewProfile(candidate)}>
                                     <ProfileAvatar
                                         imageSrc={candidate.profileImage}
                                         name={candidate.name}
-                                        className="candidate-avatar"
+                                        className="candidate-avatar profileimage"
                                         imageClassName="profile-avatar-image"
+                                        useProfileIconFallback
                                     />
                                     <div className="candidate-info">
-                                        <div className="candidate-name-row">
-                                            <h3 className="candidate-name">{candidate.name || 'Unnamed Candidate'}</h3>
-                                            {renderLikeButton(candidate)}
-                                        </div>
+                                        <h3 className="candidate-name Name">{candidate.name || 'Unnamed Candidate'}</h3>
                                         <div className="candidate-match-summary candidate-jumptake-meta">
                                             <span>{candidate.jumptakeId || candidate.jumpTakeId || candidate.user?.jumptakeId || 'JumpTake ID unavailable'}</span>
                                         </div>
@@ -925,7 +880,55 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                                             </div>
                                         )}
                                     </div>
-                                    <div className="candidate-view-profile">View Profile</div>
+                                    <div className="candidate-card-socialbar socialbar">
+                                        {renderLikeButton(candidate)}
+                                        {mode === 'candidate' && (
+                                            <button
+                                                type="button"
+                                                className={`candidate-card-action candidate-card-friend-action ${candidate.connectionStatus?.status || 'is-new'}`}
+                                                onClick={(event) => {
+                                                    event.stopPropagation();
+                                                    if (!candidate.connectionStatus) {
+                                                        sendFriendRequest({ candidateId: candidate._id });
+                                                    } else if (candidate.connectionStatus.status === 'pending' && candidate.connectionStatus.direction === 'outgoing') {
+                                                        cancelFriendRequest(candidate);
+                                                    }
+                                                }}
+                                                disabled={sendingFriendRequest || candidate.connectionStatus?.status === 'accepted' || (candidate.connectionStatus?.status === 'pending' && candidate.connectionStatus?.direction !== 'outgoing')}
+                                                aria-label={candidate.connectionStatus?.status === 'accepted' ? 'Already friends' : candidate.connectionStatus?.status === 'pending' ? 'Friend invitation pending' : 'Add friend'}
+                                                title={candidate.connectionStatus?.status === 'accepted' ? 'Friends' : candidate.connectionStatus?.status === 'pending' ? 'Invitation pending' : 'Add friend'}
+                                            >
+                                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                                    <path d="M15 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.42 0-8 2.24-8 5v1h10.1A6.9 6.9 0 0 1 17 19c0-1.85.72-3.54 1.9-4.8A11.7 11.7 0 0 0 15 14Zm6-3V8h-2v3h-3v2h3v3h2v-3h3v-2h-3Z" />
+                                                </svg>
+                                            </button>
+                                        )}
+                                        <button
+                                            type="button"
+                                            className="candidate-card-action candidate-card-message-action"
+                                            onClick={(event) => {
+                                                event.stopPropagation();
+                                                handleViewProfile(candidate);
+                                            }}
+                                            aria-label={`Message ${candidate.name || 'candidate'}`}
+                                            title="Message candidate"
+                                        >
+                                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                                <path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-5 4v-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm0 2v10h1v1.84L7.3 16H20V6H4Z" />
+                                            </svg>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className={`bookmark-star-button talent-bookmark-button candidate-card-action ${bookmarkedTalentIds.includes(String(candidate._id)) ? 'active' : ''}`}
+                                            onClick={(event) => toggleTalentBookmark(candidate, event)}
+                                            aria-label={bookmarkedTalentIds.includes(String(candidate._id)) ? 'Remove bookmark' : 'Bookmark talent'}
+                                            title={bookmarkedTalentIds.includes(String(candidate._id)) ? 'Remove bookmark' : 'Bookmark'}
+                                        >
+                                            <svg viewBox="0 0 16 16" aria-hidden="true">
+                                                <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187z" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                             )})}
                         </div>

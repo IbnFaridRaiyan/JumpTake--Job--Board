@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
+import ProfileAvatar from './ProfileAvatar';
+import logoDark from './media/logo4.png';
 
 const PublicLandingIcon = ({ name, className = '' }) => {
     if (name === 'candidate') {
@@ -126,7 +128,63 @@ const PublicSendIcon = () => (
     </svg>
 );
 
+const PublicTerminalIcon = () => (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+            d="M7 15L10 12L7 9M13 15H17M7.8 21H16.2C17.8802 21 18.7202 21 19.362 20.673C19.9265 20.3854 20.3854 19.9265 20.673 19.362C21 18.7202 21 17.8802 21 16.2V7.8C21 6.11984 21 5.27976 20.673 4.63803C20.3854 4.07354 19.9265 3.6146 19.362 3.32698C18.7202 3 17.8802 3 16.2 3H7.8C6.11984 3 5.27976 3 4.63803 3.32698C4.07354 3.6146 3.6146 4.07354 3.32698 4.63803C3 5.27976 3 6.11984 3 7.8V16.2C3 17.8802 3 18.7202 3.32698 19.362C3.6146 19.9265 4.07354 20.3854 4.63803 20.673C5.27976 21 6.11984 21 7.8 21Z"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
+
+const getPublicJobApplications = (job) => {
+    if (Array.isArray(job?.applications)) {
+        return job.applications;
+    }
+
+    if (Array.isArray(job?.applicants)) {
+        return job.applicants;
+    }
+
+    return [];
+};
+
+const getPublicJobSkills = (job) => {
+    if (!Array.isArray(job?.skills)) {
+        return [];
+    }
+
+    return job.skills
+        .flatMap((skill) => Array.isArray(skill) ? skill : [skill])
+        .map((skill) => String(skill || '').trim())
+        .filter(Boolean);
+};
+
+const getPublicJobLikeCount = (job) => {
+    if (typeof job?.likes === 'number') {
+        return job.likes;
+    }
+
+    if (Array.isArray(job?.likes)) {
+        return job.likes.length;
+    }
+
+    return 0;
+};
+
 const formatAssistantTime = () => new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+
+const formatPublicSalary = (salary) => {
+    if (salary === null || salary === undefined || salary === '') {
+        return 'Salary not listed';
+    }
+
+    return String(salary);
+};
 
 const PublicLoginDialog = ({ apiBase, onClose, onSuccessCandidate, onSuccessEmployer }) => {
     const [identifier, setIdentifier] = useState('');
@@ -311,7 +369,7 @@ const PublicLandingNav = () => {
     const [assistantLoading, setAssistantLoading] = useState(false);
     const [assistantMessages, setAssistantMessages] = useState([]);
     const [assistantSettingsOpen, setAssistantSettingsOpen] = useState(false);
-    const jobsPerPage = 6;
+    const jobsPerPage = 1;
     const totalJobPages = Math.max(1, Math.ceil(jobs.length / jobsPerPage));
     const visibleJobs = jobs.slice((jobsPage - 1) * jobsPerPage, jobsPage * jobsPerPage);
     const assistantStarted = assistantMessages.length > 0;
@@ -365,6 +423,10 @@ const PublicLandingNav = () => {
         } else if (action === 'employer-register') {
             setActiveModal('');
             navigate('/company');
+        } else if (action === 'candidate-login' || action === 'employer-login') {
+            setActiveModal('login-choice');
+        } else if (action === 'open-jobs') {
+            setActiveModal('jobs');
         } else if (action === 'choose-register') {
             setActiveModal('register-choice');
         } else if (action === 'choose-login') {
@@ -388,7 +450,10 @@ const PublicLandingNav = () => {
             const response = await fetch(`${apiBase}/api/public-assistant`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: question })
+                body: JSON.stringify({
+                    message: question,
+                    history: assistantMessages.slice(-8).map(({ role, text }) => ({ role, text }))
+                })
             });
             const contentType = response.headers.get('content-type') || '';
             if (!contentType.includes('application/json')) {
@@ -474,73 +539,90 @@ const PublicLandingNav = () => {
                     <section className="public-assistant-dialog" role="dialog" aria-modal="true" aria-label="Ask JumpTake" onMouseDown={(event) => event.stopPropagation()}>
                         {!assistantStarted ? (
                             <form className="public-ai-launch-form" onSubmit={askAssistant}>
-                                <div className="public-ai-launch-input">
-                                    <PublicSparkSearchIcon />
-                                    <input
-                                        className="public-ai-launch-textbox"
-                                        value={assistantInput}
-                                        onChange={(event) => setAssistantInput(event.target.value)}
-                                        placeholder="Ask jumptake AI"
-                                    />
+                                <div className="public-ai-launch-logo-wrap" aria-hidden="true">
+                                    <img src={logoDark} alt="" className="public-ai-launch-logo" />
+                                </div>
+                                <div className="public-ai-launch-stage">
+                                    <label className="public-ai-launch-input" htmlFor="public-ai-launch-textbox">
+                                        <PublicSparkSearchIcon />
+                                        <input
+                                            id="public-ai-launch-textbox"
+                                            className="public-ai-launch-textbox"
+                                            value={assistantInput}
+                                            onChange={(event) => setAssistantInput(event.target.value)}
+                                            placeholder="Ask jumptake AI"
+                                        />
+                                    </label>
+                                </div>
+                                <div className="public-ai-launch-footer">
+                                    <BackArrowButton onClick={() => setActiveModal('')} label="Close JumpTake assistant" />
                                 </div>
                             </form>
                         ) : (
-                            <div className="public-ai-chat-card">
-                                <div className="public-ai-chat-header">
-                                    <div className="public-ai-chat-brand">
-                                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                                            <path d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                        </svg>
-                                        <div className="public-ai-chat-title">Jumptake chat</div>
+                            <div className="public-ai-chat-card public-terminal-card">
+                                <div className="public-terminal-wrap">
+                                    <div className="public-terminal-head public-ai-chat-header">
+                                        <div className="public-ai-chat-brand">
+                                            <p className="public-terminal-title">
+                                                <PublicTerminalIcon />
+                                                <span>Jumptake chat</span>
+                                            </p>
+                                        </div>
+                                        <div className="public-ai-chat-settings-wrap">
+                                            <button
+                                                type="button"
+                                                className="public-ai-settings-button"
+                                                aria-label="Chat settings"
+                                                onClick={() => setAssistantSettingsOpen((open) => !open)}
+                                            >
+                                                <PublicSettingsIcon />
+                                            </button>
+                                            {assistantSettingsOpen ? (
+                                                <div className="public-ai-settings-menu">
+                                                    <button type="button" onClick={clearAssistantChat}>Clear chat</button>
+                                                </div>
+                                            ) : null}
+                                        </div>
                                     </div>
-                                    <div className="public-ai-chat-settings-wrap">
-                                        <button
-                                            type="button"
-                                            className="public-ai-settings-button"
-                                            aria-label="Chat settings"
-                                            onClick={() => setAssistantSettingsOpen((open) => !open)}
-                                        >
-                                            <PublicSettingsIcon />
-                                        </button>
-                                        {assistantSettingsOpen ? (
-                                            <div className="public-ai-settings-menu">
-                                                <button type="button" onClick={clearAssistantChat}>Clear chat</button>
+                                    <div className="public-terminal-body public-terminal-chat-body">
+                                        <ul className="public-ai-chat-messages">
+                                            {assistantMessages.map((message, index) => (
+                                                <li key={`${message.role}-${index}`} className={`public-ai-chat-row is-${message.role}`}>
+                                                    <div className="public-ai-chat-time">{message.time}</div>
+                                                    <div
+                                                        className={`public-ai-chat-bubble is-${message.role}${message.role === 'assistant' && index === assistantMessages.length - 1 ? ' is-latest' : ''}`}
+                                                    >
+                                                        {message.text}
+                                                    </div>
+                                                </li>
+                                            ))}
+                                            {assistantLoading ? (
+                                                <li className="public-ai-chat-row is-assistant">
+                                                    <div className="public-ai-chat-bubble is-typing">
+                                                        <span />
+                                                        <span />
+                                                        <span />
+                                                    </div>
+                                                </li>
+                                            ) : null}
+                                        </ul>
+                                        <form className="public-ai-chat-reply" onSubmit={askAssistant}>
+                                            <div className="public-ai-reply-field">
+                                                <input
+                                                    type="text"
+                                                    value={assistantInput}
+                                                    onChange={(event) => setAssistantInput(event.target.value)}
+                                                    placeholder="Reply"
+                                                />
+                                                <button type="submit" className="public-ai-send-button" disabled={assistantLoading}>
+                                                    <PublicSendIcon />
+                                                </button>
                                             </div>
-                                        ) : null}
+                                        </form>
+                                        <div className="public-ai-chat-footer">
+                                            <BackArrowButton onClick={() => setActiveModal('')} label="Close JumpTake chat" />
+                                        </div>
                                     </div>
-                                </div>
-                                <ul className="public-ai-chat-messages">
-                                    {assistantMessages.map((message, index) => (
-                                        <li key={`${message.role}-${index}`} className={`public-ai-chat-row is-${message.role}`}>
-                                            <div className="public-ai-chat-time">{message.time}</div>
-                                            <div className={`public-ai-chat-bubble is-${message.role}`}>{message.text}</div>
-                                        </li>
-                                    ))}
-                                    {assistantLoading ? (
-                                        <li className="public-ai-chat-row is-assistant">
-                                            <div className="public-ai-chat-bubble is-typing">
-                                                <span />
-                                                <span />
-                                                <span />
-                                            </div>
-                                        </li>
-                                    ) : null}
-                                </ul>
-                                <form className="public-ai-chat-reply" onSubmit={askAssistant}>
-                                    <div className="public-ai-reply-field">
-                                        <input
-                                            type="text"
-                                            value={assistantInput}
-                                            onChange={(event) => setAssistantInput(event.target.value)}
-                                            placeholder="Reply"
-                                        />
-                                        <button type="submit" className="public-ai-send-button" disabled={assistantLoading}>
-                                            <PublicSendIcon />
-                                        </button>
-                                    </div>
-                                </form>
-                                <div className="public-ai-chat-footer">
-                                    <BackArrowButton onClick={() => setActiveModal('')} label="Close JumpTake chat" />
                                 </div>
                             </div>
                         )}
@@ -551,35 +633,136 @@ const PublicLandingNav = () => {
             {activeModal === 'jobs' && renderModal(
                 <div className="public-landing-modal-backdrop" role="presentation" onMouseDown={() => setActiveModal('')}>
                     <section className="public-jobs-dialog" role="dialog" aria-modal="true" aria-label="Public job feed" onMouseDown={(event) => event.stopPropagation()}>
-                        <h2>JumpTake Job Feed</h2>
-                        <p className="public-jobs-lead">
-                            JumpTake Job Feed gets better{' '}
-                            <span className="public-jobs-lead-highlight">if you are in it..</span>
-                        </p>
-                        <p className="public-jobs-join-copy">
-                            <button type="button" className="public-jobs-join-link" onClick={() => setActiveModal('register-choice')}>
-                                Join us now
-                            </button>
-                            {', '}we love to connect
-                        </p>
+                        <div className="public-jobs-hero">
+                            <div className="public-jobs-hero-copy">
+                                <p className="public-jobs-lead">
+                                    <span className="public-jobs-lead-copy">Job Feed gets better</span>
+                                    <span className="public-jobs-lead-highlight">If you are in it...</span>
+                                </p>
+                            </div>
+                            <div className="public-jobs-hero-side">
+                                <div className="public-jobs-hero-logo" aria-hidden="true">
+                                    <img src={logoDark} alt="" className="public-jobs-hero-logo-image" />
+                                </div>
+                                <p className="public-jobs-join-copy">
+                                    <button
+                                        type="button"
+                                        className="public-jobs-join-link"
+                                        onClick={() => setActiveModal('register-choice')}
+                                    >
+                                        Join us now
+                                    </button>
+                                    <span className="public-jobs-join-tail">we love to connect</span>
+                                </p>
+                            </div>
+                        </div>
                         <div className="public-jobs-list">
                             {jobsLoading && <p>Loading jobs...</p>}
                             {!jobsLoading && jobsError && <p>{jobsError}</p>}
                             {!jobsLoading && !jobsError && !jobs.length && <p>No active jobs are available right now.</p>}
-                            {visibleJobs.map((job) => (
-                                <article className="public-job-card" key={job._id}>
-                                    <h3>{job.title}</h3>
-                                    <p>{job.company?.name || 'Company'} - {job.location || 'Location not listed'}</p>
-                                    <div className="public-job-meta">
-                                        <span>{job.jobType || 'Full-time'}</span>
-                                        {job.salary && <span>{job.salary}</span>}
-                                    </div>
-                                    <div className="public-job-actions">
-                                        <button type="button" onClick={requireCandidateLogin}>View Job</button>
-                                        <button type="button" onClick={requireCandidateLogin}>Apply Now</button>
-                                    </div>
-                                </article>
-                            ))}
+                            {visibleJobs.map((job) => {
+                                const applicationCount = getPublicJobApplications(job).length;
+                                const likeCount = getPublicJobLikeCount(job);
+                                const skills = getPublicJobSkills(job);
+                                const description = String(job?.description || '').trim();
+                                const companyName = job.company?.name || 'Company unavailable';
+                                const location = job.location || 'Location not listed';
+                                const jobType = job.jobType || 'Full-time';
+                                const salary = formatPublicSalary(job.salary);
+                                const postedDate = new Date(job.createdAt || Date.now()).toLocaleDateString();
+
+                                return (
+                                    <article
+                                        className="public-job-feed-card public-job-feed-card-shell"
+                                        key={job._id}
+                                        onClick={requireCandidateLogin}
+                                        role="button"
+                                        tabIndex={0}
+                                    >
+                                        <div className="public-job-feed-card-content">
+                                            <div className="job-card-header">
+                                                <ProfileAvatar
+                                                    imageSrc={job.company?.logo}
+                                                    name={companyName || job.title}
+                                                    className="job-company-logo"
+                                                    imageClassName="profile-avatar-image"
+                                                    alt={`${companyName || 'Company'} logo`}
+                                                />
+                                                <div className="job-card-header-text">
+                                                    <h3>{job.title}</h3>
+                                                    <p>{companyName}</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="job-card-body">
+                                                <div className="public-job-feed-topline">
+                                                    <span>{location}</span>
+                                                    <span>{jobType}</span>
+                                                    <span>{salary}</span>
+                                                </div>
+                                                <div className="job-card-meta public-job-feed-meta">
+                                                    <span className="job-meta-row">Job Number: {job.jobNumber || 'Generating...'}</span>
+                                                    <span className="job-meta-row">Posted: {postedDate}</span>
+                                                </div>
+                                                {description ? <p className="public-job-feed-description">{description}</p> : null}
+                                                {skills.length ? (
+                                                    <div className="public-job-feed-skills">
+                                                        {skills.slice(0, 3).map((skill) => (
+                                                            <span key={`${job._id}-${skill}`}>{skill}</span>
+                                                        ))}
+                                                    </div>
+                                                ) : null}
+                                            </div>
+
+                                            <div className="job-card-stats public-job-feed-stats">
+                                                <span>{likeCount} reach</span>
+                                                <span>{applicationCount} applicants</span>
+                                                <span>{job.hiredCount || 0} hired</span>
+                                                <span>{job.fitScore || '0%'} fit for you</span>
+                                            </div>
+
+                                            <div className="job-card-reactions public-job-feed-reactions">
+                                                <button
+                                                    type="button"
+                                                    className="job-card-like-button"
+                                                    onClick={(event) => {
+                                                        event.stopPropagation();
+                                                        requireCandidateLogin();
+                                                    }}
+                                                >
+                                                    <span aria-hidden="true">{"\uD83D\uDC4D"}</span>
+                                                    <span>{`Like ${likeCount}`}</span>
+                                                </button>
+                                            </div>
+
+                                            <div className="job-card-footer">
+                                                <div className="public-job-feed-actions">
+                                                    <button
+                                                        type="button"
+                                                        className="public-job-feed-secondary-button"
+                                                        onClick={(event) => {
+                                                            event.stopPropagation();
+                                                            requireCandidateLogin();
+                                                        }}
+                                                    >
+                                                        View Job
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="apply-button"
+                                                        onClick={(event) => {
+                                                            event.stopPropagation();
+                                                            requireCandidateLogin();
+                                                        }}
+                                                    >
+                                                        Apply Now
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </article>
+                                );
+                            })}
                         </div>
                         {!jobsLoading && !jobsError && jobs.length > jobsPerPage ? (
                             <div className="public-modal-pagination" aria-label="Job feed pagination">

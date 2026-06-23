@@ -38057,3 +38057,384 @@ html[data-theme="light"] .employer-dashboard-header .dashboard-title p {
     transform: none !important;
   }
 }
+
+/* Public JumpTake home navigation and modal surface. */
+.landing-page-container .landing-content .landing-subtitle,
+.landing-page-container .landing-content .button-container,
+.landing-page-container .landing-content .button-separator,
+.landing-page-container .landing-content .role-button,
+.landing-page-container .landing-content .job-seeker-button,
+.landing-page-container .landing-content .company-button {
+  display: none !important;
+}
+
+.public-home-nav {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: min(300px, calc(100vw - 5rem)) !important;
+  height: 60px !important;
+  margin: 1.35rem auto 0 !important;
+  padding: 0 0.35rem !important;
+  color: #111111 !important;
+  background: #ffffff !important;
+  border: 0 !important;
+  border-radius: 40px !important;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.08) !important;
+  box-sizing: border-box !important;
+}
+
+.public-home-nav-button {
+  display: grid !important;
+  place-items: center !important;
+  width: 70px !important;
+  height: 60px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #111111 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+  transition: color 0.18s ease, transform 0.18s ease, opacity 0.18s ease !important;
+}
+
+.public-home-nav-button svg {
+  display: block !important;
+  width: 42px !important;
+  height: 42px !important;
+  padding: 0.58rem !important;
+  color: currentColor !important;
+  opacity: 0.82 !important;
+  box-sizing: border-box !important;
+  transition: inherit !important;
+}
+
+.public-landing-icon-home,
+.public-landing-icon-search {
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 2 !important;
+}
+
+.public-landing-icon-register,
+.public-landing-icon-jobs {
+  fill: currentColor !important;
+  stroke: none !important;
+}
+
+.public-home-nav-button:hover,
+.public-home-nav-button:focus-visible {
+  color: rgb(235, 40, 176) !important;
+  outline: 0 !important;
+  transform: translateY(-4px) !important;
+}
+
+.public-home-nav-button:hover svg,
+.public-home-nav-button:focus-visible svg {
+  opacity: 1 !important;
+}
+
+.public-landing-modal-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 100000 !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 1rem !important;
+  background: rgba(0, 0, 0, 0.72) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+.public-choice-dialog,
+.public-assistant-dialog,
+.public-jobs-dialog {
+  position: relative !important;
+  width: min(92vw, 720px) !important;
+  max-height: min(84vh, 760px) !important;
+  overflow: auto !important;
+  padding: clamp(1.15rem, 3vw, 1.8rem) !important;
+  color: #f8fafc !important;
+  background: #050505 !important;
+  border: 1px solid rgba(94, 234, 212, 0.38) !important;
+  border-radius: 1.15rem !important;
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.55) !important;
+}
+
+.public-choice-dialog {
+  width: min(92vw, 420px) !important;
+}
+
+.public-choice-dialog h2,
+.public-assistant-dialog h2,
+.public-jobs-dialog h2 {
+  margin: 0 2rem 1rem 0 !important;
+  color: #ffffff !important;
+  font-family: "Chewy", "Lexend", system-ui, sans-serif !important;
+  font-size: clamp(1.6rem, 5vw, 2.3rem) !important;
+  font-weight: 400 !important;
+  line-height: 1.05 !important;
+}
+
+.public-modal-close {
+  position: absolute !important;
+  top: 0.7rem !important;
+  right: 0.7rem !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 1.8rem !important;
+  height: 1.8rem !important;
+  padding: 0 !important;
+  color: #ffffff !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  box-shadow: none !important;
+  font: 900 1.05rem/1 "Lexend", system-ui, sans-serif !important;
+  text-transform: uppercase !important;
+  cursor: pointer !important;
+}
+
+.public-modal-close:hover,
+.public-modal-close:focus-visible {
+  color: #ff4d57 !important;
+  outline: 0 !important;
+}
+
+.public-choice-actions,
+.public-job-actions,
+.public-assistant-form {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.75rem !important;
+}
+
+.public-choice-actions button,
+.public-job-actions button,
+.public-assistant-form button {
+  flex: 1 1 10rem !important;
+  min-height: 2.65rem !important;
+  padding: 0.7rem 1rem !important;
+  color: #ffffff !important;
+  background: rgba(9, 54, 46, 0.9) !important;
+  border: 1px solid rgba(94, 234, 212, 0.55) !important;
+  border-radius: 999px !important;
+  font-weight: 900 !important;
+  cursor: pointer !important;
+}
+
+.public-choice-actions button:hover,
+.public-job-actions button:hover,
+.public-assistant-form button:hover {
+  background: #5eead4 !important;
+  color: #001512 !important;
+}
+
+.public-assistant-messages {
+  display: grid !important;
+  gap: 0.7rem !important;
+  max-height: 18rem !important;
+  margin: 0 0 1rem !important;
+  overflow: auto !important;
+}
+
+.public-assistant-message {
+  margin: 0 !important;
+  padding: 0.75rem 0.9rem !important;
+  border-radius: 0.85rem !important;
+  font-size: 0.95rem !important;
+  line-height: 1.45 !important;
+}
+
+.public-assistant-message.is-assistant {
+  background: rgba(20, 83, 75, 0.38) !important;
+}
+
+.public-assistant-message.is-user {
+  justify-self: end !important;
+  max-width: 85% !important;
+  background: rgba(56, 189, 248, 0.18) !important;
+}
+
+.public-assistant-form input {
+  flex: 999 1 16rem !important;
+  min-height: 2.65rem !important;
+  padding: 0.7rem 1rem !important;
+  color: #ffffff !important;
+  background: #000000 !important;
+  border: 1px solid rgba(148, 163, 184, 0.38) !important;
+  border-radius: 999px !important;
+  outline: 0 !important;
+}
+
+.public-jobs-list {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+  gap: 0.9rem !important;
+  margin-top: 1rem !important;
+}
+
+.public-job-card {
+  padding: 1rem !important;
+  color: #ffffff !important;
+  background: #111111 !important;
+  border: 1px solid rgba(94, 234, 212, 0.28) !important;
+  border-radius: 1rem !important;
+}
+
+.public-job-card h3 {
+  margin: 0 0 0.35rem !important;
+  font-size: 1.05rem !important;
+}
+
+.public-job-card p {
+  margin: 0 0 0.7rem !important;
+  color: rgba(248, 250, 252, 0.8) !important;
+}
+
+.public-job-meta {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.45rem !important;
+  margin-bottom: 0.8rem !important;
+}
+
+.public-job-meta span {
+  padding: 0.25rem 0.55rem !important;
+  border-radius: 999px !important;
+  background: rgba(94, 234, 212, 0.13) !important;
+}
+
+@media (max-width: 768px) {
+  .public-home-nav {
+    width: min(300px, calc(100vw - 4rem)) !important;
+    height: 56px !important;
+    margin-top: 1rem !important;
+  }
+
+  .public-home-nav-button {
+    width: 25% !important;
+    height: 56px !important;
+  }
+
+  .public-home-nav-button svg {
+    width: 38px !important;
+    height: 38px !important;
+    padding: 0.54rem !important;
+  }
+
+  .public-choice-dialog,
+  .public-assistant-dialog,
+  .public-jobs-dialog {
+    max-height: 82vh !important;
+    padding: 1rem !important;
+  }
+}
+
+/* Portal sidebar final toggle polish: compact open button, right-aligned close button, normal expanded labels. */
+.home-page .portal-uiverse-sidebar .portal-sidebar-menu-icon,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar .portal-sidebar-menu-icon,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .portal-sidebar-menu-icon {
+  position: relative !important;
+  display: grid !important;
+  width: 2.15rem !important;
+  min-width: 2.15rem !important;
+  max-width: 2.15rem !important;
+  height: 2.15rem !important;
+  min-height: 2.15rem !important;
+  max-height: 2.15rem !important;
+  margin: 0 auto 0.45rem !important;
+  padding: 0.45rem !important;
+  background: #000000 !important;
+  border: 0 !important;
+  border-radius: 0.55rem !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+}
+
+.home-page .portal-uiverse-sidebar.is-expanded .portal-sidebar-menu-icon,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded .portal-sidebar-menu-icon,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded .portal-sidebar-menu-icon {
+  position: sticky !important;
+  top: 0.45rem !important;
+  right: 0.45rem !important;
+  left: auto !important;
+  justify-self: end !important;
+  align-self: start !important;
+  width: 1.8rem !important;
+  min-width: 1.8rem !important;
+  max-width: 1.8rem !important;
+  height: 1.8rem !important;
+  min-height: 1.8rem !important;
+  max-height: 1.8rem !important;
+  margin: 0 0 0.5rem auto !important;
+  padding: 0.25rem !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  z-index: 3 !important;
+}
+
+.home-page .portal-uiverse-sidebar .portal-sidebar-menu-icon span,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar .portal-sidebar-menu-icon span,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .portal-sidebar-menu-icon span {
+  display: block !important;
+  width: 100% !important;
+  height: 2px !important;
+  margin: 0 0 5px !important;
+  background: #ffffff !important;
+  border-radius: 999px !important;
+  transform-origin: left center !important;
+  transition: transform 0.24s ease, opacity 0.2s ease, margin 0.24s ease, background 0.24s ease !important;
+}
+
+.home-page .portal-uiverse-sidebar .portal-sidebar-menu-icon input:checked ~ span,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar .portal-sidebar-menu-icon input:checked ~ span,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .portal-sidebar-menu-icon input:checked ~ span {
+  left: 0 !important;
+  margin-bottom: 6px !important;
+  background: #ff4d57 !important;
+}
+
+.home-page .portal-uiverse-sidebar.is-expanded .sidebar__link .text,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded .sidebar__link .text,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded .sidebar__link .text {
+  display: inline-block !important;
+  overflow: hidden !important;
+  color: #ffffff !important;
+  font-family: "Lexend", system-ui, sans-serif !important;
+  font-size: 0.9rem !important;
+  font-weight: 900 !important;
+  line-height: 1.2 !important;
+  text-align: left !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.home-page .portal-uiverse-sidebar.is-expanded .sidebar__link,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded .sidebar__link,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded .sidebar__link {
+  min-height: 2.9rem !important;
+  padding: 0.65rem 0.85rem !important;
+  gap: 0.75rem !important;
+}
+
+@media (max-width: 768px) {
+  .home-page .portal-uiverse-sidebar.is-expanded,
+  .home-page .portal-uiverse-sidebar.is-expanded.sidebar,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded.sidebar,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded.sidebar {
+    width: min(58vw, 14.6rem) !important;
+    max-width: min(58vw, 14.6rem) !important;
+  }
+
+  .home-page .portal-uiverse-sidebar.is-expanded .portal-uiverse-rail,
+  .dashboard-container.mobile-section-open .portal-uiverse-sidebar.is-expanded .portal-uiverse-rail,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded .portal-uiverse-rail {
+    padding: 0.35rem 0.35rem 0.75rem !important;
+  }
+}

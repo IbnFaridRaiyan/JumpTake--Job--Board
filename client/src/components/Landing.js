@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PublicLandingNav from './PublicLandingNav';
 import homeVideo from './media/home.mp4';
 import candidateVideo from './media/employee.mp4';
 import employerVideo from './media/employer.mp4';
@@ -8,8 +9,6 @@ import logo from './media/logo3.png';
 const Landing = () => {
     const navigate = useNavigate();
     const aboutSectionRef = useRef(null);
-    const candidatePortalRef = useRef(null);
-    const employerPortalRef = useRef(null);
 
     const goToJobSeeker = () => {
         navigate('/job-seeker');
@@ -23,14 +22,6 @@ const Landing = () => {
         aboutSectionRef.current.scrollIntoView({ behavior: 'smooth' });
     };
     
-    const scrollToCandidatePortal = () => {
-        candidatePortalRef.current.scrollIntoView({ behavior: 'smooth' });
-    };
-    
-    const scrollToEmployerPortal = () => {
-        employerPortalRef.current.scrollIntoView({ behavior: 'smooth' });
-    };
-
     return (
         <div className="landing-page-container">
             <div className="landing-container">
@@ -48,25 +39,7 @@ const Landing = () => {
                         <img src={logo} alt="JumpTake Logo" className="landing-logo" />
                     </div>
                     
-                    <p className="landing-subtitle">Just couple of clicks to get started as a</p>
-                    
-                    <div className="button-container">
-                        <button 
-                            className="role-button job-seeker-button"
-                            onClick={goToJobSeeker}
-                        >
-                            Candidate
-                        </button>
-                        
-                        <div className="button-separator">or an</div>
-                        
-                        <button 
-                            className="role-button company-button"
-                            onClick={goToCompany}
-                        >
-                            Employer
-                        </button>
-                    </div>
+                    <PublicLandingNav />
                     
                     <div className="learn-more-links">
                         <button className="about-button" onClick={scrollToAbout}>
@@ -169,7 +142,7 @@ const Landing = () => {
             </div>
             
             
-            <div className="portal-preview-section candidate-portal-section" ref={candidatePortalRef}>
+            <div className="portal-preview-section candidate-portal-section">
                 <div className="portal-preview-container">
                     <div className="portal-video-background">
                         <video autoPlay loop muted playsInline className="portal-video">
@@ -222,7 +195,7 @@ const Landing = () => {
             </div>
             
            
-            <div className="portal-preview-section employer-portal-section" ref={employerPortalRef}>
+            <div className="portal-preview-section employer-portal-section">
                 <div className="portal-preview-container">
                     <div className="portal-video-background">
                         <video autoPlay loop muted playsInline className="portal-video">

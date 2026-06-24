@@ -220,6 +220,44 @@ const fallbackAnswer = (message, action, history = []) => {
     : 'I can help with JumpTake. Ask for a tour, a page explanation, jobs, account setup, or the next step.';
 };
 
+const askOpenAI = async ({ prompt }) => {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    return '';
+  }
+
+  const model = process.env.OPENAI_MODEL || 'gpt-5.2';
+  const response = await axios.post(
+    'https://api.openai.com/v1/responses',
+    {
+      model,
+      input: prompt,
+      max_output_tokens: 500
+    },
+    {
+      timeout: 20000,
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      }
+    }
+  );
+
+  const directText = String(response.data?.output_text || '').trim();
+  if (directText) {
+    return directText;
+  }
+
+  const outputBlocks = Array.isArray(response.data?.output) ? response.data.output : [];
+  const joined = outputBlocks
+    .flatMap((block) => Array.isArray(block?.content) ? block.content : [])
+    .map((part) => part?.text || '')
+    .join('')
+    .trim();
+
+  return joined;
+};
+
 const shouldUseDirectAssistantReply = (message, action) => {
   const normalized = String(message || '').toLowerCase();
 
@@ -250,10 +288,6 @@ const askPublicAssistant = async (req, res) => {
     return res.json({ answer: fallbackAnswer(message, action, history), action });
   }
 
-  if (!apiKey) {
-    return res.json({ answer: fallbackAnswer(message, action, history), action });
-  }
-
   const conversationHistory = buildHistoryBlock(history);
 
   const prompt = `
@@ -277,6 +311,19 @@ ${conversationHistory || 'No prior conversation.'}
 
 Visitor: ${message}
 `;
+
+  try {
+    const openAiAnswer = await askOpenAI({ prompt });
+    if (openAiAnswer) {
+      return res.json({ answer: openAiAnswer, action });
+    }
+  } catch (error) {
+    console.warn('[PUBLIC ASSISTANT] OpenAI failed:', error.response?.data?.error?.message || error.message);
+  }
+
+  if (!apiKey) {
+    return res.json({ answer: fallbackAnswer(message, action, history), action });
+  }
 
   const models = [
     process.env.GEMINI_MODEL,

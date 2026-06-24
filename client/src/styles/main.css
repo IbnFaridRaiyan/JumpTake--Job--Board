@@ -39462,6 +39462,523 @@ html[data-theme="light"] .employer-dashboard-header .dashboard-title p {
   background: #000000 !important;
 }
 
+/* Public landing final override v7 */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+input,
+textarea,
+select {
+  font-size: 16px !important;
+}
+
+.landing-content .learn-more-links,
+.landing-page-container .learn-more-links,
+.landing-page-container [class*="learn-more"] {
+  display: none !important;
+}
+
+.landing-page-container .landing-content {
+  width: min(90vw, 16.5rem) !important;
+  min-height: 18.5rem !important;
+  padding: 0.85rem 0.8rem 0.7rem !important;
+  gap: 0.18rem !important;
+}
+
+.landing-page-container .landing-logo {
+  width: 5.4rem !important;
+  margin-bottom: 0.05rem !important;
+}
+
+.public-home-nav {
+  width: min(11.75rem, 76vw) !important;
+  height: 2.4rem !important;
+  min-height: 2.4rem !important;
+  padding: 0.24rem 0.45rem !important;
+  gap: 0.25rem !important;
+  margin-top: 0.05rem !important;
+  background: #000 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  box-shadow: none !important;
+}
+
+.public-home-nav-button {
+  width: 2rem !important;
+  height: 2rem !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.public-home-nav-button svg {
+  width: 1rem !important;
+  height: 1rem !important;
+}
+
+.public-auth-card,
+.public-auth-card.is-register {
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.public-auth-form-shell,
+.public-auth-form-shell:hover,
+.public-auth-form-shell:focus-within {
+  width: min(86vw, 17rem) !important;
+  padding: 0.85rem 0.72rem 0.58rem !important;
+  gap: 0.28rem !important;
+  background: #000 !important;
+  color: #fff !important;
+  border: 0 !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.45) !important;
+  transform: none !important;
+}
+
+.public-auth-form {
+  gap: 0.4rem !important;
+}
+
+.public-auth-heading {
+  margin: 0 0 0.18rem !important;
+  font-size: 1.08rem !important;
+  line-height: 1 !important;
+  color: #fff !important;
+}
+
+.public-auth-field {
+  min-height: 2.35rem !important;
+  padding: 0.32rem 0.55rem !important;
+  gap: 0.4rem !important;
+  background: #1f2029 !important;
+  border: 0 !important;
+}
+
+.public-auth-input {
+  height: 1.75rem !important;
+  padding: 0.32rem 0.5rem !important;
+  background: #3e3e3e !important;
+  color: #fff !important;
+  font-size: 16px !important;
+}
+
+.public-auth-input-icon {
+  width: 0.9rem !important;
+  height: 0.9rem !important;
+}
+
+.public-auth-submit {
+  min-height: 2.1rem !important;
+  margin: 0.12rem auto 0 !important;
+  padding: 0.42rem 0.7rem !important;
+  font-size: 0.72rem !important;
+}
+
+.public-auth-link,
+.public-auth-secondary-link {
+  margin: 0 auto !important;
+  padding: 0 !important;
+  font-size: 0.64rem !important;
+  line-height: 1.1 !important;
+}
+
+.public-auth-secondary-link {
+  color: #ffe7a3 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.public-auth-arrow-button,
+.public-auth-arrow-button:hover,
+.public-auth-arrow-button:focus-visible {
+  width: 1.45rem !important;
+  height: 1.45rem !important;
+  min-width: 0 !important;
+  margin: 0.12rem auto 0 !important;
+  color: #fff !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.public-assistant-dialog {
+  width: min(90vw, 21rem) !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.public-ai-launch-form {
+  width: min(88vw, 20rem) !important;
+  min-height: 0 !important;
+  padding: 0.6rem 0.58rem 0.42rem !important;
+  gap: 0.22rem !important;
+  background: #000 !important;
+  border: 0 !important;
+  border-radius: 1rem !important;
+  box-shadow: none !important;
+}
+
+.public-ai-chat-card .public-ai-chat-header {
+  display: flex !important;
+}
+
+.public-ai-launch-logo {
+  width: 3rem !important;
+  margin-bottom: 0.08rem !important;
+}
+
+.public-ai-launch-input {
+  height: 2.08rem !important;
+  min-height: 2.08rem !important;
+  padding: 0 0.55rem 0 2.18rem !important;
+  background: #000 !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 0.8rem !important;
+  box-shadow: none !important;
+}
+
+.public-ai-launch-input .public-ai-search-icon {
+  left: 0.68rem !important;
+  width: 1rem !important;
+  height: 1rem !important;
+  color: #fb923c !important;
+  fill: #fb923c !important;
+}
+
+.public-ai-launch-textbox {
+  height: 1.68rem !important;
+  padding-left: 0.14rem !important;
+  background: transparent !important;
+  color: #fff !important;
+  font-size: 16px !important;
+}
+
+.public-ai-chat-card {
+  width: min(90vw, 20.5rem) !important;
+  max-width: 20.5rem !important;
+  padding: 0.38rem !important;
+  background: #000 !important;
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 0.9rem !important;
+  box-shadow: none !important;
+}
+
+.public-terminal-wrap,
+.public-terminal-body,
+.public-ai-chat-header,
+.public-ai-chat-messages,
+.public-ai-chat-footer {
+  background: #000 !important;
+  color: #fff !important;
+}
+
+.public-ai-chat-messages {
+  min-height: 6rem !important;
+  max-height: 10rem !important;
+}
+
+.public-ai-chat-bubble.is-assistant {
+  background: #151515 !important;
+  color: #fff !important;
+}
+
+.public-ai-reply-row {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 0.32rem !important;
+  width: 100% !important;
+}
+
+.public-ai-reply-field {
+  min-width: 0 !important;
+  position: static !important;
+}
+
+.public-ai-reply-field input {
+  width: 100% !important;
+  height: 2rem !important;
+  min-height: 2rem !important;
+  padding: 0.38rem 0.58rem !important;
+  font-size: 16px !important;
+  background: #3d3d3d !important;
+  color: #fff !important;
+  border: 0 !important;
+  border-radius: 0.62rem !important;
+}
+
+.public-ai-send-button,
+.public-ai-send-button:hover,
+.public-ai-send-button:focus-visible {
+  position: static !important;
+  transform: none !important;
+  flex: 0 0 auto !important;
+  width: 1.6rem !important;
+  height: 1.6rem !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #fff !important;
+}
+
+.public-ai-send-button svg {
+  width: 0.88rem !important;
+  height: 0.88rem !important;
+}
+
+.public-jobs-dialog {
+  width: min(92vw, 34rem) !important;
+  max-width: 34rem !important;
+  max-height: 88vh !important;
+  padding: 0.7rem 0.72rem 0.58rem !important;
+  gap: 0.28rem !important;
+  background: #000 !important;
+  border: 1px solid rgba(110, 231, 216, 0.28) !important;
+  overflow-y: auto !important;
+}
+
+.public-jobs-hero {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 0.36rem !important;
+  align-items: start !important;
+  margin-bottom: 0.04rem !important;
+}
+
+.public-jobs-lead {
+  align-items: flex-start !important;
+  gap: 0 !important;
+  text-align: left !important;
+}
+
+.public-jobs-lead-copy {
+  font-size: 0.72rem !important;
+  line-height: 0.95 !important;
+}
+
+.public-jobs-lead-highlight {
+  font-size: 1.34rem !important;
+  line-height: 0.88 !important;
+}
+
+.public-jobs-hero-side {
+  align-items: flex-end !important;
+  gap: 0.05rem !important;
+}
+
+.public-jobs-hero-logo-image {
+  width: 2.45rem !important;
+}
+
+.public-jobs-join-copy {
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 0.18rem !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  font-size: 0.58rem !important;
+  line-height: 1 !important;
+}
+
+.public-jobs-join-link {
+  color: #facc15 !important;
+}
+
+.public-jobs-list {
+  gap: 0.36rem !important;
+  padding: 0.04rem 0 !important;
+}
+
+.public-job-feed-card-shell {
+  width: min(100%, 22rem) !important;
+  max-width: 22rem !important;
+  height: 20.25rem !important;
+  min-height: 20.25rem !important;
+  max-height: 20.25rem !important;
+  margin: 0 auto !important;
+  border-radius: 1rem !important;
+  background: #171717 !important;
+  overflow: hidden !important;
+}
+
+.public-job-feed-card-shell .public-job-feed-card-content {
+  width: calc(100% - 4px) !important;
+  height: calc(100% - 4px) !important;
+  min-height: calc(100% - 4px) !important;
+  padding: 0.55rem 0.58rem !important;
+  gap: 0.24rem !important;
+  border-radius: 0.86rem !important;
+  background: #171717 !important;
+  overflow: hidden !important;
+}
+
+.public-job-feed-card-shell .job-card-header {
+  gap: 0.4rem !important;
+}
+
+.public-job-feed-card-shell .job-company-logo {
+  width: 2rem !important;
+  height: 2rem !important;
+}
+
+.public-job-feed-card-shell .job-card-header-text h3 {
+  font-size: 0.8rem !important;
+  line-height: 1.05 !important;
+}
+
+.public-job-feed-card-shell .job-card-header-text p,
+.public-job-feed-card-shell .job-meta-row,
+.public-job-feed-card-shell .posted-date {
+  font-size: 0.58rem !important;
+  line-height: 1.16 !important;
+}
+
+.public-job-feed-card-shell .job-card-body {
+  gap: 0.22rem !important;
+}
+
+.public-job-feed-card-shell .job-card-meta {
+  gap: 0.18rem !important;
+}
+
+.public-job-feed-topline {
+  gap: 0.18rem !important;
+}
+
+.public-job-feed-topline span,
+.public-job-feed-skills span {
+  padding: 0.16rem 0.34rem !important;
+  font-size: 0.52rem !important;
+}
+
+.public-job-feed-description {
+  margin: 0 !important;
+  font-size: 0.58rem !important;
+  line-height: 1.2 !important;
+  -webkit-line-clamp: 3 !important;
+}
+
+.public-job-feed-card-shell .job-card-stats {
+  gap: 0.22rem !important;
+}
+
+.public-job-feed-card-shell .job-card-stats span {
+  min-height: 1.28rem !important;
+  padding: 0.16rem 0.22rem !important;
+  font-size: 0.48rem !important;
+}
+
+.public-job-feed-reactions {
+  margin: 0 !important;
+}
+
+.public-job-feed-actions {
+  gap: 0.28rem !important;
+}
+
+.public-job-feed-secondary-button,
+.public-job-feed-card-shell .apply-button {
+  min-height: 1.45rem !important;
+  padding: 0.22rem 0.34rem !important;
+  font-size: 0.56rem !important;
+}
+
+.public-modal-pagination {
+  gap: 0.58rem !important;
+  margin: 0.04rem auto 0 !important;
+}
+
+.public-modal-pagination button {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0.02rem 0.12rem !important;
+  min-width: 0 !important;
+}
+
+.public-modal-pagination span {
+  white-space: nowrap !important;
+  font-size: 0.55rem !important;
+}
+
+@media (min-width: 769px) {
+  .landing-page-container .landing-content {
+    width: 17.5rem !important;
+    min-height: 18.5rem !important;
+  }
+
+  .public-jobs-dialog {
+    width: min(82vw, 42rem) !important;
+    max-width: 42rem !important;
+  }
+
+  .public-job-feed-card-shell {
+    width: min(100%, 26rem) !important;
+    max-width: 26rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .landing-page-container .landing-content {
+    width: min(90vw, 15.5rem) !important;
+    min-height: 17.8rem !important;
+  }
+
+  .landing-page-container .landing-logo {
+    width: 4.9rem !important;
+  }
+
+  .public-jobs-dialog {
+    width: min(94vw, 21.5rem) !important;
+    max-width: 21.5rem !important;
+  }
+
+  .public-jobs-lead-copy {
+    font-size: 0.64rem !important;
+  }
+
+  .public-jobs-lead-highlight {
+    font-size: 1.16rem !important;
+  }
+
+  .public-jobs-hero-logo-image {
+    width: 2.05rem !important;
+  }
+
+  .public-jobs-join-copy,
+  .public-jobs-join-link,
+  .public-jobs-join-tail {
+    font-size: 0.54rem !important;
+  }
+
+  .public-job-feed-card-shell {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 19.8rem !important;
+    min-height: 19.8rem !important;
+    max-height: 19.8rem !important;
+  }
+}
+
 .public-auth-heading,
 .public-auth-link,
 .public-auth-message,
@@ -40387,6 +40904,1388 @@ html[data-theme="light"] .employer-dashboard-header .dashboard-title p {
 
   .public-modal-pagination span {
     font-size: 0.64rem !important;
+  }
+}
+
+/* Absolute final public landing nav icon sizing. Keep this at EOF. */
+.landing-page-container .public-home-nav {
+  width: min(84vw, 15.75rem) !important;
+  min-width: 13.25rem !important;
+  height: 3.45rem !important;
+  min-height: 3.45rem !important;
+  padding: 0.34rem 0.72rem !important;
+  gap: 1rem !important;
+  background: #000000 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.34) !important;
+}
+
+.landing-page-container .public-home-nav-button {
+  width: 2.85rem !important;
+  height: 2.85rem !important;
+  min-width: 2.85rem !important;
+  min-height: 2.85rem !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #ffffff !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.landing-page-container .public-home-nav-button svg,
+.landing-page-container .public-home-nav-button .public-landing-icon {
+  width: 1.95rem !important;
+  height: 1.95rem !important;
+  min-width: 1.95rem !important;
+  min-height: 1.95rem !important;
+  display: block !important;
+  color: currentColor !important;
+  opacity: 1 !important;
+}
+
+.landing-page-container .public-home-nav-button .public-landing-icon-home path,
+.landing-page-container .public-home-nav-button .public-landing-icon-search path {
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 2.6 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+.landing-page-container .public-home-nav-button .public-landing-icon-register path {
+  fill: currentColor !important;
+  stroke: none !important;
+}
+
+@media (max-width: 768px) {
+  .landing-page-container .landing-content {
+    height: 30vh !important;
+    min-height: 13.75rem !important;
+    max-height: 16.5rem !important;
+    padding: 0.62rem 0.68rem 0.56rem !important;
+  }
+
+  .landing-page-container .landing-logo {
+    width: 5.45rem !important;
+  }
+
+  .landing-page-container .public-home-nav {
+    width: min(80vw, 13.75rem) !important;
+    min-width: 12.4rem !important;
+    height: 3.25rem !important;
+    min-height: 3.25rem !important;
+    padding: 0.3rem 0.64rem !important;
+    gap: 0.9rem !important;
+  }
+
+  .landing-page-container .public-home-nav-button {
+    width: 2.65rem !important;
+    height: 2.65rem !important;
+    min-width: 2.65rem !important;
+    min-height: 2.65rem !important;
+  }
+
+  .landing-page-container .public-home-nav-button svg,
+  .landing-page-container .public-home-nav-button .public-landing-icon {
+    width: 1.82rem !important;
+    height: 1.82rem !important;
+    min-width: 1.82rem !important;
+    min-height: 1.82rem !important;
+  }
+}
+
+/* Absolute final public-home nav sizing override. */
+.landing-page-container .public-home-nav {
+  width: min(82vw, 14.5rem) !important;
+  min-width: 12.75rem !important;
+  height: 3.25rem !important;
+  min-height: 3.25rem !important;
+  padding: 0.32rem 0.65rem !important;
+  gap: 0.95rem !important;
+  background: #000000 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.landing-page-container .public-home-nav-button {
+  width: 2.65rem !important;
+  height: 2.65rem !important;
+  min-width: 2.65rem !important;
+  min-height: 2.65rem !important;
+  padding: 0 !important;
+  color: #ffffff !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  opacity: 1 !important;
+}
+
+.landing-page-container .public-home-nav-button svg {
+  width: 1.72rem !important;
+  height: 1.72rem !important;
+  min-width: 1.72rem !important;
+  min-height: 1.72rem !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: currentColor !important;
+  display: block !important;
+}
+
+.landing-page-container .public-home-nav-button .public-landing-icon-home path,
+.landing-page-container .public-home-nav-button .public-landing-icon-search path {
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 2.35 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+.landing-page-container .public-home-nav-button .public-landing-icon-register path {
+  fill: currentColor !important;
+  stroke: none !important;
+}
+
+@media (max-width: 768px) {
+  .landing-page-container .landing-content {
+    height: 30vh !important;
+    min-height: 13.75rem !important;
+    max-height: 16.5rem !important;
+  }
+
+  .landing-page-container .public-home-nav {
+    width: min(78vw, 12.8rem) !important;
+    min-width: 11.8rem !important;
+    height: 3rem !important;
+    min-height: 3rem !important;
+    padding: 0.3rem 0.58rem !important;
+    gap: 0.82rem !important;
+  }
+
+  .landing-page-container .public-home-nav-button {
+    width: 2.42rem !important;
+    height: 2.42rem !important;
+    min-width: 2.42rem !important;
+    min-height: 2.42rem !important;
+  }
+
+  .landing-page-container .public-home-nav-button svg {
+    width: 1.58rem !important;
+    height: 1.58rem !important;
+    min-width: 1.58rem !important;
+    min-height: 1.58rem !important;
+  }
+}
+
+/* Public home mobile visibility fix: keep this after all public landing overrides. */
+.public-home-nav {
+  width: auto !important;
+  min-width: 11rem !important;
+  height: 2.85rem !important;
+  padding: 0.32rem 0.48rem !important;
+  border-radius: 999px !important;
+  background: #000000 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.56rem !important;
+}
+
+.public-home-nav-button {
+  width: 2.15rem !important;
+  height: 2.15rem !important;
+  min-width: 2.15rem !important;
+  min-height: 2.15rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  color: #ffffff !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  opacity: 1 !important;
+}
+
+.public-home-nav-button:hover,
+.public-home-nav-button:focus-visible {
+  color: #58a6ff !important;
+  background: rgba(88, 166, 255, 0.12) !important;
+}
+
+.public-home-nav-button svg {
+  width: 1.28rem !important;
+  height: 1.28rem !important;
+  min-width: 1.28rem !important;
+  min-height: 1.28rem !important;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: currentColor !important;
+  overflow: visible !important;
+}
+
+.public-home-nav-button .public-landing-icon-home path,
+.public-home-nav-button .public-landing-icon-search path {
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 2 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+.public-home-nav-button .public-landing-icon-register path {
+  fill: currentColor !important;
+  stroke: none !important;
+}
+
+@media (max-width: 768px) {
+  .landing-page-container .landing-content {
+    width: min(82vw, 18rem) !important;
+    height: 30vh !important;
+    min-height: 13.75rem !important;
+    max-height: 16.5rem !important;
+    padding: 1rem 0.9rem !important;
+    gap: 0.48rem !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+  }
+
+  .landing-page-container .logo-container {
+    margin: 0 !important;
+  }
+
+  .landing-page-container .landing-logo {
+    width: 5.6rem !important;
+  }
+
+  .public-home-nav {
+    min-width: 10rem !important;
+    height: 2.55rem !important;
+    padding: 0.26rem 0.42rem !important;
+    gap: 0.5rem !important;
+  }
+
+  .public-home-nav-button {
+    width: 1.95rem !important;
+    height: 1.95rem !important;
+    min-width: 1.95rem !important;
+    min-height: 1.95rem !important;
+  }
+
+  .public-home-nav-button svg {
+    width: 1.16rem !important;
+    height: 1.16rem !important;
+    min-width: 1.16rem !important;
+    min-height: 1.16rem !important;
+  }
+}
+
+/* Public landing final polish: compact modals, cleaner AI chat, and tighter public job feed. */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+input,
+textarea,
+select {
+  font-size: 16px !important;
+}
+
+.landing-page-container .landing-content {
+  width: min(92vw, 17.25rem) !important;
+  min-height: 20.75rem !important;
+  padding: 0.95rem 0.85rem 0.85rem !important;
+  gap: 0.22rem !important;
+}
+
+.landing-page-container .landing-logo {
+  width: 5.8rem !important;
+  margin: 0 auto 0.08rem !important;
+}
+
+.public-home-nav {
+  width: min(78vw, 12.4rem) !important;
+  min-height: 2.62rem !important;
+  height: 2.62rem !important;
+  padding: 0.22rem 0.52rem !important;
+  gap: 0.46rem !important;
+  margin: 0.12rem auto 0 !important;
+  background: #000000 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+}
+
+.public-home-nav-button {
+  width: 1.95rem !important;
+  height: 1.95rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.public-home-nav-button svg {
+  width: 1.05rem !important;
+  height: 1.05rem !important;
+}
+
+.learn-more-links,
+.landing-learn-more,
+.landing-page-container .learn-more-links,
+.landing-page-container .learn-more-button,
+.landing-page-container [class*="learn-more"] {
+  display: none !important;
+}
+
+.public-auth-card {
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.public-auth-form-shell {
+  width: min(86vw, 17.2rem) !important;
+  padding: 0.9rem 0.78rem 0.65rem !important;
+  background: #000000 !important;
+  color: #ffffff !important;
+  border: 0 !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.48) !important;
+}
+
+.public-auth-form {
+  gap: 0.42rem !important;
+}
+
+.public-auth-heading {
+  margin: 0 0 0.25rem !important;
+  color: #ffffff !important;
+  font-family: "Roboto Flex", "Saira", system-ui, sans-serif !important;
+  font-size: 1rem !important;
+  line-height: 1.1 !important;
+  letter-spacing: 0 !important;
+}
+
+.public-auth-field {
+  min-height: 2.18rem !important;
+  padding: 0.25rem 0.48rem !important;
+  gap: 0.42rem !important;
+  background: #1f2029 !important;
+  border: 0 !important;
+  border-radius: 0.35rem !important;
+}
+
+.public-auth-input-icon {
+  width: 0.9rem !important;
+  height: 0.9rem !important;
+}
+
+.public-auth-input {
+  height: 1.78rem !important;
+  padding: 0.35rem 0.5rem !important;
+  font-size: 16px !important;
+  background: #3f3f3f !important;
+  color: #ffffff !important;
+}
+
+.public-auth-submit {
+  min-height: 2.08rem !important;
+  margin: 0.18rem auto 0 !important;
+  padding: 0.45rem 0.75rem !important;
+  font-size: 0.68rem !important;
+}
+
+.public-auth-link,
+.public-auth-secondary-link {
+  margin: 0.02rem auto !important;
+  font-size: 0.6rem !important;
+  line-height: 1.15 !important;
+}
+
+.public-auth-secondary-link {
+  color: #ffffff !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.public-auth-arrow-button {
+  width: 1.45rem !important;
+  height: 1.45rem !important;
+  min-width: 0 !important;
+  margin: 0.12rem auto 0 !important;
+  color: #ffffff !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.public-auth-arrow-button svg {
+  width: 0.92rem !important;
+  height: 0.92rem !important;
+  fill: currentColor !important;
+}
+
+.public-assistant-dialog {
+  width: min(92vw, 21.75rem) !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.public-ai-launch-form {
+  width: min(88vw, 20.4rem) !important;
+  min-height: 0 !important;
+  padding: 0.7rem 0.65rem 0.48rem !important;
+  gap: 0.34rem !important;
+  background: #000000 !important;
+  border: 1px solid rgba(110, 231, 216, 0.24) !important;
+  border-radius: 1rem !important;
+  box-shadow: none !important;
+}
+
+.public-ai-launch-logo {
+  width: 3.1rem !important;
+}
+
+.public-ai-launch-input {
+  min-height: 2.05rem !important;
+  height: 2.05rem !important;
+  padding: 0 0.58rem 0 2.28rem !important;
+  background: #000000 !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 0.82rem !important;
+  box-shadow: none !important;
+}
+
+.public-ai-launch-input .public-ai-search-icon {
+  left: 0.72rem !important;
+  width: 1.05rem !important;
+  height: 1.05rem !important;
+  color: #fb923c !important;
+  fill: #fb923c !important;
+}
+
+.public-ai-launch-textbox {
+  height: 1.75rem !important;
+  min-height: 1.75rem !important;
+  padding: 0 0 0 0.12rem !important;
+  color: #ffffff !important;
+  background: transparent !important;
+  font-size: 16px !important;
+}
+
+.public-ai-chat-card {
+  width: min(90vw, 21rem) !important;
+  max-width: 21rem !important;
+  padding: 0.38rem !important;
+  background: #000000 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  border-radius: 0.9rem !important;
+  box-shadow: none !important;
+}
+
+.public-terminal-wrap,
+.public-terminal-body {
+  background: #000000 !important;
+}
+
+.public-ai-chat-header {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14) !important;
+}
+
+.public-ai-chat-bubble.is-assistant {
+  background: #151515 !important;
+  color: #ffffff !important;
+}
+
+.public-ai-chat-reply {
+  width: 100% !important;
+}
+
+.public-ai-reply-row {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.38rem !important;
+}
+
+.public-ai-reply-field {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  position: static !important;
+}
+
+.public-ai-reply-field input {
+  width: 100% !important;
+  height: 2.08rem !important;
+  padding: 0.42rem 0.62rem !important;
+  color: #ffffff !important;
+  background: #3d3d3d !important;
+  border: 0 !important;
+  border-radius: 0.62rem !important;
+  font-size: 16px !important;
+}
+
+.public-ai-send-button,
+.public-ai-send-button:hover,
+.public-ai-send-button:focus-visible {
+  position: static !important;
+  transform: none !important;
+  flex: 0 0 1.72rem !important;
+  width: 1.72rem !important;
+  height: 1.72rem !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  color: #ffffff !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.public-ai-send-button svg {
+  width: 0.95rem !important;
+  height: 0.95rem !important;
+}
+
+.public-jobs-dialog {
+  width: min(92vw, 36rem) !important;
+  max-width: 36rem !important;
+  max-height: 88vh !important;
+  padding: 0.72rem 0.76rem 0.58rem !important;
+  gap: 0.3rem !important;
+  overflow-y: auto !important;
+  background: #000000 !important;
+  border: 1px solid rgba(110, 231, 216, 0.32) !important;
+}
+
+.public-jobs-hero {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 0.4rem !important;
+  align-items: start !important;
+  margin: 0 0 0.1rem !important;
+}
+
+.public-jobs-lead {
+  align-items: flex-start !important;
+  gap: 0 !important;
+  text-align: left !important;
+}
+
+.public-jobs-lead-copy {
+  font-size: 0.78rem !important;
+  line-height: 0.98 !important;
+}
+
+.public-jobs-lead-highlight {
+  font-size: clamp(1.42rem, 2.4vw, 2.05rem) !important;
+  line-height: 0.88 !important;
+}
+
+.public-jobs-hero-side {
+  align-items: flex-end !important;
+  gap: 0.1rem !important;
+}
+
+.public-jobs-hero-logo-image {
+  width: 2.85rem !important;
+  height: auto !important;
+}
+
+.public-jobs-join-copy {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 0.2rem !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  font-size: 0.64rem !important;
+  line-height: 1 !important;
+}
+
+.public-jobs-join-link {
+  color: #facc15 !important;
+}
+
+.public-jobs-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.42rem !important;
+  padding: 0.08rem 0 !important;
+  margin: 0 !important;
+}
+
+.public-job-feed-card-shell {
+  width: min(100%, 24rem) !important;
+  max-width: 24rem !important;
+  min-height: 22.6rem !important;
+  max-height: 22.6rem !important;
+  margin: 0 auto !important;
+  overflow: hidden !important;
+  border-radius: 1rem !important;
+  background: #171717 !important;
+  box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.53) !important;
+}
+
+.public-job-feed-card-shell::before {
+  width: 4.5rem !important;
+  height: 28rem !important;
+  background: linear-gradient(#ff2288, #387ef0) !important;
+}
+
+.public-job-feed-card-shell::after {
+  background: rgba(23, 23, 23, 0.2) !important;
+}
+
+.public-job-feed-card-shell .public-job-feed-card-content {
+  width: calc(100% - 4px) !important;
+  min-height: calc(100% - 4px) !important;
+  height: calc(100% - 4px) !important;
+  padding: 0.64rem 0.66rem !important;
+  gap: 0.34rem !important;
+  border-radius: 0.86rem !important;
+  background: #171717 !important;
+  overflow: hidden !important;
+}
+
+.public-job-feed-card-shell .job-company-logo {
+  width: 2.2rem !important;
+  height: 2.2rem !important;
+}
+
+.public-job-feed-card-shell .job-card-header {
+  gap: 0.5rem !important;
+}
+
+.public-job-feed-card-shell .job-card-header-text h3 {
+  font-size: 0.86rem !important;
+  line-height: 1.05 !important;
+}
+
+.public-job-feed-card-shell .job-card-header-text p,
+.public-job-feed-card-shell .job-meta-row,
+.public-job-feed-card-shell .posted-date,
+.public-job-feed-description {
+  font-size: 0.64rem !important;
+  line-height: 1.22 !important;
+}
+
+.public-job-feed-card-shell .job-card-body,
+.public-job-feed-card-shell .job-card-meta {
+  gap: 0.28rem !important;
+}
+
+.public-job-feed-topline {
+  gap: 0.24rem !important;
+}
+
+.public-job-feed-topline span,
+.public-job-feed-skills span {
+  padding: 0.2rem 0.42rem !important;
+  font-size: 0.6rem !important;
+}
+
+.public-job-feed-description {
+  -webkit-line-clamp: 4 !important;
+  margin: 0 !important;
+}
+
+.public-job-feed-skills {
+  gap: 0.24rem !important;
+}
+
+.public-job-feed-card-shell .job-card-stats {
+  gap: 0.26rem !important;
+}
+
+.public-job-feed-card-shell .job-card-stats span {
+  min-height: 1.45rem !important;
+  padding: 0.18rem 0.26rem !important;
+  font-size: 0.54rem !important;
+}
+
+.public-job-feed-reactions {
+  margin: 0 !important;
+  min-height: 1.1rem !important;
+}
+
+.public-job-feed-reactions .job-card-like-button {
+  gap: 0.2rem !important;
+  font-size: 0.68rem !important;
+}
+
+.public-job-feed-actions {
+  gap: 0.32rem !important;
+}
+
+.public-job-feed-secondary-button,
+.public-job-feed-card-shell .apply-button {
+  min-height: 1.66rem !important;
+  padding: 0.26rem 0.38rem !important;
+  font-size: 0.62rem !important;
+}
+
+.public-modal-pagination {
+  gap: 0.7rem !important;
+  margin: 0.06rem auto 0 !important;
+}
+
+.public-modal-pagination button {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  min-width: 0 !important;
+  padding: 0.02rem 0.14rem !important;
+}
+
+.public-modal-pagination span {
+  font-size: 0.56rem !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 768px) {
+  .landing-page-container .landing-content {
+    width: min(90vw, 16.6rem) !important;
+    min-height: 19.6rem !important;
+    padding: 0.85rem 0.78rem 0.72rem !important;
+  }
+
+  .landing-page-container .landing-logo {
+    width: 5.25rem !important;
+  }
+
+  .public-home-nav {
+    width: min(74vw, 11.6rem) !important;
+    height: 2.45rem !important;
+    min-height: 2.45rem !important;
+    margin-top: 0.05rem !important;
+  }
+
+  .public-assistant-dialog {
+    width: min(92vw, 21rem) !important;
+  }
+
+  .public-ai-launch-form {
+    width: min(88vw, 20rem) !important;
+    padding: 0.62rem 0.58rem 0.42rem !important;
+  }
+
+  .public-ai-launch-logo {
+    width: 2.8rem !important;
+  }
+
+  .public-ai-launch-input {
+    min-height: 1.96rem !important;
+    height: 1.96rem !important;
+    padding-left: 2.2rem !important;
+  }
+
+  .public-ai-chat-card {
+    width: min(90vw, 20.4rem) !important;
+    max-width: 20.4rem !important;
+  }
+
+  .public-ai-chat-messages {
+    min-height: 7rem !important;
+    max-height: 10.5rem !important;
+  }
+
+  .public-ai-reply-row {
+    gap: 0.3rem !important;
+  }
+
+  .public-ai-reply-field input {
+    height: 2rem !important;
+    padding: 0.4rem 0.55rem !important;
+  }
+
+  .public-ai-send-button,
+  .public-ai-send-button:hover,
+  .public-ai-send-button:focus-visible {
+    flex-basis: 1.55rem !important;
+    width: 1.55rem !important;
+    height: 1.55rem !important;
+  }
+
+  .public-jobs-dialog {
+    width: min(94vw, 22.6rem) !important;
+    max-height: 92vh !important;
+    padding: 0.55rem 0.5rem 0.48rem !important;
+  }
+
+  .public-jobs-hero {
+    gap: 0.2rem !important;
+  }
+
+  .public-jobs-lead-copy {
+    font-size: 0.62rem !important;
+  }
+
+  .public-jobs-lead-highlight {
+    font-size: 1.18rem !important;
+  }
+
+  .public-jobs-hero-logo-image {
+    width: 2.35rem !important;
+  }
+
+  .public-jobs-join-copy,
+  .public-jobs-join-link,
+  .public-jobs-join-tail {
+    font-size: 0.56rem !important;
+  }
+
+  .public-job-feed-card-shell {
+    max-width: 100% !important;
+    min-height: 22rem !important;
+    max-height: 22rem !important;
+  }
+
+  .public-job-feed-card-shell .public-job-feed-card-content {
+    padding: 0.58rem !important;
+    gap: 0.3rem !important;
+  }
+
+  .public-job-feed-card-shell .job-card-header-text h3 {
+    font-size: 0.82rem !important;
+  }
+
+  .public-job-feed-card-shell .job-company-logo {
+    width: 2.05rem !important;
+    height: 2.05rem !important;
+  }
+
+  .public-job-feed-card-shell .job-card-header-text p,
+  .public-job-feed-card-shell .job-meta-row,
+  .public-job-feed-card-shell .posted-date,
+  .public-job-feed-description {
+    font-size: 0.6rem !important;
+  }
+
+  .public-job-feed-description {
+    -webkit-line-clamp: 4 !important;
+  }
+
+  .public-job-feed-topline span,
+  .public-job-feed-skills span {
+    font-size: 0.56rem !important;
+  }
+
+  .public-job-feed-card-shell .job-card-stats span {
+    min-height: 1.35rem !important;
+    font-size: 0.5rem !important;
+  }
+
+  .public-job-feed-secondary-button,
+  .public-job-feed-card-shell .apply-button {
+    min-height: 1.55rem !important;
+    font-size: 0.58rem !important;
+  }
+}
+
+/* Final public-home popup authority overrides */
+.public-home-nav {
+  width: min(18rem, calc(100% - 2rem)) !important;
+  min-height: 3.25rem !important;
+  padding: 0.38rem 0.65rem !important;
+  border-radius: 999px !important;
+  background: #000 !important;
+  gap: 0.4rem !important;
+}
+
+.public-home-nav-button {
+  width: 2.6rem !important;
+  height: 2.6rem !important;
+}
+
+.public-home-nav-button svg {
+  width: 1.28rem !important;
+  height: 1.28rem !important;
+}
+
+.landing-page-container .landing-content {
+  width: min(100%, 18.6rem) !important;
+  min-height: 22.5rem !important;
+  padding: 0.9rem 0.9rem 0.75rem !important;
+  gap: 0.28rem !important;
+}
+
+.landing-page-container .landing-logo-wrap {
+  margin-bottom: 0.15rem !important;
+}
+
+.landing-page-container .landing-logo {
+  width: min(100%, 7rem) !important;
+}
+
+.public-auth-card,
+.public-auth-card.is-register,
+.public-assistant-dialog,
+.public-jobs-dialog {
+  box-shadow: none !important;
+}
+
+.public-auth-form-shell {
+  gap: 0.35rem !important;
+}
+
+.public-auth-form {
+  gap: 0.48rem !important;
+}
+
+.public-auth-heading {
+  margin: 0 0 0.3rem !important;
+  font-size: 1.7rem !important;
+  line-height: 1 !important;
+}
+
+.public-auth-field {
+  min-height: 3.1rem !important;
+  padding: 0.45rem 0.75rem !important;
+}
+
+.public-auth-input {
+  font-size: 1rem !important;
+}
+
+.public-auth-submit {
+  margin-top: 0.35rem !important;
+}
+
+.public-auth-link,
+.public-auth-secondary-link {
+  display: block !important;
+  margin: 0 auto !important;
+  text-align: center !important;
+}
+
+.public-auth-secondary-link {
+  border: 0 !important;
+  background: transparent !important;
+  color: #ffe7a3 !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+}
+
+.public-ai-launch-form {
+  justify-content: center !important;
+  gap: 0.3rem !important;
+}
+
+.public-ai-launch-stage {
+  width: 100% !important;
+}
+
+.public-ai-launch-input {
+  min-height: 2.5rem !important;
+  padding: 0 0.68rem 0 2.45rem !important;
+  background: #000 !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+.public-ai-launch-input::before,
+.public-ai-launch-input::after {
+  display: none !important;
+}
+
+.public-ai-launch-textbox {
+  background: #000 !important;
+  color: #fff !important;
+  font-size: 1rem !important;
+}
+
+.public-ai-launch-textbox::placeholder {
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
+.public-ai-search-icon {
+  color: #fb923c !important;
+}
+
+.public-ai-chat-card {
+  width: min(100%, 24rem) !important;
+  max-width: 24rem !important;
+}
+
+.public-ai-chat-header {
+  padding: 0.7rem 0.85rem !important;
+}
+
+.public-ai-chat-messages {
+  min-height: 7rem !important;
+}
+
+.public-ai-chat-reply {
+  margin-top: 0.42rem !important;
+}
+
+.public-ai-reply-row {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 0.48rem !important;
+}
+
+.public-ai-reply-field {
+  position: relative !important;
+}
+
+.public-ai-reply-field input {
+  width: 100% !important;
+  min-height: 2.45rem !important;
+  padding: 0.56rem 0.72rem !important;
+  font-size: 1rem !important;
+}
+
+.public-ai-send-button,
+.public-ai-send-button:hover,
+.public-ai-send-button:focus-visible {
+  position: static !important;
+  min-width: 0 !important;
+  width: 2rem !important;
+  height: 2rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #fff !important;
+  transform: none !important;
+}
+
+.public-ai-send-button svg {
+  width: 0.92rem !important;
+  height: 0.92rem !important;
+}
+
+.public-jobs-dialog {
+  width: min(92vw, 49rem) !important;
+  max-width: 49rem !important;
+  padding: 0.95rem 1rem 0.8rem !important;
+  gap: 0.55rem !important;
+}
+
+.public-jobs-hero {
+  align-items: start !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+}
+
+.public-jobs-hero-copy {
+  align-self: start !important;
+}
+
+.public-jobs-lead {
+  align-items: flex-start !important;
+  gap: 0.02rem !important;
+}
+
+.public-jobs-lead-copy {
+  font-size: 0.98rem !important;
+  line-height: 1 !important;
+}
+
+.public-jobs-lead-highlight {
+  font-size: 2.2rem !important;
+  line-height: 0.94 !important;
+}
+
+.public-jobs-hero-side {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  justify-content: flex-start !important;
+  gap: 0.15rem !important;
+}
+
+.public-jobs-hero-logo-image {
+  width: 3.2rem !important;
+}
+
+.public-jobs-join-copy {
+  gap: 0.24rem !important;
+  font-size: 0.78rem !important;
+}
+
+.public-job-feed-card-shell {
+  width: min(100%, 28rem) !important;
+}
+
+.public-job-feed-card-shell .public-job-feed-card-content {
+  padding: 0.82rem 0.85rem 0.76rem !important;
+  gap: 0.48rem !important;
+}
+
+.public-job-feed-card-shell .job-card-header-text h3 {
+  font-size: 1rem !important;
+}
+
+.public-job-feed-card-shell .job-card-header-text p,
+.public-job-feed-card-shell .job-meta-row,
+.public-job-feed-card-shell .posted-date,
+.public-job-feed-description {
+  font-size: 0.78rem !important;
+  line-height: 1.32 !important;
+}
+
+.public-job-feed-description {
+  -webkit-line-clamp: 4 !important;
+}
+
+.public-job-feed-card-shell .job-card-stats span {
+  min-height: 2.05rem !important;
+  font-size: 0.69rem !important;
+}
+
+.public-job-feed-secondary-button,
+.public-job-feed-card-shell .apply-button {
+  min-height: 2.1rem !important;
+  font-size: 0.76rem !important;
+}
+
+.public-modal-pagination {
+  margin-top: 0.1rem !important;
+}
+
+.public-modal-pagination button {
+  font-size: 0.82rem !important;
+}
+
+.public-modal-pagination span {
+  font-size: 0.68rem !important;
+}
+
+@media (max-width: 768px) {
+  .public-home-nav {
+    width: min(12.25rem, calc(100% - 1.5rem)) !important;
+    min-height: 2.8rem !important;
+    padding: 0.24rem 0.5rem !important;
+    gap: 0.2rem !important;
+  }
+
+  .public-home-nav-button {
+    width: 2.2rem !important;
+    height: 2.2rem !important;
+  }
+
+  .public-home-nav-button svg {
+    width: 1.08rem !important;
+    height: 1.08rem !important;
+  }
+
+  .landing-page-container .landing-content {
+    width: min(100%, 16.35rem) !important;
+    min-height: 19.25rem !important;
+    padding: 0.7rem 0.72rem 0.6rem !important;
+    gap: 0.2rem !important;
+  }
+
+  .landing-page-container .landing-logo {
+    width: 5.4rem !important;
+  }
+
+  .public-auth-card,
+  .public-auth-card.is-register {
+    width: min(90vw, 18.25rem) !important;
+    padding: 0.82rem 0.78rem !important;
+  }
+
+  .public-auth-form-shell {
+    gap: 0.25rem !important;
+  }
+
+  .public-auth-heading {
+    font-size: 1.32rem !important;
+    margin-bottom: 0.1rem !important;
+  }
+
+  .public-auth-field {
+    min-height: 2.65rem !important;
+    padding: 0.34rem 0.62rem !important;
+  }
+
+  .public-auth-input,
+  .public-auth-link,
+  .public-auth-secondary-link,
+  .public-ai-launch-textbox,
+  .public-ai-reply-field input {
+    font-size: 16px !important;
+  }
+
+  .public-auth-submit {
+    min-height: 2.5rem !important;
+    margin-top: 0.15rem !important;
+    font-size: 0.84rem !important;
+  }
+
+  .public-auth-link,
+  .public-auth-secondary-link {
+    font-size: 0.8rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .public-assistant-dialog {
+    width: min(92vw, 22rem) !important;
+    min-height: min(72vh, 26rem) !important;
+    padding: 0.45rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .public-ai-launch-form {
+    width: min(100%, 20rem) !important;
+    gap: 0.18rem !important;
+  }
+
+  .public-ai-launch-logo {
+    width: 52px !important;
+  }
+
+  .public-ai-launch-input {
+    min-height: 2.25rem !important;
+    padding: 0 0.58rem 0 2.15rem !important;
+    border-radius: 0.8rem !important;
+  }
+
+  .public-ai-search-icon {
+    left: 0.68rem !important;
+    width: 1rem !important;
+    height: 1rem !important;
+  }
+
+  .public-ai-launch-textbox {
+    height: 1.7rem !important;
+  }
+
+  .public-ai-chat-card {
+    width: min(100%, 20rem) !important;
+    max-width: 20rem !important;
+    padding: 0.36rem !important;
+  }
+
+  .public-ai-chat-header {
+    padding: 0.58rem 0.7rem !important;
+  }
+
+  .public-ai-chat-messages {
+    min-height: 5.8rem !important;
+    max-height: 8.3rem !important;
+  }
+
+  .public-ai-reply-row {
+    gap: 0.32rem !important;
+  }
+
+  .public-ai-reply-field input {
+    min-height: 2.05rem !important;
+    padding: 0.4rem 0.55rem !important;
+  }
+
+  .public-ai-send-button,
+  .public-ai-send-button:hover,
+  .public-ai-send-button:focus-visible {
+    width: 1.7rem !important;
+    height: 1.7rem !important;
+  }
+
+  .public-jobs-dialog {
+    width: min(94vw, 22rem) !important;
+    max-width: 22rem !important;
+    padding: 0.72rem 0.66rem 0.58rem !important;
+    gap: 0.32rem !important;
+  }
+
+  .public-jobs-lead-copy {
+    font-size: 0.8rem !important;
+  }
+
+  .public-jobs-lead-highlight {
+    font-size: 1.72rem !important;
+    line-height: 0.92 !important;
+  }
+
+  .public-jobs-join-copy,
+  .public-jobs-join-link,
+  .public-jobs-join-tail {
+    font-size: 0.62rem !important;
+    line-height: 1 !important;
+  }
+
+  .public-jobs-hero-logo-image {
+    width: 2.35rem !important;
+  }
+
+  .public-job-feed-card-shell {
+    width: 100% !important;
+  }
+
+  .public-job-feed-card-shell .public-job-feed-card-content {
+    padding: 0.68rem 0.66rem 0.62rem !important;
+    gap: 0.42rem !important;
+  }
+
+  .public-job-feed-card-shell .job-company-logo {
+    width: 2.2rem !important;
+    height: 2.2rem !important;
+  }
+
+  .public-job-feed-card-shell .job-card-header-text h3 {
+    font-size: 0.92rem !important;
+  }
+
+  .public-job-feed-card-shell .job-card-header-text p,
+  .public-job-feed-card-shell .job-meta-row,
+  .public-job-feed-card-shell .posted-date,
+  .public-job-feed-description,
+  .public-job-feed-topline span,
+  .public-job-feed-skills span {
+    font-size: 0.71rem !important;
+    line-height: 1.26 !important;
+  }
+
+  .public-job-feed-card-shell .job-card-stats span {
+    min-height: 1.88rem !important;
+    font-size: 0.63rem !important;
+    padding: 0.3rem 0.36rem !important;
+  }
+
+  .public-job-feed-secondary-button,
+  .public-job-feed-card-shell .apply-button {
+    min-height: 1.95rem !important;
+    font-size: 0.72rem !important;
+    padding: 0.34rem 0.48rem !important;
+  }
+
+  .public-modal-pagination span {
+    font-size: 0.6rem !important;
   }
 }
 
@@ -45482,4 +47381,161 @@ html[data-theme="light"] .employer-dashboard-header .dashboard-title p {
   .public-modal-pagination span {
     font-size: 0.64rem !important;
   }
+}
+/* True EOF landing card compacting + nav/logo sizing override. */
+.landing-page-container .landing-content {
+  min-height: 16rem !important;
+  height: auto !important;
+  max-height: 18rem !important;
+  padding: 0.78rem 0.82rem 0.66rem !important;
+  gap: 0.08rem !important;
+}
+
+.landing-page-container .landing-logo-wrap {
+  margin-bottom: 0 !important;
+}
+
+.landing-page-container .landing-logo {
+  width: min(100%, 7.75rem) !important;
+  margin-bottom: 0 !important;
+}
+
+.landing-page-container .public-home-nav {
+  width: min(84vw, 15.75rem) !important;
+  min-width: 13.25rem !important;
+  height: 3.45rem !important;
+  min-height: 3.45rem !important;
+  padding: 0.34rem 0.72rem !important;
+  gap: 1rem !important;
+  margin-top: 0.02rem !important;
+  background: #000000 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.34) !important;
+}
+
+.landing-page-container .public-home-nav-button {
+  width: 2.85rem !important;
+  height: 2.85rem !important;
+  min-width: 2.85rem !important;
+  min-height: 2.85rem !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #ffffff !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.landing-page-container .public-home-nav-button svg,
+.landing-page-container .public-home-nav-button .public-landing-icon {
+  width: 1.95rem !important;
+  height: 1.95rem !important;
+  min-width: 1.95rem !important;
+  min-height: 1.95rem !important;
+  display: block !important;
+  color: currentColor !important;
+  opacity: 1 !important;
+}
+
+.landing-page-container .public-home-nav-button .public-landing-icon-home path,
+.landing-page-container .public-home-nav-button .public-landing-icon-search path {
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 2.65 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+.landing-page-container .public-home-nav-button .public-landing-icon-register path {
+  fill: currentColor !important;
+  stroke: none !important;
+}
+
+@media (max-width: 768px) {
+  .landing-page-container .landing-content {
+    min-height: 12.5rem !important;
+    height: 30vh !important;
+    max-height: 15rem !important;
+    padding: 0.58rem 0.68rem 0.52rem !important;
+    gap: 0.02rem !important;
+  }
+
+  .landing-page-container .landing-logo {
+    width: 6.15rem !important;
+  }
+
+  .landing-page-container .public-home-nav {
+    width: min(80vw, 13.75rem) !important;
+    min-width: 12.4rem !important;
+    height: 3.25rem !important;
+    min-height: 3.25rem !important;
+    padding: 0.3rem 0.64rem !important;
+    gap: 0.9rem !important;
+    margin-top: 0 !important;
+  }
+
+  .landing-page-container .public-home-nav-button {
+    width: 2.65rem !important;
+    height: 2.65rem !important;
+    min-width: 2.65rem !important;
+    min-height: 2.65rem !important;
+  }
+
+  .landing-page-container .public-home-nav-button svg,
+  .landing-page-container .public-home-nav-button .public-landing-icon {
+    width: 1.82rem !important;
+    height: 1.82rem !important;
+    min-width: 1.82rem !important;
+    min-height: 1.82rem !important;
+  }
+}
+/* True EOF override: public homepage chat sends with Enter/Return only. */
+.public-ai-chat-reply .public-ai-reply-row {
+  display: block !important;
+  width: 100% !important;
+}
+
+.public-ai-chat-reply .public-ai-reply-field {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.public-ai-chat-reply .public-ai-reply-field .public-ai-search-icon {
+  position: absolute !important;
+  left: 0.68rem !important;
+  top: 50% !important;
+  width: 1rem !important;
+  height: 1rem !important;
+  transform: translateY(-50%) !important;
+  color: #fb923c !important;
+  fill: #fb923c !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
+}
+
+.public-ai-chat-reply .public-ai-reply-field .public-ai-search-icon path {
+  fill: currentColor !important;
+  transform-box: fill-box !important;
+  transform-origin: center !important;
+}
+
+.public-ai-chat-reply .public-ai-reply-field:focus-within .public-ai-search-icon path {
+  animation: pop 0.5s var(--d, 0s) !important;
+}
+
+.public-ai-chat-reply .public-ai-reply-field input {
+  width: 100% !important;
+  padding-left: 2.05rem !important;
+  padding-right: 0.85rem !important;
+}
+
+.public-ai-chat-reply .public-ai-send-button {
+  display: none !important;
 }

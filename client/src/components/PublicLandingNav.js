@@ -122,12 +122,6 @@ const PublicSettingsIcon = () => (
     </svg>
 );
 
-const PublicSendIcon = () => (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 3v18M12 3l7.5 7.5M12 3 4.5 10.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-);
-
 const PublicTerminalIcon = () => (
     <svg viewBox="0 0 24 24" aria-hidden="true">
         <path
@@ -186,7 +180,7 @@ const formatPublicSalary = (salary) => {
     return String(salary);
 };
 
-const PublicLoginDialog = ({ apiBase, onClose, onSuccessCandidate, onSuccessEmployer }) => {
+const PublicLoginDialog = ({ apiBase, onClose, onOpenRegister, onSuccessCandidate, onSuccessEmployer }) => {
     const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
@@ -325,6 +319,7 @@ const PublicLoginDialog = ({ apiBase, onClose, onSuccessCandidate, onSuccessEmpl
                             {isLoading ? 'Submitting...' : 'Login'}
                         </button>
                         <a href="/reset-password" className="public-auth-link">Forgot your password?</a>
+                        <button type="button" className="public-auth-secondary-link" onClick={onOpenRegister}>Sign up</button>
                     </form>
                     <BackArrowButton onClick={() => { resetState(); onClose(); }} label="Close login options" />
                     {message ? (
@@ -390,6 +385,23 @@ const PublicLandingNav = () => {
     }, [activeModal]);
 
     useEffect(() => {
+        if (!activeModal || typeof document === 'undefined') {
+            return undefined;
+        }
+
+        const previousBodyOverflow = document.body.style.overflow;
+        const previousDocumentOverflow = document.documentElement.style.overflow;
+
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+
+        return () => {
+            document.body.style.overflow = previousBodyOverflow;
+            document.documentElement.style.overflow = previousDocumentOverflow;
+        };
+    }, [activeModal]);
+
+    useEffect(() => {
         if (activeModal !== 'jobs' || jobs.length) {
             return;
         }
@@ -435,7 +447,7 @@ const PublicLandingNav = () => {
     };
 
     const askAssistant = async (event) => {
-        event.preventDefault();
+        event?.preventDefault();
         const question = assistantInput.trim();
         if (!question || assistantLoading) {
             return;
@@ -474,6 +486,15 @@ const PublicLandingNav = () => {
         }
     };
 
+    const handleAssistantReplyKeyDown = (event) => {
+        if (event.key !== 'Enter' || event.shiftKey || assistantLoading) {
+            return;
+        }
+
+        event.preventDefault();
+        askAssistant();
+    };
+
     const clearAssistantChat = () => {
         setAssistantMessages([]);
         setAssistantInput('');
@@ -508,8 +529,7 @@ const PublicLandingNav = () => {
                 {[
                     { id: 'home', label: 'Login', icon: 'home', action: () => setActiveModal('login-choice') },
                     { id: 'assistant', label: 'Ask JumpTake', icon: 'search', action: () => setActiveModal('assistant') },
-                    { id: 'register', label: 'Create account', icon: 'register', action: () => setActiveModal('register-choice') },
-                    { id: 'jobs', label: 'Browse jobs', icon: 'jobs', action: () => setActiveModal('jobs') }
+                    { id: 'register', label: 'Create account', icon: 'register', action: () => setActiveModal('register-choice') }
                 ].map((item) => (
                     <button key={item.id} type="button" className="public-home-nav-button" onClick={item.action} aria-label={item.label} title={item.label}>
                         <PublicLandingIcon name={item.icon} />
@@ -521,6 +541,7 @@ const PublicLandingNav = () => {
                 <PublicLoginDialog
                     apiBase={apiBase}
                     onClose={() => setActiveModal('')}
+                    onOpenRegister={() => setActiveModal('register-choice')}
                     onSuccessCandidate={handleCandidateLoginSuccess}
                     onSuccessEmployer={handleEmployerLoginSuccess}
                 />
@@ -607,16 +628,18 @@ const PublicLandingNav = () => {
                                             ) : null}
                                         </ul>
                                         <form className="public-ai-chat-reply" onSubmit={askAssistant}>
-                                            <div className="public-ai-reply-field">
-                                                <input
-                                                    type="text"
-                                                    value={assistantInput}
-                                                    onChange={(event) => setAssistantInput(event.target.value)}
-                                                    placeholder="Reply"
-                                                />
-                                                <button type="submit" className="public-ai-send-button" disabled={assistantLoading}>
-                                                    <PublicSendIcon />
-                                                </button>
+                                            <div className="public-ai-reply-row">
+                                                <div className="public-ai-reply-field">
+                                                    <PublicSparkSearchIcon />
+                                                    <input
+                                                        type="text"
+                                                        value={assistantInput}
+                                                        onChange={(event) => setAssistantInput(event.target.value)}
+                                                        onKeyDown={handleAssistantReplyKeyDown}
+                                                        enterKeyHint="send"
+                                                        placeholder="Reply"
+                                                    />
+                                                </div>
                                             </div>
                                         </form>
                                         <div className="public-ai-chat-footer">

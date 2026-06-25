@@ -16,11 +16,418 @@ Candidate: Home, Notifications, View Candidates, Friends, Bookmarked Candidates,
 Employer: Home, Notifications, Post a Job, Manage Jobs, Manage Applications, Talent Pool, Bookmarked Talents, Assessments, Interviews, Inbox, Company Profile, About JumpTake, Progress Check, Settings.
 `;
 
+const RESPONSE_PLAYBOOK = `
+Use this response style bank as examples, not as a script. Vary wording, answer the latest message directly, and avoid repeating one platform overview.
+
+Account creation:
+- If they ask to create an employer account, ask for company name, business email, industry, or point them to employer registration.
+- If they ask to create a candidate account, ask for name, email, field of work, or point them to candidate registration.
+- If they only say "create me an account", ask whether they are joining as a candidate/job seeker or employer/hiring manager.
+- If they ask to log in, ask whether candidate or employer unless they already specified.
+
+Career tools:
+- Resume requests: ask for work history, education, target role, skills, or an existing resume.
+- Cover letter requests: ask for job title, company, job description, and background.
+- Profile tailoring: ask for target role and the profile/summary to improve.
+
+General conversation:
+- Greetings get a friendly greeting back.
+- "How are you" gets a natural status-style reply.
+- General facts can be answered briefly, then gently offer JumpTake help.
+- Random irrelevant requests should be answered safely and briefly, then redirected to jobs, accounts, resumes, hiring, or JumpTake.
+
+Utility:
+- Math requests should ask for the expression unless the expression is already present.
+- Code requests should ask for language, goal, and features.
+- Jokes, stories, food suggestions, favors, and random questions can be answered normally in one or two sentences.
+
+Extra trained behaviors:
+- If the visitor asks whether they can have two accounts, explain that they can use both candidate and employer workspaces, while keeping the role/account details separate.
+- Utility requests such as currency conversion, translation, JSON formatting, passwords, debugging, SQL, regex, spreadsheets, word counts, markdown conversion, text simplification, dummy data, or pattern finding should ask for the missing input and avoid repeating the platform overview.
+- Decision requests such as what to eat, what to watch, whether to buy something, career choices, travel, books, phones, college, events, exercise, or forgiveness should ask for context and give a short useful direction.
+- Daily troubleshooting requests such as frozen laptops, wet phones, power outages, lockouts, deleted files, Wi-Fi, spills, ovens, plumbing, or car batteries should give immediate safe first steps.
+- Goodbyes and thanks should close naturally.
+`;
+
+const normalizeText = (value) => (
+  String(value || '')
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+);
+
+const pickVariation = (message, options) => {
+  const seed = String(message || '').split('').reduce((total, char) => total + char.charCodeAt(0), 0);
+  return options[seed % options.length];
+};
+
+const LOGIC_QA = [
+  ['A brother and sister were born in different years, but they celebrate their birthdays on the exact same day. How is this possible?', 'They are not twins. They were simply born on the same calendar date in different years.'],
+  ['If a doctor gives you 3 pills and tells you to take one every half hour, how long will they last?', '1 hour. Take one now, one after 30 minutes, and the last after 60 minutes.'],
+  ['A man pushes his car to a hotel and tells the owner he is bankrupt. Why?', 'He is playing Monopoly.'],
+  ['What has keys but opens no locks, space but no room, and allows you to enter but not leave?', 'A keyboard.'],
+  ['A clerk in a butcher shop is 5 feet 10 inches tall and wears size 11 shoes. What does he weigh?', 'Meat.'],
+  ['If an electric train is traveling south and the wind is blowing west, which way does the smoke blow?', 'Nowhere. Electric trains do not emit smoke.'],
+  ['How many months have 28 days?', 'All 12 months have at least 28 days.'],
+  ['Before Mt. Everest was discovered, what was the highest mountain in the world?', 'Mt. Everest. It was still the highest before people identified it.'],
+  ['Johnnys mother had three children. The first child was named April. The second child was named May. What was the third child named?', 'Johnny.'],
+  ['What can run but never walks, has a mouth but never talks, has a head but never weeps, and has a bed but never sleeps?', 'A river.'],
+  ['If you are running a race and you pass the person in second place, what place are you in?', 'Second place.'],
+  ['What word is spelled incorrectly in every single dictionary?', 'Incorrectly.'],
+  ['Brothers and sisters I have none, but that mans father is my fathers son. Who is in the photograph?', 'His son.'],
+  ['What is so fragile that saying its name breaks it?', 'Silence.'],
+  ['Give me food and I will live. Give me water and I will die. What am I?', 'Fire.'],
+  ['What gets wetter the more it dries?', 'A towel.'],
+  ['What goes up but never comes down?', 'Your age.'],
+  ['A man leaves home, makes three left turns, and returns home to find two masked men waiting for him. Who are they?', 'The catcher and the umpire in a baseball game.'],
+  ['What can you catch but never throw?', 'A cold.'],
+  ['You see a boat filled with people. It has not capsized or sunk, but not a single person is on the boat. Why?', 'Everyone on the boat is married.'],
+  ['If a rooster lays an egg on the absolute peak of a sloped roof, which side does it roll down?', 'It does not. Roosters do not lay eggs.'],
+  ['A cowboy rides into town on Friday. He stays three nights, then leaves on Friday. How?', 'His horse is named Friday.'],
+  ['What belongs to you, but everyone else uses it more than you do?', 'Your name.'],
+  ['I have cities but no houses, forests but no trees, and water but no fish. What am I?', 'A map.'],
+  ['How can a man go eight days without sleep?', 'He sleeps at night.'],
+  ['If you drop a yellow hat into the Red Sea, what does it become?', 'Wet.'],
+  ['What has a head and a tail but no body?', 'A coin.'],
+  ['What building has the most stories?', 'A library.'],
+  ['Which is heavier, a pound of feathers or a pound of bricks?', 'Neither. They both weigh one pound.'],
+  ['What occurs once in a minute, twice in a moment, but never in a thousand years?', 'The letter M.'],
+  ['A house has four walls, all facing south. A bear walks past one window. What color is the bear?', 'White. The house is at the North Pole, so it is a polar bear.'],
+  ['What has hands but cannot clap?', 'A clock.'],
+  ['What has an eye but cannot see?', 'A needle, or a storm.'],
+  ['What has a neck but no head?', 'A bottle.'],
+  ['If there are three apples and you take away two, how many apples do you have?', 'Two. You have the two apples you took.'],
+  ['What flies without wings and cries without eyes?', 'A cloud.'],
+  ['The more of them you take, the more you leave behind. What are they?', 'Footsteps.'],
+  ['What goes through cities and over hills but never moves?', 'A road.'],
+  ['What disappears the moment you put it in water?', 'Ice, sugar, or salt can fit depending on context.'],
+  ['What has a thumb and four fingers but is not alive?', 'A glove.'],
+  ['What is full of holes but can still hold water?', 'A sponge.'],
+  ['What goes up and down but remains in the same spot?', 'A staircase.'],
+  ['Two fathers and two sons go fishing and catch three fish, each takes one. How is this possible?', 'There are three people: a grandfather, his son, and his grandson.'],
+  ['A man is born in 1975 and dies in 1975, but he is 30 years old. How?', '1975 is a room number, not the year.'],
+  ['What can you hold in your left hand but never in your right hand?', 'Your right elbow.'],
+  ['I am light as a feather, yet the strongest man cannot hold me for more than five minutes. What am I?', 'Breath.'],
+  ['What is always in front of you but can never be seen?', 'The future.'],
+  ['What breaks on the water but never on land?', 'A wave.'],
+  ['What gets sharper the more you use it?', 'Your brain.'],
+  ['A red house is made of red bricks and a blue house is made of blue bricks. What is a green house made of?', 'Glass.'],
+  ['What kind of room has no doors or windows?', 'A mushroom.'],
+  ['What has legs but cannot walk?', 'A table or chair.'],
+  ['What can you hear but not see or touch, even though you control it?', 'Your voice.'],
+  ['What can you hear but not see or touch, even though you control it completely?', 'Your voice.'],
+  ['A man was walking in the rain without an umbrella or hat, yet no hair got wet. Why?', 'He was bald.'],
+  ['What goes into the water black and comes out red?', 'A lobster when cooked.'],
+  ['What can you drop that will never break, and what can you drop that will surely break?', 'A feather will not break; an egg likely will.'],
+  ['What is black when you buy it, red when you use it, and gray when you throw it away?', 'Charcoal.'],
+  ['What loses its head in the morning and gets it back at night?', 'A pillow.'],
+  ['What has branches but no bark, fruit, or leaves?', 'A bank.'],
+  ['What comes once in a second, once in a month, but never in a century?', 'The letter O.'],
+  ['What has words but never speaks?', 'A book.'],
+  ['You throw away the outside and cook the inside, then eat the outside and throw away the inside. What is it?', 'Corn on the cob.'],
+  ['What is always coming but never arrives?', 'Tomorrow.'],
+  ['I have a large collection of keys, but I cannot open a single door. What am I?', 'A piano.'],
+  ['What is made of water, but if you put it in water it disappears?', 'An ice cube.'],
+  ['What has a ring but no finger?', 'A telephone.'],
+  ['What can travel all around the world while remaining in its corner?', 'A postage stamp.'],
+  ['What gets larger the more you take away from it?', 'A hole.'],
+  ['If a grandfather, two fathers, and two sons go to a movie, what is the minimum number of tickets?', 'Three tickets. They are grandfather, father, and son.'],
+  ['What is easy to get into but hard to get out of?', 'Trouble.'],
+  ['What is clean when it is black and dirty when it is white?', 'A blackboard.'],
+  ['The person who makes it sells it. The person who buys it does not use it. The person who uses it never sees it. What is it?', 'A coffin.'],
+  ['What kind of tree can you carry in your hand?', 'A palm tree.'],
+  ['What is the longest word in the English language?', 'Smiles, because there is a mile between the first and last letters.'],
+  ['How many bricks does it take to complete a standard brick house?', 'One: the last brick.'],
+  ['What can fill an entire room without occupying physical space?', 'Light.'],
+  ['What is yours but is used almost exclusively by other people?', 'Your phone number.'],
+  ['What animal can jump higher than a skyscraper?', 'Any animal that can jump, because skyscrapers cannot jump.'],
+  ['What has two hands, a clean face, but no arms or legs?', 'A clock.'],
+  ['If you divide 30 by half and then add 10, what is the result?', '70. Dividing by half means 30 / 0.5 = 60, plus 10.'],
+  ['How many birthdays does the average human being celebrate?', 'One actual birthday. The rest are anniversaries of it.'],
+  ['Which weighs more, 10 ounces of pure gold or 10 ounces of loose dirt?', 'They weigh the same: 10 ounces.'],
+  ['Why are 1995 pennies worth more than 1994 pennies?', 'Because 1995 pennies is one more penny than 1994 pennies.'],
+  ['A man is driving a black truck with headlights off, no moon, and a black cat steps into the road. How did he see it?', 'It was daytime.'],
+  ['What kind of coat can only be put on when it is wet?', 'A coat of paint.'],
+  ['If five machines take five minutes to make five widgets, how long do 100 machines take to make 100 widgets?', 'Five minutes.'],
+  ['What cannot talk but will always answer back immediately when spoken to?', 'An echo.'],
+  ['You have one match in a dark room with an oil lamp, candle, and wood stove. Which do you light first?', 'The match.'],
+  ['What is full of teeth but can never bite?', 'A comb.'],
+  ['What begins with T, ends with T, and is filled with T?', 'A teapot.'],
+  ['What goes up a chimney down but cannot come down a chimney up?', 'An umbrella.'],
+  ['What question can you never answer honestly with yes?', 'Are you asleep yet?'],
+  ['What has a bottom at the top?', 'Your legs.'],
+  ['What two things can you never eat for breakfast?', 'Lunch and dinner.'],
+  ['What gets smaller every time it takes a bath?', 'A bar of soap.'],
+  ['A group of 10 people are under one umbrella, yet none gets wet. How?', 'It is not raining.'],
+  ['Where does Friday always come before Thursday?', 'In the dictionary.'],
+  ['What has a spine but no bones, and leaves but no branches?', 'A book.'],
+  ['What is the next letter in this sequence: J, F, M, A, M, J, J, A?', 'S, for September in the sequence of month initials.']
+].map(([question, answer]) => ({
+  question,
+  normalizedQuestion: normalizeText(question),
+  answer
+}));
+
+const findLogicAnswer = (message) => {
+  const normalized = normalizeText(message);
+  if (!normalized) {
+    return '';
+  }
+
+  const exact = LOGIC_QA.find((item) => normalized === item.normalizedQuestion);
+  if (exact) {
+    return exact.answer;
+  }
+
+  if (normalized.length < 18) {
+    return '';
+  }
+
+  return LOGIC_QA.find((item) => (
+    item.normalizedQuestion.length > 28
+    && (
+      normalized.includes(item.normalizedQuestion)
+      || (normalized.length > 24 && item.normalizedQuestion.includes(normalized))
+    )
+  ))?.answer || '';
+};
+
+const replyRule = (id, terms, responses) => ({
+  id,
+  test: (normalized) => terms.some((term) => (
+    term instanceof RegExp ? term.test(normalized) : normalized.includes(term)
+  )),
+  responses
+});
+
+const TRAINED_REPLY_RULES = [
+  replyRule('two-accounts', [
+    /\b(can|could|may)\s+i\s+(have|use|make|create|get)\s+(two|2|multiple|both)\s+accounts?\b/,
+    /\b(two|2|multiple|both)\s+accounts?\b/,
+    /\bcandidate\s+and\s+employer\s+accounts?\b/
+  ], [
+    'Yes. You can use JumpTake as both a candidate and an employer. Keep the workspaces separate: candidate for jobs, resumes, and applications; employer for posting jobs and managing hiring. If one email is already tied to a role, use the matching login or a separate email for the other role.',
+    'Yes, that is fine. Think of them as two work modes: candidate for finding work and employer for hiring. Use the correct portal when logging in so your applications and hiring tools stay organized.',
+    'You can have both roles on JumpTake. Candidate accounts handle job search and resumes, while employer accounts handle companies, posts, talent, and applications.'
+  ]),
+  replyRule('currency', ['convert currency', 'exchange rate', 'currency conversion'], [
+    'Sure. Tell me the amount, the currency you have, and the currency you want to convert into.',
+    'I can help with that. Send the amount plus the source and target currencies, like 50 USD to GBP.'
+  ]),
+  replyRule('translate', ['translate to spanish', 'translate this', 'translation'], [
+    'Paste the text you want translated and tell me the target language.',
+    'I can translate it. Send the sentence or paragraph and the language you want.'
+  ]),
+  replyRule('time', ['what time is it', 'current time'], [
+    'Please check your device clock for the exact local time. I can help with schedules or reminders around JumpTake if you need.',
+    'Your screen clock will have the accurate local time. What would you like to do next?'
+  ]),
+  replyRule('json', ['format this json', 'prettify json', 'validate json'], [
+    'Paste the raw JSON and I will clean up the formatting and point out any syntax issues.',
+    'Drop the messy JSON here and I will make it readable.'
+  ]),
+  replyRule('password', ['generate a safe password', 'secure password', 'random password'], [
+    'Tell me the password length you want and whether symbols are allowed. I can suggest a strong format.',
+    'I can help generate a strong password pattern. How many characters should it be?'
+  ]),
+  replyRule('debug-code', ['debug my code', 'fix my code', 'error logs', 'error log'], [
+    'Paste the code and the exact error message. I will help narrow down what is breaking.',
+    'Send the snippet, what you expected, and what happened instead. We will debug it step by step.'
+  ]),
+  replyRule('uppercase', ['uppercase', 'all caps'], [
+    'Paste the text and I will convert it to uppercase.',
+    'Send the text you want transformed.'
+  ]),
+  replyRule('sql', ['sql query', 'write sql'], [
+    'Tell me the table names, columns, and the result you want, and I will write the SQL query.',
+    'I can write that query. Share the schema and the goal.'
+  ]),
+  replyRule('ip-address', ['my ip address', 'what is my ip'], [
+    'I cannot see your private network details from here. Use your device settings or a trusted IP-checking site.',
+    'For privacy, I do not have access to your IP address. Your network settings can show it.'
+  ]),
+  replyRule('spreadsheet', ['spreadsheet formula', 'excel formula', 'google sheets formula'], [
+    'Tell me the columns, cell ranges, and what you want calculated. I will write the formula.',
+    'I can help with that spreadsheet formula. What cells and operation are involved?'
+  ]),
+  replyRule('word-count', ['count these words', 'word count', 'character count'], [
+    'Paste the text and I will count the words for you.',
+    'Send the paragraph or draft and I will calculate the count.'
+  ]),
+  replyRule('markdown', ['markdown to html', 'convert markdown'], [
+    'Paste the markdown and I will convert it into clean HTML.',
+    'Send the markdown block and I will turn it into HTML.'
+  ]),
+  replyRule('regex', ['regex pattern', 'regular expression', 'write regex'], [
+    'Tell me exactly what text pattern you want to match, and I will write the regex.',
+    'Regex can be picky. Send examples of what should match and what should not.'
+  ]),
+  replyRule('simplify', ['simplify this text', 'make this simpler', 'rewrite simply'], [
+    'Paste the text and I will make it clearer and easier to read.',
+    'Send the dense copy and I will simplify it.'
+  ]),
+  replyRule('dummy-data', ['dummy data', 'mock data', 'fake data'], [
+    'Tell me the format you need, like JSON, CSV, or SQL, plus the fields and number of rows.',
+    'I can generate sample data. What fields should it include?'
+  ]),
+  replyRule('find-patterns', ['find text patterns', 'find pattern', 'search this text'], [
+    'Paste the text and tell me what keyword or pattern you want found.',
+    'Send the document and the pattern you are hunting for.'
+  ]),
+  replyRule('choose-food', ['what should i eat', 'what food should i eat', 'hungry'], [
+    'Tell me your mood: savory, sweet, spicy, healthy, or comfort food. I will help you pick.',
+    'A quick balanced option is protein, carbs, and vegetables. What ingredients do you have?'
+  ]),
+  replyRule('decide', ['help me decide', 'choose between', 'which one should i pick'], [
+    'List the options and what matters most: cost, time, risk, comfort, or outcome. I will compare them.',
+    'Decision mode on. Give me the two choices and your main priorities.'
+  ]),
+  replyRule('quit-job', ['should i quit my job', 'quit my job'], [
+    'That is a big decision. Before quitting, look at savings, backup options, stress level, career growth, and whether you have another role lined up.',
+    'Let us slow it down: what is pushing you to leave, and do you have a financial or career backup plan?'
+  ]),
+  replyRule('movie', ['what movie should i watch', 'movie should i watch'], [
+    'What mood are you in: comedy, thriller, sci-fi, drama, or something cozy?',
+    'Give me a genre and one movie you liked recently, and I will suggest one.'
+  ]),
+  replyRule('career-choice', ['what career should i choose', 'career should i choose'], [
+    'Start with three things: what you are good at, what you can tolerate daily, and what the market pays for. What fields interest you?',
+    'Tell me your skills, interests, and preferred work style, and I will suggest career directions.'
+  ]),
+  replyRule('phone-choice', ['which phone is better', 'best phone'], [
+    'Which models are you comparing, and what matters most: camera, battery, price, performance, or ecosystem?',
+    'Tell me the two phones and your budget, and I will compare them clearly.'
+  ]),
+  replyRule('link-safety', ['is this link safe', 'is this url safe', 'safe link', 'virus link'], [
+    'I cannot sandbox or click live links from here. For safety, paste only the domain if you want a quick read, and use a trusted scanner like VirusTotal before opening anything suspicious.',
+    'Smart question. I cannot verify a live URL directly in this chat, but you can check it with a URL safety scanner and avoid logging in through links you did not request.'
+  ]),
+  replyRule('python-script', ['write a python script', 'python script', 'python code'], [
+    'Python is a good pick. Tell me what the script should automate, the input it receives, and the output you want.',
+    'I can write that Python script. Share the task, any required libraries, and a tiny example of the data if you have one.'
+  ]),
+  replyRule('pick-number', ['pick a number', 'number between 1 and 10'], [
+    '7.',
+    'Let us go with 7. Classic choice, weirdly powerful.'
+  ]),
+  replyRule('flip-coin', [
+    'flip a coin',
+    'coin toss',
+    'heads or tails',
+    /\b(flip|toss)\s+(a\s+)?coin\b/,
+    /\bcoin\s+(flip|toss)\b/
+  ], [
+    'Heads.',
+    'Digital coin flipped: heads.'
+  ]),
+  replyRule('rain', ['is it going to rain', 'will it rain', 'rain today'], [
+    'I do not know your exact local weather from here. Check your weather app for the live forecast, and take an umbrella if the sky looks suspicious.',
+    'I cannot see your location-specific forecast in this chat. Your local weather app will be more accurate.'
+  ]),
+  replyRule('buy-this', ['should i buy this', 'should i purchase', 'worth buying'], [
+    'Tell me what it is, the price, your budget, and how often you will use it. Then I can help decide if it is worth buying.',
+    'Quick test: is it useful, affordable, and something you will still want next week? Send the item details and I will compare it with you.'
+  ]),
+  replyRule('vacation', ['where should i go on vacation', 'vacation destination', 'travel destination'], [
+    'What kind of trip do you want: beach, city, nature, culture, food, or quiet rest? Add your budget and season, and I will suggest options.',
+    'Give me your budget, travel dates, and vibe, and I will help narrow down a good destination.'
+  ]),
+  replyRule('college', ['is college worth it', 'university worth it'], [
+    'It depends on your field, cost, debt, and alternatives. For licensed careers it often matters; for tech or creative paths, portfolios and certifications can also work.',
+    'Let us compare cost, career goal, and expected return. What subject are you considering?'
+  ]),
+  replyRule('book', ['what book should i read', 'book should i read', 'read next'], [
+    'What mood are you in: fiction, self-improvement, biography, fantasy, mystery, or career growth?',
+    'Tell me one book you liked and one genre you want, and I will suggest a good next read.'
+  ]),
+  replyRule('adopt-pet', ['should i adopt a pet', 'adopt a pet'], [
+    'Pets are wonderful, but they need time, money, space, and long-term care. What pet are you considering and what is your daily schedule like?',
+    'If you have the budget, stable housing, and time for daily care, adoption can be great. Let us check the practical side first.'
+  ]),
+  replyRule('red-or-blue', ['red or blue', 'blue or red'], [
+    'Blue.',
+    'I pick blue. Calm, clean, dependable.'
+  ]),
+  replyRule('event-choice', ['should i go to the event', 'go to the event'], [
+    'If the event gives you connection, learning, or a real break, go. If you are exhausted or it costs too much, skip it without guilt.',
+    'Tell me the event, cost, timing, and why you are unsure. I will help you decide.'
+  ]),
+  replyRule('workout', ['should i work out', 'workout today'], [
+    'If you are not sick or injured, even a short walk or stretch is worth it. Keep it light if you are tired.',
+    'Listen to your body. Energy available? Move a little. Pain or illness? Rest.'
+  ]),
+  replyRule('truth', ['should i tell them the truth', 'tell them the truth'], [
+    'Usually yes, but delivery matters. Be honest, calm, and specific without being cruel.',
+    'Truth is usually cleaner long-term. What is the situation? I can help phrase it.'
+  ]),
+  replyRule('forgive', ['should i forgive', 'forgive them'], [
+    'Forgiveness can give you peace, but it does not mean removing boundaries. What happened?',
+    'You can forgive and still protect yourself. Let us think through the boundary you need.'
+  ]),
+  replyRule('laptop-frozen', ['laptop froze', 'computer froze', 'screen froze'], [
+    'Try Ctrl + Shift + Esc on Windows to open Task Manager, or hold the power button for about 10 seconds if it is fully locked.',
+    'Give it a minute first. If it stays frozen, force restart and check autosave afterward.'
+  ]),
+  replyRule('phone-water', ['phone in water', 'dropped my phone in water', 'water damage'], [
+    'Turn it off immediately. Remove the case and SIM if possible, dry the outside, and use silica gel packs. Avoid rice and do not charge it yet.',
+    'Power it down now. The danger is electricity through wet circuits, so do not test or charge it until it is fully dry.'
+  ]),
+  replyRule('power-out', ['power went out', 'blackout'], [
+    'Check if neighbors also lost power. If only your place is out, look for a tripped breaker if it is safe to do so.',
+    'Use a phone light, avoid candles near flammable things, and check whether the outage is building-wide or just your unit.'
+  ]),
+  replyRule('locked-out', ['locked myself out', 'locked out of my house'], [
+    'Check safe alternate entry points, then call a roommate, landlord, property manager, or a certified locksmith.',
+    'That is stressful. First confirm every door/window you can safely access, then contact someone with a key.'
+  ]),
+  replyRule('deleted-file', ['deleted an important file', 'accidentally deleted', 'recover file'], [
+    'Check Recycle Bin or Trash first. If it is not there, stop saving new files to that drive and use a recovery tool quickly.',
+    'Look in Trash/Recycle Bin immediately. If it was emptied, avoid writing new data before recovery.'
+  ]),
+  replyRule('wifi', ['wifi keeps dropping', 'wi fi keeps dropping', 'internet keeps dropping'], [
+    'Restart your router and modem for 30 seconds. If it continues, check router placement, interference, and firmware updates.',
+    'Move closer to the router, restart it, and see if other devices have the same issue.'
+  ]),
+  replyRule('spill', ['spilled coffee', 'spilled water on keyboard', 'keyboard spill'], [
+    'Unplug it immediately, flip it upside down over a towel, and let it dry completely before testing.',
+    'Cut power first. Then drain and dry it. Do not keep typing on it while wet.'
+  ]),
+  replyRule('car-click', ['car wont start', 'car won t start', 'click when i turn the key'], [
+    'Rapid clicking usually means a weak or dead battery. Try a jump start or a battery booster.',
+    'That click often points to low battery voltage. Jumper cables or a booster pack are the next step.'
+  ]),
+  replyRule('goodbye-trained', ['goodbye', 'talk to you later', 'see ya', 'peace out', 'signing off'], [
+    'Goodbye. Come back anytime you want help with JumpTake or anything practical.',
+    'Talk to you later. I will be here when you need the next step.'
+  ]),
+  replyRule('sleep', ['going to sleep', 'go to sleep', 'sleep now'], [
+    'Sleep well. I will be here when you come back.',
+    'Good call. Rest up, and we can pick this back up later.'
+  ]),
+  replyRule('clear-history', ['clear history', 'clear chat', 'clear history and close'], [
+    'You can clear the chat from the settings menu. After that, we will start fresh.',
+    'Sure. Use clear chat in the settings menu and I will treat the next message like a new conversation.'
+  ])
+];
+
+const findTrainedAssistantAnswer = (message) => {
+  const normalized = normalizeText(message);
+  if (!normalized) {
+    return '';
+  }
+
+  const rule = TRAINED_REPLY_RULES.find(({ test }) => test(normalized));
+  return rule ? pickVariation(message, rule.responses) : '';
+};
+
 const inferAction = (message) => {
   const normalized = String(message || '').toLowerCase();
   const mentionsCandidate = /\b(candidate|job seeker|jobseeker)\b/.test(normalized);
   const mentionsEmployer = /\b(employer|company|recruiter)\b/.test(normalized);
-  const asksRegister = /\b(register|registration|create (an )?account|sign ?up|join)\b/.test(normalized);
+  const asksRegister = /\b(register|registration|sign ?up|join)\b/.test(normalized)
+    || /\b(create|make|open|start|set ?up|setup|get)\b.{0,24}\b(account|profile)\b/.test(normalized);
   const asksLogin = /\b(log ?in|login|sign ?in)\b/.test(normalized);
   const asksJobs = /\b(job feed|jobs feed|browse jobs|open jobs|show jobs|job posts|find jobs)\b/.test(normalized);
 
@@ -126,29 +533,66 @@ const fallbackAnswer = (message, action, history = []) => {
   const looksLikeCasualShortMessage = normalized.length <= 12 && /^[a-z0-9\s,'!?-]+$/i.test(normalized);
 
   if (action === 'choose-login') {
-    return 'Would you like to log in as a candidate or an employer?';
+    return pickVariation(message, [
+      'Would you like to log in as a candidate or an employer?',
+      'Sure. Are you signing in as a job seeker or as an employer?',
+      'Welcome back. Which portal should I open for you: candidate or employer?'
+    ]);
   }
   if (action === 'choose-register') {
-    return 'Which account would you like to create: candidate or employer?';
+    return pickVariation(message, [
+      'Which account would you like to create: candidate or employer?',
+      'I can help with that. Are you joining to find work or to hire talent?',
+      'Let’s get you registered. Do you need a candidate account or an employer account?'
+    ]);
   }
   if (action === 'candidate-login') {
-    return 'Opening candidate login. Candidates can browse jobs, apply, track applications, complete assessments, and manage their profile.';
+    return pickVariation(message, [
+      'Opening candidate login. You can browse jobs, apply, track applications, complete assessments, and manage your profile.',
+      'Candidate login coming up. Enter your details there and you’ll land in your job seeker workspace.',
+      'Let’s get you back into the candidate portal. Use your registered email or username and password.'
+    ]);
   }
   if (action === 'employer-login') {
-    return 'Opening employer login. Employers can post jobs, manage applications, browse talent, and arrange assessments and interviews.';
+    return pickVariation(message, [
+      'Opening employer login. Employers can post jobs, manage applications, browse talent, and arrange assessments and interviews.',
+      'Employer login coming up. Enter your company account details to access hiring tools.',
+      'Let’s get you into the employer portal so you can manage jobs, candidates, interviews, and applications.'
+    ]);
   }
   if (action === 'candidate-register') {
-    return 'Opening candidate registration. Start by uploading your resume, then create your account and choose job preferences.';
+    return pickVariation(message, [
+      'Opening candidate registration. Start by uploading your resume, then create your account and choose job preferences.',
+      'Let’s build your candidate profile. Upload your resume first, then JumpTake can help match you with jobs.',
+      'Ready to find your next role? Candidate registration starts with your resume and basic account details.'
+    ]);
   }
   if (action === 'employer-register') {
-    return 'Opening employer registration. Start by searching for your company or entering company information manually.';
+    return pickVariation(message, [
+      'Opening employer registration. Start by searching for your company or entering company information manually.',
+      'Let’s set up your employer profile. Search your company first, or use manual registration if it is not listed.',
+      'Ready to hire? Employer registration starts with your company name and business details.'
+    ]);
   }
   if (action === 'open-jobs') {
     return 'Opening the public job feed. You can browse active jobs now, and candidate login is only needed when you want to open details or apply.';
   }
 
+  const trainedAnswer = findTrainedAssistantAnswer(message);
+  if (trainedAnswer) {
+    return trainedAnswer;
+  }
+
   if (/\b(what('?s| is) your name|who are you)\b/.test(normalized)) {
     return "I'm JumpTake AI. Want to learn more about me?";
+  }
+
+  if (/\b(capital of germany|germany capital)\b/.test(normalized)) {
+    return pickVariation(message, [
+      'The capital of Germany is Berlin.',
+      'That would be Berlin, Germany’s capital and largest city.',
+      'Berlin. It is Germany’s capital and a major cultural, political, and tech hub.'
+    ]);
   }
 
   if (/\b(yes|yeah|yep|sure|okay|ok|tell me more)\b/.test(normalized) && /learn more about me/.test(lastAssistantText)) {
@@ -160,13 +604,25 @@ const fallbackAnswer = (message, action, history = []) => {
   }
 
   if (/\b(hi|hii|hello|helo|hey|hiya|yo|sup|good morning|good evening)\b/.test(normalized)) {
-    return priorConversation
-      ? "Hey, I'm still with you. Ask me about jobs, accounts, applications, resumes, hiring, or any JumpTake page."
-      : "Hey there. I'm JumpTake AI. I can help with jobs, accounts, resumes, hiring, portal pages, and how the platform works.";
+    return pickVariation(message, priorConversation
+      ? [
+        "Hey, I'm still with you. What would you like to do next?",
+        'Hello again. Want help with jobs, resumes, accounts, or hiring?',
+        'Hey. I’m here. Give me the next thing you want to figure out.'
+      ]
+      : [
+        "Hey there. I'm JumpTake AI. I can help with jobs, accounts, resumes, hiring, portal pages, and how the platform works.",
+        'Hello. I’m JumpTake AI, your guide for jobs, candidates, employers, resumes, and account setup.',
+        'Hi. Tell me what you want to do on JumpTake and I’ll walk you through it.'
+      ]);
   }
 
   if (/\b(how are you|how you doing|what'?s up|whats up|wyd)\b/.test(normalized)) {
-    return "I'm doing well and ready to help. Ask me about JumpTake, jobs, applications, resumes, hiring, or what you want to do next.";
+    return pickVariation(message, [
+      "I'm doing well and ready to help. Ask me about JumpTake, jobs, applications, resumes, hiring, or what you want to do next.",
+      'All systems ready. What are we working on: job search, hiring, resumes, accounts, or a page tour?',
+      'Doing great. I’m here to help you move through JumpTake without getting lost in the buttons.'
+    ]);
   }
 
   if (/\b(thanks|thank you|cheers)\b/.test(normalized)) {
@@ -183,6 +639,110 @@ const fallbackAnswer = (message, action, history = []) => {
 
   if (/\b(tour|show me around|how does jumptake work|how it works)\b/.test(normalized)) {
     return "Quick tour: public visitors can browse jobs, candidates can register, apply, build resumes, and track applications, and employers can register, post jobs, review applications, and search talent. Tell me which side you want to explore and I'll walk you through it.";
+  }
+
+  if (/\b(build|make|write|create).{0,20}\b(resume|cv)\b|\b(resume|cv).{0,20}(build|make|write|create)\b/.test(normalized)) {
+    return pickVariation(message, [
+      'I can help build your resume. Share your work history, education, skills, and the role you are targeting.',
+      'Let’s craft a strong resume. Paste your old resume or list your recent jobs and top achievements.',
+      'Ready to stand out? Tell me your target job title and your strongest skills, then I’ll help shape the resume.'
+    ]);
+  }
+
+  if (/\b(cover letter|coverletter)\b/.test(normalized)) {
+    return pickVariation(message, [
+      'I can draft a cover letter. Send the job title, company name, and a short summary of your background.',
+      'Paste the job description and your resume details, and I’ll tailor a cover letter for that role.',
+      'Sure. Do you want it professional and direct, or more energetic and creative?'
+    ]);
+  }
+
+  if (/\b(tailor|optimize|improve|rewrite).{0,30}\b(profile|bio|summary)\b|\b(profile|bio|summary).{0,30}\b(tailor|optimize|improve|rewrite)\b/.test(normalized)) {
+    return pickVariation(message, [
+      'I can tailor your profile. Share your current summary and the target role or industry.',
+      'Let’s make your profile sharper. What are the top three skills or projects you want recruiters to notice?',
+      'Send the job description you’re aiming for and I’ll help align your profile with the right keywords.'
+    ]);
+  }
+
+  if (/\b(apple)\b/.test(normalized)) {
+    return pickVariation(message, [
+      'Apple can mean the fruit, or Apple Inc., the company behind iPhone, Mac, iPad, and iOS.',
+      'Are we talking about the snack or the tech company? I can explain either one.',
+      'Apple is both a common fruit and a major technology company founded by Steve Jobs, Steve Wozniak, and Ronald Wayne.'
+    ]);
+  }
+
+  if (/\b(help me|help|assist me|need help)\b/.test(normalized)) {
+    return pickVariation(message, [
+      'I’m here. Tell me what you’re trying to do and I’ll guide you step by step.',
+      'You’ve got me. Do you need help with jobs, accounts, resumes, hiring, or something else?',
+      'Signal received. What problem are we solving today?'
+    ]);
+  }
+
+  if (/\b(math|calculate|calculator|solve|equation)\b/.test(normalized)) {
+    return pickVariation(message, [
+      'Math mode ready. Send the expression or numbers and I’ll calculate it.',
+      'Give me the equation, percentage, or formula and I’ll work it out.',
+      'I can do that. What calculation should I solve?'
+    ]);
+  }
+
+  if (/\b(code|coding|program|script|debug)\b/.test(normalized)) {
+    return pickVariation(message, [
+      'I can help with code. What language are we using, and what should it do?',
+      'Tell me the tech stack and the feature or bug, and I’ll help write or debug it.',
+      'Ready to build. Describe the logic you need and I’ll shape the code.'
+    ]);
+  }
+
+  if (/\b(joke|make me laugh)\b/.test(normalized)) {
+    return pickVariation(message, [
+      "Why don't scientists trust atoms? Because they make up everything.",
+      "How many programmers does it take to change a lightbulb? None. That's a hardware problem.",
+      'Why did the scarecrow win an award? Because he was outstanding in his field.'
+    ]);
+  }
+
+  if (/\b(story|tell me a story)\b/.test(normalized)) {
+    return pickVariation(message, [
+      'I can tell you a story. Pick a genre: sci-fi, mystery, comedy, or career adventure.',
+      'Once upon a time, a tiny idea applied for its dream job and somehow passed every interview. Want the full version?',
+      'Give me a main character and a mood, and I’ll spin a short story for you.'
+    ]);
+  }
+
+  if (/\b(dance|can you dance)\b/.test(normalized)) {
+    return pickVariation(message, [
+      'No physical legs here, but I can absolutely dance through text rhythm.',
+      'Only in the data stream. My footwork is imaginary, but my timing is decent.',
+      'I can’t dance physically, but I can make you a playlist or explain a dance step.'
+    ]);
+  }
+
+  if (/\b(food|eat|hungry|meal|snack)\b/.test(normalized)) {
+    return pickVariation(message, [
+      'If you want comfort, pasta is a solid pick. If you want light and fresh, try a salad or grilled protein bowl.',
+      'Depends on your mood. Are you craving savory, sweet, spicy, quick, or healthy?',
+      'A good default: rice or bread, protein, vegetables, and something bright like lemon or sauce.'
+    ]);
+  }
+
+  if (/\b(random question|ask me random|ask random)\b/.test(normalized)) {
+    return pickVariation(message, [
+      'Random question: If you could master one skill instantly, what would it be?',
+      'Here’s one: would you rather work from a quiet cabin or a high-rise city office?',
+      'Random one: if your life had a title this week, what would it be?'
+    ]);
+  }
+
+  if (/\b(favor|favour|do me a favor|do me a favour)\b/.test(normalized)) {
+    return pickVariation(message, [
+      'Of course. Tell me the favor, and if it involves text, logic, coding, learning, jobs, or planning, I’ll help.',
+      'Name it. I’ll do my best to make it easier.',
+      'Sure. What do you need from me?'
+    ]);
   }
 
   if (/\b(what next|next step|what should i do|help me start)\b/.test(normalized)) {
@@ -220,22 +780,89 @@ const fallbackAnswer = (message, action, history = []) => {
     : 'I can help with JumpTake. Ask for a tour, a page explanation, jobs, account setup, or the next step.';
 };
 
-const askOpenAI = async ({ prompt }) => {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    return '';
+const getOpenAIApiKey = () => (
+  process.env.OPENAI_API_KEY
+  || process.env.CHATGPT_API_KEY
+  || process.env.OPENAI_SECRET_KEY
+  || process.env.OPENAI_KEY
+  || ''
+).trim();
+
+const getOpenAIModelCandidates = () => {
+  const configured = String(process.env.OPENAI_MODEL || '').trim();
+  return [...new Set([
+    configured,
+    'gpt-5',
+    'gpt-4.1-mini',
+    'gpt-4o-mini'
+  ].filter(Boolean))];
+};
+
+const getPreferredAssistantProvider = () => (
+  String(
+    process.env.PUBLIC_ASSISTANT_PROVIDER
+    || process.env.AI_PROVIDER
+    || 'openai'
+  )
+    .trim()
+    .toLowerCase()
+);
+
+const getAssistantProviderOrder = () => {
+  const preferred = getPreferredAssistantProvider();
+
+  if (preferred === 'openai') {
+    return ['openai'];
   }
 
-  const model = process.env.OPENAI_MODEL || 'gpt-5.2';
+  if (preferred === 'gemini') {
+    return ['gemini'];
+  }
+
+  return ['openai'];
+};
+
+const extractOpenAIResponseText = (data) => {
+  const directText = String(data?.output_text || '').trim();
+  if (directText) {
+    return directText;
+  }
+
+  const outputBlocks = Array.isArray(data?.output) ? data.output : [];
+  const collected = outputBlocks
+    .flatMap((block) => Array.isArray(block?.content) ? block.content : [])
+    .map((part) => {
+      if (typeof part?.text === 'string') {
+        return part.text;
+      }
+      if (typeof part?.text?.value === 'string') {
+        return part.text.value;
+      }
+      return '';
+    })
+    .join('')
+    .trim();
+
+  return collected;
+};
+
+const askOpenAIResponsesApi = async ({ apiKey, model, prompt, useWebSearch = false }) => {
+  const payload = {
+    model,
+    input: prompt,
+    max_output_tokens: 500
+  };
+
+  if (useWebSearch) {
+    payload.tools = [{ type: 'web_search_preview' }];
+    payload.tool_choice = 'auto';
+  }
+
   const response = await axios.post(
     'https://api.openai.com/v1/responses',
+    payload,
     {
-      model,
-      input: prompt,
-      max_output_tokens: 500
-    },
-    {
-      timeout: 20000,
+      timeout: 25000,
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
@@ -243,19 +870,160 @@ const askOpenAI = async ({ prompt }) => {
     }
   );
 
-  const directText = String(response.data?.output_text || '').trim();
-  if (directText) {
-    return directText;
+  return extractOpenAIResponseText(response.data);
+};
+
+const askOpenAIChatCompletionsApi = async ({ apiKey, model, prompt }) => {
+  const response = await axios.post(
+    'https://api.openai.com/v1/chat/completions',
+    {
+      model,
+      temperature: 0.35,
+      max_tokens: 500,
+      messages: [
+        {
+          role: 'user',
+          content: prompt
+        }
+      ]
+    },
+    {
+      timeout: 25000,
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      }
+    }
+  );
+
+  return String(response.data?.choices?.[0]?.message?.content || '').trim();
+};
+
+const askOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = false }) => {
+  try {
+    const responseText = await askOpenAIResponsesApi({ apiKey, model, prompt, useWebSearch });
+    if (responseText) {
+      return responseText;
+    }
+  } catch (error) {
+    const message = String(error.response?.data?.error?.message || error.message || '');
+    const shouldRetryWithoutSearch = useWebSearch && /web_search|tool|unsupported|invalid/i.test(message);
+
+    if (shouldRetryWithoutSearch) {
+      return askOpenAIWithModel({ apiKey, model, prompt, useWebSearch: false });
+    }
+
+    const shouldTryChatCompletions = /responses|output_text|max_output_tokens|unknown|not found|unsupported|model/i.test(message);
+    if (!shouldTryChatCompletions) {
+      throw error;
+    }
+
+    console.warn(`[PUBLIC ASSISTANT] Responses API failed for ${model}, retrying with chat completions:`, message);
   }
 
-  const outputBlocks = Array.isArray(response.data?.output) ? response.data.output : [];
-  const joined = outputBlocks
-    .flatMap((block) => Array.isArray(block?.content) ? block.content : [])
-    .map((part) => part?.text || '')
-    .join('')
-    .trim();
+  return askOpenAIChatCompletionsApi({ apiKey, model, prompt });
+};
 
-  return joined;
+const askOpenAI = async ({ prompt }) => {
+  const apiKey = getOpenAIApiKey();
+  if (!apiKey) {
+    return '';
+  }
+
+  const enableWebSearch = process.env.OPENAI_ENABLE_WEB_SEARCH !== 'false';
+  const models = getOpenAIModelCandidates();
+  let lastError = null;
+
+  for (const model of models) {
+    try {
+      const answer = await askOpenAIWithModel({
+        apiKey,
+        model,
+        prompt,
+        useWebSearch: enableWebSearch
+      });
+
+      if (answer) {
+        return answer;
+      }
+    } catch (error) {
+      lastError = error;
+      console.warn(`[PUBLIC ASSISTANT] OpenAI model ${model} failed:`, error.response?.data?.error?.message || error.message);
+    }
+  }
+
+  if (lastError) {
+    throw lastError;
+  }
+
+  return '';
+};
+
+const getGeminiApiKey = () => String(process.env.GEMINI_API_KEY || '').trim();
+
+const getGeminiModelCandidates = () => (
+  [...new Set([
+    String(process.env.GEMINI_MODEL || '').trim(),
+    'gemini-2.0-flash',
+    'gemini-1.5-flash'
+  ].filter(Boolean))]
+);
+
+const askGemini = async ({ prompt }) => {
+  const apiKey = getGeminiApiKey();
+  if (!apiKey) {
+    return '';
+  }
+
+  const models = getGeminiModelCandidates();
+  let lastError = null;
+
+  for (const model of models) {
+    try {
+      const response = await axios.post(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+        {
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: 0.35,
+            maxOutputTokens: 500
+          }
+        },
+        { timeout: 20000 }
+      );
+
+      const answer = response.data?.candidates?.[0]?.content?.parts
+        ?.map((part) => part.text || '')
+        .join('')
+        .trim();
+
+      if (answer) {
+        return answer;
+      }
+    } catch (error) {
+      lastError = error;
+      console.warn(`[PUBLIC ASSISTANT] ${model} failed:`, error.response?.data?.error?.message || error.message);
+    }
+  }
+
+  if (lastError) {
+    throw lastError;
+  }
+
+  return '';
+};
+
+const isQuotaError = (error) => {
+  const message = String(error?.response?.data?.error?.message || error?.message || '').toLowerCase();
+  return /quota|billing|rate limit|insufficient/i.test(message);
+};
+
+const getAiUnavailableReply = ({ openAiFailed = false, geminiFailed = false } = {}) => {
+  if (openAiFailed || geminiFailed) {
+    return 'Error connecting';
+  }
+
+  return '';
 };
 
 const shouldUseDirectAssistantReply = (message, action) => {
@@ -277,7 +1045,74 @@ const askPublicAssistant = async (req, res) => {
   }
 
   const action = inferAction(message);
-  const apiKey = process.env.GEMINI_API_KEY;
+
+  if (action) {
+    return res.json({ answer: fallbackAnswer(message, action, history), action });
+  }
+
+  const logicAnswer = findLogicAnswer(message);
+  if (logicAnswer) {
+    return res.json({ answer: logicAnswer, action: null });
+  }
+
+  const conversationHistory = buildHistoryBlock(history);
+  let openAiQuotaFailed = false;
+  let geminiQuotaFailed = false;
+
+  const prompt = `
+You are JumpTake AI, a polished public assistant for JumpTake.
+Use the product guide and trained Q&A context below for JumpTake, jobs, hiring, accounts, resumes, applications, assessments, interviews, candidates, employers, and portal questions.
+For safe general questions outside JumpTake, answer naturally and briefly first, then gently offer to help with JumpTake if useful.
+Be welcoming and practical. If the visitor asks what to do next, recommend either exploring public jobs, creating an account, or logging in.
+If they ask for a tour, explain the relevant public, candidate, and employer areas in a short ordered tour.
+You may also answer broader career, job-search, resume, hiring, and platform-guidance questions in a helpful concise way.
+Do not repeat the same overview paragraph on every turn. Use the conversation history and answer the latest message directly.
+If the visitor is making casual conversation, reply naturally but steer back toward JumpTake help.
+If the visitor says hello, hi, hey, or another greeting, greet them back instead of giving a long product summary.
+If the visitor asks your name, say you are JumpTake AI and ask whether they want to learn more.
+If the visitor uses slang or casual language, interpret it naturally and reply like a polished support assistant.
+Avoid repeating the phrase "JumpTake connects candidates and employers in one hiring platform" unless the visitor explicitly asks for the platform overview again.
+Never claim an unavailable feature exists. Do not output URLs or JSON.
+If the visitor just says hello, hey, hi, what is up, or asks a very short follow-up, reply to that naturally instead of switching topics.
+If the visitor asks a general question like coin toss, banana, New York, food, jokes, or small talk, answer it naturally first, then gently offer JumpTake help if it fits.
+If the visitor asks something unrelated and harmless, do not repeat a stock JumpTake paragraph. Keep the reply conversational and helpful.
+If the visitor asks a logic or riddle question, answer that exact question directly.
+If the visitor asks to create an account, log in, browse jobs, or take a product action, guide them into the correct JumpTake flow.
+If you cannot complete a live response because of a provider problem, reply exactly with: Error connecting
+
+${SITE_GUIDE}
+
+${RESPONSE_PLAYBOOK}
+
+Conversation so far:
+${conversationHistory || 'No prior conversation.'}
+
+Visitor: ${message}
+`;
+
+  for (const provider of getAssistantProviderOrder()) {
+    try {
+      const answer = provider === 'gemini'
+        ? await askGemini({ prompt })
+        : await askOpenAI({ prompt });
+
+      if (answer) {
+        return res.json({ answer, action });
+      }
+    } catch (error) {
+      if (provider === 'gemini' && isQuotaError(error)) {
+        geminiQuotaFailed = true;
+      } else if (provider === 'openai' && isQuotaError(error)) {
+        openAiQuotaFailed = true;
+      }
+      console.warn(`[PUBLIC ASSISTANT] ${provider} failed:`, error.response?.data?.error?.message || error.message);
+    }
+  }
+
+  const trainedAnswer = findTrainedAssistantAnswer(message);
+  if (trainedAnswer) {
+    return res.json({ answer: trainedAnswer, action });
+  }
 
   const knowledgeAnswer = await lookupGeneralKnowledge(message);
   if (knowledgeAnswer) {
@@ -288,74 +1123,13 @@ const askPublicAssistant = async (req, res) => {
     return res.json({ answer: fallbackAnswer(message, action, history), action });
   }
 
-  const conversationHistory = buildHistoryBlock(history);
+  const aiUnavailableReply = getAiUnavailableReply({
+    openAiFailed: openAiQuotaFailed,
+    geminiFailed: geminiQuotaFailed
+  });
 
-  const prompt = `
-You are the public JumpTake guide. Answer concisely and accurately using only the product guide below.
-Be welcoming and practical. If the visitor asks what to do next, recommend either exploring public jobs, creating an account, or logging in.
-If they ask for a tour, explain the relevant public, candidate, and employer areas in a short ordered tour.
-You may also answer broader career, job-search, resume, hiring, and platform-guidance questions in a helpful concise way.
-If a question is unrelated to JumpTake, careers, hiring, candidates, employers, resumes, assessments, interviews, applications, or jobs, answer briefly in a natural way first, then gently offer JumpTake help instead of repeating a long introduction.
-Do not repeat the same overview paragraph on every turn. Use the conversation history and answer the latest message directly.
-If the visitor is making casual conversation, reply naturally but steer back toward JumpTake help.
-If the visitor says hello, hi, hey, or another greeting, greet them back instead of giving a long product summary.
-If the visitor asks your name, say you are JumpTake AI and ask whether they want to learn more.
-If the visitor uses slang or casual language, interpret it naturally and reply like a polished support assistant.
-Avoid repeating the phrase "JumpTake connects candidates and employers in one hiring platform" unless the visitor explicitly asks for the platform overview again.
-Never claim an unavailable feature exists. Do not output URLs or JSON.
-
-${SITE_GUIDE}
-
-Conversation so far:
-${conversationHistory || 'No prior conversation.'}
-
-Visitor: ${message}
-`;
-
-  try {
-    const openAiAnswer = await askOpenAI({ prompt });
-    if (openAiAnswer) {
-      return res.json({ answer: openAiAnswer, action });
-    }
-  } catch (error) {
-    console.warn('[PUBLIC ASSISTANT] OpenAI failed:', error.response?.data?.error?.message || error.message);
-  }
-
-  if (!apiKey) {
-    return res.json({ answer: fallbackAnswer(message, action, history), action });
-  }
-
-  const models = [
-    process.env.GEMINI_MODEL,
-    'gemini-2.0-flash',
-    'gemini-1.5-flash'
-  ].filter(Boolean);
-
-  for (const model of [...new Set(models)]) {
-    try {
-      const response = await axios.post(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-        {
-          contents: [{ role: 'user', parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.35,
-            maxOutputTokens: 500
-          }
-        },
-        { timeout: 20000 }
-      );
-
-      const answer = response.data?.candidates?.[0]?.content?.parts
-        ?.map((part) => part.text || '')
-        .join('')
-        .trim();
-
-      if (answer) {
-        return res.json({ answer, action });
-      }
-    } catch (error) {
-      console.warn(`[PUBLIC ASSISTANT] ${model} failed:`, error.response?.data?.error?.message || error.message);
-    }
+  if (aiUnavailableReply) {
+    return res.json({ answer: aiUnavailableReply, action });
   }
 
   return res.json({ answer: fallbackAnswer(message, action, history), action });

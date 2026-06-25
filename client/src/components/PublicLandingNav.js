@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import ProfileAvatar from './ProfileAvatar';
 import logoDark from './media/logo4.png';
+import { sendPasswordResetEmail, validateEmailAddress } from '../utils/emailVerification';
 
 const PublicLandingIcon = ({ name, className = '' }) => {
     if (name === 'candidate') {
@@ -181,15 +182,19 @@ const formatPublicSalary = (salary) => {
 };
 
 const PublicLoginDialog = ({ apiBase, onClose, onOpenRegister, onSuccessCandidate, onSuccessEmployer }) => {
+    const [mode, setMode] = useState('login');
     const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
+    const [resetEmail, setResetEmail] = useState('');
     const [message, setMessage] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     const resetState = () => {
+        setMode('login');
         setIdentifier('');
         setPassword('');
+        setResetEmail('');
         setMessage('');
         setIsSuccess(false);
     };
@@ -289,38 +294,137 @@ const PublicLoginDialog = ({ apiBase, onClose, onOpenRegister, onSuccessCandidat
         }
     };
 
+    const handleForgotPassword = async (event) => {
+        event.preventDefault();
+
+        const normalizedEmail = resetEmail.trim().toLowerCase();
+
+        if (!validateEmailAddress(normalizedEmail)) {
+            setMessage('Please enter a valid email address to receive a reset link.');
+            setIsSuccess(false);
+            return;
+        }
+
+        try {
+            setIsLoading(true);
+            setMessage('');
+            setIsSuccess(false);
+
+            const response = await fetch(`${apiBase}/api/password-reset/request`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: normalizedEmail,
+                    accountType: 'candidate',
+                    origin: window.location.origin
+                })
+            });
+
+            const contentType = response.headers.get('content-type') || '';
+            if (!contentType.includes('application/json')) {
+                throw new Error('JumpTake password reset is warming up. Please try again in a moment.');
+            }
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to prepare the password reset link.');
+            }
+
+            if (!data.resetUrl) {
+                throw new Error('No password reset link was generated for this email address.');
+            }
+
+            await sendPasswordResetEmail({
+                email: normalizedEmail,
+                recipientName: data.recipientName || normalizedEmail.split('@')[0],
+                resetUrl: data.resetUrl,
+                accountType: 'candidate'
+            });
+
+            setMessage('A password reset link has been sent to your email.');
+            setIsSuccess(true);
+        } catch (error) {
+            setMessage(error.message || 'Failed to send password reset email.');
+            setIsSuccess(false);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="public-landing-modal-backdrop" role="presentation" onMouseDown={onClose}>
             <section className="public-auth-card" role="dialog" aria-modal="true" aria-label="Log in to JumpTake" onMouseDown={(event) => event.stopPropagation()}>
                 <div className="public-auth-form-shell">
-                    <form className="public-auth-form" onSubmit={handleSubmit}>
-                        <h4 className="public-auth-heading">Log In!</h4>
-                        <div className="public-auth-field">
-                            <PublicAuthFieldIcon type="identifier" />
-                            <input
-                                className="public-auth-input"
-                                placeholder="Email or Username"
-                                type="text"
-                                value={identifier}
-                                onChange={(event) => setIdentifier(event.target.value)}
-                            />
-                        </div>
-                        <div className="public-auth-field">
-                            <PublicAuthFieldIcon type="password" />
-                            <input
-                                className="public-auth-input"
-                                placeholder="Password"
-                                type="password"
-                                value={password}
-                                onChange={(event) => setPassword(event.target.value)}
-                            />
-                        </div>
-                        <button type="submit" className="public-auth-submit" disabled={isLoading}>
-                            {isLoading ? 'Submitting...' : 'Login'}
-                        </button>
-                        <a href="/reset-password" className="public-auth-link">Forgot your password?</a>
-                        <button type="button" className="public-auth-secondary-link" onClick={onOpenRegister}>Sign up</button>
-                    </form>
+                    {mode === 'login' ? (
+                        <form className="public-auth-form" onSubmit={handleSubmit}>
+                            <h4 className="public-auth-heading">Log In!</h4>
+                            <div className="public-auth-field">
+                                <PublicAuthFieldIcon type="identifier" />
+                                <input
+                                    className="public-auth-input"
+                                    placeholder="Email or Username"
+                                    type="text"
+                                    value={identifier}
+                                    onChange={(event) => setIdentifier(event.target.value)}
+                                />
+                            </div>
+                            <div className="public-auth-field">
+                                <PublicAuthFieldIcon type="password" />
+                                <input
+                                    className="public-auth-input"
+                                    placeholder="Password"
+                                    type="password"
+                                    value={password}
+                                    onChange={(event) => setPassword(event.target.value)}
+                                />
+                            </div>
+                            <button type="submit" className="public-auth-submit" disabled={isLoading}>
+                                {isLoading ? 'Submitting...' : 'Login'}
+                            </button>
+                            <button
+                                type="button"
+                                className="public-auth-link"
+                                onClick={() => {
+                                    setMode('forgot');
+                                    setResetEmail(identifier.includes('@') ? identifier : '');
+                                    setMessage('');
+                                    setIsSuccess(false);
+                                }}
+                            >
+                                Forgot your password?
+                            </button>
+                            <button type="button" className="public-auth-secondary-link" onClick={onOpenRegister}>Sign up</button>
+                        </form>
+                    ) : (
+                        <form className="public-auth-form" onSubmit={handleForgotPassword}>
+                            <h4 className="public-auth-heading">Reset Password</h4>
+                            <div className="public-auth-field">
+                                <PublicAuthFieldIcon type="identifier" />
+                                <input
+                                    className="public-auth-input"
+                                    placeholder="Candidate account email"
+                                    type="email"
+                                    value={resetEmail}
+                                    onChange={(event) => setResetEmail(event.target.value)}
+                                />
+                            </div>
+                            <button type="submit" className="public-auth-submit" disabled={isLoading}>
+                                {isLoading ? 'Sending...' : 'Send Reset Link'}
+                            </button>
+                            <button
+                                type="button"
+                                className="public-auth-secondary-link"
+                                onClick={() => {
+                                    setMode('login');
+                                    setMessage('');
+                                    setIsSuccess(false);
+                                }}
+                            >
+                                Back to login
+                            </button>
+                        </form>
+                    )}
                     <BackArrowButton onClick={() => { resetState(); onClose(); }} label="Close login options" />
                     {message ? (
                         <p className={`public-auth-message ${isSuccess ? 'is-success' : 'is-error'}`}>{message}</p>

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import RichMessageEditor from './RichMessageEditor';
 import AssistantChat from './AssistantChat';
+import ChatAvatar from './ChatAvatar';
+import { apiUrl } from '../utils/apiUrl';
 
 const stripHtml = (html = '') => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 const hasMessageContent = (html = '') => stripHtml(html).length > 0 || /<img\b/i.test(html);
@@ -52,7 +54,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
 
         try {
             const token = localStorage.getItem(isEmployer ? 'employerToken' : 'token');
-            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}${endpoint}`, {
+            const response = await fetch(apiUrl(endpoint), {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -89,7 +91,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
 
         try {
             const token = localStorage.getItem(isEmployer ? 'employerToken' : 'token');
-            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/messages/${selectedThread._id}/reply`, {
+            const response = await fetch(apiUrl(`/api/messages/${selectedThread._id}/reply`), {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -152,7 +154,17 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
         return thread?.company?.industry || 'Employer message';
     };
 
-    const getInitial = (thread) => (getThreadTitle(thread).charAt(0) || 'J').toUpperCase();
+    const getThreadAvatar = (thread) => {
+        if (isEmployer) {
+            return thread?.candidate?.profileImage || '';
+        }
+
+        if (isDirectCandidateThread(thread)) {
+            return getPeerCandidate(thread)?.profileImage || '';
+        }
+
+        return thread?.company?.logo || '';
+    };
 
     const isThreadActive = (thread) => {
         if (!thread?.lastMessageAt) {
@@ -191,7 +203,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                         Back to Inbox
                     </button>
                     <div className="messenger-chat-head">
-                        <div className="messenger-avatar">AI</div>
+                        <ChatAvatar ai className="messenger-avatar" label="JumpTake AI" />
                         <div>
                             <h2>JumpTake AI</h2>
                             <p>Assistant chat</p>
@@ -211,7 +223,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                         Back to Chats
                     </button>
                     <div className="messenger-chat-head">
-                        <div className="messenger-avatar">{getInitial(selectedThread)}</div>
+                        <ChatAvatar imageSrc={getThreadAvatar(selectedThread)} className="messenger-avatar" label={getThreadTitle(selectedThread)} />
                         <div>
                             <h2>{getThreadTitle(selectedThread)}</h2>
                             <p>{getThreadSubtitle(selectedThread)}</p>
@@ -275,7 +287,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
             >
                 <div className="content-avatar">
                     <div className="avatar">
-                        <span className="user-img">AI</span>
+                        <ChatAvatar ai className="user-img" label="JumpTake AI" />
                     </div>
                     <span className="status-user"></span>
                 </div>
@@ -310,7 +322,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                             >
                                 <div className="content-avatar">
                                     <div className="avatar">
-                                        <span className="user-img">{getInitial(thread)}</span>
+                                        <ChatAvatar imageSrc={getThreadAvatar(thread)} className="user-img" label={getThreadTitle(thread)} />
                                     </div>
                                     <span className="status-user"></span>
                                 </div>

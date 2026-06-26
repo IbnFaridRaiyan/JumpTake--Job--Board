@@ -47581,3 +47581,72 @@ select {
   background: #111827;
   color: #ffffff;
 }
+
+/* Portal inbox avatar and auth-link final overrides. */
+.chat-avatar-image {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  object-fit: cover !important;
+  border-radius: inherit !important;
+}
+
+.chat-avatar-icon {
+  width: 64% !important;
+  height: 64% !important;
+  display: block !important;
+  color: currentColor !important;
+}
+
+.chat-avatar-icon-ai {
+  color: #f97316 !important;
+}
+
+.button-message .avatar,
+.messenger-avatar,
+.floating-messenger-contact-avatar,
+.floating-messenger-chat-avatar {
+  overflow: hidden !important;
+}
+
+.button-message .avatar .user-img,
+.messenger-avatar,
+.floating-messenger-contact-avatar,
+.floating-messenger-chat-avatar {
+  color: #ffffff !important;
+}
+
+.button-message .avatar .user-img:has(.chat-avatar-icon-ai),
+.messenger-avatar:has(.chat-avatar-icon-ai),
+.floating-messenger-contact-avatar:has(.chat-avatar-icon-ai),
+.floating-messenger-chat-avatar:has(.chat-avatar-icon-ai) {
+  background: rgba(249, 115, 22, 0.12) !important;
+  color: #f97316 !important;
+}
+
+.login-link-button,
+.public-auth-link {
+  appearance: none !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #f97316 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 0.18em !important;
+}
+
+.login-link-button:hover,
+.login-link-button:focus-visible,
+.public-auth-link:hover,
+.public-auth-link:focus-visible {
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #fb923c !important;
+}

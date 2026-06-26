@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import RichMessageEditor from './RichMessageEditor';
 import AssistantChat from './AssistantChat';
+import ChatAvatar from './ChatAvatar';
+import { apiUrl } from '../utils/apiUrl';
 
 const stripHtml = (html = '') => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 const hasMessageContent = (html = '') => stripHtml(html).length > 0 || /<img\b/i.test(html);
@@ -80,7 +82,17 @@ const FloatingMessenger = ({
         return thread?.company?.industry || 'Employer message';
     };
 
-    const getInitial = (thread) => (getThreadTitle(thread).charAt(0) || 'M').toUpperCase();
+    const getThreadAvatar = (thread) => {
+        if (isEmployer) {
+            return thread?.candidate?.profileImage || '';
+        }
+
+        if (isDirectCandidateThread(thread)) {
+            return getPeerCandidate(thread)?.profileImage || '';
+        }
+
+        return thread?.company?.logo || '';
+    };
 
     const isOwnMessage = (thread, item) => {
         if (isDirectCandidateThread(thread)) {
@@ -107,7 +119,7 @@ const FloatingMessenger = ({
 
         try {
             const token = localStorage.getItem(isEmployer ? 'employerToken' : 'token');
-            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}${endpoint}`, {
+            const response = await fetch(apiUrl(endpoint), {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -238,7 +250,7 @@ const FloatingMessenger = ({
 
         try {
             const token = localStorage.getItem(isEmployer ? 'employerToken' : 'token');
-            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/messages/${selectedThread._id}/reply`, {
+            const response = await fetch(apiUrl(`/api/messages/${selectedThread._id}/reply`), {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -303,7 +315,7 @@ const FloatingMessenger = ({
                                     className={`floating-messenger-contact portal-ai-floating-contact ${assistantSelected ? 'is-active' : ''}`}
                                     onClick={() => handleSelectThread(ASSISTANT_THREAD_ID)}
                                 >
-                                    <div className="floating-messenger-contact-avatar">AI</div>
+                                    <ChatAvatar ai className="floating-messenger-contact-avatar" label="JumpTake AI" />
                                     <div className="floating-messenger-contact-copy">
                                         <strong>JumpTake AI</strong>
                                         <span>Ask for help with jobs, resumes, hiring, and portal actions.</span>
@@ -326,7 +338,7 @@ const FloatingMessenger = ({
                                             className={`floating-messenger-contact ${thread._id === selectedThreadId ? 'is-active' : ''}`}
                                             onClick={() => handleSelectThread(thread._id)}
                                         >
-                                            <div className="floating-messenger-contact-avatar">{getInitial(thread)}</div>
+                                            <ChatAvatar imageSrc={getThreadAvatar(thread)} className="floating-messenger-contact-avatar" label={getThreadTitle(thread)} />
                                             <div className="floating-messenger-contact-copy">
                                                 <strong>{getThreadTitle(thread)}</strong>
                                                 <span>{lastMessagePreview(thread)}</span>
@@ -344,7 +356,7 @@ const FloatingMessenger = ({
                                 <>
                                     <div className="floating-messenger-chat-bar">
                                         <div className="floating-messenger-chat-head">
-                                            <div className="floating-messenger-chat-avatar">AI</div>
+                                            <ChatAvatar ai className="floating-messenger-chat-avatar" label="JumpTake AI" />
                                             <div className="floating-messenger-chat-copy">
                                                 <strong>JumpTake AI</strong>
                                                 <span>Assistant chat</span>
@@ -377,7 +389,7 @@ const FloatingMessenger = ({
                                 <>
                                     <div className="floating-messenger-chat-bar">
                                         <div className="floating-messenger-chat-head">
-                                            <div className="floating-messenger-chat-avatar">{getInitial(selectedThread)}</div>
+                                            <ChatAvatar imageSrc={getThreadAvatar(selectedThread)} className="floating-messenger-chat-avatar" label={getThreadTitle(selectedThread)} />
                                             <div className="floating-messenger-chat-copy">
                                                 <strong>{getThreadTitle(selectedThread)}</strong>
                                                 <span>{getThreadSubtitle(selectedThread)}</span>

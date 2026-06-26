@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { apiUrl } from '../utils/apiUrl';
 
 const formatAssistantTime = () => new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 
@@ -40,7 +41,7 @@ const AssistantChat = ({ title = 'Jumptake chat', className = '' }) => {
         setAssistantLoading(true);
 
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/public-assistant`, {
+            const response = await fetch(apiUrl('/api/public-assistant'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

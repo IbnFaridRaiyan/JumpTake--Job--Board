@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import ResumeFilePreview from './ResumeFilePreview';
+import { apiUrl } from '../utils/apiUrl';
 
 const WORK_NEWS_STORAGE_KEY = 'jumptakeWorkNewsPosts';
 const TALENT_STORIES_STORAGE_KEY = 'jumptakeTalentStoriesPosts';
@@ -691,7 +692,7 @@ const PortalHomeFeed = ({
             const migratedPosts = [];
             for (const post of localOnlyPosts.slice(0, 50)) {
                 try {
-                    const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/feed-posts`, {
+                    const response = await fetch(apiUrl('/api/feed-posts'), {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -715,7 +716,7 @@ const PortalHomeFeed = ({
             setFeedError('');
 
             try {
-                const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/feed-posts`);
+                const response = await fetch(apiUrl('/api/feed-posts'));
                 if (!response.ok) {
                     throw new Error('Failed to load live feed posts');
                 }
@@ -775,7 +776,7 @@ const PortalHomeFeed = ({
         const fetchAppliedHomeJobs = async () => {
             try {
                 const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
-                const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/applications/user/${userId}`, {
+                const response = await fetch(apiUrl(`/api/applications/user/${userId}`), {
                     headers: {
                         ...(token ? { Authorization: `Bearer ${token}` } : {})
                     }
@@ -827,7 +828,7 @@ const PortalHomeFeed = ({
         const fetchBookmarkedHomeJobs = async () => {
             try {
                 const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
-                const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/job-bookmarks/user/${userId}`, {
+                const response = await fetch(apiUrl(`/api/job-bookmarks/user/${userId}`), {
                     headers: {
                         ...(token ? { Authorization: `Bearer ${token}` } : {})
                     }
@@ -953,7 +954,7 @@ const PortalHomeFeed = ({
         }
 
         try {
-            await fetch(`${process.env.REACT_APP_API_URL || ''}/api/feed-posts/${postId}`, {
+            await fetch(apiUrl(`/api/feed-posts/${postId}`), {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(post)
@@ -1019,7 +1020,7 @@ const PortalHomeFeed = ({
         });
 
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/feed-posts`, {
+            const response = await fetch(apiUrl('/api/feed-posts'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(nextPost)
@@ -1030,6 +1031,7 @@ const PortalHomeFeed = ({
             setComposerText('');
             setComposerMedia(null);
             setComposerAudience('everyone');
+            setFeedError('');
             setActiveTab(isCompanyPost ? 'my-company-posts' : 'my-feed');
         } catch (error) {
             console.error('Could not publish live feed post:', error);
@@ -1173,8 +1175,8 @@ const PortalHomeFeed = ({
             const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
             const response = await fetch(
                 alreadyBookmarked
-                    ? `${process.env.REACT_APP_API_URL || ''}/api/job-bookmarks/user/${userId}/job/${jobId}`
-                    : `${process.env.REACT_APP_API_URL || ''}/api/job-bookmarks`,
+                    ? apiUrl(`/api/job-bookmarks/user/${userId}/job/${jobId}`)
+                    : apiUrl('/api/job-bookmarks'),
                 {
                     method: alreadyBookmarked ? 'DELETE' : 'POST',
                     headers: {
@@ -1413,7 +1415,7 @@ const PortalHomeFeed = ({
 
         try {
             const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
-            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/applications`, {
+            const response = await fetch(apiUrl('/api/applications'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

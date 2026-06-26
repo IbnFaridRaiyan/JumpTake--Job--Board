@@ -661,7 +661,7 @@ const PublicLandingNav = () => {
 
             {activeModal === 'assistant' && renderModal(
                 <div className="public-landing-modal-backdrop" role="presentation" onMouseDown={() => setActiveModal('')}>
-                    <section className="public-assistant-dialog" role="dialog" aria-modal="true" aria-label="Ask JumpTake" onMouseDown={(event) => event.stopPropagation()}>
+                    <section className={`public-assistant-dialog ${assistantStarted ? 'is-chatting' : 'is-launching'}`} role="dialog" aria-modal="true" aria-label="Ask JumpTake" onMouseDown={(event) => event.stopPropagation()}>
                         {!assistantStarted ? (
                             <form className="public-ai-launch-form" onSubmit={askAssistant}>
                                 <div className="public-ai-launch-logo-wrap" aria-hidden="true">

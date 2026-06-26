@@ -20,6 +20,7 @@ import Inbox from './Inbox';
 import ResumePlayground from './ResumePlayground';
 import PortalHomeFeed from './PortalHomeFeed';
 import PortalDefaultLanding from './PortalDefaultLanding';
+import PortalAiButton from './PortalAiButton';
 import logo from './media/logo3.png';
 import logoDark from './media/logo4.png';
 
@@ -602,9 +603,16 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         switchSection(nextSection);
     };
 
+    const openPortalAssistant = () => {
+        setPendingInboxCount(0);
+        localStorage.setItem('jumptakeCandidateInboxSeenAt', String(Date.now()));
+        window.dispatchEvent(new CustomEvent('jumptake-open-candidate-messenger', {
+            detail: { assistant: true }
+        }));
+    };
+
     const candidatePrimaryNavItems = [
         { id: 'home', label: 'Dashboard', icon: 'dashboard' },
-        { id: 'inbox', label: 'Inbox', icon: 'inbox', notification: pendingInboxCount > 0 },
         { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 },
         { id: 'view-candidates', label: 'View Candidates', icon: 'users' },
         { id: 'friend-invitations', label: 'Friends', icon: 'user-plus' },
@@ -640,7 +648,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         if (nextSection === 'inbox') {
             setPendingInboxCount(0);
             localStorage.setItem('jumptakeCandidateInboxSeenAt', String(Date.now()));
-            openSection('inbox');
+            window.dispatchEvent(new CustomEvent('jumptake-open-candidate-messenger'));
             return;
         }
 
@@ -879,6 +887,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             <div className="loading-container">
                 <div className="dashboard-header candidate-dashboard-header">
                     <div className="portal-dashboard-identity candidate-dashboard-identity">
+                        <PortalAiButton onClick={openPortalAssistant} />
                         <div
                             className="dashboard-logo-button dashboard-logo-static"
                             aria-label="JumpTake"
@@ -896,6 +905,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         <div className="home-page">
             <div className="dashboard-header candidate-dashboard-header">
                 <div className="portal-dashboard-identity candidate-dashboard-identity">
+                    <PortalAiButton onClick={openPortalAssistant} />
                     <div
                         className="dashboard-logo-button dashboard-logo-static"
                         aria-label="JumpTake"

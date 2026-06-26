@@ -17,6 +17,7 @@ import Inbox from './Inbox';
 import ResumePlayground from './ResumePlayground';
 import PortalHomeFeed from './PortalHomeFeed';
 import PortalDefaultLanding from './PortalDefaultLanding';
+import PortalAiButton from './PortalAiButton';
 import logo from './media/logo3.png';
 import logoDark from './media/logo4.png';
 
@@ -362,9 +363,16 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         switchSection(nextSection);
     };
 
+    const openPortalAssistant = () => {
+        setPendingInboxCount(0);
+        localStorage.setItem('jumptakeEmployerInboxSeenAt', String(Date.now()));
+        window.dispatchEvent(new CustomEvent('jumptake-open-employer-messenger', {
+            detail: { assistant: true }
+        }));
+    };
+
     const employerPrimaryNavItems = [
         { id: 'home', label: 'Dashboard', icon: 'dashboard' },
-        { id: 'inbox', label: 'Inbox', icon: 'inbox', notification: pendingInboxCount > 0 },
         { id: 'post-job', label: 'Post a Job', icon: 'briefcase' },
         { id: 'manage-jobs', label: 'Manage Jobs', icon: 'briefcase' },
         { id: 'make-assessment', label: 'Make an Assessment', icon: 'assessment' },
@@ -397,7 +405,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         if (nextSection === 'inbox') {
             setPendingInboxCount(0);
             localStorage.setItem('jumptakeEmployerInboxSeenAt', String(Date.now()));
-            openSection('inbox');
+            window.dispatchEvent(new CustomEvent('jumptake-open-employer-messenger'));
             return;
         }
 
@@ -709,6 +717,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
             <div className="loading-container">
                 <div className="dashboard-header employer-dashboard-header">
                     <div className="portal-dashboard-identity employer-dashboard-identity">
+                        <PortalAiButton onClick={openPortalAssistant} />
                         <div
                             className="dashboard-logo-button dashboard-logo-static"
                             aria-label="JumpTake"
@@ -726,6 +735,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         <div className="home-page">
             <div className="dashboard-header employer-dashboard-header">
                 <div className="portal-dashboard-identity employer-dashboard-identity">
+                    <PortalAiButton onClick={openPortalAssistant} />
                     <div
                         className="dashboard-logo-button dashboard-logo-static"
                         aria-label="JumpTake"

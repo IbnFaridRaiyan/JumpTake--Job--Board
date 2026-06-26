@@ -47650,3 +47650,120 @@ select {
   box-shadow: none !important;
   color: #fb923c !important;
 }
+
+/* Portal top AI launcher and expanded public assistant chat. */
+.portal-dashboard-identity {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.65rem !important;
+}
+
+.portal-ai-top-button {
+  width: 2.75rem !important;
+  height: 2.75rem !important;
+  min-width: 2.75rem !important;
+  min-height: 2.75rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: #000000 !important;
+  color: #ffffff !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.26) !important;
+  cursor: pointer !important;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, color 0.18s ease !important;
+}
+
+.portal-ai-top-button:hover,
+.portal-ai-top-button:focus-visible {
+  color: #f97316 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 18px 36px rgba(249, 115, 22, 0.2) !important;
+}
+
+.portal-ai-top-icon {
+  width: 1.62rem !important;
+  height: 1.62rem !important;
+  display: block !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 2.65 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+.public-assistant-dialog.is-chatting {
+  width: min(calc(100vw - 2rem), 38rem) !important;
+  min-height: min(calc(100vh - 2rem), 48rem) !important;
+}
+
+.public-assistant-dialog.is-chatting .public-ai-chat-card {
+  width: 100% !important;
+  max-width: 36rem !important;
+  min-height: min(78vh, 42rem) !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.public-assistant-dialog.is-chatting .public-terminal-wrap,
+.public-assistant-dialog.is-chatting .public-terminal-chat-body {
+  min-height: 0 !important;
+  flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.public-assistant-dialog.is-chatting .public-ai-chat-messages {
+  min-height: 18rem !important;
+  max-height: none !important;
+  flex: 1 1 auto !important;
+}
+
+.public-assistant-dialog.is-launching .public-ai-launch-input::before,
+.public-assistant-dialog.is-launching .public-ai-launch-input::after {
+  display: none !important;
+  content: none !important;
+}
+
+.public-assistant-dialog.is-launching .public-ai-launch-input {
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  box-shadow: none !important;
+}
+
+.public-assistant-dialog.is-launching .public-ai-launch-textbox {
+  height: 2.05rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 768px) {
+  .portal-dashboard-identity {
+    gap: 0.5rem !important;
+  }
+
+  .portal-ai-top-button {
+    width: 2.38rem !important;
+    height: 2.38rem !important;
+    min-width: 2.38rem !important;
+    min-height: 2.38rem !important;
+  }
+
+  .portal-ai-top-icon {
+    width: 1.42rem !important;
+    height: 1.42rem !important;
+  }
+
+  .public-assistant-dialog.is-chatting {
+    width: min(calc(100vw - 1rem), 34rem) !important;
+    min-height: min(calc(100vh - 1rem), 44rem) !important;
+  }
+
+  .public-assistant-dialog.is-chatting .public-ai-chat-messages {
+    min-height: 15rem !important;
+  }
+}

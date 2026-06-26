@@ -39,6 +39,7 @@ const FloatingMessenger = ({
         typeof window !== 'undefined' ? window.matchMedia('(max-width: 768px)').matches : false
     ));
     const messagesRef = useRef(null);
+    const openAssistantOnNextLoadRef = useRef(false);
     const openEventName = isEmployer ? 'jumptake-open-employer-messenger' : 'jumptake-open-candidate-messenger';
 
     const endpoint = useMemo(() => (
@@ -132,7 +133,12 @@ const FloatingMessenger = ({
             setThreads(nextThreads);
 
             if (!preserveSelection) {
-                setSelectedThreadId(isMobileView ? '' : ASSISTANT_THREAD_ID);
+                if (openAssistantOnNextLoadRef.current) {
+                    openAssistantOnNextLoadRef.current = false;
+                    setSelectedThreadId(ASSISTANT_THREAD_ID);
+                } else {
+                    setSelectedThreadId(isMobileView ? '' : ASSISTANT_THREAD_ID);
+                }
             } else {
                 const threadStillExists = nextThreads.some((thread) => thread._id === selectedThreadId);
                 if (!threadStillExists && selectedThreadId !== ASSISTANT_THREAD_ID) {
@@ -186,9 +192,13 @@ const FloatingMessenger = ({
     }, [selectedThread?.messages?.length, open, selectedThread]);
 
     useEffect(() => {
-        const handleOpenEvent = () => {
+        const handleOpenEvent = (event) => {
+            const shouldOpenAssistant = event?.detail?.assistant === true;
+            openAssistantOnNextLoadRef.current = shouldOpenAssistant;
             setOpen(true);
-            if (isMobileView) {
+            if (shouldOpenAssistant) {
+                setSelectedThreadId(ASSISTANT_THREAD_ID);
+            } else if (isMobileView) {
                 setSelectedThreadId('');
             }
             onSeen?.();

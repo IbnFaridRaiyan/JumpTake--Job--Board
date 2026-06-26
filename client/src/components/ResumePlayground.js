@@ -1512,6 +1512,55 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         });
     };
 
+    useEffect(() => {
+        if (typeof window === 'undefined') {
+            return undefined;
+        }
+
+        const openAiDraft = (draft = {}) => {
+            const draftMode = draft.mode || 'resume';
+            if ((draftMode === 'document') !== isDocumentMode) {
+                return;
+            }
+
+            const draftText = String(draft.text || '').trim();
+            if (!draftText) {
+                return;
+            }
+
+            const draftRecord = createResumeRecord({
+                name: draft.name || (isDocumentMode ? 'AI Generated Document' : 'AI Generated Resume'),
+                html: plainTextToHtml(draftText),
+                source: 'scratch'
+            });
+
+            setCreateMode('scratch');
+            openEditor(draftRecord, 'edit');
+            setStatusMessage(isDocumentMode ? 'AI document draft opened in the editor.' : 'AI resume draft opened in the editor.');
+        };
+
+        const readStoredDraft = () => {
+            try {
+                const storedDraft = JSON.parse(sessionStorage.getItem('jumptakeResumePlaygroundAiDraft') || 'null');
+                if (storedDraft) {
+                    sessionStorage.removeItem('jumptakeResumePlaygroundAiDraft');
+                    openAiDraft(storedDraft);
+                }
+            } catch (error) {
+                sessionStorage.removeItem('jumptakeResumePlaygroundAiDraft');
+            }
+        };
+
+        const handleAiDraft = (event) => {
+            openAiDraft(event.detail || {});
+        };
+
+        readStoredDraft();
+        window.addEventListener('jumptake-resume-playground-ai-draft', handleAiDraft);
+        return () => window.removeEventListener('jumptake-resume-playground-ai-draft', handleAiDraft);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isDocumentMode]);
+
     const saveSelection = () => {
         const selection = window.getSelection();
         if (!selection || selection.rangeCount === 0 || !editorRef.current) {

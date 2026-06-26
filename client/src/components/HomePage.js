@@ -611,6 +611,26 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         }));
     };
 
+    useEffect(() => {
+        if (typeof window === 'undefined') {
+            return undefined;
+        }
+
+        const handleAiOpenSection = (event) => {
+            const { mode, section } = event.detail || {};
+            if (mode && mode !== 'candidate') {
+                return;
+            }
+            if (section && CANDIDATE_SECTION_IDS.has(section)) {
+                openSection(section);
+            }
+        };
+
+        window.addEventListener('jumptake-ai-open-section', handleAiOpenSection);
+        return () => window.removeEventListener('jumptake-ai-open-section', handleAiOpenSection);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeSection, mobileSectionVisible, user?.id]);
+
     const candidatePrimaryNavItems = [
         { id: 'home', label: 'Dashboard', icon: 'dashboard' },
         { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 },
@@ -886,8 +906,10 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         return (
             <div className="loading-container">
                 <div className="dashboard-header candidate-dashboard-header">
-                    <div className="portal-dashboard-identity candidate-dashboard-identity">
+                    <div className="portal-header-ai-action">
                         <PortalAiButton onClick={openPortalAssistant} />
+                    </div>
+                    <div className="portal-dashboard-identity candidate-dashboard-identity">
                         <div
                             className="dashboard-logo-button dashboard-logo-static"
                             aria-label="JumpTake"
@@ -904,8 +926,10 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     return (
         <div className="home-page">
             <div className="dashboard-header candidate-dashboard-header">
-                <div className="portal-dashboard-identity candidate-dashboard-identity">
+                <div className="portal-header-ai-action">
                     <PortalAiButton onClick={openPortalAssistant} />
+                </div>
+                <div className="portal-dashboard-identity candidate-dashboard-identity">
                     <div
                         className="dashboard-logo-button dashboard-logo-static"
                         aria-label="JumpTake"
@@ -995,6 +1019,9 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             <FloatingMessenger
                 mode="candidate"
                 userId={user?.id}
+                currentUser={user}
+                profileData={jobSeekerData}
+                jobs={jobs}
                 unreadCount={pendingInboxCount}
                 onSeen={() => {
                     setPendingInboxCount(0);

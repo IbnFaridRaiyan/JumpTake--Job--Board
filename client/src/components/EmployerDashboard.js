@@ -371,6 +371,26 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         }));
     };
 
+    useEffect(() => {
+        if (typeof window === 'undefined') {
+            return undefined;
+        }
+
+        const handleAiOpenSection = (event) => {
+            const { mode, section } = event.detail || {};
+            if (mode && mode !== 'employer') {
+                return;
+            }
+            if (section && EMPLOYER_SECTION_IDS.has(section)) {
+                openSection(section);
+            }
+        };
+
+        window.addEventListener('jumptake-ai-open-section', handleAiOpenSection);
+        return () => window.removeEventListener('jumptake-ai-open-section', handleAiOpenSection);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeSection, mobileSectionVisible, employer?.companyId]);
+
     const employerPrimaryNavItems = [
         { id: 'home', label: 'Dashboard', icon: 'dashboard' },
         { id: 'post-job', label: 'Post a Job', icon: 'briefcase' },
@@ -716,8 +736,10 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         return (
             <div className="loading-container">
                 <div className="dashboard-header employer-dashboard-header">
-                    <div className="portal-dashboard-identity employer-dashboard-identity">
+                    <div className="portal-header-ai-action">
                         <PortalAiButton onClick={openPortalAssistant} />
+                    </div>
+                    <div className="portal-dashboard-identity employer-dashboard-identity">
                         <div
                             className="dashboard-logo-button dashboard-logo-static"
                             aria-label="JumpTake"
@@ -734,8 +756,10 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     return (
         <div className="home-page">
             <div className="dashboard-header employer-dashboard-header">
-                <div className="portal-dashboard-identity employer-dashboard-identity">
+                <div className="portal-header-ai-action">
                     <PortalAiButton onClick={openPortalAssistant} />
+                </div>
+                <div className="portal-dashboard-identity employer-dashboard-identity">
                     <div
                         className="dashboard-logo-button dashboard-logo-static"
                         aria-label="JumpTake"
@@ -777,6 +801,9 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
             <FloatingMessenger
                 mode="employer"
                 companyId={employer?.companyId}
+                currentUser={employer}
+                companyData={companyData}
+                jobs={jobs}
                 unreadCount={pendingInboxCount}
                 onSeen={() => {
                     setPendingInboxCount(0);

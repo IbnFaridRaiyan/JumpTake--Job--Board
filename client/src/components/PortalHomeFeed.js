@@ -19,29 +19,6 @@ const escapeHtml = (value = '') => (
         .replace(/'/g, '&#39;')
 );
 
-const readStoredArray = (key) => {
-    if (typeof window === 'undefined') {
-        return [];
-    }
-
-    try {
-        const parsed = JSON.parse(localStorage.getItem(key) || '[]');
-        return Array.isArray(parsed)
-            ? parsed.filter((item) => item && typeof item === 'object')
-            : [];
-    } catch (error) {
-        return [];
-    }
-};
-
-const writeStoredArray = (key, value) => {
-    if (typeof window === 'undefined') {
-        return;
-    }
-
-    localStorage.setItem(key, JSON.stringify(value));
-};
-
 const readJobReachMap = () => {
     if (typeof window === 'undefined') {
         return {};
@@ -112,10 +89,6 @@ const countApplicationsByStatus = (job, statusTerms) => {
 const getJobKey = (job) => String(job?._id || job?.jobNumber || job?.title || 'job');
 
 const getPostKey = (post, fallbackIndex = 0) => String(post?.id || post?._id || `post-${fallbackIndex}`);
-
-const getFeedTypeFromStorageKey = (key) => (
-    key === WORK_NEWS_STORAGE_KEY ? 'work-news' : 'talent-story'
-);
 
 const asDisplayText = (value, fallback = '') => {
     if (value === null || value === undefined) {
@@ -677,74 +650,42 @@ const PortalHomeFeed = ({
     useEffect(() => {
         let isMounted = true;
 
-        const migrateLocalPosts = async (key, serverPosts) => {
-            const localPosts = readStoredArray(key);
-            const serverIds = new Set(serverPosts.flatMap((post) => [String(post._id || ''), String(post.id || '')]).filter(Boolean));
-            const localOnlyPosts = localPosts.filter((post) => {
-                const postId = String(post?._id || post?.id || '');
-                return post && typeof post === 'object' && (!postId || !serverIds.has(postId));
-            });
-
-            if (!localOnlyPosts.length) {
-                return serverPosts;
-            }
-
-            const migratedPosts = [];
-            for (const post of localOnlyPosts.slice(0, 50)) {
-                try {
-                    const response = await fetch(apiUrl('/api/feed-posts'), {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            ...post,
-                            type: post.type || getFeedTypeFromStorageKey(key)
-                        })
-                    });
-                    if (response.ok) {
-                        migratedPosts.push(await response.json());
-                    }
-                } catch (error) {
-                    console.error('Could not migrate local feed post:', error);
-                }
-            }
-
-            return [...migratedPosts, ...serverPosts];
-        };
-
         const loadFeedPosts = async () => {
             setFeedLoading(true);
             setFeedError('');
 
             try {
-                const response = await fetch(apiUrl('/api/feed-posts'));
-                if (!response.ok) {
-                    throw new Error('Failed to load live feed posts');
+                const [workResponse, talentResponse] = await Promise.all([
+                    fetch(apiUrl('/api/feed-posts?type=work-news')),
+                    fetch(apiUrl('/api/feed-posts?type=talent-story'))
+                ]);
+
+                if (!workResponse.ok || !talentResponse.ok) {
+                    throw new Error('Failed to load MongoDB feed posts');
                 }
 
-                const posts = await response.json();
-                const safePosts = Array.isArray(posts) ? posts : [];
-                let workPosts = safePosts.filter((post) => post.type === 'work-news');
-                let talentPosts = safePosts.filter((post) => post.type === 'talent-story');
-
-                workPosts = await migrateLocalPosts(WORK_NEWS_STORAGE_KEY, workPosts);
-                talentPosts = await migrateLocalPosts(TALENT_STORIES_STORAGE_KEY, talentPosts);
+                const [workPosts, talentPosts] = await Promise.all([
+                    workResponse.json(),
+                    talentResponse.json()
+                ]);
 
                 if (!isMounted) {
                     return;
                 }
 
-                setWorkNewsPosts(workPosts);
-                setTalentStories(talentPosts);
-                writeStoredArray(WORK_NEWS_STORAGE_KEY, workPosts);
-                writeStoredArray(TALENT_STORIES_STORAGE_KEY, talentPosts);
+                setWorkNewsPosts(Array.isArray(workPosts) ? workPosts : []);
+                setTalentStories(Array.isArray(talentPosts) ? talentPosts : []);
+
+                if (typeof window !== 'undefined') {
+                    localStorage.removeItem(WORK_NEWS_STORAGE_KEY);
+                    localStorage.removeItem(TALENT_STORIES_STORAGE_KEY);
+                }
             } catch (error) {
                 console.error('Error loading live feed posts:', error);
                 if (!isMounted) {
                     return;
                 }
-                setFeedError('Live feed is temporarily unavailable. Showing this device cache.');
-                setWorkNewsPosts(readStoredArray(WORK_NEWS_STORAGE_KEY));
-                setTalentStories(readStoredArray(TALENT_STORIES_STORAGE_KEY));
+                setFeedError('Live feed is temporarily unavailable. Please check the API and MongoDB connection.');
             } finally {
                 if (isMounted) {
                     setFeedLoading(false);
@@ -939,7 +880,6 @@ const PortalHomeFeed = ({
             return;
         }
 
-        writeStoredArray(key, nextPosts);
         if (key === WORK_NEWS_STORAGE_KEY) {
             setWorkNewsPosts(nextPosts);
         } else {
@@ -969,7 +909,6 @@ const PortalHomeFeed = ({
 
         setPosts((currentPosts) => {
             const nextPosts = updater(currentPosts);
-            writeStoredArray(key, nextPosts);
 
             nextPosts.forEach((post) => {
                 const previousPost = currentPosts.find((item) => getPostKey(item) === getPostKey(post));
@@ -1025,7 +964,10 @@ const PortalHomeFeed = ({
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(nextPost)
             });
-            const savedPost = response.ok ? await response.json() : nextPost;
+            const savedPost = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(savedPost.error || savedPost.message || 'Could not publish to MongoDB.');
+            }
 
             updatePosts(key, (posts) => [savedPost, ...posts]);
             setComposerText('');
@@ -1035,8 +977,7 @@ const PortalHomeFeed = ({
             setActiveTab(isCompanyPost ? 'my-company-posts' : 'my-feed');
         } catch (error) {
             console.error('Could not publish live feed post:', error);
-            updatePosts(key, (posts) => [nextPost, ...posts]);
-            setFeedError('Post saved on this device, but the live feed is temporarily unavailable.');
+            setFeedError(error.message || 'Could not publish to the live MongoDB feed. Please try again.');
         }
     };
 
@@ -1279,6 +1220,22 @@ const PortalHomeFeed = ({
             });
         };
 
+        const openFeedDraft = (draft = {}) => {
+            if (draft.mode && draft.mode !== mode) {
+                return;
+            }
+
+            const requestedTab = draft.tab || (mode === 'employer' ? 'create-post' : 'create-story');
+            if (!tabIds.includes(requestedTab)) {
+                return;
+            }
+
+            setActiveTab(requestedTab);
+            setComposerText(String(draft.text || '').trim());
+            setComposerMedia(null);
+            setFeedError('');
+        };
+
         const readStoredRequest = () => {
             try {
                 const storedRequest = JSON.parse(sessionStorage.getItem('jumptakeHomeFeedRequest') || 'null');
@@ -1289,17 +1246,33 @@ const PortalHomeFeed = ({
             } catch (error) {
                 sessionStorage.removeItem('jumptakeHomeFeedRequest');
             }
+
+            try {
+                const storedDraft = JSON.parse(sessionStorage.getItem('jumptakeFeedAiDraft') || 'null');
+                if (storedDraft) {
+                    sessionStorage.removeItem('jumptakeFeedAiDraft');
+                    openFeedDraft(storedDraft);
+                }
+            } catch (error) {
+                sessionStorage.removeItem('jumptakeFeedAiDraft');
+            }
         };
 
         const handleHomeFeedRequest = (event) => {
             openRequestedJob(event.detail || {});
         };
 
+        const handleFeedDraft = (event) => {
+            openFeedDraft(event.detail || {});
+        };
+
         readStoredRequest();
         window.addEventListener('jumptake-home-feed-request', handleHomeFeedRequest);
+        window.addEventListener('jumptake-feed-ai-draft', handleFeedDraft);
 
         return () => {
             window.removeEventListener('jumptake-home-feed-request', handleHomeFeedRequest);
+            window.removeEventListener('jumptake-feed-ai-draft', handleFeedDraft);
         };
     }, [defaultTab, mode, safeJobs]);
 

@@ -58,31 +58,40 @@ const PortalDefaultLanding = ({
 
     const stats = isEmployer
         ? [
-            { label: 'Active jobs', value: jobs.length },
-            { label: 'Applications', value: applicationCount },
-            { label: 'Notifications', value: notificationCount },
-            { label: 'Inbox', value: inboxCount }
+            { label: 'Active jobs', value: jobs.length, section: 'manage-jobs' },
+            { label: 'Applications', value: applicationCount, section: 'application-tracking' },
+            { label: 'Notifications', value: notificationCount, section: 'notifications' },
+            { label: 'Inbox', value: inboxCount, action: 'messages' }
         ]
         : [
-            { label: 'Available jobs', value: jobs.length },
-            { label: 'Assessments', value: assessmentCount },
-            { label: 'Video interviews', value: videoInterviewCount },
-            { label: 'Notifications', value: notificationCount }
+            { label: 'Available jobs', value: jobs.length, section: 'job-feed' },
+            { label: 'Assessments', value: assessmentCount, section: 'assessments' },
+            { label: 'Video interviews', value: videoInterviewCount, section: 'video-interviews' },
+            { label: 'Notifications', value: notificationCount, section: 'notifications' }
         ];
 
     const actions = isEmployer
         ? [
-            { label: 'Dashboard Feed', section: 'home-feed', icon: 'home', tone: 'primary' },
+            { label: 'Home', section: 'home-feed', icon: 'home', tone: 'primary' },
             { label: 'Post a Job', section: 'post-job', icon: 'postJob' },
             { label: 'Manage Jobs', section: 'manage-jobs', icon: 'manageJobs' },
             { label: 'Talent Pool', section: 'talent-pool', icon: 'talentPool' }
         ]
         : [
-            { label: 'Dashboard Feed', section: 'job-feed', icon: 'home', tone: 'primary' },
+            { label: 'Home', section: 'job-feed', icon: 'home', tone: 'primary' },
             { label: 'My Applications', section: 'applications', icon: 'applications' },
             { label: 'Resume Playground', section: 'resume-playground', icon: 'resume' },
             { label: 'My Profile', section: 'profile', icon: 'profile' }
         ];
+
+    const handleStatClick = (stat) => {
+        if (stat.action === 'messages' && typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent(isEmployer ? 'jumptake-open-employer-messenger' : 'jumptake-open-candidate-messenger'));
+            return;
+        }
+
+        switchSection?.(stat.section);
+    };
 
     return (
         <section className={`portal-default-landing ${isEmployer ? 'is-employer' : 'is-candidate'}`}>
@@ -111,10 +120,15 @@ const PortalDefaultLanding = ({
 
             <div className="portal-default-stats" aria-label="Portal summary">
                 {stats.map((stat) => (
-                    <div className="portal-default-stat" key={stat.label}>
+                    <button
+                        type="button"
+                        className="portal-default-stat"
+                        key={stat.label}
+                        onClick={() => handleStatClick(stat)}
+                    >
                         <strong>{stat.value}</strong>
                         <span>{stat.label}</span>
-                    </div>
+                    </button>
                 ))}
             </div>
 

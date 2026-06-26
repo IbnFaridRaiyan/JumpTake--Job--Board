@@ -20,6 +20,46 @@ const createEmptyAssessment = () => ({
     questions: [createQuestion()]
 });
 
+const cleanAiAssessmentLine = (line = '') => String(line || '')
+    .replace(/^[-*\s]+/, '')
+    .replace(/^(question|q)\s*\d*[).:\-\s]*/i, '')
+    .replace(/^\d+[).:\-\s]+/, '')
+    .trim();
+
+const createAssessmentDraftFromAi = (text = '') => {
+    const rawText = String(text || '').trim();
+    const lines = rawText
+        .split(/\n+/)
+        .map((line) => line.trim())
+        .filter(Boolean);
+    const titleLine = lines.find((line) => /^title\s*:/i.test(line)) || lines[0] || 'AI Generated Assessment';
+    const title = titleLine.replace(/^title\s*:/i, '').trim().slice(0, 120) || 'AI Generated Assessment';
+    const questionLines = lines
+        .filter((line) => (
+            /\?$/.test(line)
+            || /^\s*(question|q)\s*\d+/i.test(line)
+            || /^\s*\d+[).:-]/.test(line)
+        ))
+        .map(cleanAiAssessmentLine)
+        .filter((line) => line && !/^title\s*:/i.test(line))
+        .slice(0, 8);
+    const questions = (questionLines.length ? questionLines : ['Review the candidate response against the assessment instructions.'])
+        .map((prompt) => ({
+            ...createQuestion('short-answer'),
+            prompt,
+            correctAnswer: 'Assess for accuracy, relevance, clarity, and job fit.',
+            marks: 1
+        }));
+
+    return {
+        ...createEmptyAssessment(),
+        title,
+        instructions: rawText.slice(0, 1200),
+        timeLimitMinutes: questionLines.length >= 6 ? '45' : '30',
+        questions
+    };
+};
+
 const MakeAssessment = ({ companyId, jobs = [], onBack, onFooterBack }) => {
     const [formData, setFormData] = useState(createEmptyAssessment());
     const [availableJobs, setAvailableJobs] = useState(jobs);
@@ -36,6 +76,45 @@ const MakeAssessment = ({ companyId, jobs = [], onBack, onFooterBack }) => {
         fetchJobs();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [companyId]);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') {
+            return undefined;
+        }
+
+        const applyAiDraft = (draft = {}) => {
+            if (draft.mode && draft.mode !== 'employer') {
+                return;
+            }
+            const draftText = String(draft.text || '').trim();
+            if (!draftText) {
+                return;
+            }
+            setFormData(createAssessmentDraftFromAi(draftText));
+            setMessage('AI assessment draft loaded. Review it, assign a job if needed, then create the assessment.');
+            setError('');
+        };
+
+        const readStoredDraft = () => {
+            try {
+                const storedDraft = JSON.parse(sessionStorage.getItem('jumptakeAssessmentAiDraft') || 'null');
+                if (storedDraft) {
+                    sessionStorage.removeItem('jumptakeAssessmentAiDraft');
+                    applyAiDraft(storedDraft);
+                }
+            } catch (error) {
+                sessionStorage.removeItem('jumptakeAssessmentAiDraft');
+            }
+        };
+
+        const handleAiDraft = (event) => {
+            applyAiDraft(event.detail || {});
+        };
+
+        readStoredDraft();
+        window.addEventListener('jumptake-assessment-ai-draft', handleAiDraft);
+        return () => window.removeEventListener('jumptake-assessment-ai-draft', handleAiDraft);
+    }, []);
 
     const fetchJobs = async () => {
         if (!companyId) {

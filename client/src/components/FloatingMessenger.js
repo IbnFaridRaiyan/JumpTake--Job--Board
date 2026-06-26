@@ -7,6 +7,11 @@ import { apiUrl } from '../utils/apiUrl';
 const stripHtml = (html = '') => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 const hasMessageContent = (html = '') => stripHtml(html).length > 0 || /<img\b/i.test(html);
 const ASSISTANT_THREAD_ID = '__jumptake_ai__';
+const normalizeSearchText = (value = '') => String(value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 
 const formatDateTime = (dateString) => {
     if (!dateString) return '';
@@ -23,6 +28,10 @@ const FloatingMessenger = ({
     mode,
     companyId,
     userId,
+    currentUser = null,
+    profileData = null,
+    companyData = null,
+    jobs = [],
     unreadCount = 0,
     onSeen
 }) => {
@@ -47,6 +56,16 @@ const FloatingMessenger = ({
             ? `/api/messages/company/${companyId}`
             : `/api/messages/user/${userId}`
     ), [isEmployer, companyId, userId]);
+    const assistantStorageKey = useMemo(() => (
+        `jumptakeAssistantChat:${mode || 'portal'}:${userId || companyId || 'guest'}`
+    ), [companyId, mode, userId]);
+    const assistantContext = useMemo(() => ({
+        portalMode: mode,
+        user: currentUser,
+        profile: profileData,
+        company: companyData,
+        jobs: Array.isArray(jobs) ? jobs : []
+    }), [companyData, currentUser, jobs, mode, profileData]);
 
     const assistantSelected = selectedThreadId === ASSISTANT_THREAD_ID;
     const selectedThread = assistantSelected ? null : (threads.find((thread) => thread._id === selectedThreadId) || null);
@@ -296,6 +315,106 @@ const FloatingMessenger = ({
     const lastMessagePreview = (thread) => thread?.messages?.[thread.messages.length - 1]?.bodyText || 'No messages yet';
     const mobileChatOpen = isMobileView && (Boolean(selectedThread) || assistantSelected);
 
+    const findRequestedJob = (query = '') => {
+        const safeJobs = Array.isArray(jobs) ? jobs : [];
+        if (!safeJobs.length) {
+            return null;
+        }
+
+        const normalizedQuery = normalizeSearchText(query);
+        if (!normalizedQuery) {
+            return null;
+        }
+
+        return safeJobs.find((job) => {
+            const haystack = normalizeSearchText([
+                job?._id,
+                job?.id,
+                job?.jobNumber,
+                job?.title,
+                job?.role,
+                job?.company?.name,
+                job?.companyName,
+                job?.location
+            ].filter(Boolean).join(' '));
+            return haystack.includes(normalizedQuery) || normalizedQuery.includes(normalizeSearchText(job?.title));
+        }) || null;
+    };
+
+    const storeAndOpenSection = (section, storageKey, payload, eventName) => {
+        if (typeof window === 'undefined') {
+            return;
+        }
+
+        if (storageKey && payload) {
+            sessionStorage.setItem(storageKey, JSON.stringify(payload));
+        }
+
+        window.dispatchEvent(new CustomEvent('jumptake-ai-open-section', {
+            detail: { mode, section }
+        }));
+
+        if (eventName) {
+            window.dispatchEvent(new CustomEvent(eventName, { detail: payload }));
+        }
+    };
+
+    const handleAssistantAction = (action, payload = {}) => {
+        const answer = String(payload.answer || '').trim();
+        const question = String(payload.question || '').trim();
+
+        if (action === 'candidate-create-resume' && !isEmployer) {
+            storeAndOpenSection('resume-playground', 'jumptakeResumePlaygroundAiDraft', {
+                mode: 'resume',
+                name: 'AI Generated Resume',
+                text: answer || question
+            }, 'jumptake-resume-playground-ai-draft');
+            return;
+        }
+
+        if (action === 'employer-create-document' && isEmployer) {
+            storeAndOpenSection('create-document', 'jumptakeResumePlaygroundAiDraft', {
+                mode: 'document',
+                name: 'AI Generated Document',
+                text: answer || question
+            }, 'jumptake-resume-playground-ai-draft');
+            return;
+        }
+
+        if (action === 'candidate-create-story' && !isEmployer) {
+            storeAndOpenSection('job-feed', 'jumptakeFeedAiDraft', {
+                mode: 'candidate',
+                tab: 'create-story',
+                text: answer || question
+            }, 'jumptake-feed-ai-draft');
+            return;
+        }
+
+        if (action === 'employer-create-assessment' && isEmployer) {
+            storeAndOpenSection('make-assessment', 'jumptakeAssessmentAiDraft', {
+                mode: 'employer',
+                text: answer || question
+            }, 'jumptake-assessment-ai-draft');
+            return;
+        }
+
+        if (action === 'candidate-apply-job' && !isEmployer) {
+            const matchedJob = findRequestedJob(question) || findRequestedJob(answer);
+            if (!matchedJob) {
+                return;
+            }
+
+            const jobId = matchedJob?._id || matchedJob?.id || matchedJob?.jobNumber;
+            const request = {
+                mode: 'candidate',
+                tab: 'job-posts',
+                jobId,
+                action: 'apply'
+            };
+            storeAndOpenSection('job-feed', 'jumptakeHomeFeedRequest', request, 'jumptake-home-feed-request');
+        }
+    };
+
     return (
         <div className={`floating-messenger ${open ? 'is-open' : ''}`}>
             {open && (
@@ -393,7 +512,13 @@ const FloatingMessenger = ({
                                             </div>
                                         ) : null}
                                     </div>
-                                    <AssistantChat title="JumpTake AI" className="floating-messenger-assistant-chat" />
+                                    <AssistantChat
+                                        title="JumpTake AI"
+                                        className="floating-messenger-assistant-chat"
+                                        storageKey={assistantStorageKey}
+                                        context={assistantContext}
+                                        onAction={handleAssistantAction}
+                                    />
                                 </>
                             ) : selectedThread ? (
                                 <>

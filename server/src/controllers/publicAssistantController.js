@@ -430,6 +430,19 @@ const inferAction = (message) => {
     || /\b(create|make|open|start|set ?up|setup|get)\b.{0,24}\b(account|profile)\b/.test(normalized);
   const asksLogin = /\b(log ?in|login|sign ?in)\b/.test(normalized);
   const asksJobs = /\b(job feed|jobs feed|browse jobs|open jobs|show jobs|job posts|find jobs)\b/.test(normalized);
+  const asksResume = /\b(make|create|build|generate|write|draft)\b.{0,36}\b(resume|cv)\b/.test(normalized)
+    || /\b(resume|cv)\b.{0,24}\b(make|create|build|generate|write|draft)\b/.test(normalized);
+  const asksDocument = /\b(make|create|build|generate|write|draft)\b.{0,36}\b(document|letter|offer letter|policy|memo)\b/.test(normalized);
+  const asksApply = /\b(apply|application)\b/.test(normalized) && /\b(job|role|position|posting)\b/.test(normalized);
+  const asksStory = /\b(make|create|write|draft|generate)\b.{0,36}\b(talent story|story|talent post|feed post|post)\b/.test(normalized);
+  const asksAssessment = /\b(make|create|write|draft|generate)\b.{0,36}\b(assessment|test|quiz|screening)\b/.test(normalized)
+    || /\bassessment\b.{0,36}\b(candidate|general|job)\b/.test(normalized);
+
+  if (asksResume) return 'candidate-create-resume';
+  if (asksApply) return 'candidate-apply-job';
+  if (asksStory) return 'candidate-create-story';
+  if (asksAssessment) return 'employer-create-assessment';
+  if (asksDocument) return 'employer-create-document';
 
   if (asksRegister && mentionsCandidate) return 'candidate-register';
   if (asksRegister && mentionsEmployer) return 'employer-register';
@@ -440,6 +453,16 @@ const inferAction = (message) => {
   if (asksLogin) return 'choose-login';
   return null;
 };
+
+const PORTAL_ACTIONS = new Set([
+  'candidate-create-resume',
+  'candidate-apply-job',
+  'candidate-create-story',
+  'employer-create-assessment',
+  'employer-create-document'
+]);
+
+const isPortalAction = (action) => PORTAL_ACTIONS.has(action);
 
 const buildHistoryBlock = (history = []) => (
   history
@@ -577,6 +600,14 @@ const fallbackAnswer = (message, action, history = []) => {
   }
   if (action === 'open-jobs') {
     return 'Opening the public job feed. You can browse active jobs now, and candidate login is only needed when you want to open details or apply.';
+  }
+  if (action === 'candidate-apply-job') {
+    const genericApplyRequest = /\bapply\b.{0,16}\b(a|any|some|the)?\s*(job|role|position|posting)\b/.test(normalized)
+      && !/\bdeveloper|engineer|designer|manager|analyst|assistant|intern|nurse|teacher|driver|sales|marketing|finance|account|support|remote|hybrid|full time|part time\b/.test(normalized);
+    if (lastAssistantText.includes('which job') || !genericApplyRequest) {
+      return 'Opening the matching job with your application draft prepared. Review the details, then tap Apply Now when you are ready.';
+    }
+    return 'Which job do you want to apply to? Send the job title or a few words from the post, and I will open it with your application draft ready.';
   }
 
   const trainedAnswer = findTrainedAssistantAnswer(message);
@@ -1080,18 +1111,47 @@ const shouldUseDirectAssistantReply = (message, action) => {
 const askPublicAssistant = async (req, res) => {
   const message = String(req.body?.message || '').trim();
   const history = Array.isArray(req.body?.history) ? req.body.history : [];
+  const context = req.body?.context && typeof req.body.context === 'object' ? req.body.context : {};
 
   if (!message) {
     return res.status(400).json({ error: 'Please enter a question.' });
   }
 
-  const action = inferAction(message);
-  const directReply = getDirectAssistantReply(message, history, action);
+  let action = inferAction(message);
+  const lastAssistantText = String(getLastHistoryEntry(history, 'assistant')?.text || '').toLowerCase();
+  if (!action && /\bwhich job\b/.test(lastAssistantText) && context?.portalMode === 'candidate') {
+    action = 'candidate-apply-job';
+  }
+  const directReply = getDirectAssistantReply(message, history, isPortalAction(action) && action !== 'candidate-apply-job' ? null : action);
   if (directReply) {
     return res.json({ answer: directReply, action });
   }
 
   const conversationHistory = buildHistoryBlock(history);
+  const contextBlock = JSON.stringify({
+    portalMode: context.portalMode || '',
+    user: context.user || null,
+    profile: context.profile || null,
+    company: context.company || null,
+    jobs: Array.isArray(context.jobs) ? context.jobs.slice(0, 12).map((job) => ({
+      id: job?._id || job?.id || job?.jobNumber || '',
+      title: job?.title || '',
+      company: job?.company?.name || job?.companyName || '',
+      description: job?.description || job?.summary || '',
+      requirements: job?.requirements || '',
+      location: job?.location || '',
+      type: job?.type || job?.jobType || ''
+    })) : []
+  }, null, 2);
+  const actionInstructions = isPortalAction(action) ? `
+The current portal action is ${action}.
+- For candidate-create-resume: write a complete resume draft using the provided user/profile context. Use clear section headings and concise bullet points. Do not say you cannot access profile data if context is present.
+- For employer-create-document: write a polished editable document draft based on the user's request and employer/company context.
+- For candidate-create-story: write a polished talent story/feed post ready to paste into the dashboard feed composer. Keep it first person when appropriate.
+- For employer-create-assessment: create an assessment draft with a title, short instructions, and 5-8 questions. Include answer keys. Mix multiple-choice and short-answer when useful.
+- For candidate-apply-job: if the user specified a recognizable job, name the likely job and say you are opening it with the application fields prepared. If not, ask which job title they want.
+Return only the user-facing text draft or instruction, not JSON.
+` : '';
   let openAiFailed = false;
   let geminiFailed = false;
 
@@ -1122,6 +1182,11 @@ ${RESPONSE_PLAYBOOK}
 
 Conversation so far:
 ${conversationHistory || 'No prior conversation.'}
+
+Portal context:
+${contextBlock}
+
+${actionInstructions}
 
 Visitor: ${message}
 `;

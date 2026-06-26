@@ -10,17 +10,41 @@ const AssistantSearchIcon = () => (
     </svg>
 );
 
-const AssistantChat = ({ title = 'Jumptake chat', className = '' }) => {
+const createInitialAssistantMessages = () => ([
+    {
+        role: 'assistant',
+        text: 'Hi, I am JumpTake AI. Ask me about jobs, resumes, applications, hiring, or anything you want to do next.',
+        time: formatAssistantTime()
+    }
+]);
+
+const AssistantChat = ({ title = 'Jumptake chat', className = '', storageKey = '', context = null, onAction }) => {
     const [assistantInput, setAssistantInput] = useState('');
     const [assistantLoading, setAssistantLoading] = useState(false);
-    const [assistantMessages, setAssistantMessages] = useState([
-        {
-            role: 'assistant',
-            text: 'Hi, I am JumpTake AI. Ask me about jobs, resumes, applications, hiring, or anything you want to do next.',
-            time: formatAssistantTime()
-        }
-    ]);
+    const [assistantMessages, setAssistantMessages] = useState(createInitialAssistantMessages);
     const messagesRef = useRef(null);
+
+    useEffect(() => {
+        if (!storageKey || typeof window === 'undefined') {
+            setAssistantMessages(createInitialAssistantMessages());
+            return;
+        }
+
+        try {
+            const storedMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            setAssistantMessages(Array.isArray(storedMessages) && storedMessages.length ? storedMessages : createInitialAssistantMessages());
+        } catch (error) {
+            setAssistantMessages(createInitialAssistantMessages());
+        }
+    }, [storageKey]);
+
+    useEffect(() => {
+        if (!storageKey || typeof window === 'undefined') {
+            return;
+        }
+
+        localStorage.setItem(storageKey, JSON.stringify(assistantMessages.slice(-80)));
+    }, [assistantMessages, storageKey]);
 
     useEffect(() => {
         if (!messagesRef.current) {
@@ -28,6 +52,14 @@ const AssistantChat = ({ title = 'Jumptake chat', className = '' }) => {
         }
         messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
     }, [assistantMessages, assistantLoading]);
+
+    const clearAssistantChat = () => {
+        setAssistantMessages(createInitialAssistantMessages());
+        setAssistantInput('');
+        if (storageKey && typeof window !== 'undefined') {
+            localStorage.removeItem(storageKey);
+        }
+    };
 
     const askAssistant = async (event) => {
         event?.preventDefault();
@@ -46,7 +78,8 @@ const AssistantChat = ({ title = 'Jumptake chat', className = '' }) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     message: question,
-                    history: assistantMessages.slice(-8).map(({ role, text }) => ({ role, text }))
+                    history: assistantMessages.slice(-8).map(({ role, text }) => ({ role, text })),
+                    context
                 })
             });
             const data = await response.json();
@@ -54,6 +87,9 @@ const AssistantChat = ({ title = 'Jumptake chat', className = '' }) => {
                 throw new Error(data.error || 'JumpTake assistant is unavailable.');
             }
             setAssistantMessages((messages) => [...messages, { role: 'assistant', text: data.answer, time: formatAssistantTime() }]);
+            if (data.action) {
+                onAction?.(data.action, { answer: data.answer, question, context });
+            }
         } catch (error) {
             setAssistantMessages((messages) => [...messages, { role: 'assistant', text: error.message, time: formatAssistantTime() }]);
         } finally {
@@ -67,6 +103,14 @@ const AssistantChat = ({ title = 'Jumptake chat', className = '' }) => {
                 <div className="public-ai-chat-brand">
                     <p className="public-ai-chat-title">{title}</p>
                 </div>
+                <button
+                    type="button"
+                    className="portal-ai-clear-chat-button"
+                    onClick={clearAssistantChat}
+                    disabled={assistantLoading}
+                >
+                    Clear chat
+                </button>
             </div>
             <ul ref={messagesRef} className="public-ai-chat-messages portal-ai-chat-messages">
                 {assistantMessages.map((message, index) => (

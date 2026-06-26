@@ -47655,37 +47655,45 @@ select {
 .portal-dashboard-identity {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 0.65rem !important;
+  gap: 0 !important;
 }
 
-.portal-ai-top-button {
-  width: 2.75rem !important;
-  height: 2.75rem !important;
-  min-width: 2.75rem !important;
-  min-height: 2.75rem !important;
-  padding: 0 !important;
-  border: 0 !important;
-  border-radius: 50% !important;
-  background: #000000 !important;
-  color: #ffffff !important;
+.portal-header-ai-action {
+  margin-right: auto !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.26) !important;
+}
+
+.portal-ai-top-button {
+  width: 2.6rem !important;
+  height: 2.6rem !important;
+  min-width: 2.6rem !important;
+  min-height: 2.6rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+  color: #f97316 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: none !important;
   cursor: pointer !important;
-  transition: transform 0.18s ease, box-shadow 0.18s ease, color 0.18s ease !important;
+  transition: transform 0.18s ease, color 0.18s ease !important;
 }
 
 .portal-ai-top-button:hover,
 .portal-ai-top-button:focus-visible {
-  color: #f97316 !important;
+  background: transparent !important;
   transform: translateY(-1px) !important;
-  box-shadow: 0 18px 36px rgba(249, 115, 22, 0.2) !important;
+  box-shadow: none !important;
+  color: #fb923c !important;
 }
 
 .portal-ai-top-icon {
-  width: 1.62rem !important;
-  height: 1.62rem !important;
+  width: 1.7rem !important;
+  height: 1.7rem !important;
   display: block !important;
   fill: none !important;
   stroke: currentColor !important;
@@ -47743,14 +47751,14 @@ select {
 
 @media (max-width: 768px) {
   .portal-dashboard-identity {
-    gap: 0.5rem !important;
+    gap: 0 !important;
   }
 
   .portal-ai-top-button {
-    width: 2.38rem !important;
-    height: 2.38rem !important;
-    min-width: 2.38rem !important;
-    min-height: 2.38rem !important;
+    width: 2.35rem !important;
+    height: 2.35rem !important;
+    min-width: 2.35rem !important;
+    min-height: 2.35rem !important;
   }
 
   .portal-ai-top-icon {
@@ -47765,5 +47773,186 @@ select {
 
   .public-assistant-dialog.is-chatting .public-ai-chat-messages {
     min-height: 15rem !important;
+  }
+}
+
+/* AI chat, dashboard landing, and editor polish for portal workflows. */
+.public-ai-chat-card,
+.portal-ai-chat-card {
+  min-height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.public-ai-chat-messages,
+.portal-ai-chat-messages {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  padding-bottom: 0.85rem !important;
+}
+
+.public-ai-chat-card .public-ai-chat-reply,
+.portal-ai-chat-card .public-ai-chat-reply {
+  position: sticky !important;
+  bottom: max(0.75rem, env(safe-area-inset-bottom)) !important;
+  z-index: 3 !important;
+  margin-top: auto !important;
+  padding-top: 0.75rem !important;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0), #000000 34%) !important;
+}
+
+.public-ai-chat-reply .public-ai-reply-row {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.portal-ai-clear-chat-button {
+  appearance: none !important;
+  border: 1px solid rgba(249, 115, 22, 0.45) !important;
+  border-radius: 999px !important;
+  background: rgba(249, 115, 22, 0.08) !important;
+  color: #fb923c !important;
+  padding: 0.38rem 0.7rem !important;
+  font-size: 0.74rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+}
+
+.portal-ai-clear-chat-button:hover,
+.portal-ai-clear-chat-button:focus-visible {
+  background: rgba(249, 115, 22, 0.18) !important;
+  color: #fed7aa !important;
+}
+
+.floating-messenger-assistant-chat {
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+.floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-reply-row {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-reply-field {
+  width: 100% !important;
+}
+
+.portal-default-stat {
+  appearance: none !important;
+  text-align: left !important;
+  cursor: pointer !important;
+}
+
+.portal-default-stat:hover,
+.portal-default-stat:focus-visible {
+  border-color: rgba(249, 115, 22, 0.7) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.2), 0 12px 28px rgba(0, 0, 0, 0.32) !important;
+}
+
+.portal-default-action-home .portal-default-action-icon {
+  width: 2.05rem !important;
+  height: 2.05rem !important;
+}
+
+.portal-default-action-home .portal-default-action-icon svg {
+  width: 1.65rem !important;
+  height: 1.65rem !important;
+}
+
+.resume-playground-toolbar-shell,
+.resume-playground-toolbar,
+.resume-playground-toolbar-row,
+.resume-playground-toolbar-row-fixed,
+.resume-playground-toolbar-row-scroll {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.resume-playground-toolbar-shell,
+.resume-playground-toolbar {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: thin !important;
+}
+
+.resume-playground-toolbar-row,
+.resume-playground-toolbar-row-fixed,
+.resume-playground-toolbar-row-scroll {
+  width: max-content !important;
+  min-width: max-content !important;
+  flex-wrap: nowrap !important;
+  overflow-x: visible !important;
+}
+
+.resume-playground-toolbar-group,
+.resume-playground-toolbar-group-wide {
+  flex: 0 0 auto !important;
+}
+
+.resume-playground-editor-document {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+}
+
+.resume-playground-editor-document *,
+.resume-playground-editor-document *::before,
+.resume-playground-editor-document *::after {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.resume-playground-editor-document table {
+  width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+}
+
+.resume-playground-editor-document img,
+.resume-playground-editor-document video {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+.resume-playground-page-break {
+  break-after: page !important;
+  page-break-after: always !important;
+}
+
+@media (max-width: 768px) {
+  .public-ai-chat-card .public-ai-chat-reply,
+  .portal-ai-chat-card .public-ai-chat-reply {
+    bottom: max(0.5rem, env(safe-area-inset-bottom)) !important;
+  }
+
+  .floating-messenger-panel.is-mobile .portal-ai-chat-card {
+    height: 100% !important;
+  }
+
+  .floating-messenger-panel.is-mobile .portal-ai-chat-messages {
+    min-height: 0 !important;
+  }
+
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-shell,
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row,
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-fixed,
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-scroll {
+    width: max-content !important;
+    min-width: max-content !important;
+    max-width: none !important;
+    flex-wrap: nowrap !important;
   }
 }

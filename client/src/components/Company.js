@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import EmployerLogin from './EmployerLogin';
 import EmployerRegistration from './EmployerRegistration';
-import employerVideo from './media/employer.mp4';
 
 const Company = () => {
     const [companyName, setCompanyName] = useState('');
@@ -11,7 +9,6 @@ const Company = () => {
     const [companyInfo, setCompanyInfo] = useState(null);
     const [searchResults, setSearchResults] = useState([]);
     const [manualInputMode, setManualInputMode] = useState(false);
-    const [showLogin, setShowLogin] = useState(false);
     const [showRegistration, setShowRegistration] = useState(false);
     const [companyId, setCompanyId] = useState(null);
     const [formData, setFormData] = useState({
@@ -291,7 +288,7 @@ const Company = () => {
     };
 
     const handleLoginClick = () => {
-        setShowLogin(true);
+        navigate('/#login');
     };
 
     const handleManualRegistrationClick = () => {
@@ -301,10 +298,6 @@ const Company = () => {
         setCompanyId(null);
         setManualInputMode(true);
         setMessage('Enter your company details manually to create an employer account.');
-    };
-
-    const handleCloseLogin = () => {
-        setShowLogin(false);
     };
 
     const submitCompanyInfo = async () => {
@@ -359,16 +352,6 @@ const Company = () => {
 
     return (
         <div className="company-page">
-            <div className="company-video-background">
-                <video autoPlay loop muted playsInline>
-                    <source src={employerVideo} type="video/mp4" />
-                    Your browser does not support the video tag.
-                </video>
-                <div className="company-video-overlay"></div>
-            </div>
-            
-            {showLogin && <EmployerLogin onClose={handleCloseLogin} />}
-            
             <div className="company-container">
                 <div className="container-header">
                     <h1 className="container-title">Employer Portal</h1>
@@ -428,9 +411,11 @@ const Company = () => {
                                 <button
                                     type="button"
                                     onClick={goBack}
-                                    className="back-button"
+                                    className="back-button portal-entry-back-button"
+                                    aria-label="Back to home"
+                                    title="Back to Home"
                                 >
-                                    Back to Home
+                                    <span className="visually-hidden">Back to Home</span>
                                 </button>
                             </div>
                         </form>
@@ -586,7 +571,7 @@ const Company = () => {
                             companyName={companyName}
                             onComplete={() => {
                                 setShowRegistration(false);
-                                setShowLogin(true);
+                                navigate('/#login');
                             }}
                         />
                     </div>

@@ -283,9 +283,11 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
 
                         <button
                             onClick={goBack}
-                            className="back-button"
+                            className="back-button portal-entry-back-button"
+                            aria-label="Back to home"
+                            title="Back to Home"
                         >
-                            Back to Home
+                            <span className="visually-hidden">Back to Home</span>
                         </button>
                     </>
                 )}

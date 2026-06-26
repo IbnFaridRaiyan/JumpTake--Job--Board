@@ -473,11 +473,47 @@ const PublicLandingNav = () => {
     const visibleJobs = jobs.slice((jobsPage - 1) * jobsPerPage, jobsPage * jobsPerPage);
     const assistantStarted = assistantMessages.length > 0;
 
+    const clearPublicModalHash = () => {
+        if (typeof window === 'undefined') {
+            return;
+        }
+
+        if (['#login', '#register'].includes(window.location.hash.toLowerCase())) {
+            window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+        }
+    };
+
+    const closeActiveModal = () => {
+        setActiveModal('');
+        clearPublicModalHash();
+    };
+
     useEffect(() => {
         if (jobsPage > totalJobPages) {
             setJobsPage(totalJobPages);
         }
     }, [jobsPage, totalJobPages]);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') {
+            return undefined;
+        }
+
+        const openModalFromHash = () => {
+            const hash = window.location.hash.toLowerCase();
+
+            if (hash === '#login') {
+                setActiveModal('login-choice');
+            } else if (hash === '#register') {
+                setActiveModal('register-choice');
+            }
+        };
+
+        openModalFromHash();
+        window.addEventListener('hashchange', openModalFromHash);
+
+        return () => window.removeEventListener('hashchange', openModalFromHash);
+    }, []);
 
     useEffect(() => {
         if (activeModal === 'jobs') {
@@ -644,7 +680,7 @@ const PublicLandingNav = () => {
             {activeModal === 'login-choice' && renderModal(
                 <PublicLoginDialog
                     apiBase={apiBase}
-                    onClose={() => setActiveModal('')}
+                    onClose={closeActiveModal}
                     onOpenRegister={() => setActiveModal('register-choice')}
                     onSuccessCandidate={handleCandidateLoginSuccess}
                     onSuccessEmployer={handleEmployerLoginSuccess}
@@ -653,14 +689,14 @@ const PublicLandingNav = () => {
 
             {activeModal === 'register-choice' && renderModal(
                 <PublicRegisterDialog
-                    onClose={() => setActiveModal('')}
+                    onClose={closeActiveModal}
                     onCandidate={() => executeAction('candidate-register')}
                     onEmployer={() => executeAction('employer-register')}
                 />
             )}
 
             {activeModal === 'assistant' && renderModal(
-                <div className="public-landing-modal-backdrop" role="presentation" onMouseDown={() => setActiveModal('')}>
+                <div className="public-landing-modal-backdrop" role="presentation" onMouseDown={closeActiveModal}>
                     <section className={`public-assistant-dialog ${assistantStarted ? 'is-chatting' : 'is-launching'}`} role="dialog" aria-modal="true" aria-label="Ask JumpTake" onMouseDown={(event) => event.stopPropagation()}>
                         {!assistantStarted ? (
                             <form className="public-ai-launch-form" onSubmit={askAssistant}>
@@ -680,7 +716,7 @@ const PublicLandingNav = () => {
                                     </label>
                                 </div>
                                 <div className="public-ai-launch-footer">
-                                    <BackArrowButton onClick={() => setActiveModal('')} label="Close JumpTake assistant" />
+                                    <BackArrowButton onClick={closeActiveModal} label="Close JumpTake assistant" />
                                 </div>
                             </form>
                         ) : (
@@ -747,7 +783,7 @@ const PublicLandingNav = () => {
                                             </div>
                                         </form>
                                         <div className="public-ai-chat-footer">
-                                            <BackArrowButton onClick={() => setActiveModal('')} label="Close JumpTake chat" />
+                                            <BackArrowButton onClick={closeActiveModal} label="Close JumpTake chat" />
                                         </div>
                                     </div>
                                 </div>
@@ -758,7 +794,7 @@ const PublicLandingNav = () => {
             )}
 
             {activeModal === 'jobs' && renderModal(
-                <div className="public-landing-modal-backdrop" role="presentation" onMouseDown={() => setActiveModal('')}>
+                <div className="public-landing-modal-backdrop" role="presentation" onMouseDown={closeActiveModal}>
                     <section className="public-jobs-dialog" role="dialog" aria-modal="true" aria-label="Public job feed" onMouseDown={(event) => event.stopPropagation()}>
                         <div className="public-jobs-hero">
                             <div className="public-jobs-hero-copy">
@@ -903,7 +939,7 @@ const PublicLandingNav = () => {
                             </div>
                         ) : null}
                         <div className="public-modal-footer">
-                            <BackArrowButton onClick={() => setActiveModal('')} label="Close job feed" />
+                            <BackArrowButton onClick={closeActiveModal} label="Close job feed" />
                         </div>
                     </section>
                 </div>

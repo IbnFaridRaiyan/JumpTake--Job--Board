@@ -47956,3 +47956,367 @@ select {
     flex-wrap: nowrap !important;
   }
 }
+
+/* Desktop portal tightening and AI chat header cleanup. */
+@media (min-width: 769px) {
+  .home-page > .dashboard-container,
+  .home-page .dashboard-container {
+    width: min(calc(100% - 7rem), 1600px) !important;
+    max-width: 1600px !important;
+    margin: 18px auto 28px !important;
+    padding-left: 1.1rem !important;
+    padding-right: 1.1rem !important;
+  }
+
+  .home-page .main-content,
+  .home-page .dashboard-main,
+  .home-page .mobile-dashboard-section-panel,
+  .home-page .mobile-job-management-section-panel {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+
+  .public-ai-chat-card .public-ai-chat-header {
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+  }
+
+  .public-ai-chat-card .public-ai-chat-brand {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+
+  .public-ai-chat-card .public-ai-chat-title {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .portal-ai-clear-chat-button {
+    border: 0 !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin-left: auto !important;
+    border-radius: 0 !important;
+    color: #fb923c !important;
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+    box-shadow: none !important;
+  }
+
+  .portal-ai-clear-chat-button:hover,
+  .portal-ai-clear-chat-button:focus-visible {
+    background: transparent !important;
+    color: #fed7aa !important;
+  }
+}
+
+/* Assistant chat header final cleanup for all viewports. */
+.public-ai-chat-card .public-ai-chat-header {
+  flex-wrap: nowrap !important;
+  gap: 0.55rem !important;
+}
+
+.public-ai-chat-card .public-ai-chat-brand {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+.public-ai-chat-card .public-ai-chat-title {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.portal-ai-clear-chat-button {
+  appearance: none !important;
+  border: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin-left: auto !important;
+  border-radius: 0 !important;
+  color: #fb923c !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  line-height: 1.15 !important;
+  box-shadow: none !important;
+}
+
+.portal-ai-clear-chat-button:hover,
+.portal-ai-clear-chat-button:focus-visible {
+  background: transparent !important;
+  color: #fed7aa !important;
+}
+
+/* Portal entry and assistant chat final corrections. */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.job-seeker-page,
+.company-page {
+  min-height: 100dvh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: clamp(1rem, 3vw, 2rem) !important;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(251, 146, 60, 0.26), transparent 34%),
+    linear-gradient(145deg, #1f0b03 0%, #7c2d12 52%, #2b0d04 100%) !important;
+  overflow-y: auto !important;
+}
+
+.candidate-video-background,
+.company-video-background {
+  display: none !important;
+}
+
+.job-seeker-container,
+.company-container {
+  width: min(100%, 24rem) !important;
+  margin: auto !important;
+  padding: 1rem 1.05rem 1.15rem !important;
+  color: #ffffff !important;
+  background: rgba(0, 0, 0, 0.9) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border-radius: 1.05rem !important;
+  box-shadow: 0 24px 62px rgba(0, 0, 0, 0.4) !important;
+}
+
+.job-seeker-container .container-header,
+.company-container .container-header {
+  margin-bottom: 0.45rem !important;
+}
+
+.job-seeker-container .container-title,
+.company-container .container-title,
+.resume-dropbox h2 {
+  color: #ffffff !important;
+}
+
+.job-seeker-container .container-subtitle,
+.company-container .container-subtitle {
+  color: rgba(255, 255, 255, 0.84) !important;
+  line-height: 1.35 !important;
+}
+
+.job-seeker-page .resume-dropbox,
+.company-page .search-section {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.job-seeker-page .drop-area {
+  padding: 1rem 0.85rem !important;
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(94, 234, 212, 0.8) !important;
+}
+
+.job-seeker-page .drop-message,
+.job-seeker-page .supported-formats {
+  color: #ffffff !important;
+}
+
+.job-seeker-page .buttons-container,
+.company-page .buttons-container {
+  max-width: 18rem !important;
+  margin: 0.8rem auto 0 !important;
+  gap: 0.28rem !important;
+}
+
+.public-auth-submit,
+.job-seeker-page .candidate-login-button,
+.job-seeker-page .demo-cv-button,
+.job-seeker-page .submit-button,
+.company-page .search-button,
+.company-page .candidate-login-button,
+.company-page .submit-button,
+.company-page .secondary-button {
+  width: auto !important;
+  max-width: min(100%, 18rem) !important;
+  min-height: 2.25rem !important;
+  margin: 0.1rem auto !important;
+  padding: 0.42rem 0.88rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  font-family: 'Chewy', 'Lexend', system-ui, sans-serif !important;
+  font-size: clamp(1rem, 2.7vw, 1.28rem) !important;
+  font-weight: 400 !important;
+  line-height: 1.1 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  text-align: center !important;
+  animation: jumptake-soft-title-wobble 11.8s infinite both !important;
+}
+
+.public-auth-submit:hover,
+.public-auth-submit:focus-visible,
+.job-seeker-page .candidate-login-button:hover,
+.job-seeker-page .candidate-login-button:focus-visible,
+.job-seeker-page .demo-cv-button:hover,
+.job-seeker-page .demo-cv-button:focus-visible,
+.job-seeker-page .submit-button:hover,
+.job-seeker-page .submit-button:focus-visible,
+.company-page .search-button:hover,
+.company-page .search-button:focus-visible,
+.company-page .candidate-login-button:hover,
+.company-page .candidate-login-button:focus-visible,
+.company-page .submit-button:hover,
+.company-page .submit-button:focus-visible,
+.company-page .secondary-button:hover,
+.company-page .secondary-button:focus-visible {
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #fed7aa !important;
+  transform: translateY(-1px) !important;
+  outline: 0 !important;
+}
+
+.job-seeker-page .submit-button:disabled,
+.company-page .search-button:disabled,
+.company-page .submit-button:disabled {
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.45) !important;
+  opacity: 1 !important;
+}
+
+.job-seeker-page .login-divider {
+  margin: 0.18rem auto !important;
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
+.job-seeker-page .portal-entry-back-button,
+.company-page .portal-entry-back-button {
+  width: 2.1rem !important;
+  min-width: 2.1rem !important;
+  max-width: 2.1rem !important;
+  height: 2.1rem !important;
+  min-height: 2.1rem !important;
+  margin: 0.25rem auto 0 !important;
+  padding: 0 !important;
+  color: #ffffff !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  font-size: 0 !important;
+}
+
+.job-seeker-page .portal-entry-back-button::before,
+.company-page .portal-entry-back-button::before {
+  content: "←" !important;
+  margin: 0 !important;
+  color: currentColor !important;
+  font-size: 1.35rem !important;
+  line-height: 1 !important;
+}
+
+.job-seeker-page .portal-entry-back-button:hover,
+.job-seeker-page .portal-entry-back-button:focus-visible,
+.company-page .portal-entry-back-button:hover,
+.company-page .portal-entry-back-button:focus-visible {
+  color: #fed7aa !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.company-page .company-input,
+.company-page .company-input:focus {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+}
+
+.public-ai-chat-card.portal-ai-chat-card {
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+.portal-ai-chat-card .public-ai-chat-header {
+  align-items: flex-start !important;
+  padding: 0 0 0.55rem !important;
+  gap: 0.45rem !important;
+}
+
+.portal-ai-chat-card .public-ai-chat-brand {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  overflow: visible !important;
+}
+
+.portal-ai-chat-card .public-ai-chat-title {
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  line-height: 1.12 !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
+.portal-ai-clear-chat-button {
+  flex: 0 0 auto !important;
+  max-width: max-content !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.portal-ai-chat-card .portal-ai-chat-messages {
+  min-height: 0 !important;
+  max-height: none !important;
+  flex: 1 1 auto !important;
+  padding-bottom: 0.55rem !important;
+}
+
+.portal-inbox-assistant,
+.floating-messenger-assistant-chat {
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+@media (min-width: 769px) {
+  .job-seeker-container,
+  .company-container {
+    width: min(100%, 25rem) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .job-seeker-page,
+  .company-page {
+    padding: 1rem 0.85rem !important;
+  }
+
+  .job-seeker-container,
+  .company-container {
+    width: min(100%, 22.75rem) !important;
+    padding: 0.9rem 0.95rem 1rem !important;
+  }
+
+  .portal-ai-chat-card .public-ai-chat-header {
+    padding-bottom: 0.5rem !important;
+  }
+}

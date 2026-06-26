@@ -64,7 +64,7 @@ const PortalDefaultLanding = ({
             { label: 'Inbox', value: inboxCount, action: 'messages' }
         ]
         : [
-            { label: 'Available jobs', value: jobs.length, section: 'job-feed' },
+            { label: 'Available jobs', value: jobs.length, section: 'job-feed', tab: 'job-posts' },
             { label: 'Assessments', value: assessmentCount, section: 'assessments' },
             { label: 'Video interviews', value: videoInterviewCount, section: 'video-interviews' },
             { label: 'Notifications', value: notificationCount, section: 'notifications' }
@@ -88,6 +88,13 @@ const PortalDefaultLanding = ({
         if (stat.action === 'messages' && typeof window !== 'undefined') {
             window.dispatchEvent(new CustomEvent(isEmployer ? 'jumptake-open-employer-messenger' : 'jumptake-open-candidate-messenger'));
             return;
+        }
+
+        if (stat.tab && typeof window !== 'undefined') {
+            sessionStorage.setItem('jumptakeHomeFeedRequest', JSON.stringify({
+                mode: isEmployer ? 'employer' : 'candidate',
+                tab: stat.tab
+            }));
         }
 
         switchSection?.(stat.section);

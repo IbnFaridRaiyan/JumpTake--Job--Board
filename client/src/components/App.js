@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Landing from './Landing';
 import Company from './Company';
-import Login from './Login';
 import HomePage from './HomePage';
 import EmployerDashboard from './EmployerDashboard';
 import JobSeeker from './JobSeeker'; 
@@ -21,7 +20,6 @@ const getInitialAppMode = () => {
 };
 
 function App() {
-  const [showLogin, setShowLogin] = useState(false);
   const [appMode, setAppMode] = useState(getInitialAppMode);
 
   useEffect(() => {
@@ -30,22 +28,12 @@ function App() {
     localStorage.setItem(APP_MODE_STORAGE_KEY, appMode);
   }, [appMode]);
 
-  const handleLoginClick = () => {
-    setShowLogin(true);
-  };
-
-  const handleCloseLogin = () => {
-    setShowLogin(false);
-  };
-
   return (
     <BrowserRouter>
       <div className="app-container">
-        {showLogin && <Login onClose={handleCloseLogin} />}
-        
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/job-seeker" element={<JobSeeker onLoginClick={handleLoginClick} />} />
+          <Route path="/job-seeker" element={<JobSeeker />} />
           <Route path="/company" element={<Company />} />
           <Route path="/home" element={<HomePage appMode={appMode} onAppModeChange={setAppMode} />} />
           <Route path="/employer-dashboard" element={<EmployerDashboard appMode={appMode} onAppModeChange={setAppMode} />} />

@@ -13,6 +13,7 @@ const engagementController = require('../controllers/engagementController');
 const passwordResetController = require('../controllers/passwordResetController');
 const messageController = require('../controllers/messageController');
 const notificationController = require('../controllers/notificationController');
+const feedPostController = require('../controllers/feedPostController');
 const jobInvitationController = require('../controllers/jobInvitationController');
 const candidateNetworkController = require('../controllers/candidateNetworkController');
 const publicAssistantController = require('../controllers/publicAssistantController');
@@ -196,6 +197,9 @@ router.put('/candidate-connections/:connectionId/respond', candidateNetworkContr
 router.get('/notifications', notificationController.getNotifications);
 router.put('/notifications/:id/read', notificationController.markNotificationRead);
 router.put('/notifications/read-all', notificationController.markAllNotificationsRead);
+router.get('/feed-posts', feedPostController.getFeedPosts);
+router.post('/feed-posts', feedPostController.createFeedPost);
+router.put('/feed-posts/:id', feedPostController.updateFeedPost);
 router.get('/job-invitations/user/:userId', jobInvitationController.getCandidateJobInvitations);
 router.get('/job-invitations/company/:companyId/job/:jobId/matches', jobInvitationController.getMatchingCandidates);
 router.post('/job-invitations/send', jobInvitationController.sendJobInvitations);

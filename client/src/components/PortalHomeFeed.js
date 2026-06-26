@@ -112,6 +112,10 @@ const getJobKey = (job) => String(job?._id || job?.jobNumber || job?.title || 'j
 
 const getPostKey = (post, fallbackIndex = 0) => String(post?.id || post?._id || `post-${fallbackIndex}`);
 
+const getFeedTypeFromStorageKey = (key) => (
+    key === WORK_NEWS_STORAGE_KEY ? 'work-news' : 'talent-story'
+);
+
 const asDisplayText = (value, fallback = '') => {
     if (value === null || value === undefined) {
         return fallback;
@@ -624,8 +628,10 @@ const PortalHomeFeed = ({
     const tabs = mode === 'employer' ? employerTabs : candidateTabs;
     const defaultTab = mode === 'employer' ? 'talent-stories' : 'work-news';
     const [activeTab, setActiveTab] = useState(defaultTab);
-    const [workNewsPosts, setWorkNewsPosts] = useState(() => readStoredArray(WORK_NEWS_STORAGE_KEY));
-    const [talentStories, setTalentStories] = useState(() => readStoredArray(TALENT_STORIES_STORAGE_KEY));
+    const [workNewsPosts, setWorkNewsPosts] = useState([]);
+    const [talentStories, setTalentStories] = useState([]);
+    const [feedLoading, setFeedLoading] = useState(false);
+    const [feedError, setFeedError] = useState('');
     const [composerText, setComposerText] = useState('');
     const [composerMedia, setComposerMedia] = useState(null);
     const [composerAudience, setComposerAudience] = useState('everyone');
@@ -666,6 +672,91 @@ const PortalHomeFeed = ({
     useEffect(() => {
         setJobPage(1);
     }, [activeTab, safeJobs.length]);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        const migrateLocalPosts = async (key, serverPosts) => {
+            const localPosts = readStoredArray(key);
+            const serverIds = new Set(serverPosts.flatMap((post) => [String(post._id || ''), String(post.id || '')]).filter(Boolean));
+            const localOnlyPosts = localPosts.filter((post) => {
+                const postId = String(post?._id || post?.id || '');
+                return post && typeof post === 'object' && (!postId || !serverIds.has(postId));
+            });
+
+            if (!localOnlyPosts.length) {
+                return serverPosts;
+            }
+
+            const migratedPosts = [];
+            for (const post of localOnlyPosts.slice(0, 50)) {
+                try {
+                    const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/feed-posts`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            ...post,
+                            type: post.type || getFeedTypeFromStorageKey(key)
+                        })
+                    });
+                    if (response.ok) {
+                        migratedPosts.push(await response.json());
+                    }
+                } catch (error) {
+                    console.error('Could not migrate local feed post:', error);
+                }
+            }
+
+            return [...migratedPosts, ...serverPosts];
+        };
+
+        const loadFeedPosts = async () => {
+            setFeedLoading(true);
+            setFeedError('');
+
+            try {
+                const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/feed-posts`);
+                if (!response.ok) {
+                    throw new Error('Failed to load live feed posts');
+                }
+
+                const posts = await response.json();
+                const safePosts = Array.isArray(posts) ? posts : [];
+                let workPosts = safePosts.filter((post) => post.type === 'work-news');
+                let talentPosts = safePosts.filter((post) => post.type === 'talent-story');
+
+                workPosts = await migrateLocalPosts(WORK_NEWS_STORAGE_KEY, workPosts);
+                talentPosts = await migrateLocalPosts(TALENT_STORIES_STORAGE_KEY, talentPosts);
+
+                if (!isMounted) {
+                    return;
+                }
+
+                setWorkNewsPosts(workPosts);
+                setTalentStories(talentPosts);
+                writeStoredArray(WORK_NEWS_STORAGE_KEY, workPosts);
+                writeStoredArray(TALENT_STORIES_STORAGE_KEY, talentPosts);
+            } catch (error) {
+                console.error('Error loading live feed posts:', error);
+                if (!isMounted) {
+                    return;
+                }
+                setFeedError('Live feed is temporarily unavailable. Showing this device cache.');
+                setWorkNewsPosts(readStoredArray(WORK_NEWS_STORAGE_KEY));
+                setTalentStories(readStoredArray(TALENT_STORIES_STORAGE_KEY));
+            } finally {
+                if (isMounted) {
+                    setFeedLoading(false);
+                }
+            }
+        };
+
+        loadFeedPosts();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
 
     useEffect(() => {
         if (mode !== 'candidate') {
@@ -855,15 +946,39 @@ const PortalHomeFeed = ({
         }
     }, [activeTab, viewerId, workNewsPosts, talentStories]);
 
-    const updatePosts = (key, updater) => {
-        const currentPosts = key === WORK_NEWS_STORAGE_KEY ? workNewsPosts : talentStories;
-        const nextPosts = updater(currentPosts);
-        writeStoredArray(key, nextPosts);
-        if (key === WORK_NEWS_STORAGE_KEY) {
-            setWorkNewsPosts(nextPosts);
-        } else {
-            setTalentStories(nextPosts);
+    const persistPost = async (post) => {
+        const postId = post?._id || post?.id;
+        if (!postId) {
+            return;
         }
+
+        try {
+            await fetch(`${process.env.REACT_APP_API_URL || ''}/api/feed-posts/${postId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(post)
+            });
+        } catch (error) {
+            console.error('Could not save feed post update:', error);
+        }
+    };
+
+    const updatePosts = (key, updater) => {
+        const setPosts = key === WORK_NEWS_STORAGE_KEY ? setWorkNewsPosts : setTalentStories;
+
+        setPosts((currentPosts) => {
+            const nextPosts = updater(currentPosts);
+            writeStoredArray(key, nextPosts);
+
+            nextPosts.forEach((post) => {
+                const previousPost = currentPosts.find((item) => getPostKey(item) === getPostKey(post));
+                if (previousPost && JSON.stringify(previousPost) !== JSON.stringify(post)) {
+                    persistPost(post);
+                }
+            });
+
+            return nextPosts;
+        });
     };
 
     const handleMediaChange = async (event) => {
@@ -884,7 +999,7 @@ const PortalHomeFeed = ({
         }
     };
 
-    const handleCreatePost = () => {
+    const handleCreatePost = async () => {
         const body = composerText.trim();
         if (!body && !composerMedia) {
             return;
@@ -903,11 +1018,24 @@ const PortalHomeFeed = ({
             audience: composerAudience
         });
 
-        updatePosts(key, (posts) => [nextPost, ...posts]);
-        setComposerText('');
-        setComposerMedia(null);
-        setComposerAudience('everyone');
-        setActiveTab(isCompanyPost ? 'my-company-posts' : 'my-feed');
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/feed-posts`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(nextPost)
+            });
+            const savedPost = response.ok ? await response.json() : nextPost;
+
+            updatePosts(key, (posts) => [savedPost, ...posts]);
+            setComposerText('');
+            setComposerMedia(null);
+            setComposerAudience('everyone');
+            setActiveTab(isCompanyPost ? 'my-company-posts' : 'my-feed');
+        } catch (error) {
+            console.error('Could not publish live feed post:', error);
+            updatePosts(key, (posts) => [nextPost, ...posts]);
+            setFeedError('Post saved on this device, but the live feed is temporarily unavailable.');
+        }
     };
 
     const recordJobReach = (job) => {
@@ -2079,6 +2207,7 @@ const PortalHomeFeed = ({
     const ownCompanyPosts = workNewsPosts.filter((post) => String(post.authorId) === viewerId);
     return (
         <div className={`portal-home-feed portal-home-feed-${mode}`}>
+            {feedError ? <div className="notification-message error">{feedError}</div> : null}
             <div className="portal-home-tabs" aria-label={`${mode} home sections`}>
                 {tabs.map((tab) => {
                     const tabPath = mode === 'candidate' && tab.id === 'talent-stories'
@@ -2102,6 +2231,7 @@ const PortalHomeFeed = ({
             </div>
 
             <div className="portal-home-feed-scroll">
+                {feedLoading ? <div className="loading-spinner">Loading live feed...</div> : null}
                 {activeTab === 'work-news' && renderPostList(workNewsPosts, WORK_NEWS_STORAGE_KEY, 'work')}
                 {activeTab === 'job-posts' && renderCandidateJobPosts()}
                 {activeTab === 'talent-stories' && renderPostList(talentStories, TALENT_STORIES_STORAGE_KEY, 'talent')}

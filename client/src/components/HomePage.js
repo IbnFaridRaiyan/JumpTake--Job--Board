@@ -16,6 +16,7 @@ import PortalSidebar from './PortalSidebar';
 import Notifications from './Notifications';
 import FriendInvitations from './FriendInvitations';
 import FloatingMessenger from './FloatingMessenger';
+import Inbox from './Inbox';
 import ResumePlayground from './ResumePlayground';
 import PortalHomeFeed from './PortalHomeFeed';
 import PortalDefaultLanding from './PortalDefaultLanding';
@@ -47,6 +48,7 @@ const JOB_INTEREST_OPTIONS = [
 
 const CANDIDATE_SECTION_IDS = new Set([
     'home',
+    'inbox',
     'job-feed',
     'notifications',
     'view-candidates',
@@ -201,8 +203,9 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     };
 
     const sectionTitles = {
-        home: 'Home',
-        'job-feed': 'Home',
+        home: 'Dashboard',
+        inbox: 'Inbox',
+        'job-feed': 'Dashboard',
         applications: 'My Applications',
         assessments: 'My Assessments',
         'video-interviews': 'Video Interviews',
@@ -600,7 +603,8 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     };
 
     const candidatePrimaryNavItems = [
-        { id: 'home', label: 'Home', icon: 'dashboard' },
+        { id: 'home', label: 'Dashboard', icon: 'dashboard' },
+        { id: 'inbox', label: 'Inbox', icon: 'inbox', notification: pendingInboxCount > 0 },
         { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 },
         { id: 'view-candidates', label: 'View Candidates', icon: 'users' },
         { id: 'friend-invitations', label: 'Friends', icon: 'user-plus' },
@@ -629,65 +633,6 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         onClick: () => openSection(item.id)
     }));
 
-    const openCandidateHomeFeedTab = (tab) => {
-        const homeFeedRequest = { mode: 'candidate', tab };
-        sessionStorage.setItem('jumptakeHomeFeedRequest', JSON.stringify(homeFeedRequest));
-        window.dispatchEvent(new CustomEvent('jumptake-home-feed-request', { detail: homeFeedRequest }));
-        openSection('job-feed');
-    };
-
-    const handleDashboardSearch = (query) => {
-        const lowerQuery = query.toLowerCase();
-
-        if (['inbox', 'message', 'messages', 'reply', 'chat'].some((term) => lowerQuery.includes(term))) {
-            setPendingInboxCount(0);
-            localStorage.setItem('jumptakeCandidateInboxSeenAt', String(Date.now()));
-            window.dispatchEvent(new CustomEvent('jumptake-open-candidate-messenger'));
-            return;
-        }
-
-        const homeFeedTabMatches = [
-            { tab: 'work-news', terms: ['work news', 'news', 'company update', 'company updates'] },
-            { tab: 'job-posts', terms: ['job post', 'job posts', 'job feed', 'open job feed', 'jobs', 'find job'] },
-            { tab: 'talent-stories', terms: ['talent story', 'talent stories', 'story', 'stories'] },
-            { tab: 'create-story', terms: ['create story', 'write story', 'post story'] },
-            { tab: 'my-feed', terms: ['my feed', 'feed'] },
-            { tab: 'work-news', terms: ['home', 'dashboard', 'overview'] }
-        ];
-        const homeFeedTabMatch = homeFeedTabMatches.find(({ terms }) => terms.some((term) => lowerQuery.includes(term)));
-        if (homeFeedTabMatch) {
-            openCandidateHomeFeedTab(homeFeedTabMatch.tab);
-            return;
-        }
-
-        const directMatches = [
-            { section: 'notifications', terms: ['notification', 'notifications', 'activity', 'alert', 'updates'] },
-            { section: 'settings', terms: ['settings', 'account', 'security', 'email', 'password'] },
-            { section: 'resume-playground', terms: ['resume playground', 'resume editor', 'resume template', 'cv editor', 'cv builder'] },
-            { section: 'profile', terms: ['profile', 'resume', 'education', 'experience', 'skill'] },
-            { section: 'applications', terms: ['application', 'applied', 'status', 'withdraw'] },
-            { section: 'assessments', terms: ['assessment', 'test', 'quiz'] },
-            { section: 'video-interviews', terms: ['video', 'interview'] },
-            { section: 'draft-applications', terms: ['draft'] },
-            { section: 'bookmarked-jobs', terms: ['bookmark', 'saved job'] },
-            { section: 'interested-jobs', terms: ['interest', 'suggestion', 'recommended'] },
-            { section: 'progress-check', terms: ['progress', 'performance', 'analytics', 'rate', 'views', 'response'] },
-            { section: 'view-candidates', terms: ['candidate', 'candidates', 'talent', 'people', 'profile'] },
-            { section: 'friend-invitations', terms: ['friend', 'friends', 'invitation', 'request', 'connection'] },
-            { section: 'bookmarked-candidates', terms: ['bookmarked candidates', 'saved candidates', 'candidate bookmarks'] },
-            { section: 'about-jumptake', terms: ['about', 'jumptake', 'help', 'guide'] }
-        ];
-
-        const match = directMatches.find(({ terms }) => terms.some((term) => lowerQuery.includes(term)));
-        if (match) {
-            openSection(match.section);
-            return;
-        }
-
-        sessionStorage.setItem('jumptakeCandidateJobSearch', query);
-        openSection('job-feed');
-    };
-
     const handleOpenNotification = (notification) => {
         const payload = notification?.payload || {};
         const nextSection = notification?.section || 'notifications';
@@ -695,7 +640,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         if (nextSection === 'inbox') {
             setPendingInboxCount(0);
             localStorage.setItem('jumptakeCandidateInboxSeenAt', String(Date.now()));
-            window.dispatchEvent(new CustomEvent('jumptake-open-candidate-messenger', { detail: payload }));
+            openSection('inbox');
             return;
         }
 
@@ -797,7 +742,13 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     assessmentCount={pendingAssessmentCount}
                     videoInterviewCount={pendingVideoInterviewCount}
                     switchSection={switchSection}
-                    onSearch={handleDashboardSearch}
+                />;
+            case 'inbox':
+                return <Inbox
+                    mode="candidate"
+                    userId={user?.id}
+                    onBack={goToPreviousSection}
+                    onFooterBack={goToPreviousSection}
                 />;
             case 'job-feed':
                 return <PortalHomeFeed

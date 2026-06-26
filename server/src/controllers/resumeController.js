@@ -85,12 +85,123 @@ const normalizeProcessedResumeData = (processedData = {}) => ({
     achievements: normalizeStringListField(processedData.achievements)
 });
 
+const extractSectionLines = (resumeText, labels) => {
+    const lines = String(resumeText || '')
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean);
+    const labelPattern = labels.join('|');
+    const startIndex = lines.findIndex((line) => new RegExp(`^(${labelPattern})\\b:?`, 'i').test(line));
+
+    if (startIndex < 0) {
+        return [];
+    }
+
+    const sectionLines = [];
+    const inlineValue = lines[startIndex].replace(new RegExp(`^(${labelPattern})\\b:?`, 'i'), '').trim();
+    if (inlineValue) {
+        sectionLines.push(inlineValue);
+    }
+
+    for (let index = startIndex + 1; index < lines.length; index += 1) {
+        if (/^(education|degrees?|experience|employment|work history|skills?|achievements?|projects?|interests?|hobbies|certifications?)\b:?/i.test(lines[index])) {
+            break;
+        }
+        sectionLines.push(lines[index]);
+    }
+
+    return sectionLines;
+};
+
+const fallbackParseResume = (resumeText) => {
+    const text = String(resumeText || '');
+    const lines = text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+    const email = text.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i)?.[0] || '';
+    const name = lines.find((line) => (
+        line.length <= 80
+        && !line.includes('@')
+        && !/^(resume|curriculum vitae|cv|profile|summary|education|experience|skills?)\b/i.test(line)
+    )) || (email ? email.split('@')[0] : 'Candidate');
+
+    const skills = extractSectionLines(text, ['skills?', 'technical skills'])
+        .flatMap((line) => line.split(/[,;|]/))
+        .map((skill) => skill.trim())
+        .filter(Boolean);
+
+    return {
+        name,
+        email,
+        education: extractSectionLines(text, ['education']),
+        degrees: extractSectionLines(text, ['degrees?']),
+        experience: extractSectionLines(text, ['experience', 'employment', 'work history']),
+        skills,
+        achievements: extractSectionLines(text, ['achievements?', 'projects?']),
+        interests: extractSectionLines(text, ['interests?']),
+        hobbies: extractSectionLines(text, ['hobbies'])
+    };
+};
+
+const extractJsonObjectText = (responseText = '') => {
+    const fencedMatch = String(responseText).match(/```(?:json)?\s*([\s\S]*?)```/i);
+    const source = fencedMatch ? fencedMatch[1] : String(responseText);
+    const firstBrace = source.indexOf('{');
+
+    if (firstBrace < 0) {
+        return source.trim();
+    }
+
+    let depth = 0;
+    let inString = false;
+    let escaped = false;
+
+    for (let index = firstBrace; index < source.length; index += 1) {
+        const char = source[index];
+
+        if (escaped) {
+            escaped = false;
+            continue;
+        }
+
+        if (char === '\\') {
+            escaped = true;
+            continue;
+        }
+
+        if (char === '"') {
+            inString = !inString;
+            continue;
+        }
+
+        if (inString) {
+            continue;
+        }
+
+        if (char === '{') {
+            depth += 1;
+        } else if (char === '}') {
+            depth -= 1;
+            if (depth === 0) {
+                return source.slice(firstBrace, index + 1).trim();
+            }
+        }
+    }
+
+    return source.slice(firstBrace).trim();
+};
+
+const parseGeminiResumeJson = (responseText) => {
+    const jsonText = extractJsonObjectText(responseText)
+        .replace(/,\s*([}\]])/g, '$1');
+    return JSON.parse(jsonText);
+};
+
 const processResumeWithGemini = async (resumeText) => {
     const apiKey = process.env.GEMINI_API_KEY;
     console.log('[GEMINI] API key available:', !!apiKey, apiKey ? '(key starts with: ' + apiKey.substring(0, 8) + '...)' : '');
     
     if (!apiKey) {
-        throw new Error('Gemini API key not configured. Please set GEMINI_API_KEY environment variable.');
+        console.warn('[GEMINI] Missing API key. Using local resume parser fallback.');
+        return fallbackParseResume(resumeText);
     }
     
     // 1. Dynamically query the available models for this API key
@@ -200,27 +311,7 @@ const processResumeWithGemini = async (resumeText) => {
             
             const responseText = response.data.candidates[0].content.parts[0].text;
             
-            const jsonMatch = responseText.match(/```json\n([\s\S]*?)\n```/) || 
-                             responseText.match(/```\n([\s\S]*?)\n```/) ||
-                             responseText.match(/\{[\s\S]*?\}/);
-                             
-            let parsedData;
-            if (jsonMatch) {
-                const jsonStr = jsonMatch[1] || jsonMatch[0];
-                try {
-                    parsedData = JSON.parse(jsonStr.trim());
-                } catch (parseError) {
-                    console.error(`[GEMINI] JSON parsing error for model ${model} (${version}):`, parseError, 'for text:', jsonStr);
-                    throw new Error(`Failed to parse Gemini response for model ${model} (${version}) as JSON`);
-                }
-            } else {
-                try {
-                    parsedData = JSON.parse(responseText);
-                } catch (parseError) {
-                    console.error(`[GEMINI] JSON parsing error for full text with model ${model} (${version}):`, parseError);
-                    throw new Error(`Failed to parse Gemini response for model ${model} (${version})`);
-                }
-            }
+            const parsedData = parseGeminiResumeJson(responseText);
             
             console.log(`[GEMINI] Successfully parsed resume using model: ${model} (${version})`);
             return parsedData;
@@ -244,10 +335,10 @@ const processResumeWithGemini = async (resumeText) => {
     const fs = require('fs');
     const path = require('path');
     const errorInfo = {
-        message: lastError.message,
-        stack: lastError.stack,
-        responseData: lastError.response?.data,
-        responseStatus: lastError.response?.status,
+        message: lastError?.message || 'All Gemini attempts failed',
+        stack: lastError?.stack,
+        responseData: lastError?.response?.data,
+        responseStatus: lastError?.response?.status,
         failedAttempts: failedAttempts
     };
     try {
@@ -256,20 +347,10 @@ const processResumeWithGemini = async (resumeText) => {
         console.error('Failed to write error log file:', fsErr);
     }
     
-    console.error('Gemini API error (all models failed):', lastError.response?.data || lastError.message);
+    console.error('Gemini API error (all models failed):', lastError?.response?.data || lastError?.message);
     console.error('Failed attempts detail:', JSON.stringify(failedAttempts, null, 2));
     
-    return {
-        name: "Could not parse",
-        email: "Could not parse",
-        education: "Could not parse resume data. The AI response couldn't be processed correctly. Check server logs or configure a valid API key.",
-        degrees: "Could not parse",
-        experience: "Could not parse",
-        skills: "Could not parse",
-        achievements: "Could not parse",
-        interests: "Could not parse",
-        hobbies: "Could not parse"
-    };
+    return fallbackParseResume(resumeText);
 };
 
 

@@ -47539,3 +47539,45 @@ select {
 .public-ai-chat-reply .public-ai-send-button {
   display: none !important;
 }
+
+.portal-ai-chat-card {
+  width: 100%;
+  max-width: none;
+  min-height: 420px;
+  height: 100%;
+  border-radius: 12px;
+}
+
+.portal-ai-chat-messages {
+  min-height: 260px;
+  max-height: 52vh;
+}
+
+.portal-ai-thread-card {
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+.portal-inbox-ai {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.floating-messenger-assistant-chat {
+  min-height: 0;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+}
+
+.floating-messenger-assistant-chat .public-ai-chat-messages {
+  min-height: 0;
+  max-height: none;
+  flex: 1;
+}
+
+.portal-ai-floating-contact .floating-messenger-contact-avatar {
+  background: #111827;
+  color: #ffffff;
+}

@@ -531,6 +531,7 @@ const fallbackAnswer = (message, action, history = []) => {
   const priorConversation = Array.isArray(history) && history.length > 0;
   const lastAssistantText = String(getLastHistoryEntry(history, 'assistant')?.text || '').toLowerCase();
   const looksLikeCasualShortMessage = normalized.length <= 12 && /^[a-z0-9\s,'!?-]+$/i.test(normalized);
+  const shortClarifier = /\b(what|why|how|huh|no|wait|again|really)\b/.test(normalized);
 
   if (action === 'choose-login') {
     return pickVariation(message, [
@@ -765,7 +766,7 @@ const fallbackAnswer = (message, action, history = []) => {
     return "Got you. I'm here when you want help with JumpTake or the next step.";
   }
 
-  if (looksLikeCasualShortMessage) {
+  if (looksLikeCasualShortMessage && !(priorConversation && shortClarifier)) {
     return priorConversation
       ? "I'm here with you. Tell me what you want to do next on JumpTake, and I'll keep it simple."
       : "Hey. Tell me what you want help with on JumpTake, and I'll guide you.";
@@ -778,6 +779,42 @@ const fallbackAnswer = (message, action, history = []) => {
   return priorConversation
     ? "I can stay with this. Ask me about the next step, a page, a job action, account setup, or anything you want to do on JumpTake."
     : 'I can help with JumpTake. Ask for a tour, a page explanation, jobs, account setup, or the next step.';
+};
+
+const GENERIC_DIRECT_REPLY_SET = new Set([
+  "I'm here with you. Tell me what you want to do next on JumpTake, and I'll keep it simple.",
+  "Hey. Tell me what you want help with on JumpTake, and I'll guide you.",
+  "I can help with that. Tell me the exact page, action, or problem you want help with, and I'll keep it focused and practical.",
+  "I can stay with this. Ask me about the next step, a page, a job action, account setup, or anything you want to do on JumpTake.",
+  'I can help with JumpTake. Ask for a tour, a page explanation, jobs, account setup, or the next step.',
+  "Got you. I'm here when you want help with JumpTake or the next step."
+]);
+
+const getDirectAssistantReply = (message, history = [], action = null) => {
+  if (action) {
+    return fallbackAnswer(message, action, history);
+  }
+
+  const logicAnswer = findLogicAnswer(message);
+  if (logicAnswer) {
+    return logicAnswer;
+  }
+
+  const trainedAnswer = findTrainedAssistantAnswer(message);
+  if (trainedAnswer) {
+    return trainedAnswer;
+  }
+
+  const contextualFallback = fallbackAnswer(message, action, history);
+  if (contextualFallback && !GENERIC_DIRECT_REPLY_SET.has(contextualFallback)) {
+    return contextualFallback;
+  }
+
+  if (shouldUseDirectAssistantReply(message, action)) {
+    return contextualFallback;
+  }
+
+  return '';
 };
 
 const getOpenAIApiKey = () => (
@@ -810,16 +847,20 @@ const getPreferredAssistantProvider = () => (
 
 const getAssistantProviderOrder = () => {
   const preferred = getPreferredAssistantProvider();
-
-  if (preferred === 'openai') {
-    return ['openai'];
-  }
+  const hasOpenAI = Boolean(getOpenAIApiKey());
+  const hasGemini = Boolean(getGeminiApiKey());
 
   if (preferred === 'gemini') {
-    return ['gemini'];
+    return [
+      ...(hasGemini ? ['gemini'] : []),
+      ...(hasOpenAI ? ['openai'] : [])
+    ];
   }
 
-  return ['openai'];
+  return [
+    ...(hasOpenAI ? ['openai'] : []),
+    ...(hasGemini ? ['gemini'] : [])
+  ];
 };
 
 const extractOpenAIResponseText = (data) => {
@@ -1045,19 +1086,14 @@ const askPublicAssistant = async (req, res) => {
   }
 
   const action = inferAction(message);
-
-  if (action) {
-    return res.json({ answer: fallbackAnswer(message, action, history), action });
-  }
-
-  const logicAnswer = findLogicAnswer(message);
-  if (logicAnswer) {
-    return res.json({ answer: logicAnswer, action: null });
+  const directReply = getDirectAssistantReply(message, history, action);
+  if (directReply) {
+    return res.json({ answer: directReply, action });
   }
 
   const conversationHistory = buildHistoryBlock(history);
-  let openAiQuotaFailed = false;
-  let geminiQuotaFailed = false;
+  let openAiFailed = false;
+  let geminiFailed = false;
 
   const prompt = `
 You are JumpTake AI, a polished public assistant for JumpTake.
@@ -1099,40 +1135,32 @@ Visitor: ${message}
       if (answer) {
         return res.json({ answer, action });
       }
+
+      if (provider === 'gemini') {
+        geminiFailed = true;
+      } else {
+        openAiFailed = true;
+      }
     } catch (error) {
-      if (provider === 'gemini' && isQuotaError(error)) {
-        geminiQuotaFailed = true;
-      } else if (provider === 'openai' && isQuotaError(error)) {
-        openAiQuotaFailed = true;
+      if (provider === 'gemini') {
+        geminiFailed = true;
+      } else {
+        openAiFailed = true;
       }
       console.warn(`[PUBLIC ASSISTANT] ${provider} failed:`, error.response?.data?.error?.message || error.message);
     }
   }
 
-  const trainedAnswer = findTrainedAssistantAnswer(message);
-  if (trainedAnswer) {
-    return res.json({ answer: trainedAnswer, action });
-  }
-
-  const knowledgeAnswer = await lookupGeneralKnowledge(message);
-  if (knowledgeAnswer) {
-    return res.json({ answer: knowledgeAnswer, action: null });
-  }
-
-  if (shouldUseDirectAssistantReply(message, action)) {
-    return res.json({ answer: fallbackAnswer(message, action, history), action });
-  }
-
   const aiUnavailableReply = getAiUnavailableReply({
-    openAiFailed: openAiQuotaFailed,
-    geminiFailed: geminiQuotaFailed
+    openAiFailed,
+    geminiFailed
   });
 
   if (aiUnavailableReply) {
     return res.json({ answer: aiUnavailableReply, action });
   }
 
-  return res.json({ answer: fallbackAnswer(message, action, history), action });
+  return res.json({ answer: 'Error connecting', action });
 };
 
 module.exports = {

@@ -12,6 +12,7 @@ const CandidateLike = require('../models/CandidateLike');
 const Company = require('../models/Company');
 const DraftApplication = require('../models/DraftApplication');
 const Employer = require('../models/Employer');
+const FeedPost = require('../models/FeedPost');
 const Job = require('../models/Job');
 const JobBookmark = require('../models/JobBookmark');
 const JobInvitation = require('../models/JobInvitation');
@@ -131,6 +132,12 @@ const COLLECTIONS = {
     model: Notification,
     searchFields: ['recipientType', 'recipientId', 'title', 'message', 'section'],
     summaryFields: ['recipientType', 'recipientId', 'title', 'section', 'read', 'createdAt']
+  },
+  feedPosts: {
+    label: 'Feed Posts',
+    model: FeedPost,
+    searchFields: ['type', 'body', 'authorId', 'authorType', 'authorName'],
+    summaryFields: ['type', 'authorName', 'authorType', 'audience', 'reach', 'createdAt']
   }
 };
 

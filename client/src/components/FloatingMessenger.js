@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import RichMessageEditor from './RichMessageEditor';
+import AssistantChat from './AssistantChat';
 
 const stripHtml = (html = '') => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 const hasMessageContent = (html = '') => stripHtml(html).length > 0 || /<img\b/i.test(html);
+const ASSISTANT_THREAD_ID = '__jumptake_ai__';
 
 const formatDateTime = (dateString) => {
     if (!dateString) return '';
@@ -43,7 +45,8 @@ const FloatingMessenger = ({
             : `/api/messages/user/${userId}`
     ), [isEmployer, companyId, userId]);
 
-    const selectedThread = threads.find((thread) => thread._id === selectedThreadId) || null;
+    const assistantSelected = selectedThreadId === ASSISTANT_THREAD_ID;
+    const selectedThread = assistantSelected ? null : (threads.find((thread) => thread._id === selectedThreadId) || null);
 
     const isDirectCandidateThread = (thread) => thread?.conversationType === 'candidate-candidate';
 
@@ -117,11 +120,11 @@ const FloatingMessenger = ({
             setThreads(nextThreads);
 
             if (!preserveSelection) {
-                setSelectedThreadId(isMobileView ? '' : (nextThreads[0]?._id || ''));
+                setSelectedThreadId(isMobileView ? '' : ASSISTANT_THREAD_ID);
             } else {
                 const threadStillExists = nextThreads.some((thread) => thread._id === selectedThreadId);
-                if (!threadStillExists) {
-                    setSelectedThreadId(isMobileView ? '' : (nextThreads[0]?._id || ''));
+                if (!threadStillExists && selectedThreadId !== ASSISTANT_THREAD_ID) {
+                    setSelectedThreadId(isMobileView ? '' : ASSISTANT_THREAD_ID);
                 }
             }
         } catch (fetchError) {
@@ -269,7 +272,7 @@ const FloatingMessenger = ({
     };
 
     const lastMessagePreview = (thread) => thread?.messages?.[thread.messages.length - 1]?.bodyText || 'No messages yet';
-    const mobileChatOpen = isMobileView && Boolean(selectedThread);
+    const mobileChatOpen = isMobileView && (Boolean(selectedThread) || assistantSelected);
 
     return (
         <div className={`floating-messenger ${open ? 'is-open' : ''}`}>
@@ -289,21 +292,33 @@ const FloatingMessenger = ({
                                     onClick={handleClose}
                                     aria-label="Close messages"
                                 >
-                                    ×
+                                    x
                                 </button>
                                 <h2>Messages</h2>
                             </div>
 
-                            {loading ? (
-                                <div className="floating-messenger-empty">
-                                    <p>Loading messages...</p>
-                                </div>
-                            ) : threads.length === 0 ? (
-                                <div className="floating-messenger-empty">
-                                    <p>No messages yet</p>
-                                </div>
-                            ) : (
-                                <div className="floating-messenger-contact-list">
+                            <div className="floating-messenger-contact-list">
+                                <button
+                                    type="button"
+                                    className={`floating-messenger-contact portal-ai-floating-contact ${assistantSelected ? 'is-active' : ''}`}
+                                    onClick={() => handleSelectThread(ASSISTANT_THREAD_ID)}
+                                >
+                                    <div className="floating-messenger-contact-avatar">AI</div>
+                                    <div className="floating-messenger-contact-copy">
+                                        <strong>JumpTake AI</strong>
+                                        <span>Ask for help with jobs, resumes, hiring, and portal actions.</span>
+                                    </div>
+                                </button>
+                                {loading ? (
+                                    <div className="floating-messenger-empty">
+                                        <p>Loading messages...</p>
+                                    </div>
+                                ) : threads.length === 0 ? (
+                                    <div className="floating-messenger-empty">
+                                        <p>No messages yet</p>
+                                    </div>
+                                ) : (
+                                    <>
                                     {threads.map((thread) => (
                                         <button
                                             key={thread._id}
@@ -319,12 +334,46 @@ const FloatingMessenger = ({
                                             <time>{formatDateTime(thread.lastMessageAt)}</time>
                                         </button>
                                     ))}
-                                </div>
-                            )}
+                                    </>
+                                )}
+                            </div>
                         </aside>
 
                         <section className="floating-messenger-chat">
-                            {selectedThread ? (
+                            {assistantSelected ? (
+                                <>
+                                    <div className="floating-messenger-chat-bar">
+                                        <div className="floating-messenger-chat-head">
+                                            <div className="floating-messenger-chat-avatar">AI</div>
+                                            <div className="floating-messenger-chat-copy">
+                                                <strong>JumpTake AI</strong>
+                                                <span>Assistant chat</span>
+                                            </div>
+                                        </div>
+                                        {isMobileView ? (
+                                            <div className="floating-messenger-chat-actions">
+                                                <button
+                                                    type="button"
+                                                    className="floating-messenger-mobile-back"
+                                                    onClick={handleBackToThreadList}
+                                                    aria-label="Back to message list"
+                                                >
+                                                    {'<'}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="floating-messenger-mobile-close"
+                                                    onClick={handleClose}
+                                                    aria-label="Close messages"
+                                                >
+                                                    x
+                                                </button>
+                                            </div>
+                                        ) : null}
+                                    </div>
+                                    <AssistantChat title="JumpTake AI" className="floating-messenger-assistant-chat" />
+                                </>
+                            ) : selectedThread ? (
                                 <>
                                     <div className="floating-messenger-chat-bar">
                                         <div className="floating-messenger-chat-head">
@@ -345,7 +394,7 @@ const FloatingMessenger = ({
                                                     onClick={handleBackToThreadList}
                                                     aria-label="Back to message list"
                                                 >
-                                                    ←
+                                                    {'<'}
                                                 </button>
                                                 <button
                                                     type="button"
@@ -353,7 +402,7 @@ const FloatingMessenger = ({
                                                     onClick={handleClose}
                                                     aria-label="Close messages"
                                                 >
-                                                    ×
+                                                    x
                                                 </button>
                                             </div>
                                         ) : null}

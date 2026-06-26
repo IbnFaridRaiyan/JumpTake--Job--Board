@@ -13,6 +13,7 @@ import PerformanceAnalytics from './PerformanceAnalytics';
 import PortalSidebar from './PortalSidebar';
 import Notifications from './Notifications';
 import FloatingMessenger from './FloatingMessenger';
+import Inbox from './Inbox';
 import ResumePlayground from './ResumePlayground';
 import PortalHomeFeed from './PortalHomeFeed';
 import PortalDefaultLanding from './PortalDefaultLanding';
@@ -21,6 +22,7 @@ import logoDark from './media/logo4.png';
 
 const EMPLOYER_SECTION_IDS = new Set([
     'home',
+    'inbox',
     'home-feed',
     'dashboard',
     'post-job',
@@ -87,8 +89,9 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     };
 
     const sectionTitles = {
-        home: 'Home',
-        'home-feed': 'Home',
+        home: 'Dashboard',
+        inbox: 'Inbox',
+        'home-feed': 'Dashboard',
         dashboard: 'Dashboard',
         'post-job': 'Post a Job',
         'manage-jobs': 'Manage Jobs',
@@ -360,7 +363,8 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     };
 
     const employerPrimaryNavItems = [
-        { id: 'home', label: 'Home', icon: 'dashboard' },
+        { id: 'home', label: 'Dashboard', icon: 'dashboard' },
+        { id: 'inbox', label: 'Inbox', icon: 'inbox', notification: pendingInboxCount > 0 },
         { id: 'post-job', label: 'Post a Job', icon: 'briefcase' },
         { id: 'manage-jobs', label: 'Manage Jobs', icon: 'briefcase' },
         { id: 'make-assessment', label: 'Make an Assessment', icon: 'assessment' },
@@ -386,63 +390,6 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         onClick: () => openSection(item.id)
     }));
 
-    const openEmployerHomeFeedTab = (tab) => {
-        const homeFeedRequest = { mode: 'employer', tab };
-        sessionStorage.setItem('jumptakeHomeFeedRequest', JSON.stringify(homeFeedRequest));
-        window.dispatchEvent(new CustomEvent('jumptake-home-feed-request', { detail: homeFeedRequest }));
-        openSection('home-feed');
-    };
-
-    const handleDashboardSearch = (query) => {
-        const lowerQuery = query.toLowerCase();
-
-        if (['inbox', 'message', 'messages', 'reply', 'chat'].some((term) => lowerQuery.includes(term))) {
-            setPendingInboxCount(0);
-            localStorage.setItem('jumptakeEmployerInboxSeenAt', String(Date.now()));
-            window.dispatchEvent(new CustomEvent('jumptake-open-employer-messenger'));
-            return;
-        }
-
-        const homeFeedTabMatches = [
-            { tab: 'talent-stories', terms: ['talent story', 'talent stories', 'story', 'stories', 'home', 'dashboard', 'overview'] },
-            { tab: 'work-news', terms: ['work news', 'news', 'company updates', 'company update'] },
-            { tab: 'create-post', terms: ['create post', 'post update', 'company post'] },
-            { tab: 'my-company-posts', terms: ['my company posts', 'my posts', 'company posts'] },
-            { tab: 'my-job-posts', terms: ['my job posts', 'job posts feed'] }
-        ];
-        const homeFeedTabMatch = homeFeedTabMatches.find(({ terms }) => terms.some((term) => lowerQuery.includes(term)));
-        if (homeFeedTabMatch) {
-            openEmployerHomeFeedTab(homeFeedTabMatch.tab);
-            return;
-        }
-
-        const directMatches = [
-            { section: 'notifications', terms: ['notification', 'notifications', 'activity', 'alert', 'updates'] },
-            { section: 'settings', terms: ['settings', 'security', 'password', 'email'] },
-            { section: 'company-profile', terms: ['company', 'profile'] },
-            { section: 'post-job', terms: ['post', 'create job', 'new job'] },
-            { section: 'manage-jobs', terms: ['manage job', 'job number', 'job-', 'listing', 'applicant', 'application'] },
-            { section: 'make-assessment', terms: ['make assessment', 'create assessment', 'assessment builder'] },
-            { section: 'general-assessment', terms: ['general assessment', 'saved assessment'] },
-            { section: 'bookmarked-talents', terms: ['bookmarked talent', 'saved candidate'] },
-            { section: 'about-jumptake', terms: ['about', 'jumptake', 'help', 'guide'] },
-            { section: 'application-tracking', terms: ['tracking', 'ats', 'application tracking', 'performance', 'analytics', 'hiring rate'] },
-            { section: 'home', terms: ['home', 'dashboard', 'overview', 'feed'] }
-        ];
-
-        const match = directMatches.find(({ terms }) => terms.some((term) => lowerQuery.includes(term)));
-        if (match) {
-            if (match.section === 'manage-jobs') {
-                sessionStorage.setItem('jumptakeEmployerJobSearch', query);
-            }
-            openSection(match.section);
-            return;
-        }
-
-        sessionStorage.setItem('jumptakeEmployerTalentSearch', query);
-        openSection('talent-pool');
-    };
-
     const handleOpenNotification = (notification) => {
         const payload = notification?.payload || {};
         const nextSection = notification?.section || 'notifications';
@@ -450,7 +397,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         if (nextSection === 'inbox') {
             setPendingInboxCount(0);
             localStorage.setItem('jumptakeEmployerInboxSeenAt', String(Date.now()));
-            window.dispatchEvent(new CustomEvent('jumptake-open-employer-messenger', { detail: payload }));
+            openSection('inbox');
             return;
         }
 
@@ -522,7 +469,13 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                     notificationCount={pendingNotificationCount}
                     inboxCount={pendingInboxCount}
                     switchSection={switchSection}
-                    onSearch={handleDashboardSearch}
+                />;
+            case 'inbox':
+                return <Inbox
+                    mode="employer"
+                    companyId={employer?.companyId}
+                    onBack={goToPreviousSection}
+                    onFooterBack={goToPreviousSection}
                 />;
             case 'home-feed':
                 return <PortalHomeFeed

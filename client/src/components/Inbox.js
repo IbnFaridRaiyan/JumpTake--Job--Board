@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import RichMessageEditor from './RichMessageEditor';
+import AssistantChat from './AssistantChat';
 
 const stripHtml = (html = '') => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 const hasMessageContent = (html = '') => stripHtml(html).length > 0 || /<img\b/i.test(html);
@@ -26,6 +27,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
     const [sending, setSending] = useState(false);
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
+    const [showAssistant, setShowAssistant] = useState(false);
 
     const isEmployer = mode === 'employer';
 
@@ -181,6 +183,26 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
         return item.senderType === 'employer' ? 'Employer' : 'Candidate';
     };
 
+    if (showAssistant) {
+        return (
+            <div className="inbox-container messenger-inbox portal-inbox-ai">
+                <div className="messenger-chat-header">
+                    <button className="back-button messenger-back" onClick={() => setShowAssistant(false)}>
+                        Back to Inbox
+                    </button>
+                    <div className="messenger-chat-head">
+                        <div className="messenger-avatar">AI</div>
+                        <div>
+                            <h2>JumpTake AI</h2>
+                            <p>Assistant chat</p>
+                        </div>
+                    </div>
+                </div>
+                <AssistantChat title="JumpTake AI" className="portal-inbox-assistant" />
+            </div>
+        );
+    }
+
     if (selectedThread) {
         return (
             <div className="inbox-container messenger-inbox">
@@ -244,6 +266,28 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
             </div>
 
             {error && <div className="error-message">{error}</div>}
+
+            <button
+                type="button"
+                className="inbox-thread-card button-message portal-ai-thread-card"
+                id="btn-message-ai"
+                onClick={() => setShowAssistant(true)}
+            >
+                <div className="content-avatar">
+                    <div className="avatar">
+                        <span className="user-img">AI</span>
+                    </div>
+                    <span className="status-user"></span>
+                </div>
+                <div className="notice-content">
+                    <div className="lable-message">
+                        <span>Assistant</span>
+                    </div>
+                    <div className="username">JumpTake AI</div>
+                    <div className="user-id">Ask about jobs, resumes, hiring, and portal actions</div>
+                    <span className="thread-preview">Start chatting with the JumpTake assistant.</span>
+                </div>
+            </button>
 
             {loading ? (
                 <div className="loading-spinner">Loading inbox...</div>

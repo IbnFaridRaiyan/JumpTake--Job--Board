@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const JobSeeker = require('../models/JobSeeker');
+const Application = require('../models/Application');
 const jwt = require('jsonwebtoken');
 const { generateJumpTakeId } = require('../utils/jumptakeId');
 

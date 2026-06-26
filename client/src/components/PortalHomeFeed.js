@@ -392,6 +392,10 @@ const ReactionIcon = ({ name }) => (
     </svg>
 );
 
+const ReactionTooltip = ({ children }) => (
+    <span className="portal-reaction-tooltip" role="tooltip">{children}</span>
+);
+
 const SimpleIcon = ({ path }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
         {(Array.isArray(path) ? path : [path]).map((pathValue, index) => (
@@ -1598,22 +1602,24 @@ const PortalHomeFeed = ({
                                 )}
                             </div>
                         )}
-                        <div className="portal-post-reactions">
+                        <div className="portal-post-reactions portal-reaction-rail">
                             {reactionLabels[kind].map((reaction) => {
                                 const selectedReactions = normalizeViewerReactions(getViewerReaction(post, viewerId));
                                 const isActiveReaction = selectedReactions.includes(reaction);
+                                const reactionCount = getReactionCount(post, reaction);
                                 return (
                                     <button
                                         key={reaction}
                                         type="button"
-                                        className={`portal-reaction-button reaction-${reaction.toLowerCase()} ${isActiveReaction ? 'active' : ''}`}
+                                        className={`portal-reaction-button portal-reaction-icon-button reaction-${reaction.toLowerCase()} ${isActiveReaction ? 'active' : ''}`}
                                         onClick={() => handleReact(key, postKey, reaction)}
                                         aria-pressed={isActiveReaction}
                                         aria-label={`${reaction} reaction`}
+                                        title={reaction}
                                     >
                                         <ReactionIcon name={reaction} />
-                                        <span className="portal-reaction-label">{reaction}</span>
-                                        <span className="portal-reaction-count">{getReactionCount(post, reaction) || ''}</span>
+                                        <ReactionTooltip>{reaction}</ReactionTooltip>
+                                        {reactionCount > 0 && <span className="portal-reaction-count">{reactionCount}</span>}
                                     </button>
                                 );
                             })}
@@ -1805,28 +1811,29 @@ const PortalHomeFeed = ({
                             ))}
                         </div>
 
-                        <div className="portal-candidate-job-reactions">
+                        <div className="job-post-action-reactions" aria-label="Job reactions">
                             <button
                                 type="button"
-                                className={`portal-job-like-toggle ${isHomeJobLiked(job) ? 'active' : ''}`}
+                                className={`job-post-reaction-button job-post-like-reaction reaction-like ${isHomeJobLiked(job) ? 'active' : ''}`}
                                 onClick={(event) => handleToggleHomeJobLike(job, event)}
                                 aria-pressed={isHomeJobLiked(job)}
                                 aria-label="Like job post"
+                                title="Like"
                             >
                                 <ReactionIcon name="Like" />
-                                <span>Like</span>
-                                <strong>{getHomeJobLikeCount(job)}</strong>
+                                <ReactionTooltip>Like</ReactionTooltip>
+                                <span className="job-post-reaction-count">{getHomeJobLikeCount(job)}</span>
                             </button>
                             <button
                                 type="button"
-                                className={`portal-job-bookmark-toggle ${bookmarked ? 'active' : ''}`}
+                                className={`job-post-reaction-button job-post-bookmark-reaction reaction-bookmark ${bookmarked ? 'active' : ''}`}
                                 onClick={(event) => handleToggleHomeJobBookmark(job, event)}
                                 aria-pressed={bookmarked}
                                 aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark job'}
                                 title={bookmarked ? 'Remove bookmark' : 'Bookmark job'}
                             >
                                 <SimpleIcon path={utilityIconPaths.starFill} />
-                                <span>Bookmark</span>
+                                <ReactionTooltip>{bookmarked ? 'Remove bookmark' : 'Bookmark'}</ReactionTooltip>
                             </button>
                         </div>
 

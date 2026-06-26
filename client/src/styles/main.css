@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Chewy&family=Lexend:wght@400;500;600;700&family=Roboto+Flex:wght@500;600;700&family=Share+Tech&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Chewy&family=Lexend:wght@400;500;600;700&family=Roboto:wght@400;500;600;700;900&family=Roboto+Flex:wght@500;600;700&family=Share+Tech&display=swap');
 
 :root {
   
@@ -48319,4 +48319,769 @@ select {
   .portal-ai-chat-card .public-ai-chat-header {
     padding-bottom: 0.5rem !important;
   }
+}
+
+/* Requested UI pass: Roboto animated auth buttons, flat entry background, smooth editor/reaction rails. */
+.job-seeker-page,
+.company-page {
+  background: #111111 !important;
+  background-image: none !important;
+}
+
+.job-seeker-page::before,
+.company-page::before,
+.job-seeker-page::after,
+.company-page::after {
+  display: none !important;
+  content: none !important;
+}
+
+.public-auth-heading,
+.landing-content .role-button,
+.landing-content .job-seeker-button,
+.landing-content .company-button,
+.public-auth-submit,
+.login-submit-button,
+.job-seeker-page .candidate-login-button,
+.job-seeker-page .demo-cv-button,
+.job-seeker-page .submit-button,
+.company-page .search-button,
+.company-page .candidate-login-button,
+.company-page .submit-button,
+.company-page .secondary-button,
+.create-account-button,
+.employer-login-button {
+  font-family: 'Roboto', Arial, sans-serif !important;
+}
+
+.landing-content .role-button,
+.landing-content .job-seeker-button,
+.landing-content .company-button,
+.public-auth-submit,
+.login-submit-button,
+.job-seeker-page .candidate-login-button,
+.job-seeker-page .demo-cv-button,
+.job-seeker-page .submit-button,
+.company-page .search-button,
+.company-page .candidate-login-button,
+.company-page .submit-button,
+.company-page .secondary-button,
+.create-account-button,
+.employer-login-button {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.45rem !important;
+  min-height: 2.8rem !important;
+  padding: 0.72rem 1.35rem !important;
+  border: 0 !important;
+  border-radius: 100px !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.13) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  line-height: 1.1 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  overflow: hidden !important;
+  cursor: pointer !important;
+  isolation: isolate !important;
+  transform: none !important;
+  animation: none !important;
+  transition: color 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+    transform 0.2s ease !important;
+}
+
+.landing-content .role-button::before,
+.landing-content .job-seeker-button::before,
+.landing-content .company-button::before,
+.public-auth-submit::before,
+.login-submit-button::before,
+.job-seeker-page .candidate-login-button::before,
+.job-seeker-page .demo-cv-button::before,
+.job-seeker-page .submit-button::before,
+.company-page .search-button::before,
+.company-page .candidate-login-button::before,
+.company-page .submit-button::before,
+.company-page .secondary-button::before,
+.create-account-button::before,
+.employer-login-button::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  z-index: -1 !important;
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 50% !important;
+  background-color: #2196f3 !important;
+  opacity: 0 !important;
+  transform: translate(-50%, -50%) !important;
+  transition: width 0.8s cubic-bezier(0.23, 1, 0.32, 1),
+    height 0.8s cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1) !important;
+}
+
+.landing-content .role-button:hover,
+.landing-content .job-seeker-button:hover,
+.landing-content .company-button:hover,
+.public-auth-submit:hover,
+.public-auth-submit:focus-visible,
+.login-submit-button:hover,
+.login-submit-button:focus-visible,
+.job-seeker-page .candidate-login-button:hover,
+.job-seeker-page .candidate-login-button:focus-visible,
+.job-seeker-page .demo-cv-button:hover,
+.job-seeker-page .demo-cv-button:focus-visible,
+.job-seeker-page .submit-button:hover,
+.job-seeker-page .submit-button:focus-visible,
+.company-page .search-button:hover,
+.company-page .search-button:focus-visible,
+.company-page .candidate-login-button:hover,
+.company-page .candidate-login-button:focus-visible,
+.company-page .submit-button:hover,
+.company-page .submit-button:focus-visible,
+.company-page .secondary-button:hover,
+.company-page .secondary-button:focus-visible,
+.create-account-button:hover,
+.create-account-button:focus-visible,
+.employer-login-button:hover,
+.employer-login-button:focus-visible {
+  color: #ffffff !important;
+  box-shadow: 0 0 0 5px rgba(33, 149, 243, 0.38) !important;
+  transform: translateY(-1px) !important;
+}
+
+.landing-content .role-button:hover::before,
+.landing-content .job-seeker-button:hover::before,
+.landing-content .company-button:hover::before,
+.public-auth-submit:hover::before,
+.public-auth-submit:focus-visible::before,
+.login-submit-button:hover::before,
+.login-submit-button:focus-visible::before,
+.job-seeker-page .candidate-login-button:hover::before,
+.job-seeker-page .candidate-login-button:focus-visible::before,
+.job-seeker-page .demo-cv-button:hover::before,
+.job-seeker-page .demo-cv-button:focus-visible::before,
+.job-seeker-page .submit-button:hover::before,
+.job-seeker-page .submit-button:focus-visible::before,
+.company-page .search-button:hover::before,
+.company-page .search-button:focus-visible::before,
+.company-page .candidate-login-button:hover::before,
+.company-page .candidate-login-button:focus-visible::before,
+.company-page .submit-button:hover::before,
+.company-page .submit-button:focus-visible::before,
+.company-page .secondary-button:hover::before,
+.company-page .secondary-button:focus-visible::before,
+.create-account-button:hover::before,
+.create-account-button:focus-visible::before,
+.employer-login-button:hover::before,
+.employer-login-button:focus-visible::before {
+  width: 170px !important;
+  height: 170px !important;
+  opacity: 1 !important;
+}
+
+.landing-content .role-button:active,
+.landing-content .job-seeker-button:active,
+.landing-content .company-button:active,
+.public-auth-submit:active,
+.login-submit-button:active,
+.job-seeker-page .candidate-login-button:active,
+.job-seeker-page .demo-cv-button:active,
+.job-seeker-page .submit-button:active,
+.company-page .search-button:active,
+.company-page .candidate-login-button:active,
+.company-page .submit-button:active,
+.company-page .secondary-button:active,
+.create-account-button:active,
+.employer-login-button:active {
+  scale: 0.95 !important;
+}
+
+.resume-playground-toolbar-shell {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scroll-behavior: smooth !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: thin !important;
+}
+
+.resume-playground-toolbar {
+  width: max-content !important;
+  min-width: 100% !important;
+  max-width: none !important;
+}
+
+.resume-playground-toolbar-row,
+.resume-playground-toolbar-row-fixed,
+.resume-playground-toolbar-row-scroll {
+  width: max-content !important;
+  min-width: max-content !important;
+  max-width: none !important;
+  flex-wrap: nowrap !important;
+  overflow: visible !important;
+}
+
+.portal-reaction-rail,
+.portal-post-reactions,
+.portal-candidate-job-reactions,
+.bookmarked-job-reactions {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.38rem !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 3.15rem !important;
+  margin: 0.75rem auto !important;
+  padding: 0.36rem 0.48rem !important;
+  border-radius: 30px !important;
+  background: #000000 !important;
+  border: 1px solid rgba(143, 242, 221, 0.18) !important;
+  list-style: none !important;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  scroll-behavior: smooth !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: thin !important;
+}
+
+.portal-reaction-icon-button,
+.portal-reaction-button,
+.portal-job-like-toggle,
+.portal-candidate-job-reactions .portal-job-bookmark-toggle,
+.bookmarked-job-reactions .job-card-like-button,
+.bookmarked-job-reactions .job-card-bookmark-action {
+  position: relative !important;
+  flex: 0 0 auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 2.18rem !important;
+  min-width: 2.18rem !important;
+  height: 2.18rem !important;
+  min-height: 2.18rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: #000000 !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  font-family: 'Roboto', Arial, sans-serif !important;
+  font-size: 0 !important;
+  line-height: 1 !important;
+  overflow: visible !important;
+  cursor: pointer !important;
+  transition: color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, transform 0.2s ease !important;
+}
+
+.portal-reaction-icon-button svg,
+.portal-reaction-button svg,
+.portal-job-like-toggle svg,
+.portal-candidate-job-reactions .portal-job-bookmark-toggle svg,
+.bookmarked-job-reactions .job-card-like-button svg {
+  width: 1.05rem !important;
+  height: 1.05rem !important;
+  fill: currentColor !important;
+  color: currentColor !important;
+}
+
+.bookmarked-job-reactions .job-card-like-button > span[aria-hidden="true"] {
+  display: none !important;
+}
+
+.bookmarked-job-reactions .job-card-bookmark-action::before {
+  content: "\2605" !important;
+  color: currentColor !important;
+  font-size: 1.05rem !important;
+  line-height: 1 !important;
+}
+
+.portal-reaction-tooltip {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  z-index: 20 !important;
+  padding: 0.36rem 0.55rem !important;
+  border-radius: 5px !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  font-family: 'Roboto', Arial, sans-serif !important;
+  font-size: 0.72rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translate(-50%, -50%) scale(0.86) !important;
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease !important;
+}
+
+.portal-reaction-icon-button:hover .portal-reaction-tooltip,
+.portal-reaction-icon-button:focus-visible .portal-reaction-tooltip,
+.portal-reaction-button:hover .portal-reaction-tooltip,
+.portal-reaction-button:focus-visible .portal-reaction-tooltip {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translate(-50%, -50%) scale(1) !important;
+}
+
+.portal-reaction-label {
+  display: none !important;
+}
+
+.portal-reaction-count,
+.portal-job-like-toggle strong,
+.bookmarked-job-reactions .job-card-like-button strong {
+  position: absolute !important;
+  right: -0.12rem !important;
+  bottom: -0.16rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 1rem !important;
+  height: 0.92rem !important;
+  padding: 0 0.22rem !important;
+  border-radius: 999px !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  font-family: 'Roboto', Arial, sans-serif !important;
+  font-size: 0.58rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+}
+
+.portal-reaction-icon-button:hover,
+.portal-reaction-icon-button:focus-visible,
+.portal-reaction-icon-button.active,
+.portal-reaction-button:hover,
+.portal-reaction-button:focus-visible,
+.portal-reaction-button.active {
+  box-shadow: 3px 2px 45px 0 rgba(0, 0, 0, 0.12) !important;
+  transform: translateY(-1px) !important;
+}
+
+.reaction-like:hover,
+.reaction-like.active {
+  color: #1db954 !important;
+}
+
+.reaction-appreciate:hover,
+.reaction-appreciate.active {
+  color: #f5b82e !important;
+}
+
+.reaction-love:hover,
+.reaction-love.active {
+  color: #ea4c89 !important;
+}
+
+.reaction-empower:hover,
+.reaction-empower.active {
+  color: #0088cc !important;
+}
+
+.reaction-congratulate:hover,
+.reaction-congratulate.active {
+  color: #f97316 !important;
+}
+
+.reaction-motivate:hover,
+.reaction-motivate.active {
+  color: #8b5cf6 !important;
+}
+
+.reaction-angry:hover,
+.reaction-angry.active,
+.reaction-bad:hover,
+.reaction-bad.active {
+  color: #bd081c !important;
+}
+
+.reaction-sad:hover,
+.reaction-sad.active {
+  color: #38bdf8 !important;
+}
+
+.reaction-hide:hover,
+.reaction-hide.active,
+.reaction-bookmark:hover,
+.reaction-bookmark.active {
+  color: #facc15 !important;
+}
+
+.portal-post-reactions > .portal-glass-mini-button {
+  flex: 0 0 auto !important;
+  min-height: 2.45rem !important;
+  margin: 0 !important;
+  padding: 0.45rem 0.78rem !important;
+  border-radius: 999px !important;
+  white-space: nowrap !important;
+}
+
+.portal-candidate-job-card .portal-candidate-job-reactions,
+.portal-candidate-job-reactions.portal-reaction-rail {
+  position: relative !important;
+  z-index: 20 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.65rem !important;
+  width: max-content !important;
+  max-width: 100% !important;
+  min-height: 3.05rem !important;
+  margin: 0.75rem auto !important;
+  padding: 0.34rem 0.48rem !important;
+  pointer-events: auto !important;
+}
+
+.portal-candidate-job-reactions .portal-job-like-toggle,
+.portal-candidate-job-reactions .portal-job-bookmark-toggle {
+  position: relative !important;
+  z-index: 25 !important;
+  flex: 0 0 2.18rem !important;
+  width: 2.18rem !important;
+  min-width: 2.18rem !important;
+  max-width: 2.18rem !important;
+  height: 2.18rem !important;
+  min-height: 2.18rem !important;
+  max-height: 2.18rem !important;
+  pointer-events: auto !important;
+}
+
+.portal-reaction-icon-button,
+.portal-reaction-button,
+.portal-job-like-toggle,
+.portal-candidate-job-reactions .portal-job-bookmark-toggle,
+.bookmarked-job-reactions .job-card-like-button,
+.bookmarked-job-reactions .job-card-bookmark-action {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.portal-reaction-icon-button:hover,
+.portal-reaction-icon-button:focus-visible,
+.portal-reaction-icon-button.active,
+.portal-reaction-button:hover,
+.portal-reaction-button:focus-visible,
+.portal-reaction-button.active {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.portal-candidate-job-reactions .portal-job-like-toggle::before,
+.portal-candidate-job-reactions .portal-job-like-toggle::after,
+.portal-candidate-job-reactions .portal-job-bookmark-toggle::before,
+.portal-candidate-job-reactions .portal-job-bookmark-toggle::after {
+  display: none !important;
+  content: none !important;
+  pointer-events: none !important;
+}
+
+@media (max-width: 480px) {
+  .portal-reaction-rail,
+  .portal-post-reactions,
+  .portal-candidate-job-reactions,
+  .bookmarked-job-reactions {
+    justify-content: flex-start !important;
+    padding: 0.5rem !important;
+    gap: 0.3rem !important;
+  }
+
+  .portal-reaction-icon-button,
+  .portal-reaction-button,
+  .portal-job-like-toggle,
+  .portal-candidate-job-reactions .portal-job-bookmark-toggle,
+  .bookmarked-job-reactions .job-card-like-button,
+  .bookmarked-job-reactions .job-card-bookmark-action {
+    width: 2.05rem !important;
+    min-width: 2.05rem !important;
+    height: 2.05rem !important;
+    min-height: 2.05rem !important;
+  }
+}
+
+/* Mobile editor/reaction overflow repair: keep controls in one horizontal strip. */
+@media (max-width: 768px) {
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-shell,
+  .resume-playground-toolbar-shell {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    overscroll-behavior-x: contain !important;
+    scroll-behavior: smooth !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-x !important;
+  }
+
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar,
+  .resume-playground-toolbar {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 0.35rem !important;
+    width: max-content !important;
+    min-width: max-content !important;
+    max-width: none !important;
+    overflow: visible !important;
+  }
+
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row,
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-fixed,
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-scroll,
+  .resume-playground-toolbar-row,
+  .resume-playground-toolbar-row-fixed,
+  .resume-playground-toolbar-row-scroll {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    width: max-content !important;
+    min-width: max-content !important;
+    max-width: none !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row::before,
+  .resume-playground-toolbar-row::before {
+    display: none !important;
+    content: none !important;
+  }
+
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-group,
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-group-wide,
+  .resume-playground-editor-mobile-overlay .resume-playground-tool-button,
+  .resume-playground-editor-mobile-overlay .resume-playground-icon-button,
+  .resume-playground-editor-mobile-overlay .resume-playground-select,
+  .resume-playground-editor-mobile-overlay .resume-playground-color-picker,
+  .resume-playground-toolbar-group,
+  .resume-playground-toolbar-group-wide,
+  .resume-playground-tool-button,
+  .resume-playground-icon-button,
+  .resume-playground-select,
+  .resume-playground-color-picker {
+    flex: 0 0 auto !important;
+  }
+
+  .portal-social-post-card .portal-post-reactions.portal-reaction-rail,
+  .portal-post-reactions.portal-reaction-rail {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 0.34rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 3.1rem !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    overscroll-behavior-x: contain !important;
+    scroll-behavior: smooth !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-x !important;
+  }
+
+  .portal-post-reactions.portal-reaction-rail .portal-reaction-icon-button,
+  .portal-post-reactions.portal-reaction-rail .portal-reaction-button {
+    flex: 0 0 2.05rem !important;
+    width: 2.05rem !important;
+    min-width: 2.05rem !important;
+    max-width: 2.05rem !important;
+    height: 2.05rem !important;
+    min-height: 2.05rem !important;
+    max-height: 2.05rem !important;
+  }
+
+  .portal-post-reactions.portal-reaction-rail > * {
+    flex-shrink: 0 !important;
+  }
+}
+
+/* Final repair for mobile editor toolbar and fresh job-card reaction controls. */
+@media (max-width: 768px) {
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-shell,
+  .resume-playground-toolbar-shell {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    padding: 0.25rem 0.25rem 0.35rem !important;
+  }
+
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar,
+  .resume-playground-toolbar {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    gap: 0.32rem !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row,
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-fixed,
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-scroll,
+  .resume-playground-toolbar-row,
+  .resume-playground-toolbar-row-fixed,
+  .resume-playground-toolbar-row-scroll {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 0.24rem !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-behavior: smooth !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-x !important;
+    scrollbar-width: thin !important;
+  }
+
+  .resume-playground-editor-mobile-overlay .resume-playground-tool-button,
+  .resume-playground-editor-mobile-overlay .resume-playground-icon-button,
+  .resume-playground-toolbar .resume-playground-tool-button,
+  .resume-playground-toolbar .resume-playground-icon-button {
+    flex: 0 0 2.22rem !important;
+    width: 2.22rem !important;
+    min-width: 2.22rem !important;
+    height: 2.22rem !important;
+    min-height: 2.22rem !important;
+    padding: 0 !important;
+    border-radius: 0.36rem !important;
+  }
+
+  .resume-playground-editor-mobile-overlay .resume-playground-select,
+  .resume-playground-toolbar .resume-playground-select {
+    flex: 0 0 auto !important;
+    min-width: 4.25rem !important;
+    max-width: 11.8rem !important;
+    height: 2.22rem !important;
+    border-radius: 0.6rem !important;
+  }
+
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-fixed .resume-playground-select:first-of-type,
+  .resume-playground-toolbar-row-fixed .resume-playground-select:first-of-type {
+    min-width: 10.5rem !important;
+  }
+}
+
+.portal-post-reactions.portal-reaction-rail {
+  align-items: center !important;
+  min-height: 3.45rem !important;
+  padding-top: 0.46rem !important;
+  padding-bottom: 0.62rem !important;
+}
+
+.portal-reaction-count,
+.portal-job-like-toggle strong,
+.bookmarked-job-reactions .job-card-like-button strong,
+.job-post-reaction-count {
+  right: 0.02rem !important;
+  bottom: 0.02rem !important;
+}
+
+.job-post-action-reactions {
+  position: relative !important;
+  z-index: 30 !important;
+  display: inline-flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.72rem !important;
+  width: max-content !important;
+  max-width: 100% !important;
+  margin: 0.9rem auto 1rem !important;
+  padding: 0.2rem !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  pointer-events: auto !important;
+}
+
+.job-post-reaction-button {
+  position: relative !important;
+  z-index: 35 !important;
+  display: inline-flex !important;
+  flex: 0 0 2.25rem !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 2.25rem !important;
+  min-width: 2.25rem !important;
+  height: 2.25rem !important;
+  min-height: 2.25rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  cursor: pointer !important;
+  overflow: visible !important;
+  pointer-events: auto !important;
+  transition: color 0.2s ease, transform 0.2s ease !important;
+}
+
+.job-post-reaction-button::before,
+.job-post-reaction-button::after {
+  display: none !important;
+  content: none !important;
+}
+
+.job-post-reaction-button svg {
+  width: 1.24rem !important;
+  height: 1.24rem !important;
+  fill: currentColor !important;
+}
+
+.job-post-reaction-button:hover,
+.job-post-reaction-button:focus-visible,
+.job-post-reaction-button.active {
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: translateY(-1px) !important;
+}
+
+.job-post-reaction-count {
+  position: absolute !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0.98rem !important;
+  height: 0.9rem !important;
+  padding: 0 0.22rem !important;
+  border-radius: 999px !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  font-family: 'Roboto', Arial, sans-serif !important;
+  font-size: 0.58rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
 }

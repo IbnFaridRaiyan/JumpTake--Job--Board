@@ -253,28 +253,29 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
                                     <span>{job?.jobType || 'Type not specified'}</span>
                                     {job?.salary && <span>{job.salary}</span>}
                                 </div>
-                                <div className="job-card-reactions bookmarked-job-reactions">
+                                <div className="job-card-reactions bookmarked-job-reactions portal-reaction-rail">
                                     <button
                                         type="button"
-                                        className={`job-card-like-button ${isJobLiked(job) ? 'active' : ''}`}
+                                        className={`job-card-like-button portal-reaction-icon-button reaction-like ${isJobLiked(job) ? 'active' : ''}`}
                                         onClick={() => toggleJobLike(job)}
                                         aria-pressed={isJobLiked(job)}
                                         aria-label="Like bookmarked job"
+                                        title="Like"
                                     >
                                         <span aria-hidden="true">👍</span>
-                                        <span>Like</span>
+                                        <span className="portal-reaction-tooltip" role="tooltip">Like</span>
                                         <strong>{getJobLikeCount(job)}</strong>
                                     </button>
                                     <button
                                         type="button"
-                                        className="bookmark-star-button job-card-bookmark-action active"
+                                        className="bookmark-star-button job-card-bookmark-action portal-reaction-icon-button reaction-bookmark active"
                                         onClick={() => removeBookmark(job?._id)}
                                         aria-pressed="true"
                                         aria-label="Remove bookmark"
                                         title="Remove bookmark"
                                         disabled={!job?._id}
                                     >
-                                        <span>Bookmark</span>
+                                        <span className="portal-reaction-tooltip" role="tooltip">Remove bookmark</span>
                                     </button>
                                 </div>
                                 <div className="application-card-actions">

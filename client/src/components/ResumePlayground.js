@@ -2187,6 +2187,28 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
     const editorPageStride = A4_PAGE_HEIGHT + A4_PAGE_GAP;
     const editorDocumentHeight = (editorPageCount * A4_PAGE_HEIGHT) + (Math.max(editorPageCount - 1, 0) * A4_PAGE_GAP);
 
+    const handleToolbarWheel = useCallback((event) => {
+        const shell = event.currentTarget;
+        const target = event.target;
+        const row = target?.closest?.('.resume-playground-toolbar-row');
+        const scroller = [row, shell].find((element) => (
+            element && element.scrollWidth > element.clientWidth + 1
+        ));
+
+        if (!scroller) {
+            return;
+        }
+
+        const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+        if (!delta) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+        scroller.scrollLeft += delta;
+    }, []);
+
     const handleAtsScan = useCallback(() => {
         const currentHtml = editorRef.current?.innerHTML || editorResume?.html || '';
         const result = analyzeResumeForATS(currentHtml);
@@ -2424,7 +2446,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                         )}
                     </div>
 
-                    <div className="resume-playground-toolbar-shell">
+                    <div className="resume-playground-toolbar-shell" onWheelCapture={handleToolbarWheel}>
                         <div className="resume-playground-toolbar">
                             {isMobileViewport ? (
                                 <>

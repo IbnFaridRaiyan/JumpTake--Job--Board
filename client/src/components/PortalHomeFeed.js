@@ -302,7 +302,7 @@ const createPost = ({ type, body, viewerId, authorName, authorType, authorAvatar
 });
 
 const reactionLabels = {
-    work: ['Like', 'Appreciate', 'Sad', 'Bad', 'Hide'],
+    work: ['Like', 'Appreciate', 'Love', 'Empower', 'Congratulate', 'Motivate', 'Angry', 'Sad', 'Bad', 'Hide'],
     talent: ['Like', 'Appreciate', 'Love', 'Empower', 'Congratulate', 'Motivate', 'Angry', 'Sad', 'Bad', 'Hide']
 };
 
@@ -389,6 +389,21 @@ const ReactionIcon = ({ name }) => (
         {name === 'Congratulate' && (
             <path className="magic-stick-accent" d="M1.3 14.7 8.35 7.65" />
         )}
+    </svg>
+);
+
+const SharePostIcon = () => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        fill="currentColor"
+        className="bi bi-arrow-up-square-fill"
+        viewBox="0 0 16 16"
+        aria-hidden="true"
+        focusable="false"
+    >
+        <path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0" />
     </svg>
 );
 
@@ -614,6 +629,7 @@ const PortalHomeFeed = ({
     const [composerMedia, setComposerMedia] = useState(null);
     const [composerAudience, setComposerAudience] = useState('everyone');
     const [commentDrafts, setCommentDrafts] = useState({});
+    const [visibleReactionTooltip, setVisibleReactionTooltip] = useState('');
     const [jobReachMap, setJobReachMap] = useState(readJobReachMap);
     const [homeJobLikeMap, setHomeJobLikeMap] = useState(readHomeJobLikeMap);
     const [selectedJob, setSelectedJob] = useState(null);
@@ -624,6 +640,7 @@ const PortalHomeFeed = ({
     const [jobActionMessage, setJobActionMessage] = useState('');
     const [jobPage, setJobPage] = useState(1);
     const applicationResumeInputRef = useRef(null);
+    const reactionTooltipTimerRef = useRef(null);
     const [applicationJob, setApplicationJob] = useState(null);
     const [applicationMessage, setApplicationMessage] = useState('');
     const [coverLetterText, setCoverLetterText] = useState('');
@@ -1176,6 +1193,12 @@ const PortalHomeFeed = ({
         openApplicationWorkspaceRef.current = openApplicationWorkspace;
     });
 
+    useEffect(() => () => {
+        if (reactionTooltipTimerRef.current) {
+            window.clearTimeout(reactionTooltipTimerRef.current);
+        }
+    }, []);
+
     useEffect(() => {
         if (typeof window === 'undefined') {
             return undefined;
@@ -1440,6 +1463,18 @@ const PortalHomeFeed = ({
     };
 
     const handleReact = (key, postId, reaction) => {
+        const tooltipKey = `${postId}:${reaction}`;
+
+        if (reactionTooltipTimerRef.current) {
+            window.clearTimeout(reactionTooltipTimerRef.current);
+        }
+
+        setVisibleReactionTooltip(tooltipKey);
+        reactionTooltipTimerRef.current = window.setTimeout(() => {
+            setVisibleReactionTooltip('');
+            reactionTooltipTimerRef.current = null;
+        }, 1000);
+
         if (reaction === 'Hide') {
             updatePosts(key, (posts) => posts.map((post) => (
                 getPostKey(post) === postId
@@ -1602,37 +1637,43 @@ const PortalHomeFeed = ({
                                 )}
                             </div>
                         )}
-                        <div className="portal-post-reactions portal-reaction-rail">
+                        <ul className="portal-post-reactions portal-reaction-rail example-1" aria-label="Post reactions">
                             {reactionLabels[kind].map((reaction) => {
                                 const selectedReactions = normalizeViewerReactions(getViewerReaction(post, viewerId));
                                 const isActiveReaction = selectedReactions.includes(reaction);
                                 const reactionCount = getReactionCount(post, reaction);
                                 return (
-                                    <button
-                                        key={reaction}
-                                        type="button"
-                                        className={`portal-reaction-button portal-reaction-icon-button reaction-${reaction.toLowerCase()} ${isActiveReaction ? 'active' : ''}`}
-                                        onClick={() => handleReact(key, postKey, reaction)}
-                                        aria-pressed={isActiveReaction}
-                                        aria-label={`${reaction} reaction`}
-                                        title={reaction}
-                                    >
-                                        <ReactionIcon name={reaction} />
-                                        <ReactionTooltip>{reaction}</ReactionTooltip>
-                                        {reactionCount > 0 && <span className="portal-reaction-count">{reactionCount}</span>}
-                                    </button>
+                                    <li key={reaction} className="portal-reaction-item icon-content">
+                                        <button
+                                            type="button"
+                                            className={`portal-reaction-button portal-reaction-icon-button link reaction-${reaction.toLowerCase()} ${isActiveReaction ? 'active' : ''} ${visibleReactionTooltip === `${postKey}:${reaction}` ? 'tooltip-visible' : ''}`}
+                                            onClick={() => handleReact(key, postKey, reaction)}
+                                            aria-pressed={isActiveReaction}
+                                            aria-label={`${reaction} reaction`}
+                                            title={reaction}
+                                        >
+                                            <ReactionIcon name={reaction} />
+                                            <ReactionTooltip>{reaction}</ReactionTooltip>
+                                            {reactionCount > 0 && <span className="portal-reaction-count">{reactionCount}</span>}
+                                        </button>
+                                    </li>
                                 );
                             })}
                             {mode === 'candidate' && kind === 'work' && (
-                                <button
-                                    type="button"
-                                    className="portal-glass-mini-button"
-                                    onClick={() => handleShare(postKey)}
-                                >
-                                    Share with friend
-                                </button>
+                                <li className="portal-reaction-item portal-share-item icon-content">
+                                    <button
+                                        type="button"
+                                        className="portal-reaction-button portal-reaction-icon-button portal-share-icon-button link reaction-share"
+                                        onClick={() => handleShare(postKey)}
+                                        aria-label="Share with friend"
+                                        title="Share"
+                                    >
+                                        <SharePostIcon />
+                                        <ReactionTooltip>Share</ReactionTooltip>
+                                    </button>
+                                </li>
                             )}
-                        </div>
+                        </ul>
                         <div className="portal-post-comments">
                             {postComments.slice(-3).map((comment, commentIndex) => (
                                 <div key={comment.id || `comment-${commentIndex}`} className="portal-comment-item">

@@ -218,6 +218,65 @@ const createCoverLetterTemplate = (profileData, job, userData = {}) => {
     ].join('\n');
 };
 
+const createCoverLetterHtml = (text = '') => (
+    String(text || '')
+        .split('\n')
+        .map((line) => `<p>${escapeHtml(line || ' ')}</p>`)
+        .join('')
+);
+
+const htmlToPlainText = (html = '') => (
+    String(html || '')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/(p|div|li|h[1-6])>/gi, '\n')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/&nbsp;/gi, ' ')
+        .replace(/&amp;/gi, '&')
+        .replace(/&lt;/gi, '<')
+        .replace(/&gt;/gi, '>')
+        .replace(/&quot;/gi, '"')
+        .replace(/&#39;/gi, "'")
+        .replace(/[ \t]+\n/g, '\n')
+        .replace(/\n{3,}/g, '\n\n')
+        .replace(/[ \t]{2,}/g, ' ')
+        .trim()
+);
+
+const getSalarySortValue = (salary) => {
+    const matches = Array.from(
+        asDisplayText(salary)
+            .replace(/,/g, '')
+            .matchAll(/(\d+(?:\.\d+)?)\s*([km])?/gi)
+    );
+
+    if (!matches.length) {
+        return null;
+    }
+
+    const values = matches
+        .map((match) => {
+            const numericValue = Number(match[1]);
+            const suffix = String(match[2] || '').toLowerCase();
+
+            if (!Number.isFinite(numericValue)) {
+                return null;
+            }
+
+            if (suffix === 'm') {
+                return numericValue * 1000000;
+            }
+
+            if (suffix === 'k') {
+                return numericValue * 1000;
+            }
+
+            return numericValue;
+        })
+        .filter((value) => value !== null);
+
+    return values.length ? Math.max(...values) : null;
+};
+
 const normalizePostComments = (comments) => (
     Array.isArray(comments)
         ? comments.filter((comment) => comment && typeof comment === 'object')
@@ -406,6 +465,25 @@ const SharePostIcon = () => (
         <path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0" />
     </svg>
 );
+
+const PortalActionIcon = ({ type }) => {
+    const paths = {
+        submit: 'M14.854 3.146a.5.5 0 0 1 0 .708l-7.5 7.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7 10.293l7.146-7.147a.5.5 0 0 1 .708 0',
+        upload: 'M.5 9.9a.5.5 0 0 1 .5.5V13a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.6a.5.5 0 0 1 1 0V13a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.6a.5.5 0 0 1 .5-.5M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z',
+        resume: 'M4 0h5.5L14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2m5 1.5V5h3.5zM4.5 8a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1z',
+        profile: 'M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m0 1c-2.667 0-5 1.333-5 3v1h10v-1c0-1.667-2.333-3-5-3m5.5 1.5a.5.5 0 0 1 .5.5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 .5-.5',
+        draft: 'M4 0h5.5L14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2m5 1.5V5h3.5zM5 8.5a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1z',
+        cancel: 'M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z',
+        filter: 'M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5M3 6.5A.5.5 0 0 1 3.5 6h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 6.5M1.5 2A.5.5 0 0 1 2 1.5h12a.5.5 0 0 1 0 1H2a.5.5 0 0 1-.5-.5',
+        open: 'M6 3.5A1.5 1.5 0 0 1 7.5 2h5A1.5 1.5 0 0 1 14 3.5v5A1.5 1.5 0 0 1 12.5 10H12v-1h.5a.5.5 0 0 0 .5-.5v-5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0-.5.5V4H6zM2 7.5A1.5 1.5 0 0 1 3.5 6h5A1.5 1.5 0 0 1 10 7.5v5A1.5 1.5 0 0 1 8.5 14h-5A1.5 1.5 0 0 1 2 12.5z'
+    };
+
+    return (
+        <svg className="portal-action-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d={paths[type] || paths.submit} />
+        </svg>
+    );
+};
 
 const ReactionTooltip = ({ children }) => (
     <span className="portal-reaction-tooltip" role="tooltip">{children}</span>
@@ -639,6 +717,10 @@ const PortalHomeFeed = ({
     const [bookmarkedHomeJobIds, setBookmarkedHomeJobIds] = useState([]);
     const [jobActionMessage, setJobActionMessage] = useState('');
     const [jobPage, setJobPage] = useState(1);
+    const [homeJobLocationFilter, setHomeJobLocationFilter] = useState('');
+    const [homeJobSalarySort, setHomeJobSalarySort] = useState('');
+    const [activeDraftId, setActiveDraftId] = useState(null);
+    const [savingApplicationDraft, setSavingApplicationDraft] = useState(false);
     const applicationResumeInputRef = useRef(null);
     const reactionTooltipTimerRef = useRef(null);
     const [applicationJob, setApplicationJob] = useState(null);
@@ -667,6 +749,34 @@ const PortalHomeFeed = ({
     useEffect(() => {
         setJobPage(1);
     }, [activeTab, safeJobs.length]);
+
+    const availableHomeJobLocations = useMemo(() => (
+        [...new Set(
+            safeJobs
+                .map((job) => asDisplayText(job.location).trim())
+                .filter(Boolean)
+        )].sort((a, b) => a.localeCompare(b))
+    ), [safeJobs]);
+
+    const filteredHomeJobs = useMemo(() => {
+        const locationFilter = homeJobLocationFilter.trim().toLowerCase();
+        const filteredJobs = locationFilter
+            ? safeJobs.filter((job) => asDisplayText(job.location).trim().toLowerCase() === locationFilter)
+            : safeJobs;
+        const sortedJobs = [...filteredJobs];
+
+        if (homeJobSalarySort === 'salary-high') {
+            sortedJobs.sort((a, b) => (getSalarySortValue(b.salary) ?? -Infinity) - (getSalarySortValue(a.salary) ?? -Infinity));
+        } else if (homeJobSalarySort === 'salary-low') {
+            sortedJobs.sort((a, b) => (getSalarySortValue(a.salary) ?? Infinity) - (getSalarySortValue(b.salary) ?? Infinity));
+        }
+
+        return sortedJobs;
+    }, [safeJobs, homeJobLocationFilter, homeJobSalarySort]);
+
+    useEffect(() => {
+        setJobPage(1);
+    }, [homeJobLocationFilter, homeJobSalarySort]);
 
     useEffect(() => {
         let isMounted = true;
@@ -1032,6 +1142,8 @@ const PortalHomeFeed = ({
         setCoverLetterText('');
         setApplicationResumeUpload(null);
         setApplicationProfile(createApplicationProfileDraft(profileData, currentUser));
+        setActiveDraftId(null);
+        setSavingApplicationDraft(false);
         setJobActionMessage('');
     };
 
@@ -1178,6 +1290,7 @@ const PortalHomeFeed = ({
         setSelectedJob(job);
         setSelectedJobMode('candidate');
         setApplicationJob(job);
+        setActiveDraftId(null);
         setApplicationMessage(`I would like to apply for ${asDisplayText(job.title, 'this role')}.`);
         setCoverLetterText(createCoverLetterTemplate(profileData, job, currentUser));
         setApplicationProfile(createApplicationProfileDraft(profileData, currentUser));
@@ -1185,12 +1298,70 @@ const PortalHomeFeed = ({
         setJobActionMessage('');
     };
 
+    const openDraftApplicationWorkspace = async (draftId) => {
+        const userId = currentUser?.id || currentUser?._id || currentUser?.userId;
+
+        if (!draftId || !userId) {
+            return;
+        }
+
+        try {
+            const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
+            const response = await fetch(apiUrl(`/api/draft-applications/user/${userId}`), {
+                headers: {
+                    ...(token ? { Authorization: `Bearer ${token}` } : {})
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch draft applications');
+            }
+
+            const drafts = await response.json();
+            const selectedDraft = (Array.isArray(drafts) ? drafts : []).find((draft) => String(draft._id) === String(draftId));
+
+            if (!selectedDraft?.job) {
+                return;
+            }
+
+            const draftJob = normalizeHomeJobForDisplay(selectedDraft.job);
+            const matchingIndex = safeJobs.findIndex((job) => [
+                String(job?._id || ''),
+                String(job?.id || ''),
+                String(job?.jobNumber || ''),
+                getJobKey(job)
+            ].filter(Boolean).includes(String(draftJob._id || draftJob.id || selectedDraft.job?._id || '')));
+            const jobForDraft = matchingIndex >= 0 ? safeJobs[matchingIndex] : draftJob;
+
+            setActiveTab('job-posts');
+            setHomeJobLocationFilter('');
+            setHomeJobSalarySort('');
+            if (matchingIndex >= 0) {
+                setJobPage(Math.floor(matchingIndex / HOME_JOB_PAGE_SIZE) + 1);
+            }
+            setSelectedJob(jobForDraft);
+            setSelectedJobMode('candidate');
+            setApplicationJob(jobForDraft);
+            setActiveDraftId(selectedDraft._id);
+            setApplicationMessage(selectedDraft.message || `I would like to apply for ${asDisplayText(jobForDraft.title, 'this role')}.`);
+            setCoverLetterText(htmlToPlainText(selectedDraft.coverLetterHtml) || createCoverLetterTemplate(profileData, jobForDraft, currentUser));
+            setApplicationProfile(createApplicationProfileDraft(selectedDraft.profileSnapshot || profileData, currentUser));
+            setApplicationResumeUpload(selectedDraft.uploadedResume || null);
+            setJobActionMessage('Draft application opened for editing.');
+        } catch (draftError) {
+            console.error('Error opening home feed draft application:', draftError);
+            setJobActionMessage(draftError.message || 'Could not open that draft application.');
+        }
+    };
+
     const openJobModalRef = useRef(openJobModal);
     const openApplicationWorkspaceRef = useRef(openApplicationWorkspace);
+    const openDraftApplicationWorkspaceRef = useRef(openDraftApplicationWorkspace);
 
     useEffect(() => {
         openJobModalRef.current = openJobModal;
         openApplicationWorkspaceRef.current = openApplicationWorkspace;
+        openDraftApplicationWorkspaceRef.current = openDraftApplicationWorkspace;
     });
 
     useEffect(() => () => {
@@ -1235,6 +1406,8 @@ const PortalHomeFeed = ({
             }
 
             const matchedJob = safeJobs[matchIndex];
+            setHomeJobLocationFilter('');
+            setHomeJobSalarySort('');
             setJobPage(Math.floor(matchIndex / HOME_JOB_PAGE_SIZE) + 1);
 
             const scheduleFrame = window.requestAnimationFrame || ((callback) => window.setTimeout(callback, 0));
@@ -1264,6 +1437,14 @@ const PortalHomeFeed = ({
         };
 
         const readStoredRequest = () => {
+            const storedActiveDraftId = localStorage.getItem('jumptakeActiveDraftId');
+            if (storedActiveDraftId) {
+                localStorage.removeItem('jumptakeActiveDraftId');
+                localStorage.removeItem('jumptakeActiveJobReturnSection');
+                openDraftApplicationWorkspaceRef.current(storedActiveDraftId);
+                return;
+            }
+
             try {
                 const storedRequest = JSON.parse(sessionStorage.getItem('jumptakeHomeFeedRequest') || 'null');
                 if (storedRequest) {
@@ -1392,6 +1573,55 @@ const PortalHomeFeed = ({
         setJobActionMessage('Profile snapshot selected for this application.');
     };
 
+    const handleSaveDraft = async () => {
+        if (!applicationJob?._id) {
+            return;
+        }
+
+        const userId = currentUser?.id || currentUser?._id || currentUser?.userId;
+        if (!userId) {
+            setJobActionMessage('Please log in again before saving this draft.');
+            return;
+        }
+
+        setSavingApplicationDraft(true);
+        setJobActionMessage('');
+
+        try {
+            const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
+            const response = await fetch(apiUrl('/api/draft-applications'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { Authorization: `Bearer ${token}` } : {})
+                },
+                body: JSON.stringify({
+                    draftId: activeDraftId,
+                    jobId: applicationJob._id,
+                    userId,
+                    message: applicationMessage,
+                    coverLetterHtml: createCoverLetterHtml(coverLetterText),
+                    profileSnapshot: prepareApplicationProfileSnapshot(applicationProfile),
+                    uploadedResume: applicationResumeUpload
+                })
+            });
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(data.error || data.message || 'Could not save draft application.');
+            }
+
+            setActiveDraftId(data._id || activeDraftId);
+            setApplicationJob(null);
+            setJobActionMessage('Draft application saved successfully.');
+            onRefresh?.();
+        } catch (error) {
+            setJobActionMessage(error.message || 'Could not save draft application.');
+        } finally {
+            setSavingApplicationDraft(false);
+        }
+    };
+
     const handleApplyToJob = async (job, event) => {
         event?.stopPropagation();
 
@@ -1425,12 +1655,10 @@ const PortalHomeFeed = ({
                     jobId: job._id,
                     userId: currentUser.id || currentUser._id || currentUser.userId,
                     message: applicationMessage,
-                    coverLetterHtml: coverLetterText
-                        .split('\n')
-                        .map((line) => `<p>${escapeHtml(line || ' ')}</p>`)
-                        .join(''),
+                    coverLetterHtml: createCoverLetterHtml(coverLetterText),
                     profileSnapshot: prepareApplicationProfileSnapshot(applicationProfile),
-                    uploadedResume: applicationResumeUpload
+                    uploadedResume: applicationResumeUpload,
+                    draftId: activeDraftId
                 })
             });
             const data = await response.json().catch(() => ({}));
@@ -1453,6 +1681,7 @@ const PortalHomeFeed = ({
             setCoverLetterText('');
             setApplicationResumeUpload(null);
             setApplicationProfile(createApplicationProfileDraft(profileData, currentUser));
+            setActiveDraftId(null);
             setJobActionMessage('Application submitted successfully.');
             onRefresh?.();
         } catch (error) {
@@ -1778,15 +2007,52 @@ const PortalHomeFeed = ({
     );
 
     const renderCandidateJobPosts = () => {
-        const totalPages = Math.max(1, Math.ceil(safeJobs.length / HOME_JOB_PAGE_SIZE));
+        const totalPages = Math.max(1, Math.ceil(filteredHomeJobs.length / HOME_JOB_PAGE_SIZE));
         const currentPage = Math.min(jobPage, totalPages);
         const pageStart = (currentPage - 1) * HOME_JOB_PAGE_SIZE;
-        const visibleJobs = safeJobs.slice(pageStart, pageStart + HOME_JOB_PAGE_SIZE);
+        const visibleJobs = filteredHomeJobs.slice(pageStart, pageStart + HOME_JOB_PAGE_SIZE);
 
         return (
             <div className="portal-candidate-job-list">
+                {safeJobs.length > 0 && (
+                    <div className="portal-job-filter-bar" aria-label="Filter job posts">
+                        <label>
+                            <PortalActionIcon type="filter" />
+                            <span>Location</span>
+                            <select value={homeJobLocationFilter} onChange={(event) => setHomeJobLocationFilter(event.target.value)}>
+                                <option value="">All locations</option>
+                                {availableHomeJobLocations.map((location) => (
+                                    <option key={location} value={location}>{location}</option>
+                                ))}
+                            </select>
+                        </label>
+                        <label>
+                            <PortalActionIcon type="filter" />
+                            <span>Salary</span>
+                            <select value={homeJobSalarySort} onChange={(event) => setHomeJobSalarySort(event.target.value)}>
+                                <option value="">Default</option>
+                                <option value="salary-high">Highest salary</option>
+                                <option value="salary-low">Lowest salary</option>
+                            </select>
+                        </label>
+                        {(homeJobLocationFilter || homeJobSalarySort) && (
+                            <button
+                                type="button"
+                                className="portal-job-filter-clear"
+                                onClick={() => {
+                                    setHomeJobLocationFilter('');
+                                    setHomeJobSalarySort('');
+                                }}
+                            >
+                                Clear filters
+                            </button>
+                        )}
+                    </div>
+                )}
                 {safeJobs.length === 0 ? (
                     <div className="portal-feed-empty">No job posts yet. New company posts will appear here.</div>
+                ) : filteredHomeJobs.length === 0 ? (
+                    <div className="portal-feed-empty">No job posts match those filters.</div>
                 ) : visibleJobs.map((job, index) => {
                 const applications = normalizeJobApplications(job);
                 const key = getJobKey(job) || `job-${pageStart + index}`;
@@ -1897,7 +2163,7 @@ const PortalHomeFeed = ({
                 );
                 })}
 
-                {safeJobs.length > HOME_JOB_PAGE_SIZE && (
+                {filteredHomeJobs.length > HOME_JOB_PAGE_SIZE && (
                     <div className="portal-home-job-pagination" aria-label="Job post pages">
                         <button
                             type="button"
@@ -2054,40 +2320,62 @@ const PortalHomeFeed = ({
                         type="button"
                         className="portal-view-job-button"
                         onClick={(event) => handleApplyToJob(applicationJob, event)}
-                        disabled={Boolean(applyingHomeJobId) || hasAppliedToJob(applicationJob)}
+                        disabled={Boolean(applyingHomeJobId) || savingApplicationDraft || hasAppliedToJob(applicationJob)}
                     >
+                        <PortalActionIcon type="submit" />
                         {applyingHomeJobId ? 'Submitting...' : hasAppliedToJob(applicationJob) ? 'Applied' : 'Submit Application'}
                     </button>
                     <button
                         type="button"
                         className="portal-view-job-button secondary"
                         onClick={() => applicationResumeInputRef.current?.click()}
-                        disabled={Boolean(applyingHomeJobId) || isPreparingResumeUpload}
+                        disabled={Boolean(applyingHomeJobId) || savingApplicationDraft || isPreparingResumeUpload}
                     >
+                        <PortalActionIcon type="upload" />
                         {isPreparingResumeUpload ? 'Reading Resume...' : applicationResumeUpload ? 'Change Uploaded Resume' : 'Apply with Uploaded Resume'}
                     </button>
                     <button
                         type="button"
                         className="portal-view-job-button secondary"
                         onClick={handleApplyUsingSavedResume}
-                        disabled={Boolean(applyingHomeJobId) || isPreparingResumeUpload}
+                        disabled={Boolean(applyingHomeJobId) || savingApplicationDraft || isPreparingResumeUpload}
                     >
+                        <PortalActionIcon type="resume" />
                         Apply with Saved Resume
                     </button>
                     <button
                         type="button"
                         className="portal-view-job-button secondary"
                         onClick={handleApplyWithProfileSnapshot}
-                        disabled={Boolean(applyingHomeJobId)}
+                        disabled={Boolean(applyingHomeJobId) || savingApplicationDraft}
                     >
+                        <PortalActionIcon type="profile" />
                         Apply with Profile Snapshot
                     </button>
                     <button
                         type="button"
-                        className="portal-view-job-button secondary"
-                        onClick={() => setApplicationJob(null)}
-                        disabled={Boolean(applyingHomeJobId)}
+                        className="portal-view-job-button secondary portal-save-draft-button"
+                        onClick={handleSaveDraft}
+                        disabled={Boolean(applyingHomeJobId) || savingApplicationDraft}
                     >
+                        <PortalActionIcon type="draft" />
+                        {savingApplicationDraft ? 'Saving Draft...' : 'Save as Draft'}
+                    </button>
+                    <button
+                        type="button"
+                        className="portal-view-job-button secondary"
+                        onClick={() => {
+                            setApplicationJob(null);
+                            setApplicationMessage('');
+                            setCoverLetterText('');
+                            setApplicationResumeUpload(null);
+                            setApplicationProfile(createApplicationProfileDraft(profileData, currentUser));
+                            setActiveDraftId(null);
+                            setJobActionMessage('');
+                        }}
+                        disabled={Boolean(applyingHomeJobId) || savingApplicationDraft}
+                    >
+                        <PortalActionIcon type="cancel" />
                         Cancel
                     </button>
                 </div>
@@ -2187,36 +2475,38 @@ const PortalHomeFeed = ({
 
                     {renderApplicationWorkspace()}
 
-                    <div className="portal-job-modal-actions">
-                        {selectedJobMode === 'employer' ? (
-                            <button
-                                type="button"
-                                className="portal-view-job-button"
-                                onClick={() => {
-                                    closeJobModal();
-                                    switchSection?.('manage-jobs');
-                                }}
-                            >
-                                Go to Manage Jobs
+                    {!applicationJob && (
+                        <div className="portal-job-modal-actions">
+                            {selectedJobMode === 'employer' ? (
+                                <button
+                                    type="button"
+                                    className="portal-view-job-button"
+                                    onClick={() => {
+                                        closeJobModal();
+                                        switchSection?.('manage-jobs');
+                                    }}
+                                >
+                                    Go to Manage Jobs
+                                </button>
+                            ) : (
+                                <button
+                                    type="button"
+                                    className="portal-view-job-button"
+                                    onClick={(event) => openApplicationWorkspace(selectedJob, event)}
+                                    disabled={applyingHomeJobId === key || hasAppliedToJob(selectedJob)}
+                                >
+                                    {hasAppliedToJob(selectedJob)
+                                        ? 'Applied'
+                                        : applyingHomeJobId === key
+                                            ? 'Applying...'
+                                            : 'Apply Now'}
+                                </button>
+                            )}
+                            <button type="button" className="portal-view-job-button secondary" onClick={closeJobModal}>
+                                Close
                             </button>
-                        ) : (
-                            <button
-                                type="button"
-                                className="portal-view-job-button"
-                                onClick={(event) => openApplicationWorkspace(selectedJob, event)}
-                                disabled={applyingHomeJobId === key || hasAppliedToJob(selectedJob)}
-                            >
-                                {hasAppliedToJob(selectedJob)
-                                    ? 'Applied'
-                                    : applyingHomeJobId === key
-                                        ? 'Applying...'
-                                        : 'Apply Now'}
-                            </button>
-                        )}
-                        <button type="button" className="portal-view-job-button secondary" onClick={closeJobModal}>
-                            Close
-                        </button>
-                    </div>
+                        </div>
+                    )}
                 </article>
             </div>
         );

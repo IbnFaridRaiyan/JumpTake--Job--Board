@@ -49773,3 +49773,251 @@ select {
     margin: 0 !important;
   }
 }
+
+/* Friends, applications, and candidate action polish. */
+.friend-invitation-actions > button,
+.friend-invitation-actions > .secondary-button,
+.friend-invitation-actions > .settings-button.primary,
+.friend-invitation-actions > .friend-block-button,
+.friend-invitation-actions .contact-candidate-panel > .settings-button.primary,
+.friend-invitation-actions .message-compose-actions > button,
+.friend-invitation-actions .friend-status-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.42rem !important;
+  min-height: 2.15rem !important;
+  border: 1px solid rgba(170, 180, 184, 0.58) !important;
+  border-radius: 0.52rem !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+.friend-invitation-actions > button:hover,
+.friend-invitation-actions > button:focus-visible,
+.friend-invitation-actions .contact-candidate-panel > .settings-button.primary:hover,
+.friend-invitation-actions .contact-candidate-panel > .settings-button.primary:focus-visible {
+  border-color: rgba(255, 255, 255, 0.82) !important;
+  background: rgba(255, 255, 255, 0.085) !important;
+}
+
+.friend-action-icon,
+.contact-candidate-action-icon,
+.application-empty-action-icon,
+.portal-action-icon {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  fill: currentColor;
+}
+
+.contact-candidate-panel > .settings-button.primary,
+.contact-candidate-panel .message-compose-actions button,
+.job-search-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.42rem !important;
+}
+
+.job-search-link {
+  border-color: rgba(245, 184, 46, 0.72) !important;
+  color: #f5b82e !important;
+}
+
+.job-search-link .application-empty-action-icon {
+  filter: drop-shadow(0 0 7px rgba(245, 184, 46, 0.42));
+}
+
+.portal-job-filter-bar {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(10rem, 1fr)) auto;
+  align-items: end;
+  gap: 0.65rem;
+  width: 100%;
+  margin: 0 0 0.9rem;
+  padding: 0.72rem;
+  border: 1px solid rgba(111, 198, 189, 0.28);
+  border-radius: 0.9rem;
+  background: rgba(2, 15, 13, 0.68);
+}
+
+.portal-job-filter-bar label {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.32rem 0.42rem;
+  min-width: 0;
+  color: rgba(248, 255, 253, 0.84);
+  font-weight: 800;
+}
+
+.portal-job-filter-bar label select {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid rgba(170, 180, 184, 0.45);
+  border-radius: 0.62rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.portal-job-filter-clear {
+  min-height: 2.25rem;
+  border: 1px solid rgba(170, 180, 184, 0.5);
+  border-radius: 999px;
+  background: transparent;
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.portal-application-actions {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)) !important;
+  align-items: stretch !important;
+}
+
+.portal-application-actions .portal-view-job-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.42rem !important;
+  min-height: 2.35rem !important;
+  padding: 0.48rem 0.78rem !important;
+  font-size: 0.86rem !important;
+  line-height: 1.08 !important;
+  white-space: normal !important;
+}
+
+.portal-save-draft-button {
+  border-color: rgba(245, 184, 46, 0.55) !important;
+  color: #ffe8a3 !important;
+}
+
+.talent-pool-container .candidate-card.uiverse-profile-card .candidate-card-socialbar.socialbar,
+.candidate-bookmarked-container .candidate-card.uiverse-profile-card .candidate-card-socialbar.socialbar,
+.candidate-view-candidates .candidate-card.uiverse-profile-card .candidate-card-socialbar.socialbar {
+  left: 50% !important;
+  right: auto !important;
+  bottom: 1rem !important;
+  transform: translateX(-50%) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: max-content !important;
+  max-width: calc(100% - 1.4rem) !important;
+  min-width: 0 !important;
+  gap: 0.48rem !important;
+  padding: 0.48rem 0.64rem !important;
+  border-radius: 999px !important;
+  box-sizing: border-box !important;
+}
+
+.uiverse-profile-card .candidate-card-socialbar .candidate-card-action,
+.uiverse-profile-card .candidate-card-socialbar .candidate-like-button,
+.uiverse-profile-card .candidate-card-socialbar .talent-bookmark-button,
+.uiverse-profile-card .candidate-card-socialbar .bookmark-star-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 1.72rem !important;
+  min-width: 1.72rem !important;
+  height: 1.72rem !important;
+  min-height: 1.72rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.uiverse-profile-card .candidate-card-socialbar .candidate-like-button {
+  gap: 0.1rem !important;
+}
+
+.uiverse-profile-card .candidate-card-socialbar .candidate-like-count {
+  position: static !important;
+  display: inline-block !important;
+  min-width: 0.42rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-align: center !important;
+}
+
+@media (max-width: 768px) {
+  .portal-job-filter-bar {
+    grid-template-columns: 1fr !important;
+    gap: 0.48rem !important;
+    padding: 0.58rem !important;
+  }
+
+  .portal-job-filter-bar label select {
+    min-height: 2.08rem !important;
+    font-size: 0.78rem !important;
+  }
+
+  .portal-job-filter-clear {
+    min-height: 2.05rem !important;
+    font-size: 0.78rem !important;
+  }
+
+  .portal-application-actions {
+    grid-template-columns: 1fr !important;
+    gap: 0.42rem !important;
+  }
+
+  .portal-application-actions .portal-view-job-button {
+    min-height: 2.12rem !important;
+    padding: 0.38rem 0.58rem !important;
+    font-size: 0.76rem !important;
+  }
+
+  .portal-application-actions .portal-action-icon {
+    width: 0.84rem !important;
+    height: 0.84rem !important;
+  }
+
+  .friend-invitation-actions > button,
+  .friend-invitation-actions > .secondary-button,
+  .friend-invitation-actions > .settings-button.primary,
+  .friend-invitation-actions > .friend-block-button,
+  .friend-invitation-actions .contact-candidate-panel > .settings-button.primary,
+  .friend-invitation-actions .friend-status-pill {
+    min-height: 1.95rem !important;
+    padding: 0.38rem 0.48rem !important;
+    font-size: 0.72rem !important;
+  }
+
+  .talent-pool-container .candidate-card.uiverse-profile-card .candidate-card-socialbar.socialbar,
+  .candidate-bookmarked-container .candidate-card.uiverse-profile-card .candidate-card-socialbar.socialbar,
+  .candidate-view-candidates .candidate-card.uiverse-profile-card .candidate-card-socialbar.socialbar {
+    bottom: 0.72rem !important;
+    gap: 0.32rem !important;
+    max-width: calc(100% - 0.82rem) !important;
+    padding: 0.36rem 0.48rem !important;
+  }
+
+  .uiverse-profile-card .candidate-card-socialbar .candidate-card-action,
+  .uiverse-profile-card .candidate-card-socialbar .candidate-like-button,
+  .uiverse-profile-card .candidate-card-socialbar .talent-bookmark-button,
+  .uiverse-profile-card .candidate-card-socialbar .bookmark-star-button {
+    width: 1.36rem !important;
+    min-width: 1.36rem !important;
+    height: 1.36rem !important;
+    min-height: 1.36rem !important;
+  }
+
+  .uiverse-profile-card .candidate-card-socialbar .candidate-card-action svg,
+  .uiverse-profile-card .candidate-card-socialbar .candidate-like-button .like,
+  .uiverse-profile-card .candidate-card-socialbar .talent-bookmark-button svg,
+  .uiverse-profile-card .candidate-card-socialbar .bookmark-star-button svg {
+    width: 0.82rem !important;
+    height: 0.82rem !important;
+  }
+
+  .uiverse-profile-card .candidate-card-socialbar .candidate-like-count {
+    font-size: 0.52rem !important;
+  }
+}

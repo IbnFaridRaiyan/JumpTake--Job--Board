@@ -2,6 +2,25 @@ import React, { useCallback, useEffect, useState } from 'react';
 import ContactCandidate from './ContactCandidate';
 import ProfileAvatar from './ProfileAvatar';
 
+const FriendActionIcon = ({ type }) => {
+    const paths = {
+        profile: 'M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m0 1c-2.667 0-5 1.333-5 3v1h10v-1c0-1.667-2.333-3-5-3m5.5 1.5a.5.5 0 0 1 .5.5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 .5-.5',
+        pending: 'M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0m.5 4.5a.5.5 0 0 0-1 0v3.75l2.4 1.44a.5.5 0 1 0 .515-.858L8.5 7.683z',
+        message: 'M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4.414L.854 15.146A.5.5 0 0 1 0 14.793zm3.5 1a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1zm0 2.5a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1zm0 2.5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1z',
+        unsend: 'M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z',
+        accept: 'M13.854 3.646a.5.5 0 0 1 0 .708l-7.5 7.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6 10.793l7.146-7.147a.5.5 0 0 1 .708 0',
+        decline: 'M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708',
+        block: 'M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14M3.707 12.293l8.586-8.586A6 6 0 0 0 3.707 12.293m.707.707A6 6 0 0 0 13 4.414z',
+        connected: 'M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z'
+    };
+
+    return (
+        <svg className="friend-action-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d={paths[type] || paths.profile} />
+        </svg>
+    );
+};
+
 const FriendInvitations = ({ userId }) => {
     const [connections, setConnections] = useState({ incoming: [], outgoing: [], friends: [] });
     const [loading, setLoading] = useState(true);
@@ -147,6 +166,7 @@ const FriendInvitations = ({ userId }) => {
                     className="secondary-button"
                     onClick={() => setSelectedCandidate(candidate)}
                 >
+                    <FriendActionIcon type="profile" />
                     View Profile
                 </button>
                 {candidate._id ? (
@@ -209,12 +229,15 @@ const FriendInvitations = ({ userId }) => {
                                 <div className="friend-invitation-actions">
                                     {renderActionTools(connection)}
                                     <button type="button" className="settings-button primary" onClick={() => respond(connection._id, 'accept')} disabled={busyId === connection._id}>
+                                        <FriendActionIcon type="accept" />
                                         Accept
                                     </button>
                                     <button type="button" className="secondary-button" onClick={() => respond(connection._id, 'decline')} disabled={busyId === connection._id}>
+                                        <FriendActionIcon type="decline" />
                                         Decline
                                     </button>
                                     <button type="button" className="friend-block-button" onClick={() => respond(connection._id, 'block')} disabled={busyId === connection._id}>
+                                        <FriendActionIcon type="block" />
                                         Block
                                     </button>
                                 </div>
@@ -233,7 +256,7 @@ const FriendInvitations = ({ userId }) => {
                             <div className="friend-outgoing-row" key={connection._id}>
                                 {renderConnectionInfo(connection, 'Invitation pending')}
                                 <div className="friend-invitation-actions">
-                                    <span className="friend-status-pill">Invitation pending</span>
+                                    <span className="friend-status-pill"><FriendActionIcon type="pending" />Invitation pending</span>
                                     {renderActionTools(connection)}
                                     <button
                                         type="button"
@@ -241,6 +264,7 @@ const FriendInvitations = ({ userId }) => {
                                         onClick={() => respond(connection._id, 'cancel')}
                                         disabled={busyId === connection._id}
                                     >
+                                        <FriendActionIcon type="unsend" />
                                         {busyId === connection._id ? 'Cancelling...' : 'Unsend'}
                                     </button>
                                 </div>
@@ -258,7 +282,7 @@ const FriendInvitations = ({ userId }) => {
                         <div className="friend-outgoing-row is-friend" key={connection._id}>
                             {renderConnectionInfo(connection, 'Connected candidate')}
                             <div className="friend-invitation-actions">
-                                <span className="friend-status-pill is-friend">Connected</span>
+                                <span className="friend-status-pill is-friend"><FriendActionIcon type="connected" />Connected</span>
                                 {renderActionTools(connection)}
                             </div>
                         </div>

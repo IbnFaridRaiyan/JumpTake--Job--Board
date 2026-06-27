@@ -97,7 +97,7 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
         localStorage.setItem('jumptakeActiveJobReturnSection', 'bookmarked-jobs');
         sessionStorage.setItem('jumptakeHomeFeedRequest', JSON.stringify(homeFeedRequest));
         if (switchSection) {
-            switchSection('home');
+            switchSection('job-feed');
         }
 
         if (typeof window !== 'undefined') {

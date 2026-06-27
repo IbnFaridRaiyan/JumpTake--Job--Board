@@ -359,6 +359,17 @@ const FloatingMessenger = ({
         }
     };
 
+    const closeAfterAssistantAction = () => {
+        if (typeof window === 'undefined') {
+            handleClose();
+            return;
+        }
+
+        window.setTimeout(() => {
+            handleClose();
+        }, 450);
+    };
+
     const handleAssistantAction = (action, payload = {}) => {
         const answer = String(payload.answer || '').trim();
         const question = String(payload.question || '').trim();
@@ -369,6 +380,7 @@ const FloatingMessenger = ({
                 name: 'AI Generated Resume',
                 text: answer || question
             }, 'jumptake-resume-playground-ai-draft');
+            closeAfterAssistantAction();
             return;
         }
 
@@ -378,6 +390,7 @@ const FloatingMessenger = ({
                 name: 'AI Generated Document',
                 text: answer || question
             }, 'jumptake-resume-playground-ai-draft');
+            closeAfterAssistantAction();
             return;
         }
 
@@ -387,6 +400,7 @@ const FloatingMessenger = ({
                 tab: 'create-story',
                 text: answer || question
             }, 'jumptake-feed-ai-draft');
+            closeAfterAssistantAction();
             return;
         }
 
@@ -395,6 +409,7 @@ const FloatingMessenger = ({
                 mode: 'employer',
                 text: answer || question
             }, 'jumptake-assessment-ai-draft');
+            closeAfterAssistantAction();
             return;
         }
 
@@ -412,6 +427,7 @@ const FloatingMessenger = ({
                 action: 'apply'
             };
             storeAndOpenSection('job-feed', 'jumptakeHomeFeedRequest', request, 'jumptake-home-feed-request');
+            closeAfterAssistantAction();
         }
     };
 

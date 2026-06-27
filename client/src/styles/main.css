@@ -50021,3 +50021,213 @@ select {
     font-size: 0.52rem !important;
   }
 }
+
+/* Chat, feed, and portal scroll polish. */
+.portal-uiverse-sidebar,
+.portal-uiverse-rail,
+.portal-sidebar-nav,
+.portal-uiverse-sidebar .sidebar__list,
+.vertical-sidebar,
+.sidebar {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.portal-uiverse-sidebar::-webkit-scrollbar,
+.portal-uiverse-rail::-webkit-scrollbar,
+.portal-sidebar-nav::-webkit-scrollbar,
+.portal-uiverse-sidebar .sidebar__list::-webkit-scrollbar,
+.vertical-sidebar::-webkit-scrollbar,
+.sidebar::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+.portal-home-feed > .portal-home-tabs,
+.portal-home-tabs {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 30 !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  transform: translateY(0) !important;
+  opacity: 1 !important;
+  transition: transform 180ms ease, opacity 180ms ease !important;
+}
+
+.portal-home-feed.is-tabs-hidden > .portal-home-tabs {
+  transform: translateY(calc(-100% - 0.6rem)) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.portal-home-tabs,
+.portal-post-reactions.portal-reaction-rail,
+.portal-social-post-card .portal-post-reactions.portal-reaction-rail,
+.resume-playground-toolbar-shell,
+.resume-playground-toolbar,
+.resume-playground-toolbar-row,
+.resume-playground-toolbar-row-fixed,
+.resume-playground-toolbar-row-scroll {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scroll-behavior: smooth !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-x: contain !important;
+  touch-action: pan-x !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.portal-home-tabs::-webkit-scrollbar,
+.portal-post-reactions.portal-reaction-rail::-webkit-scrollbar,
+.portal-social-post-card .portal-post-reactions.portal-reaction-rail::-webkit-scrollbar,
+.resume-playground-toolbar-shell::-webkit-scrollbar,
+.resume-playground-toolbar::-webkit-scrollbar,
+.resume-playground-toolbar-row::-webkit-scrollbar,
+.resume-playground-toolbar-row-fixed::-webkit-scrollbar,
+.resume-playground-toolbar-row-scroll::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+.portal-home-tabs > *,
+.portal-post-reactions.portal-reaction-rail > *,
+.portal-post-reactions.portal-reaction-rail .portal-reaction-button,
+.portal-post-reactions.portal-reaction-rail .portal-reaction-icon-button,
+.resume-playground-toolbar .resume-playground-tool-button,
+.resume-playground-toolbar .resume-playground-icon-button,
+.resume-playground-toolbar .resume-playground-select,
+.resume-playground-toolbar .resume-playground-color-picker {
+  touch-action: pan-x !important;
+}
+
+.portal-social-post-card .portal-comment-row,
+.portal-comment-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.18rem !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.portal-social-post-card .portal-comment-row input,
+.portal-comment-row input {
+  flex: 1 1 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 15rem !important;
+  min-height: 2.05rem !important;
+  padding: 0.42rem 0.72rem !important;
+  font-size: 0.82rem !important;
+  line-height: 1.1 !important;
+}
+
+.portal-social-post-card .portal-comment-button {
+  flex: 0 0 auto !important;
+}
+
+.mobile-section-applications .job-search-link,
+.applications-container .job-search-link {
+  border-color: #000000 !important;
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  box-shadow: inset 0 0 0 1px #000000 !important;
+}
+
+.mobile-section-applications .job-search-link .application-empty-action-icon,
+.applications-container .job-search-link .application-empty-action-icon {
+  color: #000000 !important;
+  fill: #000000 !important;
+  filter: none !important;
+}
+
+.home-page .main-content.mobile-section-view-candidates > .talent-pool-container > .page-footer-actions,
+.home-page .main-content.mobile-section-bookmarked-candidates > .candidate-bookmarked-container > .page-footer-actions,
+.home-page .main-content.mobile-section-notifications > .mobile-section-fallback-footer,
+.home-page .main-content.mobile-section-applications > .applications-container > .page-footer-actions,
+.home-page .main-content.mobile-section-video-interviews > .video-interviews-container > .page-footer-actions,
+.home-page .main-content.mobile-section-draft-applications > .applications-container > .page-footer-actions,
+.home-page .main-content.mobile-section-bookmarked-jobs > .applications-container > .page-footer-actions,
+.home-page .main-content.mobile-section-interested-jobs > .interested-job-suggestion-section > .page-footer-actions,
+.home-page .main-content.mobile-section-resume-playground > .resume-playground-section > .page-footer-actions,
+.home-page .main-content.mobile-section-profile > .profile-container > .page-footer-actions,
+.home-page .main-content.mobile-section-profile > .profile-container .profile-display > .page-footer-actions,
+.home-page .main-content.mobile-section-profile > .profile-container .profile-form > .page-footer-actions,
+.home-page .main-content.mobile-section-about-jumptake > .mobile-section-fallback-footer,
+.home-page .main-content.mobile-section-progress-check > .mobile-section-fallback-footer,
+.home-page .main-content.mobile-section-settings > .settings-container > .page-footer-actions,
+.home-page .main-content.mobile-section-settings > .user-settings-container > .page-footer-actions {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .portal-social-post-card .portal-comment-row input,
+  .portal-comment-row input {
+    flex: 1 1 0 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    min-height: 1.92rem !important;
+    font-size: 0.76rem !important;
+  }
+
+  .portal-social-post-card .portal-comment-row,
+  .portal-comment-row {
+    display: flex !important;
+    grid-template-columns: none !important;
+    gap: 0.12rem !important;
+    padding-right: 0 !important;
+  }
+
+  .portal-social-post-card .portal-comment-button,
+  .portal-comment-button {
+    order: 0 !important;
+    flex: 0 0 1.65rem !important;
+    width: 1.65rem !important;
+    min-width: 1.65rem !important;
+    max-width: 1.65rem !important;
+    height: 1.65rem !important;
+    min-height: 1.65rem !important;
+    max-height: 1.65rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-shell,
+  .resume-playground-toolbar-shell {
+    padding: 0.12rem !important;
+    border: 1.5px solid rgba(99, 192, 184, 0.32) !important;
+    border-radius: 1.1rem !important;
+    background: rgba(4, 8, 12, 0.72) !important;
+  }
+
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar,
+  .resume-playground-toolbar {
+    padding: 0.82rem !important;
+    border-width: 1.5px !important;
+    border-color: rgba(99, 192, 184, 0.34) !important;
+  }
+
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row,
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-fixed,
+  .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-scroll,
+  .resume-playground-toolbar-row,
+  .resume-playground-toolbar-row-fixed,
+  .resume-playground-toolbar-row-scroll {
+    min-height: 3.15rem !important;
+    padding: 1rem 0.72rem 0.72rem !important;
+    border-width: 1.5px !important;
+    border-color: rgba(99, 192, 184, 0.34) !important;
+    background: rgba(255, 255, 255, 0.045) !important;
+  }
+
+  .portal-home-tabs {
+    top: 0 !important;
+  }
+}

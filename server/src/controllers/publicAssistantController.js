@@ -1122,7 +1122,10 @@ const askPublicAssistant = async (req, res) => {
   if (!action && /\bwhich job\b/.test(lastAssistantText) && context?.portalMode === 'candidate') {
     action = 'candidate-apply-job';
   }
-  const directReply = getDirectAssistantReply(message, history, isPortalAction(action) && action !== 'candidate-apply-job' ? null : action);
+  const shouldGeneratePortalDraft = isPortalAction(action) && action !== 'candidate-apply-job';
+  const directReply = shouldGeneratePortalDraft
+    ? ''
+    : getDirectAssistantReply(message, history, action);
   if (directReply) {
     return res.json({ answer: directReply, action });
   }

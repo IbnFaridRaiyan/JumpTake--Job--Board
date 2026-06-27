@@ -849,6 +849,8 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
     const signatureDrawingRef = useRef(false);
     const textColorRef = useRef(DEFAULT_TEXT_COLOR);
     const manualTextInsertRef = useRef(false);
+    const aiDraftTypingTimerRef = useRef(null);
+    const aiDraftTypingTokenRef = useRef(0);
 
     const [activeTab, setActiveTab] = useState('create');
     const [createMode, setCreateMode] = useState('');
@@ -1488,7 +1490,18 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         }
     };
 
+    const clearAiDraftTyping = useCallback(() => {
+        aiDraftTypingTokenRef.current += 1;
+
+        if (typeof window !== 'undefined' && aiDraftTypingTimerRef.current) {
+            window.clearTimeout(aiDraftTypingTimerRef.current);
+        }
+
+        aiDraftTypingTimerRef.current = null;
+    }, []);
+
     const openEditor = (resume, nextTab = 'edit') => {
+        clearAiDraftTyping();
         setEditorResume(resume);
         setEditorSuspended(false);
         const nextTextColor = resume?.textColor || DEFAULT_TEXT_COLOR;
@@ -1512,6 +1525,63 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         });
     };
 
+    const animateAiDraftIntoEditor = (draftRecord, draftText) => {
+        if (typeof window === 'undefined') {
+            setEditorResume((current) => (
+                current && current.id === draftRecord.id
+                    ? { ...current, html: plainTextToHtml(draftText) }
+                    : current
+            ));
+            return;
+        }
+
+        clearAiDraftTyping();
+        const typingToken = aiDraftTypingTokenRef.current;
+        const characters = Array.from(String(draftText || '').trim());
+        const chunkSize = Math.max(3, Math.ceil(characters.length / 180));
+        let cursor = 0;
+
+        setStatusMessage(isDocumentMode ? 'JumpTake AI is typing the document...' : 'JumpTake AI is typing the resume...');
+
+        const typeNextChunk = () => {
+            if (typingToken !== aiDraftTypingTokenRef.current) {
+                return;
+            }
+
+            cursor = Math.min(characters.length, cursor + chunkSize);
+            const partialText = characters.slice(0, cursor).join('');
+            const nextHtml = plainTextToHtml(partialText);
+
+            if (editorRef.current) {
+                editorRef.current.innerHTML = nextHtml;
+            }
+
+            setEditorResume((current) => (
+                current && current.id === draftRecord.id
+                    ? { ...current, html: nextHtml }
+                    : current
+            ));
+
+            window.requestAnimationFrame(() => {
+                repaginateEditorContent();
+            });
+
+            if (cursor < characters.length) {
+                aiDraftTypingTimerRef.current = window.setTimeout(typeNextChunk, 20);
+                return;
+            }
+
+            aiDraftTypingTimerRef.current = null;
+            setStatusMessage(isDocumentMode ? 'AI document draft finished typing in the editor.' : 'AI resume draft finished typing in the editor.');
+        };
+
+        aiDraftTypingTimerRef.current = window.setTimeout(typeNextChunk, 280);
+    };
+
+    useEffect(() => () => {
+        clearAiDraftTyping();
+    }, [clearAiDraftTyping]);
+
     useEffect(() => {
         if (typeof window === 'undefined') {
             return undefined;
@@ -1530,13 +1600,13 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
 
             const draftRecord = createResumeRecord({
                 name: draft.name || (isDocumentMode ? 'AI Generated Document' : 'AI Generated Resume'),
-                html: plainTextToHtml(draftText),
+                html: '<p></p>',
                 source: 'scratch'
             });
 
             setCreateMode('scratch');
             openEditor(draftRecord, 'edit');
-            setStatusMessage(isDocumentMode ? 'AI document draft opened in the editor.' : 'AI resume draft opened in the editor.');
+            animateAiDraftIntoEditor(draftRecord, draftText);
         };
 
         const readStoredDraft = () => {

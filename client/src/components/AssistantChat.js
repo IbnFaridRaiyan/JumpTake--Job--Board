@@ -87,7 +87,7 @@ const AssistantChat = ({ title = 'Jumptake chat', className = '', storageKey = '
                 throw new Error(data.error || 'JumpTake assistant is unavailable.');
             }
             setAssistantMessages((messages) => [...messages, { role: 'assistant', text: data.answer, time: formatAssistantTime() }]);
-            if (data.action) {
+            if (data.action && String(data.answer || '').trim().toLowerCase() !== 'error connecting') {
                 onAction?.(data.action, { answer: data.answer, question, context });
             }
         } catch (error) {

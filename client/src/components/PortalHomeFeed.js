@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import ResumeFilePreview from './ResumeFilePreview';
 import { apiUrl } from '../utils/apiUrl';
@@ -703,6 +703,7 @@ const PortalHomeFeed = ({
     const [talentStories, setTalentStories] = useState([]);
     const [feedLoading, setFeedLoading] = useState(false);
     const [feedError, setFeedError] = useState('');
+    const [tabsHidden, setTabsHidden] = useState(false);
     const [composerText, setComposerText] = useState('');
     const [composerMedia, setComposerMedia] = useState(null);
     const [composerAudience, setComposerAudience] = useState('everyone');
@@ -723,6 +724,9 @@ const PortalHomeFeed = ({
     const [savingApplicationDraft, setSavingApplicationDraft] = useState(false);
     const applicationResumeInputRef = useRef(null);
     const reactionTooltipTimerRef = useRef(null);
+    const feedScrollTopRef = useRef(0);
+    const feedDraftTypingTimerRef = useRef(null);
+    const feedDraftTypingTokenRef = useRef(0);
     const [applicationJob, setApplicationJob] = useState(null);
     const [applicationMessage, setApplicationMessage] = useState('');
     const [coverLetterText, setCoverLetterText] = useState('');
@@ -980,6 +984,11 @@ const PortalHomeFeed = ({
 
         return true;
     };
+
+    useEffect(() => {
+        setTabsHidden(false);
+        feedScrollTopRef.current = 0;
+    }, [activeTab]);
 
     useEffect(() => {
         const key = activeTab === 'work-news' || activeTab === 'my-company-posts'
@@ -1368,6 +1377,10 @@ const PortalHomeFeed = ({
         if (reactionTooltipTimerRef.current) {
             window.clearTimeout(reactionTooltipTimerRef.current);
         }
+        if (feedDraftTypingTimerRef.current) {
+            window.clearTimeout(feedDraftTypingTimerRef.current);
+        }
+        feedDraftTypingTokenRef.current += 1;
     }, []);
 
     useEffect(() => {
@@ -1420,6 +1433,38 @@ const PortalHomeFeed = ({
             });
         };
 
+        const typeFeedDraft = (text = '') => {
+            if (feedDraftTypingTimerRef.current) {
+                window.clearTimeout(feedDraftTypingTimerRef.current);
+            }
+
+            feedDraftTypingTokenRef.current += 1;
+            const typingToken = feedDraftTypingTokenRef.current;
+            const characters = Array.from(String(text || '').trim());
+            const chunkSize = Math.max(2, Math.ceil(characters.length / 140));
+            let cursor = 0;
+
+            setComposerText('');
+
+            const typeNextChunk = () => {
+                if (typingToken !== feedDraftTypingTokenRef.current) {
+                    return;
+                }
+
+                cursor = Math.min(characters.length, cursor + chunkSize);
+                setComposerText(characters.slice(0, cursor).join(''));
+
+                if (cursor < characters.length) {
+                    feedDraftTypingTimerRef.current = window.setTimeout(typeNextChunk, 22);
+                    return;
+                }
+
+                feedDraftTypingTimerRef.current = null;
+            };
+
+            feedDraftTypingTimerRef.current = window.setTimeout(typeNextChunk, 260);
+        };
+
         const openFeedDraft = (draft = {}) => {
             if (draft.mode && draft.mode !== mode) {
                 return;
@@ -1431,7 +1476,7 @@ const PortalHomeFeed = ({
             }
 
             setActiveTab(requestedTab);
-            setComposerText(String(draft.text || '').trim());
+            typeFeedDraft(draft.text || '');
             setComposerMedia(null);
             setFeedError('');
         };
@@ -1815,6 +1860,44 @@ const PortalHomeFeed = ({
         )));
     };
 
+    const handleHorizontalRailWheel = useCallback((event) => {
+        const scroller = event.currentTarget;
+
+        if (!scroller || scroller.scrollWidth <= scroller.clientWidth + 1) {
+            return;
+        }
+
+        const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+
+        if (!delta) {
+            return;
+        }
+
+        const maxScrollLeft = scroller.scrollWidth - scroller.clientWidth;
+        const nextScrollLeft = Math.max(0, Math.min(maxScrollLeft, scroller.scrollLeft + delta));
+
+        if (nextScrollLeft === scroller.scrollLeft) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+        scroller.scrollLeft = nextScrollLeft;
+    }, []);
+
+    const handleFeedScroll = useCallback((event) => {
+        const nextScrollTop = event.currentTarget.scrollTop;
+        const previousScrollTop = feedScrollTopRef.current;
+        const delta = nextScrollTop - previousScrollTop;
+
+        if (Math.abs(delta) < 8) {
+            return;
+        }
+
+        setTabsHidden(nextScrollTop > 12 && delta > 0);
+        feedScrollTopRef.current = nextScrollTop;
+    }, []);
+
     const renderPostList = (posts, key, kind) => {
         const safePosts = Array.isArray(posts)
             ? posts
@@ -1866,7 +1949,7 @@ const PortalHomeFeed = ({
                                 )}
                             </div>
                         )}
-                        <ul className="portal-post-reactions portal-reaction-rail example-1" aria-label="Post reactions">
+                        <ul className="portal-post-reactions portal-reaction-rail example-1" aria-label="Post reactions" onWheelCapture={handleHorizontalRailWheel}>
                             {reactionLabels[kind].map((reaction) => {
                                 const selectedReactions = normalizeViewerReactions(getViewerReaction(post, viewerId));
                                 const isActiveReaction = selectedReactions.includes(reaction);
@@ -2519,7 +2602,7 @@ const PortalHomeFeed = ({
     const ownTalentStories = talentStories.filter((post) => String(post.authorId) === viewerId);
     const ownCompanyPosts = workNewsPosts.filter((post) => String(post.authorId) === viewerId);
     return (
-        <div className={`portal-home-feed portal-home-feed-${mode}`}>
+        <div className={`portal-home-feed portal-home-feed-${mode} ${tabsHidden ? 'is-tabs-hidden' : ''}`}>
             {feedError ? <div className="notification-message error">{feedError}</div> : null}
             <div className="portal-home-tabs" aria-label={`${mode} home sections`}>
                 {tabs.map((tab) => {
@@ -2543,7 +2626,7 @@ const PortalHomeFeed = ({
                 })}
             </div>
 
-            <div className="portal-home-feed-scroll">
+            <div className="portal-home-feed-scroll" onScroll={handleFeedScroll}>
                 {feedLoading ? <div className="loading-spinner">Loading live feed...</div> : null}
                 {activeTab === 'work-news' && renderPostList(workNewsPosts, WORK_NEWS_STORAGE_KEY, 'work')}
                 {activeTab === 'job-posts' && renderCandidateJobPosts()}

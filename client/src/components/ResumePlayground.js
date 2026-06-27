@@ -12,6 +12,7 @@ const A4_PAGE_WIDTH = 794;
 const A4_PAGE_HEIGHT = 1123;
 const A4_PAGE_GAP = 56;
 const RULER_SIZE = 34;
+const MOBILE_RULER_SIZE = 24;
 const A4_TOP_PADDING = 48;
 const A4_RIGHT_PADDING = 56;
 const A4_BOTTOM_PADDING = 48;
@@ -1191,7 +1192,8 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         }
     }, [getPaginationHost]);
 
-    const createMeasurementContainer = useCallback(() => {
+    const createMeasurementContainer = useCallback((pageIndex = 0) => {
+        const pageMargins = editorPageMargins[pageIndex] || editorMargins;
         const measurement = document.createElement('div');
         measurement.style.position = 'absolute';
         measurement.style.left = '-100000px';
@@ -1199,7 +1201,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         measurement.style.visibility = 'hidden';
         measurement.style.pointerEvents = 'none';
         measurement.style.width = `${A4_PAGE_WIDTH}px`;
-        measurement.style.padding = `${editorMargins.top}px ${A4_RIGHT_PADDING}px ${A4_BOTTOM_PADDING}px ${editorMargins.left}px`;
+        measurement.style.padding = `${pageMargins.top}px ${A4_RIGHT_PADDING}px ${A4_BOTTOM_PADDING}px ${pageMargins.left}px`;
         measurement.style.boxSizing = 'border-box';
         measurement.style.background = '#ffffff';
         measurement.style.color = '#111827';
@@ -1210,7 +1212,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         measurement.style.overflowWrap = 'anywhere';
         document.body.appendChild(measurement);
         return measurement;
-    }, [editorMargins.left, editorMargins.top]);
+    }, [editorMargins, editorPageMargins]);
 
     const splitTextBlockToFit = useCallback((node, measurement) => {
         if (!node || node.nodeType !== Node.ELEMENT_NODE) {
@@ -1304,17 +1306,25 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
             }
         }
 
-        const measurement = createMeasurementContainer();
+        const measurement = createMeasurementContainer(0);
         const nodes = Array.from(root.childNodes);
         let pages = 1;
         let currentPageIndex = 0;
         let blocksOnCurrentPage = 0;
 
         const getPageTopMargin = (pageIndex) => (editorPageMargins[pageIndex] || editorMargins).top;
-        const getUsedHeight = () => Math.max(measurement.scrollHeight, getPageTopMargin(currentPageIndex) + A4_BOTTOM_PADDING);
-        const createBreakHeight = (usedHeight, nextPageIndex = currentPageIndex + 1) => {
+        const applyMeasurementPageMargins = (pageIndex) => {
+            const pageMargins = editorPageMargins[pageIndex] || editorMargins;
+            measurement.style.padding = `${pageMargins.top}px ${A4_RIGHT_PADDING}px ${A4_BOTTOM_PADDING}px ${pageMargins.left}px`;
+        };
+        const getFlowHeight = () => Math.max(
+            measurement.scrollHeight - A4_BOTTOM_PADDING,
+            getPageTopMargin(currentPageIndex)
+        );
+        const createBreakHeight = (flowHeight, nextPageIndex = currentPageIndex + 1) => {
             const nextTopMargin = getPageTopMargin(nextPageIndex);
-            return Math.max(nextTopMargin, (A4_PAGE_HEIGHT + A4_PAGE_GAP + nextTopMargin) - usedHeight);
+            const nextContentTop = A4_PAGE_HEIGHT + A4_PAGE_GAP + nextTopMargin;
+            return Math.max(A4_PAGE_GAP + nextTopMargin, nextContentTop - flowHeight);
         };
 
         nodes.forEach((node) => {
@@ -1323,16 +1333,17 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
             }
 
             if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains('resume-playground-page-break')) {
-                const usedHeight = getUsedHeight();
-                node.style.height = `${createBreakHeight(usedHeight, pages)}px`;
+                const flowHeight = getFlowHeight();
+                node.style.height = `${createBreakHeight(flowHeight, pages)}px`;
                 measurement.innerHTML = '';
                 pages += 1;
                 currentPageIndex = pages - 1;
+                applyMeasurementPageMargins(currentPageIndex);
                 blocksOnCurrentPage = 0;
                 return;
             }
 
-            const usedBeforeAppend = getUsedHeight();
+            const flowHeightBeforeAppend = getFlowHeight();
             const nodeClone = node.cloneNode(true);
             measurement.appendChild(nodeClone);
 
@@ -1345,20 +1356,22 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                     if (splitResult) {
                         const { fittingNode, overflowNode } = splitResult;
                         root.insertBefore(fittingNode, node);
+                        measurement.appendChild(fittingNode.cloneNode(true));
 
                         const autoBreak = document.createElement('div');
                         autoBreak.className = 'resume-playground-page-break';
                         autoBreak.setAttribute('data-break-type', 'auto');
                         autoBreak.setAttribute('contenteditable', 'false');
-                        autoBreak.style.height = `${createBreakHeight(getUsedHeight(), pages)}px`;
+                        autoBreak.style.height = `${createBreakHeight(getFlowHeight(), pages)}px`;
                         root.insertBefore(autoBreak, node);
 
                         node.replaceWith(overflowNode);
 
-                        measurement.innerHTML = '';
-                        measurement.appendChild(overflowNode.cloneNode(true));
                         pages += 1;
                         currentPageIndex = pages - 1;
+                        measurement.innerHTML = '';
+                        applyMeasurementPageMargins(currentPageIndex);
+                        measurement.appendChild(overflowNode.cloneNode(true));
                         blocksOnCurrentPage = 1;
                         return;
                     }
@@ -1368,13 +1381,14 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                 autoBreak.className = 'resume-playground-page-break';
                 autoBreak.setAttribute('data-break-type', 'auto');
                 autoBreak.setAttribute('contenteditable', 'false');
-                autoBreak.style.height = `${createBreakHeight(usedBeforeAppend, pages)}px`;
+                autoBreak.style.height = `${createBreakHeight(flowHeightBeforeAppend, pages)}px`;
                 root.insertBefore(autoBreak, node);
 
-                measurement.innerHTML = '';
-                measurement.appendChild(node.cloneNode(true));
                 pages += 1;
                 currentPageIndex = pages - 1;
+                measurement.innerHTML = '';
+                applyMeasurementPageMargins(currentPageIndex);
+                measurement.appendChild(node.cloneNode(true));
                 blocksOnCurrentPage = 1;
                 return;
             }
@@ -2256,6 +2270,19 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         : 'Browser spellcheck is off for this editor.';
     const editorPageStride = A4_PAGE_HEIGHT + A4_PAGE_GAP;
     const editorDocumentHeight = (editorPageCount * A4_PAGE_HEIGHT) + (Math.max(editorPageCount - 1, 0) * A4_PAGE_GAP);
+    const mobileWorkbenchWidth = (A4_PAGE_WIDTH + (MOBILE_RULER_SIZE * 2)) * mobileEditorZoom;
+    const mobileWorkbenchHeight = (editorDocumentHeight + (MOBILE_RULER_SIZE * 2)) * mobileEditorZoom;
+    const mobileWorkbenchScaleStyle = isMobileViewport
+        ? {
+            width: `${mobileWorkbenchWidth}px`,
+            minWidth: `${mobileWorkbenchWidth}px`,
+            height: `${mobileWorkbenchHeight}px`,
+            minHeight: `${mobileWorkbenchHeight}px`
+        }
+        : undefined;
+    const mobileWorkbenchStyle = isMobileViewport
+        ? { '--resume-mobile-editor-zoom': mobileEditorZoom }
+        : undefined;
 
     const handleToolbarWheel = useCallback((event) => {
         const shell = event.currentTarget;
@@ -2721,80 +2748,92 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                         onTouchCancel={handleEditorCanvasTouchEnd}
                     >
                         <div
-                            className="resume-playground-editor-workbench"
-                            style={isMobileViewport ? { '--resume-mobile-editor-zoom': mobileEditorZoom } : undefined}
+                            className="resume-playground-editor-workbench-scale-box"
+                            style={mobileWorkbenchScaleStyle}
                         >
-                            {Array.from({ length: editorPageCount }).map((_, index) => (
-                                <React.Fragment key={`page-rulers-${index}`}>
-                                    <div
-                                        className="resume-playground-ruler resume-playground-ruler-horizontal"
-                                        style={{ top: `${index * editorPageStride}px` }}
-                                        onPointerDown={(event) => startRulerDrag('horizontal', index, event)}
-                                    >
-                                        <div className="resume-playground-ruler-ticks" />
-                                        <div className="resume-playground-ruler-labels">
-                                            {Array.from({ length: 7 }).map((__, labelIndex) => (
-                                                <span key={`hr-${index}-${labelIndex}`}>{labelIndex + 1}</span>
-                                            ))}
-                                        </div>
-                                        <div
-                                            className="resume-playground-ruler-indicator resume-playground-ruler-indicator-horizontal"
-                                            style={{ left: `${(editorPageMargins[index] || editorMargins).left}px` }}
-                                        />
-                                    </div>
-
-                                    <div
-                                        className="resume-playground-ruler resume-playground-ruler-vertical"
-                                        style={{
-                                            top: `${(index * editorPageStride) + RULER_SIZE}px`,
-                                            height: `${A4_PAGE_HEIGHT}px`
-                                        }}
-                                        onPointerDown={(event) => startRulerDrag('vertical', index, event)}
-                                    >
-                                        <div className="resume-playground-ruler-ticks" />
-                                        <div className="resume-playground-ruler-labels">
-                                            {Array.from({ length: 9 }).map((__, labelIndex) => (
-                                                <span key={`vr-${index}-${labelIndex}`}>{labelIndex + 1}</span>
-                                            ))}
-                                        </div>
-                                        <div
-                                            className="resume-playground-ruler-indicator resume-playground-ruler-indicator-vertical"
-                                            style={{ top: `${(editorPageMargins[index] || editorMargins).top}px` }}
-                                        />
-                                    </div>
-                                </React.Fragment>
-                            ))}
-
-                            <div className="resume-playground-editor-page-frame">
-                                <div className="resume-playground-editor-pages-stack" style={{ minHeight: `${editorDocumentHeight}px`, width: `${A4_PAGE_WIDTH}px` }}>
-                            {Array.from({ length: editorPageCount }).map((_, index) => (
-                                <div
-                                    key={`page-${index}`}
-                                    className="resume-playground-editor-page-layer"
-                                    style={{ top: `${index * editorPageStride}px`, height: `${A4_PAGE_HEIGHT}px` }}
-                                />
-                            ))}
                             <div
-                                ref={editorRef}
-                                className={`resume-playground-editor-document${editorResume?.source === 'scratch' || editorResume?.source === 'upload' ? ' is-plain-mode' : ''}${editorResume?.source === 'ai-tailor' ? ' is-ai-tailor-mode' : ''}`}
-                                contentEditable
-                                suppressContentEditableWarning
-                                spellCheck={spellcheckEnabled}
-                                style={{
-                                    minHeight: `${editorDocumentHeight}px`,
-                                    padding: `${editorMargins.top}px ${A4_RIGHT_PADDING}px ${A4_BOTTOM_PADDING}px ${editorMargins.left}px`,
-                                    color: DEFAULT_TEXT_COLOR,
-                                    WebkitTextFillColor: DEFAULT_TEXT_COLOR,
-                                    caretColor: textColor
-                                }}
-                                onInput={handleEditorInput}
-                                onBeforeInput={handleEditorBeforeInput}
-                                onBlur={saveSelection}
-                                onKeyDown={handleEditorKeyDown}
-                                onKeyUp={saveSelection}
-                                onMouseUp={saveSelection}
-                                onFocus={saveSelection}
-                            />
+                                className="resume-playground-editor-workbench"
+                                style={mobileWorkbenchStyle}
+                            >
+                                {Array.from({ length: editorPageCount }).map((_, index) => (
+                                    <React.Fragment key={`page-rulers-${index}`}>
+                                        <div
+                                            className="resume-playground-ruler resume-playground-ruler-horizontal"
+                                            style={{ top: `${index * editorPageStride}px` }}
+                                            onPointerDown={(event) => startRulerDrag('horizontal', index, event)}
+                                        >
+                                            <div className="resume-playground-ruler-ticks" />
+                                            <div className="resume-playground-ruler-labels">
+                                                {Array.from({ length: 7 }).map((__, labelIndex) => (
+                                                    <span key={`hr-${index}-${labelIndex}`}>{labelIndex + 1}</span>
+                                                ))}
+                                            </div>
+                                            <div
+                                                className="resume-playground-ruler-indicator resume-playground-ruler-indicator-horizontal"
+                                                style={{ left: `${(editorPageMargins[index] || editorMargins).left}px` }}
+                                            />
+                                        </div>
+
+                                        <div
+                                            className="resume-playground-ruler resume-playground-ruler-vertical"
+                                            style={{
+                                                top: `${(index * editorPageStride) + RULER_SIZE}px`,
+                                                height: `${A4_PAGE_HEIGHT}px`
+                                            }}
+                                            onPointerDown={(event) => startRulerDrag('vertical', index, event)}
+                                        >
+                                            <div className="resume-playground-ruler-ticks" />
+                                            <div className="resume-playground-ruler-labels">
+                                                {Array.from({ length: 9 }).map((__, labelIndex) => (
+                                                    <span key={`vr-${index}-${labelIndex}`}>{labelIndex + 1}</span>
+                                                ))}
+                                            </div>
+                                            <div
+                                                className="resume-playground-ruler-indicator resume-playground-ruler-indicator-vertical"
+                                                style={{ top: `${(editorPageMargins[index] || editorMargins).top}px` }}
+                                            />
+                                        </div>
+                                    </React.Fragment>
+                                ))}
+
+                                <div className="resume-playground-editor-page-frame">
+                                    <div
+                                        className="resume-playground-editor-pages-stack"
+                                        style={{
+                                            minHeight: `${editorDocumentHeight}px`,
+                                            height: `${editorDocumentHeight}px`,
+                                            width: `${A4_PAGE_WIDTH}px`
+                                        }}
+                                    >
+                                        {Array.from({ length: editorPageCount }).map((_, index) => (
+                                            <div
+                                                key={`page-${index}`}
+                                                className="resume-playground-editor-page-layer"
+                                                style={{ top: `${index * editorPageStride}px`, height: `${A4_PAGE_HEIGHT}px` }}
+                                            />
+                                        ))}
+                                        <div
+                                            ref={editorRef}
+                                            className={`resume-playground-editor-document${editorResume?.source === 'scratch' || editorResume?.source === 'upload' ? ' is-plain-mode' : ''}${editorResume?.source === 'ai-tailor' ? ' is-ai-tailor-mode' : ''}`}
+                                            contentEditable
+                                            suppressContentEditableWarning
+                                            spellCheck={spellcheckEnabled}
+                                            style={{
+                                                minHeight: `${editorDocumentHeight}px`,
+                                                padding: `${editorMargins.top}px ${A4_RIGHT_PADDING}px ${A4_BOTTOM_PADDING}px ${editorMargins.left}px`,
+                                                color: DEFAULT_TEXT_COLOR,
+                                                WebkitTextFillColor: DEFAULT_TEXT_COLOR,
+                                                caretColor: textColor
+                                            }}
+                                            onInput={handleEditorInput}
+                                            onBeforeInput={handleEditorBeforeInput}
+                                            onBlur={saveSelection}
+                                            onKeyDown={handleEditorKeyDown}
+                                            onKeyUp={saveSelection}
+                                            onMouseUp={saveSelection}
+                                            onFocus={saveSelection}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -498,7 +498,10 @@ const SimpleIcon = ({ path }) => (
     </svg>
 );
 
-const getReactionCount = (post, reaction) => Number(post.reactions?.[reaction] || 0);
+const getTotalReactionCount = (post) => Object.entries(post.reactions || {}).reduce(
+    (total, [reaction, count]) => (reaction === 'Hide' ? total : total + (Number(count) || 0)),
+    0
+);
 
 const getViewerReaction = (post, viewerId) => (
     post.reactionsByUser && typeof post.reactionsByUser === 'object'
@@ -2084,6 +2087,8 @@ const PortalHomeFeed = ({
                     const isCommentOpen = openCommentPostId === postKey;
                     const isShareOpen = openSharePostId === postKey;
                     const hasViewerComment = postComments.some((comment) => String(comment.authorId || '') === viewerId);
+                    const reactionTotal = getTotalReactionCount(post);
+                    const commentTotal = postComments.length;
 
                     return (
                     <article key={postKey} className="portal-social-post-card">
@@ -2119,7 +2124,6 @@ const PortalHomeFeed = ({
                                 <ul className="portal-post-reactions portal-reaction-rail example-1 is-popover" aria-label="Post reactions" onWheelCapture={handleHorizontalRailWheel}>
                                     {reactionLabels[kind].map((reaction) => {
                                         const isActiveReaction = selectedReactions.includes(reaction);
-                                        const reactionCount = getReactionCount(post, reaction);
                                         const isAnimatingReaction = animatingReactionKey === `${postKey}:${reaction}`;
                                         return (
                                             <li key={reaction} className="portal-reaction-item icon-content">
@@ -2132,7 +2136,6 @@ const PortalHomeFeed = ({
                                                 >
                                                     <ReactionIcon name={reaction} />
                                                     <ReactionTooltip>{reaction}</ReactionTooltip>
-                                                    {reactionCount > 0 && <span className="portal-reaction-count">{reactionCount}</span>}
                                                 </button>
                                             </li>
                                         );
@@ -2158,6 +2161,11 @@ const PortalHomeFeed = ({
                                         <img src={reactionButtonIcon} alt="" />
                                     )}
                                 </button>
+                                {reactionTotal > 0 && (
+                                    <span className="portal-reaction-trigger-count" aria-label={`${reactionTotal} reactions`}>
+                                        {reactionTotal}
+                                    </span>
+                                )}
                                 <button
                                     type="button"
                                     className={`portal-comment-toggle ${hasViewerComment ? 'active' : ''}`}
@@ -2172,6 +2180,11 @@ const PortalHomeFeed = ({
                                 >
                                     <ReactionIcon name="Comment" />
                                 </button>
+                                {commentTotal > 0 && (
+                                    <span className="portal-comment-trigger-count" aria-label={`${commentTotal} comments`}>
+                                        {commentTotal}
+                                    </span>
+                                )}
                                 {mode === 'candidate' && kind === 'work' && (
                                     <button
                                         type="button"

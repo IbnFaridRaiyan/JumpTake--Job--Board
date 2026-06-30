@@ -51765,3 +51765,319 @@ select {
     transform: rotate(60deg) scale(0.32) !important;
   }
 }
+
+/* Final inactive reaction visibility: every unselected popover icon stays light gray. */
+.portal-post-reactions.is-popover .portal-reaction-button:not(.active):not(.is-click-animating),
+.portal-post-reactions.is-popover .portal-reaction-button:not(.active):not(.is-click-animating):hover,
+.portal-post-reactions.is-popover .portal-reaction-button:not(.active):not(.is-click-animating):focus-visible {
+  color: #c7c7c7 !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button:not(.active):not(.is-click-animating) svg,
+.portal-post-reactions.is-popover .portal-reaction-button:not(.active):not(.is-click-animating) svg *,
+.portal-post-reactions.is-popover .portal-reaction-button:not(.active):not(.is-click-animating):hover svg,
+.portal-post-reactions.is-popover .portal-reaction-button:not(.active):not(.is-click-animating):hover svg *,
+.portal-post-reactions.is-popover .portal-reaction-button:not(.active):not(.is-click-animating):focus-visible svg,
+.portal-post-reactions.is-popover .portal-reaction-button:not(.active):not(.is-click-animating):focus-visible svg * {
+  color: #c7c7c7 !important;
+  fill: #c7c7c7 !important;
+  stroke: #c7c7c7 !important;
+}
+
+/* Final reaction popup icon visibility and moved total counter. */
+.portal-post-reactions.is-popover .portal-reaction-count {
+  display: none !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button {
+  color: #c7c7c7 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button svg,
+.portal-post-reactions.is-popover .portal-reaction-button svg * {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button svg {
+  position: relative !important;
+  z-index: 3 !important;
+  color: currentColor !important;
+  fill: currentColor !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button svg path {
+  fill: currentColor !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button .magic-stick-accent {
+  stroke: currentColor !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button.active,
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating {
+  color: var(--reaction-color, #c7c7c7) !important;
+}
+
+.portal-reaction-trigger-count {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0.9rem !important;
+  margin-left: -0.24rem !important;
+  margin-right: 0.08rem !important;
+  color: #c7c7c7 !important;
+  font-size: 1rem !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  letter-spacing: 0 !important;
+}
+
+@media (max-width: 768px) {
+  .portal-reaction-trigger-count {
+    font-size: 0.96rem !important;
+    margin-left: -0.18rem !important;
+  }
+}
+
+/* Final popup height/readability pass: keep reaction icons visible at the top of the rail. */
+.portal-post-reactions.portal-reaction-rail.is-popover,
+.portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+  align-items: flex-start !important;
+  height: 2.85rem !important;
+  min-height: 2.85rem !important;
+  max-height: 2.85rem !important;
+  padding: 0.42rem 0.5rem 0.24rem !important;
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-item,
+.portal-post-reactions.is-popover .icon-content,
+.portal-post-reactions.is-popover .portal-reaction-button {
+  width: 1.55rem !important;
+  min-width: 1.55rem !important;
+  height: 1.55rem !important;
+  min-height: 1.55rem !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button {
+  display: inline-grid !important;
+  grid-template: 1fr / 1fr !important;
+  place-items: start center !important;
+  overflow: visible !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button::before,
+.portal-post-reactions.is-popover .portal-reaction-button::after {
+  grid-area: 1 / 1 !important;
+  z-index: 1 !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button svg {
+  grid-area: 1 / 1 !important;
+  align-self: start !important;
+  justify-self: center !important;
+  width: 0.98rem !important;
+  height: 0.98rem !important;
+  margin-top: 0 !important;
+  color: currentColor !important;
+  fill: currentColor !important;
+  opacity: 1 !important;
+  transform: translateY(-0.08rem) !important;
+  z-index: 5 !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button svg path {
+  fill: currentColor !important;
+  opacity: 1 !important;
+}
+
+.portal-reaction-trigger-count,
+.portal-comment-trigger-count {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0.9rem !important;
+  color: #c7c7c7 !important;
+  font-size: 1rem !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  letter-spacing: 0 !important;
+}
+
+.portal-comment-trigger-count {
+  margin-left: -0.24rem !important;
+  margin-right: 0.08rem !important;
+}
+
+@media (max-width: 768px) {
+  .portal-post-reactions.portal-reaction-rail.is-popover,
+  .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+    height: 2.68rem !important;
+    min-height: 2.68rem !important;
+    max-height: 2.68rem !important;
+    padding: 0.38rem 0.42rem 0.22rem !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-item,
+  .portal-post-reactions.is-popover .icon-content,
+  .portal-post-reactions.is-popover .portal-reaction-button {
+    width: 1.46rem !important;
+    min-width: 1.46rem !important;
+    height: 1.46rem !important;
+    min-height: 1.46rem !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button svg {
+    width: 0.92rem !important;
+    height: 0.92rem !important;
+    transform: translateY(-0.06rem) !important;
+  }
+
+  .portal-reaction-trigger-count,
+  .portal-comment-trigger-count {
+    font-size: 0.96rem !important;
+  }
+
+  .portal-comment-trigger-count {
+    margin-left: -0.18rem !important;
+  }
+}
+
+/* Final reaction rail alignment pass for screenshots 139-141. */
+.portal-post-reactions.portal-reaction-rail.is-popover,
+.portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+  bottom: calc(100% + 0.22rem) !important;
+  align-items: center !important;
+  height: 2.7rem !important;
+  min-height: 2.7rem !important;
+  max-height: 2.7rem !important;
+  padding: 0.34rem 0.5rem !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button {
+  --r: 1.18rem !important;
+  place-items: center !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button svg {
+  align-self: center !important;
+  width: 0.96rem !important;
+  height: 0.96rem !important;
+  transform: translateY(0.06rem) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating::before {
+  transform: scale(0.86) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating::after,
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating .portal-reaction-tooltip::after {
+  margin: -0.3rem !important;
+  transform: scale(0.5) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating .portal-reaction-tooltip::after {
+  transform: rotate(60deg) scale(0.5) !important;
+}
+
+@media (max-width: 768px) {
+  .portal-post-reactions.portal-reaction-rail.is-popover,
+  .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+    bottom: calc(100% + 0.62rem) !important;
+    align-items: flex-start !important;
+    height: 2.78rem !important;
+    min-height: 2.78rem !important;
+    max-height: 2.78rem !important;
+    padding: 0.34rem 0.42rem 0.2rem !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button {
+    --r: 1.08rem !important;
+    place-items: start center !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button svg {
+    align-self: start !important;
+    width: 0.9rem !important;
+    height: 0.9rem !important;
+    transform: translateY(-0.08rem) !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button.is-click-animating::before {
+    transform: scale(0.82) !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button.is-click-animating::after,
+  .portal-post-reactions.is-popover .portal-reaction-button.is-click-animating .portal-reaction-tooltip::after {
+    margin: -0.26rem !important;
+    transform: scale(0.46) !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button.is-click-animating .portal-reaction-tooltip::after {
+    transform: rotate(60deg) scale(0.46) !important;
+  }
+}
+
+/* Final animation centering: the reaction burst ring stays around the clicked icon. */
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating {
+  place-items: center !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating svg {
+  align-self: center !important;
+  justify-self: center !important;
+  transform: none !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating::before,
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating::after,
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating .portal-reaction-tooltip::after {
+  align-self: center !important;
+  justify-self: center !important;
+  margin: 0 !important;
+  transform-origin: center center !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating::before {
+  transform: scale(1) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating::after {
+  transform: scale(0.68) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating .portal-reaction-tooltip::after {
+  transform: rotate(60deg) scale(0.68) !important;
+}
+
+@media (max-width: 768px) {
+  .portal-post-reactions.is-popover .portal-reaction-button.is-click-animating {
+    place-items: center !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button.is-click-animating svg {
+    align-self: center !important;
+    transform: none !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button.is-click-animating::before {
+    transform: scale(0.96) !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button.is-click-animating::after {
+    transform: scale(0.62) !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button.is-click-animating .portal-reaction-tooltip::after {
+    transform: rotate(60deg) scale(0.62) !important;
+  }
+}

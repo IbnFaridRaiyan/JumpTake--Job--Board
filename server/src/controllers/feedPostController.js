@@ -114,8 +114,25 @@ const updateFeedPost = async (req, res) => {
     }
 };
 
+const deleteFeedPost = async (req, res) => {
+    try {
+        const deleted = await FeedPost.findByIdAndDelete(req.params.id);
+        if (!deleted) {
+            return res.status(404).json({ error: 'Feed post not found' });
+        }
+
+        return res.status(200).json({ message: 'Feed post deleted' });
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            error: 'Failed to delete feed post',
+            message: error.message
+        });
+    }
+};
+
 module.exports = {
     getFeedPosts,
     createFeedPost,
-    updateFeedPost
+    updateFeedPost,
+    deleteFeedPost
 };

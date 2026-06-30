@@ -200,6 +200,7 @@ router.put('/notifications/read-all', notificationController.markAllNotification
 router.get('/feed-posts', feedPostController.getFeedPosts);
 router.post('/feed-posts', feedPostController.createFeedPost);
 router.put('/feed-posts/:id', feedPostController.updateFeedPost);
+router.delete('/feed-posts/:id', feedPostController.deleteFeedPost);
 router.get('/job-invitations/user/:userId', jobInvitationController.getCandidateJobInvitations);
 router.get('/job-invitations/company/:companyId/job/:jobId/matches', jobInvitationController.getMatchingCandidates);
 router.post('/job-invitations/send', jobInvitationController.sendJobInvitations);

@@ -467,6 +467,21 @@ const SharePostIcon = () => (
     </svg>
 );
 
+const DeletePostIcon = () => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        fill="currentColor"
+        viewBox="0 0 16 16"
+        aria-hidden="true"
+        focusable="false"
+    >
+        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1 0-2H5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1h2.5a1 1 0 0 1 1 1M4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+    </svg>
+);
+
 const PortalCloseIcon = () => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -1166,6 +1181,21 @@ const PortalHomeFeed = ({
         }
     };
 
+    const deleteFeedPostRecord = async (post) => {
+        const postId = post?._id || post?.id;
+        if (!postId || String(postId).startsWith(`${post.type || 'post'}-`)) {
+            return;
+        }
+
+        try {
+            await fetch(apiUrl(`/api/feed-posts/${postId}`), {
+                method: 'DELETE'
+            });
+        } catch (error) {
+            console.error('Could not delete feed post:', error);
+        }
+    };
+
     const updatePosts = (key, updater) => {
         const setPosts = key === WORK_NEWS_STORAGE_KEY ? setWorkNewsPosts : setTalentStories;
 
@@ -1181,6 +1211,43 @@ const PortalHomeFeed = ({
 
             return nextPosts;
         });
+    };
+
+    const handleDeletePost = (key, post) => {
+        if (!window.confirm('Delete this post?')) {
+            return;
+        }
+
+        const postKey = getPostKey(post);
+        const setPosts = key === WORK_NEWS_STORAGE_KEY ? setWorkNewsPosts : setTalentStories;
+        setPosts((currentPosts) => currentPosts.filter((item) => getPostKey(item) !== postKey));
+        setOpenReactionPostId('');
+        setOpenCommentPostId('');
+        setOpenSharePostId('');
+        deleteFeedPostRecord(post);
+    };
+
+    const handleDeleteHomeJob = async (job, event) => {
+        event?.stopPropagation();
+        const jobId = job?._id || job?.id;
+        if (!jobId || !window.confirm('Delete this job post?')) {
+            return;
+        }
+
+        try {
+            const token = typeof window !== 'undefined' ? localStorage.getItem('employerToken') : '';
+            const response = await fetch(apiUrl(`/api/jobs/${jobId}`), {
+                method: 'DELETE',
+                headers: token ? { Authorization: `Bearer ${token}` } : {}
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(data.error || data.message || 'Could not delete job post.');
+            }
+            onRefresh?.();
+        } catch (error) {
+            setFeedError(error.message || 'Could not delete job post.');
+        }
     };
 
     const handleMediaChange = async (event) => {
@@ -1970,6 +2037,31 @@ const PortalHomeFeed = ({
         setOpenCommentPostId('');
     };
 
+    const handleCopyPostShare = async (key, post) => {
+        const postId = getPostKey(post);
+        const postText = [
+            asDisplayText(post.authorName, 'JumpTake user'),
+            asDisplayText(post.body, 'Shared a JumpTake post')
+        ].filter(Boolean).join('\n\n');
+
+        try {
+            if (navigator.share) {
+                await navigator.share({ text: postText });
+            } else if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(postText);
+            }
+
+            updatePosts(key, (posts) => posts.map((item) => (
+                getPostKey(item) === postId
+                    ? { ...item, reach: Number(item.reach || 0) + 1 }
+                    : item
+            )));
+            setShareStatus('Post ready to share.');
+        } catch (error) {
+            setShareStatus('Could not open sharing. Try again.');
+        }
+    };
+
     const handleShareToFriend = async (key, post, friend) => {
         const postId = getPostKey(post);
         if (!friend?.candidateId || !candidateUserId) {
@@ -2104,6 +2196,8 @@ const PortalHomeFeed = ({
                     const hasViewerComment = postComments.some((comment) => String(comment.authorId || '') === viewerId);
                     const reactionTotal = getTotalReactionCount(post);
                     const commentTotal = postComments.length;
+                    const canDeletePost = String(post.authorId) === viewerId
+                        && ['my-feed', 'my-company-posts'].includes(activeTab);
 
                     return (
                     <article key={postKey} className="portal-social-post-card">
@@ -2200,27 +2294,49 @@ const PortalHomeFeed = ({
                                         {commentTotal}
                                     </span>
                                 )}
-                                {mode === 'candidate' && (
+                                <button
+                                    type="button"
+                                    className={`portal-share-toggle ${isShareOpen ? 'active' : ''}`}
+                                    onClick={() => {
+                                        setOpenSharePostId((openId) => (openId === postKey ? '' : postKey));
+                                        setOpenReactionPostId('');
+                                        setOpenCommentPostId('');
+                                        setShareStatus('');
+                                    }}
+                                    aria-expanded={isShareOpen}
+                                    aria-label="Share post"
+                                    title="Share"
+                                >
+                                    <SharePostIcon />
+                                </button>
+                                {canDeletePost && (
                                     <button
                                         type="button"
-                                        className={`portal-share-toggle ${isShareOpen ? 'active' : ''}`}
-                                        onClick={() => {
-                                            setOpenSharePostId((openId) => (openId === postKey ? '' : postKey));
-                                            setOpenReactionPostId('');
-                                            setOpenCommentPostId('');
-                                            setShareStatus('');
-                                        }}
-                                        aria-expanded={isShareOpen}
-                                        aria-label="Share with friend"
-                                        title="Share"
+                                        className="portal-post-delete-toggle"
+                                        onClick={() => handleDeletePost(key, post)}
+                                        aria-label="Delete post"
+                                        title="Delete post"
                                     >
-                                        <SharePostIcon />
+                                        <DeletePostIcon />
                                     </button>
                                 )}
                                 {isShareOpen && (
                                     <div className="portal-share-picker" role="dialog" aria-label="Share post with friend">
-                                        <strong>Share with</strong>
-                                        {feedFriends.length ? (
+                                        <strong>Share post</strong>
+                                        <button
+                                            type="button"
+                                            className="portal-share-friend portal-share-copy-button"
+                                            onClick={() => handleCopyPostShare(key, post)}
+                                        >
+                                            <span className="portal-share-friend-avatar">
+                                                <SharePostIcon />
+                                            </span>
+                                            <span>
+                                                <span className="portal-share-friend-name">Copy or share post</span>
+                                                <small>Use your device share tools</small>
+                                            </span>
+                                        </button>
+                                        {mode === 'candidate' && feedFriends.length ? (
                                             <div className="portal-share-friend-list">
                                                 {feedFriends.map((friend) => (
                                                     <button
@@ -2240,9 +2356,9 @@ const PortalHomeFeed = ({
                                                     </button>
                                                 ))}
                                             </div>
-                                        ) : (
+                                        ) : mode === 'candidate' ? (
                                             <p>No friends to share with yet.</p>
-                                        )}
+                                        ) : null}
                                         {shareStatus && <p className="portal-share-status">{shareStatus}</p>}
                                     </div>
                                 )}
@@ -2568,13 +2684,24 @@ const PortalHomeFeed = ({
                         <div>
                             <h3>{asDisplayText(job.title, 'Untitled job')}</h3>
                             <p>{asDisplayText(job.location, 'Location not set')} - {asDisplayText(job.jobType, 'Job type not set')}</p>
-                            <button
-                                type="button"
-                                className="portal-view-job-button"
-                                onClick={() => openJobModal(job, 'employer')}
-                            >
-                                View Job Post
-                            </button>
+                            <div className="portal-job-summary-actions">
+                                <button
+                                    type="button"
+                                    className="portal-view-job-button"
+                                    onClick={() => openJobModal(job, 'employer')}
+                                >
+                                    View Job Post
+                                </button>
+                                <button
+                                    type="button"
+                                    className="portal-job-delete-button"
+                                    onClick={(event) => handleDeleteHomeJob(job, event)}
+                                    aria-label="Delete job post"
+                                    title="Delete job post"
+                                >
+                                    <DeletePostIcon />
+                                </button>
+                            </div>
                         </div>
                         <div className="portal-job-stats-grid">
                             {statItems.map((item) => (

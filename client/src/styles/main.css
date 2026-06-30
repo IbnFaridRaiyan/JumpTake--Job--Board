@@ -52759,3 +52759,460 @@ select {
     font-size: 0.74rem !important;
   }
 }
+
+/* Final feed action and scroll pass for screenshots 157-158. */
+.portal-post-action-row {
+  min-height: 1.78rem !important;
+  height: auto !important;
+  gap: 0.18rem !important;
+  padding: 0.14rem 0.34rem !important;
+}
+
+.portal-reaction-trigger,
+.portal-comment-toggle,
+.portal-share-toggle,
+.portal-post-delete-toggle {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 1.18rem !important;
+  min-width: 1.18rem !important;
+  height: 1.18rem !important;
+  min-height: 1.18rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+  color: #c7c7c7 !important;
+  box-shadow: none !important;
+}
+
+.portal-reaction-trigger svg,
+.portal-comment-toggle svg,
+.portal-share-toggle svg,
+.portal-post-delete-toggle svg {
+  width: 0.74rem !important;
+  height: 0.74rem !important;
+  color: currentColor !important;
+  fill: currentColor !important;
+}
+
+.portal-reaction-trigger img {
+  width: 0.82rem !important;
+  height: 0.82rem !important;
+}
+
+.portal-post-delete-toggle:hover,
+.portal-post-delete-toggle:focus-visible,
+.portal-post-delete-toggle:active {
+  color: #ef4444 !important;
+}
+
+.portal-reaction-trigger-count,
+.portal-comment-trigger-count {
+  min-width: 0.5rem !important;
+  margin-left: -0.12rem !important;
+  font-size: 0.66rem !important;
+}
+
+.portal-share-copy-button {
+  width: 100% !important;
+  text-align: left !important;
+}
+
+.portal-share-copy-button .portal-share-friend-avatar {
+  color: #c7c7c7 !important;
+}
+
+.portal-job-summary-actions {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.44rem !important;
+  margin-top: 0.62rem !important;
+}
+
+.portal-job-delete-button {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 2.18rem !important;
+  min-width: 2.18rem !important;
+  height: 2.18rem !important;
+  min-height: 2.18rem !important;
+  padding: 0 !important;
+  border: 1px solid rgba(239, 68, 68, 0.42) !important;
+  border-radius: 999px !important;
+  background: rgba(239, 68, 68, 0.08) !important;
+  color: #ef4444 !important;
+}
+
+.portal-job-delete-button svg {
+  width: 0.95rem !important;
+  height: 0.95rem !important;
+  fill: currentColor !important;
+}
+
+.home-page .portal-home-feed,
+.dashboard-container .portal-home-feed,
+.portal-home-feed {
+  height: calc(100dvh - 8.25rem) !important;
+  max-height: calc(100dvh - 8.25rem) !important;
+  min-height: 20rem !important;
+  overflow: hidden !important;
+}
+
+.portal-home-feed-scroll,
+.home-page .portal-home-feed-scroll {
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding: 0 0.15rem 7rem 0 !important;
+  overscroll-behavior-y: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-y !important;
+}
+
+.portal-social-list,
+.portal-candidate-job-list,
+.portal-job-posts-summary,
+.portal-feed-empty {
+  padding-bottom: 7rem !important;
+}
+
+.portal-social-post-card,
+.portal-candidate-job-card,
+.portal-job-summary-card,
+.portal-post-body,
+.portal-post-media {
+  touch-action: pan-y !important;
+}
+
+@media (max-width: 768px) {
+  .portal-post-action-row {
+    min-height: 1.62rem !important;
+    gap: 0.15rem !important;
+    padding: 0.12rem 0.28rem !important;
+  }
+
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle {
+    width: 1.08rem !important;
+    min-width: 1.08rem !important;
+    height: 1.08rem !important;
+    min-height: 1.08rem !important;
+  }
+
+  .portal-reaction-trigger svg,
+  .portal-comment-toggle svg,
+  .portal-share-toggle svg,
+  .portal-post-delete-toggle svg {
+    width: 0.68rem !important;
+    height: 0.68rem !important;
+  }
+
+  .portal-reaction-trigger img {
+    width: 0.76rem !important;
+    height: 0.76rem !important;
+  }
+
+  .portal-reaction-trigger-count,
+  .portal-comment-trigger-count {
+    font-size: 0.62rem !important;
+  }
+
+  .home-page .portal-home-feed,
+  .dashboard-container .portal-home-feed,
+  .portal-home-feed {
+    height: calc(100dvh - 5.9rem) !important;
+    max-height: calc(100dvh - 5.9rem) !important;
+    min-height: 18rem !important;
+  }
+
+  .portal-home-feed-scroll,
+  .home-page .portal-home-feed-scroll {
+    padding-bottom: 8rem !important;
+  }
+
+  .portal-social-list,
+  .portal-candidate-job-list,
+  .portal-job-posts-summary,
+  .portal-feed-empty {
+    padding-bottom: 8rem !important;
+  }
+
+  .portal-job-summary-actions {
+    gap: 0.34rem !important;
+  }
+
+  .portal-job-delete-button {
+    width: 2rem !important;
+    min-width: 2rem !important;
+    height: 2rem !important;
+    min-height: 2rem !important;
+  }
+}
+
+/* Final home tab transparency and reaction sizing pass for screenshots 159-161. */
+.portal-home-feed > .portal-home-tabs,
+.portal-home-tabs {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.portal-home-tabs .portal-home-tab,
+.portal-home-feed > .portal-home-tabs .portal-home-tab {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.portal-home-feed.is-tabs-hidden > .portal-home-tabs {
+  max-height: 0 !important;
+  min-height: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  border-width: 0 !important;
+  overflow: hidden !important;
+  transform: translateY(-120%) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+@media (min-width: 769px) {
+  .portal-post-action-row {
+    min-height: 1.92rem !important;
+    gap: 0.22rem !important;
+    padding: 0.12rem 0.38rem !important;
+  }
+
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle {
+    width: 1.42rem !important;
+    min-width: 1.42rem !important;
+    height: 1.42rem !important;
+    min-height: 1.42rem !important;
+  }
+
+  .portal-reaction-trigger svg,
+  .portal-comment-toggle svg,
+  .portal-share-toggle svg,
+  .portal-post-delete-toggle svg {
+    width: 0.9rem !important;
+    height: 0.9rem !important;
+  }
+
+  .portal-reaction-trigger img {
+    width: 1.02rem !important;
+    height: 1.02rem !important;
+  }
+
+  .portal-reaction-trigger-count,
+  .portal-comment-trigger-count {
+    font-size: 0.76rem !important;
+  }
+
+  .portal-post-reactions.portal-reaction-rail.is-popover,
+  .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+    min-height: 1.84rem !important;
+    height: 1.84rem !important;
+    margin: 0.18rem 0 0.32rem !important;
+    padding: 0.05rem 0.48rem 0.16rem !important;
+    align-items: flex-start !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button,
+  .portal-post-reactions.portal-reaction-rail.is-popover .portal-reaction-button {
+    width: 1.48rem !important;
+    min-width: 1.48rem !important;
+    height: 1.48rem !important;
+    min-height: 1.48rem !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button svg,
+  .portal-post-reactions.portal-reaction-rail.is-popover .portal-reaction-button svg {
+    width: 0.92rem !important;
+    height: 0.92rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .portal-post-action-row {
+    min-height: 1.42rem !important;
+    gap: 0.14rem !important;
+    padding: 0.05rem 0.24rem !important;
+  }
+
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle {
+    width: 1.08rem !important;
+    min-width: 1.08rem !important;
+    height: 1.08rem !important;
+    min-height: 1.08rem !important;
+  }
+
+  .portal-reaction-trigger svg,
+  .portal-comment-toggle svg,
+  .portal-share-toggle svg,
+  .portal-post-delete-toggle svg {
+    width: 0.68rem !important;
+    height: 0.68rem !important;
+  }
+
+  .portal-reaction-trigger img {
+    width: 0.76rem !important;
+    height: 0.76rem !important;
+  }
+
+  .portal-post-reactions.portal-reaction-rail.is-popover,
+  .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+    min-height: 1.62rem !important;
+    height: 1.62rem !important;
+    margin: 0.16rem 0 0.24rem !important;
+    padding: 0.04rem 0.32rem 0.12rem !important;
+    align-items: flex-start !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button,
+  .portal-post-reactions.portal-reaction-rail.is-popover .portal-reaction-button {
+    width: 1.22rem !important;
+    min-width: 1.22rem !important;
+    height: 1.22rem !important;
+    min-height: 1.22rem !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button svg,
+  .portal-post-reactions.portal-reaction-rail.is-popover .portal-reaction-button svg {
+    width: 0.74rem !important;
+    height: 0.74rem !important;
+  }
+}
+
+/* Floating home tabs and unclipped reaction rail refinement for screenshot 162. */
+.portal-home-feed > .portal-home-tabs,
+.portal-home-tabs {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 35 !important;
+  max-height: 4.8rem !important;
+  opacity: 1 !important;
+  transform: translateY(0) scale(1) !important;
+  transform-origin: top center !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transition:
+    transform 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.42s ease,
+    max-height 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+    margin 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+    padding 0.48s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.portal-home-feed.is-tabs-hidden > .portal-home-tabs {
+  max-height: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  border-width: 0 !important;
+  opacity: 0 !important;
+  transform: translateY(-1.5rem) scale(0.98) !important;
+  pointer-events: none !important;
+}
+
+.portal-home-feed > .portal-home-tabs::before,
+.portal-home-feed > .portal-home-tabs::after,
+.portal-home-tabs::before,
+.portal-home-tabs::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.portal-home-tabs .portal-home-tab {
+  transition:
+    color 0.28s ease,
+    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.38s ease !important;
+}
+
+.portal-post-reactions.portal-reaction-rail.is-popover,
+.portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+  min-height: 2.12rem !important;
+  height: 2.12rem !important;
+  margin: 0.08rem 0 0.34rem !important;
+  padding: 0.2rem 0.44rem 0.24rem !important;
+  align-items: center !important;
+  overflow-y: hidden !important;
+  transform: translateY(-0.08rem) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button,
+.portal-post-reactions.portal-reaction-rail.is-popover .portal-reaction-button {
+  width: 1.54rem !important;
+  min-width: 1.54rem !important;
+  height: 1.54rem !important;
+  min-height: 1.54rem !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button svg,
+.portal-post-reactions.portal-reaction-rail.is-popover .portal-reaction-button svg {
+  width: 0.96rem !important;
+  height: 0.96rem !important;
+}
+
+@media (max-width: 768px) {
+  .portal-home-feed > .portal-home-tabs,
+  .portal-home-tabs {
+    max-height: 4.4rem !important;
+    transition:
+      transform 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.46s ease,
+      max-height 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+      margin 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+      padding 0.52s cubic-bezier(0.22, 1, 0.36, 1) !important;
+  }
+
+  .portal-post-reactions.portal-reaction-rail.is-popover,
+  .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+    min-height: 2.02rem !important;
+    height: 2.02rem !important;
+    margin: 0.08rem 0 0.3rem !important;
+    padding: 0.18rem 0.36rem 0.22rem !important;
+    align-items: center !important;
+    transform: translateY(-0.1rem) !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button,
+  .portal-post-reactions.portal-reaction-rail.is-popover .portal-reaction-button {
+    width: 1.38rem !important;
+    min-width: 1.38rem !important;
+    height: 1.38rem !important;
+    min-height: 1.38rem !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button svg,
+  .portal-post-reactions.portal-reaction-rail.is-popover .portal-reaction-button svg {
+    width: 0.84rem !important;
+    height: 0.84rem !important;
+  }
+}

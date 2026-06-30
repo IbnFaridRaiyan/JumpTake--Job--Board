@@ -6,6 +6,7 @@ const EditJob = ({ job, onCancel, onJobUpdated }) => {
         description: job.description || '',
         location: job.location || '',
         salary: job.salary || '',
+        applicationLink: job.applicationLink || '',
         jobType: job.jobType || 'Full-time',
         requirements: job.requirements ? job.requirements.join('\n') : '',
         responsibilities: job.responsibilities ? job.responsibilities.join('\n') : '',
@@ -63,6 +64,7 @@ const EditJob = ({ job, onCancel, onJobUpdated }) => {
                     description: formData.description,
                     location: formData.location,
                     salary: formData.salary,
+                    applicationLink: formData.applicationLink,
                     jobType: formData.jobType,
                     requirements,
                     responsibilities,
@@ -156,6 +158,20 @@ const EditJob = ({ job, onCancel, onJobUpdated }) => {
                             className="form-control"
                         />
                     </div>
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="applicationLink">Add application link (optional)</label>
+                    <input
+                        type="url"
+                        id="applicationLink"
+                        name="applicationLink"
+                        value={formData.applicationLink}
+                        onChange={handleChange}
+                        className="form-control"
+                        placeholder="https://example.com/apply"
+                    />
+                    <p className="form-hint">Candidates will be sent to this link when they press Apply Now.</p>
                 </div>
                 
                 <div className="form-group">

@@ -38,6 +38,7 @@ const AdminPanel = () => {
     title: '',
     location: '',
     salary: '',
+    applicationLink: '',
     jobType: 'Full-time',
     description: '',
     requirements: '',
@@ -190,6 +191,7 @@ const AdminPanel = () => {
         title: '',
         location: '',
         salary: '',
+        applicationLink: '',
         jobType: 'Full-time',
         description: '',
         requirements: '',
@@ -200,6 +202,45 @@ const AdminPanel = () => {
       setPage(1);
       await Promise.all([loadSummary(), loadCollection()]);
       setMessage('Job post created.');
+    } catch (error) {
+      setMessage(error.message);
+    }
+  };
+
+  const handleDeletePostComment = async (postId, commentId) => {
+    const confirmed = window.confirm('Delete this comment from the post? This cannot be undone.');
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setMessage('');
+      await adminFetch(`/feed-posts/${postId}/comments/${commentId}`, {
+        method: 'DELETE'
+      });
+      await loadCollection();
+      setMessage('Comment deleted.');
+    } catch (error) {
+      setMessage(error.message);
+    }
+  };
+
+  const handleUpdateJobApplicationLink = async (jobId, currentLink = '') => {
+    const nextLink = window.prompt('Add or update the external application link:', currentLink || '');
+
+    if (nextLink === null) {
+      return;
+    }
+
+    try {
+      setMessage('');
+      await adminFetch(`/collections/jobs/${jobId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ applicationLink: nextLink.trim() })
+      });
+      await loadCollection();
+      setMessage('Application link updated.');
     } catch (error) {
       setMessage(error.message);
     }
@@ -330,6 +371,12 @@ const AdminPanel = () => {
                 onChange={(event) => setJobForm((current) => ({ ...current, salary: event.target.value }))}
                 placeholder="Salary"
               />
+              <input
+                type="url"
+                value={jobForm.applicationLink}
+                onChange={(event) => setJobForm((current) => ({ ...current, applicationLink: event.target.value }))}
+                placeholder="Application link"
+              />
               <select
                 value={jobForm.jobType}
                 onChange={(event) => setJobForm((current) => ({ ...current, jobType: event.target.value }))}
@@ -382,6 +429,14 @@ const AdminPanel = () => {
                   >
                     Delete
                   </button>
+                  {selectedCollection === 'jobs' ? (
+                    <button
+                      type="button"
+                      onClick={() => handleUpdateJobApplicationLink(item._id, item.applicationLink)}
+                    >
+                      Set Apply Link
+                    </button>
+                  ) : null}
                 </div>
                 <dl>
                   {Object.entries(item)
@@ -394,6 +449,26 @@ const AdminPanel = () => {
                       </React.Fragment>
                     ))}
                 </dl>
+                {selectedCollection === 'feedPosts' && Array.isArray(item.comments) && item.comments.length ? (
+                  <div className="admin-comment-tools">
+                    <h4>Comments</h4>
+                    {item.comments.map((comment, index) => {
+                      const commentId = comment.id || comment._id || `comment-${index}`;
+                      return (
+                        <div className="admin-comment-tool" key={commentId}>
+                          <span>{formatValue(comment.authorName)}: {formatValue(comment.text)}</span>
+                          <button
+                            type="button"
+                            className="admin-danger-button"
+                            onClick={() => handleDeletePostComment(item._id, commentId)}
+                          >
+                            Delete Comment
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : null}
               </article>
             ))}
           </div>

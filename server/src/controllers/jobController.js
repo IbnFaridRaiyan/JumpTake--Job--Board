@@ -59,6 +59,7 @@ const createJob = async (req, res) => {
             companyId,
             location,
             salary,
+            applicationLink,
             jobType,
             requirements,
             responsibilities,
@@ -87,6 +88,7 @@ const createJob = async (req, res) => {
             company: companyId,
             location,
             salary,
+            applicationLink,
             jobType,
             requirements: requirements || [],
             responsibilities: responsibilities || [],
@@ -136,6 +138,7 @@ const updateJob = async (req, res) => {
             description,
             location,
             salary,
+            applicationLink,
             jobType,
             requirements,
             responsibilities,
@@ -154,6 +157,7 @@ const updateJob = async (req, res) => {
         job.description = description || job.description;
         job.location = location || job.location;
         job.salary = salary !== undefined ? salary : job.salary;
+        job.applicationLink = applicationLink !== undefined ? applicationLink : job.applicationLink;
         job.jobType = jobType || job.jobType;
         job.requirements = requirements || job.requirements;
         job.responsibilities = responsibilities || job.responsibilities;

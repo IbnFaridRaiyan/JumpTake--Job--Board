@@ -455,6 +455,7 @@ router.post('/jobs', async (req, res) => {
       company,
       location,
       salary,
+      applicationLink,
       jobType,
       requirements,
       responsibilities,
@@ -467,6 +468,7 @@ router.post('/jobs', async (req, res) => {
       company,
       location,
       salary,
+      applicationLink,
       jobType,
       requirements: Array.isArray(requirements) ? requirements : String(requirements || '').split('\n').filter(Boolean),
       responsibilities: Array.isArray(responsibilities) ? responsibilities : String(responsibilities || '').split('\n').filter(Boolean),
@@ -476,6 +478,31 @@ router.post('/jobs', async (req, res) => {
     res.status(201).json({ item: serializeDocument(job) });
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+});
+
+router.delete('/feed-posts/:postId/comments/:commentId', async (req, res) => {
+  try {
+    const { postId, commentId } = req.params;
+    const post = await FeedPost.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ error: 'Feed post not found' });
+    }
+
+    const comments = Array.isArray(post.comments) ? post.comments : [];
+    const nextComments = comments.filter((comment) => String(comment.id || comment._id) !== String(commentId));
+
+    if (nextComments.length === comments.length) {
+      return res.status(404).json({ error: 'Comment not found' });
+    }
+
+    post.comments = nextComments;
+    await post.save();
+
+    res.json({ item: serializeDocument(post) });
+  } catch (error) {
+    res.status(error.status || 500).json({ error: error.message });
   }
 });
 

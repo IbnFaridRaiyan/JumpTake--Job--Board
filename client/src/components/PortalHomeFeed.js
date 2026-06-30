@@ -497,6 +497,19 @@ const PortalCloseIcon = () => (
     </svg>
 );
 
+const DefaultProfileIcon = () => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 16 16"
+        fill="currentColor"
+        aria-hidden="true"
+        focusable="false"
+    >
+        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+        <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1v-1c0-1-1-4-6-4s-6 3-6 4v1a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z" />
+    </svg>
+);
+
 const PortalActionIcon = ({ type }) => {
     const paths = {
         submit: 'M14.854 3.146a.5.5 0 0 1 0 .708l-7.5 7.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7 10.293l7.146-7.147a.5.5 0 0 1 .708 0',
@@ -634,6 +647,7 @@ const normalizeHomeJobForDisplay = (job, index = 0) => {
         location: asDisplayText(source?.location, 'Location not set'),
         jobType: asDisplayText(source?.jobType, asDisplayText(source?.type, 'Job type not set')),
         salary: asDisplayText(source?.salary, ''),
+        applicationLink: asDisplayText(source?.applicationLink, asDisplayText(source?.applyLink, asDisplayText(source?.externalApplyLink, ''))),
         jobNumber: asDisplayText(source?.jobNumber, asDisplayText(source?.reference, 'Not assigned')),
         description: asDisplayText(source?.description, asDisplayText(source?.summary, asDisplayText(source?.about, 'No description added.'))),
         skills,
@@ -643,6 +657,16 @@ const normalizeHomeJobForDisplay = (job, index = 0) => {
         applicationCount: Number(source?.applicationCount || source?.applicationsCount || applications.length || 0) || 0,
         createdAt: source?.createdAt || source?.postedAt || source?.date || Date.now()
     };
+};
+
+const normalizeExternalUrl = (value = '') => {
+    const trimmed = asDisplayText(value).trim();
+
+    if (!trimmed) {
+        return '';
+    }
+
+    return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
 };
 
 const getCandidateSkillSet = (profileData) => {
@@ -767,6 +791,7 @@ const PortalHomeFeed = ({
     const reactionTooltipTimerRef = useRef(null);
     const reactionCloseTimerRef = useRef(null);
     const feedScrollTopRef = useRef(0);
+    const feedTouchRef = useRef({ y: 0, scrollTop: 0 });
     const feedDraftTypingTimerRef = useRef(null);
     const feedDraftTypingTokenRef = useRef(0);
     const [applicationJob, setApplicationJob] = useState(null);
@@ -1480,6 +1505,13 @@ const PortalHomeFeed = ({
             return;
         }
 
+        const applicationLink = normalizeExternalUrl(job.applicationLink);
+
+        if (applicationLink && typeof window !== 'undefined') {
+            window.open(applicationLink, '_blank', 'noopener,noreferrer');
+            return;
+        }
+
         if (!currentUser?.id && !currentUser?._id) {
             setJobActionMessage('Please log in again before applying.');
             return;
@@ -2167,6 +2199,27 @@ const PortalHomeFeed = ({
         feedScrollTopRef.current = nextScrollTop;
     }, []);
 
+    const handleFeedTouchStart = useCallback((event) => {
+        if (typeof window === 'undefined' || window.innerWidth > 768 || !event.touches?.length) {
+            return;
+        }
+
+        feedTouchRef.current = {
+            y: event.touches[0].clientY,
+            scrollTop: event.currentTarget.scrollTop
+        };
+    }, []);
+
+    const handleFeedTouchMove = useCallback((event) => {
+        if (typeof window === 'undefined' || window.innerWidth > 768 || !event.touches?.length) {
+            return;
+        }
+
+        const delta = feedTouchRef.current.y - event.touches[0].clientY;
+        event.preventDefault();
+        event.currentTarget.scrollTop = feedTouchRef.current.scrollTop + (delta * 0.48);
+    }, []);
+
     const renderPostList = (posts, key, kind) => {
         const safePosts = Array.isArray(posts)
             ? posts
@@ -2206,7 +2259,7 @@ const PortalHomeFeed = ({
                                 {post.authorAvatar ? (
                                     <img src={post.authorAvatar} alt={asDisplayText(post.authorName, 'Post author')} />
                                 ) : (
-                                    <span>{asDisplayText(post.authorName, 'J').charAt(0).toUpperCase()}</span>
+                                    <span className="portal-default-profile-icon"><DefaultProfileIcon /></span>
                                 )}
                             </div>
                             <div>
@@ -2347,7 +2400,7 @@ const PortalHomeFeed = ({
                                                         disabled={sharingTargetId === friend.id}
                                                     >
                                                         <span className="portal-share-friend-avatar">
-                                                            {friend.profileImage ? <img src={friend.profileImage} alt="" /> : friend.name.charAt(0).toUpperCase()}
+                                                            {friend.profileImage ? <img src={friend.profileImage} alt="" /> : <DefaultProfileIcon />}
                                                         </span>
                                                         <span>
                                                             <span className="portal-share-friend-name">{friend.name}</span>
@@ -2371,7 +2424,7 @@ const PortalHomeFeed = ({
                                         {comment.authorAvatar ? (
                                             <img src={comment.authorAvatar} alt={asDisplayText(comment.authorName, 'Comment author')} />
                                         ) : (
-                                            <span>{asDisplayText(comment.authorName, 'J').charAt(0).toUpperCase()}</span>
+                                            <span className="portal-default-profile-icon"><DefaultProfileIcon /></span>
                                         )}
                                     </div>
                                     <p>
@@ -2526,7 +2579,6 @@ const PortalHomeFeed = ({
                 const displaySkills = (jobSkills.length ? jobSkills : jobRequirements).slice(0, 3);
                 const fit = calculateCandidateFit(job, profileData);
                 const bookmarked = isHomeJobBookmarked(job);
-                const companyInitial = asDisplayText(job.companyName, 'C').charAt(0).toUpperCase();
                 const statItems = [
                     { key: 'reach', label: 'reach', value: Number(jobReachMap[key] || job.reach || 0) || 0 },
                     { key: 'applicants', label: 'applicants', value: Number(job.applicationCount || applications.length || 0) || 0 },
@@ -2553,7 +2605,7 @@ const PortalHomeFeed = ({
                                 {job.companyLogo ? (
                                     <img src={job.companyLogo} alt={job.companyName} />
                                 ) : (
-                                    <span>{companyInitial}</span>
+                                    <span className="portal-default-profile-icon"><DefaultProfileIcon /></span>
                                 )}
                             </div>
                             <div>
@@ -2894,8 +2946,6 @@ const PortalHomeFeed = ({
         const selectedJobSkills = Array.isArray(selectedJob.skills) ? selectedJob.skills : [];
         const selectedJobRequirements = Array.isArray(selectedJob.requirements) ? selectedJob.requirements : [];
         const modalSkills = selectedJobSkills.length ? selectedJobSkills : selectedJobRequirements;
-        const selectedCompanyInitial = asDisplayText(selectedJob.companyName, 'C').charAt(0).toUpperCase();
-
         const modalMarkup = (
             <div className="portal-job-modal-backdrop" role="presentation" onClick={closeJobModal}>
                 <article className="portal-job-modal" role="dialog" aria-modal="true" aria-label={`${selectedJob.title} job details`} onClick={(event) => event.stopPropagation()}>
@@ -2904,7 +2954,7 @@ const PortalHomeFeed = ({
                             {selectedJob.companyLogo ? (
                                 <img src={selectedJob.companyLogo} alt={selectedJob.companyName} />
                             ) : (
-                                <span>{selectedCompanyInitial}</span>
+                                <span className="portal-default-profile-icon"><DefaultProfileIcon /></span>
                             )}
                         </div>
                         <div>
@@ -3027,7 +3077,12 @@ const PortalHomeFeed = ({
                 })}
             </div>
 
-            <div className="portal-home-feed-scroll" onScroll={handleFeedScroll}>
+            <div
+                className="portal-home-feed-scroll"
+                onScroll={handleFeedScroll}
+                onTouchStart={handleFeedTouchStart}
+                onTouchMove={handleFeedTouchMove}
+            >
                 {feedLoading ? <div className="loading-spinner">Loading live feed...</div> : null}
                 {activeTab === 'work-news' && renderPostList(workNewsPosts, WORK_NEWS_STORAGE_KEY, 'work')}
                 {activeTab === 'job-posts' && renderCandidateJobPosts()}

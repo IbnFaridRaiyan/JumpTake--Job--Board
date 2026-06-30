@@ -219,6 +219,7 @@ const normalizeJobForDisplay = (job = {}, index = 0) => {
         location: asDisplayText(job.location, 'Location not specified'),
         jobType: asDisplayText(job.jobType, 'Type not specified'),
         salary: asDisplayText(job.salary),
+        applicationLink: asDisplayText(job.applicationLink, asDisplayText(job.applyLink, asDisplayText(job.externalApplyLink, ''))),
         description: asDisplayText(job.description, 'No description added.'),
         requirements: normalizeTextList(job.requirements),
         responsibilities: normalizeTextList(job.responsibilities),
@@ -235,6 +236,16 @@ const normalizeJobForDisplay = (job = {}, index = 0) => {
             website: asDisplayText(company.website)
         }
     };
+};
+
+const normalizeExternalUrl = (value = '') => {
+    const trimmed = asDisplayText(value).trim();
+
+    if (!trimmed) {
+        return '';
+    }
+
+    return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
 };
 
 const createApplicationProfileDraft = (profileData, userData = {}) => ({
@@ -828,6 +839,13 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
         }
 
         if (!job || appliedJobIds.includes(String(job._id))) {
+            return;
+        }
+
+        const applicationLink = normalizeExternalUrl(job.applicationLink);
+
+        if (applicationLink) {
+            window.open(applicationLink, '_blank', 'noopener,noreferrer');
             return;
         }
 

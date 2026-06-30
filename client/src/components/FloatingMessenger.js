@@ -468,14 +468,16 @@ const FloatingMessenger = ({
                     <div className={`floating-messenger-shell ${mobileChatOpen ? 'is-mobile-chat-open' : ''}`}>
                         <aside className="floating-messenger-contacts">
                             <div className="floating-messenger-header">
-                                <button
-                                    type="button"
-                                    className="floating-messenger-close"
-                                    onClick={handleClose}
-                                    aria-label="Close messages"
-                                >
-                                    <CloseIcon />
-                                </button>
+                                {!isMobileView && (
+                                    <button
+                                        type="button"
+                                        className="floating-messenger-close"
+                                        onClick={handleClose}
+                                        aria-label="Close messages"
+                                    >
+                                        <CloseIcon />
+                                    </button>
+                                )}
                                 <h2>Messages</h2>
                             </div>
 
@@ -542,14 +544,6 @@ const FloatingMessenger = ({
                                                 >
                                                     {'<'}
                                                 </button>
-                                                <button
-                                                    type="button"
-                                                    className="floating-messenger-mobile-close"
-                                                    onClick={handleClose}
-                                                    aria-label="Close messages"
-                                                >
-                                                    <CloseIcon />
-                                                </button>
                                             </div>
                                         ) : null}
                                     </div>
@@ -583,14 +577,6 @@ const FloatingMessenger = ({
                                                     aria-label="Back to message list"
                                                 >
                                                     {'<'}
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className="floating-messenger-mobile-close"
-                                                    onClick={handleClose}
-                                                    aria-label="Close messages"
-                                                >
-                                                    <CloseIcon />
                                                 </button>
                                             </div>
                                         ) : null}

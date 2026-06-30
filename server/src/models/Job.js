@@ -31,6 +31,10 @@ const JobSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  applicationLink: {
+    type: String,
+    trim: true
+  },
   jobType: {
     type: String,
     enum: ['Full-time', 'Part-time', 'Contract', 'Internship', 'Remote'],

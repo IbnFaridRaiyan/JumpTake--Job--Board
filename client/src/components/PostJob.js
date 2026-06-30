@@ -21,6 +21,7 @@ const PostJob = ({ companyId, onJobPosted, onCancel, onFooterBack }) => {
         description: '',
         location: '',
         salary: '',
+        applicationLink: '',
         jobType: 'Full-time',
         requirements: '',
         responsibilities: '',
@@ -79,6 +80,7 @@ const PostJob = ({ companyId, onJobPosted, onCancel, onFooterBack }) => {
                     companyId: companyId,
                     location: formData.location,
                     salary: formData.salary,
+                    applicationLink: formData.applicationLink,
                     jobType: formData.jobType,
                     requirements,
                     responsibilities,
@@ -101,6 +103,7 @@ const PostJob = ({ companyId, onJobPosted, onCancel, onFooterBack }) => {
                 description: '',
                 location: '',
                 salary: '',
+                applicationLink: '',
                 jobType: 'Full-time',
                 requirements: '',
                 responsibilities: '',
@@ -210,6 +213,20 @@ const PostJob = ({ companyId, onJobPosted, onCancel, onFooterBack }) => {
                                     className="form-control"
                                 />
                             </div>
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="applicationLink">Add application link (optional)</label>
+                            <input
+                                type="url"
+                                id="applicationLink"
+                                name="applicationLink"
+                                value={formData.applicationLink}
+                                onChange={handleChange}
+                                placeholder="https://example.com/apply"
+                                className="form-control"
+                            />
+                            <p className="form-hint">Candidates will be sent to this link when they press Apply Now.</p>
                         </div>
                     </div>
                     

@@ -53216,3 +53216,220 @@ select {
     height: 0.84rem !important;
   }
 }
+
+/* Screenshot 163-168 refinements: transparent tabs, scroll-through media, mobile close placement, and no loaders. */
+.portal-home-feed > .portal-home-tabs,
+.portal-home-tabs {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.portal-home-feed > .portal-home-tabs::before,
+.portal-home-feed > .portal-home-tabs::after,
+.portal-home-tabs::before,
+.portal-home-tabs::after {
+  display: none !important;
+  content: none !important;
+}
+
+.portal-home-feed > .portal-home-tabs {
+  transition:
+    transform 0.68s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.58s ease,
+    max-height 0.68s cubic-bezier(0.22, 1, 0.36, 1),
+    margin 0.68s cubic-bezier(0.22, 1, 0.36, 1),
+    padding 0.68s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.portal-home-feed.is-tabs-hidden > .portal-home-tabs {
+  transform: translateY(-1.7rem) scale(0.985) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.portal-post-media,
+.portal-post-media.portal-post-media-preview {
+  touch-action: pan-y !important;
+  overscroll-behavior: auto !important;
+}
+
+.portal-post-media img,
+.portal-post-media.portal-post-media-preview img {
+  pointer-events: none !important;
+  touch-action: pan-y !important;
+}
+
+.loading-spinner,
+.loader,
+.spinner,
+.resume-processing-loader .loader,
+.resume-processing-loader .loader-letter,
+.loading-message::before,
+.loading-message::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+.loading-spinner,
+.loader,
+.spinner,
+.resume-processing-loader {
+  display: none !important;
+}
+
+.admin-comment-tools {
+  border-top: 1px solid rgba(199, 199, 199, 0.16);
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+}
+
+.admin-comment-tools h4 {
+  color: #c7c7c7;
+  margin: 0 0 0.65rem;
+}
+
+.admin-comment-tool {
+  align-items: center;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+}
+
+.admin-comment-tool span {
+  color: #f4f4f4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (min-width: 769px) {
+  .portal-post-reactions.portal-reaction-rail.is-popover,
+  .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+    min-height: 2.14rem !important;
+    height: 2.14rem !important;
+    padding: 0.16rem 0.46rem 0.22rem !important;
+    align-items: center !important;
+    overflow-y: hidden !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .portal-post-reactions.portal-reaction-rail.is-popover,
+  .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+    min-height: 2.22rem !important;
+    height: 2.22rem !important;
+    margin: 0.04rem 0 0.28rem !important;
+    padding: 0.14rem 0.34rem 0.28rem !important;
+    align-items: center !important;
+    overflow-y: hidden !important;
+    transform: translateY(-0.24rem) !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button,
+  .portal-post-reactions.portal-reaction-rail.is-popover .portal-reaction-button {
+    width: 1.42rem !important;
+    min-width: 1.42rem !important;
+    height: 1.42rem !important;
+    min-height: 1.42rem !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button svg,
+  .portal-post-reactions.portal-reaction-rail.is-popover .portal-reaction-button svg {
+    width: 0.86rem !important;
+    height: 0.86rem !important;
+  }
+
+  .floating-messenger-panel.is-mobile-thread-list .floating-messenger-close,
+  .floating-messenger-panel.is-mobile-chat-open .floating-messenger-mobile-close,
+  .floating-messenger-panel.is-mobile .floating-messenger-mobile-close,
+  .floating-messenger-panel.is-mobile .floating-messenger-close {
+    position: fixed !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: max(1.05rem, env(safe-area-inset-bottom)) !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 10080 !important;
+  }
+}
+
+/* Screenshot 169-170 refinements: calmer mobile touch scroll, lifted reactions, default avatars, and bare messenger back button. */
+.portal-default-profile-icon,
+.portal-post-avatar .portal-default-profile-icon,
+.portal-comment-avatar .portal-default-profile-icon,
+.portal-job-company-avatar .portal-default-profile-icon {
+  align-items: center !important;
+  color: #ffffff !important;
+  display: inline-flex !important;
+  height: 100% !important;
+  justify-content: center !important;
+  width: 100% !important;
+}
+
+.portal-default-profile-icon svg,
+.portal-share-friend-avatar > svg {
+  color: #ffffff !important;
+  fill: currentColor !important;
+  height: 58% !important;
+  width: 58% !important;
+}
+
+@media (max-width: 768px) {
+  .portal-home-feed-scroll,
+  .home-page .portal-home-feed-scroll {
+    -webkit-overflow-scrolling: auto !important;
+    overscroll-behavior: contain !important;
+    scroll-behavior: auto !important;
+    touch-action: none !important;
+  }
+
+  .portal-post-reactions.portal-reaction-rail.is-popover,
+  .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+    min-height: 2.28rem !important;
+    height: 2.28rem !important;
+    padding: 0.08rem 0.34rem 0.34rem !important;
+    transform: translateY(-0.42rem) !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-item,
+  .portal-post-reactions.is-popover .icon-content {
+    transform: translateY(-0.1rem) !important;
+  }
+
+  .floating-messenger-panel.is-mobile-thread-list .floating-messenger-close,
+  .floating-messenger-panel.is-mobile-chat-open .floating-messenger-mobile-close,
+  .floating-messenger-panel.is-mobile .floating-messenger-mobile-close,
+  .floating-messenger-panel.is-mobile .floating-messenger-close {
+    display: none !important;
+  }
+
+  .floating-messenger-chat-actions {
+    display: inline-flex !important;
+    margin-left: auto !important;
+  }
+
+  .floating-messenger-mobile-back {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    min-width: 2rem !important;
+    outline: 0 !important;
+    padding: 0 !important;
+  }
+
+  .floating-messenger-mobile-back:hover,
+  .floating-messenger-mobile-back:focus-visible,
+  .floating-messenger-mobile-back:active {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+  }
+}

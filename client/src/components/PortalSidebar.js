@@ -40,6 +40,7 @@ const PortalSidebar = ({
                 className={`sidebar__link ${item.active ? 'is-active' : ''} ${item.danger ? 'is-danger' : ''}`}
                 data-tooltip={item.label}
                 onClick={() => {
+                    setExpanded(false);
                     item.onClick?.();
                 }}
                 aria-current={item.active ? 'page' : undefined}
@@ -78,7 +79,10 @@ const PortalSidebar = ({
                                 type="button"
                                 className="sidebar__link is-danger"
                                 data-tooltip="Log Out"
-                                onClick={onLogout}
+                                onClick={() => {
+                                    setExpanded(false);
+                                    onLogout?.();
+                                }}
                                 aria-label="Log Out"
                             >
                                 <span className="icon">

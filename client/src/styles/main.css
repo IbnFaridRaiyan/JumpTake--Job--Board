@@ -48331,6 +48331,79 @@ select {
   min-height: 0 !important;
 }
 
+/* Floating messenger viewport lock: keep composers visible and transcripts scrollable. */
+.floating-messenger-panel {
+  max-height: calc(100dvh - 7rem) !important;
+}
+
+.floating-messenger-shell,
+.floating-messenger-contacts,
+.floating-messenger-chat {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.floating-messenger-chat {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+}
+
+.floating-messenger-chat-bar,
+.floating-messenger-input,
+.floating-messenger-assistant-chat .public-ai-chat-header,
+.floating-messenger-assistant-chat .public-ai-chat-reply {
+  flex: 0 0 auto !important;
+}
+
+.floating-messenger-messages,
+.floating-messenger-assistant-chat,
+.floating-messenger-assistant-chat .portal-ai-chat-messages,
+.floating-messenger-assistant-chat .public-ai-chat-messages {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+.floating-messenger-assistant-chat {
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.floating-messenger-assistant-chat .public-ai-chat-reply {
+  position: relative !important;
+  bottom: auto !important;
+  z-index: 4 !important;
+  margin-top: 0 !important;
+  padding-top: 0.65rem !important;
+  background: #000000 !important;
+}
+
+.floating-messenger-input {
+  position: relative !important;
+  z-index: 4 !important;
+  margin-top: 0 !important;
+}
+
+@media (max-width: 768px) {
+  .floating-messenger-panel,
+  .floating-messenger-panel.is-mobile,
+  .floating-messenger-panel.is-mobile-thread-list,
+  .floating-messenger-panel.is-mobile-chat-open {
+    max-height: 100dvh !important;
+  }
+
+  .floating-messenger-panel.is-mobile .floating-messenger-input,
+  .floating-messenger-panel.is-mobile .floating-messenger-assistant-chat .public-ai-chat-reply {
+    position: relative !important;
+    bottom: auto !important;
+    padding-bottom: calc(0.8rem + env(safe-area-inset-bottom)) !important;
+  }
+}
+
 @media (min-width: 769px) {
   .job-seeker-container,
   .company-container {
@@ -50491,5 +50564,1204 @@ select {
     min-height: 1.38rem !important;
     padding: 0.12rem 0.22rem !important;
     font-size: 0.46rem !important;
+  }
+}
+
+/* Assistant composer: multiline return key plus external animated send button. */
+.public-ai-chat-reply .public-ai-reply-row {
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 0.62rem !important;
+  width: 100% !important;
+}
+
+.public-ai-chat-reply .public-ai-reply-field {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  width: auto !important;
+  max-width: none !important;
+}
+
+.public-ai-chat-reply .public-ai-reply-field textarea {
+  width: 100% !important;
+  min-height: 2.55rem !important;
+  max-height: 6rem !important;
+  resize: none !important;
+  overflow-y: auto !important;
+  padding: 0.72rem 0.85rem 0.72rem 2.05rem !important;
+  border: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  color: #f8fafc !important;
+  font: inherit !important;
+  line-height: 1.28 !important;
+  scrollbar-width: thin !important;
+}
+
+.public-ai-chat-reply .public-ai-reply-field textarea::placeholder {
+  color: rgba(255, 255, 255, 0.58) !important;
+}
+
+.public-ai-chat-reply .public-ai-send-button {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: 5.65rem !important;
+  height: 2.72rem !important;
+  min-height: 2.72rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.22rem !important;
+  padding: 0.58rem 0.82rem !important;
+  padding-left: 0.76rem !important;
+  border: 0 !important;
+  border-radius: 0.92rem !important;
+  overflow: hidden !important;
+  background: #2563eb !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+  font-family: inherit !important;
+  font-size: 0.88rem !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease !important;
+}
+
+.public-ai-chat-reply .public-ai-send-button:disabled {
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+}
+
+.public-ai-chat-reply .public-ai-send-button span {
+  display: block !important;
+  margin-left: 0.18rem !important;
+  transition: transform 0.3s ease-in-out !important;
+}
+
+.public-ai-chat-reply .public-ai-send-button svg {
+  display: block !important;
+  width: 1.18rem !important;
+  height: 1.18rem !important;
+  transform-origin: center center !important;
+  transition: transform 0.3s ease-in-out !important;
+}
+
+.public-ai-chat-reply .public-ai-send-button:hover:not(:disabled) {
+  background: #1d4ed8 !important;
+}
+
+.public-ai-chat-reply .public-ai-send-button:hover:not(:disabled) .svg-wrapper {
+  animation: assistant-send-fly 0.6s ease-in-out infinite alternate !important;
+}
+
+.public-ai-chat-reply .public-ai-send-button:hover:not(:disabled) svg {
+  transform: translateX(0.86em) rotate(45deg) scale(1.08) !important;
+}
+
+.public-ai-chat-reply .public-ai-send-button:hover:not(:disabled) span {
+  transform: translateX(4.6em) !important;
+}
+
+.public-ai-chat-reply .public-ai-send-button:active:not(:disabled) {
+  transform: scale(0.95) !important;
+}
+
+@keyframes assistant-send-fly {
+  from {
+    transform: translateY(0.1em);
+  }
+
+  to {
+    transform: translateY(-0.1em);
+  }
+}
+
+@media (max-width: 768px) {
+  .public-ai-chat-reply .public-ai-reply-row {
+    gap: 0.42rem !important;
+  }
+
+  .public-ai-chat-reply .public-ai-reply-field textarea {
+    min-height: 2.38rem !important;
+    max-height: 5rem !important;
+    padding: 0.62rem 0.66rem 0.58rem 1.95rem !important;
+    font-size: 0.86rem !important;
+  }
+
+  .public-ai-chat-reply .public-ai-send-button {
+    min-width: 2.75rem !important;
+    width: 2.75rem !important;
+    height: 2.38rem !important;
+    min-height: 2.38rem !important;
+    padding: 0 !important;
+    border-radius: 0.74rem !important;
+  }
+
+  .public-ai-chat-reply .public-ai-send-button span {
+    display: none !important;
+  }
+
+  .public-ai-chat-reply .public-ai-send-button svg {
+    width: 1.02rem !important;
+    height: 1.02rem !important;
+  }
+
+  .public-ai-chat-reply .public-ai-send-button:hover:not(:disabled) svg {
+    transform: translateX(0.28em) rotate(45deg) scale(1.04) !important;
+  }
+}
+
+/* Floating assistant composer sizing: compact button, no overflow. */
+.floating-messenger-assistant-chat .public-ai-chat-reply {
+  overflow: visible !important;
+}
+
+.floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-reply-row {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: end !important;
+  gap: 0.42rem !important;
+  overflow: visible !important;
+}
+
+.floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-reply-field {
+  width: 100% !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+.floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-reply-field textarea {
+  min-height: 2.05rem !important;
+  max-height: 2.05rem !important;
+  height: 2.05rem !important;
+  overflow: hidden !important;
+  padding-top: 0.45rem !important;
+  padding-bottom: 0.42rem !important;
+  scrollbar-width: none !important;
+}
+
+.floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-reply-field textarea::-webkit-scrollbar {
+  display: none !important;
+}
+
+.floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button,
+.floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button:hover,
+.floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button:focus-visible {
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+  flex: 0 0 auto !important;
+  width: 3.65rem !important;
+  min-width: 3.65rem !important;
+  max-width: 3.65rem !important;
+  height: 2.2rem !important;
+  min-height: 2.2rem !important;
+  max-height: 2.2rem !important;
+  padding: 0 0.42rem !important;
+  margin: 0 !important;
+  border-radius: 0.68rem !important;
+  font-size: 0.68rem !important;
+}
+
+.floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button svg {
+  width: 0.82rem !important;
+  height: 0.82rem !important;
+}
+
+.floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button span {
+  margin-left: 0.08rem !important;
+}
+
+.floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button:hover:not(:disabled) svg {
+  transform: translateX(0.34em) rotate(45deg) scale(1.04) !important;
+}
+
+.floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button:hover:not(:disabled) span {
+  transform: translateX(3.2em) !important;
+}
+
+@media (max-width: 768px) {
+  .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-reply-row {
+    gap: 0.34rem !important;
+  }
+
+  .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button,
+  .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button:hover,
+  .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button:focus-visible {
+    width: 1.92rem !important;
+    min-width: 1.92rem !important;
+    max-width: 1.92rem !important;
+    height: 1.32rem !important;
+    min-height: 1.32rem !important;
+    max-height: 1.32rem !important;
+    padding: 0 !important;
+    border-radius: 0.46rem !important;
+  }
+
+  .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button svg {
+    width: 0.68rem !important;
+    height: 0.68rem !important;
+  }
+
+  .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button:hover:not(:disabled) svg {
+    transform: translateX(0.12em) rotate(45deg) scale(1.03) !important;
+  }
+}
+
+/* Final portal/chat alignment pass: desktop rail spacing plus level AI composer controls. */
+.floating-messenger-panel .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-reply-row {
+  align-items: center !important;
+}
+
+.floating-messenger-panel .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-reply-field,
+.floating-messenger-panel .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button {
+  align-self: center !important;
+}
+
+.floating-messenger-panel .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-reply-field textarea {
+  box-sizing: border-box !important;
+  display: block !important;
+  min-height: 2.02rem !important;
+  height: 2.02rem !important;
+  max-height: 2.02rem !important;
+  padding-top: 0.4rem !important;
+  padding-bottom: 0.38rem !important;
+  line-height: 1.12 !important;
+}
+
+.floating-messenger-panel .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button,
+.floating-messenger-panel .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button:hover,
+.floating-messenger-panel .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button:focus-visible {
+  height: 2.02rem !important;
+  min-height: 2.02rem !important;
+  max-height: 2.02rem !important;
+}
+
+@media (max-width: 768px) {
+  .floating-messenger-panel .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-reply-row {
+    align-items: center !important;
+    gap: 0.36rem !important;
+  }
+
+  .floating-messenger-panel .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-reply-field textarea {
+    min-height: 2rem !important;
+    height: 2rem !important;
+    max-height: 2rem !important;
+    padding-top: 0.38rem !important;
+    padding-bottom: 0.36rem !important;
+  }
+
+  .floating-messenger-panel .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button,
+  .floating-messenger-panel .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button:hover,
+  .floating-messenger-panel .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button:focus-visible {
+    width: 2.08rem !important;
+    min-width: 2.08rem !important;
+    max-width: 2.08rem !important;
+    height: 2rem !important;
+    min-height: 2rem !important;
+    max-height: 2rem !important;
+    border-radius: 0.55rem !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .home-page > .dashboard-header {
+    width: min(calc(100% - 1.6rem), 1840px) !important;
+  }
+
+  .home-page > .dashboard-container,
+  .home-page .dashboard-container,
+  .home-page .dashboard-container.mobile-section-open {
+    width: min(calc(100% - 1.6rem), 1840px) !important;
+    max-width: 1840px !important;
+    padding-left: 6.25rem !important;
+    padding-right: 1rem !important;
+    transition: padding-left 280ms cubic-bezier(0.22, 1, 0.36, 1), width 280ms ease !important;
+  }
+
+  .home-page .dashboard-container:has(> .portal-uiverse-sidebar.is-expanded) {
+    padding-left: 16.65rem !important;
+  }
+
+  .home-page .portal-uiverse-sidebar,
+  .home-page .portal-uiverse-sidebar.sidebar,
+  .home-page .portal-uiverse-sidebar.is-collapsed,
+  .home-page .portal-uiverse-sidebar.is-collapsed.sidebar,
+  .home-page .portal-uiverse-sidebar.is-expanded,
+  .home-page .portal-uiverse-sidebar.is-expanded.sidebar,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.sidebar,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-collapsed,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-collapsed.sidebar,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded.sidebar {
+    transition:
+      width 280ms cubic-bezier(0.22, 1, 0.36, 1),
+      min-width 280ms cubic-bezier(0.22, 1, 0.36, 1),
+      max-width 280ms cubic-bezier(0.22, 1, 0.36, 1),
+      inline-size 280ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 220ms ease,
+      opacity 180ms ease !important;
+    will-change: width, inline-size !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .portal-sidebar-nav,
+  .home-page .portal-uiverse-sidebar .portal-uiverse-rail,
+  .home-page .portal-uiverse-sidebar.is-expanded .portal-sidebar-nav,
+  .home-page .portal-uiverse-sidebar.is-expanded .portal-uiverse-rail,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .portal-sidebar-nav,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .portal-uiverse-rail {
+    overflow-x: hidden !important;
+    transition:
+      width 280ms cubic-bezier(0.22, 1, 0.36, 1),
+      min-width 280ms cubic-bezier(0.22, 1, 0.36, 1),
+      max-width 280ms cubic-bezier(0.22, 1, 0.36, 1),
+      padding 220ms ease,
+      border-radius 220ms ease !important;
+  }
+
+  .home-page .portal-uiverse-sidebar .text,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .text {
+    opacity: 0 !important;
+    transition: opacity 160ms ease !important;
+  }
+
+  .home-page .portal-uiverse-sidebar.is-expanded .text,
+  .dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar.is-expanded .text {
+    opacity: 1 !important;
+    transition-delay: 110ms !important;
+  }
+}
+
+/* Final chat bubble colors: AI sent messages use the JumpTake AI orange, direct messages use dark green. */
+.public-ai-chat-card .public-ai-chat-bubble.is-user,
+.portal-ai-chat-card .public-ai-chat-bubble.is-user,
+.floating-messenger-assistant-chat .public-ai-chat-bubble.is-user {
+  background: #7c2d12 !important;
+  border: 1px solid rgba(249, 115, 22, 0.38) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+.floating-messenger-message.is-own {
+  background: #0b3b2e !important;
+  border-color: rgba(45, 212, 191, 0.18) !important;
+  color: #ffffff !important;
+}
+
+.floating-messenger-message-meta {
+  align-items: center !important;
+  margin-bottom: 0.32rem !important;
+  gap: 0.5rem !important;
+}
+
+.floating-messenger-message-meta strong,
+.floating-messenger-message-meta span {
+  font-size: 0.66rem !important;
+  line-height: 1.1 !important;
+  letter-spacing: 0 !important;
+}
+
+.floating-messenger-message-meta span {
+  opacity: 0.72 !important;
+}
+
+@media (max-width: 768px) {
+  .floating-messenger-message-meta strong,
+  .floating-messenger-message-meta span {
+    font-size: 0.62rem !important;
+  }
+}
+
+.public-ai-chat-reply .public-ai-send-button,
+.public-ai-chat-reply .public-ai-send-button:focus-visible,
+.floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button,
+.floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button:focus-visible {
+  background: #f97316 !important;
+  border: 1px solid rgba(251, 146, 60, 0.36) !important;
+  color: #ffffff !important;
+}
+
+.public-ai-chat-reply .public-ai-send-button:hover:not(:disabled),
+.floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button:hover:not(:disabled) {
+  background: #7c2d12 !important;
+  border-color: rgba(251, 146, 60, 0.48) !important;
+}
+
+.public-ai-chat-reply .public-ai-send-button:disabled,
+.floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button:disabled {
+  background: #7c2d12 !important;
+  border-color: rgba(124, 45, 18, 0.72) !important;
+  color: rgba(255, 255, 255, 0.72) !important;
+  opacity: 0.58 !important;
+}
+
+/* Final normal messenger composer sizing: compact input with centered emoji/send controls. */
+.floating-messenger-input {
+  padding: 0.72rem 0.9rem !important;
+}
+
+.floating-messenger-input .rich-message-editor-messagebox {
+  display: block !important;
+}
+
+.floating-messenger-input .messageBox,
+.floating-messenger-input .rich-message-editor-messagebox .messageBox {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.36rem !important;
+  min-height: 2.72rem !important;
+  height: auto !important;
+  padding: 0.24rem 0.36rem !important;
+  border-radius: 0.8rem !important;
+}
+
+.floating-messenger-input .fileUploadWrapper,
+.floating-messenger-input .emojiUploadWrapper {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+  flex: 0 0 2.05rem !important;
+  width: 2.05rem !important;
+  min-width: 2.05rem !important;
+  height: 2.05rem !important;
+  min-height: 2.05rem !important;
+  margin: 0 !important;
+}
+
+.floating-messenger-input .emoji-trigger-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+  width: 2.05rem !important;
+  min-width: 2.05rem !important;
+  max-width: 2.05rem !important;
+  height: 2.05rem !important;
+  min-height: 2.05rem !important;
+  max-height: 2.05rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.floating-messenger-input .messageInput,
+.floating-messenger-input .rich-message-editor-messagebox .rich-message-input {
+  align-self: center !important;
+  min-height: 2.08rem !important;
+  max-height: 3.75rem !important;
+  padding: 0.42rem 0.62rem !important;
+  line-height: 1.18 !important;
+}
+
+.floating-messenger-input .sendButton {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+  flex: 0 0 2.05rem !important;
+  width: 2.05rem !important;
+  min-width: 2.05rem !important;
+  max-width: 2.05rem !important;
+  height: 2.05rem !important;
+  min-height: 2.05rem !important;
+  max-height: 2.05rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.floating-messenger-input .emoji-trigger-button svg,
+.floating-messenger-input .sendButton svg {
+  width: 1rem !important;
+  height: 1rem !important;
+}
+
+@media (max-width: 768px) {
+  .floating-messenger-input {
+    padding: 0.62rem 0.72rem !important;
+  }
+
+  .floating-messenger-input .messageBox,
+  .floating-messenger-input .rich-message-editor-messagebox .messageBox {
+    min-height: 2.55rem !important;
+    gap: 0.28rem !important;
+    padding: 0.22rem 0.32rem !important;
+  }
+
+  .floating-messenger-input .fileUploadWrapper,
+  .floating-messenger-input .emojiUploadWrapper,
+  .floating-messenger-input .emoji-trigger-button,
+  .floating-messenger-input .sendButton {
+    flex-basis: 1.95rem !important;
+    width: 1.95rem !important;
+    min-width: 1.95rem !important;
+    max-width: 1.95rem !important;
+    height: 1.95rem !important;
+    min-height: 1.95rem !important;
+    max-height: 1.95rem !important;
+  }
+
+  .floating-messenger-input .messageInput,
+  .floating-messenger-input .rich-message-editor-messagebox .rich-message-input {
+    min-height: 1.98rem !important;
+    max-height: 3.45rem !important;
+    padding: 0.38rem 0.56rem !important;
+  }
+}
+
+/* Final mobile chat/nav pass: larger composer actions and blue active navigation icons. */
+@media (max-width: 768px) {
+  .floating-messenger-input .messageBox,
+  .floating-messenger-input .rich-message-editor-messagebox .messageBox {
+    min-height: 2.82rem !important;
+    padding: 0.22rem 0.36rem !important;
+  }
+
+  .floating-messenger-input .fileUploadWrapper,
+  .floating-messenger-input .emojiUploadWrapper,
+  .floating-messenger-input .emoji-trigger-button,
+  .floating-messenger-input .sendButton {
+    flex-basis: 2.34rem !important;
+    width: 2.34rem !important;
+    min-width: 2.34rem !important;
+    max-width: 2.34rem !important;
+    height: 2.34rem !important;
+    min-height: 2.34rem !important;
+    max-height: 2.34rem !important;
+  }
+
+  .floating-messenger-input .emoji-trigger-button svg,
+  .floating-messenger-input .sendButton svg {
+    width: 1.22rem !important;
+    height: 1.22rem !important;
+  }
+}
+
+.home-page .portal-uiverse-sidebar .sidebar__link.is-active,
+.home-page .portal-uiverse-sidebar .sidebar__link.is-active .icon,
+.home-page .portal-uiverse-sidebar .sidebar__link.is-active .icon svg,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar .sidebar__link.is-active,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar .sidebar__link.is-active .icon,
+.dashboard-container.mobile-section-open .portal-uiverse-sidebar .sidebar__link.is-active .icon svg,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .sidebar__link.is-active,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .sidebar__link.is-active .icon,
+.dashboard-container:not(.mobile-section-open) .portal-uiverse-sidebar .sidebar__link.is-active .icon svg {
+  color: #60a5fa !important;
+  fill: #60a5fa !important;
+}
+
+/* Final feed action redesign: collapsed reaction button, popover reactions, hidden comment field, friend share picker. */
+.portal-post-action-cluster {
+  position: relative !important;
+  width: max-content !important;
+  max-width: 100% !important;
+  margin-top: 0.7rem !important;
+  z-index: 4 !important;
+}
+
+.portal-post-action-row {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.46rem !important;
+  min-width: 0 !important;
+  padding: 0.34rem 0.44rem !important;
+  background: rgba(0, 0, 0, 0.64) !important;
+  border: 1px solid rgba(94, 234, 212, 0.18) !important;
+  border-radius: 999px !important;
+  box-shadow: none !important;
+}
+
+.portal-reaction-trigger,
+.portal-comment-toggle,
+.portal-share-toggle {
+  appearance: none !important;
+  position: relative !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 2.05rem !important;
+  min-width: 2.05rem !important;
+  height: 2.05rem !important;
+  min-height: 2.05rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #c7c7c7 !important;
+  cursor: pointer !important;
+  transition: color 0.18s ease, transform 0.18s ease, filter 0.18s ease !important;
+}
+
+.portal-reaction-trigger:hover,
+.portal-reaction-trigger:focus-visible,
+.portal-comment-toggle:hover,
+.portal-comment-toggle:focus-visible,
+.portal-share-toggle:hover,
+.portal-share-toggle:focus-visible {
+  transform: translateY(-1px) scale(1.05) !important;
+  outline: 0 !important;
+}
+
+.portal-reaction-trigger img {
+  display: block !important;
+  width: 1.45rem !important;
+  height: 1.45rem !important;
+  object-fit: contain !important;
+  opacity: 0.92 !important;
+  filter: brightness(0) saturate(100%) invert(82%) sepia(0%) saturate(0%) hue-rotate(163deg) brightness(96%) contrast(92%) !important;
+}
+
+.portal-reaction-trigger.has-reaction {
+  color: var(--reaction-color, #ffffff) !important;
+  filter: drop-shadow(0 0 0.45rem var(--reaction-color, currentColor)) !important;
+}
+
+.portal-reaction-trigger svg,
+.portal-comment-toggle svg,
+.portal-share-toggle svg {
+  width: 1.16rem !important;
+  height: 1.16rem !important;
+  fill: currentColor !important;
+}
+
+.portal-comment-toggle.active {
+  color: #22c55e !important;
+}
+
+.portal-share-toggle.active {
+  color: #3b82f6 !important;
+}
+
+.portal-post-reactions.portal-reaction-rail.is-popover,
+.portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+  position: absolute !important;
+  left: 0 !important;
+  bottom: calc(100% + 0.45rem) !important;
+  z-index: 30 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  width: max-content !important;
+  max-width: min(34rem, calc(100vw - 3rem)) !important;
+  min-height: 3rem !important;
+  margin: 0 !important;
+  padding: 0.42rem 0.56rem !important;
+  gap: 0.42rem !important;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  background: #000000 !important;
+  border: 1px solid rgba(94, 234, 212, 0.28) !important;
+  border-radius: 999px !important;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.42) !important;
+  list-style: none !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-item,
+.portal-post-reactions.is-popover .icon-content {
+  position: relative !important;
+  flex: 0 0 auto !important;
+  width: 2.12rem !important;
+  min-width: 2.12rem !important;
+  height: 2.12rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button {
+  --r: 2.08rem;
+  display: inline-grid !important;
+  grid-template: 1fr / 1fr !important;
+  place-items: center !important;
+  width: var(--r) !important;
+  min-width: var(--r) !important;
+  height: var(--r) !important;
+  min-height: var(--r) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: var(--reaction-color, #c7c7c7) !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  filter: grayscale(1) opacity(0.74) !important;
+  overflow: visible !important;
+  transition:
+    filter 0.5s,
+    transform 1s cubic-bezier(0, 26.67, 0.5, 26.67),
+    color 0.2s ease !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button::before {
+  content: "" !important;
+  grid-area: 1 / 1 !important;
+  width: var(--r) !important;
+  height: var(--r) !important;
+  border-radius: 50% !important;
+  border: solid var(--reaction-color, #f97316) calc(var(--r) / 2) !important;
+  transform: scale(0) !important;
+  transition: transform 0.5s, border-width 0.5s 0.5s !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button::after,
+.portal-post-reactions.is-popover .portal-reaction-button .portal-reaction-tooltip::after {
+  content: "" !important;
+  grid-area: 1 / 1 !important;
+  width: var(--r) !important;
+  height: var(--r) !important;
+  margin: calc(var(--r) / -2) !important;
+  --c1: radial-gradient(var(--reaction-color, #ef4444) 50%, #0000 60%);
+  --c2: radial-gradient(#facc15 50%, #0000 60%);
+  background:
+    var(--c1), var(--c1), var(--c1), var(--c1),
+    var(--c2), var(--c2), var(--c2), var(--c2) !important;
+  background-size: calc(var(--r) / 6) calc(var(--r) / 6) !important;
+  background-position:
+    calc(50% - var(--r) / 2) calc(50% - var(--r) / 2),
+    calc(50% + var(--r) / 2) calc(50% - var(--r) / 2),
+    calc(50% - var(--r) / 2) calc(50% + var(--r) / 2),
+    calc(50% + var(--r) / 2) calc(50% + var(--r) / 2),
+    50% calc(50% + var(--r) * 0.707),
+    calc(50% + var(--r) * 0.707) 50%,
+    calc(50% - var(--r) * 0.707) 50%,
+    50% calc(50% - var(--r) * 0.707) !important;
+  background-repeat: no-repeat !important;
+  opacity: 0 !important;
+  transform: scale(0) !important;
+  pointer-events: none !important;
+  transition: transform 0.5s 0.18s, opacity 0.4s 0.55s, background-size 0.5s 0.55s !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button .portal-reaction-tooltip::after {
+  background-size: calc(var(--r) / 8) calc(var(--r) / 8) !important;
+  transform: rotate(60deg) scale(0) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button:hover,
+.portal-post-reactions.is-popover .portal-reaction-button:focus-visible,
+.portal-post-reactions.is-popover .portal-reaction-button.active {
+  color: var(--reaction-color, #ffffff) !important;
+  filter: grayscale(0) opacity(1) drop-shadow(0 0 0.48rem var(--reaction-color, currentColor)) !important;
+  transform: scale(1.08) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button:hover::before,
+.portal-post-reactions.is-popover .portal-reaction-button:focus-visible::before,
+.portal-post-reactions.is-popover .portal-reaction-button.active::before {
+  border-width: 0 !important;
+  transform: scale(1) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button:hover::after,
+.portal-post-reactions.is-popover .portal-reaction-button:focus-visible::after,
+.portal-post-reactions.is-popover .portal-reaction-button.active::after,
+.portal-post-reactions.is-popover .portal-reaction-button:hover .portal-reaction-tooltip::after,
+.portal-post-reactions.is-popover .portal-reaction-button:focus-visible .portal-reaction-tooltip::after,
+.portal-post-reactions.is-popover .portal-reaction-button.active .portal-reaction-tooltip::after {
+  background-size: 0 0 !important;
+  opacity: 1 !important;
+  transform: scale(1) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button:hover .portal-reaction-tooltip::after,
+.portal-post-reactions.is-popover .portal-reaction-button:focus-visible .portal-reaction-tooltip::after,
+.portal-post-reactions.is-popover .portal-reaction-button.active .portal-reaction-tooltip::after {
+  transform: rotate(60deg) scale(1) !important;
+}
+
+.portal-share-picker {
+  position: absolute !important;
+  left: 0 !important;
+  top: calc(100% + 0.55rem) !important;
+  z-index: 35 !important;
+  width: min(18rem, calc(100vw - 2rem)) !important;
+  padding: 0.78rem !important;
+  color: #f8fafc !important;
+  background: #050708 !important;
+  border: 1px solid rgba(94, 234, 212, 0.28) !important;
+  border-radius: 0.9rem !important;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.48) !important;
+}
+
+.portal-share-picker > strong {
+  display: block !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 0.82rem !important;
+}
+
+.portal-share-friend-list {
+  display: grid !important;
+  gap: 0.42rem !important;
+  max-height: 14rem !important;
+  overflow-y: auto !important;
+}
+
+.portal-share-friend {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 0.52rem !important;
+  width: 100% !important;
+  padding: 0.42rem !important;
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.045) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 0.72rem !important;
+  text-align: left !important;
+}
+
+.portal-share-friend:hover,
+.portal-share-friend:focus-visible {
+  border-color: rgba(59, 130, 246, 0.68) !important;
+  background: rgba(59, 130, 246, 0.16) !important;
+}
+
+.portal-share-friend-avatar {
+  display: grid !important;
+  place-items: center !important;
+  width: 1.75rem !important;
+  height: 1.75rem !important;
+  border-radius: 50% !important;
+  background: rgba(94, 234, 212, 0.22) !important;
+  color: #ffffff !important;
+  overflow: hidden !important;
+  font-size: 0.76rem !important;
+  font-weight: 900 !important;
+}
+
+.portal-share-friend-avatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.portal-share-friend-name,
+.portal-share-friend small,
+.portal-share-status,
+.portal-share-picker p {
+  display: block !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.portal-share-friend-name {
+  font-size: 0.82rem !important;
+  font-weight: 900 !important;
+}
+
+.portal-share-friend small,
+.portal-share-status,
+.portal-share-picker p {
+  color: rgba(248, 250, 252, 0.68) !important;
+  font-size: 0.68rem !important;
+}
+
+.portal-post-comments .portal-comment-row {
+  margin-top: 0.58rem !important;
+}
+
+.portal-post-comments .portal-comment-row:not(.is-open) {
+  display: none !important;
+}
+
+.portal-post-comments .portal-comment-row.is-open {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.34rem !important;
+}
+
+.portal-post-comments .portal-comment-row.is-open input {
+  min-width: 12rem !important;
+  max-width: min(22rem, 72vw) !important;
+}
+
+.portal-post-comments .portal-comment-row.is-open .portal-comment-button {
+  color: #22c55e !important;
+}
+
+@media (max-width: 768px) {
+  .portal-post-action-cluster {
+    width: 100% !important;
+  }
+
+  .portal-post-action-row {
+    max-width: 100% !important;
+    padding: 0.28rem 0.36rem !important;
+  }
+
+  .portal-post-reactions.portal-reaction-rail.is-popover,
+  .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+    max-width: calc(100vw - 6.4rem) !important;
+    min-height: 2.78rem !important;
+    padding: 0.36rem 0.44rem !important;
+    gap: 0.3rem !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-item,
+  .portal-post-reactions.is-popover .icon-content,
+  .portal-post-reactions.is-popover .portal-reaction-button {
+    --r: 1.92rem;
+    width: 1.92rem !important;
+    min-width: 1.92rem !important;
+    height: 1.92rem !important;
+    min-height: 1.92rem !important;
+  }
+
+  .portal-share-picker {
+    width: min(16.5rem, calc(100vw - 5.5rem)) !important;
+  }
+
+  .portal-post-comments .portal-comment-row.is-open input {
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+}
+
+/* Final feed reaction cleanup: compact popover animation and no reaction title badge. */
+.portal-comment-toggle {
+  color: #c7c7c7 !important;
+}
+
+.portal-comment-toggle.active {
+  color: #22c55e !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-tooltip {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+.portal-post-reactions.portal-reaction-rail.is-popover,
+.portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+  min-height: 2.32rem !important;
+  padding: 0.3rem 0.42rem !important;
+  gap: 0.26rem !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-item,
+.portal-post-reactions.is-popover .icon-content {
+  width: 1.68rem !important;
+  min-width: 1.68rem !important;
+  height: 1.68rem !important;
+  min-height: 1.68rem !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button {
+  --r: 1.36rem !important;
+  width: 1.68rem !important;
+  min-width: 1.68rem !important;
+  height: 1.68rem !important;
+  min-height: 1.68rem !important;
+  transform: scale(1) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button svg {
+  width: 0.96rem !important;
+  height: 0.96rem !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button::before {
+  width: var(--r) !important;
+  height: var(--r) !important;
+  border-width: 0.36rem !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button::after,
+.portal-post-reactions.is-popover .portal-reaction-button .portal-reaction-tooltip::after {
+  width: var(--r) !important;
+  height: var(--r) !important;
+  margin: -0.44rem !important;
+  background-size: 0.12rem 0.12rem !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button:hover,
+.portal-post-reactions.is-popover .portal-reaction-button:focus-visible,
+.portal-post-reactions.is-popover .portal-reaction-button.active {
+  transform: scale(1.03) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button:hover::after,
+.portal-post-reactions.is-popover .portal-reaction-button:focus-visible::after,
+.portal-post-reactions.is-popover .portal-reaction-button.active::after {
+  transform: scale(0.64) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-count {
+  color: #ffffff !important;
+  font-size: 0.58rem !important;
+}
+
+@media (max-width: 768px) {
+  .portal-post-reactions.portal-reaction-rail.is-popover,
+  .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+    min-height: 2.16rem !important;
+    padding: 0.26rem 0.36rem !important;
+    gap: 0.2rem !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-item,
+  .portal-post-reactions.is-popover .icon-content {
+    width: 1.52rem !important;
+    min-width: 1.52rem !important;
+    height: 1.52rem !important;
+    min-height: 1.52rem !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button {
+    --r: 1.22rem !important;
+    width: 1.52rem !important;
+    min-width: 1.52rem !important;
+    height: 1.52rem !important;
+    min-height: 1.52rem !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button svg {
+    width: 0.86rem !important;
+    height: 0.86rem !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button::before {
+    border-width: 0.3rem !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button::after,
+  .portal-post-reactions.is-popover .portal-reaction-button .portal-reaction-tooltip::after {
+    margin: -0.38rem !important;
+    background-size: 0.1rem 0.1rem !important;
+  }
+}
+
+/* Final reaction timing pass: animate only the clicked reaction and keep the popover one-line. */
+.portal-post-reactions.portal-reaction-rail.is-popover,
+.portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+  align-items: center !important;
+  justify-content: flex-start !important;
+  height: 1.86rem !important;
+  min-height: 1.86rem !important;
+  max-height: 1.86rem !important;
+  padding: 0.2rem 0.34rem !important;
+  gap: 0.18rem !important;
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
+}
+
+.portal-post-reactions.portal-reaction-rail.is-popover::-webkit-scrollbar,
+.portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover::-webkit-scrollbar {
+  display: none !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-item,
+.portal-post-reactions.is-popover .icon-content {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 1.24rem !important;
+  min-width: 1.24rem !important;
+  height: 1.24rem !important;
+  min-height: 1.24rem !important;
+  overflow: visible !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button {
+  --r: 0.92rem !important;
+  width: 1.24rem !important;
+  min-width: 1.24rem !important;
+  height: 1.24rem !important;
+  min-height: 1.24rem !important;
+  transform: none !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button svg {
+  width: 0.72rem !important;
+  height: 0.72rem !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button:hover,
+.portal-post-reactions.is-popover .portal-reaction-button:focus-visible,
+.portal-post-reactions.is-popover .portal-reaction-button.active {
+  filter: grayscale(0) opacity(1) drop-shadow(0 0 0.24rem var(--reaction-color, currentColor)) !important;
+  transform: none !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button:hover::before,
+.portal-post-reactions.is-popover .portal-reaction-button:focus-visible::before,
+.portal-post-reactions.is-popover .portal-reaction-button.active::before {
+  border-width: 0.2rem !important;
+  transform: scale(0) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button:hover::after,
+.portal-post-reactions.is-popover .portal-reaction-button:focus-visible::after,
+.portal-post-reactions.is-popover .portal-reaction-button.active::after,
+.portal-post-reactions.is-popover .portal-reaction-button:hover .portal-reaction-tooltip::after,
+.portal-post-reactions.is-popover .portal-reaction-button:focus-visible .portal-reaction-tooltip::after,
+.portal-post-reactions.is-popover .portal-reaction-button.active .portal-reaction-tooltip::after {
+  opacity: 0 !important;
+  transform: scale(0) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating {
+  filter: grayscale(0) opacity(1) drop-shadow(0 0 0.2rem var(--reaction-color, currentColor)) !important;
+  transform: scale(1.02) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating::before {
+  border-width: 0 !important;
+  transform: scale(0.62) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating::after,
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating .portal-reaction-tooltip::after {
+  width: var(--r) !important;
+  height: var(--r) !important;
+  margin: -0.22rem !important;
+  background-size: 0 0 !important;
+  opacity: 1 !important;
+  transform: scale(0.36) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating .portal-reaction-tooltip::after {
+  transform: rotate(60deg) scale(0.36) !important;
+}
+
+@media (max-width: 768px) {
+  .portal-post-reactions.portal-reaction-rail.is-popover,
+  .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+    height: 1.78rem !important;
+    min-height: 1.78rem !important;
+    max-height: 1.78rem !important;
+    max-width: calc(100vw - 6.4rem) !important;
+    padding: 0.18rem 0.3rem !important;
+    gap: 0.14rem !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-item,
+  .portal-post-reactions.is-popover .icon-content,
+  .portal-post-reactions.is-popover .portal-reaction-button {
+    --r: 0.86rem !important;
+    width: 1.18rem !important;
+    min-width: 1.18rem !important;
+    height: 1.18rem !important;
+    min-height: 1.18rem !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button svg {
+    width: 0.68rem !important;
+    height: 0.68rem !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button.is-click-animating::after,
+  .portal-post-reactions.is-popover .portal-reaction-button.is-click-animating .portal-reaction-tooltip::after {
+    margin: -0.2rem !important;
+    transform: scale(0.32) !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button.is-click-animating .portal-reaction-tooltip::after {
+    transform: rotate(60deg) scale(0.32) !important;
   }
 }

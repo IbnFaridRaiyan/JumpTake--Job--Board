@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom';
 import ResumeFilePreview from './ResumeFilePreview';
 import { apiUrl } from '../utils/apiUrl';
+import reactionButtonIcon from './media/reaction.png';
 
 const WORK_NEWS_STORAGE_KEY = 'jumptakeWorkNewsPosts';
 const TALENT_STORIES_STORAGE_KEY = 'jumptakeTalentStoriesPosts';
@@ -457,12 +458,12 @@ const SharePostIcon = () => (
         width="16"
         height="16"
         fill="currentColor"
-        className="bi bi-arrow-up-square-fill"
+        className="bi bi-arrow-90deg-right"
         viewBox="0 0 16 16"
         aria-hidden="true"
         focusable="false"
     >
-        <path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0" />
+        <path fillRule="evenodd" d="M14.854 4.854a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 4H3.5A2.5 2.5 0 0 0 1 6.5v8a.5.5 0 0 0 1 0v-8A1.5 1.5 0 0 1 3.5 5h9.793l-3.147 3.146a.5.5 0 0 0 .708.708z" />
     </svg>
 );
 
@@ -708,7 +709,14 @@ const PortalHomeFeed = ({
     const [composerMedia, setComposerMedia] = useState(null);
     const [composerAudience, setComposerAudience] = useState('everyone');
     const [commentDrafts, setCommentDrafts] = useState({});
+    const [openReactionPostId, setOpenReactionPostId] = useState('');
+    const [openCommentPostId, setOpenCommentPostId] = useState('');
+    const [openSharePostId, setOpenSharePostId] = useState('');
+    const [feedFriends, setFeedFriends] = useState([]);
+    const [shareStatus, setShareStatus] = useState('');
+    const [sharingTargetId, setSharingTargetId] = useState('');
     const [visibleReactionTooltip, setVisibleReactionTooltip] = useState('');
+    const [animatingReactionKey, setAnimatingReactionKey] = useState('');
     const [jobReachMap, setJobReachMap] = useState(readJobReachMap);
     const [homeJobLikeMap, setHomeJobLikeMap] = useState(readHomeJobLikeMap);
     const [selectedJob, setSelectedJob] = useState(null);
@@ -724,6 +732,7 @@ const PortalHomeFeed = ({
     const [savingApplicationDraft, setSavingApplicationDraft] = useState(false);
     const applicationResumeInputRef = useRef(null);
     const reactionTooltipTimerRef = useRef(null);
+    const reactionCloseTimerRef = useRef(null);
     const feedScrollTopRef = useRef(0);
     const feedDraftTypingTimerRef = useRef(null);
     const feedDraftTypingTokenRef = useRef(0);
@@ -745,10 +754,100 @@ const PortalHomeFeed = ({
     const authorAvatar = mode === 'employer'
         ? companyData?.logo
         : profileData?.profileImage;
+    const candidateUserId = currentUser?.id || currentUser?._id || currentUser?.userId;
 
     useEffect(() => {
         setActiveTab(defaultTab);
     }, [defaultTab]);
+
+    useEffect(() => {
+        if (!openReactionPostId && !openCommentPostId && !openSharePostId) {
+            return undefined;
+        }
+
+        const closeOpenPostActions = (event) => {
+            if (
+                event.target.closest?.('.portal-post-action-cluster') ||
+                event.target.closest?.('.portal-comment-row')
+            ) {
+                return;
+            }
+
+            if (reactionCloseTimerRef.current) {
+                window.clearTimeout(reactionCloseTimerRef.current);
+                reactionCloseTimerRef.current = null;
+            }
+
+            setOpenReactionPostId('');
+            setOpenCommentPostId('');
+            setOpenSharePostId('');
+            setAnimatingReactionKey('');
+        };
+
+        document.addEventListener('mousedown', closeOpenPostActions);
+        document.addEventListener('touchstart', closeOpenPostActions);
+
+        return () => {
+            document.removeEventListener('mousedown', closeOpenPostActions);
+            document.removeEventListener('touchstart', closeOpenPostActions);
+        };
+    }, [openReactionPostId, openCommentPostId, openSharePostId]);
+
+    useEffect(() => {
+        if (mode !== 'candidate' || !candidateUserId) {
+            setFeedFriends([]);
+            return;
+        }
+
+        let isMounted = true;
+
+        const fetchFeedFriends = async () => {
+            try {
+                const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
+                const response = await fetch(apiUrl(`/api/candidate-connections/user/${candidateUserId}`), {
+                    headers: {
+                        ...(token ? { Authorization: `Bearer ${token}` } : {})
+                    }
+                });
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to load friends');
+                }
+
+                if (!isMounted) {
+                    return;
+                }
+
+                const friends = (Array.isArray(data.friends) ? data.friends : [])
+                    .map((connection) => {
+                        const peer = connection?.peer || {};
+                        return {
+                            id: String(peer.candidateId || peer.userId || connection._id || ''),
+                            candidateId: peer.candidateId || '',
+                            userId: peer.userId || '',
+                            name: peer.name || 'Candidate',
+                            jumptakeId: peer.jumptakeId || '',
+                            profileImage: peer.profileImage || ''
+                        };
+                    })
+                    .filter((friend) => friend.id);
+
+                setFeedFriends(friends);
+            } catch (error) {
+                console.error('Error loading feed friends:', error);
+                if (isMounted) {
+                    setFeedFriends([]);
+                }
+            }
+        };
+
+        fetchFeedFriends();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [mode, candidateUserId]);
 
     useEffect(() => {
         setJobPage(1);
@@ -947,7 +1046,7 @@ const PortalHomeFeed = ({
             'jumptakeCandidateFriends'
         ];
 
-        return possibleKeys.flatMap((key) => {
+        const cachedFriendIds = possibleKeys.flatMap((key) => {
             try {
                 const value = JSON.parse(localStorage.getItem(key) || '[]');
                 return Array.isArray(value)
@@ -957,7 +1056,12 @@ const PortalHomeFeed = ({
                 return [];
             }
         });
-    }, [viewerId]);
+
+        return [...new Set([
+            ...cachedFriendIds,
+            ...feedFriends.map((friend) => String(friend.userId || friend.id)).filter(Boolean)
+        ])];
+    }, [viewerId, feedFriends]);
 
     const canViewPost = (post) => {
         if (!post || typeof post !== 'object') {
@@ -1377,6 +1481,9 @@ const PortalHomeFeed = ({
         if (reactionTooltipTimerRef.current) {
             window.clearTimeout(reactionTooltipTimerRef.current);
         }
+        if (reactionCloseTimerRef.current) {
+            window.clearTimeout(reactionCloseTimerRef.current);
+        }
         if (feedDraftTypingTimerRef.current) {
             window.clearTimeout(feedDraftTypingTimerRef.current);
         }
@@ -1738,16 +1845,22 @@ const PortalHomeFeed = ({
 
     const handleReact = (key, postId, reaction) => {
         const tooltipKey = `${postId}:${reaction}`;
+        const reactionAnimationKey = `${postId}:${reaction}`;
 
         if (reactionTooltipTimerRef.current) {
             window.clearTimeout(reactionTooltipTimerRef.current);
         }
+        if (reactionCloseTimerRef.current) {
+            window.clearTimeout(reactionCloseTimerRef.current);
+            reactionCloseTimerRef.current = null;
+        }
 
         setVisibleReactionTooltip(tooltipKey);
+        setAnimatingReactionKey(reactionAnimationKey);
         reactionTooltipTimerRef.current = window.setTimeout(() => {
             setVisibleReactionTooltip('');
             reactionTooltipTimerRef.current = null;
-        }, 1000);
+        }, 760);
 
         if (reaction === 'Hide') {
             updatePosts(key, (posts) => posts.map((post) => (
@@ -1771,6 +1884,8 @@ const PortalHomeFeed = ({
                 )));
             }
 
+            setOpenReactionPostId('');
+            setAnimatingReactionKey('');
             return;
         }
 
@@ -1798,6 +1913,11 @@ const PortalHomeFeed = ({
                 })()
                 : post
         )));
+        reactionCloseTimerRef.current = window.setTimeout(() => {
+            setOpenReactionPostId('');
+            setAnimatingReactionKey('');
+            reactionCloseTimerRef.current = null;
+        }, 760);
     };
 
     const handleComment = (key, postId) => {
@@ -1829,35 +1949,74 @@ const PortalHomeFeed = ({
                 : post
         )));
         setCommentDrafts((drafts) => ({ ...drafts, [postId]: '' }));
+        setOpenCommentPostId('');
     };
 
-    const handleShare = (postId) => {
-        const target = window.prompt('Enter a candidate name or JumpTake ID to share this with:');
-        if (!target) {
+    const handleShareToFriend = async (key, post, friend) => {
+        const postId = getPostKey(post);
+        if (!friend?.candidateId || !candidateUserId) {
+            setShareStatus('This friend cannot receive messages yet.');
             return;
         }
 
-        updatePosts(WORK_NEWS_STORAGE_KEY, (posts) => posts.map((post) => (
-            getPostKey(post) === postId
-                ? {
-                    ...post,
-                    reach: Number(post.reach || 0) + 1,
-                    comments: [
-                        ...(Array.isArray(post.comments) ? post.comments : []),
-                        {
-                            id: `share-${Date.now()}`,
-                            authorId: viewerId,
-                            authorName,
-                            authorType: mode,
-                            authorAvatar,
-                            text: `Shared with @${target.trim()}`,
-                            mentions: [target.trim()],
-                            createdAt: new Date().toISOString()
-                        }
-                    ]
-                }
-                : post
-        )));
+        setSharingTargetId(friend.id);
+        setShareStatus('');
+
+        try {
+            const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
+            const postText = asDisplayText(post.body, 'a JumpTake post');
+            const bodyHtml = [
+                `<p>${escapeHtml(authorName)} shared a JumpTake post with you.</p>`,
+                `<p>${escapeHtml(postText)}</p>`
+            ].join('');
+
+            const response = await fetch(apiUrl('/api/messages/candidate-direct'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { Authorization: `Bearer ${token}` } : {})
+                },
+                body: JSON.stringify({
+                    senderUserId: candidateUserId,
+                    recipientCandidateId: friend.candidateId,
+                    bodyHtml
+                })
+            });
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Could not share this post.');
+            }
+
+            updatePosts(key, (posts) => posts.map((item) => (
+                getPostKey(item) === postId
+                    ? {
+                        ...item,
+                        reach: Number(item.reach || 0) + 1,
+                        comments: [
+                            ...(Array.isArray(item.comments) ? item.comments : []),
+                            {
+                                id: `share-${Date.now()}`,
+                                authorId: viewerId,
+                                authorName,
+                                authorType: mode,
+                                authorAvatar,
+                                text: `Shared with @${friend.jumptakeId || friend.name}`,
+                                mentions: [friend.jumptakeId || friend.name],
+                                createdAt: new Date().toISOString()
+                            }
+                        ]
+                    }
+                    : item
+            )));
+
+            setShareStatus(`Shared with ${friend.name}.`);
+            setOpenSharePostId('');
+        } catch (error) {
+            setShareStatus(error.message || 'Could not share this post.');
+        } finally {
+            setSharingTargetId('');
+        }
     };
 
     const handleHorizontalRailWheel = useCallback((event) => {
@@ -1919,6 +2078,12 @@ const PortalHomeFeed = ({
                 {visiblePosts.map((post, postIndex) => {
                     const postKey = getPostKey(post, postIndex);
                     const postComments = post.comments;
+                    const selectedReactions = normalizeViewerReactions(getViewerReaction(post, viewerId));
+                    const selectedReaction = selectedReactions[selectedReactions.length - 1] || '';
+                    const isReactionMenuOpen = openReactionPostId === postKey;
+                    const isCommentOpen = openCommentPostId === postKey;
+                    const isShareOpen = openSharePostId === postKey;
+                    const hasViewerComment = postComments.some((comment) => String(comment.authorId || '') === viewerId);
 
                     return (
                     <article key={postKey} className="portal-social-post-card">
@@ -1949,43 +2114,112 @@ const PortalHomeFeed = ({
                                 )}
                             </div>
                         )}
-                        <ul className="portal-post-reactions portal-reaction-rail example-1" aria-label="Post reactions" onWheelCapture={handleHorizontalRailWheel}>
-                            {reactionLabels[kind].map((reaction) => {
-                                const selectedReactions = normalizeViewerReactions(getViewerReaction(post, viewerId));
-                                const isActiveReaction = selectedReactions.includes(reaction);
-                                const reactionCount = getReactionCount(post, reaction);
-                                return (
-                                    <li key={reaction} className="portal-reaction-item icon-content">
-                                        <button
-                                            type="button"
-                                            className={`portal-reaction-button portal-reaction-icon-button link reaction-${reaction.toLowerCase()} ${isActiveReaction ? 'active' : ''} ${visibleReactionTooltip === `${postKey}:${reaction}` ? 'tooltip-visible' : ''}`}
-                                            onClick={() => handleReact(key, postKey, reaction)}
-                                            aria-pressed={isActiveReaction}
-                                            aria-label={`${reaction} reaction`}
-                                            title={reaction}
-                                        >
-                                            <ReactionIcon name={reaction} />
-                                            <ReactionTooltip>{reaction}</ReactionTooltip>
-                                            {reactionCount > 0 && <span className="portal-reaction-count">{reactionCount}</span>}
-                                        </button>
-                                    </li>
-                                );
-                            })}
-                            {mode === 'candidate' && kind === 'work' && (
-                                <li className="portal-reaction-item portal-share-item icon-content">
+                        <div className="portal-post-action-cluster">
+                            {isReactionMenuOpen && (
+                                <ul className="portal-post-reactions portal-reaction-rail example-1 is-popover" aria-label="Post reactions" onWheelCapture={handleHorizontalRailWheel}>
+                                    {reactionLabels[kind].map((reaction) => {
+                                        const isActiveReaction = selectedReactions.includes(reaction);
+                                        const reactionCount = getReactionCount(post, reaction);
+                                        const isAnimatingReaction = animatingReactionKey === `${postKey}:${reaction}`;
+                                        return (
+                                            <li key={reaction} className="portal-reaction-item icon-content">
+                                                <button
+                                                    type="button"
+                                                    className={`portal-reaction-button portal-reaction-icon-button link reaction-${reaction.toLowerCase()} ${isActiveReaction ? 'active' : ''} ${isAnimatingReaction ? 'is-click-animating' : ''} ${visibleReactionTooltip === `${postKey}:${reaction}` ? 'tooltip-visible' : ''}`}
+                                                    onClick={() => handleReact(key, postKey, reaction)}
+                                                    aria-pressed={isActiveReaction}
+                                                    aria-label={`${reaction} reaction`}
+                                                >
+                                                    <ReactionIcon name={reaction} />
+                                                    <ReactionTooltip>{reaction}</ReactionTooltip>
+                                                    {reactionCount > 0 && <span className="portal-reaction-count">{reactionCount}</span>}
+                                                </button>
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            )}
+                            <div className="portal-post-action-row">
+                                <button
+                                    type="button"
+                                    className={`portal-reaction-trigger ${selectedReaction ? `has-reaction reaction-${selectedReaction.toLowerCase()}` : ''}`}
+                                    onClick={() => {
+                                        setOpenReactionPostId((openId) => (openId === postKey ? '' : postKey));
+                                        setOpenCommentPostId('');
+                                        setOpenSharePostId('');
+                                        setAnimatingReactionKey('');
+                                    }}
+                                    aria-expanded={isReactionMenuOpen}
+                                    aria-label="Choose reaction"
+                                >
+                                    {selectedReaction ? (
+                                        <ReactionIcon name={selectedReaction} />
+                                    ) : (
+                                        <img src={reactionButtonIcon} alt="" />
+                                    )}
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`portal-comment-toggle ${hasViewerComment ? 'active' : ''}`}
+                                    onClick={() => {
+                                        setOpenCommentPostId((openId) => (openId === postKey ? '' : postKey));
+                                        setOpenReactionPostId('');
+                                        setOpenSharePostId('');
+                                    }}
+                                    aria-expanded={isCommentOpen}
+                                    aria-label="Comment"
+                                    title="Comment"
+                                >
+                                    <ReactionIcon name="Comment" />
+                                </button>
+                                {mode === 'candidate' && kind === 'work' && (
                                     <button
                                         type="button"
-                                        className="portal-reaction-button portal-reaction-icon-button portal-share-icon-button link reaction-share"
-                                        onClick={() => handleShare(postKey)}
+                                        className={`portal-share-toggle ${isShareOpen ? 'active' : ''}`}
+                                        onClick={() => {
+                                            setOpenSharePostId((openId) => (openId === postKey ? '' : postKey));
+                                            setOpenReactionPostId('');
+                                            setOpenCommentPostId('');
+                                            setShareStatus('');
+                                        }}
+                                        aria-expanded={isShareOpen}
                                         aria-label="Share with friend"
                                         title="Share"
                                     >
                                         <SharePostIcon />
-                                        <ReactionTooltip>Share</ReactionTooltip>
                                     </button>
-                                </li>
-                            )}
-                        </ul>
+                                )}
+                                {isShareOpen && (
+                                    <div className="portal-share-picker" role="dialog" aria-label="Share post with friend">
+                                        <strong>Share with</strong>
+                                        {feedFriends.length ? (
+                                            <div className="portal-share-friend-list">
+                                                {feedFriends.map((friend) => (
+                                                    <button
+                                                        key={friend.id}
+                                                        type="button"
+                                                        className="portal-share-friend"
+                                                        onClick={() => handleShareToFriend(key, post, friend)}
+                                                        disabled={sharingTargetId === friend.id}
+                                                    >
+                                                        <span className="portal-share-friend-avatar">
+                                                            {friend.profileImage ? <img src={friend.profileImage} alt="" /> : friend.name.charAt(0).toUpperCase()}
+                                                        </span>
+                                                        <span>
+                                                            <span className="portal-share-friend-name">{friend.name}</span>
+                                                            {friend.jumptakeId ? <small>{friend.jumptakeId}</small> : null}
+                                                        </span>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <p>No friends to share with yet.</p>
+                                        )}
+                                        {shareStatus && <p className="portal-share-status">{shareStatus}</p>}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                         <div className="portal-post-comments">
                             {postComments.slice(-3).map((comment, commentIndex) => (
                                 <div key={comment.id || `comment-${commentIndex}`} className="portal-comment-item">
@@ -2001,18 +2235,20 @@ const PortalHomeFeed = ({
                                     </p>
                                 </div>
                             ))}
-                            <div className="portal-comment-row">
-                                <input
-                                    type="text"
-                                    value={commentDrafts[postKey] || ''}
-                                    placeholder="Comment or mention with @JumpTakeID..."
-                                    onChange={(event) => setCommentDrafts((drafts) => ({ ...drafts, [postKey]: event.target.value }))}
-                                />
-                                <button type="button" className="portal-comment-button" onClick={() => handleComment(key, postKey)} aria-label="Comment">
-                                    <ReactionIcon name="Comment" />
-                                    <span>Comment</span>
-                                </button>
-                            </div>
+                            {isCommentOpen && (
+                                <div className="portal-comment-row is-open">
+                                    <input
+                                        type="text"
+                                        value={commentDrafts[postKey] || ''}
+                                        placeholder="Comment or mention with @JumpTakeID..."
+                                        onChange={(event) => setCommentDrafts((drafts) => ({ ...drafts, [postKey]: event.target.value }))}
+                                    />
+                                    <button type="button" className="portal-comment-button" onClick={() => handleComment(key, postKey)} aria-label="Post comment">
+                                        <ReactionIcon name="Comment" />
+                                        <span>Post</span>
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </article>
                 );

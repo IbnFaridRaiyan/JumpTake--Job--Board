@@ -121,7 +121,7 @@ const PortalDefaultLanding = ({
                 <p>
                     {isEmployer
                         ? `Welcome back, ${name}. Jump into hiring, talent discovery, and application tracking from one clean starting point.`
-                        : `Welcome back, ${name}. Continue your job search, manage applications, and keep your profile ready from one clean starting point.`}
+                        : `Welcome back, ${name}. Explore your career in a structured way!`}
                 </p>
             </div>
 

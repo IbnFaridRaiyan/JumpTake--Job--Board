@@ -23,6 +23,7 @@ const AssistantChat = ({ title = 'Jumptake chat', className = '', storageKey = '
     const [assistantLoading, setAssistantLoading] = useState(false);
     const [assistantMessages, setAssistantMessages] = useState(createInitialAssistantMessages);
     const messagesRef = useRef(null);
+    const inputRef = useRef(null);
 
     useEffect(() => {
         if (!storageKey || typeof window === 'undefined') {
@@ -52,6 +53,15 @@ const AssistantChat = ({ title = 'Jumptake chat', className = '', storageKey = '
         }
         messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
     }, [assistantMessages, assistantLoading]);
+
+    useEffect(() => {
+        if (!inputRef.current) {
+            return;
+        }
+
+        inputRef.current.style.height = 'auto';
+        inputRef.current.style.height = `${Math.min(inputRef.current.scrollHeight, 96)}px`;
+    }, [assistantInput]);
 
     const clearAssistantChat = () => {
         setAssistantMessages(createInitialAssistantMessages());
@@ -135,18 +145,28 @@ const AssistantChat = ({ title = 'Jumptake chat', className = '', storageKey = '
                 <div className="public-ai-reply-row">
                     <div className="public-ai-reply-field">
                         <AssistantSearchIcon />
-                        <input
-                            type="text"
+                        <textarea
+                            ref={inputRef}
                             value={assistantInput}
                             onChange={(event) => setAssistantInput(event.target.value)}
-                            enterKeyHint="send"
+                            rows={1}
+                            enterKeyHint="enter"
                             placeholder="Ask JumpTake AI"
                         />
                     </div>
                     <button type="submit" className="public-ai-send-button" disabled={assistantLoading || !assistantInput.trim()} aria-label="Send to JumpTake AI">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M3 20 21 12 3 4v6l11 2-11 2v6Z" />
-                        </svg>
+                        <div className="svg-wrapper-1">
+                            <div className="svg-wrapper">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+                                    <path fill="none" d="M0 0h24v24H0z" />
+                                    <path
+                                        fill="currentColor"
+                                        d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
+                                    />
+                                </svg>
+                            </div>
+                        </div>
+                        <span>Send</span>
                     </button>
                 </div>
             </form>

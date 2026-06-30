@@ -49,6 +49,8 @@ const FloatingMessenger = ({
     ));
     const messagesRef = useRef(null);
     const openAssistantOnNextLoadRef = useRef(false);
+    const selectedThreadIdRef = useRef(selectedThreadId);
+    const isMobileViewRef = useRef(isMobileView);
     const openEventName = isEmployer ? 'jumptake-open-employer-messenger' : 'jumptake-open-candidate-messenger';
 
     const endpoint = useMemo(() => (
@@ -69,6 +71,14 @@ const FloatingMessenger = ({
 
     const assistantSelected = selectedThreadId === ASSISTANT_THREAD_ID;
     const selectedThread = assistantSelected ? null : (threads.find((thread) => thread._id === selectedThreadId) || null);
+
+    useEffect(() => {
+        selectedThreadIdRef.current = selectedThreadId;
+    }, [selectedThreadId]);
+
+    useEffect(() => {
+        isMobileViewRef.current = isMobileView;
+    }, [isMobileView]);
 
     const isDirectCandidateThread = (thread) => thread?.conversationType === 'candidate-candidate';
 
@@ -156,12 +166,13 @@ const FloatingMessenger = ({
                     openAssistantOnNextLoadRef.current = false;
                     setSelectedThreadId(ASSISTANT_THREAD_ID);
                 } else {
-                    setSelectedThreadId(isMobileView ? '' : ASSISTANT_THREAD_ID);
+                    setSelectedThreadId(isMobileViewRef.current ? '' : ASSISTANT_THREAD_ID);
                 }
             } else {
-                const threadStillExists = nextThreads.some((thread) => thread._id === selectedThreadId);
-                if (!threadStillExists && selectedThreadId !== ASSISTANT_THREAD_ID) {
-                    setSelectedThreadId(isMobileView ? '' : ASSISTANT_THREAD_ID);
+                const currentSelectedThreadId = selectedThreadIdRef.current;
+                const threadStillExists = nextThreads.some((thread) => thread._id === currentSelectedThreadId);
+                if (!threadStillExists && currentSelectedThreadId !== ASSISTANT_THREAD_ID) {
+                    setSelectedThreadId(isMobileViewRef.current ? '' : ASSISTANT_THREAD_ID);
                 }
             }
         } catch (fetchError) {
@@ -359,9 +370,8 @@ const FloatingMessenger = ({
         }
     };
 
-    const closeAfterAssistantAction = () => {
-        if (typeof window === 'undefined') {
-            handleClose();
+    const minimizeAfterMobileAssistantAction = () => {
+        if (!isMobileViewRef.current || typeof window === 'undefined') {
             return;
         }
 
@@ -380,7 +390,7 @@ const FloatingMessenger = ({
                 name: 'AI Generated Resume',
                 text: answer || question
             }, 'jumptake-resume-playground-ai-draft');
-            closeAfterAssistantAction();
+            minimizeAfterMobileAssistantAction();
             return;
         }
 
@@ -390,7 +400,7 @@ const FloatingMessenger = ({
                 name: 'AI Generated Document',
                 text: answer || question
             }, 'jumptake-resume-playground-ai-draft');
-            closeAfterAssistantAction();
+            minimizeAfterMobileAssistantAction();
             return;
         }
 
@@ -400,7 +410,7 @@ const FloatingMessenger = ({
                 tab: 'create-story',
                 text: answer || question
             }, 'jumptake-feed-ai-draft');
-            closeAfterAssistantAction();
+            minimizeAfterMobileAssistantAction();
             return;
         }
 
@@ -409,7 +419,7 @@ const FloatingMessenger = ({
                 mode: 'employer',
                 text: answer || question
             }, 'jumptake-assessment-ai-draft');
-            closeAfterAssistantAction();
+            minimizeAfterMobileAssistantAction();
             return;
         }
 
@@ -427,7 +437,7 @@ const FloatingMessenger = ({
                 action: 'apply'
             };
             storeAndOpenSection('job-feed', 'jumptakeHomeFeedRequest', request, 'jumptake-home-feed-request');
-            closeAfterAssistantAction();
+            minimizeAfterMobileAssistantAction();
         }
     };
 

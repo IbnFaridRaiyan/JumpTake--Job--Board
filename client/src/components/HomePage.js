@@ -168,6 +168,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const [pendingVideoInterviewCount, setPendingVideoInterviewCount] = useState(0);
     const [pendingInboxCount, setPendingInboxCount] = useState(0);
     const [pendingNotificationCount, setPendingNotificationCount] = useState(0);
+    const [pendingFriendInvitationCount, setPendingFriendInvitationCount] = useState(0);
     const [showInterestPopup, setShowInterestPopup] = useState(false);
     const [selectedJobInterests, setSelectedJobInterests] = useState([]);
     const [interestError, setInterestError] = useState('');
@@ -252,6 +253,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         fetchCandidateNotifications(parsedUser.id);
         fetchCandidateInboxNotifications(parsedUser.id);
         fetchCandidatePortalNotifications(parsedUser.id);
+        fetchCandidateFriendNotifications(parsedUser.id);
 
         let seekerId = parsedUser.jobSeekerId;
 
@@ -504,6 +506,32 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         }
     };
 
+    const fetchCandidateFriendNotifications = async (userId) => {
+        if (!userId) {
+            setPendingFriendInvitationCount(0);
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/candidate-connections/user/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch friend invitations');
+            }
+
+            const data = await response.json();
+            setPendingFriendInvitationCount(Array.isArray(data?.incoming) ? data.incoming.length : 0);
+        } catch (friendError) {
+            console.error('Error fetching candidate friend notifications:', friendError);
+            setPendingFriendInvitationCount(0);
+        }
+    };
+
     const toggleJobInterest = (interest) => {
         setSelectedJobInterests((prevInterests) => (
             prevInterests.includes(interest)
@@ -564,6 +592,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             fetchCandidateNotifications(user.id);
             fetchCandidateInboxNotifications(user.id);
             fetchCandidatePortalNotifications(user.id);
+            fetchCandidateFriendNotifications(user.id);
         }
         if (user?.jobSeekerId) {
             fetchJobSeekerData(user.jobSeekerId);
@@ -635,7 +664,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         { id: 'home', label: 'Dashboard', icon: 'dashboard' },
         { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 },
         { id: 'view-candidates', label: 'View Candidates', icon: 'users' },
-        { id: 'friend-invitations', label: 'Friends', icon: 'user-plus' },
+        { id: 'friend-invitations', label: 'Friends', icon: 'user-plus', notification: pendingFriendInvitationCount > 0 },
         { id: 'bookmarked-candidates', label: 'Bookmarked Candidates', icon: 'heart' },
         { id: 'applications', label: 'My Applications', icon: 'profile' },
         { id: 'assessments', label: 'My Assessments', icon: 'assessment', notification: pendingAssessmentCount > 0 },
@@ -699,6 +728,13 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             window.dispatchEvent(new CustomEvent('jumptake-home-feed-request', { detail: homeFeedRequest }));
             openSection('job-feed');
             return;
+        }
+
+        if (nextSection === 'friend-invitations') {
+            const profileUserId = payload.candidateUserId || payload.userId || payload.requesterId || payload.recipientId;
+            if (profileUserId) {
+                sessionStorage.setItem('jumptakeFriendProfileUserId', String(profileUserId));
+            }
         }
 
         const normalizedSection = normalizeCandidateSection(nextSection);

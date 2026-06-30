@@ -467,6 +467,21 @@ const SharePostIcon = () => (
     </svg>
 );
 
+const PortalCloseIcon = () => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        fill="currentColor"
+        className="bi bi-x"
+        viewBox="0 0 16 16"
+        aria-hidden="true"
+        focusable="false"
+    >
+        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+    </svg>
+);
+
 const PortalActionIcon = ({ type }) => {
     const paths = {
         submit: 'M14.854 3.146a.5.5 0 0 1 0 .708l-7.5 7.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7 10.293l7.146-7.147a.5.5 0 0 1 .708 0',
@@ -697,8 +712,8 @@ const PortalHomeFeed = ({
         { id: 'talent-stories', label: 'Talent Stories' },
         { id: 'work-news', label: 'Work News' },
         { id: 'create-post', label: 'Create Post' },
-        { id: 'my-company-posts', label: 'My Company Posts' },
-        { id: 'my-job-posts', label: 'My Job Posts' }
+        { id: 'my-company-posts', label: 'My News' },
+        { id: 'my-job-posts', label: 'My Jobs' }
     ];
     const tabs = mode === 'employer' ? employerTabs : candidateTabs;
     const defaultTab = mode === 'employer' ? 'talent-stories' : 'work-news';
@@ -2185,7 +2200,7 @@ const PortalHomeFeed = ({
                                         {commentTotal}
                                     </span>
                                 )}
-                                {mode === 'candidate' && kind === 'work' && (
+                                {mode === 'candidate' && (
                                     <button
                                         type="button"
                                         className={`portal-share-toggle ${isShareOpen ? 'active' : ''}`}
@@ -2283,24 +2298,26 @@ const PortalHomeFeed = ({
                 onChange={(event) => setComposerText(event.target.value)}
                 placeholder="Write your post..."
             />
-            <label className="portal-audience-select">
-                Audience
-                <select value={composerAudience} onChange={(event) => setComposerAudience(event.target.value)}>
-                    <option value="everyone">Everyone</option>
-                    <option value="friends">Friends only</option>
-                    <option value="only-me">Only me</option>
-                </select>
-            </label>
-            <div className="portal-post-media-picker">
-                <label>
-                    Add picture or video
-                    <input type="file" accept="image/*,video/*" onChange={handleMediaChange} />
+            <div className="portal-composer-tools">
+                <label className="portal-audience-select">
+                    Audience
+                    <select value={composerAudience} onChange={(event) => setComposerAudience(event.target.value)}>
+                        <option value="everyone">Everyone</option>
+                        <option value="friends">Friends only</option>
+                        <option value="only-me">Only me</option>
+                    </select>
                 </label>
-                {composerMedia && (
-                    <button type="button" className="portal-media-clear-button" onClick={() => setComposerMedia(null)}>
-                        Remove {composerMedia.type}
-                    </button>
-                )}
+                <div className="portal-post-media-picker">
+                    <label>
+                        Add picture or video
+                        <input type="file" accept="image/*,video/*" onChange={handleMediaChange} />
+                    </label>
+                    {composerMedia && (
+                        <button type="button" className="portal-media-clear-button" onClick={() => setComposerMedia(null)}>
+                            Remove {composerMedia.type}
+                        </button>
+                    )}
+                </div>
             </div>
             {composerMedia?.dataUrl && (
                 <div className="portal-post-media portal-post-media-preview">
@@ -2332,7 +2349,7 @@ const PortalHomeFeed = ({
                 <span>{asDisplayText(job.jobType, 'Job type not set')}</span>
             </span>
             <span className="portal-job-meta-chip">
-                <SimpleIcon path={jobMetaIconPaths.salary} />
+                <span className="portal-job-salary-symbol" aria-hidden="true">£</span>
                 <span>{formatSalary(job.salary)}</span>
             </span>
         </div>
@@ -2390,7 +2407,7 @@ const PortalHomeFeed = ({
                 const key = getJobKey(job) || `job-${pageStart + index}`;
                 const jobSkills = Array.isArray(job.skills) ? job.skills : [];
                 const jobRequirements = Array.isArray(job.requirements) ? job.requirements : [];
-                const displaySkills = jobSkills.length ? jobSkills : jobRequirements.slice(0, 4);
+                const displaySkills = (jobSkills.length ? jobSkills : jobRequirements).slice(0, 3);
                 const fit = calculateCandidateFit(job, profileData);
                 const bookmarked = isHomeJobBookmarked(job);
                 const companyInitial = asDisplayText(job.companyName, 'C').charAt(0).toUpperCase();
@@ -2435,6 +2452,7 @@ const PortalHomeFeed = ({
 
                         {displaySkills.length > 0 && (
                             <div className="portal-candidate-job-skills">
+                                <strong>Required skills:</strong>
                                 {displaySkills.slice(0, 8).map((skill, skillIndex) => (
                                     <span key={`${key}-skill-${skillIndex}`}>{skill}</span>
                                 ))}
@@ -2461,8 +2479,12 @@ const PortalHomeFeed = ({
                             >
                                 <ReactionIcon name="Like" />
                                 <ReactionTooltip>Like</ReactionTooltip>
-                                <span className="job-post-reaction-count">{getHomeJobLikeCount(job)}</span>
                             </button>
+                            {getHomeJobLikeCount(job) > 0 && (
+                                <span className="job-post-action-count" aria-label={`${getHomeJobLikeCount(job)} likes`}>
+                                    {getHomeJobLikeCount(job)}
+                                </span>
+                            )}
                             <button
                                 type="button"
                                 className={`job-post-reaction-button job-post-bookmark-reaction reaction-bookmark ${bookmarked ? 'active' : ''}`}
@@ -2474,10 +2496,13 @@ const PortalHomeFeed = ({
                                 <SimpleIcon path={utilityIconPaths.starFill} />
                                 <ReactionTooltip>{bookmarked ? 'Remove bookmark' : 'Bookmark'}</ReactionTooltip>
                             </button>
+                            {bookmarked && (
+                                <span className="job-post-action-count" aria-label="1 bookmark">1</span>
+                            )}
                         </div>
 
                         <div className="portal-candidate-job-footer">
-                            <span>Posted: {safeDateLabel(job.createdAt)}</span>
+                            <span className="portal-candidate-job-posted-date">Posted: {safeDateLabel(job.createdAt)}</span>
                             <button
                                 type="button"
                                 className="portal-view-job-button"
@@ -2747,7 +2772,6 @@ const PortalHomeFeed = ({
         const modalMarkup = (
             <div className="portal-job-modal-backdrop" role="presentation" onClick={closeJobModal}>
                 <article className="portal-job-modal" role="dialog" aria-modal="true" aria-label={`${selectedJob.title} job details`} onClick={(event) => event.stopPropagation()}>
-                    <button type="button" className="portal-job-modal-close" onClick={closeJobModal} aria-label="Close job details">×</button>
                     <div className="portal-candidate-job-header portal-job-modal-header">
                         <div className="portal-job-company-avatar">
                             {selectedJob.companyLogo ? (
@@ -2783,6 +2807,7 @@ const PortalHomeFeed = ({
                         <section className="portal-job-modal-section">
                             <h4>Skills</h4>
                             <div className="portal-candidate-job-skills">
+                                <strong>Required skills:</strong>
                                 {modalSkills.map((skill, index) => (
                                     <span key={`${key}-modal-skill-${index}`}>{skill}</span>
                                 ))}
@@ -2834,8 +2859,8 @@ const PortalHomeFeed = ({
                                             : 'Apply Now'}
                                 </button>
                             )}
-                            <button type="button" className="portal-view-job-button secondary" onClick={closeJobModal}>
-                                Close
+                            <button type="button" className="portal-view-job-button secondary portal-icon-close-button" onClick={closeJobModal} aria-label="Close job details">
+                                <PortalCloseIcon />
                             </button>
                         </div>
                     )}

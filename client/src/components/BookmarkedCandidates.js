@@ -13,6 +13,7 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack }) => {
     const [sendingFriendTo, setSendingFriendTo] = useState('');
     const [likedCandidateIds, setLikedCandidateIds] = useState([]);
     const [candidateLikeCounts, setCandidateLikeCounts] = useState({});
+    const [skillsExpanded, setSkillsExpanded] = useState(false);
     const [isMobileView, setIsMobileView] = useState(() => (
         typeof window !== 'undefined' ? window.innerWidth <= 768 : false
     ));
@@ -32,6 +33,10 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack }) => {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+
+    useEffect(() => {
+        setSkillsExpanded(false);
+    }, [selectedCandidate?._id]);
 
     const bookmarksPerMobilePage = 6;
     const totalPages = Math.max(1, Math.ceil(bookmarks.length / bookmarksPerMobilePage));
@@ -295,6 +300,9 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack }) => {
     };
 
     if (selectedCandidate) {
+        const selectedSkills = getSkillList(selectedCandidate.skills);
+        const visibleSkills = skillsExpanded ? selectedSkills : selectedSkills.slice(0, 5);
+
         return (
             <div className="candidate-profile bookmarked-candidate-profile">
                 <div className="candidate-profile-header">
@@ -314,9 +322,23 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack }) => {
 
                     <div className="profile-section">
                         <h3>Skills</h3>
-                        <div className="skills-container">
-                            {getSkillList(selectedCandidate.skills).length > 0
-                                ? getSkillList(selectedCandidate.skills).map((skill, index) => <span key={index} className="skill-tag">{skill}</span>)
+                        <div className={`skills-container compact-skills-container ${skillsExpanded ? 'is-expanded' : ''}`}>
+                            {selectedSkills.length > 0
+                                ? (
+                                    <>
+                                        {visibleSkills.map((skill, index) => <span key={index} className="skill-tag">{skill}</span>)}
+                                        {selectedSkills.length > 5 && (
+                                            <button
+                                                type="button"
+                                                className="skill-tag skill-expand-button"
+                                                onClick={() => setSkillsExpanded((expanded) => !expanded)}
+                                                aria-expanded={skillsExpanded}
+                                            >
+                                                {skillsExpanded ? '-' : `+${selectedSkills.length - 5}`}
+                                            </button>
+                                        )}
+                                    </>
+                                )
                                 : <p>No skills listed</p>}
                         </div>
                     </div>

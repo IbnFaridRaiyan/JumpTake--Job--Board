@@ -52081,3 +52081,681 @@ select {
     transform: rotate(60deg) scale(0.62) !important;
   }
 }
+
+/* Final job-feed compact card pass: dates, reactions, filters, modal close, and scroll feel. */
+.portal-home-feed,
+.portal-home-feed-scroll {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-y !important;
+}
+
+.portal-home-feed > .portal-home-tabs {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 24 !important;
+  background: rgba(4, 15, 14, 0.82) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  transition: transform 0.24s ease, opacity 0.24s ease !important;
+}
+
+.portal-home-feed.is-tabs-hidden > .portal-home-tabs {
+  transform: translateY(-120%) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.portal-candidate-job-card {
+  position: relative !important;
+  display: grid !important;
+  gap: 0.58rem !important;
+  min-height: 0 !important;
+  padding: 1rem 1.1rem 1.05rem !important;
+  overflow: hidden !important;
+}
+
+.portal-candidate-job-description {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: normal !important;
+}
+
+.portal-job-meta-icons {
+  gap: 0.44rem !important;
+}
+
+.portal-job-meta-chip,
+.portal-job-meta-chip svg,
+.portal-job-salary-symbol {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+.portal-job-meta-chip {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.portal-job-meta-chip > span:last-child {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.portal-job-salary-symbol {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 1rem !important;
+  height: 1rem !important;
+  font-size: 0.95rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+}
+
+.portal-candidate-job-skills {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 0.34rem !important;
+  max-height: 2.45rem !important;
+  overflow: hidden !important;
+}
+
+.portal-candidate-job-skills strong {
+  color: #ffffff !important;
+  font-size: 0.78rem !important;
+  font-weight: 900 !important;
+}
+
+.portal-candidate-job-skills span {
+  max-width: 10rem !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  background: #03251e !important;
+  border-color: rgba(34, 197, 94, 0.34) !important;
+  color: #dffcf2 !important;
+}
+
+.portal-candidate-job-stats {
+  margin: 0.15rem 0 !important;
+}
+
+.job-post-action-reactions {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.44rem !important;
+  width: max-content !important;
+  max-width: 100% !important;
+  min-height: 2.45rem !important;
+  margin: 0.12rem 0 0 !important;
+  padding: 0.32rem 0.52rem !important;
+  border: 1px solid rgba(94, 234, 212, 0.18) !important;
+  border-radius: 999px !important;
+  background: #000000 !important;
+  overflow: visible !important;
+}
+
+.job-post-reaction-button {
+  position: relative !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 1.7rem !important;
+  min-width: 1.7rem !important;
+  height: 1.7rem !important;
+  min-height: 1.7rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+  color: #c7c7c7 !important;
+  box-shadow: none !important;
+}
+
+.job-post-reaction-button svg {
+  width: 1.03rem !important;
+  height: 1.03rem !important;
+  color: currentColor !important;
+  fill: currentColor !important;
+}
+
+.job-post-like-reaction.active {
+  color: #3b82f6 !important;
+}
+
+.job-post-bookmark-reaction.active {
+  color: #facc15 !important;
+}
+
+.job-post-action-count {
+  min-width: 0.78rem !important;
+  margin-left: -0.32rem !important;
+  color: #c7c7c7 !important;
+  font-size: 0.88rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+}
+
+.job-post-reaction-count {
+  display: none !important;
+}
+
+.portal-candidate-job-footer {
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: space-between !important;
+  gap: 0.75rem !important;
+  margin-top: 0.15rem !important;
+}
+
+.portal-candidate-job-posted-date {
+  margin-left: auto !important;
+  order: 2 !important;
+  color: rgba(255, 255, 255, 0.68) !important;
+  font-size: 0.68rem !important;
+  line-height: 1 !important;
+  text-align: right !important;
+  white-space: nowrap !important;
+}
+
+.portal-candidate-job-footer .portal-view-job-button {
+  order: 1 !important;
+}
+
+.portal-job-filter-bar {
+  align-items: end !important;
+}
+
+.portal-job-filter-bar label select {
+  cursor: pointer !important;
+}
+
+.portal-job-modal {
+  position: relative !important;
+}
+
+.portal-job-modal-close {
+  position: fixed !important;
+  top: max(0.7rem, env(safe-area-inset-top)) !important;
+  right: max(0.7rem, env(safe-area-inset-right)) !important;
+  z-index: 10050 !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 2.35rem !important;
+  height: 2.35rem !important;
+  border-radius: 50% !important;
+}
+
+@media (max-width: 768px) {
+  .portal-home-feed > .portal-home-tabs {
+    top: 0 !important;
+    margin-bottom: 0.62rem !important;
+  }
+
+  .portal-candidate-job-list {
+    gap: 0.72rem !important;
+  }
+
+  .portal-job-filter-bar {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    align-items: end !important;
+    gap: 0.38rem !important;
+    padding: 0.42rem !important;
+    border-radius: 0.72rem !important;
+  }
+
+  .portal-job-filter-bar label {
+    gap: 0.18rem !important;
+    font-size: 0.68rem !important;
+  }
+
+  .portal-job-filter-bar label svg {
+    width: 0.72rem !important;
+    height: 0.72rem !important;
+  }
+
+  .portal-job-filter-bar label select {
+    min-height: 1.86rem !important;
+    padding: 0.28rem 0.48rem !important;
+    border-radius: 0.52rem !important;
+    font-size: 0.68rem !important;
+  }
+
+  .portal-job-filter-clear {
+    grid-column: 1 / -1 !important;
+    min-height: 1.8rem !important;
+    padding: 0.26rem 0.5rem !important;
+    font-size: 0.68rem !important;
+  }
+
+  .portal-candidate-job-card {
+    gap: 0.48rem !important;
+    padding: 0.82rem 0.78rem 0.86rem !important;
+  }
+
+  .portal-candidate-job-header h3 {
+    font-size: 0.98rem !important;
+    line-height: 1.05 !important;
+  }
+
+  .portal-candidate-job-header p,
+  .portal-job-meta-chip,
+  .portal-candidate-job-description,
+  .portal-candidate-job-skills strong,
+  .portal-candidate-job-skills span {
+    font-size: 0.68rem !important;
+  }
+
+  .portal-job-meta-icons {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 0.18rem !important;
+  }
+
+  .portal-candidate-job-description {
+    -webkit-line-clamp: 1 !important;
+  }
+
+  .portal-candidate-job-skills {
+    max-height: 1.95rem !important;
+  }
+
+  .portal-candidate-job-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.36rem !important;
+  }
+
+  .portal-candidate-job-stat {
+    min-height: 1.84rem !important;
+    padding: 0.34rem 0.42rem !important;
+    font-size: 0.66rem !important;
+  }
+
+  .job-post-action-reactions {
+    min-height: 2.24rem !important;
+    padding: 0.24rem 0.46rem !important;
+  }
+
+  .job-post-reaction-button {
+    width: 1.52rem !important;
+    min-width: 1.52rem !important;
+    height: 1.52rem !important;
+    min-height: 1.52rem !important;
+  }
+
+  .portal-candidate-job-footer {
+    align-items: center !important;
+    margin-top: 0 !important;
+  }
+
+  .portal-candidate-job-posted-date {
+    font-size: 0.62rem !important;
+  }
+
+  .portal-candidate-job-footer .portal-view-job-button,
+  .portal-job-modal-actions .portal-view-job-button {
+    min-height: 2.05rem !important;
+    padding: 0.34rem 0.68rem !important;
+    font-size: 0.72rem !important;
+  }
+
+  .portal-job-modal {
+    padding-top: 3.25rem !important;
+  }
+
+  .portal-job-modal-close {
+    top: max(0.55rem, env(safe-area-inset-top)) !important;
+    right: max(0.62rem, env(safe-area-inset-right)) !important;
+    width: 2.18rem !important;
+    height: 2.18rem !important;
+  }
+
+  .floating-messenger-panel.is-mobile-chat-open .floating-messenger-mobile-close,
+  .floating-messenger-panel.is-mobile .floating-messenger-mobile-close,
+  .floating-messenger-panel.is-mobile .floating-messenger-close {
+    position: fixed !important;
+    top: max(0.7rem, env(safe-area-inset-top)) !important;
+    right: max(0.72rem, env(safe-area-inset-right)) !important;
+    z-index: 10070 !important;
+  }
+}
+
+/* Final polish for feed actions, composer tools, close buttons, skills, and touch scrolling. */
+.portal-social-post-card,
+.portal-post-media,
+.portal-social-list,
+.portal-candidate-job-list,
+.portal-home-feed-scroll > * {
+  touch-action: pan-y !important;
+  overscroll-behavior-y: contain !important;
+}
+
+.portal-post-action-row {
+  min-height: 2.05rem !important;
+  gap: 0.24rem !important;
+  padding: 0.22rem 0.42rem !important;
+  border-radius: 999px !important;
+}
+
+.portal-reaction-trigger,
+.portal-comment-toggle,
+.portal-share-toggle {
+  width: 1.42rem !important;
+  min-width: 1.42rem !important;
+  height: 1.42rem !important;
+  min-height: 1.42rem !important;
+  padding: 0 !important;
+}
+
+.portal-reaction-trigger svg,
+.portal-comment-toggle svg,
+.portal-share-toggle svg {
+  width: 0.88rem !important;
+  height: 0.88rem !important;
+}
+
+.portal-reaction-trigger img {
+  width: 1rem !important;
+  height: 1rem !important;
+}
+
+.portal-reaction-trigger-count,
+.portal-comment-trigger-count {
+  min-width: 0.62rem !important;
+  margin-left: -0.16rem !important;
+  color: #c7c7c7 !important;
+  font-size: 0.76rem !important;
+  line-height: 1 !important;
+}
+
+.portal-post-reactions.portal-reaction-rail.is-popover {
+  min-height: 2.15rem !important;
+  height: 2.15rem !important;
+  padding: 0.18rem 0.46rem !important;
+  align-items: center !important;
+  overflow-y: hidden !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button {
+  width: 1.36rem !important;
+  min-width: 1.36rem !important;
+  height: 1.36rem !important;
+  min-height: 1.36rem !important;
+  place-items: center !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button svg {
+  width: 0.82rem !important;
+  height: 0.82rem !important;
+  align-self: center !important;
+  justify-self: center !important;
+  transform: none !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating,
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating svg {
+  transform: none !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating::before,
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating::after,
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating .portal-reaction-tooltip::after {
+  align-self: center !important;
+  justify-self: center !important;
+  margin: 0 !important;
+  transform-origin: center center !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating::before {
+  transform: scale(0.82) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating::after {
+  transform: scale(0.52) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button.is-click-animating .portal-reaction-tooltip::after {
+  transform: rotate(60deg) scale(0.52) !important;
+}
+
+.portal-post-composer {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(12rem, 18rem) !important;
+  align-items: start !important;
+  gap: 0.7rem 1rem !important;
+}
+
+.portal-post-composer > h3,
+.portal-post-composer > p {
+  grid-column: 1 !important;
+}
+
+.portal-post-composer > textarea,
+.portal-post-composer > .portal-post-media-preview,
+.portal-post-composer > .settings-button {
+  grid-column: 1 / -1 !important;
+}
+
+.portal-composer-tools {
+  grid-column: 2 !important;
+  grid-row: 1 / span 2 !important;
+  align-self: start !important;
+  justify-self: end !important;
+  display: grid !important;
+  width: min(18rem, 100%) !important;
+  gap: 0.45rem !important;
+}
+
+.portal-composer-tools .portal-audience-select,
+.portal-composer-tools .portal-post-media-picker {
+  margin: 0 !important;
+}
+
+.portal-composer-tools .portal-post-media-picker {
+  align-items: end !important;
+}
+
+.portal-icon-close-button,
+.post-job-close-button {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 2.5rem !important;
+  min-width: 2.5rem !important;
+  max-width: 2.5rem !important;
+  height: 2.5rem !important;
+  min-height: 2.5rem !important;
+  padding: 0 !important;
+  color: #ffffff !important;
+}
+
+.portal-icon-close-button:hover,
+.portal-icon-close-button:focus-visible,
+.portal-icon-close-button:active,
+.post-job-close-button:hover,
+.post-job-close-button:focus-visible,
+.post-job-close-button:active,
+.floating-messenger-close:hover,
+.floating-messenger-close:focus-visible,
+.floating-messenger-close:active,
+.floating-messenger-mobile-close:hover,
+.floating-messenger-mobile-close:focus-visible,
+.floating-messenger-mobile-close:active {
+  color: #ef4444 !important;
+}
+
+.portal-icon-close-button svg,
+.post-job-close-button svg,
+.floating-messenger-close svg,
+.floating-messenger-mobile-close svg {
+  width: 1.28rem !important;
+  height: 1.28rem !important;
+  color: currentColor !important;
+  fill: currentColor !important;
+}
+
+.floating-messenger-close,
+.floating-messenger-mobile-close {
+  color: #ffffff !important;
+  display: inline-grid !important;
+  place-items: center !important;
+}
+
+.form-actions .post-job-close-button {
+  flex: 0 0 2.5rem !important;
+}
+
+.skill-tag,
+.candidate-skill-tag,
+.skill-tags .skill-tag,
+.skills-container .skill-tag,
+.preview-skills .skill-tag,
+.job-skills .skill-tag,
+.public-job-feed-skills span,
+.portal-candidate-job-skills span {
+  background: #03251e !important;
+  border-color: rgba(34, 197, 94, 0.34) !important;
+  color: #dffcf2 !important;
+}
+
+.compact-skills-container {
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.compact-skills-container .skill-expand-button {
+  cursor: pointer !important;
+  border: 1px solid rgba(34, 197, 94, 0.45) !important;
+  font-weight: 900 !important;
+}
+
+.job-management-nav {
+  gap: 0.42rem !important;
+}
+
+.job-management-nav button {
+  min-height: 2.45rem !important;
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.84rem !important;
+  line-height: 1.15 !important;
+}
+
+@media (max-width: 768px) {
+  .portal-post-action-row {
+    min-height: 1.92rem !important;
+    gap: 0.2rem !important;
+    padding: 0.18rem 0.34rem !important;
+  }
+
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle {
+    width: 1.3rem !important;
+    min-width: 1.3rem !important;
+    height: 1.3rem !important;
+    min-height: 1.3rem !important;
+  }
+
+  .portal-reaction-trigger svg,
+  .portal-comment-toggle svg,
+  .portal-share-toggle svg {
+    width: 0.8rem !important;
+    height: 0.8rem !important;
+  }
+
+  .portal-reaction-trigger img {
+    width: 0.92rem !important;
+    height: 0.92rem !important;
+  }
+
+  .portal-reaction-trigger-count,
+  .portal-comment-trigger-count {
+    font-size: 0.7rem !important;
+  }
+
+  .portal-post-reactions.portal-reaction-rail.is-popover {
+    min-height: 2rem !important;
+    height: 2rem !important;
+    padding: 0.14rem 0.34rem !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button {
+    width: 1.22rem !important;
+    min-width: 1.22rem !important;
+    height: 1.22rem !important;
+    min-height: 1.22rem !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button svg {
+    width: 0.74rem !important;
+    height: 0.74rem !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button.is-click-animating::before {
+    transform: scale(0.78) !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button.is-click-animating::after {
+    transform: scale(0.48) !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button.is-click-animating .portal-reaction-tooltip::after {
+    transform: rotate(60deg) scale(0.48) !important;
+  }
+
+  .portal-post-composer {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .portal-post-composer > h3,
+  .portal-post-composer > p,
+  .portal-post-composer > textarea,
+  .portal-post-composer > .portal-post-media-preview,
+  .portal-post-composer > .settings-button,
+  .portal-composer-tools {
+    grid-column: 1 !important;
+  }
+
+  .portal-composer-tools {
+    grid-row: auto !important;
+    justify-self: stretch !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: end !important;
+    width: 100% !important;
+  }
+
+  .portal-composer-tools .portal-post-media-picker {
+    justify-self: end !important;
+  }
+
+  .portal-icon-close-button,
+  .post-job-close-button {
+    width: 2.25rem !important;
+    min-width: 2.25rem !important;
+    max-width: 2.25rem !important;
+    height: 2.25rem !important;
+    min-height: 2.25rem !important;
+  }
+
+  .portal-job-modal-actions {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: center !important;
+  }
+
+  .job-management-nav button {
+    min-height: 2.2rem !important;
+    padding: 0.42rem 0.58rem !important;
+    font-size: 0.74rem !important;
+  }
+}

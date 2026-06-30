@@ -47,6 +47,22 @@ const FriendInvitations = ({ userId }) => {
                 throw new Error(data.error || 'Failed to load friend invitations');
             }
             setConnections(data);
+            const targetUserId = sessionStorage.getItem('jumptakeFriendProfileUserId');
+            if (targetUserId) {
+                const allConnections = [
+                    ...(Array.isArray(data.incoming) ? data.incoming : []),
+                    ...(Array.isArray(data.outgoing) ? data.outgoing : []),
+                    ...(Array.isArray(data.friends) ? data.friends : [])
+                ];
+                const matchedConnection = allConnections.find((connection) => (
+                    String(connection?.peer?.userId || '') === String(targetUserId)
+                ));
+                if (matchedConnection) {
+                    setSelectedCandidate(getCandidateFromConnection(matchedConnection));
+                    setActiveTab(matchedConnection.status === 'accepted' ? 'friends' : 'incoming');
+                    sessionStorage.removeItem('jumptakeFriendProfileUserId');
+                }
+            }
             setError('');
         } catch (fetchError) {
             setError(fetchError.message || 'Failed to load friend invitations.');

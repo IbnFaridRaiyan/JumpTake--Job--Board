@@ -334,6 +334,23 @@ const respondToConnection = async (req, res) => {
         }
 
         await connection.save();
+
+        if (action === 'accept') {
+            const recipientProfile = await JobSeeker.findOne({ user: connection.recipient }).select('name');
+            await createNotification({
+                recipientType: 'candidate',
+                recipientId: connection.requester,
+                title: 'Friend request accepted',
+                message: `${recipientProfile?.name || 'A candidate'} accepted your friend request.`,
+                section: 'friend-invitations',
+                actionLabel: 'View profile',
+                payload: {
+                    connectionId: String(connection._id),
+                    candidateUserId: String(connection.recipient)
+                }
+            });
+        }
+
         return res.status(200).json({ message: `Invitation ${action}ed`, connection });
     } catch (error) {
         return res.status(error.status || 500).json({ error: error.message || 'Failed to update friend invitation' });

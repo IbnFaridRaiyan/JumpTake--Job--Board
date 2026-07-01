@@ -56795,3 +56795,479 @@ html[data-theme="light"] .unread-badge {
     max-width: none !important;
   }
 }
+
+/* Light-mode cleanup pass: remove dark leftovers and bordered icon boxes. */
+html[data-theme="light"] :is(
+  .dashboard-header,
+  .candidate-dashboard-header,
+  .employer-dashboard-header,
+  .portal-dashboard-identity,
+  .candidate-dashboard-identity,
+  .employer-dashboard-identity,
+  .dashboard-logo-button,
+  .dashboard-logo-static,
+  .portal-header-ai-action,
+  .portal-ai-top-button,
+  .dashboard-search,
+  .dashboard-search-compact,
+  .input__container,
+  .portal-default-search-mainbox
+) {
+  background: #f7f3ec !important;
+  background-color: #f7f3ec !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: #111827 !important;
+}
+
+html[data-theme="light"] :is(.dashboard-header, .candidate-dashboard-header, .employer-dashboard-header) {
+  border: 1px solid #eadfd2 !important;
+}
+
+html[data-theme="light"] :is(.dashboard-logo-button, .dashboard-logo-static, .portal-header-ai-action, .portal-ai-top-button) {
+  border: 0 !important;
+  outline: 0 !important;
+}
+
+html[data-theme="light"] :is(.candidate-dashboard-logo, .employer-dashboard-logo, .dashboard-logo-button img) {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .portal-ai-top-button,
+html[data-theme="light"] .input__button__shadow,
+html[data-theme="light"] .dashboard-search-button,
+html[data-theme="light"] .search-button,
+html[data-theme="light"] .clear-dashboard-search {
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0.28rem !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #111827 !important;
+}
+
+html[data-theme="light"] .portal-ai-top-button :is(svg, path),
+html[data-theme="light"] .input__button__shadow :is(svg, path),
+html[data-theme="light"] .dashboard-search-button :is(svg, path),
+html[data-theme="light"] .search-button :is(svg, path) {
+  color: #f97316 !important;
+  fill: none;
+  stroke: currentColor;
+}
+
+html[data-theme="light"] .input__container {
+  transform: none !important;
+  perspective: none !important;
+  padding: 0.42rem 0.6rem !important;
+  gap: 0.35rem !important;
+  border-radius: 999px !important;
+}
+
+html[data-theme="light"] .shadow__input {
+  display: none !important;
+}
+
+html[data-theme="light"] .input__search,
+html[data-theme="light"] .portal-default-search-input {
+  background: #fffaf4 !important;
+  background-color: #fffaf4 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+}
+
+html[data-theme="light"] .portal-default-search-input::placeholder,
+html[data-theme="light"] .input__search::placeholder {
+  color: #6b7280 !important;
+  -webkit-text-fill-color: #6b7280 !important;
+}
+
+html[data-theme="light"] .portal-default-search-icon {
+  fill: #f97316 !important;
+  color: #f97316 !important;
+}
+
+html[data-theme="light"] :is(
+  .portal-default-landing,
+  .portal-default-hero,
+  .portal-default-copy,
+  .portal-default-title-animated,
+  .portal-default-title-brand
+) {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .portal-default-landing {
+  overflow: visible !important;
+}
+
+html[data-theme="light"] .portal-default-hero {
+  padding-top: clamp(2rem, 4vw, 3.2rem) !important;
+  overflow: visible !important;
+}
+
+html[data-theme="light"] .portal-default-title-animated {
+  display: block !important;
+  overflow: visible !important;
+  line-height: 1.08 !important;
+  padding: 0.08rem 0 0.22rem !important;
+  margin: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+}
+
+html[data-theme="light"] .portal-default-title-animated span {
+  display: inline !important;
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+}
+
+html[data-theme="light"] .portal-default-title-animated .portal-default-title-brand {
+  color: #7f1d1d !important;
+  -webkit-text-fill-color: #7f1d1d !important;
+}
+
+html[data-theme="light"] .portal-default-kicker {
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+}
+
+html[data-theme="light"] :is(
+  .portal-default-action,
+  .portal-default-stat,
+  .portal-home-tab,
+  .sidebar__link,
+  .portal-uiverse-sidebar button,
+  .portal-uiverse-sidebar a,
+  .portal-uiverse-rail button,
+  .portal-uiverse-rail a,
+  .icon-button,
+  .action-icon-button,
+  .profile-icon-button,
+  .settings-icon-button,
+  .more-button,
+  .ellipsis-button,
+  .bookmark-star-button,
+  .portal-glass-mini-button,
+  .portal-reaction-button,
+  .portal-comment-toggle,
+  .portal-share-button,
+  .portal-share-toggle,
+  .portal-job-like-toggle,
+  .portal-job-bookmark-toggle,
+  .post-menu-button,
+  .more-options-button
+) {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] :is(
+  .portal-default-action,
+  .portal-home-tab,
+  .sidebar__link,
+  .portal-uiverse-sidebar button,
+  .portal-uiverse-sidebar a,
+  .portal-uiverse-rail button,
+  .portal-uiverse-rail a,
+  .icon-button,
+  .action-icon-button,
+  .profile-icon-button,
+  .settings-icon-button,
+  .more-button,
+  .ellipsis-button,
+  .bookmark-star-button,
+  .portal-glass-mini-button,
+  .portal-reaction-button,
+  .portal-comment-toggle,
+  .portal-share-button,
+  .portal-share-toggle,
+  .portal-job-like-toggle,
+  .portal-job-bookmark-toggle,
+  .post-menu-button,
+  .more-options-button
+) {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+html[data-theme="light"] .portal-default-stat {
+  background: #fffaf4 !important;
+  background-color: #fffaf4 !important;
+  border: 1px solid #eadfd2 !important;
+}
+
+html[data-theme="light"] .portal-uiverse-sidebar :is(.sidebar__link, button, a)::before,
+html[data-theme="light"] .portal-uiverse-sidebar :is(.sidebar__link, button, a)::after,
+html[data-theme="light"] .portal-uiverse-rail :is(.sidebar__link, button, a)::before,
+html[data-theme="light"] .portal-uiverse-rail :is(.sidebar__link, button, a)::after,
+html[data-theme="light"] .portal-home-tab::after,
+html[data-theme="light"] .portal-default-action::before,
+html[data-theme="light"] .portal-default-action::after {
+  display: none !important;
+  content: none !important;
+}
+
+html[data-theme="light"] .portal-uiverse-sidebar :is(.sidebar__link.is-active, .sidebar__link.active, button.is-active, a.is-active),
+html[data-theme="light"] .portal-uiverse-rail :is(.sidebar__link.is-active, .sidebar__link.active, button.is-active, a.is-active) {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+html[data-theme="light"] .portal-uiverse-sidebar :is(.sidebar__link.is-active, .sidebar__link.active, button.is-active, a.is-active) :is(svg, i, .icon),
+html[data-theme="light"] .portal-uiverse-rail :is(.sidebar__link.is-active, .sidebar__link.active, button.is-active, a.is-active) :is(svg, i, .icon) {
+  color: #2563eb !important;
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+html[data-theme="light"] .portal-home-feed > .portal-home-tabs,
+html[data-theme="light"] .portal-home-tabs {
+  background: #fffaf4 !important;
+  background-color: #fffaf4 !important;
+  border: 1px solid #eadfd2 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .portal-home-tabs .portal-home-tab,
+html[data-theme="light"] .portal-home-feed > .portal-home-tabs .portal-home-tab {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #111827 !important;
+}
+
+html[data-theme="light"] .portal-home-tab svg {
+  color: #ffffff !important;
+  filter: drop-shadow(0 1px 1px rgba(17, 24, 39, 0.55)) !important;
+}
+
+html[data-theme="light"] .portal-home-tab-work-news.active,
+html[data-theme="light"] .portal-home-tab-work-news.active svg {
+  color: #d97706 !important;
+}
+
+html[data-theme="light"] .portal-home-tab-job-posts.active,
+html[data-theme="light"] .portal-home-tab-job-posts.active svg,
+html[data-theme="light"] .portal-home-tab-my-job-posts.active,
+html[data-theme="light"] .portal-home-tab-my-job-posts.active svg {
+  color: #0ea5e9 !important;
+}
+
+html[data-theme="light"] .portal-home-tab-talent-stories.active,
+html[data-theme="light"] .portal-home-tab-talent-stories.active svg,
+html[data-theme="light"] .portal-home-tab-my-feed.active,
+html[data-theme="light"] .portal-home-tab-my-feed.active svg {
+  color: #8b5cf6 !important;
+}
+
+html[data-theme="light"] .portal-home-tab-create-story.active,
+html[data-theme="light"] .portal-home-tab-create-story.active svg,
+html[data-theme="light"] .portal-home-tab-create-post.active,
+html[data-theme="light"] .portal-home-tab-create-post.active svg {
+  color: #f97316 !important;
+}
+
+html[data-theme="light"] .portal-home-tab-my-company-posts.active,
+html[data-theme="light"] .portal-home-tab-my-company-posts.active svg {
+  color: #d97706 !important;
+}
+
+html[data-theme="light"] .portal-home-tab.active svg {
+  filter: none !important;
+}
+
+html[data-theme="light"] :is(
+  .portal-social-post-card,
+  .portal-candidate-job-card,
+  .portal-job-summary-card,
+  .portal-post-composer,
+  .portal-feed-empty,
+  .post-card,
+  .feed-post-card,
+  .job-post-card,
+  .company-update-card,
+  .talent-story-card,
+  .fresh-application-card,
+  .application-card,
+  .assessment-card,
+  .video-interview-card,
+  .draft-application-card,
+  .bookmarked-job-card,
+  .saved-post-card,
+  .interested-job-card,
+  .notification-card,
+  .friend-card,
+  .profile-card,
+  .profile-section,
+  .company-profile-card,
+  .settings-card,
+  .post-job-card,
+  .post-job-form,
+  .form-card
+) {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  border-color: #eadfd2 !important;
+  color: #111827 !important;
+}
+
+html[data-theme="light"] :is(
+  .portal-candidate-job-skills span,
+  .skill-tag,
+  .candidate-skill-tag,
+  .profile-skill-tag,
+  .skills-tags .skill-tag,
+  .skills-container .skill-tag,
+  .preview-skills .skill-tag,
+  .job-skills .skill-tag,
+  .public-job-feed-skills span,
+  .compact-skills-container span,
+  .tag,
+  .chip,
+  .preference-chip,
+  .preference-tag
+) {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  border: 1px solid rgba(17, 24, 39, 0.32) !important;
+  box-shadow: none !important;
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+}
+
+html[data-theme="light"] :is(
+  .job-interest-grid button.selected,
+  .interested-job-suggestion-section .job-interest-grid button.selected,
+  .job-interest-modal .job-interest-grid button.selected,
+  .preference-chip.selected,
+  .preference-tag.selected,
+  .chip.selected,
+  .skill-tag.skill-match,
+  .candidate-skill-tag.spotlight
+) {
+  background: #fff7ed !important;
+  background-color: #fff7ed !important;
+  border-color: #f97316 !important;
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+}
+
+html[data-theme="light"] :is(
+  .portal-post-action-row,
+  .portal-post-action-cluster,
+  .portal-post-reactions,
+  .portal-post-reactions.portal-reaction-rail,
+  .portal-social-post-card .portal-post-reactions,
+  .portal-social-post-card .portal-post-reactions.portal-reaction-rail,
+  .job-post-action-row,
+  .job-post-action-reactions,
+  .portal-candidate-job-reactions,
+  .post-action-row,
+  .reaction-row
+) {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] :is(
+  .portal-reaction-popover,
+  .reaction-popover,
+  .share-popover,
+  .portal-share-picker,
+  .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover
+) {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  border: 0 !important;
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.14) !important;
+}
+
+html[data-theme="light"] :is(
+  .portal-glass-mini-button,
+  .portal-reaction-button,
+  .portal-comment-toggle,
+  .portal-share-button,
+  .portal-share-toggle,
+  .portal-job-like-toggle,
+  .portal-job-bookmark-toggle
+) :is(svg, i, .icon, span, strong) {
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+}
+
+html[data-theme="light"] .portal-candidate-job-reactions .portal-job-bookmark-toggle.active :is(svg, span),
+html[data-theme="light"] .portal-job-bookmark-toggle.active :is(svg, span) {
+  color: #facc15 !important;
+  -webkit-text-fill-color: #facc15 !important;
+}
+
+html[data-theme="light"] .portal-job-like-toggle.active :is(svg, span) {
+  color: #0ea5e9 !important;
+  -webkit-text-fill-color: #0ea5e9 !important;
+}
+
+html[data-theme="light"] :is(
+  .card,
+  .panel,
+  .modal-content,
+  .modal-card,
+  .job-interest-modal,
+  .preferences-panel,
+  .dashboard-stat-card,
+  .portal-stat-card,
+  .job-stat-card,
+  .metric-card,
+  .info-card,
+  .summary-card,
+  .empty-state
+) {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
+html[data-theme="light"] :is(
+  .black,
+  .dark,
+  .glass,
+  .glass-card,
+  .dark-card
+) {
+  color: #111827 !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme="light"] .dashboard-header,
+  html[data-theme="light"] .candidate-dashboard-header,
+  html[data-theme="light"] .employer-dashboard-header {
+    background: #f7f3ec !important;
+    border-color: #eadfd2 !important;
+    box-shadow: none !important;
+  }
+
+  html[data-theme="light"] .portal-default-title-animated {
+    font-size: clamp(2.15rem, 12vw, 3.2rem) !important;
+    line-height: 1.04 !important;
+    padding-bottom: 0.3rem !important;
+  }
+
+  html[data-theme="light"] .portal-uiverse-sidebar :is(.sidebar__link, button, a) {
+    border: 0 !important;
+    box-shadow: none !important;
+    outline: 0 !important;
+  }
+}

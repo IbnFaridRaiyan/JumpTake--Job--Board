@@ -53774,3 +53774,269 @@ select {
     justify-content: flex-end;
   }
 }
+
+/* Screenshot 177-179 refinements: messenger back behavior, smoother feed scroll, and lower reaction rail. */
+@media (max-width: 768px) {
+  .floating-messenger-list-bottom-back {
+    align-items: center !important;
+    background: transparent !important;
+    border: 0 !important;
+    bottom: max(1.05rem, env(safe-area-inset-bottom)) !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    font: inherit !important;
+    font-size: 1.45rem !important;
+    height: 2.5rem !important;
+    justify-content: center !important;
+    left: 50% !important;
+    line-height: 1 !important;
+    min-height: 2.5rem !important;
+    min-width: 2.5rem !important;
+    padding: 0 !important;
+    position: fixed !important;
+    transform: translateX(-50%) !important;
+    width: 2.5rem !important;
+    z-index: 10075 !important;
+  }
+
+  .floating-messenger-list-bottom-back:hover,
+  .floating-messenger-list-bottom-back:focus-visible,
+  .floating-messenger-list-bottom-back:active {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+  }
+
+  .portal-home-feed-scroll,
+  .home-page .portal-home-feed-scroll {
+    scroll-behavior: smooth !important;
+  }
+
+  .portal-post-action-cluster {
+    gap: 0.02rem !important;
+  }
+
+  .portal-post-reactions.portal-reaction-rail.is-popover,
+  .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+    margin-bottom: 0.08rem !important;
+    padding: 0.16rem 0.34rem 0.12rem !important;
+    transform: translateY(-0.46rem) !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-item,
+  .portal-post-reactions.is-popover .icon-content {
+    transform: translateY(0) !important;
+  }
+
+  .portal-post-action-row,
+  .job-post-action-reactions {
+    margin-top: -0.08rem !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .portal-post-action-cluster {
+    gap: 0.04rem !important;
+  }
+
+  .portal-post-reactions.portal-reaction-rail.is-popover,
+  .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+    margin-bottom: 0.1rem !important;
+    padding-top: 0.14rem !important;
+    transform: translateY(-0.52rem) !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-item,
+  .portal-post-reactions.is-popover .icon-content {
+    transform: translateY(0.02rem) !important;
+  }
+}
+
+/* Screenshot 180-182: compact post cards, close author/title alignment, and smaller action rail shell. */
+.portal-social-post-card {
+  padding: 0.86rem 0.92rem !important;
+}
+
+.portal-social-list {
+  gap: 0.72rem !important;
+}
+
+.portal-social-post-header {
+  align-items: start !important;
+  column-gap: 0.42rem !important;
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+  row-gap: 0.2rem !important;
+}
+
+.portal-post-avatar {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  margin: 0 !important;
+}
+
+.portal-post-title-block {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  margin: 0 !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+}
+
+.portal-post-author-name,
+.portal-social-post-header h3 {
+  line-height: 1.05 !important;
+  margin: 0 0 0.16rem !important;
+}
+
+.portal-social-post-header p {
+  line-height: 1.12 !important;
+  margin: 0 !important;
+}
+
+.portal-post-header-actions {
+  align-items: center !important;
+  grid-column: 3 !important;
+  grid-row: 1 !important;
+  justify-self: end !important;
+  margin: -0.14rem 0 0 0.28rem !important;
+}
+
+.portal-post-reach {
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+  justify-self: start !important;
+  margin: 0.12rem 0 0 !important;
+  white-space: nowrap !important;
+}
+
+.portal-post-body {
+  margin: 0.62rem 0 0.55rem !important;
+}
+
+.portal-post-media {
+  margin: 0.52rem 0 0.58rem !important;
+}
+
+.portal-post-action-cluster {
+  gap: 0 !important;
+  margin-top: 0.22rem !important;
+}
+
+.portal-post-action-row,
+.job-post-action-reactions {
+  min-height: 1.9rem !important;
+  padding: 0.07rem 0.42rem !important;
+}
+
+.portal-post-comments {
+  margin-top: 0.42rem !important;
+}
+
+.portal-comment-item {
+  margin-top: 0.32rem !important;
+}
+
+.portal-candidate-job-card {
+  gap: 0.48rem !important;
+  min-height: 0 !important;
+  padding: 0.9rem 2.45rem 0.92rem 0.92rem !important;
+}
+
+.portal-candidate-job-header {
+  gap: 0.42rem !important;
+  margin-bottom: 0.35rem !important;
+}
+
+.portal-candidate-job-header h3,
+.portal-candidate-job-header p {
+  margin: 0 !important;
+}
+
+.portal-job-meta-icons {
+  gap: 0.28rem 0.5rem !important;
+  margin: 0.28rem 0 !important;
+}
+
+.portal-candidate-job-description {
+  margin: 0.38rem 0 !important;
+}
+
+.portal-candidate-job-skills {
+  gap: 0.28rem !important;
+  margin: 0.32rem 0 !important;
+}
+
+.portal-candidate-job-stats {
+  gap: 0.34rem !important;
+  margin: 0.44rem 0 !important;
+}
+
+.portal-candidate-job-footer {
+  margin-top: 0.44rem !important;
+}
+
+@media (max-width: 768px) {
+  .portal-social-post-card {
+    padding: 0.74rem 0.72rem !important;
+  }
+
+  .portal-social-list {
+    gap: 0.58rem !important;
+  }
+
+  .portal-social-post-header {
+    column-gap: 0.34rem !important;
+    row-gap: 0.16rem !important;
+  }
+
+  .portal-post-header-actions {
+    margin-top: -0.18rem !important;
+  }
+
+  .portal-post-options-button {
+    height: 1.24rem !important;
+    min-height: 1.24rem !important;
+    min-width: 1.24rem !important;
+    width: 1.24rem !important;
+  }
+
+  .portal-post-options-button svg {
+    height: 0.72rem !important;
+    width: 0.72rem !important;
+  }
+
+  .portal-post-reach {
+    margin-top: 0.08rem !important;
+  }
+
+  .portal-post-body {
+    margin: 0.52rem 0 0.42rem !important;
+  }
+
+  .portal-post-media {
+    margin: 0.42rem 0 0.48rem !important;
+  }
+
+  .portal-post-action-row,
+  .job-post-action-reactions {
+    min-height: 1.62rem !important;
+    padding: 0.03rem 0.36rem !important;
+  }
+
+  .portal-post-action-cluster {
+    margin-top: 0.14rem !important;
+  }
+
+  .portal-candidate-job-card {
+    padding: 0.76rem 2.15rem 0.78rem 0.76rem !important;
+  }
+
+  .portal-job-card-options {
+    right: 0.52rem !important;
+    top: 0.52rem !important;
+  }
+}

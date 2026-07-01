@@ -603,7 +603,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
     return (
         <div ref={talentPoolRef} className={`talent-pool-container ${mode === 'candidate' ? 'candidate-view-candidates' : ''}`}>
             <div className="talent-pool-header">
-                <h2>{mode === 'candidate' ? 'View Candidates' : 'Talent Pool'}</h2>
+                <h2>{mode === 'candidate' ? 'Candidates' : 'Talent Pool'}</h2>
                 {mode === 'employer' && (
                     <div className="talent-pool-header-actions">
                         <button

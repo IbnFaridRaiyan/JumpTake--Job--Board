@@ -2538,7 +2538,7 @@ const PortalHomeFeed = ({
 
         const delta = feedTouchRef.current.y - event.touches[0].clientY;
         event.preventDefault();
-        event.currentTarget.scrollTop = feedTouchRef.current.scrollTop + (delta * 0.28);
+        event.currentTarget.scrollTop = feedTouchRef.current.scrollTop + (delta * 0.36);
     }, []);
 
     const renderPostList = (posts, key, kind) => {
@@ -2584,7 +2584,7 @@ const PortalHomeFeed = ({
                                     <span className="portal-default-profile-icon"><DefaultProfileIcon /></span>
                                 )}
                             </div>
-                            <div>
+                            <div className="portal-post-title-block">
                                 <h3 className="portal-post-author-name">{asDisplayText(post.authorName, 'Unknown author')}</h3>
                                 <p>{post.authorType === 'employer' ? 'Company update' : 'Talent story'} - {safeDateLabel(post.createdAt)}</p>
                                 {post.audience && post.audience !== 'everyone' && (
@@ -2592,7 +2592,6 @@ const PortalHomeFeed = ({
                                 )}
                             </div>
                             <div className="portal-post-header-actions">
-                                <span className="portal-post-reach">{formatCompactCount(post.reach || 0)} reach</span>
                                 <span className="portal-post-options-wrap">
                                     <button
                                         type="button"
@@ -2620,6 +2619,7 @@ const PortalHomeFeed = ({
                                     )}
                                 </span>
                             </div>
+                            <span className="portal-post-reach">{formatCompactCount(post.reach || 0)} reach</span>
                         </div>
                         {asDisplayText(post.body) && <p className="portal-post-body">{asDisplayText(post.body)}</p>}
                         {post.media?.dataUrl && (

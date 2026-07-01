@@ -64,6 +64,7 @@ const FloatingMessenger = ({
     ));
     const messagesRef = useRef(null);
     const openAssistantOnNextLoadRef = useRef(false);
+    const assistantDirectOpenRef = useRef(false);
     const selectedThreadIdRef = useRef(selectedThreadId);
     const isMobileViewRef = useRef(isMobileView);
     const openEventName = isEmployer ? 'jumptake-open-employer-messenger' : 'jumptake-open-candidate-messenger';
@@ -240,6 +241,7 @@ const FloatingMessenger = ({
         const handleOpenEvent = (event) => {
             const shouldOpenAssistant = event?.detail?.assistant === true;
             openAssistantOnNextLoadRef.current = shouldOpenAssistant;
+            assistantDirectOpenRef.current = shouldOpenAssistant;
             setOpen(true);
             if (shouldOpenAssistant) {
                 setSelectedThreadId(ASSISTANT_THREAD_ID);
@@ -266,6 +268,7 @@ const FloatingMessenger = ({
     }, [message]);
 
     const handleOpen = () => {
+        assistantDirectOpenRef.current = false;
         setOpen(true);
         if (isMobileView) {
             setSelectedThreadId('');
@@ -279,18 +282,26 @@ const FloatingMessenger = ({
         setReplyHtml('');
         setMessage('');
         setError('');
+        assistantDirectOpenRef.current = false;
     };
 
     const handleSelectThread = (threadId) => {
+        assistantDirectOpenRef.current = false;
         setSelectedThreadId(threadId);
         onSeen?.();
     };
 
     const handleBackToThreadList = () => {
+        if (assistantSelected && assistantDirectOpenRef.current) {
+            handleClose();
+            return;
+        }
+
         setSelectedThreadId('');
         setReplyHtml('');
         setMessage('');
         setError('');
+        assistantDirectOpenRef.current = false;
     };
 
     const sendReply = async () => {
@@ -521,6 +532,16 @@ const FloatingMessenger = ({
                                     </>
                                 )}
                             </div>
+                            {isMobileView && !mobileChatOpen && (
+                                <button
+                                    type="button"
+                                    className="floating-messenger-list-bottom-back"
+                                    onClick={handleClose}
+                                    aria-label="Back to previous page"
+                                >
+                                    {'<'}
+                                </button>
+                            )}
                         </aside>
 
                         <section className="floating-messenger-chat">

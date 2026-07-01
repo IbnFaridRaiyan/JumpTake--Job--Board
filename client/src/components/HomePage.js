@@ -217,7 +217,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         'bookmarked-jobs': 'Bookmarked Jobs',
         'saved-posts': 'Saved Posts',
         notifications: 'Notifications',
-        'view-candidates': 'View Candidates',
+        'view-candidates': 'Candidates',
         'friend-invitations': 'Friends',
         'bookmarked-candidates': 'Bookmarked Candidates',
         'interested-jobs': 'Job Preferences',
@@ -670,7 +670,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const candidatePrimaryNavItems = [
         { id: 'home', label: 'Dashboard', icon: 'dashboard' },
         { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 },
-        { id: 'view-candidates', label: 'View Candidates', icon: 'users' },
+        { id: 'view-candidates', label: 'Candidates', icon: 'users' },
         { id: 'friend-invitations', label: 'Friends', icon: 'user-plus', notification: pendingFriendInvitationCount > 0 },
         { id: 'bookmarked-candidates', label: 'Bookmarked Candidates', icon: 'heart' },
         { id: 'applications', label: 'My Applications', icon: 'profile' },

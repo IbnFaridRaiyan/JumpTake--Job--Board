@@ -12,6 +12,8 @@ const RESUME_PLAYGROUND_STORAGE_KEY = 'jumptakeResumePlayground:';
 const SAVED_POSTS_STORAGE_PREFIX = 'jumptakeSavedPosts:';
 const BLOCKED_FEED_AUTHORS_STORAGE_PREFIX = 'jumptakeBlockedFeedAuthors:';
 const HOME_JOB_PAGE_SIZE = 7;
+const MOBILE_FEED_TOUCH_SCROLL_RATIO = 0.5;
+const MOBILE_FEED_TOUCH_MAX_STEP = 90;
 
 const escapeHtml = (value = '') => (
     String(value)
@@ -349,6 +351,54 @@ const getSalarySortValue = (salary) => {
         .filter((value) => value !== null);
 
     return values.length ? Math.max(...values) : null;
+};
+
+const JOB_FIELD_KEYWORDS = [
+    ['Marketing', ['marketing', 'seo', 'social media', 'brand', 'content', 'campaign', 'communications', 'digital marketing']],
+    ['Computing', ['computing', 'computer science', 'software', 'developer', 'programmer', 'coding', 'web developer', 'frontend', 'backend']],
+    ['IT', [' it ', 'information technology', 'technical support', 'helpdesk', 'network', 'systems', 'cyber', 'cloud', 'infrastructure']],
+    ['Business', ['business', 'commercial', 'strategy', 'operations', 'sales', 'account manager', 'customer success', 'management']],
+    ['Finance', ['finance', 'accounting', 'audit', 'tax', 'banking', 'investment', 'payroll', 'analyst']],
+    ['Engineering', ['engineering', 'engineer', 'mechanical', 'electrical', 'civil', 'manufacturing', 'maintenance']],
+    ['Data', ['data', 'analytics', 'analyst', 'bi', 'excel', 'sql', 'machine learning', 'ai']],
+    ['Design', ['design', 'designer', 'ux', 'ui', 'creative', 'graphics', 'product design']],
+    ['Healthcare', ['healthcare', 'health', 'medical', 'nurse', 'clinical', 'care']],
+    ['Education', ['education', 'teacher', 'teaching', 'training', 'school', 'tutor']],
+    ['Legal', ['legal', 'law', 'compliance', 'solicitor', 'paralegal']],
+    ['Human Resources', ['human resources', ' hr ', 'recruitment', 'talent acquisition', 'people team']],
+    ['Logistics', ['logistics', 'supply chain', 'warehouse', 'transport', 'procurement']],
+    ['Science', ['science', 'laboratory', 'lab', 'biology', 'chemistry', 'physics', 'research']]
+];
+
+const getJobField = (job) => {
+    const explicitField = asDisplayText(
+        job?.field
+        || job?.jobField
+        || job?.category
+        || job?.industry
+        || job?.company?.industry
+    ).trim();
+
+    if (explicitField && !/not set|unavailable/i.test(explicitField)) {
+        return explicitField;
+    }
+
+    const haystack = [
+        job?.title,
+        job?.companyName,
+        job?.description,
+        job?.summary,
+        job?.about,
+        ...normalizeTextList(job?.skills),
+        ...normalizeTextList(job?.requirements),
+        ...normalizeTextList(job?.responsibilities)
+    ].map((value) => ` ${asDisplayText(value).toLowerCase()} `).join(' ');
+
+    const match = JOB_FIELD_KEYWORDS.find(([, keywords]) => (
+        keywords.some((keyword) => haystack.includes(keyword.toLowerCase()))
+    ));
+
+    return match?.[0] || 'General';
 };
 
 const normalizePostComments = (comments) => (
@@ -718,6 +768,7 @@ const normalizeHomeJobForDisplay = (job, index = 0) => {
         companyLogo: getCompanyLogoFromJob(source),
         location: asDisplayText(source?.location, 'Location not set'),
         jobType: asDisplayText(source?.jobType, asDisplayText(source?.type, 'Job type not set')),
+        jobField: getJobField(source),
         salary: asDisplayText(source?.salary, ''),
         applicationLink: asDisplayText(source?.applicationLink, asDisplayText(source?.applyLink, asDisplayText(source?.externalApplyLink, ''))),
         jobNumber: asDisplayText(source?.jobNumber, asDisplayText(source?.reference, 'Not assigned')),
@@ -861,6 +912,8 @@ const PortalHomeFeed = ({
     const [jobPage, setJobPage] = useState(1);
     const [homeJobLocationFilter, setHomeJobLocationFilter] = useState('');
     const [homeJobSalarySort, setHomeJobSalarySort] = useState('');
+    const [homeJobTypeFilter, setHomeJobTypeFilter] = useState('');
+    const [homeJobFieldFilter, setHomeJobFieldFilter] = useState('');
     const [activeDraftId, setActiveDraftId] = useState(null);
     const [savingApplicationDraft, setSavingApplicationDraft] = useState(false);
     const applicationResumeInputRef = useRef(null);
@@ -868,6 +921,12 @@ const PortalHomeFeed = ({
     const reactionCloseTimerRef = useRef(null);
     const feedScrollTopRef = useRef(0);
     const tabsHiddenRef = useRef(false);
+    const feedTouchScrollRef = useRef({
+        active: false,
+        lastY: 0,
+        pendingDelta: 0,
+        frameId: null
+    });
     const pendingDeepLinkRef = useRef(null);
     const feedDraftTypingTimerRef = useRef(null);
     const feedDraftTypingTokenRef = useRef(0);
@@ -1004,15 +1063,37 @@ const PortalHomeFeed = ({
         )].sort((a, b) => a.localeCompare(b))
     ), [safeJobs]);
 
+    const availableHomeJobTypes = useMemo(() => (
+        [...new Set(
+            safeJobs
+                .map((job) => asDisplayText(job.jobType).trim())
+                .filter((jobType) => jobType && !/not set/i.test(jobType))
+        )].sort((a, b) => a.localeCompare(b))
+    ), [safeJobs]);
+
+    const availableHomeJobFields = useMemo(() => (
+        [...new Set(
+            safeJobs
+                .map((job) => asDisplayText(job.jobField || getJobField(job)).trim())
+                .filter(Boolean)
+        )].sort((a, b) => a.localeCompare(b))
+    ), [safeJobs]);
+
     const filteredHomeJobs = useMemo(() => {
         const locationFilter = homeJobLocationFilter.trim().toLowerCase();
+        const typeFilter = homeJobTypeFilter.trim().toLowerCase();
+        const fieldFilter = homeJobFieldFilter.trim().toLowerCase();
         const visibleJobs = safeJobs.filter((job) => {
             const companyKey = String(job?.companyId || job?.company?._id || job?.companyName || '');
             return !companyKey || !blockedFeedAuthors.includes(companyKey);
         });
-        const filteredJobs = locationFilter
-            ? visibleJobs.filter((job) => asDisplayText(job.location).trim().toLowerCase() === locationFilter)
-            : visibleJobs;
+        const filteredJobs = visibleJobs.filter((job) => {
+            const matchesLocation = !locationFilter || asDisplayText(job.location).trim().toLowerCase() === locationFilter;
+            const matchesType = !typeFilter || asDisplayText(job.jobType).trim().toLowerCase() === typeFilter;
+            const matchesField = !fieldFilter || asDisplayText(job.jobField || getJobField(job)).trim().toLowerCase() === fieldFilter;
+
+            return matchesLocation && matchesType && matchesField;
+        });
         const sortedJobs = [...filteredJobs];
 
         if (homeJobSalarySort === 'salary-high') {
@@ -1022,11 +1103,11 @@ const PortalHomeFeed = ({
         }
 
         return sortedJobs;
-    }, [safeJobs, homeJobLocationFilter, homeJobSalarySort, blockedFeedAuthors]);
+    }, [safeJobs, homeJobLocationFilter, homeJobSalarySort, homeJobTypeFilter, homeJobFieldFilter, blockedFeedAuthors]);
 
     useEffect(() => {
         setJobPage(1);
-    }, [homeJobLocationFilter, homeJobSalarySort]);
+    }, [homeJobLocationFilter, homeJobSalarySort, homeJobTypeFilter, homeJobFieldFilter]);
 
     useEffect(() => {
         let isMounted = true;
@@ -1241,6 +1322,14 @@ const PortalHomeFeed = ({
     };
 
     useEffect(() => {
+        const touchState = feedTouchScrollRef.current;
+        touchState.active = false;
+        touchState.lastY = 0;
+        touchState.pendingDelta = 0;
+        if (touchState.frameId && typeof window !== 'undefined') {
+            window.cancelAnimationFrame(touchState.frameId);
+            touchState.frameId = null;
+        }
         tabsHiddenRef.current = false;
         setTabsHidden(false);
         feedScrollTopRef.current = 0;
@@ -1764,6 +1853,8 @@ const PortalHomeFeed = ({
             setActiveTab('job-posts');
             setHomeJobLocationFilter('');
             setHomeJobSalarySort('');
+            setHomeJobTypeFilter('');
+            setHomeJobFieldFilter('');
             if (matchingIndex >= 0) {
                 setJobPage(Math.floor(matchingIndex / HOME_JOB_PAGE_SIZE) + 1);
             }
@@ -1867,6 +1958,8 @@ const PortalHomeFeed = ({
             const matchedJob = safeJobs[matchIndex];
             setHomeJobLocationFilter('');
             setHomeJobSalarySort('');
+            setHomeJobTypeFilter('');
+            setHomeJobFieldFilter('');
             setJobPage(Math.floor(matchIndex / HOME_JOB_PAGE_SIZE) + 1);
 
             const scheduleFrame = window.requestAnimationFrame || ((callback) => window.setTimeout(callback, 0));
@@ -2510,6 +2603,78 @@ const PortalHomeFeed = ({
         feedScrollTopRef.current = nextScrollTop;
     }, []);
 
+    const stopMobileFeedTouchScroll = useCallback(() => {
+        const touchState = feedTouchScrollRef.current;
+        touchState.active = false;
+        touchState.lastY = 0;
+        touchState.pendingDelta = 0;
+
+        if (touchState.frameId && typeof window !== 'undefined') {
+            window.cancelAnimationFrame(touchState.frameId);
+        }
+
+        touchState.frameId = null;
+    }, []);
+
+    const handleMobileFeedTouchStart = useCallback((event) => {
+        const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+        const target = event.target;
+        const isEditingField = target?.closest?.('input, textarea, select, [contenteditable="true"]');
+
+        if (!isMobile || event.touches.length !== 1 || isEditingField) {
+            stopMobileFeedTouchScroll();
+            return;
+        }
+
+        const touchState = feedTouchScrollRef.current;
+        touchState.active = true;
+        touchState.lastY = event.touches[0].clientY;
+        touchState.pendingDelta = 0;
+    }, [stopMobileFeedTouchScroll]);
+
+    const handleMobileFeedTouchMove = useCallback((event) => {
+        const touchState = feedTouchScrollRef.current;
+
+        if (!touchState.active || event.touches.length !== 1) {
+            return;
+        }
+
+        const scroller = event.currentTarget;
+        const nextY = event.touches[0].clientY;
+        const rawDelta = touchState.lastY - nextY;
+        touchState.lastY = nextY;
+
+        if (Math.abs(rawDelta) < 1) {
+            return;
+        }
+
+        if (event.cancelable) {
+            event.preventDefault();
+        }
+
+        const limitedDelta = Math.sign(rawDelta) * Math.min(
+            Math.abs(rawDelta) * MOBILE_FEED_TOUCH_SCROLL_RATIO,
+            MOBILE_FEED_TOUCH_MAX_STEP
+        );
+        touchState.pendingDelta += limitedDelta;
+
+        if (touchState.frameId || typeof window === 'undefined') {
+            return;
+        }
+
+        touchState.frameId = window.requestAnimationFrame(() => {
+            const nextScrollTop = scroller.scrollTop + touchState.pendingDelta;
+            touchState.pendingDelta = 0;
+            touchState.frameId = null;
+            scroller.scrollTop = nextScrollTop;
+            feedScrollTopRef.current = scroller.scrollTop;
+        });
+    }, []);
+
+    useEffect(() => () => {
+        stopMobileFeedTouchScroll();
+    }, [stopMobileFeedTouchScroll]);
+
     const renderPostList = (posts, key, kind) => {
         const safePosts = Array.isArray(posts)
             ? posts
@@ -2875,13 +3040,35 @@ const PortalHomeFeed = ({
                                 <option value="salary-low">Lowest salary</option>
                             </select>
                         </label>
-                        {(homeJobLocationFilter || homeJobSalarySort) && (
+                        <label>
+                            <PortalActionIcon type="filter" />
+                            <span>Job type</span>
+                            <select value={homeJobTypeFilter} onChange={(event) => setHomeJobTypeFilter(event.target.value)}>
+                                <option value="">All job types</option>
+                                {availableHomeJobTypes.map((jobType) => (
+                                    <option key={jobType} value={jobType}>{jobType}</option>
+                                ))}
+                            </select>
+                        </label>
+                        <label>
+                            <PortalActionIcon type="filter" />
+                            <span>Job field</span>
+                            <select value={homeJobFieldFilter} onChange={(event) => setHomeJobFieldFilter(event.target.value)}>
+                                <option value="">All job fields</option>
+                                {availableHomeJobFields.map((jobField) => (
+                                    <option key={jobField} value={jobField}>{jobField}</option>
+                                ))}
+                            </select>
+                        </label>
+                        {(homeJobLocationFilter || homeJobSalarySort || homeJobTypeFilter || homeJobFieldFilter) && (
                             <button
                                 type="button"
                                 className="portal-job-filter-clear"
                                 onClick={() => {
                                     setHomeJobLocationFilter('');
                                     setHomeJobSalarySort('');
+                                    setHomeJobTypeFilter('');
+                                    setHomeJobFieldFilter('');
                                 }}
                             >
                                 Clear filters
@@ -3446,6 +3633,10 @@ const PortalHomeFeed = ({
             <div
                 className="portal-home-feed-scroll"
                 onScroll={handleFeedScroll}
+                onTouchStart={handleMobileFeedTouchStart}
+                onTouchMove={handleMobileFeedTouchMove}
+                onTouchEnd={stopMobileFeedTouchScroll}
+                onTouchCancel={stopMobileFeedTouchScroll}
             >
                 {feedLoading ? <div className="loading-spinner">Loading live feed...</div> : null}
                 {activeTab === 'work-news' && renderPostList(workNewsPosts, WORK_NEWS_STORAGE_KEY, 'work')}

@@ -50119,7 +50119,7 @@ select {
 
 .portal-job-filter-bar {
   display: grid;
-  grid-template-columns: repeat(2, minmax(10rem, 1fr)) auto;
+  grid-template-columns: repeat(2, minmax(10rem, 1fr));
   align-items: end;
   gap: 0.65rem;
   width: 100%;
@@ -50151,6 +50151,8 @@ select {
 }
 
 .portal-job-filter-clear {
+  justify-self: start;
+  grid-column: 1 / -1;
   min-height: 2.25rem;
   border: 1px solid rgba(170, 180, 184, 0.5);
   border-radius: 999px;

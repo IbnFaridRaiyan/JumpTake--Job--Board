@@ -12,7 +12,6 @@ const RESUME_PLAYGROUND_STORAGE_KEY = 'jumptakeResumePlayground:';
 const SAVED_POSTS_STORAGE_PREFIX = 'jumptakeSavedPosts:';
 const BLOCKED_FEED_AUTHORS_STORAGE_PREFIX = 'jumptakeBlockedFeedAuthors:';
 const HOME_JOB_PAGE_SIZE = 7;
-const MOBILE_FEED_TOUCH_SCROLL_SPEED = 0.5;
 
 const escapeHtml = (value = '') => (
     String(value)
@@ -883,7 +882,6 @@ const PortalHomeFeed = ({
     const reactionTooltipTimerRef = useRef(null);
     const reactionCloseTimerRef = useRef(null);
     const feedScrollTopRef = useRef(0);
-    const feedTouchRef = useRef({ y: 0, scrollTop: 0 });
     const pendingDeepLinkRef = useRef(null);
     const feedDraftTypingTimerRef = useRef(null);
     const feedDraftTypingTokenRef = useRef(0);
@@ -2521,33 +2519,6 @@ const PortalHomeFeed = ({
         feedScrollTopRef.current = nextScrollTop;
     }, []);
 
-    const handleFeedTouchStart = useCallback((event) => {
-        if (typeof window === 'undefined' || window.innerWidth > 768 || !event.touches?.length) {
-            return;
-        }
-
-        feedTouchRef.current = {
-            y: event.touches[0].clientY,
-            scrollTop: event.currentTarget.scrollTop
-        };
-    }, []);
-
-    const handleFeedTouchMove = useCallback((event) => {
-        if (typeof window === 'undefined' || window.innerWidth > 768 || !event.touches?.length) {
-            return;
-        }
-
-        const delta = feedTouchRef.current.y - event.touches[0].clientY;
-        event.preventDefault();
-        const nextScrollTop = feedTouchRef.current.scrollTop + (delta * MOBILE_FEED_TOUCH_SCROLL_SPEED);
-        event.currentTarget.scrollTop = nextScrollTop;
-        feedScrollTopRef.current = nextScrollTop;
-
-        if (Math.abs(delta) > 12) {
-            setTabsHidden(delta > 0);
-        }
-    }, []);
-
     const renderPostList = (posts, key, kind) => {
         const safePosts = Array.isArray(posts)
             ? posts
@@ -3478,8 +3449,6 @@ const PortalHomeFeed = ({
             <div
                 className="portal-home-feed-scroll"
                 onScroll={handleFeedScroll}
-                onTouchStart={handleFeedTouchStart}
-                onTouchMove={handleFeedTouchMove}
             >
                 {feedLoading ? <div className="loading-spinner">Loading live feed...</div> : null}
                 {activeTab === 'work-news' && renderPostList(workNewsPosts, WORK_NEWS_STORAGE_KEY, 'work')}
@@ -3496,3 +3465,4 @@ const PortalHomeFeed = ({
 };
 
 export default PortalHomeFeed;
+

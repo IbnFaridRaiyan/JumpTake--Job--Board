@@ -53383,10 +53383,10 @@ select {
 @media (max-width: 768px) {
   .portal-home-feed-scroll,
   .home-page .portal-home-feed-scroll {
-    -webkit-overflow-scrolling: auto !important;
+    -webkit-overflow-scrolling: touch !important;
     overscroll-behavior: contain !important;
-    scroll-behavior: auto !important;
-    touch-action: none !important;
+    scroll-behavior: smooth !important;
+    touch-action: pan-y !important;
   }
 
   .portal-post-reactions.portal-reaction-rail.is-popover,
@@ -54109,10 +54109,10 @@ select {
   .portal-home-feed,
   .portal-home-feed-scroll,
   .home-page .portal-home-feed-scroll {
-    -webkit-overflow-scrolling: auto !important;
+    -webkit-overflow-scrolling: touch !important;
     overscroll-behavior-y: contain !important;
-    scroll-behavior: auto !important;
-    touch-action: none !important;
+    scroll-behavior: smooth !important;
+    touch-action: pan-y !important;
   }
 
   .portal-social-post-header {

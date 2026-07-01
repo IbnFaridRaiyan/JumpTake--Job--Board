@@ -282,7 +282,7 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
                                     <button className="view-profile-btn secondary-action" onClick={() => openJob(job?._id, 'preview')}>
                                         Open Job
                                     </button>
-                                    <button className="view-profile-btn" onClick={() => openJob(job?._id, 'apply')} disabled={hasApplied}>
+                                    <button className="view-profile-btn sky-apply-button" onClick={() => openJob(job?._id, 'apply')} disabled={hasApplied}>
                                         {hasApplied ? 'Applied' : 'Apply Now'}
                                     </button>
                                 </div>

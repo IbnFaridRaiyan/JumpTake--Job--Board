@@ -1577,7 +1577,7 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                                     <div className="job-card-footer">
                                         <span className="posted-date">Posted: {new Date(job.createdAt).toLocaleDateString()}</span>
                                         <button 
-                                            className="apply-button"
+                                            className="apply-button sky-apply-button"
                                             onClick={(e) => handleApplyClick(job, e)}
                                             disabled={hasApplied}
                                         >
@@ -1804,7 +1804,7 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                                         {companyLoading ? 'Opening...' : 'View Company'}
                                     </button>
                                     <button
-                                        className="preview-apply-button"
+                                        className="preview-apply-button sky-apply-button"
                                         onClick={(e) => handleApplyClick(previewJob, e)}
                                         disabled={appliedJobIds.includes(String(previewJob._id))}
                                     >

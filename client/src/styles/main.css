@@ -55123,3 +55123,122 @@ select {
     white-space: nowrap !important;
   }
 }
+
+/* Screenshot 221 refinements: portal tabs, feed actions, apply buttons, and public auth hover. */
+.portal-home-feed > .portal-home-tabs,
+.portal-home-tabs {
+  background: rgba(24, 24, 24, 0.92) !important;
+  background-color: rgba(24, 24, 24, 0.92) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+.portal-home-tabs .portal-home-tab,
+.portal-home-feed > .portal-home-tabs .portal-home-tab {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.portal-post-action-row,
+.portal-social-post-card .portal-post-action-row,
+.job-post-action-reactions,
+.portal-candidate-job-action-row .job-post-action-reactions,
+.job-card-reactions,
+.bookmarked-job-reactions,
+.bookmarked-jobs-container .job-card-reactions,
+.bookmarked-jobs .job-card-reactions {
+  border: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.portal-post-action-row,
+.job-post-action-reactions,
+.job-card-reactions,
+.bookmarked-job-reactions {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.portal-post-reactions.portal-reaction-rail.is-popover,
+.portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+  background: #000000 !important;
+  border: 1px solid rgba(143, 242, 221, 0.18) !important;
+}
+
+.sky-apply-button,
+.sky-apply-button:not(.secondary),
+button.sky-apply-button,
+.apply-button.sky-apply-button,
+.preview-apply-button.sky-apply-button,
+.portal-view-job-button.sky-apply-button,
+.view-profile-btn.sky-apply-button {
+  background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%) !important;
+  border-color: rgba(125, 211, 252, 0.78) !important;
+  color: #03121b !important;
+  box-shadow: 0 10px 24px rgba(14, 165, 233, 0.24) !important;
+}
+
+.sky-apply-button:hover:not(:disabled),
+.sky-apply-button:focus-visible:not(:disabled),
+.apply-button.sky-apply-button:hover:not(:disabled),
+.preview-apply-button.sky-apply-button:hover:not(:disabled),
+.portal-view-job-button.sky-apply-button:hover:not(:disabled),
+.view-profile-btn.sky-apply-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%) !important;
+  border-color: rgba(186, 230, 253, 0.92) !important;
+  color: #020617 !important;
+  box-shadow: 0 12px 30px rgba(56, 189, 248, 0.32) !important;
+}
+
+.landing-content .role-button::before,
+.landing-content .job-seeker-button::before,
+.landing-content .company-button::before,
+.public-auth-submit::before,
+.login-submit-button::before,
+.job-seeker-page .candidate-login-button::before,
+.job-seeker-page .demo-cv-button::before,
+.job-seeker-page .submit-button::before,
+.company-page .search-button::before,
+.company-page .candidate-login-button::before,
+.company-page .submit-button::before,
+.company-page .secondary-button::before,
+.create-account-button::before,
+.employer-login-button::before {
+  background-color: #8a3408 !important;
+}
+
+.landing-content .role-button:hover,
+.landing-content .job-seeker-button:hover,
+.landing-content .company-button:hover,
+.public-auth-submit:hover,
+.public-auth-submit:focus-visible,
+.login-submit-button:hover,
+.login-submit-button:focus-visible,
+.login-link-button:hover,
+.login-link-button:focus-visible,
+.job-seeker-page .candidate-login-button:hover,
+.job-seeker-page .candidate-login-button:focus-visible,
+.job-seeker-page .demo-cv-button:hover,
+.job-seeker-page .demo-cv-button:focus-visible,
+.job-seeker-page .submit-button:hover,
+.job-seeker-page .submit-button:focus-visible,
+.company-page .search-button:hover,
+.company-page .search-button:focus-visible,
+.company-page .candidate-login-button:hover,
+.company-page .candidate-login-button:focus-visible,
+.company-page .submit-button:hover,
+.company-page .submit-button:focus-visible,
+.company-page .secondary-button:hover,
+.company-page .secondary-button:focus-visible,
+.create-account-button:hover,
+.create-account-button:focus-visible,
+.employer-login-button:hover,
+.employer-login-button:focus-visible {
+  border-color: rgba(138, 52, 8, 0.78) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 0 5px rgba(138, 52, 8, 0.42) !important;
+}

@@ -3635,7 +3635,7 @@ const PortalHomeFeed = ({
                             </div>
                             <button
                                 type="button"
-                                className="portal-view-job-button"
+                                className="portal-view-job-button sky-apply-button"
                                 onClick={(event) => openApplicationWorkspace(job, event)}
                                 disabled={applyingHomeJobId === key || hasAppliedToJob(job)}
                             >
@@ -3820,7 +3820,7 @@ const PortalHomeFeed = ({
                 <div className="portal-application-actions">
                     <button
                         type="button"
-                        className="portal-view-job-button"
+                        className="portal-view-job-button sky-apply-button"
                         onClick={(event) => handleApplyToJob(applicationJob, event)}
                         disabled={Boolean(applyingHomeJobId) || savingApplicationDraft || hasAppliedToJob(applicationJob)}
                     >
@@ -3989,7 +3989,7 @@ const PortalHomeFeed = ({
                             {selectedJobMode === 'employer' ? (
                                 <button
                                     type="button"
-                                    className="portal-view-job-button"
+                                    className="portal-view-job-button sky-apply-button"
                                     onClick={() => {
                                         closeJobModal();
                                         switchSection?.('manage-jobs');

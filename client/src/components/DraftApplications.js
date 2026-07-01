@@ -120,7 +120,7 @@ const DraftApplications = ({ userId, switchSection, onFooterBack }) => {
                                     onClick={() => handleDeleteDraft(draft._id)}
                                     title="Delete draft"
                                 />
-                                <button className="view-profile-btn" onClick={() => handleContinueDraft(draft)}>
+                                <button className="view-profile-btn sky-apply-button" onClick={() => handleContinueDraft(draft)}>
                                     Continue Draft
                                 </button>
                             </div>

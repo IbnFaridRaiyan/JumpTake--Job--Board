@@ -54041,7 +54041,7 @@ select {
   }
 }
 
-/* Screenshot 183-185 refinements: tighter title alignment, compact composer buttons, job actions, and mobile momentum scroll. */
+/* Screenshot 183-185 refinements: tighter title alignment, compact composer buttons, job actions, and mobile feed scroll. */
 .portal-social-post-header {
   column-gap: 0.24rem !important;
 }
@@ -54109,10 +54109,10 @@ select {
   .portal-home-feed,
   .portal-home-feed-scroll,
   .home-page .portal-home-feed-scroll {
-    -webkit-overflow-scrolling: touch !important;
+    -webkit-overflow-scrolling: auto !important;
     overscroll-behavior-y: contain !important;
-    scroll-behavior: smooth !important;
-    touch-action: pan-y !important;
+    scroll-behavior: auto !important;
+    touch-action: none !important;
   }
 
   .portal-social-post-header {

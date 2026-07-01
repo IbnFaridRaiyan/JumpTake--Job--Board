@@ -22,8 +22,8 @@ import PortalHomeFeed from './PortalHomeFeed';
 import PortalDefaultLanding from './PortalDefaultLanding';
 import PortalAiButton from './PortalAiButton';
 import SavedPosts from './SavedPosts';
-import logo from './media/logo3.png';
 import logoDark from './media/logo4.png';
+import logoLight from './media/jumptake-logo-main-light.png';
 
 const JOB_INTEREST_OPTIONS = [
     'Software Engineering',
@@ -180,7 +180,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const videoInterviewsRef = useRef(null);
     const mobilePanelRef = useRef(null);
     const navigate = useNavigate();
-    const dashboardLogo = appMode === 'dark' ? logoDark : logo;
+    const dashboardLogo = appMode === 'dark' ? logoDark : logoLight;
     const displayEmail = typeof user?.email === 'string' ? user.email : '';
     const displayName = displayEmail.includes('@') ? displayEmail.split('@')[0] : (displayEmail || 'User');
     const displayInitial = displayName ? displayName.charAt(0).toUpperCase() : 'U';

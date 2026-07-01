@@ -19,8 +19,8 @@ import PortalHomeFeed from './PortalHomeFeed';
 import PortalDefaultLanding from './PortalDefaultLanding';
 import PortalAiButton from './PortalAiButton';
 import SavedPosts from './SavedPosts';
-import logo from './media/logo3.png';
 import logoDark from './media/logo4.png';
+import logoLight from './media/jumptake-logo-main-light.png';
 
 const EMPLOYER_SECTION_IDS = new Set([
     'home',
@@ -69,7 +69,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     const [isManagingEmployerJob, setIsManagingEmployerJob] = useState(false);
     const mobilePanelRef = useRef(null);
     const navigate = useNavigate();
-    const dashboardLogo = appMode === 'dark' ? logoDark : logo;
+    const dashboardLogo = appMode === 'dark' ? logoDark : logoLight;
 
     const updateActiveSection = (section, { push = true } = {}) => {
         const nextSectionValue = normalizeEmployerSection(section);

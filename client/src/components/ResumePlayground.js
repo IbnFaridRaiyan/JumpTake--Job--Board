@@ -158,16 +158,71 @@ const looksLikeHeading = (line = '') => {
         return false;
     }
 
-    return /^(summary|profile|objective|experience|work experience|employment|education|skills|technical skills|projects|certifications|achievements|interests|contact|references|overview|purpose|background|details|next steps|recommendations|conclusion)\b:?$/i.test(trimmed)
+    return /^(summary|professional summary|profile|objective|experience|professional experience|work experience|employment|employment history|education|academic achievements|academic background|skills|core skills|technical skills|projects|certifications|achievements|languages|additional information|interests|contact|references|overview|purpose|background|details|next steps|recommendations|conclusion)\b:?$/i.test(trimmed)
         || (trimmed.length <= 42 && trimmed === trimmed.toUpperCase() && /[A-Z]/.test(trimmed));
+};
+
+const stripDraftMarkdown = (line = '') => {
+    const source = String(line || '').replace(/\u2022|\u00e2\u20ac\u00a2/g, '-').trim();
+    const isBullet = /^[-*]\s+/.test(source);
+    const clean = source
+        .replace(/^```[\w-]*\s*$/i, '')
+        .replace(/^#{1,6}\s*/, '')
+        .replace(/^>\s*/, '')
+        .replace(/^\s*[-*_]{3,}\s*$/, '')
+        .replace(/\*\*([^*]+)\*\*/g, '$1')
+        .replace(/__([^_]+)__/g, '$1')
+        .replace(/\*([^*]+)\*/g, '$1')
+        .replace(/_([^_]+)_/g, '$1')
+        .replace(/`([^`]+)`/g, '$1')
+        .replace(/\*/g, '')
+        .trim();
+
+    if (!clean) {
+        return '';
+    }
+
+    return isBullet && !clean.startsWith('- ')
+        ? `- ${clean.replace(/^[-*]\s*/, '')}`
+        : clean;
+};
+
+const isAiDraftPreambleLine = (line = '') => {
+    const normalized = String(line || '')
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+    if (!normalized) {
+        return true;
+    }
+
+    return /^(absolutely|certainly|sure|of course|here|below|based|i ve|i have)\b/.test(normalized)
+        && /\b(resume|draft|ats friendly|ats-friendly|profile|based on your profile)\b/.test(normalized);
 };
 
 const normalizeDraftLines = (text = '') => String(text || '')
     .replace(/\r\n/g, '\n')
-    .replace(/\u2022|\u00e2\u20ac\u00a2/g, '-')
     .split('\n')
-    .map((line) => line.trim())
-    .filter(Boolean);
+    .map(stripDraftMarkdown)
+    .filter(Boolean)
+    .filter((line) => !isAiDraftPreambleLine(line));
+
+const cleanResumeLine = (line = '') => stripDraftMarkdown(line).replace(/^[-*]\s*/, '').trim();
+
+const isLikelyResumeNameLine = (line = '') => {
+    const clean = cleanResumeLine(line).replace(/:$/, '');
+
+    return clean.length >= 3
+        && clean.length <= 64
+        && clean.split(/\s+/).length <= 6
+        && /^[A-Za-z][A-Za-z .'-]+$/.test(clean)
+        && !looksLikeHeading(clean)
+        && !/\b(resume|curriculum vitae|cv|email|phone|linkedin|github|portfolio|summary|profile|objective)\b/i.test(clean);
+};
+
+const isLikelyContactLine = (line = '') => /(@|\||\+?\d[\d\s().-]{6,}|linkedin|github|portfolio|email|phone|mobile|address)/i.test(line);
 
 const createAiDraftHtml = (text = '', { documentMode = false } = {}) => {
     const lines = normalizeDraftLines(text);
@@ -196,22 +251,31 @@ const createAiDraftHtml = (text = '', { documentMode = false } = {}) => {
         `.trim().replace(/\u00e2\u20ac\u00a2/g, '&#8226;');
     }
 
-    const firstLine = lines[0] || 'Candidate';
-    const bodyLines = lines.slice(1);
+    const nameIndex = lines.findIndex((line, index) => index < 4 && isLikelyResumeNameLine(line));
+    const candidateName = nameIndex >= 0
+        ? cleanResumeLine(lines[nameIndex])
+        : (looksLikeHeading(lines[0]) ? 'Candidate' : cleanResumeLine(lines[0] || 'Candidate'));
+    const remainingLines = lines.filter((_, index) => index !== (nameIndex >= 0 ? nameIndex : 0));
+    const contactIndex = remainingLines.findIndex((line, index) => index < 3 && isLikelyContactLine(line));
+    const contactLine = contactIndex >= 0 ? cleanResumeLine(remainingLines[contactIndex]) : '';
+    const bodyLines = remainingLines.filter((_, index) => index !== contactIndex);
 
     return `
-        <div data-resume-template-root="ai-a4" style="font-family:Arial, sans-serif;color:#111827;background:#ffffff;line-height:1.26;font-size:12.5px;">
-            <h1 style="font-size:23px;line-height:1.04;margin:0 0 4px;text-align:center;text-transform:uppercase;letter-spacing:0;color:#0f172a;">${escapeHtml(firstLine)}</h1>
+        <div data-resume-template-root="ai-a4" style="font-family:'Times New Roman', Times, serif;color:#111111;background:#ffffff;line-height:1.15;font-size:10.5px;">
+            <div style="text-align:center;margin:0 0 8px;">
+                <h1 style="font-size:20px;line-height:1.05;margin:0;text-align:center;text-transform:uppercase;letter-spacing:0;font-weight:800;color:#111111;">${escapeHtml(candidateName)}</h1>
+                ${contactLine ? `<p style="font-size:9.5px;line-height:1.12;margin:2px 0 0;text-align:center;color:#111111;">${escapeHtml(contactLine)}</p>` : ''}
+            </div>
             ${bodyLines.map((line) => {
                 const isBullet = /^[-*•]\s*/.test(line);
-                const cleanLine = escapeHtml(line.replace(/^[-*•]\s*/, ''));
+                const cleanLine = escapeHtml(cleanResumeLine(line));
                 if (looksLikeHeading(line)) {
-                    return `<h2 style="font-size:13.5px;line-height:1.12;margin:11px 0 4px;padding-bottom:2px;border-bottom:1px solid #94a3b8;color:#0f172a;text-transform:uppercase;letter-spacing:0;">${cleanLine.replace(/:$/, '')}</h2>`;
+                    return `<h2 style="font-size:10.5px;line-height:1.08;margin:8px 0 3px;padding-bottom:1px;border-bottom:1px solid #333333;color:#111111;text-transform:uppercase;letter-spacing:0;font-weight:800;">${cleanLine.replace(/:$/, '')}</h2>`;
                 }
                 if (isBullet) {
-                    return `<p style="margin:3px 0 3px 16px;">• ${cleanLine}</p>`;
+                    return `<p style="margin:1px 0 1px 12px;">&#8226; ${cleanLine}</p>`;
                 }
-                return `<p style="margin:0 0 4px;">${cleanLine}</p>`;
+                return `<p style="margin:0 0 3px;">${cleanLine}</p>`;
             }).join('')}
         </div>
     `.trim().replace(/\u00e2\u20ac\u00a2/g, '&#8226;');

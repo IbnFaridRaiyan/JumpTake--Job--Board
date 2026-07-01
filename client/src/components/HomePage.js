@@ -21,6 +21,7 @@ import ResumePlayground from './ResumePlayground';
 import PortalHomeFeed from './PortalHomeFeed';
 import PortalDefaultLanding from './PortalDefaultLanding';
 import PortalAiButton from './PortalAiButton';
+import SavedPosts from './SavedPosts';
 import logo from './media/logo3.png';
 import logoDark from './media/logo4.png';
 
@@ -60,6 +61,7 @@ const CANDIDATE_SECTION_IDS = new Set([
     'video-interviews',
     'draft-applications',
     'bookmarked-jobs',
+    'saved-posts',
     'interested-jobs',
     'resume-playground',
     'profile',
@@ -213,6 +215,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         'video-interviews': 'Video Interviews',
         'draft-applications': 'Draft Applications',
         'bookmarked-jobs': 'Bookmarked Jobs',
+        'saved-posts': 'Saved Posts',
         notifications: 'Notifications',
         'view-candidates': 'View Candidates',
         'friend-invitations': 'Friends',
@@ -295,12 +298,16 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             }
         };
 
-        const initialSection = 'home';
+        const hasFeedDeepLink = Boolean(
+            new URLSearchParams(window.location.search).get('jtPost')
+            || new URLSearchParams(window.location.search).get('jtJob')
+        );
+        const initialSection = hasFeedDeepLink ? 'job-feed' : 'home';
         sessionStorage.setItem(CANDIDATE_SECTION_STORAGE_KEY, initialSection);
         sessionStorage.removeItem('jumptakeHomeFeedRequest');
         sessionStorage.removeItem('jumptakeCandidateJobSearch');
         window.history.replaceState(null, '', `#candidate:${initialSection}`);
-        setMobileSectionVisible(false);
+        setMobileSectionVisible(hasFeedDeepLink && isMobileViewport());
         window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
 
         window.addEventListener('hashchange', applyHashSection);
@@ -671,6 +678,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         { id: 'video-interviews', label: 'Video Interviews', icon: 'send', notification: pendingVideoInterviewCount > 0 },
         { id: 'draft-applications', label: 'Draft Applications', icon: 'draft' },
         { id: 'bookmarked-jobs', label: 'Bookmarked Jobs', icon: 'star' },
+        { id: 'saved-posts', label: 'Saved Posts', icon: 'star' },
         { id: 'interested-jobs', label: 'Job Preferences', icon: 'briefcase' },
         { id: 'resume-playground', label: 'Resume Playground', icon: 'draft' }
     ].map((item) => ({
@@ -856,6 +864,11 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                 return <BookmarkedJobs
                     userId={user?.id}
                     switchSection={switchSection}
+                    onFooterBack={goToPreviousSection}
+                />;
+            case 'saved-posts':
+                return <SavedPosts
+                    viewerId={user?.id || user?._id || user?.userId || 'candidate-guest'}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'notifications':

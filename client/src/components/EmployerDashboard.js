@@ -18,6 +18,7 @@ import ResumePlayground from './ResumePlayground';
 import PortalHomeFeed from './PortalHomeFeed';
 import PortalDefaultLanding from './PortalDefaultLanding';
 import PortalAiButton from './PortalAiButton';
+import SavedPosts from './SavedPosts';
 import logo from './media/logo3.png';
 import logoDark from './media/logo4.png';
 
@@ -32,6 +33,7 @@ const EMPLOYER_SECTION_IDS = new Set([
     'general-assessment',
     'talent-pool',
     'bookmarked-talents',
+    'saved-posts',
     'notifications',
     'create-document',
     'company-profile',
@@ -100,6 +102,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         'general-assessment': 'General Assessment',
         'talent-pool': 'Talent Pool',
         'bookmarked-talents': 'Bookmarked Talents',
+        'saved-posts': 'Saved Posts',
         notifications: 'Notifications',
         'create-document': 'Create Document',
         'company-profile': 'Company Profile',
@@ -143,13 +146,17 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
             }
         };
 
-        const initialSection = 'home';
+        const hasFeedDeepLink = Boolean(
+            new URLSearchParams(window.location.search).get('jtPost')
+            || new URLSearchParams(window.location.search).get('jtJob')
+        );
+        const initialSection = hasFeedDeepLink ? 'home-feed' : 'home';
         sessionStorage.setItem(EMPLOYER_SECTION_STORAGE_KEY, initialSection);
         sessionStorage.removeItem('jumptakeHomeFeedRequest');
         sessionStorage.removeItem('jumptakeEmployerJobSearch');
         sessionStorage.removeItem('jumptakeEmployerTalentSearch');
         window.history.replaceState(null, '', `#employer:${initialSection}`);
-        setMobileSectionVisible(false);
+        setMobileSectionVisible(hasFeedDeepLink && isMobileViewport());
         window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
 
         window.addEventListener('hashchange', applyHashSection);
@@ -399,6 +406,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         { id: 'general-assessment', label: 'General Assessment', icon: 'assessment' },
         { id: 'talent-pool', label: 'Talent Pool', icon: 'users' },
         { id: 'bookmarked-talents', label: 'Bookmarked Talents', icon: 'star' },
+        { id: 'saved-posts', label: 'Saved Posts', icon: 'star' },
         { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 },
         { id: 'create-document', label: 'Create Document', icon: 'profile' }
     ].map((item) => ({
@@ -569,6 +577,11 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                 return <BookmarkedTalents
                     companyId={employer?.companyId}
                     onBack={goToPreviousSection}
+                    onFooterBack={goToPreviousSection}
+                />;
+            case 'saved-posts':
+                return <SavedPosts
+                    viewerId={employer?.companyId || employer?._id || employer?.id || 'employer-guest'}
                     onFooterBack={goToPreviousSection}
                 />;
             case 'notifications':

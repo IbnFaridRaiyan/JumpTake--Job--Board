@@ -9,6 +9,8 @@ const TALENT_STORIES_STORAGE_KEY = 'jumptakeTalentStoriesPosts';
 const JOB_REACH_STORAGE_KEY = 'jumptakeJobReachMap';
 const HOME_JOB_LIKE_STORAGE_KEY = 'jumptakeHomeJobLikeMap';
 const RESUME_PLAYGROUND_STORAGE_KEY = 'jumptakeResumePlayground:';
+const SAVED_POSTS_STORAGE_PREFIX = 'jumptakeSavedPosts:';
+const BLOCKED_FEED_AUTHORS_STORAGE_PREFIX = 'jumptakeBlockedFeedAuthors:';
 const HOME_JOB_PAGE_SIZE = 7;
 
 const escapeHtml = (value = '') => (
@@ -90,6 +92,77 @@ const countApplicationsByStatus = (job, statusTerms) => {
 const getJobKey = (job) => String(job?._id || job?.jobNumber || job?.title || 'job');
 
 const getPostKey = (post, fallbackIndex = 0) => String(post?.id || post?._id || `post-${fallbackIndex}`);
+
+const formatCompactCount = (value) => {
+    const numericValue = Number(value || 0);
+    if (!Number.isFinite(numericValue) || numericValue <= 0) {
+        return '0';
+    }
+
+    if (numericValue >= 1000) {
+        return `${Math.floor(numericValue / 100)}K`;
+    }
+
+    return String(numericValue);
+};
+
+const getSavedPostsStorageKey = (viewerId = 'guest') => `${SAVED_POSTS_STORAGE_PREFIX}${viewerId || 'guest'}`;
+const getBlockedFeedAuthorsStorageKey = (viewerId = 'guest') => `${BLOCKED_FEED_AUTHORS_STORAGE_PREFIX}${viewerId || 'guest'}`;
+
+const readStorageArray = (key) => {
+    if (typeof window === 'undefined') {
+        return [];
+    }
+
+    try {
+        const parsed = JSON.parse(localStorage.getItem(key) || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+        return [];
+    }
+};
+
+const writeStorageArray = (key, value) => {
+    if (typeof window === 'undefined') {
+        return;
+    }
+
+    localStorage.setItem(key, JSON.stringify(Array.isArray(value) ? value : []));
+};
+
+const getFeedShareUrl = ({ kind = 'post', id = '', tab = 'work-news', portal = 'candidate' }) => {
+    if (typeof window === 'undefined') {
+        return '';
+    }
+
+    const url = new URL(window.location.href);
+    url.searchParams.delete('jtPost');
+    url.searchParams.delete('jtJob');
+    url.searchParams.delete('jtTab');
+
+    if (kind === 'job') {
+        url.searchParams.set('jtJob', id);
+        url.searchParams.set('jtTab', 'job-posts');
+    } else {
+        url.searchParams.set('jtPost', id);
+        url.searchParams.set('jtTab', tab);
+    }
+
+    url.hash = portal === 'employer' ? 'employer:home-feed' : 'candidate:job-feed';
+    return url.toString();
+};
+
+const getPostTabFromStorageKey = (key, activeTab = '') => {
+    if (activeTab === 'my-feed') {
+        return 'talent-stories';
+    }
+
+    if (activeTab === 'my-company-posts') {
+        return 'work-news';
+    }
+
+    return key === WORK_NEWS_STORAGE_KEY ? 'work-news' : 'talent-stories';
+};
 
 const asDisplayText = (value, fallback = '') => {
     if (value === null || value === undefined) {
@@ -482,6 +555,20 @@ const DeletePostIcon = () => (
     </svg>
 );
 
+const MoreOptionsIcon = () => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        fill="currentColor"
+        viewBox="0 0 16 16"
+        aria-hidden="true"
+        focusable="false"
+    >
+        <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3" />
+    </svg>
+);
+
 const PortalCloseIcon = () => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -769,6 +856,10 @@ const PortalHomeFeed = ({
     const [openReactionPostId, setOpenReactionPostId] = useState('');
     const [openCommentPostId, setOpenCommentPostId] = useState('');
     const [openSharePostId, setOpenSharePostId] = useState('');
+    const [openOptionsPostId, setOpenOptionsPostId] = useState('');
+    const [openJobOptionsId, setOpenJobOptionsId] = useState('');
+    const [, setSavedPosts] = useState([]);
+    const [blockedFeedAuthors, setBlockedFeedAuthors] = useState([]);
     const [feedFriends, setFeedFriends] = useState([]);
     const [shareStatus, setShareStatus] = useState('');
     const [sharingTargetId, setSharingTargetId] = useState('');
@@ -792,6 +883,7 @@ const PortalHomeFeed = ({
     const reactionCloseTimerRef = useRef(null);
     const feedScrollTopRef = useRef(0);
     const feedTouchRef = useRef({ y: 0, scrollTop: 0 });
+    const pendingDeepLinkRef = useRef(null);
     const feedDraftTypingTimerRef = useRef(null);
     const feedDraftTypingTokenRef = useRef(0);
     const [applicationJob, setApplicationJob] = useState(null);
@@ -819,14 +911,20 @@ const PortalHomeFeed = ({
     }, [defaultTab]);
 
     useEffect(() => {
-        if (!openReactionPostId && !openCommentPostId && !openSharePostId) {
+        setSavedPosts(readStorageArray(getSavedPostsStorageKey(viewerId)));
+        setBlockedFeedAuthors(readStorageArray(getBlockedFeedAuthorsStorageKey(viewerId)).map(String));
+    }, [viewerId]);
+
+    useEffect(() => {
+        if (!openReactionPostId && !openCommentPostId && !openSharePostId && !openOptionsPostId && !openJobOptionsId) {
             return undefined;
         }
 
         const closeOpenPostActions = (event) => {
             if (
                 event.target.closest?.('.portal-post-action-cluster') ||
-                event.target.closest?.('.portal-comment-row')
+                event.target.closest?.('.portal-comment-row') ||
+                event.target.closest?.('.portal-post-options-wrap')
             ) {
                 return;
             }
@@ -839,6 +937,8 @@ const PortalHomeFeed = ({
             setOpenReactionPostId('');
             setOpenCommentPostId('');
             setOpenSharePostId('');
+            setOpenOptionsPostId('');
+            setOpenJobOptionsId('');
             setAnimatingReactionKey('');
         };
 
@@ -849,7 +949,7 @@ const PortalHomeFeed = ({
             document.removeEventListener('mousedown', closeOpenPostActions);
             document.removeEventListener('touchstart', closeOpenPostActions);
         };
-    }, [openReactionPostId, openCommentPostId, openSharePostId]);
+    }, [openReactionPostId, openCommentPostId, openSharePostId, openOptionsPostId, openJobOptionsId]);
 
     useEffect(() => {
         if (mode !== 'candidate' || !candidateUserId) {
@@ -921,9 +1021,13 @@ const PortalHomeFeed = ({
 
     const filteredHomeJobs = useMemo(() => {
         const locationFilter = homeJobLocationFilter.trim().toLowerCase();
+        const visibleJobs = safeJobs.filter((job) => {
+            const companyKey = String(job?.companyId || job?.company?._id || job?.companyName || '');
+            return !companyKey || !blockedFeedAuthors.includes(companyKey);
+        });
         const filteredJobs = locationFilter
-            ? safeJobs.filter((job) => asDisplayText(job.location).trim().toLowerCase() === locationFilter)
-            : safeJobs;
+            ? visibleJobs.filter((job) => asDisplayText(job.location).trim().toLowerCase() === locationFilter)
+            : visibleJobs;
         const sortedJobs = [...filteredJobs];
 
         if (homeJobSalarySort === 'salary-high') {
@@ -933,7 +1037,7 @@ const PortalHomeFeed = ({
         }
 
         return sortedJobs;
-    }, [safeJobs, homeJobLocationFilter, homeJobSalarySort]);
+    }, [safeJobs, homeJobLocationFilter, homeJobSalarySort, blockedFeedAuthors]);
 
     useEffect(() => {
         setJobPage(1);
@@ -1131,6 +1235,10 @@ const PortalHomeFeed = ({
             return false;
         }
 
+        if (blockedFeedAuthors.includes(String(post.authorId || ''))) {
+            return false;
+        }
+
         if (String(post.authorId) === viewerId) {
             return true;
         }
@@ -1250,6 +1358,110 @@ const PortalHomeFeed = ({
         setOpenCommentPostId('');
         setOpenSharePostId('');
         deleteFeedPostRecord(post);
+    };
+
+    const savePostSnapshot = (snapshot) => {
+        setSavedPosts((currentSavedPosts) => {
+            const nextSavedPosts = [
+                snapshot,
+                ...currentSavedPosts.filter((item) => item.id !== snapshot.id)
+            ].slice(0, 80);
+
+            writeStorageArray(getSavedPostsStorageKey(viewerId), nextSavedPosts);
+            return nextSavedPosts;
+        });
+        setShareStatus('Saved.');
+    };
+
+    const handleSavePost = (key, post) => {
+        const postId = getPostKey(post);
+        const tab = getPostTabFromStorageKey(key, activeTab);
+
+        savePostSnapshot({
+            id: `post:${postId}`,
+            kind: 'post',
+            sourceTab: tab,
+            title: asDisplayText(post.authorName, 'JumpTake post'),
+            subtitle: post.authorType === 'employer' ? 'Company update' : 'Talent story',
+            body: asDisplayText(post.body, 'Shared a JumpTake post'),
+            authorName: asDisplayText(post.authorName, 'JumpTake user'),
+            authorAvatar: post.authorAvatar || '',
+            createdAt: post.createdAt || new Date().toISOString(),
+            link: getFeedShareUrl({ kind: 'post', id: postId, tab, portal: mode })
+        });
+        setOpenOptionsPostId('');
+    };
+
+    const handleHidePost = (key, post) => {
+        const postId = getPostKey(post);
+        updatePosts(key, (posts) => posts.map((item) => (
+            getPostKey(item) === postId
+                ? {
+                    ...item,
+                    hiddenBy: [...new Set([...(Array.isArray(item.hiddenBy) ? item.hiddenBy : []), viewerId])]
+                }
+                : item
+        )));
+        setOpenOptionsPostId('');
+    };
+
+    const handleBlockPostOwner = (post) => {
+        const authorId = String(post?.authorId || '');
+        if (!authorId || authorId === viewerId) {
+            setOpenOptionsPostId('');
+            return;
+        }
+
+        setBlockedFeedAuthors((currentBlocked) => {
+            const nextBlocked = [...new Set([...currentBlocked, authorId])];
+            writeStorageArray(getBlockedFeedAuthorsStorageKey(viewerId), nextBlocked);
+            return nextBlocked;
+        });
+        setOpenOptionsPostId('');
+        setShareStatus('User blocked from your feed.');
+    };
+
+    const handleReportPost = (post) => {
+        setOpenOptionsPostId('');
+        setShareStatus(`${asDisplayText(post?.authorName, 'Post')} reported.`);
+    };
+
+    const handleSaveJobPost = (job, event) => {
+        event?.stopPropagation();
+        const jobId = getJobKey(job);
+        savePostSnapshot({
+            id: `job:${jobId}`,
+            kind: 'job',
+            sourceTab: 'job-posts',
+            title: asDisplayText(job.title, 'Job post'),
+            subtitle: asDisplayText(job.companyName, 'Company'),
+            body: asDisplayText(job.description, 'JumpTake job post'),
+            authorName: asDisplayText(job.companyName, 'Company'),
+            authorAvatar: job.companyLogo || '',
+            createdAt: job.createdAt || new Date().toISOString(),
+            link: getFeedShareUrl({ kind: 'job', id: jobId, portal: mode })
+        });
+        setOpenJobOptionsId('');
+    };
+
+    const handleReportJobPost = (job, event) => {
+        event?.stopPropagation();
+        setOpenJobOptionsId('');
+        setJobActionMessage(`${asDisplayText(job?.title, 'Job')} reported.`);
+    };
+
+    const handleBlockJobPost = (job, event) => {
+        event?.stopPropagation();
+        const companyId = String(job?.companyId || job?.company?._id || job?.companyName || '');
+        if (companyId) {
+            setBlockedFeedAuthors((currentBlocked) => {
+                const nextBlocked = [...new Set([...currentBlocked, companyId])];
+                writeStorageArray(getBlockedFeedAuthorsStorageKey(viewerId), nextBlocked);
+                return nextBlocked;
+            });
+        }
+        setOpenJobOptionsId('');
+        setJobActionMessage('Job owner blocked from your feed.');
     };
 
     const handleDeleteHomeJob = async (job, event) => {
@@ -1584,6 +1796,30 @@ const PortalHomeFeed = ({
         }
     };
 
+    const handleCopyJobShare = async (job, event) => {
+        event?.stopPropagation();
+        const jobId = getJobKey(job);
+        const jobUrl = getFeedShareUrl({ kind: 'job', id: jobId, portal: mode });
+        const jobText = [
+            asDisplayText(job.title, 'JumpTake job post'),
+            asDisplayText(job.companyName, 'Company'),
+            jobUrl
+        ].filter(Boolean).join('\n\n');
+
+        try {
+            if (navigator.share) {
+                await navigator.share({ text: jobText, url: jobUrl });
+            } else if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(jobUrl || jobText);
+            }
+
+            recordJobReach(job);
+            setJobActionMessage('Job link copied.');
+        } catch (error) {
+            setJobActionMessage('Could not share this job post.');
+        }
+    };
+
     const openJobModalRef = useRef(openJobModal);
     const openApplicationWorkspaceRef = useRef(openApplicationWorkspace);
     const openDraftApplicationWorkspaceRef = useRef(openDraftApplicationWorkspace);
@@ -1752,6 +1988,81 @@ const PortalHomeFeed = ({
             window.removeEventListener('jumptake-feed-ai-draft', handleFeedDraft);
         };
     }, [defaultTab, mode, safeJobs]);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') {
+            return;
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const linkedPostId = params.get('jtPost');
+        const linkedJobId = params.get('jtJob');
+        const linkedTab = params.get('jtTab');
+
+        if (linkedPostId) {
+            pendingDeepLinkRef.current = { type: 'post', id: linkedPostId };
+            const allowedTabs = mode === 'employer'
+                ? ['talent-stories', 'work-news', 'create-post', 'my-company-posts', 'my-job-posts']
+                : ['work-news', 'job-posts', 'talent-stories', 'create-story', 'my-feed'];
+            if (linkedTab && allowedTabs.includes(linkedTab)) {
+                setActiveTab(linkedTab);
+            }
+            return;
+        }
+
+        if (linkedJobId) {
+            pendingDeepLinkRef.current = { type: 'job', id: linkedJobId };
+            setActiveTab('job-posts');
+        }
+    }, [mode]);
+
+    useEffect(() => {
+        if (typeof window === 'undefined' || !pendingDeepLinkRef.current) {
+            return;
+        }
+
+        const deepLink = pendingDeepLinkRef.current;
+        const selectorId = String(deepLink.id).replace(/"/g, '\\"');
+        if (deepLink.type === 'job') {
+            const matchIndex = filteredHomeJobs.findIndex((job) => [
+                String(job?._id || ''),
+                String(job?.id || ''),
+                String(job?.jobNumber || ''),
+                getJobKey(job)
+            ].filter(Boolean).includes(String(deepLink.id)));
+            if (matchIndex >= 0) {
+                const nextPage = Math.floor(matchIndex / HOME_JOB_PAGE_SIZE) + 1;
+                if (nextPage !== jobPage) {
+                    setJobPage(nextPage);
+                    return;
+                }
+            }
+        }
+
+        const selector = deepLink.type === 'job'
+            ? `[data-job-id="${selectorId}"]`
+            : `[data-post-id="${selectorId}"]`;
+        const scheduleFrame = window.requestAnimationFrame || ((callback) => window.setTimeout(callback, 0));
+
+        scheduleFrame(() => {
+            const target = document.querySelector(selector);
+            if (!target) {
+                return;
+            }
+
+            target.scrollIntoView({ block: 'center', behavior: 'smooth' });
+            target.classList.add('portal-deep-link-target');
+            window.setTimeout(() => target.classList.remove('portal-deep-link-target'), 1800);
+            pendingDeepLinkRef.current = null;
+
+            if (deepLink.type === 'job') {
+                const matchedJob = safeJobs.find((job) => getJobKey(job) === deepLink.id);
+                if (matchedJob) {
+                    openJobModalRef.current(matchedJob, 'candidate');
+                }
+            }
+        });
+    }, [activeTab, workNewsPosts, talentStories, filteredHomeJobs, safeJobs, jobPage]);
 
     const handleApplicationProfileChange = (event) => {
         const { name, value } = event.target;
@@ -2071,16 +2382,19 @@ const PortalHomeFeed = ({
 
     const handleCopyPostShare = async (key, post) => {
         const postId = getPostKey(post);
+        const tab = getPostTabFromStorageKey(key, activeTab);
+        const postUrl = getFeedShareUrl({ kind: 'post', id: postId, tab, portal: mode });
         const postText = [
             asDisplayText(post.authorName, 'JumpTake user'),
-            asDisplayText(post.body, 'Shared a JumpTake post')
+            asDisplayText(post.body, 'Shared a JumpTake post'),
+            postUrl
         ].filter(Boolean).join('\n\n');
 
         try {
             if (navigator.share) {
-                await navigator.share({ text: postText });
+                await navigator.share({ text: postText, url: postUrl });
             } else if (navigator.clipboard?.writeText) {
-                await navigator.clipboard.writeText(postText);
+                await navigator.clipboard.writeText(postUrl || postText);
             }
 
             updatePosts(key, (posts) => posts.map((item) => (
@@ -2088,7 +2402,7 @@ const PortalHomeFeed = ({
                     ? { ...item, reach: Number(item.reach || 0) + 1 }
                     : item
             )));
-            setShareStatus('Post ready to share.');
+            setShareStatus('Post link copied.');
         } catch (error) {
             setShareStatus('Could not open sharing. Try again.');
         }
@@ -2107,9 +2421,16 @@ const PortalHomeFeed = ({
         try {
             const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
             const postText = asDisplayText(post.body, 'a JumpTake post');
+            const postUrl = getFeedShareUrl({
+                kind: 'post',
+                id: postId,
+                tab: getPostTabFromStorageKey(key, activeTab),
+                portal: mode
+            });
             const bodyHtml = [
                 `<p>${escapeHtml(authorName)} shared a JumpTake post with you.</p>`,
-                `<p>${escapeHtml(postText)}</p>`
+                `<p>${escapeHtml(postText)}</p>`,
+                postUrl ? `<p><a href="${escapeHtml(postUrl)}">${escapeHtml(postUrl)}</a></p>` : ''
             ].join('');
 
             const response = await fetch(apiUrl('/api/messages/candidate-direct'), {
@@ -2217,7 +2538,7 @@ const PortalHomeFeed = ({
 
         const delta = feedTouchRef.current.y - event.touches[0].clientY;
         event.preventDefault();
-        event.currentTarget.scrollTop = feedTouchRef.current.scrollTop + (delta * 0.48);
+        event.currentTarget.scrollTop = feedTouchRef.current.scrollTop + (delta * 0.28);
     }, []);
 
     const renderPostList = (posts, key, kind) => {
@@ -2246,6 +2567,7 @@ const PortalHomeFeed = ({
                     const isReactionMenuOpen = openReactionPostId === postKey;
                     const isCommentOpen = openCommentPostId === postKey;
                     const isShareOpen = openSharePostId === postKey;
+                    const isOptionsOpen = openOptionsPostId === postKey;
                     const hasViewerComment = postComments.some((comment) => String(comment.authorId || '') === viewerId);
                     const reactionTotal = getTotalReactionCount(post);
                     const commentTotal = postComments.length;
@@ -2253,9 +2575,9 @@ const PortalHomeFeed = ({
                         && ['my-feed', 'my-company-posts'].includes(activeTab);
 
                     return (
-                    <article key={postKey} className="portal-social-post-card">
+                    <article key={postKey} className="portal-social-post-card" data-post-id={postKey}>
                         <div className="portal-social-post-header">
-                            <div className="portal-post-avatar">
+                            <div className={`portal-post-avatar ${post.authorAvatar ? '' : 'has-default-profile-icon'}`}>
                                 {post.authorAvatar ? (
                                     <img src={post.authorAvatar} alt={asDisplayText(post.authorName, 'Post author')} />
                                 ) : (
@@ -2269,7 +2591,35 @@ const PortalHomeFeed = ({
                                     <small className="portal-audience-pill">{post.audience === 'only-me' ? 'Only me' : 'Friends only'}</small>
                                 )}
                             </div>
-                            <span className="portal-post-reach">{Number(post.reach || 0)} reach</span>
+                            <div className="portal-post-header-actions">
+                                <span className="portal-post-reach">{formatCompactCount(post.reach || 0)} reach</span>
+                                <span className="portal-post-options-wrap">
+                                    <button
+                                        type="button"
+                                        className="portal-post-options-button"
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                            setOpenOptionsPostId((openId) => (openId === postKey ? '' : postKey));
+                                            setOpenReactionPostId('');
+                                            setOpenCommentPostId('');
+                                            setOpenSharePostId('');
+                                        }}
+                                        aria-expanded={isOptionsOpen}
+                                        aria-label="Post options"
+                                        title="Post options"
+                                    >
+                                        <MoreOptionsIcon />
+                                    </button>
+                                    {isOptionsOpen && (
+                                        <span className="portal-post-options-menu" role="menu">
+                                            <button type="button" onClick={() => handleSavePost(key, post)} role="menuitem">Save post</button>
+                                            <button type="button" onClick={() => handleReportPost(post)} role="menuitem">Report</button>
+                                            <button type="button" onClick={() => handleHidePost(key, post)} role="menuitem">Hide post</button>
+                                            <button type="button" onClick={() => handleBlockPostOwner(post)} role="menuitem">Block user</button>
+                                        </span>
+                                    )}
+                                </span>
+                            </div>
                         </div>
                         {asDisplayText(post.body) && <p className="portal-post-body">{asDisplayText(post.body)}</p>}
                         {post.media?.dataUrl && (
@@ -2312,6 +2662,7 @@ const PortalHomeFeed = ({
                                         setOpenReactionPostId((openId) => (openId === postKey ? '' : postKey));
                                         setOpenCommentPostId('');
                                         setOpenSharePostId('');
+                                        setOpenOptionsPostId('');
                                         setAnimatingReactionKey('');
                                     }}
                                     aria-expanded={isReactionMenuOpen}
@@ -2325,7 +2676,7 @@ const PortalHomeFeed = ({
                                 </button>
                                 {reactionTotal > 0 && (
                                     <span className="portal-reaction-trigger-count" aria-label={`${reactionTotal} reactions`}>
-                                        {reactionTotal}
+                                        {formatCompactCount(reactionTotal)}
                                     </span>
                                 )}
                                 <button
@@ -2335,6 +2686,7 @@ const PortalHomeFeed = ({
                                         setOpenCommentPostId((openId) => (openId === postKey ? '' : postKey));
                                         setOpenReactionPostId('');
                                         setOpenSharePostId('');
+                                        setOpenOptionsPostId('');
                                     }}
                                     aria-expanded={isCommentOpen}
                                     aria-label="Comment"
@@ -2344,7 +2696,7 @@ const PortalHomeFeed = ({
                                 </button>
                                 {commentTotal > 0 && (
                                     <span className="portal-comment-trigger-count" aria-label={`${commentTotal} comments`}>
-                                        {commentTotal}
+                                        {formatCompactCount(commentTotal)}
                                     </span>
                                 )}
                                 <button
@@ -2354,6 +2706,7 @@ const PortalHomeFeed = ({
                                         setOpenSharePostId((openId) => (openId === postKey ? '' : postKey));
                                         setOpenReactionPostId('');
                                         setOpenCommentPostId('');
+                                        setOpenOptionsPostId('');
                                         setShareStatus('');
                                     }}
                                     aria-expanded={isShareOpen}
@@ -2420,7 +2773,7 @@ const PortalHomeFeed = ({
                         <div className="portal-post-comments">
                             {postComments.slice(-3).map((comment, commentIndex) => (
                                 <div key={comment.id || `comment-${commentIndex}`} className="portal-comment-item">
-                                    <div className="portal-comment-avatar">
+                                    <div className={`portal-comment-avatar ${comment.authorAvatar ? '' : 'has-default-profile-icon'}`}>
                                         {comment.authorAvatar ? (
                                             <img src={comment.authorAvatar} alt={asDisplayText(comment.authorName, 'Comment author')} />
                                         ) : (
@@ -2590,6 +2943,7 @@ const PortalHomeFeed = ({
                     <article
                         key={key}
                         className="portal-candidate-job-card"
+                        data-job-id={key}
                         role="button"
                         tabIndex={0}
                         onClick={() => openJobModal(job, 'candidate')}
@@ -2600,8 +2954,33 @@ const PortalHomeFeed = ({
                             }
                         }}
                     >
+                        <div className="portal-post-options-wrap portal-job-card-options">
+                            <button
+                                type="button"
+                                className="portal-post-options-button"
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    setOpenJobOptionsId((openId) => (openId === key ? '' : key));
+                                    setOpenReactionPostId('');
+                                    setOpenCommentPostId('');
+                                    setOpenSharePostId('');
+                                }}
+                                aria-expanded={openJobOptionsId === key}
+                                aria-label="Job options"
+                                title="Job options"
+                            >
+                                <MoreOptionsIcon />
+                            </button>
+                            {openJobOptionsId === key && (
+                                <span className="portal-post-options-menu portal-job-options-menu" role="menu">
+                                    <button type="button" onClick={(event) => handleSaveJobPost(job, event)} role="menuitem">Save job</button>
+                                    <button type="button" onClick={(event) => handleReportJobPost(job, event)} role="menuitem">Report job</button>
+                                    <button type="button" onClick={(event) => handleBlockJobPost(job, event)} role="menuitem">Block job</button>
+                                </span>
+                            )}
+                        </div>
                         <div className="portal-candidate-job-header">
-                            <div className="portal-job-company-avatar">
+                            <div className={`portal-job-company-avatar ${job.companyLogo ? '' : 'has-default-profile-icon'}`}>
                                 {job.companyLogo ? (
                                     <img src={job.companyLogo} alt={job.companyName} />
                                 ) : (
@@ -2650,7 +3029,7 @@ const PortalHomeFeed = ({
                             </button>
                             {getHomeJobLikeCount(job) > 0 && (
                                 <span className="job-post-action-count" aria-label={`${getHomeJobLikeCount(job)} likes`}>
-                                    {getHomeJobLikeCount(job)}
+                                    {formatCompactCount(getHomeJobLikeCount(job))}
                                 </span>
                             )}
                             <button
@@ -2667,6 +3046,16 @@ const PortalHomeFeed = ({
                             {bookmarked && (
                                 <span className="job-post-action-count" aria-label="1 bookmark">1</span>
                             )}
+                            <button
+                                type="button"
+                                className="job-post-reaction-button job-post-share-reaction"
+                                onClick={(event) => handleCopyJobShare(job, event)}
+                                aria-label="Share job post"
+                                title="Share"
+                            >
+                                <SharePostIcon />
+                                <ReactionTooltip>Share</ReactionTooltip>
+                            </button>
                         </div>
 
                         <div className="portal-candidate-job-footer">
@@ -2950,7 +3339,7 @@ const PortalHomeFeed = ({
             <div className="portal-job-modal-backdrop" role="presentation" onClick={closeJobModal}>
                 <article className="portal-job-modal" role="dialog" aria-modal="true" aria-label={`${selectedJob.title} job details`} onClick={(event) => event.stopPropagation()}>
                     <div className="portal-candidate-job-header portal-job-modal-header">
-                        <div className="portal-job-company-avatar">
+                        <div className={`portal-job-company-avatar ${selectedJob.companyLogo ? '' : 'has-default-profile-icon'}`}>
                             {selectedJob.companyLogo ? (
                                 <img src={selectedJob.companyLogo} alt={selectedJob.companyName} />
                             ) : (

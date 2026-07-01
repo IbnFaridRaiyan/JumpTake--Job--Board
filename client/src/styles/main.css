@@ -53433,3 +53433,344 @@ select {
     color: #ffffff !important;
   }
 }
+
+/* Screenshot 171-176 refinements: larger action rails, options menus, saved posts, links, and clean default avatars. */
+.portal-social-post-card,
+.portal-candidate-job-card {
+  position: relative !important;
+}
+
+.portal-post-header-actions {
+  align-items: flex-start !important;
+  display: inline-flex !important;
+  gap: 0.55rem !important;
+  margin-left: auto !important;
+  position: relative !important;
+}
+
+.portal-post-options-wrap {
+  display: inline-flex !important;
+  position: relative !important;
+}
+
+.portal-post-options-button {
+  align-items: center !important;
+  background: transparent !important;
+  border: 0 !important;
+  color: #c7c7c7 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  height: 1.65rem !important;
+  justify-content: center !important;
+  min-height: 1.65rem !important;
+  min-width: 1.65rem !important;
+  padding: 0 !important;
+  width: 1.65rem !important;
+}
+
+.portal-post-options-button:hover,
+.portal-post-options-button:focus-visible,
+.portal-post-options-button[aria-expanded="true"] {
+  color: #ffffff !important;
+}
+
+.portal-post-options-button svg {
+  height: 1rem !important;
+  width: 1rem !important;
+}
+
+.portal-post-options-menu {
+  background: #050706 !important;
+  border: 1px solid rgba(91, 183, 166, 0.55) !important;
+  border-radius: 0.65rem !important;
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.45) !important;
+  display: grid !important;
+  gap: 0.15rem !important;
+  min-width: 8.6rem !important;
+  padding: 0.45rem !important;
+  position: absolute !important;
+  right: 0 !important;
+  top: calc(100% + 0.25rem) !important;
+  z-index: 120 !important;
+}
+
+.portal-post-options-menu button {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0.45rem !important;
+  color: #f4f4f4 !important;
+  cursor: pointer !important;
+  font: inherit !important;
+  padding: 0.42rem 0.55rem !important;
+  text-align: left !important;
+  white-space: nowrap !important;
+}
+
+.portal-post-options-menu button:hover,
+.portal-post-options-menu button:focus-visible {
+  background: rgba(91, 183, 166, 0.18) !important;
+}
+
+.portal-job-card-options {
+  position: absolute !important;
+  right: 0.75rem !important;
+  top: 0.75rem !important;
+  z-index: 5 !important;
+}
+
+.portal-candidate-job-card {
+  padding-right: 2.9rem !important;
+}
+
+.portal-reaction-trigger-count,
+.portal-comment-trigger-count,
+.job-post-action-count {
+  color: #c7c7c7 !important;
+  display: inline-flex !important;
+  font-variant-numeric: tabular-nums !important;
+  line-height: 1 !important;
+  min-width: max-content !important;
+  white-space: nowrap !important;
+}
+
+.portal-post-action-row,
+.job-post-action-reactions {
+  align-items: center !important;
+  min-height: 2.35rem !important;
+  padding: 0.2rem 0.58rem !important;
+}
+
+.portal-reaction-trigger,
+.portal-comment-toggle,
+.portal-share-toggle,
+.portal-post-delete-toggle,
+.job-post-reaction-button {
+  height: 1.72rem !important;
+  min-height: 1.72rem !important;
+  min-width: 1.72rem !important;
+  width: 1.72rem !important;
+}
+
+.portal-reaction-trigger svg,
+.portal-comment-toggle svg,
+.portal-share-toggle svg,
+.portal-post-delete-toggle svg,
+.job-post-reaction-button svg {
+  height: 1.04rem !important;
+  width: 1.04rem !important;
+}
+
+.portal-reaction-trigger img {
+  height: 1.18rem !important;
+  width: 1.18rem !important;
+}
+
+.portal-post-reactions.portal-reaction-rail.is-popover,
+.portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+  height: 2.52rem !important;
+  min-height: 2.52rem !important;
+  padding: 0.06rem 0.52rem 0.22rem !important;
+  transform: translateY(-0.64rem) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-item,
+.portal-post-reactions.is-popover .icon-content {
+  align-items: center !important;
+  display: inline-flex !important;
+  transform: translateY(-0.12rem) !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button,
+.portal-post-reactions.portal-reaction-rail.is-popover .portal-reaction-button {
+  height: 1.78rem !important;
+  min-height: 1.78rem !important;
+  min-width: 1.78rem !important;
+  width: 1.78rem !important;
+}
+
+.portal-post-reactions.is-popover .portal-reaction-button svg,
+.portal-post-reactions.portal-reaction-rail.is-popover .portal-reaction-button svg {
+  height: 1.08rem !important;
+  width: 1.08rem !important;
+}
+
+.portal-post-avatar.has-default-profile-icon,
+.portal-comment-avatar.has-default-profile-icon,
+.portal-job-company-avatar.has-default-profile-icon,
+.portal-share-friend-avatar:has(> svg) {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.portal-post-avatar.has-default-profile-icon .portal-default-profile-icon svg,
+.portal-job-company-avatar.has-default-profile-icon .portal-default-profile-icon svg {
+  height: 86% !important;
+  width: 86% !important;
+}
+
+.portal-comment-avatar.has-default-profile-icon .portal-default-profile-icon svg {
+  height: 82% !important;
+  width: 82% !important;
+}
+
+.portal-default-profile-icon,
+.portal-default-profile-icon svg {
+  color: #ffffff !important;
+}
+
+.portal-deep-link-target {
+  box-shadow:
+    0 0 0 1px rgba(245, 184, 46, 0.8),
+    0 0 1.2rem rgba(245, 184, 46, 0.28) !important;
+}
+
+.saved-posts-section {
+  color: #f4f4f4;
+  padding: 0.75rem;
+}
+
+.saved-posts-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.saved-post-card {
+  align-items: center;
+  background: rgba(4, 14, 12, 0.78);
+  border: 1px solid rgba(91, 183, 166, 0.42);
+  border-radius: 0.7rem;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  padding: 0.85rem;
+}
+
+.saved-post-card-icon {
+  align-items: center;
+  color: #c7c7c7;
+  display: inline-flex;
+  justify-content: center;
+}
+
+.saved-post-card-body {
+  min-width: 0;
+}
+
+.saved-post-card-body h3,
+.saved-post-card-body p {
+  margin: 0;
+}
+
+.saved-post-card-body span {
+  color: #c7c7c7;
+  display: block;
+  margin-top: 0.35rem;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.saved-post-card-actions {
+  display: inline-flex;
+  gap: 0.45rem;
+}
+
+.saved-post-card-actions button {
+  background: rgba(91, 183, 166, 0.18);
+  border: 1px solid rgba(91, 183, 166, 0.5);
+  border-radius: 999px;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 0.42rem 0.75rem;
+}
+
+.saved-post-card-actions button.secondary {
+  background: transparent;
+  color: #c7c7c7;
+}
+
+@media (max-width: 768px) {
+  .portal-post-action-row,
+  .job-post-action-reactions {
+    min-height: 2.06rem !important;
+    padding: 0.14rem 0.5rem !important;
+  }
+
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle,
+  .job-post-reaction-button {
+    height: 1.45rem !important;
+    min-height: 1.45rem !important;
+    min-width: 1.45rem !important;
+    width: 1.45rem !important;
+  }
+
+  .portal-reaction-trigger svg,
+  .portal-comment-toggle svg,
+  .portal-share-toggle svg,
+  .portal-post-delete-toggle svg,
+  .job-post-reaction-button svg {
+    height: 0.92rem !important;
+    width: 0.92rem !important;
+  }
+
+  .portal-reaction-trigger img {
+    height: 1rem !important;
+    width: 1rem !important;
+  }
+
+  .portal-post-reactions.portal-reaction-rail.is-popover,
+  .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+    height: 2.32rem !important;
+    min-height: 2.32rem !important;
+    padding: 0.03rem 0.34rem 0.28rem !important;
+    transform: translateY(-0.72rem) !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-item,
+  .portal-post-reactions.is-popover .icon-content {
+    transform: translateY(-0.18rem) !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button,
+  .portal-post-reactions.portal-reaction-rail.is-popover .portal-reaction-button {
+    height: 1.48rem !important;
+    min-height: 1.48rem !important;
+    min-width: 1.48rem !important;
+    width: 1.48rem !important;
+  }
+
+  .portal-post-reactions.is-popover .portal-reaction-button svg,
+  .portal-post-reactions.portal-reaction-rail.is-popover .portal-reaction-button svg {
+    height: 0.9rem !important;
+    width: 0.9rem !important;
+  }
+
+  .portal-post-options-button {
+    height: 1.5rem !important;
+    min-height: 1.5rem !important;
+    min-width: 1.5rem !important;
+    width: 1.5rem !important;
+  }
+
+  .portal-post-options-menu {
+    min-width: 8rem !important;
+  }
+
+  .portal-post-header-actions {
+    gap: 0.28rem !important;
+  }
+
+  .saved-post-card {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .saved-post-card-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+  }
+}

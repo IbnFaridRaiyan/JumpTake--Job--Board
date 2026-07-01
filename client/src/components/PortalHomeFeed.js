@@ -12,8 +12,9 @@ const RESUME_PLAYGROUND_STORAGE_KEY = 'jumptakeResumePlayground:';
 const SAVED_POSTS_STORAGE_PREFIX = 'jumptakeSavedPosts:';
 const BLOCKED_FEED_AUTHORS_STORAGE_PREFIX = 'jumptakeBlockedFeedAuthors:';
 const HOME_JOB_PAGE_SIZE = 7;
-const MOBILE_FEED_TOUCH_SCROLL_RATIO = 0.5;
-const MOBILE_FEED_TOUCH_MAX_STEP = 90;
+const MOBILE_FEED_TOUCH_SCROLL_RATIO = 0.32;
+const MOBILE_FEED_TOUCH_MAX_STEP = 48;
+const MOBILE_FEED_SCROLL_EASE = 0.28;
 
 const escapeHtml = (value = '') => (
     String(value)
@@ -921,11 +922,13 @@ const PortalHomeFeed = ({
     const reactionCloseTimerRef = useRef(null);
     const feedScrollTopRef = useRef(0);
     const tabsHiddenRef = useRef(false);
+    const feedScrollerRef = useRef(null);
     const feedTouchScrollRef = useRef({
         active: false,
         lastY: 0,
-        pendingDelta: 0,
-        frameId: null
+        targetScrollTop: 0,
+        frameId: null,
+        scroller: null
     });
     const pendingDeepLinkRef = useRef(null);
     const feedDraftTypingTimerRef = useRef(null);
@@ -1325,7 +1328,8 @@ const PortalHomeFeed = ({
         const touchState = feedTouchScrollRef.current;
         touchState.active = false;
         touchState.lastY = 0;
-        touchState.pendingDelta = 0;
+        touchState.targetScrollTop = 0;
+        touchState.scroller = null;
         if (touchState.frameId && typeof window !== 'undefined') {
             window.cancelAnimationFrame(touchState.frameId);
             touchState.frameId = null;
@@ -2603,11 +2607,12 @@ const PortalHomeFeed = ({
         feedScrollTopRef.current = nextScrollTop;
     }, []);
 
-    const stopMobileFeedTouchScroll = useCallback(() => {
+    const cancelMobileFeedTouchScroll = useCallback(() => {
         const touchState = feedTouchScrollRef.current;
         touchState.active = false;
         touchState.lastY = 0;
-        touchState.pendingDelta = 0;
+        touchState.targetScrollTop = 0;
+        touchState.scroller = null;
 
         if (touchState.frameId && typeof window !== 'undefined') {
             window.cancelAnimationFrame(touchState.frameId);
@@ -2616,64 +2621,111 @@ const PortalHomeFeed = ({
         touchState.frameId = null;
     }, []);
 
-    const handleMobileFeedTouchStart = useCallback((event) => {
-        const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-        const target = event.target;
-        const isEditingField = target?.closest?.('input, textarea, select, [contenteditable="true"]');
-
-        if (!isMobile || event.touches.length !== 1 || isEditingField) {
-            stopMobileFeedTouchScroll();
-            return;
-        }
-
+    const runMobileFeedScrollFrame = useCallback(() => {
         const touchState = feedTouchScrollRef.current;
-        touchState.active = true;
-        touchState.lastY = event.touches[0].clientY;
-        touchState.pendingDelta = 0;
-    }, [stopMobileFeedTouchScroll]);
+        const scroller = touchState.scroller;
 
-    const handleMobileFeedTouchMove = useCallback((event) => {
+        if (!scroller || typeof window === 'undefined') {
+            touchState.frameId = null;
+            return;
+        }
+
+        const diff = touchState.targetScrollTop - scroller.scrollTop;
+        if (Math.abs(diff) < 0.7) {
+            scroller.scrollTop = touchState.targetScrollTop;
+            feedScrollTopRef.current = scroller.scrollTop;
+            touchState.frameId = null;
+            return;
+        }
+
+        scroller.scrollTop += diff * MOBILE_FEED_SCROLL_EASE;
+        feedScrollTopRef.current = scroller.scrollTop;
+        touchState.frameId = window.requestAnimationFrame(runMobileFeedScrollFrame);
+    }, []);
+
+    const ensureMobileFeedScrollFrame = useCallback(() => {
         const touchState = feedTouchScrollRef.current;
-
-        if (!touchState.active || event.touches.length !== 1) {
-            return;
-        }
-
-        const scroller = event.currentTarget;
-        const nextY = event.touches[0].clientY;
-        const rawDelta = touchState.lastY - nextY;
-        touchState.lastY = nextY;
-
-        if (Math.abs(rawDelta) < 1) {
-            return;
-        }
-
-        if (event.cancelable) {
-            event.preventDefault();
-        }
-
-        const limitedDelta = Math.sign(rawDelta) * Math.min(
-            Math.abs(rawDelta) * MOBILE_FEED_TOUCH_SCROLL_RATIO,
-            MOBILE_FEED_TOUCH_MAX_STEP
-        );
-        touchState.pendingDelta += limitedDelta;
-
         if (touchState.frameId || typeof window === 'undefined') {
             return;
         }
 
-        touchState.frameId = window.requestAnimationFrame(() => {
-            const nextScrollTop = scroller.scrollTop + touchState.pendingDelta;
-            touchState.pendingDelta = 0;
-            touchState.frameId = null;
-            scroller.scrollTop = nextScrollTop;
-            feedScrollTopRef.current = scroller.scrollTop;
-        });
-    }, []);
+        touchState.frameId = window.requestAnimationFrame(runMobileFeedScrollFrame);
+    }, [runMobileFeedScrollFrame]);
 
-    useEffect(() => () => {
-        stopMobileFeedTouchScroll();
-    }, [stopMobileFeedTouchScroll]);
+    useEffect(() => {
+        const scroller = feedScrollerRef.current;
+
+        if (!scroller || typeof window === 'undefined') {
+            return undefined;
+        }
+
+        const getMaxScrollTop = () => Math.max(0, scroller.scrollHeight - scroller.clientHeight);
+        const clampScrollTop = (value) => Math.max(0, Math.min(getMaxScrollTop(), value));
+        const isMobileFeedTouch = (event) => (
+            window.innerWidth <= 768
+            && event.touches.length === 1
+            && !event.target?.closest?.('input, textarea, select, [contenteditable="true"]')
+        );
+
+        const handleTouchStart = (event) => {
+            if (!isMobileFeedTouch(event)) {
+                cancelMobileFeedTouchScroll();
+                return;
+            }
+
+            const touchState = feedTouchScrollRef.current;
+            touchState.active = true;
+            touchState.scroller = scroller;
+            touchState.lastY = event.touches[0].clientY;
+            touchState.targetScrollTop = scroller.scrollTop;
+        };
+
+        const handleTouchMove = (event) => {
+            const touchState = feedTouchScrollRef.current;
+
+            if (!touchState.active || event.touches.length !== 1) {
+                return;
+            }
+
+            const nextY = event.touches[0].clientY;
+            const rawDelta = touchState.lastY - nextY;
+            touchState.lastY = nextY;
+
+            if (Math.abs(rawDelta) < 1) {
+                return;
+            }
+
+            if (event.cancelable) {
+                event.preventDefault();
+            }
+
+            const limitedDelta = Math.sign(rawDelta) * Math.min(
+                Math.abs(rawDelta) * MOBILE_FEED_TOUCH_SCROLL_RATIO,
+                MOBILE_FEED_TOUCH_MAX_STEP
+            );
+            touchState.targetScrollTop = clampScrollTop(touchState.targetScrollTop + limitedDelta);
+            ensureMobileFeedScrollFrame();
+        };
+
+        const handleTouchEnd = () => {
+            const touchState = feedTouchScrollRef.current;
+            touchState.active = false;
+            touchState.lastY = 0;
+        };
+
+        scroller.addEventListener('touchstart', handleTouchStart, { passive: true });
+        scroller.addEventListener('touchmove', handleTouchMove, { passive: false });
+        scroller.addEventListener('touchend', handleTouchEnd, { passive: true });
+        scroller.addEventListener('touchcancel', handleTouchEnd, { passive: true });
+
+        return () => {
+            scroller.removeEventListener('touchstart', handleTouchStart);
+            scroller.removeEventListener('touchmove', handleTouchMove);
+            scroller.removeEventListener('touchend', handleTouchEnd);
+            scroller.removeEventListener('touchcancel', handleTouchEnd);
+            cancelMobileFeedTouchScroll();
+        };
+    }, [cancelMobileFeedTouchScroll, ensureMobileFeedScrollFrame]);
 
     const renderPostList = (posts, key, kind) => {
         const safePosts = Array.isArray(posts)
@@ -3631,12 +3683,9 @@ const PortalHomeFeed = ({
             </div>
 
             <div
+                ref={feedScrollerRef}
                 className="portal-home-feed-scroll"
                 onScroll={handleFeedScroll}
-                onTouchStart={handleMobileFeedTouchStart}
-                onTouchMove={handleMobileFeedTouchMove}
-                onTouchEnd={stopMobileFeedTouchScroll}
-                onTouchCancel={stopMobileFeedTouchScroll}
             >
                 {feedLoading ? <div className="loading-spinner">Loading live feed...</div> : null}
                 {activeTab === 'work-news' && renderPostList(workNewsPosts, WORK_NEWS_STORAGE_KEY, 'work')}

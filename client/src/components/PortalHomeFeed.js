@@ -12,9 +12,9 @@ const RESUME_PLAYGROUND_STORAGE_KEY = 'jumptakeResumePlayground:';
 const SAVED_POSTS_STORAGE_PREFIX = 'jumptakeSavedPosts:';
 const BLOCKED_FEED_AUTHORS_STORAGE_PREFIX = 'jumptakeBlockedFeedAuthors:';
 const HOME_JOB_PAGE_SIZE = 7;
-const MOBILE_FEED_TOUCH_SCROLL_RATIO = 0.32;
-const MOBILE_FEED_TOUCH_MAX_STEP = 48;
-const MOBILE_FEED_SCROLL_EASE = 0.28;
+const MOBILE_FEED_TOUCH_SCROLL_RATIO = 0.42;
+const MOBILE_FEED_TOUCH_MAX_STEP = 62;
+const MOBILE_FEED_SCROLL_EASE = 0.36;
 
 const escapeHtml = (value = '') => (
     String(value)

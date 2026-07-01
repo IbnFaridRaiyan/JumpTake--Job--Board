@@ -92,6 +92,66 @@ const plainTextToHtml = (text = '') => {
         .join('');
 };
 
+const EDITOR_PAGE_WRAPPER_SELECTOR = [
+    '.resume-export-page',
+    '.resume-print-page',
+    '.resume-page',
+    '.a4-page',
+    '.page',
+    '.resume-playground-editor-page-frame',
+    '.resume-playground-editor-pages-stack',
+    '.resume-playground-editor-document',
+    '[data-resume-page]',
+    '[data-document-page]',
+    '[data-a4-page]'
+].join(',');
+
+const unwrapElement = (element) => {
+    if (!element?.parentNode || typeof document === 'undefined') {
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    while (element.firstChild) {
+        fragment.appendChild(element.firstChild);
+    }
+    element.replaceWith(fragment);
+};
+
+const flattenEditorPageWrappers = (root) => {
+    if (!root || typeof document === 'undefined') {
+        return;
+    }
+
+    Array.from(root.querySelectorAll(EDITOR_PAGE_WRAPPER_SELECTOR)).forEach((element) => {
+        if (element.classList?.contains('resume-playground-page-break')) {
+            return;
+        }
+        unwrapElement(element);
+    });
+
+    root.querySelectorAll('[data-resume-template-root], [data-document-template-root]').forEach((element) => {
+        element.style.width = 'auto';
+        element.style.maxWidth = '100%';
+        element.style.minHeight = '0';
+        element.style.height = 'auto';
+        element.style.background = 'transparent';
+        element.style.boxShadow = 'none';
+        element.style.border = '0';
+    });
+};
+
+const sanitizeEditorHtml = (html = '') => {
+    if (typeof document === 'undefined') {
+        return String(html || '');
+    }
+
+    const template = document.createElement('template');
+    template.innerHTML = String(html || '');
+    flattenEditorPageWrappers(template.content);
+    return template.innerHTML;
+};
+
 const looksLikeHeading = (line = '') => {
     const trimmed = String(line || '').trim();
     if (!trimmed) {
@@ -1278,11 +1338,14 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
     }, []);
 
     const normalizeEditorContent = useCallback(() => {
+        flattenEditorPageWrappers(editorRef.current);
+
         const root = getPaginationHost();
 
         if (!root) {
             return;
         }
+        flattenEditorPageWrappers(root);
         const childNodes = Array.from(root.childNodes);
 
         childNodes.forEach((node) => {
@@ -1517,8 +1580,10 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
             return;
         }
 
-        if (editorRef.current.innerHTML !== editorResume.html) {
-            editorRef.current.innerHTML = editorResume.html;
+        const sanitizedHtml = sanitizeEditorHtml(editorResume.html);
+
+        if (editorRef.current.innerHTML !== sanitizedHtml) {
+            editorRef.current.innerHTML = sanitizedHtml;
         }
 
         window.requestAnimationFrame(() => {
@@ -1652,7 +1717,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
     };
 
     const animateAiDraftIntoEditor = (draftRecord, draftText, finalHtml = '') => {
-        const formattedHtml = finalHtml || plainTextToHtml(draftText);
+        const formattedHtml = sanitizeEditorHtml(finalHtml || plainTextToHtml(draftText));
 
         if (typeof window === 'undefined') {
             setEditorResume((current) => (
@@ -1745,7 +1810,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                 return;
             }
 
-            const formattedHtml = createAiDraftHtml(draftText, { documentMode: isDocumentMode });
+            const formattedHtml = sanitizeEditorHtml(createAiDraftHtml(draftText, { documentMode: isDocumentMode }));
             const draftRecord = createResumeRecord({
                 name: draft.name || (isDocumentMode ? 'AI Generated Document' : 'AI Generated Resume'),
                 html: formattedHtml,

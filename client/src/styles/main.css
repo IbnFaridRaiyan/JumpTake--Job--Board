@@ -55242,3 +55242,77 @@ button.sky-apply-button,
   color: #ffffff !important;
   box-shadow: 0 0 0 5px rgba(138, 52, 8, 0.42) !important;
 }
+
+/* Resume editor: generated/imported page wrappers should not create nested A4 sheets. */
+.resume-playground-editor-document :is(
+  .resume-export-page,
+  .resume-print-page,
+  .resume-page,
+  .a4-page,
+  .page,
+  .resume-playground-editor-page-frame,
+  .resume-playground-editor-pages-stack,
+  .resume-playground-editor-document,
+  [data-resume-page],
+  [data-document-page],
+  [data-a4-page]
+) {
+  display: contents !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  min-height: 0 !important;
+  height: auto !important;
+  width: auto !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.resume-playground-editor-document :is([data-resume-template-root], [data-document-template-root]) {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  min-height: 0 !important;
+  height: auto !important;
+  width: auto !important;
+  max-width: 100% !important;
+}
+
+/* Screenshot 224/225 refinements: share menu layering and dashboard actions moved into the icon rail. */
+.portal-default-actions {
+  display: none !important;
+}
+
+.portal-social-post-card:has(.portal-share-picker) {
+  position: relative !important;
+  z-index: 90 !important;
+  overflow: visible !important;
+}
+
+.portal-social-post-card:has(.portal-share-picker) .portal-post-action-cluster,
+.portal-social-post-card:has(.portal-share-picker) .portal-post-action-row {
+  position: relative !important;
+  z-index: 95 !important;
+  overflow: visible !important;
+}
+
+.portal-share-toggle.active {
+  z-index: 100 !important;
+}
+
+.portal-share-picker {
+  top: auto !important;
+  bottom: calc(100% + 0.55rem) !important;
+  left: 0 !important;
+  z-index: 120 !important;
+  max-height: min(18rem, 46vh) !important;
+  overflow-y: auto !important;
+}
+
+@media (max-width: 768px) {
+  .portal-share-picker {
+    width: min(16.5rem, calc(100vw - 5.5rem)) !important;
+    max-height: min(16rem, 42vh) !important;
+  }
+}

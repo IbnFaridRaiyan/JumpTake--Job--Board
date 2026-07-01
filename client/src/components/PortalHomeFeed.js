@@ -12,8 +12,8 @@ const RESUME_PLAYGROUND_STORAGE_KEY = 'jumptakeResumePlayground:';
 const SAVED_POSTS_STORAGE_PREFIX = 'jumptakeSavedPosts:';
 const BLOCKED_FEED_AUTHORS_STORAGE_PREFIX = 'jumptakeBlockedFeedAuthors:';
 const HOME_JOB_PAGE_SIZE = 7;
-const MOBILE_FEED_TOUCH_SCROLL_RATIO = 0.82;
-const MOBILE_FEED_MAX_TOUCH_SCROLL = 640;
+const MOBILE_FEED_TOUCH_SCROLL_RATIO = 0.9;
+const MOBILE_FEED_MAX_TOUCH_SCROLL = 1120;
 
 const escapeHtml = (value = '') => (
     String(value)
@@ -2567,7 +2567,12 @@ const PortalHomeFeed = ({
             event.preventDefault();
         }
 
-        scroller.scrollTop = nextScrollTop;
+        if (typeof scroller.scrollTo === 'function') {
+            scroller.scrollTo({ top: nextScrollTop, behavior: 'smooth' });
+        } else {
+            scroller.scrollTop = nextScrollTop;
+        }
+
         feedScrollTopRef.current = nextScrollTop;
 
         if (Math.abs(cappedDelta) > 12) {

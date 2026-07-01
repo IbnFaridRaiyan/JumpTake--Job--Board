@@ -54285,7 +54285,7 @@ select {
     overflow-x: hidden !important;
     overscroll-behavior-y: contain !important;
     -webkit-overflow-scrolling: auto !important;
-    scroll-behavior: auto !important;
+    scroll-behavior: smooth !important;
     touch-action: none !important;
     contain: layout paint !important;
   }

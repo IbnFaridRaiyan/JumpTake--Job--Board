@@ -36700,6 +36700,7 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
 .admin-sidebar,
 .admin-content,
 .admin-record-card,
+.admin-create-company,
 .admin-create-job {
   border: 1px solid rgba(125, 239, 229, 0.24);
   border-radius: 0.9rem;
@@ -36866,11 +36867,69 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
   width: min(430px, 100%);
 }
 
+.admin-create-company,
 .admin-create-job {
   display: grid;
   gap: 0.7rem;
   margin-bottom: 1rem;
   padding: 0.9rem;
+}
+
+.admin-form-heading-row {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.admin-form-heading-row p {
+  margin: 0.3rem 0 0;
+}
+
+.admin-company-create-layout {
+  display: grid;
+  grid-template-columns: minmax(11rem, 14rem) minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: start;
+}
+
+.admin-company-logo-field {
+  display: grid;
+  gap: 0.55rem;
+  justify-items: start;
+}
+
+.admin-company-avatar {
+  display: grid;
+  place-items: center;
+  width: 5.3rem;
+  height: 5.3rem;
+  border: 1px solid rgba(125, 239, 229, 0.32);
+  border-radius: 0.85rem;
+  background: #000000;
+  color: #ffffff;
+  font-size: 2.2rem;
+  font-weight: 900;
+  overflow: hidden;
+}
+
+.admin-company-avatar-image,
+.admin-company-avatar .candidate-profile-fallback-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-company-avatar .candidate-profile-fallback-icon {
+  width: 64%;
+  height: 64%;
+  fill: currentColor;
+}
+
+.admin-company-fields {
+  display: grid;
+  gap: 0.7rem;
+  min-width: 0;
 }
 
 .admin-form-grid {
@@ -36960,6 +37019,15 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
 
   .admin-form-grid {
     grid-template-columns: 1fr;
+  }
+
+  .admin-form-heading-row,
+  .admin-company-create-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-form-heading-row {
+    flex-direction: column;
   }
 
   .admin-search-form {
@@ -54184,5 +54252,46 @@ select {
     min-width: 5.9rem !important;
     padding: 0.32rem 0.7rem !important;
     font-size: 0.7rem !important;
+  }
+}
+
+/* Mobile portal home feeds: keep the page shell fixed and let the feed body scroll independently. */
+@media (max-width: 768px) {
+  .home-page .main-content.mobile-section-job-feed,
+  .home-page .main-content.mobile-section-home-feed {
+    min-height: 0 !important;
+    overflow: hidden !important;
+    overscroll-behavior: contain !important;
+  }
+
+  .home-page .main-content.mobile-section-job-feed .portal-home-feed,
+  .home-page .main-content.mobile-section-home-feed .portal-home-feed {
+    display: flex !important;
+    flex-direction: column !important;
+    height: calc(100dvh - 5.9rem) !important;
+    max-height: calc(100dvh - 5.9rem) !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    overscroll-behavior: contain !important;
+  }
+
+  .home-page .main-content.mobile-section-job-feed .portal-home-feed-scroll,
+  .home-page .main-content.mobile-section-home-feed .portal-home-feed-scroll {
+    flex: 1 1 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-behavior: auto !important;
+    touch-action: pan-y !important;
+    contain: layout paint !important;
+  }
+
+  .home-page .main-content.mobile-section-job-feed .portal-home-feed-scroll > *,
+  .home-page .main-content.mobile-section-home-feed .portal-home-feed-scroll > * {
+    touch-action: pan-y !important;
   }
 }

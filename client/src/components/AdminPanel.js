@@ -1,8 +1,34 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ProfileAvatar from './ProfileAvatar';
+import { createSquareProfileImage } from '../utils/profileImages';
 
 const API_BASE = process.env.REACT_APP_API_URL || '';
 const ADMIN_KEY_STORAGE = 'jumptakeAdminKey';
+
+const emptyCompanyForm = {
+  name: '',
+  industry: '',
+  headquarters: '',
+  website: '',
+  founded: '',
+  description: '',
+  logo: ''
+};
+
+const randomCompanyNames = [
+  'Northstar Works',
+  'BrightPath Labs',
+  'Evergreen Talent',
+  'Atlas Hiring Group',
+  'BluePeak Systems',
+  'NovaBridge Careers'
+];
+
+const randomIndustries = ['Technology', 'Healthcare', 'Finance', 'Education', 'Retail', 'Logistics'];
+const randomHeadquarters = ['New York, NY', 'Austin, TX', 'San Francisco, CA', 'Chicago, IL', 'Seattle, WA', 'Miami, FL'];
+
+const pickRandom = (items) => items[Math.floor(Math.random() * items.length)];
 
 const formatValue = (value) => {
   if (value === null || value === undefined || value === '') {
@@ -33,6 +59,9 @@ const AdminPanel = () => {
   const [pagination, setPagination] = useState({ total: 0, totalPages: 1 });
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const companyLogoInputRef = useRef(null);
+  const [isProcessingCompanyLogo, setIsProcessingCompanyLogo] = useState(false);
+  const [companyForm, setCompanyForm] = useState({ ...emptyCompanyForm });
   const [jobForm, setJobForm] = useState({
     company: '',
     title: '',
@@ -207,6 +236,68 @@ const AdminPanel = () => {
     }
   };
 
+  const handleRandomizeCompany = () => {
+    const randomName = pickRandom(randomCompanyNames);
+    setCompanyForm((current) => ({
+      ...current,
+      name: `${randomName} ${Math.floor(100 + Math.random() * 900)}`,
+      industry: current.industry || pickRandom(randomIndustries),
+      headquarters: current.headquarters || pickRandom(randomHeadquarters),
+      description: current.description || 'Admin-created company profile for testing jobs, posts, and employer portal flows.'
+    }));
+  };
+
+  const handleCompanyLogoUpload = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      setMessage('');
+      setIsProcessingCompanyLogo(true);
+      const logo = await createSquareProfileImage(file);
+      setCompanyForm((current) => ({ ...current, logo }));
+    } catch (error) {
+      setMessage(error.message || 'Could not prepare that company picture.');
+    } finally {
+      setIsProcessingCompanyLogo(false);
+    }
+  };
+
+  const handleCreateCompany = async (event) => {
+    event.preventDefault();
+
+    try {
+      setMessage('');
+      const data = await adminFetch('/companies', {
+        method: 'POST',
+        body: JSON.stringify(companyForm)
+      });
+      const createdCompanyId = data.item?._id || '';
+      const companiesData = await adminFetch('/collections/companies?page=1&limit=20');
+      setCompanyForm({ ...emptyCompanyForm });
+      setSelectedCollection('companies');
+      setPage(1);
+      setItems(companiesData.items || []);
+      setPagination({
+        total: companiesData.total || 0,
+        totalPages: companiesData.totalPages || 1
+      });
+      if (createdCompanyId) {
+        setJobForm((current) => ({ ...current, company: createdCompanyId }));
+      }
+      await loadSummary();
+      setMessage(createdCompanyId
+        ? `Company created. Company ID: ${createdCompanyId}`
+        : 'Company created.');
+    } catch (error) {
+      setMessage(error.message);
+    }
+  };
+
   const handleDeletePostComment = async (postId, commentId) => {
     const confirmed = window.confirm('Delete this comment from the post? This cannot be undone.');
 
@@ -344,6 +435,88 @@ const AdminPanel = () => {
               <button type="submit">Search</button>
             </form>
           </div>
+
+          <form className="admin-create-company" onSubmit={handleCreateCompany}>
+            <div className="admin-form-heading-row">
+              <div>
+                <h3>Create Company</h3>
+                <p>Creates a company record with a generated company ID. Upload a picture or leave it empty for the default icon.</p>
+              </div>
+              <button type="button" onClick={handleRandomizeCompany}>
+                Random Company
+              </button>
+            </div>
+            <div className="admin-company-create-layout">
+              <div className="admin-company-logo-field">
+                <ProfileAvatar
+                  imageSrc={companyForm.logo}
+                  name={companyForm.name || 'Company'}
+                  className="admin-company-avatar"
+                  imageClassName="admin-company-avatar-image"
+                  useProfileIconFallback
+                />
+                <input
+                  ref={companyLogoInputRef}
+                  type="file"
+                  className="profile-resume-input"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  onChange={handleCompanyLogoUpload}
+                />
+                <button
+                  type="button"
+                  onClick={() => companyLogoInputRef.current?.click()}
+                  disabled={isProcessingCompanyLogo}
+                >
+                  {isProcessingCompanyLogo ? 'Preparing...' : 'Set Profile Picture'}
+                </button>
+                {companyForm.logo ? (
+                  <button
+                    type="button"
+                    className="admin-ghost-button"
+                    onClick={() => setCompanyForm((current) => ({ ...current, logo: '' }))}
+                  >
+                    Use Default Icon
+                  </button>
+                ) : null}
+              </div>
+              <div className="admin-company-fields">
+                <div className="admin-form-grid">
+                  <input
+                    value={companyForm.name}
+                    onChange={(event) => setCompanyForm((current) => ({ ...current, name: event.target.value }))}
+                    placeholder="Company name"
+                    required
+                  />
+                  <input
+                    value={companyForm.industry}
+                    onChange={(event) => setCompanyForm((current) => ({ ...current, industry: event.target.value }))}
+                    placeholder="Industry"
+                  />
+                  <input
+                    value={companyForm.headquarters}
+                    onChange={(event) => setCompanyForm((current) => ({ ...current, headquarters: event.target.value }))}
+                    placeholder="Headquarters"
+                  />
+                  <input
+                    value={companyForm.website}
+                    onChange={(event) => setCompanyForm((current) => ({ ...current, website: event.target.value }))}
+                    placeholder="Website"
+                  />
+                  <input
+                    value={companyForm.founded}
+                    onChange={(event) => setCompanyForm((current) => ({ ...current, founded: event.target.value }))}
+                    placeholder="Founded"
+                  />
+                </div>
+                <textarea
+                  value={companyForm.description}
+                  onChange={(event) => setCompanyForm((current) => ({ ...current, description: event.target.value }))}
+                  placeholder="Company description"
+                />
+                <button type="submit">Create Company</button>
+              </div>
+            </div>
+          </form>
 
           <form className="admin-create-job" onSubmit={handleCreateJob}>
             <h3>Create Job Post As Company</h3>

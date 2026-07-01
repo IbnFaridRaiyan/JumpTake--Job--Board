@@ -481,6 +481,39 @@ router.post('/jobs', async (req, res) => {
   }
 });
 
+router.post('/companies', async (req, res) => {
+  try {
+    const {
+      name,
+      industry = '',
+      founded = '',
+      headquarters = '',
+      description = '',
+      website = '',
+      logo = ''
+    } = req.body;
+
+    if (!String(name || '').trim()) {
+      return res.status(400).json({ error: 'Company name is required' });
+    }
+
+    const company = await Company.create({
+      name: String(name).trim(),
+      industry: String(industry || '').trim(),
+      founded: String(founded || '').trim(),
+      headquarters: String(headquarters || '').trim(),
+      description: String(description || '').trim(),
+      website: String(website || '').trim(),
+      logo: typeof logo === 'string' ? logo : '',
+      source: 'admin'
+    });
+
+    res.status(201).json({ item: serializeDocument(company) });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 router.delete('/feed-posts/:postId/comments/:commentId', async (req, res) => {
   try {
     const { postId, commentId } = req.params;

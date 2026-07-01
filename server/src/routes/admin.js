@@ -345,15 +345,22 @@ const extractOpenAIText = (data) => {
     .trim();
 };
 
-const askAdminOpenAIWithModel = async ({ apiKey, model, prompt }) => {
+const askAdminOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = false }) => {
   try {
+    const payload = {
+      model,
+      input: prompt,
+      max_output_tokens: 650
+    };
+
+    if (useWebSearch) {
+      payload.tools = [{ type: 'web_search_preview' }];
+      payload.tool_choice = 'auto';
+    }
+
     const response = await axios.post(
       'https://api.openai.com/v1/responses',
-      {
-        model,
-        input: prompt,
-        max_output_tokens: 650
-      },
+      payload,
       {
         timeout: 25000,
         headers: {
@@ -369,6 +376,11 @@ const askAdminOpenAIWithModel = async ({ apiKey, model, prompt }) => {
     }
   } catch (error) {
     const message = String(error.response?.data?.error?.message || error.message || '');
+    const shouldRetryWithoutSearch = useWebSearch && /web_search|tool|unsupported|invalid/i.test(message);
+    if (shouldRetryWithoutSearch) {
+      return askAdminOpenAIWithModel({ apiKey, model, prompt, useWebSearch: false });
+    }
+
     const shouldTryChat = /responses|output_text|max_output_tokens|unknown|not found|unsupported|model/i.test(message);
     if (!shouldTryChat) {
       throw error;
@@ -395,7 +407,7 @@ const askAdminOpenAIWithModel = async ({ apiKey, model, prompt }) => {
   return String(chatResponse.data?.choices?.[0]?.message?.content || '').trim();
 };
 
-const askAdminOpenAI = async (prompt) => {
+const askAdminOpenAI = async (prompt, { useWebSearch = false } = {}) => {
   const apiKey = getOpenAIApiKey();
   if (!apiKey) {
     return '';
@@ -404,7 +416,7 @@ const askAdminOpenAI = async (prompt) => {
   let lastError = null;
   for (const model of getOpenAIModelCandidates()) {
     try {
-      const text = await askAdminOpenAIWithModel({ apiKey, model, prompt });
+      const text = await askAdminOpenAIWithModel({ apiKey, model, prompt, useWebSearch });
       if (text) {
         return text;
       }
@@ -524,6 +536,11 @@ Rules:
 - Fill only fields that can be inferred from the request.
 - If the admin asks to post/create a job, fill jobForm. If they provide a company ID such as ez1231231, put it in jobForm.company.
 - If they ask to create a company, fill companyForm. If they provide a custom company ID/code, put it in companyForm.adminCompanyId.
+- For company creation or company enrichment, extract and fill company name, headquarters/address, website, industry, founded year, and description/company details from the admin text.
+- If the admin gives only a company name and fields are missing, use web search results to identify the real company details. Prefer official company websites and reliable business/profile pages. Do not invent details; leave uncertain fields blank.
+- Put a physical address or city/country in companyForm.headquarters.
+- Put the official public URL in companyForm.website.
+- Put a concise factual company overview in companyForm.description.
 - jobType must be one of Full-time, Part-time, Contract, Internship, Remote.
 - Do not include markdown.
 
@@ -820,7 +837,12 @@ router.post('/assistant', async (req, res) => {
       companyForm: req.body?.companyForm || {},
       jobForm: req.body?.jobForm || {}
     });
-    const aiText = await askAdminOpenAI(prompt);
+    const companyForm = req.body?.companyForm || {};
+    const lowerMessage = message.toLowerCase();
+    const wantsCompanyInfo = /\b(company|business|employer|website|industry|founded|address|headquarters|details|profile)\b/.test(lowerMessage);
+    const hasMissingCompanyDetails = !companyForm.industry || !companyForm.headquarters || !companyForm.website || !companyForm.founded || !companyForm.description;
+    const useWebSearch = process.env.OPENAI_ENABLE_WEB_SEARCH !== 'false' && wantsCompanyInfo && hasMissingCompanyDetails;
+    const aiText = await askAdminOpenAI(prompt, { useWebSearch });
     const parsed = parseJsonObjectFromText(aiText) || createFallbackAdminAssistantPlan(message);
 
     res.json({
@@ -828,7 +850,7 @@ router.post('/assistant', async (req, res) => {
       action: parsed.action || 'reply',
       companyForm: parsed.companyForm && typeof parsed.companyForm === 'object' ? parsed.companyForm : {},
       jobForm: parsed.jobForm && typeof parsed.jobForm === 'object' ? parsed.jobForm : {},
-      provider: aiText ? 'openai' : 'fallback'
+      provider: aiText ? (useWebSearch ? 'openai-web' : 'openai') : 'fallback'
     });
   } catch (error) {
     res.status(500).json({ error: error.message || 'Admin assistant failed' });

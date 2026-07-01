@@ -12,8 +12,6 @@ const RESUME_PLAYGROUND_STORAGE_KEY = 'jumptakeResumePlayground:';
 const SAVED_POSTS_STORAGE_PREFIX = 'jumptakeSavedPosts:';
 const BLOCKED_FEED_AUTHORS_STORAGE_PREFIX = 'jumptakeBlockedFeedAuthors:';
 const HOME_JOB_PAGE_SIZE = 7;
-const MOBILE_FEED_TOUCH_SCROLL_RATIO = 1.05;
-const MOBILE_FEED_MAX_TOUCH_SCROLL = 1560;
 
 const escapeHtml = (value = '') => (
     String(value)
@@ -571,21 +569,6 @@ const MoreOptionsIcon = () => (
     </svg>
 );
 
-const PortalCloseIcon = () => (
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        fill="currentColor"
-        className="bi bi-x"
-        viewBox="0 0 16 16"
-        aria-hidden="true"
-        focusable="false"
-    >
-        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
-    </svg>
-);
-
 const DefaultProfileIcon = () => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -884,7 +867,6 @@ const PortalHomeFeed = ({
     const reactionTooltipTimerRef = useRef(null);
     const reactionCloseTimerRef = useRef(null);
     const feedScrollTopRef = useRef(0);
-    const feedTouchRef = useRef({ y: 0, scrollTop: 0 });
     const pendingDeepLinkRef = useRef(null);
     const feedDraftTypingTimerRef = useRef(null);
     const feedDraftTypingTokenRef = useRef(0);
@@ -2522,72 +2504,6 @@ const PortalHomeFeed = ({
         feedScrollTopRef.current = nextScrollTop;
     }, []);
 
-    const shouldUseControlledFeedTouch = useCallback((event) => {
-        if (typeof window === 'undefined' || window.innerWidth > 768 || !event.touches?.length) {
-            return false;
-        }
-
-        const target = event.target;
-        if (!target?.closest) {
-            return true;
-        }
-
-        return !target.closest('input, textarea, select, [contenteditable="true"], .portal-home-tabs, .portal-reaction-rail');
-    }, []);
-
-    const handleFeedTouchStart = useCallback((event) => {
-        if (!shouldUseControlledFeedTouch(event)) {
-            return;
-        }
-
-        feedTouchRef.current = {
-            y: event.touches[0].clientY,
-            scrollTop: event.currentTarget.scrollTop
-        };
-    }, [shouldUseControlledFeedTouch]);
-
-    const handleFeedTouchMove = useCallback((event) => {
-        if (!shouldUseControlledFeedTouch(event)) {
-            return;
-        }
-
-        const delta = feedTouchRef.current.y - event.touches[0].clientY;
-        const cappedDelta = Math.max(
-            -MOBILE_FEED_MAX_TOUCH_SCROLL,
-            Math.min(MOBILE_FEED_MAX_TOUCH_SCROLL, delta * MOBILE_FEED_TOUCH_SCROLL_RATIO)
-        );
-        const scroller = event.currentTarget;
-        const maxScrollTop = Math.max(scroller.scrollHeight - scroller.clientHeight, 0);
-        const nextScrollTop = Math.max(
-            0,
-            Math.min(maxScrollTop, feedTouchRef.current.scrollTop + cappedDelta)
-        );
-
-        if (event.cancelable) {
-            event.preventDefault();
-        }
-
-        if (typeof scroller.scrollTo === 'function') {
-            scroller.scrollTo({ top: nextScrollTop, behavior: 'smooth' });
-        } else {
-            scroller.scrollTop = nextScrollTop;
-        }
-
-        feedScrollTopRef.current = nextScrollTop;
-
-        if (Math.abs(cappedDelta) > 12) {
-            setTabsHidden(nextScrollTop > 12 && cappedDelta > 0);
-        }
-    }, [shouldUseControlledFeedTouch]);
-
-    const handleFeedTouchEnd = useCallback((event) => {
-        feedTouchRef.current = {
-            y: 0,
-            scrollTop: event.currentTarget.scrollTop
-        };
-        feedScrollTopRef.current = event.currentTarget.scrollTop;
-    }, []);
-
     const renderPostList = (posts, key, kind) => {
         const safePosts = Array.isArray(posts)
             ? posts
@@ -3399,6 +3315,15 @@ const PortalHomeFeed = ({
                             <h3>{selectedJob.title}</h3>
                             <p>{selectedJob.companyName}</p>
                         </div>
+                        <button
+                            type="button"
+                            className="portal-job-modal-back-button"
+                            onClick={closeJobModal}
+                            aria-label="Back to job posts"
+                            title="Back"
+                        >
+                            <SimpleIcon path={utilityIconPaths.chevronDoubleLeft} />
+                        </button>
                     </div>
 
                     {renderJobMeta(selectedJob)}
@@ -3474,9 +3399,6 @@ const PortalHomeFeed = ({
                                             : 'Apply Now'}
                                 </button>
                             )}
-                            <button type="button" className="portal-view-job-button secondary portal-icon-close-button" onClick={closeJobModal} aria-label="Close job details">
-                                <PortalCloseIcon />
-                            </button>
                         </div>
                     )}
                 </article>
@@ -3518,10 +3440,6 @@ const PortalHomeFeed = ({
             <div
                 className="portal-home-feed-scroll"
                 onScroll={handleFeedScroll}
-                onTouchStart={handleFeedTouchStart}
-                onTouchMove={handleFeedTouchMove}
-                onTouchEnd={handleFeedTouchEnd}
-                onTouchCancel={handleFeedTouchEnd}
             >
                 {feedLoading ? <div className="loading-spinner">Loading live feed...</div> : null}
                 {activeTab === 'work-news' && renderPostList(workNewsPosts, WORK_NEWS_STORAGE_KEY, 'work')}

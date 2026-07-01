@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const express = require('express');
 const mongoose = require('mongoose');
+const axios = require('axios');
 
 const Application = require('../models/Application');
 const ApplicationBookmark = require('../models/ApplicationBookmark');
@@ -46,14 +47,14 @@ const COLLECTIONS = {
   companies: {
     label: 'Companies',
     model: Company,
-    searchFields: ['name', 'industry', 'headquarters', 'description', 'website'],
-    summaryFields: ['name', 'industry', 'headquarters', 'website', 'createdAt']
+    searchFields: ['name', 'adminCompanyId', 'industry', 'headquarters', 'description', 'website'],
+    summaryFields: ['name', 'adminCompanyId', 'industry', 'headquarters', 'website', 'createdAt']
   },
   jobs: {
     label: 'Job Posts',
     model: Job,
-    searchFields: ['title', 'description', 'location', 'salary', 'jobType', 'jobNumber'],
-    summaryFields: ['title', 'jobNumber', 'location', 'jobType', 'salary', 'active', 'company', 'createdAt']
+    searchFields: ['title', 'description', 'location', 'salary', 'jobType', 'jobNumber', 'adminCompanyId'],
+    summaryFields: ['title', 'jobNumber', 'adminCompanyId', 'location', 'jobType', 'salary', 'active', 'company', 'createdAt']
   },
   applications: {
     label: 'Applications',
@@ -241,6 +242,294 @@ const getSort = (model) => {
 
   return { _id: -1 };
 };
+
+const normalizeAdminCompanyId = (value) => String(value || '').trim();
+
+const createCompanyNameFromAdminId = (adminCompanyId) => {
+  const cleaned = normalizeAdminCompanyId(adminCompanyId);
+  if (!cleaned) {
+    return 'Admin Company';
+  }
+
+  return `Admin Company ${cleaned}`;
+};
+
+const resolveAdminJobCompany = async (companyValue, fallbackName = '') => {
+  const requestedCompanyId = normalizeAdminCompanyId(companyValue);
+
+  if (!requestedCompanyId) {
+    const error = new Error('Company ID is required');
+    error.status = 400;
+    throw error;
+  }
+
+  if (mongoose.Types.ObjectId.isValid(requestedCompanyId)) {
+    const existingByObjectId = await Company.findById(requestedCompanyId);
+    if (existingByObjectId) {
+      return {
+        company: existingByObjectId,
+        adminCompanyId: existingByObjectId.adminCompanyId || requestedCompanyId
+      };
+    }
+
+    const createdWithObjectId = await Company.create({
+      _id: requestedCompanyId,
+      name: fallbackName || createCompanyNameFromAdminId(requestedCompanyId),
+      adminCompanyId: requestedCompanyId,
+      source: 'admin'
+    });
+
+    return {
+      company: createdWithObjectId,
+      adminCompanyId: requestedCompanyId
+    };
+  }
+
+  const existingByAdminId = await Company.findOne({ adminCompanyId: requestedCompanyId });
+  if (existingByAdminId) {
+    return {
+      company: existingByAdminId,
+      adminCompanyId: requestedCompanyId
+    };
+  }
+
+  const created = await Company.create({
+    name: fallbackName || createCompanyNameFromAdminId(requestedCompanyId),
+    adminCompanyId: requestedCompanyId,
+    source: 'admin'
+  });
+
+  return {
+    company: created,
+    adminCompanyId: requestedCompanyId
+  };
+};
+
+const getOpenAIApiKey = () => (
+  process.env.OPENAI_API_KEY
+  || process.env.CHATGPT_API_KEY
+  || process.env.OPENAI_SECRET_KEY
+  || process.env.OPENAI_KEY
+  || ''
+).trim();
+
+const getOpenAIModelCandidates = () => {
+  const configured = String(process.env.OPENAI_MODEL || '').trim();
+  return [...new Set([
+    configured,
+    'gpt-5',
+    'gpt-4.1-mini',
+    'gpt-4o-mini'
+  ].filter(Boolean))];
+};
+
+const extractOpenAIText = (data) => {
+  const outputText = String(data?.output_text || '').trim();
+  if (outputText) {
+    return outputText;
+  }
+
+  const output = Array.isArray(data?.output) ? data.output : [];
+  return output
+    .flatMap((block) => Array.isArray(block?.content) ? block.content : [])
+    .map((part) => {
+      if (typeof part?.text === 'string') {
+        return part.text;
+      }
+      if (typeof part?.text?.value === 'string') {
+        return part.text.value;
+      }
+      return '';
+    })
+    .join('')
+    .trim();
+};
+
+const askAdminOpenAIWithModel = async ({ apiKey, model, prompt }) => {
+  try {
+    const response = await axios.post(
+      'https://api.openai.com/v1/responses',
+      {
+        model,
+        input: prompt,
+        max_output_tokens: 650
+      },
+      {
+        timeout: 25000,
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    const text = extractOpenAIText(response.data);
+    if (text) {
+      return text;
+    }
+  } catch (error) {
+    const message = String(error.response?.data?.error?.message || error.message || '');
+    const shouldTryChat = /responses|output_text|max_output_tokens|unknown|not found|unsupported|model/i.test(message);
+    if (!shouldTryChat) {
+      throw error;
+    }
+  }
+
+  const chatResponse = await axios.post(
+    'https://api.openai.com/v1/chat/completions',
+    {
+      model,
+      temperature: 0.25,
+      max_tokens: 650,
+      messages: [{ role: 'user', content: prompt }]
+    },
+    {
+      timeout: 25000,
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      }
+    }
+  );
+
+  return String(chatResponse.data?.choices?.[0]?.message?.content || '').trim();
+};
+
+const askAdminOpenAI = async (prompt) => {
+  const apiKey = getOpenAIApiKey();
+  if (!apiKey) {
+    return '';
+  }
+
+  let lastError = null;
+  for (const model of getOpenAIModelCandidates()) {
+    try {
+      const text = await askAdminOpenAIWithModel({ apiKey, model, prompt });
+      if (text) {
+        return text;
+      }
+    } catch (error) {
+      lastError = error;
+      console.warn(`[ADMIN ASSISTANT] OpenAI model ${model} failed:`, error.response?.data?.error?.message || error.message);
+    }
+  }
+
+  if (lastError) {
+    throw lastError;
+  }
+
+  return '';
+};
+
+const parseJsonObjectFromText = (text) => {
+  const raw = String(text || '').trim();
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(raw);
+  } catch (error) {
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (!match) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(match[0]);
+    } catch (nestedError) {
+      return null;
+    }
+  }
+};
+
+const extractQuotedOrAfter = (message, labels) => {
+  for (const label of labels) {
+    const pattern = new RegExp(`${label}\\s*(?:is|as|:|=)?\\s*["']?([^"',\\n]+)`, 'i');
+    const match = message.match(pattern);
+    if (match?.[1]) {
+      return match[1].trim();
+    }
+  }
+
+  return '';
+};
+
+const createFallbackAdminAssistantPlan = (message) => {
+  const normalized = String(message || '').trim();
+  const lower = normalized.toLowerCase();
+  const wantsCompany = /\b(company|business|employer)\b/.test(lower);
+  const wantsJob = /\b(job|role|position|vacancy|post)\b/.test(lower);
+
+  const companyName = extractQuotedOrAfter(normalized, ['company name', 'company', 'business name', 'employer']);
+  const jobTitle = extractQuotedOrAfter(normalized, ['job title', 'title', 'role', 'position']);
+  const location = extractQuotedOrAfter(normalized, ['location', 'in']);
+  const salary = extractQuotedOrAfter(normalized, ['salary', 'pay']);
+  const companyId = extractQuotedOrAfter(normalized, ['company id', 'company code', 'id']);
+
+  return {
+    action: wantsJob ? 'fillJob' : wantsCompany ? 'fillCompany' : 'reply',
+    reply: wantsJob
+      ? 'I filled what I could in the job form. Add any missing details, then create the job.'
+      : wantsCompany
+        ? 'I filled what I could in the company form. Add any missing details, then create the company.'
+        : 'Tell me the company or job details you want filled.',
+    companyForm: wantsCompany ? {
+      name: companyName || '',
+      adminCompanyId: companyId || '',
+      description: companyName ? `${companyName} company profile created from the admin assistant.` : ''
+    } : {},
+    jobForm: wantsJob ? {
+      company: companyId || '',
+      title: jobTitle || '',
+      location: location || '',
+      salary: salary || '',
+      jobType: /\b(remote)\b/i.test(normalized) ? 'Remote' : 'Full-time',
+      description: normalized
+    } : {}
+  };
+};
+
+const createAdminAssistantPrompt = ({ message, companyForm, jobForm }) => `You are JumpTake Admin AI. Convert the admin request into JSON that fills admin panel forms.
+
+Return only valid JSON with this shape:
+{
+  "reply": "short admin-facing reply",
+  "action": "fillCompany" | "fillJob" | "fillBoth" | "reply",
+  "companyForm": {
+    "name": "",
+    "adminCompanyId": "",
+    "industry": "",
+    "headquarters": "",
+    "website": "",
+    "founded": "",
+    "description": ""
+  },
+  "jobForm": {
+    "company": "",
+    "companyName": "",
+    "title": "",
+    "location": "",
+    "salary": "",
+    "applicationLink": "",
+    "jobType": "Full-time",
+    "skills": "",
+    "description": "",
+    "requirements": "",
+    "responsibilities": ""
+  }
+}
+
+Rules:
+- Fill only fields that can be inferred from the request.
+- If the admin asks to post/create a job, fill jobForm. If they provide a company ID such as ez1231231, put it in jobForm.company.
+- If they ask to create a company, fill companyForm. If they provide a custom company ID/code, put it in companyForm.adminCompanyId.
+- jobType must be one of Full-time, Part-time, Contract, Internship, Remote.
+- Do not include markdown.
+
+Current company form: ${JSON.stringify(companyForm || {})}
+Current job form: ${JSON.stringify(jobForm || {})}
+Admin request: ${message}`;
 
 const deleteCandidateData = async ({ userId, jobSeekerId }) => {
   const candidateIds = [];
@@ -453,6 +742,7 @@ router.post('/jobs', async (req, res) => {
       title,
       description,
       company,
+      companyName,
       location,
       salary,
       applicationLink,
@@ -461,11 +751,13 @@ router.post('/jobs', async (req, res) => {
       responsibilities,
       skills
     } = req.body;
+    const resolvedCompany = await resolveAdminJobCompany(company, companyName);
 
     const job = await Job.create({
       title,
       description,
-      company,
+      company: resolvedCompany.company._id,
+      adminCompanyId: resolvedCompany.adminCompanyId,
       location,
       salary,
       applicationLink,
@@ -485,6 +777,7 @@ router.post('/companies', async (req, res) => {
   try {
     const {
       name,
+      adminCompanyId = '',
       industry = '',
       founded = '',
       headquarters = '',
@@ -499,6 +792,7 @@ router.post('/companies', async (req, res) => {
 
     const company = await Company.create({
       name: String(name).trim(),
+      adminCompanyId: normalizeAdminCompanyId(adminCompanyId) || undefined,
       industry: String(industry || '').trim(),
       founded: String(founded || '').trim(),
       headquarters: String(headquarters || '').trim(),
@@ -511,6 +805,33 @@ router.post('/companies', async (req, res) => {
     res.status(201).json({ item: serializeDocument(company) });
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+});
+
+router.post('/assistant', async (req, res) => {
+  try {
+    const message = String(req.body?.message || '').trim();
+    if (!message) {
+      return res.status(400).json({ error: 'Message is required' });
+    }
+
+    const prompt = createAdminAssistantPrompt({
+      message,
+      companyForm: req.body?.companyForm || {},
+      jobForm: req.body?.jobForm || {}
+    });
+    const aiText = await askAdminOpenAI(prompt);
+    const parsed = parseJsonObjectFromText(aiText) || createFallbackAdminAssistantPlan(message);
+
+    res.json({
+      reply: String(parsed.reply || 'I filled what I could. Review the form before creating the record.'),
+      action: parsed.action || 'reply',
+      companyForm: parsed.companyForm && typeof parsed.companyForm === 'object' ? parsed.companyForm : {},
+      jobForm: parsed.jobForm && typeof parsed.jobForm === 'object' ? parsed.jobForm : {},
+      provider: aiText ? 'openai' : 'fallback'
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message || 'Admin assistant failed' });
   }
 });
 

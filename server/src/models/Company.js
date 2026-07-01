@@ -6,6 +6,12 @@ const CompanySchema = new mongoose.Schema({
     required: [true, 'Company name is required'],
     trim: true
   },
+  adminCompanyId: {
+    type: String,
+    trim: true,
+    index: true,
+    sparse: true
+  },
   industry: {
     type: String,
     trim: true

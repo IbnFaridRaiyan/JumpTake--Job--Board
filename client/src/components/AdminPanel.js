@@ -8,6 +8,7 @@ const ADMIN_KEY_STORAGE = 'jumptakeAdminKey';
 
 const emptyCompanyForm = {
   name: '',
+  adminCompanyId: '',
   industry: '',
   headquarters: '',
   website: '',
@@ -29,6 +30,13 @@ const randomIndustries = ['Technology', 'Healthcare', 'Finance', 'Education', 'R
 const randomHeadquarters = ['New York, NY', 'Austin, TX', 'San Francisco, CA', 'Chicago, IL', 'Seattle, WA', 'Miami, FL'];
 
 const pickRandom = (items) => items[Math.floor(Math.random() * items.length)];
+
+const mergeFilledFields = (current, updates = {}) => Object.fromEntries(
+  Object.entries(current).map(([key, value]) => {
+    const nextValue = updates[key];
+    return [key, nextValue === undefined || nextValue === null || nextValue === '' ? value : String(nextValue)];
+  })
+);
 
 const formatValue = (value) => {
   if (value === null || value === undefined || value === '') {
@@ -62,8 +70,18 @@ const AdminPanel = () => {
   const companyLogoInputRef = useRef(null);
   const [isProcessingCompanyLogo, setIsProcessingCompanyLogo] = useState(false);
   const [companyForm, setCompanyForm] = useState({ ...emptyCompanyForm });
+  const [adminAssistantOpen, setAdminAssistantOpen] = useState(false);
+  const [adminAssistantInput, setAdminAssistantInput] = useState('');
+  const [adminAssistantBusy, setAdminAssistantBusy] = useState(false);
+  const [adminAssistantMessages, setAdminAssistantMessages] = useState([
+    {
+      role: 'assistant',
+      text: 'Tell me what company or job to create and I will fill the admin forms.'
+    }
+  ]);
   const [jobForm, setJobForm] = useState({
     company: '',
+    companyName: '',
     title: '',
     location: '',
     salary: '',
@@ -217,6 +235,7 @@ const AdminPanel = () => {
       });
       setJobForm({
         company: '',
+        companyName: '',
         title: '',
         location: '',
         salary: '',
@@ -241,6 +260,7 @@ const AdminPanel = () => {
     setCompanyForm((current) => ({
       ...current,
       name: `${randomName} ${Math.floor(100 + Math.random() * 900)}`,
+      adminCompanyId: current.adminCompanyId || `company-${Math.floor(100000 + Math.random() * 900000)}`,
       industry: current.industry || pickRandom(randomIndustries),
       headquarters: current.headquarters || pickRandom(randomHeadquarters),
       description: current.description || 'Admin-created company profile for testing jobs, posts, and employer portal flows.'
@@ -276,7 +296,7 @@ const AdminPanel = () => {
         method: 'POST',
         body: JSON.stringify(companyForm)
       });
-      const createdCompanyId = data.item?._id || '';
+      const createdCompanyId = data.item?.adminCompanyId || data.item?._id || '';
       const companiesData = await adminFetch('/collections/companies?page=1&limit=20');
       setCompanyForm({ ...emptyCompanyForm });
       setSelectedCollection('companies');
@@ -295,6 +315,53 @@ const AdminPanel = () => {
         : 'Company created.');
     } catch (error) {
       setMessage(error.message);
+    }
+  };
+
+  const handleAdminAssistantSubmit = async (event) => {
+    event.preventDefault();
+    const prompt = adminAssistantInput.trim();
+
+    if (!prompt || adminAssistantBusy) {
+      return;
+    }
+
+    setAdminAssistantInput('');
+    setAdminAssistantBusy(true);
+    setAdminAssistantMessages((current) => [...current, { role: 'user', text: prompt }]);
+
+    try {
+      const data = await adminFetch('/assistant', {
+        method: 'POST',
+        body: JSON.stringify({
+          message: prompt,
+          companyForm,
+          jobForm
+        })
+      });
+
+      if (data.companyForm && Object.keys(data.companyForm).length) {
+        setCompanyForm((current) => mergeFilledFields(current, data.companyForm));
+      }
+
+      if (data.jobForm && Object.keys(data.jobForm).length) {
+        setJobForm((current) => mergeFilledFields(current, data.jobForm));
+      }
+
+      setAdminAssistantMessages((current) => [
+        ...current,
+        {
+          role: 'assistant',
+          text: data.reply || 'I filled the form fields I could infer. Review them before creating the record.'
+        }
+      ]);
+    } catch (error) {
+      setAdminAssistantMessages((current) => [
+        ...current,
+        { role: 'assistant', text: error.message || 'Admin assistant failed.' }
+      ]);
+    } finally {
+      setAdminAssistantBusy(false);
     }
   };
 
@@ -488,6 +555,11 @@ const AdminPanel = () => {
                     required
                   />
                   <input
+                    value={companyForm.adminCompanyId}
+                    onChange={(event) => setCompanyForm((current) => ({ ...current, adminCompanyId: event.target.value }))}
+                    placeholder="Custom company ID"
+                  />
+                  <input
                     value={companyForm.industry}
                     onChange={(event) => setCompanyForm((current) => ({ ...current, industry: event.target.value }))}
                     placeholder="Industry"
@@ -526,6 +598,11 @@ const AdminPanel = () => {
                 onChange={(event) => setJobForm((current) => ({ ...current, company: event.target.value }))}
                 placeholder="Company ID"
                 required
+              />
+              <input
+                value={jobForm.companyName}
+                onChange={(event) => setJobForm((current) => ({ ...current, companyName: event.target.value }))}
+                placeholder="Company name if ID is new"
               />
               <input
                 value={jobForm.title}
@@ -661,6 +738,46 @@ const AdminPanel = () => {
           </div>
         </section>
       </section>
+
+      <div className={`admin-floating-assistant ${adminAssistantOpen ? 'is-open' : ''}`}>
+        {adminAssistantOpen ? (
+          <section className="admin-assistant-panel" aria-label="Admin AI assistant">
+            <div className="admin-assistant-header">
+              <div>
+                <h3>Admin AI</h3>
+                <p>Fill company and job forms with action commands.</p>
+              </div>
+              <button type="button" onClick={() => setAdminAssistantOpen(false)} aria-label="Close admin AI">
+                Close
+              </button>
+            </div>
+            <div className="admin-assistant-messages">
+              {adminAssistantMessages.map((chatMessage, index) => (
+                <div className={`admin-assistant-message is-${chatMessage.role}`} key={`${chatMessage.role}-${index}`}>
+                  {chatMessage.text}
+                </div>
+              ))}
+              {adminAssistantBusy ? (
+                <div className="admin-assistant-message is-assistant">Working on the forms...</div>
+              ) : null}
+            </div>
+            <form className="admin-assistant-form" onSubmit={handleAdminAssistantSubmit}>
+              <textarea
+                value={adminAssistantInput}
+                onChange={(event) => setAdminAssistantInput(event.target.value)}
+                placeholder="Example: post a remote frontend job for company ID ez1231231 in London, salary 70000"
+              />
+              <button type="submit" disabled={adminAssistantBusy || !adminAssistantInput.trim()}>
+                Send
+              </button>
+            </form>
+          </section>
+        ) : (
+          <button type="button" className="admin-assistant-launcher" onClick={() => setAdminAssistantOpen(true)}>
+            Admin AI
+          </button>
+        )}
+      </div>
     </main>
   );
 };

@@ -22,6 +22,10 @@ const JobSchema = new mongoose.Schema({
     ref: 'Company',
     required: [true, 'Company is required']
   },
+  adminCompanyId: {
+    type: String,
+    trim: true
+  },
   location: {
     type: String,
     required: [true, 'Job location is required'],

@@ -137,8 +137,8 @@ const COLLECTIONS = {
   feedPosts: {
     label: 'Feed Posts',
     model: FeedPost,
-    searchFields: ['type', 'body', 'authorId', 'authorType', 'authorName'],
-    summaryFields: ['type', 'authorName', 'authorType', 'audience', 'reach', 'createdAt']
+    searchFields: ['type', 'body', 'authorId', 'authorType', 'authorName', 'source', 'sourceTitle'],
+    summaryFields: ['type', 'authorName', 'authorType', 'audience', 'reach', 'source', 'createdAt']
   }
 };
 
@@ -363,7 +363,7 @@ const askAdminOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = f
     const payload = {
       model,
       input: prompt,
-      max_output_tokens: 3000
+      max_output_tokens: 5500
     };
 
     if (useWebSearch) {
@@ -395,7 +395,7 @@ const askAdminOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = f
       const legacyPayload = {
         model,
         input: prompt,
-        max_output_tokens: 3000,
+        max_output_tokens: 5500,
         tools: [{ type: 'web_search_preview' }],
         tool_choice: 'required',
         include: ['web_search_call.action.sources']
@@ -442,7 +442,7 @@ const askAdminOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = f
     {
       model,
       temperature: 0.25,
-      max_tokens: 3000,
+      max_tokens: 5500,
       messages: [{ role: 'user', content: prompt }]
     },
     {
@@ -466,7 +466,7 @@ const askAdminOpenAIChatSearch = async ({ apiKey, prompt }) => {
         'https://api.openai.com/v1/chat/completions',
         {
           model,
-          max_tokens: 3000,
+          max_tokens: 5500,
           web_search_options: {},
           messages: [{ role: 'user', content: prompt }]
         },
@@ -553,6 +553,11 @@ const looksLikeWebJobRefusal = (text) => (
   && /\b(web|browse|browsing|internet|source|sources|company details|job feed|live jobs)\b/i.test(String(text || ''))
 );
 
+const looksLikeWebWorkNewsRefusal = (text) => (
+  /\b(can't|cannot|unable|need|without|no access|not able)\b/i.test(String(text || ''))
+  && /\b(web|browse|browsing|internet|source|sources|linkedin|company updates?|live)\b/i.test(String(text || ''))
+);
+
 const extractQuotedOrAfter = (message, labels) => {
   for (const label of labels) {
     const pattern = new RegExp(`${label}\\s*(?:is|as|:|=)?\\s*["']?([^"',\\n]+)`, 'i');
@@ -605,7 +610,7 @@ const createAdminAssistantPrompt = ({ message, companyForm, jobForm }) => `You a
 Return only valid JSON with this shape:
 {
   "reply": "short admin-facing reply",
-  "action": "fillCompany" | "fillJob" | "fillBoth" | "reply",
+  "action": "fillCompany" | "fillJob" | "fillBoth" | "draftWorkNews" | "reply",
   "companyForm": {
     "name": "",
     "adminCompanyId": "",
@@ -643,6 +648,17 @@ Return only valid JSON with this shape:
       "responsibilities": "",
       "source": ""
     }
+  ],
+  "workNewsDrafts": [
+    {
+      "companyName": "",
+      "companyLogoUrl": "",
+      "body": "",
+      "mediaUrl": "",
+      "mediaType": "image",
+      "source": "",
+      "sourceTitle": ""
+    }
   ]
 }
 
@@ -658,6 +674,13 @@ Rules:
 - Put the source URL in both applicationLink when it is the apply/job page and source for traceability.
 - Do not say the jobs were posted. Tell the admin the drafts are ready and they should review each card and click Post Job.
 - Do not fabricate job details. Leave unknown fields blank.
+- If the admin asks to post/create Work News, company updates, LinkedIn updates, or feed posts from the live web, return workNewsDrafts instead of jobDrafts.
+- For requests like "post on work news make 10 drafts from the live web", use web search and collect exactly the requested number when possible, otherwise as many reliable current company updates as you can find.
+- Search LinkedIn public results, company newsrooms, company blogs, official social posts, and reliable business news pages. Prefer original company pages when LinkedIn is unavailable.
+- Each workNewsDraft must include companyName, source URL, sourceTitle when available, and a concise JumpTake Work News body. Paraphrase the update; do not copy long text verbatim.
+- Put a direct company logo or profile image URL in companyLogoUrl only when a reliable direct image URL is available. Otherwise leave it blank so JumpTake can use its default icon.
+- Put a direct image URL from the update in mediaUrl only when a reliable direct image URL is available. mediaType must be image or video. If no media exists or the URL is not direct, leave mediaUrl blank.
+- Do not say the Work News posts were posted. Tell the admin the drafts are ready and they should review each card and click Post Work News.
 - If they ask to create a company, fill companyForm. If they provide a custom company ID/code, put it in companyForm.adminCompanyId.
 - For company creation or company enrichment, extract and fill company name, headquarters/address, website, industry, founded year, and description/company details from the admin text.
 - If the admin gives only a company name and fields are missing, use web search results to identify the real company details. Prefer official company websites and reliable business/profile pages. Do not invent details; leave uncertain fields blank.
@@ -949,6 +972,42 @@ router.post('/companies', async (req, res) => {
   }
 });
 
+router.post('/feed-posts', async (req, res) => {
+  try {
+    const body = String(req.body?.body || '').trim().slice(0, 5000);
+    const authorName = String(req.body?.authorName || req.body?.companyName || 'Admin Company').trim().slice(0, 160);
+    const source = String(req.body?.source || '').trim().slice(0, 1000);
+    const sourceTitle = String(req.body?.sourceTitle || '').trim().slice(0, 240);
+    const mediaUrl = String(req.body?.mediaUrl || '').trim().slice(0, 4000);
+    const mediaType = req.body?.mediaType === 'video' ? 'video' : 'image';
+
+    if (!body && !mediaUrl) {
+      return res.status(400).json({ error: 'Write something or attach media before posting' });
+    }
+
+    const post = await FeedPost.create({
+      type: 'work-news',
+      body,
+      authorId: String(req.body?.authorId || `admin-work-news-${Date.now()}`),
+      authorType: 'employer',
+      authorName: authorName || 'Admin Company',
+      authorAvatar: String(req.body?.authorAvatar || req.body?.companyLogoUrl || ''),
+      audience: 'everyone',
+      media: mediaUrl ? {
+        dataUrl: mediaUrl,
+        type: mediaType,
+        name: sourceTitle || `${authorName || 'Company'} update media`
+      } : null,
+      source,
+      sourceTitle
+    });
+
+    res.status(201).json({ item: serializeDocument(post) });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 router.post('/assistant', async (req, res) => {
   try {
     const message = String(req.body?.message || '').trim();
@@ -966,11 +1025,14 @@ router.post('/assistant', async (req, res) => {
     const wantsCompanyInfo = /\b(company|business|employer|website|industry|founded|address|headquarters|details|profile)\b/.test(lowerMessage);
     const wantsWebJobs = /\b(latest|recent|web|online|search|find|collect|gradcracker|rate\s*my\s*placement|ratemyplacement|linkedin)\b/.test(lowerMessage)
       && /\b(job|jobs|role|roles|placement|graduate|internship)\b/.test(lowerMessage);
+    const wantsWorkNewsDrafts = /\b(work\s*news|company updates?|linkedin updates?|feed posts?|company posts?|news posts?)\b/.test(lowerMessage)
+      && /\b(draft|drafts|post|posts|create|make|generate|from web|live web|latest|recent|search|find|collect|linkedin|companies?)\b/.test(lowerMessage);
     const hasMissingCompanyDetails = !companyForm.industry || !companyForm.headquarters || !companyForm.website || !companyForm.founded || !companyForm.description;
-    const useWebSearch = process.env.OPENAI_ENABLE_WEB_SEARCH !== 'false' && (wantsWebJobs || (wantsCompanyInfo && hasMissingCompanyDetails));
+    const useWebSearch = process.env.OPENAI_ENABLE_WEB_SEARCH !== 'false' && (wantsWebJobs || wantsWorkNewsDrafts || (wantsCompanyInfo && hasMissingCompanyDetails));
     let aiText = await askAdminOpenAI(prompt, { useWebSearch });
     let parsed = parseJsonObjectFromText(aiText) || createFallbackAdminAssistantPlan(message);
     let jobDrafts = Array.isArray(parsed.jobDrafts) ? parsed.jobDrafts.slice(0, 20) : [];
+    let workNewsDrafts = Array.isArray(parsed.workNewsDrafts) ? parsed.workNewsDrafts.slice(0, 20) : [];
 
     if (wantsWebJobs && useWebSearch && !jobDrafts.length && looksLikeWebJobRefusal(`${parsed.reply || ''} ${aiText || ''}`)) {
       const retryPrompt = `${prompt}
@@ -986,8 +1048,26 @@ Strict retry:
       jobDrafts = Array.isArray(parsed.jobDrafts) ? parsed.jobDrafts.slice(0, 20) : [];
     }
 
+    if (wantsWorkNewsDrafts && useWebSearch && !workNewsDrafts.length && looksLikeWebWorkNewsRefusal(`${parsed.reply || ''} ${aiText || ''}`)) {
+      const retryPrompt = `${prompt}
+
+Strict retry:
+- The admin requested live web Work News drafts.
+- You must use the web search tool now.
+- Return JSON with workNewsDrafts filled from current company updates, LinkedIn/public social posts, company newsrooms, or official company blogs.
+- Do not return a refusal or ask the admin for source/company details.
+- If fewer than the requested number are found, return the reliable ones you found.`;
+      aiText = await askAdminOpenAI(retryPrompt, { useWebSearch: true });
+      parsed = parseJsonObjectFromText(aiText) || parsed;
+      workNewsDrafts = Array.isArray(parsed.workNewsDrafts) ? parsed.workNewsDrafts.slice(0, 20) : [];
+    }
+
     if (wantsWebJobs && !jobDrafts.length && looksLikeWebJobRefusal(`${parsed.reply || ''} ${aiText || ''}`)) {
       parsed.reply = 'Web search did not return usable job drafts. Check that the OpenAI account has web search access, then try the request again.';
+    }
+
+    if (wantsWorkNewsDrafts && !workNewsDrafts.length && looksLikeWebWorkNewsRefusal(`${parsed.reply || ''} ${aiText || ''}`)) {
+      parsed.reply = 'Web search did not return usable Work News drafts. Check that the OpenAI account has web search access, then try the request again.';
     }
 
     res.json({
@@ -996,6 +1076,7 @@ Strict retry:
       companyForm: parsed.companyForm && typeof parsed.companyForm === 'object' ? parsed.companyForm : {},
       jobForm: parsed.jobForm && typeof parsed.jobForm === 'object' ? parsed.jobForm : {},
       jobDrafts,
+      workNewsDrafts,
       provider: aiText ? (useWebSearch ? 'openai-web' : 'openai') : 'fallback'
     });
   } catch (error) {

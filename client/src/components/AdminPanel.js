@@ -32,6 +32,16 @@ const emptyJobForm = {
   source: ''
 };
 
+const emptyWorkNewsDraft = {
+  companyName: '',
+  companyLogoUrl: '',
+  body: '',
+  mediaUrl: '',
+  mediaType: 'image',
+  source: '',
+  sourceTitle: ''
+};
+
 const randomCompanyNames = [
   'Northstar Works',
   'BrightPath Labs',
@@ -62,6 +72,18 @@ const normalizeJobDraft = (draft = {}, index = 0) => ({
     ])
   ),
   id: draft.id || `job-draft-${Date.now()}-${index}`
+});
+
+const normalizeWorkNewsDraft = (draft = {}, index = 0) => ({
+  ...emptyWorkNewsDraft,
+  ...Object.fromEntries(
+    Object.keys(emptyWorkNewsDraft).map((key) => [
+      key,
+      draft[key] === undefined || draft[key] === null ? emptyWorkNewsDraft[key] : String(draft[key])
+    ])
+  ),
+  mediaType: draft.mediaType === 'video' ? 'video' : 'image',
+  id: draft.id || `work-news-draft-${Date.now()}-${index}`
 });
 
 const formatValue = (value) => {
@@ -102,11 +124,12 @@ const AdminPanel = () => {
   const [adminAssistantMessages, setAdminAssistantMessages] = useState([
     {
       role: 'assistant',
-      text: 'Tell me what company or job to create and I will fill the admin forms.'
+      text: 'Tell me what company, job, or Work News drafts to create and I will fill the admin forms.'
     }
   ]);
   const [jobForm, setJobForm] = useState({ ...emptyJobForm });
   const [adminJobDrafts, setAdminJobDrafts] = useState([]);
+  const [adminWorkNewsDrafts, setAdminWorkNewsDrafts] = useState([]);
 
   const headers = useMemo(() => ({
     'Content-Type': 'application/json',
@@ -355,6 +378,10 @@ const AdminPanel = () => {
         setAdminJobDrafts(data.jobDrafts.map((draft, index) => normalizeJobDraft(draft, index)));
       }
 
+      if (Array.isArray(data.workNewsDrafts) && data.workNewsDrafts.length) {
+        setAdminWorkNewsDrafts(data.workNewsDrafts.map((draft, index) => normalizeWorkNewsDraft(draft, index)));
+      }
+
       setAdminAssistantMessages((current) => [
         ...current,
         {
@@ -382,6 +409,16 @@ const AdminPanel = () => {
     setAdminJobDrafts((current) => current.filter((draft) => draft.id !== draftId));
   };
 
+  const updateAdminWorkNewsDraft = (draftId, field, value) => {
+    setAdminWorkNewsDrafts((current) => current.map((draft) => (
+      draft.id === draftId ? { ...draft, [field]: value } : draft
+    )));
+  };
+
+  const removeAdminWorkNewsDraft = (draftId) => {
+    setAdminWorkNewsDrafts((current) => current.filter((draft) => draft.id !== draftId));
+  };
+
   const postAdminJobDraft = async (draft) => {
     try {
       setMessage('');
@@ -397,6 +434,33 @@ const AdminPanel = () => {
       setPage(1);
       await Promise.all([loadSummary(), loadCollection()]);
       setMessage(`Job posted: ${draft.title || 'Untitled job'}`);
+    } catch (error) {
+      setMessage(error.message);
+    }
+  };
+
+  const postAdminWorkNewsDraft = async (draft) => {
+    try {
+      setMessage('');
+      await adminFetch('/feed-posts', {
+        method: 'POST',
+        body: JSON.stringify({
+          companyName: draft.companyName,
+          authorName: draft.companyName,
+          companyLogoUrl: draft.companyLogoUrl,
+          authorAvatar: draft.companyLogoUrl,
+          body: draft.body,
+          mediaUrl: draft.mediaUrl,
+          mediaType: draft.mediaType,
+          source: draft.source,
+          sourceTitle: draft.sourceTitle
+        })
+      });
+      removeAdminWorkNewsDraft(draft.id);
+      setSelectedCollection('feedPosts');
+      setPage(1);
+      await Promise.all([loadSummary(), loadCollection()]);
+      setMessage(`Work News posted: ${draft.companyName || 'Company update'}`);
     } catch (error) {
       setMessage(error.message);
     }
@@ -753,6 +817,70 @@ const AdminPanel = () => {
             </section>
           ) : null}
 
+          {adminWorkNewsDrafts.length ? (
+            <section className="admin-ai-job-drafts admin-ai-work-news-drafts">
+              <div className="admin-form-heading-row">
+                <div>
+                  <h3>AI Work News Drafts</h3>
+                  <p>Review each live-web company update before posting it to Work News.</p>
+                </div>
+                <button type="button" className="admin-ghost-button" onClick={() => setAdminWorkNewsDrafts([])}>
+                  Clear Drafts
+                </button>
+              </div>
+              <div className="admin-ai-job-draft-list">
+                {adminWorkNewsDrafts.map((draft, index) => (
+                  <article className="admin-ai-job-draft-card admin-ai-work-news-draft-card" key={draft.id}>
+                    <div className="admin-record-card-header">
+                      <div className="admin-work-news-draft-title">
+                        <ProfileAvatar
+                          imageSrc={draft.companyLogoUrl}
+                          name={draft.companyName || 'Company'}
+                          className="admin-work-news-draft-logo"
+                          imageClassName="admin-work-news-draft-logo-image"
+                          useProfileIconFallback
+                        />
+                        <div>
+                          <h3>Draft {index + 1}: {draft.companyName || 'Company update'}</h3>
+                          <p>{draft.sourceTitle || draft.source || 'Source not set'}</p>
+                        </div>
+                      </div>
+                      <div className="admin-draft-actions">
+                        <button type="button" onClick={() => postAdminWorkNewsDraft(draft)}>
+                          Post Work News
+                        </button>
+                        <button type="button" className="admin-danger-button" onClick={() => removeAdminWorkNewsDraft(draft.id)}>
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                    <div className="admin-form-grid">
+                      <input value={draft.companyName} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'companyName', event.target.value)} placeholder="Company name" />
+                      <input type="url" value={draft.companyLogoUrl} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'companyLogoUrl', event.target.value)} placeholder="Company logo/profile picture URL" />
+                      <input type="url" value={draft.mediaUrl} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'mediaUrl', event.target.value)} placeholder="Post image or video URL" />
+                      <select value={draft.mediaType} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'mediaType', event.target.value)}>
+                        <option value="image">Image</option>
+                        <option value="video">Video</option>
+                      </select>
+                      <input value={draft.sourceTitle} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'sourceTitle', event.target.value)} placeholder="Source title" />
+                      <input type="url" value={draft.source} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'source', event.target.value)} placeholder="Source URL" />
+                    </div>
+                    <textarea value={draft.body} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'body', event.target.value)} placeholder="Work News post text" />
+                    {draft.mediaUrl ? (
+                      <div className="admin-work-news-media-preview">
+                        {draft.mediaType === 'video' ? (
+                          <video src={draft.mediaUrl} controls muted />
+                        ) : (
+                          <img src={draft.mediaUrl} alt="" />
+                        )}
+                      </div>
+                    ) : null}
+                  </article>
+                ))}
+              </div>
+            </section>
+          ) : null}
+
           <div className="admin-records">
             {isLoading ? <p className="admin-empty">Loading records...</p> : null}
             {!isLoading && !items.length ? <p className="admin-empty">No records found.</p> : null}
@@ -836,7 +964,7 @@ const AdminPanel = () => {
             <div className="admin-assistant-header">
               <div>
                 <h3>Admin AI</h3>
-                <p>Fill company and job forms with action commands.</p>
+                <p>Fill company, job, and Work News drafts with action commands.</p>
               </div>
               <button type="button" onClick={() => setAdminAssistantOpen(false)} aria-label="Close admin AI">
                 Close
@@ -856,7 +984,7 @@ const AdminPanel = () => {
               <textarea
                 value={adminAssistantInput}
                 onChange={(event) => setAdminAssistantInput(event.target.value)}
-                placeholder="Example: find 10 latest graduate jobs from Gradcracker, RateMyPlacement, and LinkedIn"
+                placeholder="Example: make 10 Work News drafts from live web company updates"
               />
               <button type="submit" disabled={adminAssistantBusy || !adminAssistantInput.trim()}>
                 Send

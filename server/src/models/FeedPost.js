@@ -60,6 +60,14 @@ const FeedPostSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.Mixed,
     default: null
   },
+  source: {
+    type: String,
+    default: ''
+  },
+  sourceTitle: {
+    type: String,
+    default: ''
+  },
   comments: {
     type: [mongoose.Schema.Types.Mixed],
     default: []

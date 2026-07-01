@@ -12,6 +12,7 @@ const RESUME_PLAYGROUND_STORAGE_KEY = 'jumptakeResumePlayground:';
 const SAVED_POSTS_STORAGE_PREFIX = 'jumptakeSavedPosts:';
 const BLOCKED_FEED_AUTHORS_STORAGE_PREFIX = 'jumptakeBlockedFeedAuthors:';
 const HOME_JOB_PAGE_SIZE = 7;
+const MOBILE_FEED_MAX_SCROLL_BURST = 360;
 
 const escapeHtml = (value = '') => (
     String(value)
@@ -867,6 +868,7 @@ const PortalHomeFeed = ({
     const reactionTooltipTimerRef = useRef(null);
     const reactionCloseTimerRef = useRef(null);
     const feedScrollTopRef = useRef(0);
+    const limitingFeedScrollRef = useRef(false);
     const pendingDeepLinkRef = useRef(null);
     const feedDraftTypingTimerRef = useRef(null);
     const feedDraftTypingTokenRef = useRef(0);
@@ -2495,6 +2497,23 @@ const PortalHomeFeed = ({
         const nextScrollTop = event.currentTarget.scrollTop;
         const previousScrollTop = feedScrollTopRef.current;
         const delta = nextScrollTop - previousScrollTop;
+
+        if (
+            typeof window !== 'undefined'
+            && window.innerWidth <= 768
+            && !limitingFeedScrollRef.current
+            && Math.abs(delta) > MOBILE_FEED_MAX_SCROLL_BURST
+        ) {
+            const limitedScrollTop = previousScrollTop + (Math.sign(delta) * MOBILE_FEED_MAX_SCROLL_BURST);
+            limitingFeedScrollRef.current = true;
+            event.currentTarget.scrollTop = limitedScrollTop;
+            feedScrollTopRef.current = limitedScrollTop;
+            window.requestAnimationFrame(() => {
+                limitingFeedScrollRef.current = false;
+            });
+            setTabsHidden(limitedScrollTop > 12 && delta > 0);
+            return;
+        }
 
         if (Math.abs(delta) < 8) {
             return;

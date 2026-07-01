@@ -36701,6 +36701,8 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
 .admin-content,
 .admin-record-card,
 .admin-create-company,
+.admin-ai-job-drafts,
+.admin-ai-job-draft-card,
 .admin-create-job {
   border: 1px solid rgba(125, 239, 229, 0.24);
   border-radius: 0.9rem;
@@ -36868,11 +36870,30 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
 }
 
 .admin-create-company,
+.admin-ai-job-drafts,
 .admin-create-job {
   display: grid;
   gap: 0.7rem;
   margin-bottom: 1rem;
   padding: 0.9rem;
+}
+
+.admin-ai-job-draft-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.admin-ai-job-draft-card {
+  display: grid;
+  gap: 0.7rem;
+  padding: 0.85rem;
+}
+
+.admin-draft-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
 }
 
 .admin-form-heading-row {

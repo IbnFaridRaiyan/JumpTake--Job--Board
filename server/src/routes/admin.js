@@ -350,7 +350,7 @@ const askAdminOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = f
     const payload = {
       model,
       input: prompt,
-      max_output_tokens: 650
+      max_output_tokens: 3000
     };
 
     if (useWebSearch) {
@@ -392,7 +392,7 @@ const askAdminOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = f
     {
       model,
       temperature: 0.25,
-      max_tokens: 650,
+      max_tokens: 3000,
       messages: [{ role: 'user', content: prompt }]
     },
     {
@@ -529,12 +529,36 @@ Return only valid JSON with this shape:
     "description": "",
     "requirements": "",
     "responsibilities": ""
-  }
+  },
+  "jobDrafts": [
+    {
+      "company": "",
+      "companyName": "",
+      "title": "",
+      "location": "",
+      "salary": "",
+      "applicationLink": "",
+      "jobType": "Full-time",
+      "skills": "",
+      "description": "",
+      "requirements": "",
+      "responsibilities": "",
+      "source": ""
+    }
+  ]
 }
 
 Rules:
 - Fill only fields that can be inferred from the request.
 - If the admin asks to post/create a job, fill jobForm. If they provide a company ID such as ez1231231, put it in jobForm.company.
+- If the admin asks for multiple/latest/web jobs, return jobDrafts instead of one jobForm.
+- For requests like "post 10 latest jobs from the web", use web search and collect exactly the requested number when possible, otherwise as many reliable current jobs as you can find.
+- Search sources such as Gradcracker, RateMyPlacement, LinkedIn, company career pages, and other reliable job pages. Prefer direct application pages or original job posts.
+- For every jobDraft include title, companyName, location, applicationLink/source URL, jobType, description, requirements, responsibilities, skills, and salary if available.
+- jobDraft.company should be a stable admin company ID based on the company name, lowercase words joined with hyphens, unless the prompt provides a specific company ID.
+- Put the source URL in both applicationLink when it is the apply/job page and source for traceability.
+- Do not say the jobs were posted. Tell the admin the drafts are ready and they should review each card and click Post Job.
+- Do not fabricate job details. Leave unknown fields blank.
 - If they ask to create a company, fill companyForm. If they provide a custom company ID/code, put it in companyForm.adminCompanyId.
 - For company creation or company enrichment, extract and fill company name, headquarters/address, website, industry, founded year, and description/company details from the admin text.
 - If the admin gives only a company name and fields are missing, use web search results to identify the real company details. Prefer official company websites and reliable business/profile pages. Do not invent details; leave uncertain fields blank.
@@ -840,16 +864,20 @@ router.post('/assistant', async (req, res) => {
     const companyForm = req.body?.companyForm || {};
     const lowerMessage = message.toLowerCase();
     const wantsCompanyInfo = /\b(company|business|employer|website|industry|founded|address|headquarters|details|profile)\b/.test(lowerMessage);
+    const wantsWebJobs = /\b(latest|recent|web|online|search|find|collect|gradcracker|rate\s*my\s*placement|ratemyplacement|linkedin)\b/.test(lowerMessage)
+      && /\b(job|jobs|role|roles|placement|graduate|internship)\b/.test(lowerMessage);
     const hasMissingCompanyDetails = !companyForm.industry || !companyForm.headquarters || !companyForm.website || !companyForm.founded || !companyForm.description;
-    const useWebSearch = process.env.OPENAI_ENABLE_WEB_SEARCH !== 'false' && wantsCompanyInfo && hasMissingCompanyDetails;
+    const useWebSearch = process.env.OPENAI_ENABLE_WEB_SEARCH !== 'false' && (wantsWebJobs || (wantsCompanyInfo && hasMissingCompanyDetails));
     const aiText = await askAdminOpenAI(prompt, { useWebSearch });
     const parsed = parseJsonObjectFromText(aiText) || createFallbackAdminAssistantPlan(message);
+    const jobDrafts = Array.isArray(parsed.jobDrafts) ? parsed.jobDrafts.slice(0, 20) : [];
 
     res.json({
       reply: String(parsed.reply || 'I filled what I could. Review the form before creating the record.'),
       action: parsed.action || 'reply',
       companyForm: parsed.companyForm && typeof parsed.companyForm === 'object' ? parsed.companyForm : {},
       jobForm: parsed.jobForm && typeof parsed.jobForm === 'object' ? parsed.jobForm : {},
+      jobDrafts,
       provider: aiText ? (useWebSearch ? 'openai-web' : 'openai') : 'fallback'
     });
   } catch (error) {

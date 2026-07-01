@@ -17,6 +17,21 @@ const emptyCompanyForm = {
   logo: ''
 };
 
+const emptyJobForm = {
+  company: '',
+  companyName: '',
+  title: '',
+  location: '',
+  salary: '',
+  applicationLink: '',
+  jobType: 'Full-time',
+  description: '',
+  requirements: '',
+  responsibilities: '',
+  skills: '',
+  source: ''
+};
+
 const randomCompanyNames = [
   'Northstar Works',
   'BrightPath Labs',
@@ -37,6 +52,17 @@ const mergeFilledFields = (current, updates = {}) => Object.fromEntries(
     return [key, nextValue === undefined || nextValue === null || nextValue === '' ? value : String(nextValue)];
   })
 );
+
+const normalizeJobDraft = (draft = {}, index = 0) => ({
+  ...emptyJobForm,
+  ...Object.fromEntries(
+    Object.keys(emptyJobForm).map((key) => [
+      key,
+      draft[key] === undefined || draft[key] === null ? emptyJobForm[key] : String(draft[key])
+    ])
+  ),
+  id: draft.id || `job-draft-${Date.now()}-${index}`
+});
 
 const formatValue = (value) => {
   if (value === null || value === undefined || value === '') {
@@ -79,19 +105,8 @@ const AdminPanel = () => {
       text: 'Tell me what company or job to create and I will fill the admin forms.'
     }
   ]);
-  const [jobForm, setJobForm] = useState({
-    company: '',
-    companyName: '',
-    title: '',
-    location: '',
-    salary: '',
-    applicationLink: '',
-    jobType: 'Full-time',
-    description: '',
-    requirements: '',
-    responsibilities: '',
-    skills: ''
-  });
+  const [jobForm, setJobForm] = useState({ ...emptyJobForm });
+  const [adminJobDrafts, setAdminJobDrafts] = useState([]);
 
   const headers = useMemo(() => ({
     'Content-Type': 'application/json',
@@ -233,19 +248,7 @@ const AdminPanel = () => {
         method: 'POST',
         body: JSON.stringify(jobForm)
       });
-      setJobForm({
-        company: '',
-        companyName: '',
-        title: '',
-        location: '',
-        salary: '',
-        applicationLink: '',
-        jobType: 'Full-time',
-        description: '',
-        requirements: '',
-        responsibilities: '',
-        skills: ''
-      });
+      setJobForm({ ...emptyJobForm });
       setSelectedCollection('jobs');
       setPage(1);
       await Promise.all([loadSummary(), loadCollection()]);
@@ -348,6 +351,10 @@ const AdminPanel = () => {
         setJobForm((current) => mergeFilledFields(current, data.jobForm));
       }
 
+      if (Array.isArray(data.jobDrafts) && data.jobDrafts.length) {
+        setAdminJobDrafts(data.jobDrafts.map((draft, index) => normalizeJobDraft(draft, index)));
+      }
+
       setAdminAssistantMessages((current) => [
         ...current,
         {
@@ -362,6 +369,36 @@ const AdminPanel = () => {
       ]);
     } finally {
       setAdminAssistantBusy(false);
+    }
+  };
+
+  const updateAdminJobDraft = (draftId, field, value) => {
+    setAdminJobDrafts((current) => current.map((draft) => (
+      draft.id === draftId ? { ...draft, [field]: value } : draft
+    )));
+  };
+
+  const removeAdminJobDraft = (draftId) => {
+    setAdminJobDrafts((current) => current.filter((draft) => draft.id !== draftId));
+  };
+
+  const postAdminJobDraft = async (draft) => {
+    try {
+      setMessage('');
+      await adminFetch('/jobs', {
+        method: 'POST',
+        body: JSON.stringify({
+          ...draft,
+          applicationLink: draft.applicationLink || draft.source || ''
+        })
+      });
+      removeAdminJobDraft(draft.id);
+      setSelectedCollection('jobs');
+      setPage(1);
+      await Promise.all([loadSummary(), loadCollection()]);
+      setMessage(`Job posted: ${draft.title || 'Untitled job'}`);
+    } catch (error) {
+      setMessage(error.message);
     }
   };
 
@@ -662,6 +699,60 @@ const AdminPanel = () => {
             <button type="submit">Create Job</button>
           </form>
 
+          {adminJobDrafts.length ? (
+            <section className="admin-ai-job-drafts">
+              <div className="admin-form-heading-row">
+                <div>
+                  <h3>AI Job Drafts</h3>
+                  <p>Review each web-sourced job before posting it to JumpTake.</p>
+                </div>
+                <button type="button" className="admin-ghost-button" onClick={() => setAdminJobDrafts([])}>
+                  Clear Drafts
+                </button>
+              </div>
+              <div className="admin-ai-job-draft-list">
+                {adminJobDrafts.map((draft, index) => (
+                  <article className="admin-ai-job-draft-card" key={draft.id}>
+                    <div className="admin-record-card-header">
+                      <div>
+                        <h3>Draft {index + 1}: {draft.title || 'Untitled job'}</h3>
+                        <p>{draft.companyName || draft.company || 'Company not set'}</p>
+                      </div>
+                      <div className="admin-draft-actions">
+                        <button type="button" onClick={() => postAdminJobDraft(draft)}>
+                          Post Job
+                        </button>
+                        <button type="button" className="admin-danger-button" onClick={() => removeAdminJobDraft(draft.id)}>
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                    <div className="admin-form-grid">
+                      <input value={draft.company} onChange={(event) => updateAdminJobDraft(draft.id, 'company', event.target.value)} placeholder="Company ID" />
+                      <input value={draft.companyName} onChange={(event) => updateAdminJobDraft(draft.id, 'companyName', event.target.value)} placeholder="Company name" />
+                      <input value={draft.title} onChange={(event) => updateAdminJobDraft(draft.id, 'title', event.target.value)} placeholder="Job title" />
+                      <input value={draft.location} onChange={(event) => updateAdminJobDraft(draft.id, 'location', event.target.value)} placeholder="Location" />
+                      <input value={draft.salary} onChange={(event) => updateAdminJobDraft(draft.id, 'salary', event.target.value)} placeholder="Salary" />
+                      <input type="url" value={draft.applicationLink} onChange={(event) => updateAdminJobDraft(draft.id, 'applicationLink', event.target.value)} placeholder="Application link" />
+                      <select value={draft.jobType} onChange={(event) => updateAdminJobDraft(draft.id, 'jobType', event.target.value)}>
+                        <option>Full-time</option>
+                        <option>Part-time</option>
+                        <option>Contract</option>
+                        <option>Internship</option>
+                        <option>Remote</option>
+                      </select>
+                      <input value={draft.skills} onChange={(event) => updateAdminJobDraft(draft.id, 'skills', event.target.value)} placeholder="Skills, comma separated" />
+                      <input type="url" value={draft.source} onChange={(event) => updateAdminJobDraft(draft.id, 'source', event.target.value)} placeholder="Source URL" />
+                    </div>
+                    <textarea value={draft.description} onChange={(event) => updateAdminJobDraft(draft.id, 'description', event.target.value)} placeholder="Description" />
+                    <textarea value={draft.requirements} onChange={(event) => updateAdminJobDraft(draft.id, 'requirements', event.target.value)} placeholder="Requirements, one per line" />
+                    <textarea value={draft.responsibilities} onChange={(event) => updateAdminJobDraft(draft.id, 'responsibilities', event.target.value)} placeholder="Responsibilities, one per line" />
+                  </article>
+                ))}
+              </div>
+            </section>
+          ) : null}
+
           <div className="admin-records">
             {isLoading ? <p className="admin-empty">Loading records...</p> : null}
             {!isLoading && !items.length ? <p className="admin-empty">No records found.</p> : null}
@@ -765,7 +856,7 @@ const AdminPanel = () => {
               <textarea
                 value={adminAssistantInput}
                 onChange={(event) => setAdminAssistantInput(event.target.value)}
-                placeholder="Example: post a remote frontend job for company ID ez1231231 in London, salary 70000"
+                placeholder="Example: find 10 latest graduate jobs from Gradcracker, RateMyPlacement, and LinkedIn"
               />
               <button type="submit" disabled={adminAssistantBusy || !adminAssistantInput.trim()}>
                 Send

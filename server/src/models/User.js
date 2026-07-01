@@ -38,6 +38,16 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: null
   },
+  authProvider: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  authProviderId: {
+    type: String,
+    trim: true,
+    default: ''
+  },
   createdAt: {
     type: Date,
     default: Date.now

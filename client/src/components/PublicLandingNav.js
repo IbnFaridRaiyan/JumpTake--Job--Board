@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import ProfileAvatar from './ProfileAvatar';
+import SocialAuthButtons from './SocialAuthButtons';
 import logoDark from './media/logo4.png';
 import { sendPasswordResetEmail, validateEmailAddress } from '../utils/emailVerification';
 
@@ -382,6 +383,10 @@ const PublicLoginDialog = ({ apiBase, onClose, onOpenRegister, onSuccessCandidat
                             <button type="submit" className="public-auth-submit" disabled={isLoading}>
                                 {isLoading ? 'Submitting...' : 'Login'}
                             </button>
+                            <SocialAuthButtons role="candidate" onError={(errorMessage) => {
+                                setMessage(errorMessage);
+                                setIsSuccess(false);
+                            }} />
                             <button
                                 type="button"
                                 className="public-auth-link"

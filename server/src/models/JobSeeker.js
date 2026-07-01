@@ -47,6 +47,9 @@ const JobSeekerSchema = new mongoose.Schema({
   resumeText: {
     type: String
   },
+  socialProfile: {
+    type: mongoose.Schema.Types.Mixed
+  },
   createdAt: {
     type: Date,
     default: Date.now

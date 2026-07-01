@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import EmailVerificationFields from './EmailVerificationFields';
+import SocialAuthButtons from './SocialAuthButtons';
 import {
     generateVerificationCode,
     getEmailVerificationExpiryMs,
@@ -183,6 +184,7 @@ const EmployerRegistration = ({ companyId, companyName, onComplete }) => {
     return (
         <div className="registration-form-container">
             <h3>Create Employer Account for {companyName}</h3>
+            <SocialAuthButtons role="employer" onError={setMessage} />
             
             {!registrationComplete ? (
                 <form onSubmit={handleSubmit}>

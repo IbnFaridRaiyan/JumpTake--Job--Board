@@ -37,6 +37,16 @@ const EmployerSchema = new mongoose.Schema({
     type: Date,
     default: null
   },
+  authProvider: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  authProviderId: {
+    type: String,
+    trim: true,
+    default: ''
+  },
   notificationPreferences: {
     newApplications: {
       type: Boolean,

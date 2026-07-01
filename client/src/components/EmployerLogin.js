@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { sendPasswordResetEmail, validateEmailAddress } from '../utils/emailVerification';
+import SocialAuthButtons from './SocialAuthButtons';
 
 const EmployerLogin = ({ onClose }) => {
     const [mode, setMode] = useState('login');
@@ -157,6 +158,19 @@ const EmployerLogin = ({ onClose }) => {
                         </div>
 
                         <button
+                            type="submit"
+                            className="login-submit-button"
+                            disabled={isLoading}
+                        >
+                            {isLoading ? 'Logging in...' : 'Login'}
+                        </button>
+
+                        <SocialAuthButtons role="employer" onError={(errorMessage) => {
+                            setMessage(errorMessage);
+                            setIsSuccess(false);
+                        }} />
+
+                        <button
                             type="button"
                             className="login-link-button"
                             onClick={() => {
@@ -166,14 +180,6 @@ const EmployerLogin = ({ onClose }) => {
                             }}
                         >
                             Forgot Password?
-                        </button>
-
-                        <button
-                            type="submit"
-                            className="login-submit-button"
-                            disabled={isLoading}
-                        >
-                            {isLoading ? 'Logging in...' : 'Login'}
                         </button>
 
                         <p className="login-signup">

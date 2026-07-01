@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from 'mammoth';
 import SimplifiedRegisterForm from './SimplifiedRegisterForm';
+import SocialAuthButtons from './SocialAuthButtons';
 
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -353,6 +354,8 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
                         >
                             Candidate Login
                         </button>
+
+                        <SocialAuthButtons role="candidate" onError={setMessage} />
 
                         <button
                             className="submit-button demo-cv-button"

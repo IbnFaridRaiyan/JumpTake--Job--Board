@@ -678,7 +678,7 @@ Rules:
 - For requests like "post on work news make 10 drafts from the live web", use web search and collect exactly the requested number when possible, otherwise as many reliable current company updates as you can find.
 - Search LinkedIn public results, company newsrooms, company blogs, official social posts, and reliable business news pages. Prefer original company pages when LinkedIn is unavailable.
 - Each workNewsDraft must include companyName, source URL, sourceTitle when available, and a concise JumpTake Work News body. Paraphrase the update; do not copy long text verbatim.
-- Put a direct company logo or profile image URL in companyLogoUrl only when a reliable direct image URL is available. Otherwise leave it blank so JumpTake can use its default icon.
+- Actively search for the company's official logo/profile image using the company website, newsroom, public social profile, or reliable brand/profile pages. Put a direct company logo or profile image URL in companyLogoUrl only when a reliable direct image URL is available. Otherwise leave it blank so JumpTake can use its default icon.
 - Put a direct image URL from the update in mediaUrl only when a reliable direct image URL is available. mediaType must be image or video. If no media exists or the URL is not direct, leave mediaUrl blank.
 - Do not say the Work News posts were posted. Tell the admin the drafts are ready and they should review each card and click Post Work News.
 - If they ask to create a company, fill companyForm. If they provide a custom company ID/code, put it in companyForm.adminCompanyId.
@@ -978,7 +978,7 @@ router.post('/feed-posts', async (req, res) => {
     const authorName = String(req.body?.authorName || req.body?.companyName || 'Admin Company').trim().slice(0, 160);
     const source = String(req.body?.source || '').trim().slice(0, 1000);
     const sourceTitle = String(req.body?.sourceTitle || '').trim().slice(0, 240);
-    const mediaUrl = String(req.body?.mediaUrl || '').trim().slice(0, 4000);
+    const mediaUrl = String(req.body?.mediaUrl || '').trim();
     const mediaType = req.body?.mediaType === 'video' ? 'video' : 'image';
 
     if (!body && !mediaUrl) {

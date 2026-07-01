@@ -17,6 +17,7 @@ const feedPostController = require('../controllers/feedPostController');
 const jobInvitationController = require('../controllers/jobInvitationController');
 const candidateNetworkController = require('../controllers/candidateNetworkController');
 const publicAssistantController = require('../controllers/publicAssistantController');
+const socialAuthController = require('../controllers/socialAuthController');
 const adminRoutes = require('./admin');
 const User = require('../models/User');
 const { getAuthenticatedPayload } = require('../utils/candidateAuth');
@@ -25,6 +26,9 @@ const { getAuthenticatedPayload } = require('../utils/candidateAuth');
 
 router.use('/admin', adminRoutes);
 router.post('/public-assistant', publicAssistantController.askPublicAssistant);
+router.get('/auth/:role/:provider/start', socialAuthController.startSocialAuth);
+router.get('/auth/:role/:provider/callback', socialAuthController.completeSocialAuth);
+router.post('/auth/:role/:provider/callback', socialAuthController.completeSocialAuth);
 
 
 router.post('/upload', resumeController.handleResume);

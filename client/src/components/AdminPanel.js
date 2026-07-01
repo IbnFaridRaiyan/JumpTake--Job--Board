@@ -42,6 +42,25 @@ const emptyWorkNewsDraft = {
   sourceTitle: ''
 };
 
+const emptyWorkNewsPostForm = {
+  companyName: '',
+  companyLogoUrl: '',
+  body: '',
+  mediaUrl: '',
+  mediaType: 'image',
+  source: '',
+  sourceTitle: ''
+};
+
+const getLogoFallbackFromSource = (source = '') => {
+  try {
+    const url = new URL(source);
+    return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(url.hostname)}&sz=128`;
+  } catch (error) {
+    return '';
+  }
+};
+
 const randomCompanyNames = [
   'Northstar Works',
   'BrightPath Labs',
@@ -82,8 +101,16 @@ const normalizeWorkNewsDraft = (draft = {}, index = 0) => ({
       draft[key] === undefined || draft[key] === null ? emptyWorkNewsDraft[key] : String(draft[key])
     ])
   ),
+  companyLogoUrl: draft.companyLogoUrl || getLogoFallbackFromSource(draft.source),
   mediaType: draft.mediaType === 'video' ? 'video' : 'image',
   id: draft.id || `work-news-draft-${Date.now()}-${index}`
+});
+
+const readAdminFileAsDataUrl = (file) => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onerror = () => reject(new Error('Could not read that file.'));
+  reader.onload = (event) => resolve(String(event.target.result || ''));
+  reader.readAsDataURL(file);
 });
 
 const formatValue = (value) => {
@@ -130,6 +157,7 @@ const AdminPanel = () => {
   const [jobForm, setJobForm] = useState({ ...emptyJobForm });
   const [adminJobDrafts, setAdminJobDrafts] = useState([]);
   const [adminWorkNewsDrafts, setAdminWorkNewsDrafts] = useState([]);
+  const [workNewsPostForm, setWorkNewsPostForm] = useState({ ...emptyWorkNewsPostForm });
 
   const headers = useMemo(() => ({
     'Content-Type': 'application/json',
@@ -281,6 +309,73 @@ const AdminPanel = () => {
     }
   };
 
+  const handleWorkNewsPostLogoUpload = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      setMessage('');
+      const logo = await createSquareProfileImage(file);
+      setWorkNewsPostForm((current) => ({ ...current, companyLogoUrl: logo }));
+    } catch (error) {
+      setMessage(error.message || 'Could not prepare that company profile picture.');
+    }
+  };
+
+  const handleWorkNewsPostMediaUpload = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      setMessage('');
+      const dataUrl = await readAdminFileAsDataUrl(file);
+      setWorkNewsPostForm((current) => ({
+        ...current,
+        mediaUrl: dataUrl,
+        mediaType: file.type.startsWith('video/') ? 'video' : 'image'
+      }));
+    } catch (error) {
+      setMessage(error.message || 'Could not prepare that Work News media.');
+    }
+  };
+
+  const handleCreateWorkNewsPost = async (event) => {
+    event.preventDefault();
+
+    try {
+      setMessage('');
+      await adminFetch('/feed-posts', {
+        method: 'POST',
+        body: JSON.stringify({
+          companyName: workNewsPostForm.companyName,
+          authorName: workNewsPostForm.companyName,
+          companyLogoUrl: workNewsPostForm.companyLogoUrl,
+          authorAvatar: workNewsPostForm.companyLogoUrl,
+          body: workNewsPostForm.body,
+          mediaUrl: workNewsPostForm.mediaUrl,
+          mediaType: workNewsPostForm.mediaType,
+          source: workNewsPostForm.source,
+          sourceTitle: workNewsPostForm.sourceTitle
+        })
+      });
+      setWorkNewsPostForm({ ...emptyWorkNewsPostForm });
+      setSelectedCollection('feedPosts');
+      setPage(1);
+      await Promise.all([loadSummary(), loadCollection()]);
+      setMessage('Work News post created.');
+    } catch (error) {
+      setMessage(error.message);
+    }
+  };
+
   const handleRandomizeCompany = () => {
     const randomName = pickRandom(randomCompanyNames);
     setCompanyForm((current) => ({
@@ -411,12 +506,51 @@ const AdminPanel = () => {
 
   const updateAdminWorkNewsDraft = (draftId, field, value) => {
     setAdminWorkNewsDrafts((current) => current.map((draft) => (
-      draft.id === draftId ? { ...draft, [field]: value } : draft
+      draft.id === draftId ? {
+        ...draft,
+        [field]: value,
+        ...(field === 'source' && !draft.companyLogoUrl ? { companyLogoUrl: getLogoFallbackFromSource(value) } : {})
+      } : draft
     )));
   };
 
   const removeAdminWorkNewsDraft = (draftId) => {
     setAdminWorkNewsDrafts((current) => current.filter((draft) => draft.id !== draftId));
+  };
+
+  const handleAdminWorkNewsLogoUpload = async (draftId, event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      setMessage('');
+      const logo = await createSquareProfileImage(file);
+      updateAdminWorkNewsDraft(draftId, 'companyLogoUrl', logo);
+    } catch (error) {
+      setMessage(error.message || 'Could not prepare that company profile picture.');
+    }
+  };
+
+  const handleAdminWorkNewsMediaUpload = async (draftId, event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      setMessage('');
+      const dataUrl = await readAdminFileAsDataUrl(file);
+      updateAdminWorkNewsDraft(draftId, 'mediaUrl', dataUrl);
+      updateAdminWorkNewsDraft(draftId, 'mediaType', file.type.startsWith('video/') ? 'video' : 'image');
+    } catch (error) {
+      setMessage(error.message || 'Could not prepare that Work News media.');
+    }
   };
 
   const postAdminJobDraft = async (draft) => {
@@ -691,6 +825,121 @@ const AdminPanel = () => {
             </div>
           </form>
 
+          <form className="admin-create-work-news" onSubmit={handleCreateWorkNewsPost}>
+            <div className="admin-form-heading-row">
+              <div>
+                <h3>Create Work News Post</h3>
+                <p>Post as a company. Upload a profile picture for the post and attach an image or video below the text.</p>
+              </div>
+              <button type="submit">
+                Post Work News
+              </button>
+            </div>
+            <div className="admin-work-news-create-layout">
+              <div className="admin-company-logo-field">
+                <ProfileAvatar
+                  imageSrc={workNewsPostForm.companyLogoUrl}
+                  name={workNewsPostForm.companyName || 'Company'}
+                  className="admin-company-avatar"
+                  imageClassName="admin-company-avatar-image"
+                  useProfileIconFallback
+                />
+                <label className="admin-work-news-file-button">
+                  Set Company Profile Picture
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    onChange={handleWorkNewsPostLogoUpload}
+                  />
+                </label>
+                {workNewsPostForm.companyLogoUrl ? (
+                  <button
+                    type="button"
+                    className="admin-ghost-button"
+                    onClick={() => setWorkNewsPostForm((current) => ({ ...current, companyLogoUrl: '' }))}
+                  >
+                    Use Default Icon
+                  </button>
+                ) : null}
+              </div>
+              <div className="admin-company-fields">
+                <div className="admin-form-grid">
+                  <input
+                    value={workNewsPostForm.companyName}
+                    onChange={(event) => setWorkNewsPostForm((current) => ({ ...current, companyName: event.target.value }))}
+                    placeholder="Company name"
+                    required
+                  />
+                  <input
+                    value={workNewsPostForm.sourceTitle}
+                    onChange={(event) => setWorkNewsPostForm((current) => ({ ...current, sourceTitle: event.target.value }))}
+                    placeholder="Source title"
+                  />
+                  <input
+                    type="url"
+                    value={workNewsPostForm.source}
+                    onChange={(event) => {
+                      const source = event.target.value;
+                      setWorkNewsPostForm((current) => ({
+                        ...current,
+                        source,
+                        companyLogoUrl: current.companyLogoUrl || getLogoFallbackFromSource(source)
+                      }));
+                    }}
+                    placeholder="Source URL"
+                  />
+                  <select
+                    value={workNewsPostForm.mediaType}
+                    onChange={(event) => setWorkNewsPostForm((current) => ({ ...current, mediaType: event.target.value }))}
+                  >
+                    <option value="image">Image</option>
+                    <option value="video">Video</option>
+                  </select>
+                </div>
+                <textarea
+                  value={workNewsPostForm.body}
+                  onChange={(event) => setWorkNewsPostForm((current) => ({ ...current, body: event.target.value }))}
+                  placeholder="Work News post text"
+                  required={!workNewsPostForm.mediaUrl}
+                />
+                <div className="admin-work-news-upload-row">
+                  <label className="admin-work-news-file-button">
+                    Upload post picture or video
+                    <input
+                      type="file"
+                      accept="image/*,video/*"
+                      onChange={handleWorkNewsPostMediaUpload}
+                    />
+                  </label>
+                  <input
+                    type="url"
+                    value={workNewsPostForm.mediaUrl.startsWith('data:') ? '' : workNewsPostForm.mediaUrl}
+                    onChange={(event) => setWorkNewsPostForm((current) => ({ ...current, mediaUrl: event.target.value }))}
+                    placeholder="Or paste post image/video URL"
+                  />
+                  {workNewsPostForm.mediaUrl ? (
+                    <button
+                      type="button"
+                      className="admin-ghost-button"
+                      onClick={() => setWorkNewsPostForm((current) => ({ ...current, mediaUrl: '' }))}
+                    >
+                      Remove Post Media
+                    </button>
+                  ) : null}
+                </div>
+                {workNewsPostForm.mediaUrl ? (
+                  <div className="admin-work-news-media-preview">
+                    {workNewsPostForm.mediaType === 'video' ? (
+                      <video src={workNewsPostForm.mediaUrl} controls muted />
+                    ) : (
+                      <img src={workNewsPostForm.mediaUrl} alt="" />
+                    )}
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          </form>
+
           <form className="admin-create-job" onSubmit={handleCreateJob}>
             <h3>Create Job Post As Company</h3>
             <div className="admin-form-grid">
@@ -864,6 +1113,34 @@ const AdminPanel = () => {
                       </select>
                       <input value={draft.sourceTitle} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'sourceTitle', event.target.value)} placeholder="Source title" />
                       <input type="url" value={draft.source} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'source', event.target.value)} placeholder="Source URL" />
+                    </div>
+                    <div className="admin-work-news-upload-row">
+                      <label className="admin-work-news-file-button">
+                        Upload company profile picture
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp,image/gif"
+                          onChange={(event) => handleAdminWorkNewsLogoUpload(draft.id, event)}
+                        />
+                      </label>
+                      <label className="admin-work-news-file-button">
+                        Upload post picture or video
+                        <input
+                          type="file"
+                          accept="image/*,video/*"
+                          onChange={(event) => handleAdminWorkNewsMediaUpload(draft.id, event)}
+                        />
+                      </label>
+                      {draft.companyLogoUrl ? (
+                        <button type="button" className="admin-ghost-button" onClick={() => updateAdminWorkNewsDraft(draft.id, 'companyLogoUrl', '')}>
+                          Use Default Profile Icon
+                        </button>
+                      ) : null}
+                      {draft.mediaUrl ? (
+                        <button type="button" className="admin-ghost-button" onClick={() => updateAdminWorkNewsDraft(draft.id, 'mediaUrl', '')}>
+                          Remove Post Media
+                        </button>
+                      ) : null}
                     </div>
                     <textarea value={draft.body} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'body', event.target.value)} placeholder="Work News post text" />
                     {draft.mediaUrl ? (

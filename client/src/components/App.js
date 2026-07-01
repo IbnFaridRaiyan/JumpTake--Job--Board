@@ -7,6 +7,7 @@ import EmployerDashboard from './EmployerDashboard';
 import JobSeeker from './JobSeeker'; 
 import ResetPasswordPage from './ResetPasswordPage';
 import AdminPanel from './AdminPanel';
+import SocialAuthComplete from './SocialAuthComplete';
 
 const APP_MODE_STORAGE_KEY = 'jumptakeAppMode';
 const ADMIN_PANEL_PATH = process.env.REACT_APP_ADMIN_PANEL_PATH || '/jt-owner-console-9x4k2-admin';
@@ -38,6 +39,7 @@ function App() {
           <Route path="/home" element={<HomePage appMode={appMode} onAppModeChange={setAppMode} />} />
           <Route path="/employer-dashboard" element={<EmployerDashboard appMode={appMode} onAppModeChange={setAppMode} />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/social-auth-complete" element={<SocialAuthComplete />} />
           <Route path={ADMIN_PANEL_PATH} element={<AdminPanel />} />
         </Routes>
       </div>

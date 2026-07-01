@@ -197,6 +197,84 @@ const asDisplayText = (value, fallback = '') => {
     return fallback;
 };
 
+const US_STATE_CODES = new Set([
+    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'IA',
+    'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO',
+    'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK',
+    'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VT', 'WA', 'WI',
+    'WV', 'WY', 'DC'
+]);
+
+const COUNTRY_ALIASES = {
+    canada: 'Canada',
+    ca: 'Canada',
+    usa: 'United States',
+    us: 'United States',
+    'u.s.': 'United States',
+    'u.s.a.': 'United States',
+    uk: 'United Kingdom',
+    'u.k.': 'United Kingdom',
+    england: 'United Kingdom',
+    scotland: 'United Kingdom',
+    wales: 'United Kingdom'
+};
+
+const UK_LOCATION_HINTS = new Set([
+    'london', 'birmingham', 'manchester', 'leeds', 'glasgow', 'liverpool',
+    'bristol', 'sheffield', 'edinburgh', 'cardiff', 'belfast', 'nottingham',
+    'newcastle', 'cambridge', 'oxford', 'portsmouth', 'southampton',
+    'hastings', 'east sussex', 'england', 'scotland', 'wales', 'northern ireland'
+]);
+
+const COUNTRY_NAME_HINTS = [
+    ['United Kingdom', /\b(united kingdom|uk|u\.k\.|england|scotland|wales|northern ireland)\b/i],
+    ['United States', /\b(united states|usa|u\.s\.a\.|us|u\.s\.)\b/i],
+    ['Canada', /\b(canada)\b/i],
+    ['India', /\b(india)\b/i],
+    ['Australia', /\b(australia)\b/i],
+    ['Germany', /\b(germany)\b/i],
+    ['France', /\b(france)\b/i],
+    ['Spain', /\b(spain)\b/i],
+    ['Ireland', /\b(ireland)\b/i],
+    ['Singapore', /\b(singapore)\b/i],
+    ['United Arab Emirates', /\b(united arab emirates|uae|u\.a\.e\.)\b/i]
+];
+
+const getCountryFromLocation = (location = '') => {
+    const text = asDisplayText(location).trim();
+    if (!text) {
+        return '';
+    }
+
+    const parts = text
+        .split(',')
+        .map((part) => part.trim())
+        .filter(Boolean);
+    const explicitCountry = COUNTRY_NAME_HINTS.find(([, pattern]) => pattern.test(text));
+    if (explicitCountry) {
+        return explicitCountry[0];
+    }
+
+    const finalPart = parts.length > 1 ? parts[parts.length - 1] : '';
+    const finalClean = finalPart.replace(/\.$/, '');
+    const upperFinal = finalClean.toUpperCase();
+
+    if (parts.length > 1 && US_STATE_CODES.has(upperFinal)) {
+        return 'United States';
+    }
+
+    if (parts.some((part) => UK_LOCATION_HINTS.has(part.toLowerCase()))) {
+        return 'United Kingdom';
+    }
+
+    const alias = COUNTRY_ALIASES[finalClean.toLowerCase()];
+    if (alias) {
+        return alias;
+    }
+
+    return finalClean && finalClean.length > 2 ? finalClean : '';
+};
+
 const buildSavedResumePreview = (resumeRecord) => {
     if (!resumeRecord?.html || typeof window === 'undefined') {
         return null;
@@ -468,6 +546,8 @@ const normalizePostForDisplay = (post, index = 0) => {
         authorName: asDisplayText(post.authorName, 'Unknown author'),
         authorType: post.authorType === 'employer' ? 'employer' : 'candidate',
         authorAvatar: typeof post.authorAvatar === 'string' ? post.authorAvatar : '',
+        source: asDisplayText(post.source),
+        sourceTitle: asDisplayText(post.sourceTitle),
         audience: ['everyone', 'friends', 'only-me'].includes(post.audience) ? post.audience : 'everyone',
         reach: Number(post.reach || 0) || 0,
         hiddenBy: Array.isArray(post.hiddenBy) ? post.hiddenBy.map(String) : [],
@@ -933,6 +1013,8 @@ const PortalHomeFeed = ({
     const [bookmarkedHomeJobIds, setBookmarkedHomeJobIds] = useState([]);
     const [jobActionMessage, setJobActionMessage] = useState('');
     const [jobPage, setJobPage] = useState(1);
+    const [homeJobCountryFilter, setHomeJobCountryFilter] = useState('');
+    const [countryMenuOpen, setCountryMenuOpen] = useState(false);
     const [homeJobLocationFilter, setHomeJobLocationFilter] = useState('');
     const [homeJobSalarySort, setHomeJobSalarySort] = useState('');
     const [homeJobTypeFilter, setHomeJobTypeFilter] = useState('');
@@ -1082,13 +1164,26 @@ const PortalHomeFeed = ({
         setJobPage(1);
     }, [activeTab, safeJobs.length]);
 
-    const availableHomeJobLocations = useMemo(() => (
+    const availableHomeJobCountries = useMemo(() => (
         [...new Set(
             safeJobs
-                .map((job) => asDisplayText(job.location).trim())
+                .map((job) => getCountryFromLocation(job.location))
                 .filter(Boolean)
         )].sort((a, b) => a.localeCompare(b))
     ), [safeJobs]);
+
+    const availableHomeJobLocations = useMemo(() => {
+        if (!homeJobCountryFilter) {
+            return [];
+        }
+
+        return [...new Set(
+            safeJobs
+                .filter((job) => getCountryFromLocation(job.location).toLowerCase() === homeJobCountryFilter.toLowerCase())
+                .map((job) => asDisplayText(job.location).trim())
+                .filter(Boolean)
+        )].sort((a, b) => a.localeCompare(b));
+    }, [safeJobs, homeJobCountryFilter]);
 
     const availableHomeJobTypes = useMemo(() => (
         [...new Set(
@@ -1108,6 +1203,7 @@ const PortalHomeFeed = ({
 
     const filteredHomeJobs = useMemo(() => {
         const locationFilter = homeJobLocationFilter.trim().toLowerCase();
+        const countryFilter = homeJobCountryFilter.trim().toLowerCase();
         const typeFilter = homeJobTypeFilter.trim().toLowerCase();
         const fieldFilter = homeJobFieldFilter.trim().toLowerCase();
         const visibleJobs = safeJobs.filter((job) => {
@@ -1115,11 +1211,12 @@ const PortalHomeFeed = ({
             return !companyKey || !blockedFeedAuthors.includes(companyKey);
         });
         const filteredJobs = visibleJobs.filter((job) => {
+            const matchesCountry = !countryFilter || getCountryFromLocation(job.location).toLowerCase() === countryFilter;
             const matchesLocation = !locationFilter || asDisplayText(job.location).trim().toLowerCase() === locationFilter;
             const matchesType = !typeFilter || asDisplayText(job.jobType).trim().toLowerCase() === typeFilter;
             const matchesField = !fieldFilter || asDisplayText(job.jobField || getJobField(job)).trim().toLowerCase() === fieldFilter;
 
-            return matchesLocation && matchesType && matchesField;
+            return matchesCountry && matchesLocation && matchesType && matchesField;
         });
         const sortedJobs = [...filteredJobs];
 
@@ -1130,11 +1227,23 @@ const PortalHomeFeed = ({
         }
 
         return sortedJobs;
-    }, [safeJobs, homeJobLocationFilter, homeJobSalarySort, homeJobTypeFilter, homeJobFieldFilter, blockedFeedAuthors]);
+    }, [safeJobs, homeJobCountryFilter, homeJobLocationFilter, homeJobSalarySort, homeJobTypeFilter, homeJobFieldFilter, blockedFeedAuthors]);
 
     useEffect(() => {
         setJobPage(1);
-    }, [homeJobLocationFilter, homeJobSalarySort, homeJobTypeFilter, homeJobFieldFilter]);
+    }, [homeJobCountryFilter, homeJobLocationFilter, homeJobSalarySort, homeJobTypeFilter, homeJobFieldFilter]);
+
+    useEffect(() => {
+        if (!homeJobCountryFilter) {
+            setHomeJobLocationFilter('');
+            return;
+        }
+
+        const locationStillAvailable = availableHomeJobLocations.some((location) => location === homeJobLocationFilter);
+        if (homeJobLocationFilter && !locationStillAvailable) {
+            setHomeJobLocationFilter('');
+        }
+    }, [availableHomeJobLocations, homeJobCountryFilter, homeJobLocationFilter]);
 
     useEffect(() => {
         let isMounted = true;
@@ -3143,6 +3252,19 @@ const PortalHomeFeed = ({
                                 )}
                             </div>
                         </div>
+                        {post.authorType === 'employer' && post.source ? (
+                            <p className="portal-post-source-link">
+                                <span>Source:</span>{' '}
+                                <a
+                                    href={post.source}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    onClick={(event) => event.stopPropagation()}
+                                >
+                                    {post.sourceTitle || post.source}
+                                </a>
+                            </p>
+                        ) : null}
                         <div className="portal-post-comments">
                             {postComments.slice(-3).map((comment, commentIndex) => (
                                 <div key={comment.id || `comment-${commentIndex}`} className="portal-comment-item">
@@ -3263,8 +3385,12 @@ const PortalHomeFeed = ({
                         <label>
                             <PortalActionIcon type="filter" />
                             <span>Location</span>
-                            <select value={homeJobLocationFilter} onChange={(event) => setHomeJobLocationFilter(event.target.value)}>
-                                <option value="">All locations</option>
+                            <select
+                                value={homeJobLocationFilter}
+                                onChange={(event) => setHomeJobLocationFilter(event.target.value)}
+                                disabled={!homeJobCountryFilter}
+                            >
+                                <option value="">{homeJobCountryFilter ? 'All locations' : 'Choose a country first'}</option>
                                 {availableHomeJobLocations.map((location) => (
                                     <option key={location} value={location}>{location}</option>
                                 ))}
@@ -3299,20 +3425,57 @@ const PortalHomeFeed = ({
                                 ))}
                             </select>
                         </label>
-                        {(homeJobLocationFilter || homeJobSalarySort || homeJobTypeFilter || homeJobFieldFilter) && (
+                        {(homeJobCountryFilter || homeJobLocationFilter || homeJobSalarySort || homeJobTypeFilter || homeJobFieldFilter) && (
                             <button
                                 type="button"
                                 className="portal-job-filter-clear"
                                 onClick={() => {
+                                    setHomeJobCountryFilter('');
                                     setHomeJobLocationFilter('');
                                     setHomeJobSalarySort('');
                                     setHomeJobTypeFilter('');
                                     setHomeJobFieldFilter('');
+                                    setCountryMenuOpen(false);
                                 }}
                             >
                                 Clear filters
                             </button>
                         )}
+                    </div>
+                )}
+                {safeJobs.length > 0 && (
+                    <div className="portal-job-country-row">
+                        <div className="portal-job-country-picker">
+                            <button
+                                type="button"
+                                className="portal-job-country-button"
+                                onClick={() => setCountryMenuOpen((open) => !open)}
+                                aria-expanded={countryMenuOpen}
+                            >
+                                {homeJobCountryFilter ? 'change country' : 'select country'}
+                            </button>
+                            {countryMenuOpen && (
+                                <div className="portal-job-country-menu" role="menu">
+                                    {availableHomeJobCountries.length ? availableHomeJobCountries.map((country) => (
+                                        <button
+                                            key={country}
+                                            type="button"
+                                            className={country === homeJobCountryFilter ? 'active' : ''}
+                                            onClick={() => {
+                                                setHomeJobCountryFilter(country);
+                                                setHomeJobLocationFilter('');
+                                                setCountryMenuOpen(false);
+                                            }}
+                                            role="menuitem"
+                                        >
+                                            {country}
+                                        </button>
+                                    )) : (
+                                        <span>No countries found</span>
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 )}
                 {safeJobs.length === 0 ? (
@@ -3920,10 +4083,7 @@ const PortalHomeFeed = ({
                     </div>
 
                     <div className="portal-job-review-actions">
-                        <button type="button" className="portal-view-job-button secondary" onClick={closeJobReviewModal}>
-                            Cancel
-                        </button>
-                        <button type="button" className="portal-view-job-button" onClick={saveJobReview}>
+                        <button type="button" className="portal-view-job-button portal-job-review-save-button" onClick={saveJobReview}>
                             Save review
                         </button>
                     </div>

@@ -36723,6 +36723,7 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
 .admin-content,
 .admin-record-card,
 .admin-create-company,
+.admin-create-work-news,
 .admin-ai-job-drafts,
 .admin-ai-job-draft-card,
 .admin-create-job {
@@ -36892,6 +36893,7 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
 }
 
 .admin-create-company,
+.admin-create-work-news,
 .admin-ai-job-drafts,
 .admin-create-job {
   display: grid;
@@ -36959,6 +36961,53 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
   object-fit: contain;
 }
 
+.admin-work-news-upload-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.admin-work-news-upload-row label {
+  display: inline-grid;
+  gap: 0.28rem;
+  min-width: min(13rem, 100%);
+  color: rgba(248, 250, 252, 0.76);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.admin-work-news-upload-row input[type="file"] {
+  padding: 0.45rem;
+  font-size: 0.72rem;
+}
+
+.admin-work-news-file-button {
+  display: inline-grid;
+  place-items: center;
+  min-height: 2.55rem;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid rgba(125, 239, 229, 0.32);
+  border-radius: 0.75rem;
+  background: rgba(6, 48, 43, 0.72);
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.admin-work-news-file-button:hover {
+  border-color: rgba(125, 239, 229, 0.58);
+  background: rgba(12, 70, 62, 0.86);
+  transform: translateY(-1px);
+}
+
+.admin-work-news-file-button input {
+  display: none;
+}
+
 .admin-form-heading-row {
   display: flex;
   align-items: start;
@@ -36971,6 +37020,13 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
 }
 
 .admin-company-create-layout {
+  display: grid;
+  grid-template-columns: minmax(11rem, 14rem) minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: start;
+}
+
+.admin-work-news-create-layout {
   display: grid;
   grid-template-columns: minmax(11rem, 14rem) minmax(0, 1fr);
   gap: 0.9rem;
@@ -37187,7 +37243,8 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
   }
 
   .admin-form-heading-row,
-  .admin-company-create-layout {
+  .admin-company-create-layout,
+  .admin-work-news-create-layout {
     grid-template-columns: 1fr;
   }
 
@@ -37210,6 +37267,97 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
 
   .admin-assistant-form {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Final compact reaction rails and country selector spacing. */
+.portal-post-reactions.portal-reaction-rail,
+.portal-social-post-card .portal-post-reactions.portal-reaction-rail,
+.job-post-action-reactions,
+.portal-candidate-job-action-row .job-post-action-reactions {
+  min-height: 1.92rem !important;
+  height: auto !important;
+  padding-top: 0.18rem !important;
+  padding-bottom: 0.18rem !important;
+}
+
+.portal-post-reactions.portal-reaction-rail .portal-reaction-button,
+.portal-post-reactions.portal-reaction-rail .portal-reaction-icon-button,
+.portal-post-reactions.is-popover .portal-reaction-button,
+.job-post-action-reactions .job-post-reaction-button {
+  width: 1.55rem !important;
+  min-width: 1.55rem !important;
+  height: 1.55rem !important;
+  min-height: 1.55rem !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.portal-post-reactions.portal-reaction-rail svg,
+.portal-post-reactions.is-popover .portal-reaction-button svg,
+.job-post-action-reactions .job-post-reaction-button svg {
+  width: 0.92rem !important;
+  height: 0.92rem !important;
+}
+
+.portal-post-source-link {
+  max-width: 92% !important;
+  margin: 0.34rem auto 0 !important;
+  color: rgba(255, 255, 255, 0.56) !important;
+  font-size: 0.58rem !important;
+  line-height: 1.15 !important;
+  text-align: center !important;
+  overflow-wrap: anywhere !important;
+}
+
+.portal-post-source-link span {
+  color: rgba(255, 255, 255, 0.78) !important;
+  font-weight: 900 !important;
+}
+
+.portal-post-source-link a {
+  color: #ff8a2a !important;
+  text-decoration: none !important;
+}
+
+.portal-post-source-link a:hover,
+.portal-post-source-link a:focus-visible {
+  text-decoration: underline !important;
+}
+
+@media (max-width: 768px) {
+  .portal-job-filter-bar {
+    margin-bottom: 0.18rem !important;
+  }
+
+  .portal-job-country-row {
+    min-height: 1rem !important;
+    margin: -0.06rem 0 0.08rem !important;
+    padding-right: 0.12rem !important;
+  }
+
+  .portal-job-country-button {
+    font-size: 0.68rem !important;
+    padding: 0.04rem 0 !important;
+  }
+
+  .portal-post-reactions.portal-reaction-rail,
+  .portal-social-post-card .portal-post-reactions.portal-reaction-rail,
+  .job-post-action-reactions,
+  .portal-candidate-job-action-row .job-post-action-reactions {
+    min-height: 1.72rem !important;
+    padding-top: 0.12rem !important;
+    padding-bottom: 0.12rem !important;
+  }
+
+  .portal-post-reactions.portal-reaction-rail .portal-reaction-button,
+  .portal-post-reactions.portal-reaction-rail .portal-reaction-icon-button,
+  .portal-post-reactions.is-popover .portal-reaction-button,
+  .job-post-action-reactions .job-post-reaction-button {
+    width: 1.34rem !important;
+    min-width: 1.34rem !important;
+    height: 1.34rem !important;
+    min-height: 1.34rem !important;
   }
 }
 
@@ -54742,6 +54890,185 @@ select {
 
 .portal-job-modal-actions .portal-icon-close-button {
   display: none !important;
+}
+
+.social-auth-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.65rem !important;
+  width: 100% !important;
+  margin: 0.55rem auto 0.25rem !important;
+}
+
+.social-auth-icon-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 2.55rem !important;
+  height: 2.55rem !important;
+  min-width: 2.55rem !important;
+  padding: 0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 0.8rem !important;
+  background: rgba(255, 255, 255, 0.055) !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+.social-auth-icon-button svg {
+  width: 1.18rem !important;
+  height: 1.18rem !important;
+  display: block !important;
+}
+
+.social-auth-icon-button:hover,
+.social-auth-icon-button:focus-visible {
+  border-color: rgba(255, 127, 42, 0.68) !important;
+  transform: translateY(-1px) !important;
+}
+
+.login-modal .social-auth-row + .login-link-button {
+  margin-top: 0.25rem !important;
+}
+
+.login-modal .login-signup {
+  margin-top: 0.35rem !important;
+}
+
+.resume-dropbox .social-auth-row,
+.registration-form-container .social-auth-row {
+  margin: 0.35rem auto 0.75rem !important;
+}
+
+.social-auth-complete-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #050707;
+  color: #ffffff;
+  text-align: center;
+  font-family: 'Lexend', system-ui, sans-serif;
+}
+
+.social-auth-complete-screen section {
+  width: min(24rem, calc(100vw - 2rem));
+  padding: 1.2rem;
+  border: 1px solid rgba(99, 192, 184, 0.26);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.social-auth-complete-screen button {
+  margin-top: 0.8rem;
+  border: 1px solid rgba(255, 138, 42, 0.62);
+  border-radius: 999px;
+  background: transparent;
+  color: #ff8a2a;
+  padding: 0.58rem 0.95rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.portal-job-country-row {
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  min-height: 1.6rem !important;
+  margin: -0.2rem 0 0.35rem !important;
+  padding: 0 0.25rem !important;
+  position: relative !important;
+  z-index: 8 !important;
+}
+
+.portal-job-country-picker {
+  position: relative !important;
+}
+
+.portal-job-country-button {
+  appearance: none !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: #ff8a2a !important;
+  font-size: 0.72rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  padding: 0.2rem 0 !important;
+  text-transform: lowercase !important;
+  cursor: pointer !important;
+}
+
+.portal-job-country-menu {
+  position: absolute !important;
+  right: 0 !important;
+  top: calc(100% + 0.35rem) !important;
+  display: grid !important;
+  gap: 0.15rem !important;
+  min-width: 12rem !important;
+  max-height: 16rem !important;
+  overflow: auto !important;
+  padding: 0.45rem !important;
+  border: 1px solid rgba(99, 192, 184, 0.24) !important;
+  border-radius: 0.65rem !important;
+  background: rgba(3, 6, 7, 0.98) !important;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45) !important;
+}
+
+.portal-job-country-menu button,
+.portal-job-country-menu span {
+  width: 100% !important;
+  border: 0 !important;
+  border-radius: 0.45rem !important;
+  background: transparent !important;
+  color: #ffffff !important;
+  font-size: 0.76rem !important;
+  font-weight: 800 !important;
+  padding: 0.45rem 0.55rem !important;
+  text-align: left !important;
+}
+
+.portal-job-country-menu button:hover,
+.portal-job-country-menu button.active {
+  background: rgba(255, 138, 42, 0.16) !important;
+  color: #ff9b4a !important;
+}
+
+.portal-job-review-modal {
+  position: relative !important;
+  padding-top: 1.1rem !important;
+}
+
+.portal-job-review-header {
+  padding-right: 2rem !important;
+}
+
+.portal-job-review-close {
+  position: absolute !important;
+  right: 0.78rem !important;
+  top: 0.78rem !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  padding: 0.1rem !important;
+  line-height: 1 !important;
+}
+
+.portal-job-review-actions {
+  justify-content: center !important;
+}
+
+.portal-job-review-save-button {
+  width: auto !important;
+  min-width: 8.5rem !important;
+  max-width: 11rem !important;
+  min-height: 2.25rem !important;
+  padding: 0.42rem 0.9rem !important;
+  font-size: 0.78rem !important;
 }
 
 @media (max-width: 768px) {

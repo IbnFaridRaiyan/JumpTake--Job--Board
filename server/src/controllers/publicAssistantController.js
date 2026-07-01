@@ -422,27 +422,95 @@ const findTrainedAssistantAnswer = (message) => {
   return rule ? pickVariation(message, rule.responses) : '';
 };
 
-const inferAction = (message) => {
+const SECTION_KEYWORDS = {
+  candidate: [
+    ['notifications', /\b(notification|notifications|alerts?)\b/],
+    ['settings', /\b(settings?|preferences?|account settings|security)\b/],
+    ['profile', /\b(profile|my profile|candidate profile)\b/],
+    ['resume-playground', /\b(resume playground|resume editor|resume builder|cv editor|cv builder|resume section)\b/],
+    ['job-feed', /\b(job feed|jobs feed|job posts|jobs?|roles?|open jobs|browse jobs)\b/],
+    ['applications', /\b(my applications|applications?|applied jobs?)\b/],
+    ['assessments', /\b(assessments?|tests?|quizzes?)\b/],
+    ['video-interviews', /\b(video interviews?|interviews?)\b/],
+    ['draft-applications', /\b(draft applications?|drafts?)\b/],
+    ['bookmarked-jobs', /\b(bookmarked jobs?|saved jobs?)\b/],
+    ['saved-posts', /\b(saved posts?|saved feed)\b/],
+    ['view-candidates', /\b(view candidates|candidates|candidate network|talent pool)\b/],
+    ['friend-invitations', /\b(friends?|friend invitations?|connections?)\b/],
+    ['bookmarked-candidates', /\b(bookmarked candidates?|saved candidates?)\b/],
+    ['interested-jobs', /\b(job preferences?|interests?|interested jobs?)\b/],
+    ['progress-check', /\b(progress check|analytics|performance)\b/],
+    ['about-jumptake', /\b(about jumptake|about)\b/],
+    ['inbox', /\b(inbox|messages?|chat)\b/],
+    ['home', /\b(home|dashboard)\b/]
+  ],
+  employer: [
+    ['notifications', /\b(notification|notifications|alerts?)\b/],
+    ['settings', /\b(settings?|preferences?|account settings|security)\b/],
+    ['company-profile', /\b(company profile|profile|company info|company information)\b/],
+    ['create-document', /\b(create document|document editor|documents?|letters?|memos?|polic(?:y|ies))\b/],
+    ['home-feed', /\b(home feed|work news|feed|company posts?|my company posts?)\b/],
+    ['post-job', /\b(post job|create job|new job|job posting)\b/],
+    ['manage-jobs', /\b(manage jobs?|job management|applications?|applicants?)\b/],
+    ['make-assessment', /\b(make assessment|create assessment|assessment builder|new assessment)\b/],
+    ['general-assessment', /\b(general assessments?|assessment library)\b/],
+    ['talent-pool', /\b(talent pool|candidates|candidate search|browse talent)\b/],
+    ['bookmarked-talents', /\b(bookmarked talents?|saved talents?|bookmarked candidates?)\b/],
+    ['saved-posts', /\b(saved posts?|saved feed)\b/],
+    ['application-tracking', /\b(application tracking|analytics|performance|progress check)\b/],
+    ['about-jumptake', /\b(about jumptake|about)\b/],
+    ['inbox', /\b(inbox|messages?|chat)\b/],
+    ['home', /\b(home|dashboard)\b/]
+  ]
+};
+
+const inferSectionAction = (normalized, context = {}) => {
+  const hasNavigationVerb = /\b(open|go to|goto|take me to|show|visit|navigate|switch to|move to|bring me to|launch)\b/.test(normalized);
+  const portalMode = context?.portalMode === 'employer' ? 'employer' : 'candidate';
+  const sections = SECTION_KEYWORDS[portalMode] || [];
+
+  for (const [section, pattern] of sections) {
+    if ((hasNavigationVerb && pattern.test(normalized)) || normalized.trim() === section || pattern.test(normalized.trim())) {
+      return `open-section:${section}`;
+    }
+  }
+
+  return null;
+};
+
+const inferAction = (message, context = {}) => {
   const normalized = String(message || '').toLowerCase();
   const mentionsCandidate = /\b(candidate|job seeker|jobseeker)\b/.test(normalized);
   const mentionsEmployer = /\b(employer|company|recruiter)\b/.test(normalized);
+  const portalMode = context?.portalMode || '';
+  const currentSection = String(context?.activeSection || '').toLowerCase();
   const asksRegister = /\b(register|registration|sign ?up|join)\b/.test(normalized)
     || /\b(create|make|open|start|set ?up|setup|get)\b.{0,24}\b(account|profile)\b/.test(normalized);
   const asksLogin = /\b(log ?in|login|sign ?in)\b/.test(normalized);
   const asksJobs = /\b(job feed|jobs feed|browse jobs|open jobs|show jobs|job posts|find jobs)\b/.test(normalized);
   const asksResume = /\b(make|create|build|generate|write|draft)\b.{0,36}\b(resume|cv)\b/.test(normalized)
     || /\b(resume|cv)\b.{0,24}\b(make|create|build|generate|write|draft)\b/.test(normalized);
+  const asksResumeFormat = /\b(format|style|design|align|fix|polish|make)\b.{0,44}\b(resume|cv)\b/.test(normalized)
+    || (currentSection === 'resume-playground' && /\b(format|style|design|align|fix|polish|a4|template)\b/.test(normalized));
   const asksDocument = /\b(make|create|build|generate|write|draft)\b.{0,36}\b(document|letter|offer letter|policy|memo)\b/.test(normalized);
+  const asksDocumentFormat = /\b(format|style|design|align|fix|polish|make)\b.{0,44}\b(document|letter|memo|policy)\b/.test(normalized)
+    || (currentSection === 'create-document' && /\b(format|style|design|align|fix|polish|a4|template)\b/.test(normalized));
   const asksApply = /\b(apply|application)\b/.test(normalized) && /\b(job|role|position|posting)\b/.test(normalized);
   const asksStory = /\b(make|create|write|draft|generate)\b.{0,36}\b(talent story|story|talent post|feed post|post)\b/.test(normalized);
+  const asksEmployerPost = /\b(make|create|write|draft|generate)\b.{0,36}\b(company post|work news|feed post|post|announcement)\b/.test(normalized);
   const asksAssessment = /\b(make|create|write|draft|generate)\b.{0,36}\b(assessment|test|quiz|screening)\b/.test(normalized)
     || /\bassessment\b.{0,36}\b(candidate|general|job)\b/.test(normalized);
+  const sectionAction = inferSectionAction(normalized, context);
 
+  if (asksResumeFormat && portalMode !== 'employer') return 'candidate-format-resume';
+  if (asksDocumentFormat && portalMode === 'employer') return 'employer-format-document';
   if (asksResume) return 'candidate-create-resume';
   if (asksApply) return 'candidate-apply-job';
+  if ((asksEmployerPost || asksStory) && portalMode === 'employer') return 'employer-create-post';
   if (asksStory) return 'candidate-create-story';
   if (asksAssessment) return 'employer-create-assessment';
   if (asksDocument) return 'employer-create-document';
+  if (sectionAction) return sectionAction;
 
   if (asksRegister && mentionsCandidate) return 'candidate-register';
   if (asksRegister && mentionsEmployer) return 'employer-register';
@@ -456,10 +524,13 @@ const inferAction = (message) => {
 
 const PORTAL_ACTIONS = new Set([
   'candidate-create-resume',
+  'candidate-format-resume',
   'candidate-apply-job',
   'candidate-create-story',
+  'employer-create-post',
   'employer-create-assessment',
-  'employer-create-document'
+  'employer-create-document',
+  'employer-format-document'
 ]);
 
 const isPortalAction = (action) => PORTAL_ACTIONS.has(action);
@@ -600,6 +671,10 @@ const fallbackAnswer = (message, action, history = []) => {
   }
   if (action === 'open-jobs') {
     return 'Opening the public job feed. You can browse active jobs now, and candidate login is only needed when you want to open details or apply.';
+  }
+  if (String(action || '').startsWith('open-section:')) {
+    const section = String(action).split(':')[1] || 'section';
+    return `Opening ${section.replace(/-/g, ' ')}.`;
   }
   if (action === 'candidate-apply-job') {
     const genericApplyRequest = /\bapply\b.{0,16}\b(a|any|some|the)?\s*(job|role|position|posting)\b/.test(normalized)
@@ -1117,7 +1192,7 @@ const askPublicAssistant = async (req, res) => {
     return res.status(400).json({ error: 'Please enter a question.' });
   }
 
-  let action = inferAction(message);
+  let action = inferAction(message, context);
   const lastAssistantText = String(getLastHistoryEntry(history, 'assistant')?.text || '').toLowerCase();
   if (!action && /\bwhich job\b/.test(lastAssistantText) && context?.portalMode === 'candidate') {
     action = 'candidate-apply-job';
@@ -1133,9 +1208,11 @@ const askPublicAssistant = async (req, res) => {
   const conversationHistory = buildHistoryBlock(history);
   const contextBlock = JSON.stringify({
     portalMode: context.portalMode || '',
+    activeSection: context.activeSection || '',
     user: context.user || null,
     profile: context.profile || null,
     company: context.company || null,
+    workspace: context.workspace || null,
     jobs: Array.isArray(context.jobs) ? context.jobs.slice(0, 12).map((job) => ({
       id: job?._id || job?.id || job?.jobNumber || '',
       title: job?.title || '',
@@ -1149,8 +1226,11 @@ const askPublicAssistant = async (req, res) => {
   const actionInstructions = isPortalAction(action) ? `
 The current portal action is ${action}.
 - For candidate-create-resume: write a complete resume draft using the provided user/profile context. Use clear section headings and concise bullet points. Do not say you cannot access profile data if context is present.
+- For candidate-format-resume: rewrite the currently open resume from Portal context workspace.currentText into a polished, A4-ready resume. Keep it concise enough for 1-2 pages, use clear section headings, strong alignment cues, ATS-friendly bullets, and do not invent facts.
 - For employer-create-document: write a polished editable document draft based on the user's request and employer/company context.
+- For employer-format-document: rewrite the currently open document from Portal context workspace.currentText into a polished, A4-ready business document. Use the company profile context for company name, industry, headquarters, website, and tone where relevant.
 - For candidate-create-story: write a polished talent story/feed post ready to paste into the dashboard feed composer. Keep it first person when appropriate.
+- For employer-create-post: write a polished Work News/company feed post ready to paste into the employer feed composer. Use company context and keep it publication-ready.
 - For employer-create-assessment: create an assessment draft with a title, short instructions, and 5-8 questions. Include answer keys. Mix multiple-choice and short-answer when useful.
 - For candidate-apply-job: if the user specified a recognizable job, name the likely job and say you are opening it with the application fields prepared. If not, ask which job title they want.
 Return only the user-facing text draft or instruction, not JSON.

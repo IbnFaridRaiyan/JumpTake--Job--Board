@@ -8,6 +8,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLi
 
 const STORAGE_PREFIX = 'jumptakeResumePlayground:';
 const DOCUMENT_STORAGE_PREFIX = 'jumptakeDocumentPlayground:';
+const WORKSPACE_SNAPSHOT_KEY = 'jumptakeResumePlaygroundSnapshot';
 const A4_PAGE_WIDTH = 794;
 const A4_PAGE_HEIGHT = 1123;
 const A4_PAGE_GAP = 56;
@@ -88,6 +89,70 @@ const plainTextToHtml = (text = '') => {
         .split(/\n\s*\n/)
         .map((block) => `<p>${escapeHtml(block).replace(/\n/g, '<br />')}</p>`)
         .join('');
+};
+
+const looksLikeHeading = (line = '') => {
+    const trimmed = String(line || '').trim();
+    if (!trimmed) {
+        return false;
+    }
+
+    return /^(summary|profile|objective|experience|work experience|employment|education|skills|technical skills|projects|certifications|achievements|interests|contact|references|overview|purpose|background|details|next steps|recommendations|conclusion)\b:?$/i.test(trimmed)
+        || (trimmed.length <= 42 && trimmed === trimmed.toUpperCase() && /[A-Z]/.test(trimmed));
+};
+
+const normalizeDraftLines = (text = '') => String(text || '')
+    .replace(/\r\n/g, '\n')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+const createAiDraftHtml = (text = '', { documentMode = false } = {}) => {
+    const lines = normalizeDraftLines(text);
+
+    if (!lines.length) {
+        return '<p></p>';
+    }
+
+    if (documentMode) {
+        return `
+            <div data-document-template-root="jumptake-ai" style="font-family:Arial, sans-serif;color:#111827;background:#ffffff;line-height:1.42;font-size:14px;">
+                ${lines.map((line, index) => {
+                    const escapedLine = escapeHtml(line.replace(/^[-*•]\s*/, ''));
+                    if (index === 0) {
+                        return `<h1 style="font-size:22px;line-height:1.15;margin:0 0 14px;text-align:center;text-transform:uppercase;letter-spacing:0;color:#0f172a;">${escapedLine}</h1>`;
+                    }
+                    if (looksLikeHeading(line)) {
+                        return `<h2 style="font-size:15px;line-height:1.2;margin:18px 0 7px;padding-bottom:4px;border-bottom:1px solid #cbd5e1;color:#0f172a;text-transform:uppercase;letter-spacing:0;">${escapedLine.replace(/:$/, '')}</h2>`;
+                    }
+                    if (/^[-*•]\s*/.test(line)) {
+                        return `<p style="margin:4px 0 4px 18px;">• ${escapedLine}</p>`;
+                    }
+                    return `<p style="margin:0 0 9px;">${escapedLine}</p>`;
+                }).join('')}
+            </div>
+        `.trim();
+    }
+
+    const firstLine = lines[0] || 'Candidate';
+    const bodyLines = lines.slice(1);
+
+    return `
+        <div data-resume-template-root="ai-a4" style="font-family:Arial, sans-serif;color:#111827;background:#ffffff;line-height:1.32;font-size:13px;">
+            <h1 style="font-size:25px;line-height:1.05;margin:0;text-align:center;text-transform:uppercase;letter-spacing:0;color:#0f172a;">${escapeHtml(firstLine)}</h1>
+            ${bodyLines.map((line) => {
+                const isBullet = /^[-*•]\s*/.test(line);
+                const cleanLine = escapeHtml(line.replace(/^[-*•]\s*/, ''));
+                if (looksLikeHeading(line)) {
+                    return `<h2 style="font-size:14px;line-height:1.15;margin:15px 0 6px;padding-bottom:3px;border-bottom:1px solid #94a3b8;color:#0f172a;text-transform:uppercase;letter-spacing:0;">${cleanLine.replace(/:$/, '')}</h2>`;
+                }
+                if (isBullet) {
+                    return `<p style="margin:3px 0 3px 16px;">• ${cleanLine}</p>`;
+                }
+                return `<p style="margin:0 0 6px;">${cleanLine}</p>`;
+            }).join('')}
+        </div>
+    `.trim();
 };
 
 const createResumeId = () => (
@@ -968,6 +1033,27 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         setErrorMessage('');
     };
 
+    const publishWorkspaceSnapshot = useCallback((resume = editorResume, htmlOverride = null) => {
+        if (typeof window === 'undefined' || !resume) {
+            return;
+        }
+
+        const currentHtml = htmlOverride ?? editorRef.current?.innerHTML ?? resume.html ?? '';
+        sessionStorage.setItem(WORKSPACE_SNAPSHOT_KEY, JSON.stringify({
+            mode,
+            type: isDocumentMode ? 'document' : 'resume',
+            activeTab,
+            name: resume.name || resourceLabel,
+            currentHtml,
+            currentText: stripHtml(currentHtml),
+            updatedAt: new Date().toISOString()
+        }));
+    }, [activeTab, editorResume, isDocumentMode, mode, resourceLabel]);
+
+    useEffect(() => {
+        publishWorkspaceSnapshot();
+    }, [publishWorkspaceSnapshot]);
+
     const syncSignaturePreview = useCallback(() => {
         const canvas = signatureCanvasRef.current;
         if (!canvas) {
@@ -1539,11 +1625,13 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         });
     };
 
-    const animateAiDraftIntoEditor = (draftRecord, draftText) => {
+    const animateAiDraftIntoEditor = (draftRecord, draftText, finalHtml = '') => {
+        const formattedHtml = finalHtml || plainTextToHtml(draftText);
+
         if (typeof window === 'undefined') {
             setEditorResume((current) => (
                 current && current.id === draftRecord.id
-                    ? { ...current, html: plainTextToHtml(draftText) }
+                    ? { ...current, html: formattedHtml }
                     : current
             ));
             return;
@@ -1585,6 +1673,22 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                 return;
             }
 
+            if (formattedHtml && formattedHtml !== nextHtml) {
+                if (editorRef.current) {
+                    editorRef.current.innerHTML = formattedHtml;
+                }
+
+                setEditorResume((current) => (
+                    current && current.id === draftRecord.id
+                        ? { ...current, html: formattedHtml }
+                        : current
+                ));
+                publishWorkspaceSnapshot(draftRecord, formattedHtml);
+                window.requestAnimationFrame(() => {
+                    repaginateEditorContent();
+                });
+            }
+
             aiDraftTypingTimerRef.current = null;
             setStatusMessage(isDocumentMode ? 'AI document draft finished typing in the editor.' : 'AI resume draft finished typing in the editor.');
         };
@@ -1612,15 +1716,16 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                 return;
             }
 
+            const formattedHtml = createAiDraftHtml(draftText, { documentMode: isDocumentMode });
             const draftRecord = createResumeRecord({
                 name: draft.name || (isDocumentMode ? 'AI Generated Document' : 'AI Generated Resume'),
-                html: '<p></p>',
-                source: 'scratch'
+                html: formattedHtml,
+                source: draft.source || 'ai-tailor'
             });
 
             setCreateMode('scratch');
             openEditor(draftRecord, 'edit');
-            animateAiDraftIntoEditor(draftRecord, draftText);
+            animateAiDraftIntoEditor(draftRecord, draftText, formattedHtml);
         };
 
         const readStoredDraft = () => {
@@ -1904,12 +2009,14 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
 
         saveSelection();
         window.requestAnimationFrame(() => {
+            const nextHtml = editorRef.current.innerHTML;
             repaginateEditorContent();
             setEditorResume((current) => (
                 current
-                    ? { ...current, html: editorRef.current.innerHTML }
+                    ? { ...current, html: nextHtml }
                     : current
             ));
+            publishWorkspaceSnapshot(editorResume, nextHtml);
             saveSelection();
         });
     };

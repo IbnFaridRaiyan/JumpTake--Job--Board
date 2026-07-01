@@ -1071,6 +1071,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                 currentUser={user}
                 profileData={jobSeekerData}
                 jobs={jobs}
+                activeSection={activeSection}
                 unreadCount={pendingInboxCount}
                 onSeen={() => {
                     setPendingInboxCount(0);

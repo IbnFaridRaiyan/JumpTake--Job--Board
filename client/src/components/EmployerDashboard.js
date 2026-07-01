@@ -817,6 +817,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                 currentUser={employer}
                 companyData={companyData}
                 jobs={jobs}
+                activeSection={activeSection}
                 unreadCount={pendingInboxCount}
                 onSeen={() => {
                     setPendingInboxCount(0);

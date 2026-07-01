@@ -83,13 +83,14 @@ const AssistantChat = ({ title = 'Jumptake chat', className = '', storageKey = '
         setAssistantLoading(true);
 
         try {
+            const resolvedContext = typeof context === 'function' ? context() : context;
             const response = await fetch(apiUrl('/api/public-assistant'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     message: question,
                     history: assistantMessages.slice(-8).map(({ role, text }) => ({ role, text })),
-                    context
+                    context: resolvedContext
                 })
             });
             const data = await response.json();
@@ -98,7 +99,7 @@ const AssistantChat = ({ title = 'Jumptake chat', className = '', storageKey = '
             }
             setAssistantMessages((messages) => [...messages, { role: 'assistant', text: data.answer, time: formatAssistantTime() }]);
             if (data.action && String(data.answer || '').trim().toLowerCase() !== 'error connecting') {
-                onAction?.(data.action, { answer: data.answer, question, context });
+                onAction?.(data.action, { answer: data.answer, question, context: resolvedContext });
             }
         } catch (error) {
             setAssistantMessages((messages) => [...messages, { role: 'assistant', text: error.message, time: formatAssistantTime() }]);

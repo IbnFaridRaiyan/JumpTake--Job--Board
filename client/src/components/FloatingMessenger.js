@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import RichMessageEditor from './RichMessageEditor';
 import AssistantChat from './AssistantChat';
 import ChatAvatar from './ChatAvatar';
@@ -12,6 +12,19 @@ const normalizeSearchText = (value = '') => String(value || '')
     .replace(/[^a-z0-9\s]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+const RESUME_WORKSPACE_SNAPSHOT_KEY = 'jumptakeResumePlaygroundSnapshot';
+
+const readWorkspaceSnapshot = () => {
+    if (typeof window === 'undefined') {
+        return null;
+    }
+
+    try {
+        return JSON.parse(sessionStorage.getItem(RESUME_WORKSPACE_SNAPSHOT_KEY) || 'null');
+    } catch (error) {
+        return null;
+    }
+};
 
 const CloseIcon = () => (
     <svg
@@ -47,6 +60,7 @@ const FloatingMessenger = ({
     profileData = null,
     companyData = null,
     jobs = [],
+    activeSection = '',
     unreadCount = 0,
     onSeen
 }) => {
@@ -77,13 +91,15 @@ const FloatingMessenger = ({
     const assistantStorageKey = useMemo(() => (
         `jumptakeAssistantChat:${mode || 'portal'}:${userId || companyId || 'guest'}`
     ), [companyId, mode, userId]);
-    const assistantContext = useMemo(() => ({
+    const getAssistantContext = useCallback(() => ({
         portalMode: mode,
+        activeSection,
         user: currentUser,
         profile: profileData,
         company: companyData,
+        workspace: readWorkspaceSnapshot(),
         jobs: Array.isArray(jobs) ? jobs : []
-    }), [companyData, currentUser, jobs, mode, profileData]);
+    }), [activeSection, companyData, currentUser, jobs, mode, profileData]);
 
     const assistantSelected = selectedThreadId === ASSISTANT_THREAD_ID;
     const selectedThread = assistantSelected ? null : (threads.find((thread) => thread._id === selectedThreadId) || null);
@@ -409,12 +425,36 @@ const FloatingMessenger = ({
     const handleAssistantAction = (action, payload = {}) => {
         const answer = String(payload.answer || '').trim();
         const question = String(payload.question || '').trim();
+        const actionName = String(action || '');
+
+        if (actionName.startsWith('open-section:')) {
+            const section = actionName.split(':')[1];
+            if (section) {
+                storeAndOpenSection(section);
+                minimizeAfterMobileAssistantAction();
+            }
+            return;
+        }
 
         if (action === 'candidate-create-resume' && !isEmployer) {
             storeAndOpenSection('resume-playground', 'jumptakeResumePlaygroundAiDraft', {
                 mode: 'resume',
                 name: 'AI Generated Resume',
-                text: answer || question
+                text: answer || question,
+                source: 'ai-tailor',
+                style: 'professional'
+            }, 'jumptake-resume-playground-ai-draft');
+            minimizeAfterMobileAssistantAction();
+            return;
+        }
+
+        if (action === 'candidate-format-resume' && !isEmployer) {
+            storeAndOpenSection('resume-playground', 'jumptakeResumePlaygroundAiDraft', {
+                mode: 'resume',
+                name: 'AI Formatted Resume',
+                text: answer || question,
+                source: 'ai-tailor',
+                style: 'professional'
             }, 'jumptake-resume-playground-ai-draft');
             minimizeAfterMobileAssistantAction();
             return;
@@ -424,7 +464,21 @@ const FloatingMessenger = ({
             storeAndOpenSection('create-document', 'jumptakeResumePlaygroundAiDraft', {
                 mode: 'document',
                 name: 'AI Generated Document',
-                text: answer || question
+                text: answer || question,
+                source: 'ai-tailor',
+                style: 'business'
+            }, 'jumptake-resume-playground-ai-draft');
+            minimizeAfterMobileAssistantAction();
+            return;
+        }
+
+        if (action === 'employer-format-document' && isEmployer) {
+            storeAndOpenSection('create-document', 'jumptakeResumePlaygroundAiDraft', {
+                mode: 'document',
+                name: 'AI Formatted Document',
+                text: answer || question,
+                source: 'ai-tailor',
+                style: 'business'
             }, 'jumptake-resume-playground-ai-draft');
             minimizeAfterMobileAssistantAction();
             return;
@@ -434,6 +488,16 @@ const FloatingMessenger = ({
             storeAndOpenSection('job-feed', 'jumptakeFeedAiDraft', {
                 mode: 'candidate',
                 tab: 'create-story',
+                text: answer || question
+            }, 'jumptake-feed-ai-draft');
+            minimizeAfterMobileAssistantAction();
+            return;
+        }
+
+        if (action === 'employer-create-post' && isEmployer) {
+            storeAndOpenSection('home-feed', 'jumptakeFeedAiDraft', {
+                mode: 'employer',
+                tab: 'create-post',
                 text: answer || question
             }, 'jumptake-feed-ai-draft');
             minimizeAfterMobileAssistantAction();
@@ -572,7 +636,7 @@ const FloatingMessenger = ({
                                         title="JumpTake AI"
                                         className="floating-messenger-assistant-chat"
                                         storageKey={assistantStorageKey}
-                                        context={assistantContext}
+                                        context={getAssistantContext}
                                         onAction={handleAssistantAction}
                                     />
                                 </>

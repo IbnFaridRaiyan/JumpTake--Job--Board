@@ -54040,3 +54040,149 @@ select {
     top: 0.52rem !important;
   }
 }
+
+/* Screenshot 183-185 refinements: tighter title alignment, compact composer buttons, job actions, and mobile momentum scroll. */
+.portal-social-post-header {
+  column-gap: 0.24rem !important;
+}
+
+.portal-post-title-block {
+  transform: translateX(-0.06rem) !important;
+}
+
+.portal-candidate-job-header {
+  gap: 0.24rem !important;
+}
+
+.portal-candidate-job-header > div:last-child {
+  transform: translateX(-0.04rem) !important;
+}
+
+.portal-candidate-job-action-row {
+  align-items: center !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.55rem !important;
+  margin: 0.08rem 0 0 !important;
+}
+
+.portal-candidate-job-action-row .job-post-action-reactions {
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+}
+
+.portal-candidate-job-action-row .portal-view-job-button {
+  flex: 0 0 auto !important;
+  min-height: 2.42rem !important;
+  min-width: 8.25rem !important;
+  padding: 0.5rem 1.18rem !important;
+  width: auto !important;
+  white-space: nowrap !important;
+}
+
+.portal-candidate-job-footer {
+  justify-content: flex-end !important;
+  margin-top: 0.12rem !important;
+}
+
+.portal-candidate-job-posted-date {
+  margin-left: 0 !important;
+}
+
+.portal-post-media-picker label {
+  min-height: 2.2rem !important;
+  padding: 0.42rem 0.68rem !important;
+  width: max-content !important;
+  white-space: nowrap !important;
+}
+
+.portal-publish-button {
+  align-self: start !important;
+  justify-self: start !important;
+  min-height: 2.05rem !important;
+  min-width: 6.8rem !important;
+  padding: 0.42rem 0.95rem !important;
+  width: auto !important;
+}
+
+@media (max-width: 768px) {
+  .portal-home-feed,
+  .portal-home-feed-scroll,
+  .home-page .portal-home-feed-scroll {
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain !important;
+    scroll-behavior: smooth !important;
+    touch-action: pan-y !important;
+  }
+
+  .portal-social-post-header {
+    column-gap: 0.18rem !important;
+  }
+
+  .portal-post-title-block {
+    transform: translateX(-0.08rem) !important;
+  }
+
+  .portal-candidate-job-header {
+    gap: 0.18rem !important;
+  }
+
+  .portal-candidate-job-header > div:last-child {
+    transform: translateX(-0.06rem) !important;
+  }
+
+  .portal-candidate-job-action-row {
+    flex-wrap: nowrap !important;
+    gap: 0.34rem !important;
+    justify-content: flex-start !important;
+    max-width: 100% !important;
+  }
+
+  .portal-candidate-job-action-row .job-post-action-reactions {
+    gap: 0.22rem !important;
+    min-height: 2rem !important;
+    padding: 0.18rem 0.34rem !important;
+  }
+
+  .portal-candidate-job-action-row .job-post-reaction-button {
+    height: 1.34rem !important;
+    min-height: 1.34rem !important;
+    min-width: 1.34rem !important;
+    width: 1.34rem !important;
+  }
+
+  .portal-candidate-job-action-row .job-post-reaction-button svg {
+    height: 0.82rem !important;
+    width: 0.82rem !important;
+  }
+
+  .portal-candidate-job-action-row .job-post-action-count {
+    font-size: 0.68rem !important;
+    margin-left: -0.22rem !important;
+  }
+
+  .portal-candidate-job-action-row .portal-view-job-button {
+    min-height: 2rem !important;
+    min-width: 5.8rem !important;
+    padding: 0.3rem 0.58rem !important;
+    font-size: 0.68rem !important;
+  }
+
+  .portal-candidate-job-footer {
+    justify-content: flex-end !important;
+    margin-top: 0.1rem !important;
+  }
+
+  .portal-post-media-picker label {
+    min-height: 1.95rem !important;
+    padding: 0.32rem 0.48rem !important;
+    font-size: 0.72rem !important;
+  }
+
+  .portal-publish-button {
+    min-height: 1.95rem !important;
+    min-width: 5.9rem !important;
+    padding: 0.32rem 0.7rem !important;
+    font-size: 0.7rem !important;
+  }
+}

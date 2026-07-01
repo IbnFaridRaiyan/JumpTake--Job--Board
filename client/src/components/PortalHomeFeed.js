@@ -2537,8 +2537,9 @@ const PortalHomeFeed = ({
         }
 
         const delta = feedTouchRef.current.y - event.touches[0].clientY;
-        event.preventDefault();
-        event.currentTarget.scrollTop = feedTouchRef.current.scrollTop + (delta * 0.36);
+        if (Math.abs(delta) > 12) {
+            setTabsHidden(delta > 0);
+        }
     }, []);
 
     const renderPostList = (posts, key, kind) => {
@@ -2831,7 +2832,7 @@ const PortalHomeFeed = ({
                 </label>
                 <div className="portal-post-media-picker">
                     <label>
-                        Add picture or video
+                        Add media
                         <input type="file" accept="image/*,video/*" onChange={handleMediaChange} />
                     </label>
                     {composerMedia && (
@@ -2850,8 +2851,8 @@ const PortalHomeFeed = ({
                     )}
                 </div>
             )}
-            <button type="button" className="settings-button primary" onClick={handleCreatePost}>
-                {mode === 'employer' ? 'Publish to Work News' : 'Publish to Talent Stories'}
+            <button type="button" className="settings-button primary portal-publish-button" onClick={handleCreatePost}>
+                Publish
             </button>
         </div>
     );
@@ -3015,51 +3016,49 @@ const PortalHomeFeed = ({
                             ))}
                         </div>
 
-                        <div className="job-post-action-reactions" aria-label="Job reactions">
-                            <button
-                                type="button"
-                                className={`job-post-reaction-button job-post-like-reaction reaction-like ${isHomeJobLiked(job) ? 'active' : ''}`}
-                                onClick={(event) => handleToggleHomeJobLike(job, event)}
-                                aria-pressed={isHomeJobLiked(job)}
-                                aria-label="Like job post"
-                                title="Like"
-                            >
-                                <ReactionIcon name="Like" />
-                                <ReactionTooltip>Like</ReactionTooltip>
-                            </button>
-                            {getHomeJobLikeCount(job) > 0 && (
-                                <span className="job-post-action-count" aria-label={`${getHomeJobLikeCount(job)} likes`}>
-                                    {formatCompactCount(getHomeJobLikeCount(job))}
-                                </span>
-                            )}
-                            <button
-                                type="button"
-                                className={`job-post-reaction-button job-post-bookmark-reaction reaction-bookmark ${bookmarked ? 'active' : ''}`}
-                                onClick={(event) => handleToggleHomeJobBookmark(job, event)}
-                                aria-pressed={bookmarked}
-                                aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark job'}
-                                title={bookmarked ? 'Remove bookmark' : 'Bookmark job'}
-                            >
-                                <SimpleIcon path={utilityIconPaths.starFill} />
-                                <ReactionTooltip>{bookmarked ? 'Remove bookmark' : 'Bookmark'}</ReactionTooltip>
-                            </button>
-                            {bookmarked && (
-                                <span className="job-post-action-count" aria-label="1 bookmark">1</span>
-                            )}
-                            <button
-                                type="button"
-                                className="job-post-reaction-button job-post-share-reaction"
-                                onClick={(event) => handleCopyJobShare(job, event)}
-                                aria-label="Share job post"
-                                title="Share"
-                            >
-                                <SharePostIcon />
-                                <ReactionTooltip>Share</ReactionTooltip>
-                            </button>
-                        </div>
-
-                        <div className="portal-candidate-job-footer">
-                            <span className="portal-candidate-job-posted-date">Posted: {safeDateLabel(job.createdAt)}</span>
+                        <div className="portal-candidate-job-action-row">
+                            <div className="job-post-action-reactions" aria-label="Job reactions">
+                                <button
+                                    type="button"
+                                    className={`job-post-reaction-button job-post-like-reaction reaction-like ${isHomeJobLiked(job) ? 'active' : ''}`}
+                                    onClick={(event) => handleToggleHomeJobLike(job, event)}
+                                    aria-pressed={isHomeJobLiked(job)}
+                                    aria-label="Like job post"
+                                    title="Like"
+                                >
+                                    <ReactionIcon name="Like" />
+                                    <ReactionTooltip>Like</ReactionTooltip>
+                                </button>
+                                {getHomeJobLikeCount(job) > 0 && (
+                                    <span className="job-post-action-count" aria-label={`${getHomeJobLikeCount(job)} likes`}>
+                                        {formatCompactCount(getHomeJobLikeCount(job))}
+                                    </span>
+                                )}
+                                <button
+                                    type="button"
+                                    className={`job-post-reaction-button job-post-bookmark-reaction reaction-bookmark ${bookmarked ? 'active' : ''}`}
+                                    onClick={(event) => handleToggleHomeJobBookmark(job, event)}
+                                    aria-pressed={bookmarked}
+                                    aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark job'}
+                                    title={bookmarked ? 'Remove bookmark' : 'Bookmark job'}
+                                >
+                                    <SimpleIcon path={utilityIconPaths.starFill} />
+                                    <ReactionTooltip>{bookmarked ? 'Remove bookmark' : 'Bookmark'}</ReactionTooltip>
+                                </button>
+                                {bookmarked && (
+                                    <span className="job-post-action-count" aria-label="1 bookmark">1</span>
+                                )}
+                                <button
+                                    type="button"
+                                    className="job-post-reaction-button job-post-share-reaction"
+                                    onClick={(event) => handleCopyJobShare(job, event)}
+                                    aria-label="Share job post"
+                                    title="Share"
+                                >
+                                    <SharePostIcon />
+                                    <ReactionTooltip>Share</ReactionTooltip>
+                                </button>
+                            </div>
                             <button
                                 type="button"
                                 className="portal-view-job-button"
@@ -3072,6 +3071,10 @@ const PortalHomeFeed = ({
                                         ? 'Applying...'
                                         : 'Apply Now'}
                             </button>
+                        </div>
+
+                        <div className="portal-candidate-job-footer">
+                            <span className="portal-candidate-job-posted-date">Posted: {safeDateLabel(job.createdAt)}</span>
                         </div>
                     </article>
                 );

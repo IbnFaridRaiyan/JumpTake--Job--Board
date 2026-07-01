@@ -15,6 +15,8 @@ const HOME_JOB_PAGE_SIZE = 7;
 const MOBILE_FEED_TOUCH_SCROLL_RATIO = 1.13;
 const MOBILE_FEED_TOUCH_MAX_STEP = 168;
 const MOBILE_FEED_SCROLL_EASE = 0.48;
+const MOBILE_FEED_SCROLL_FRAME_MS = 1000 / 60;
+const MOBILE_FEED_SCROLL_MAX_FRAME_STEP = 86;
 
 const escapeHtml = (value = '') => (
     String(value)
@@ -928,7 +930,8 @@ const PortalHomeFeed = ({
         lastY: 0,
         targetScrollTop: 0,
         frameId: null,
-        scroller: null
+        scroller: null,
+        lastFrameTime: 0
     });
     const pendingDeepLinkRef = useRef(null);
     const feedDraftTypingTimerRef = useRef(null);
@@ -1330,6 +1333,7 @@ const PortalHomeFeed = ({
         touchState.lastY = 0;
         touchState.targetScrollTop = 0;
         touchState.scroller = null;
+        touchState.lastFrameTime = 0;
         if (touchState.frameId && typeof window !== 'undefined') {
             window.cancelAnimationFrame(touchState.frameId);
             touchState.frameId = null;
@@ -2590,8 +2594,7 @@ const PortalHomeFeed = ({
         scroller.scrollLeft = nextScrollLeft;
     }, []);
 
-    const handleFeedScroll = useCallback((event) => {
-        const nextScrollTop = event.currentTarget.scrollTop;
+    const updateFeedTabsVisibility = useCallback((nextScrollTop) => {
         const previousScrollTop = feedScrollTopRef.current;
         const delta = nextScrollTop - previousScrollTop;
 
@@ -2607,6 +2610,10 @@ const PortalHomeFeed = ({
         feedScrollTopRef.current = nextScrollTop;
     }, []);
 
+    const handleFeedScroll = useCallback((event) => {
+        updateFeedTabsVisibility(event.currentTarget.scrollTop);
+    }, [updateFeedTabsVisibility]);
+
     const cancelMobileFeedTouchScroll = useCallback(() => {
         const touchState = feedTouchScrollRef.current;
         touchState.active = false;
@@ -2621,7 +2628,7 @@ const PortalHomeFeed = ({
         touchState.frameId = null;
     }, []);
 
-    const runMobileFeedScrollFrame = useCallback(() => {
+    const runMobileFeedScrollFrame = useCallback((timestamp = 0) => {
         const touchState = feedTouchScrollRef.current;
         const scroller = touchState.scroller;
 
@@ -2633,15 +2640,27 @@ const PortalHomeFeed = ({
         const diff = touchState.targetScrollTop - scroller.scrollTop;
         if (Math.abs(diff) < 0.7) {
             scroller.scrollTop = touchState.targetScrollTop;
-            feedScrollTopRef.current = scroller.scrollTop;
+            updateFeedTabsVisibility(scroller.scrollTop);
+            touchState.lastFrameTime = 0;
             touchState.frameId = null;
             return;
         }
 
-        scroller.scrollTop += diff * MOBILE_FEED_SCROLL_EASE;
-        feedScrollTopRef.current = scroller.scrollTop;
+        const previousFrameTime = touchState.lastFrameTime || timestamp;
+        const frameScale = timestamp
+            ? Math.min(1.5, Math.max(0.75, (timestamp - previousFrameTime) / MOBILE_FEED_SCROLL_FRAME_MS || 1))
+            : 1;
+        const easedStep = diff * (1 - Math.pow(1 - MOBILE_FEED_SCROLL_EASE, frameScale));
+        const cappedStep = Math.sign(easedStep) * Math.min(
+            Math.abs(easedStep),
+            MOBILE_FEED_SCROLL_MAX_FRAME_STEP * frameScale
+        );
+
+        touchState.lastFrameTime = timestamp;
+        scroller.scrollTop += cappedStep;
+        updateFeedTabsVisibility(scroller.scrollTop);
         touchState.frameId = window.requestAnimationFrame(runMobileFeedScrollFrame);
-    }, []);
+    }, [updateFeedTabsVisibility]);
 
     const ensureMobileFeedScrollFrame = useCallback(() => {
         const touchState = feedTouchScrollRef.current;
@@ -2678,6 +2697,7 @@ const PortalHomeFeed = ({
             touchState.scroller = scroller;
             touchState.lastY = event.touches[0].clientY;
             touchState.targetScrollTop = scroller.scrollTop;
+            touchState.lastFrameTime = 0;
         };
 
         const handleTouchMove = (event) => {

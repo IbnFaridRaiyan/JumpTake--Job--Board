@@ -54284,14 +54284,14 @@ select {
     overflow-y: auto !important;
     overflow-x: hidden !important;
     overscroll-behavior-y: contain !important;
-    -webkit-overflow-scrolling: touch !important;
+    -webkit-overflow-scrolling: auto !important;
     scroll-behavior: auto !important;
-    touch-action: pan-y !important;
+    touch-action: none !important;
     contain: layout paint !important;
   }
 
   .home-page .main-content.mobile-section-job-feed .portal-home-feed-scroll > *,
   .home-page .main-content.mobile-section-home-feed .portal-home-feed-scroll > * {
-    touch-action: pan-y !important;
+    touch-action: inherit !important;
   }
 }

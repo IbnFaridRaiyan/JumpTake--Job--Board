@@ -12,6 +12,8 @@ const RESUME_PLAYGROUND_STORAGE_KEY = 'jumptakeResumePlayground:';
 const SAVED_POSTS_STORAGE_PREFIX = 'jumptakeSavedPosts:';
 const BLOCKED_FEED_AUTHORS_STORAGE_PREFIX = 'jumptakeBlockedFeedAuthors:';
 const HOME_JOB_PAGE_SIZE = 7;
+const MOBILE_FEED_TOUCH_SCROLL_RATIO = 0.82;
+const MOBILE_FEED_MAX_TOUCH_SCROLL = 640;
 
 const escapeHtml = (value = '') => (
     String(value)
@@ -882,6 +884,7 @@ const PortalHomeFeed = ({
     const reactionTooltipTimerRef = useRef(null);
     const reactionCloseTimerRef = useRef(null);
     const feedScrollTopRef = useRef(0);
+    const feedTouchRef = useRef({ y: 0, scrollTop: 0 });
     const pendingDeepLinkRef = useRef(null);
     const feedDraftTypingTimerRef = useRef(null);
     const feedDraftTypingTokenRef = useRef(0);
@@ -2519,6 +2522,67 @@ const PortalHomeFeed = ({
         feedScrollTopRef.current = nextScrollTop;
     }, []);
 
+    const shouldUseControlledFeedTouch = useCallback((event) => {
+        if (typeof window === 'undefined' || window.innerWidth > 768 || !event.touches?.length) {
+            return false;
+        }
+
+        const target = event.target;
+        if (!target?.closest) {
+            return true;
+        }
+
+        return !target.closest('input, textarea, select, [contenteditable="true"], .portal-home-tabs, .portal-reaction-rail');
+    }, []);
+
+    const handleFeedTouchStart = useCallback((event) => {
+        if (!shouldUseControlledFeedTouch(event)) {
+            return;
+        }
+
+        feedTouchRef.current = {
+            y: event.touches[0].clientY,
+            scrollTop: event.currentTarget.scrollTop
+        };
+    }, [shouldUseControlledFeedTouch]);
+
+    const handleFeedTouchMove = useCallback((event) => {
+        if (!shouldUseControlledFeedTouch(event)) {
+            return;
+        }
+
+        const delta = feedTouchRef.current.y - event.touches[0].clientY;
+        const cappedDelta = Math.max(
+            -MOBILE_FEED_MAX_TOUCH_SCROLL,
+            Math.min(MOBILE_FEED_MAX_TOUCH_SCROLL, delta * MOBILE_FEED_TOUCH_SCROLL_RATIO)
+        );
+        const scroller = event.currentTarget;
+        const maxScrollTop = Math.max(scroller.scrollHeight - scroller.clientHeight, 0);
+        const nextScrollTop = Math.max(
+            0,
+            Math.min(maxScrollTop, feedTouchRef.current.scrollTop + cappedDelta)
+        );
+
+        if (event.cancelable) {
+            event.preventDefault();
+        }
+
+        scroller.scrollTop = nextScrollTop;
+        feedScrollTopRef.current = nextScrollTop;
+
+        if (Math.abs(cappedDelta) > 12) {
+            setTabsHidden(nextScrollTop > 12 && cappedDelta > 0);
+        }
+    }, [shouldUseControlledFeedTouch]);
+
+    const handleFeedTouchEnd = useCallback((event) => {
+        feedTouchRef.current = {
+            y: 0,
+            scrollTop: event.currentTarget.scrollTop
+        };
+        feedScrollTopRef.current = event.currentTarget.scrollTop;
+    }, []);
+
     const renderPostList = (posts, key, kind) => {
         const safePosts = Array.isArray(posts)
             ? posts
@@ -3449,6 +3513,10 @@ const PortalHomeFeed = ({
             <div
                 className="portal-home-feed-scroll"
                 onScroll={handleFeedScroll}
+                onTouchStart={handleFeedTouchStart}
+                onTouchMove={handleFeedTouchMove}
+                onTouchEnd={handleFeedTouchEnd}
+                onTouchCancel={handleFeedTouchEnd}
             >
                 {feedLoading ? <div className="loading-spinner">Loading live feed...</div> : null}
                 {activeTab === 'work-news' && renderPostList(workNewsPosts, WORK_NEWS_STORAGE_KEY, 'work')}

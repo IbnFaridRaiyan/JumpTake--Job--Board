@@ -55399,3 +55399,718 @@ button.sky-apply-button,
     width: 20px !important;
   }
 }
+
+/* Unified compact portal cards for applications, assessments, profiles, settings, and saved items. */
+.home-page :is(
+  .fresh-application-card,
+  .application-card,
+  .assessment-card,
+  .assessment-summary-card,
+  .assessment-question-card,
+  .saved-post-card,
+  .settings-card,
+  .profile-card,
+  .profile-section,
+  .company-profile-card,
+  .interested-job-card,
+  .resume-playground-panel,
+  .resume-playground-choice-card,
+  .resume-playground-template-card,
+  .resume-playground-saved-card,
+  .notification-card
+),
+.dashboard-container :is(
+  .fresh-application-card,
+  .application-card,
+  .assessment-card,
+  .assessment-summary-card,
+  .assessment-question-card,
+  .saved-post-card,
+  .settings-card,
+  .profile-card,
+  .profile-section,
+  .company-profile-card,
+  .interested-job-card,
+  .resume-playground-panel,
+  .resume-playground-choice-card,
+  .resume-playground-template-card,
+  .resume-playground-saved-card,
+  .notification-card
+),
+.manage-applications-container .application-card,
+.job-management-workspace :is(.application-card, .assessment-card, .profile-section, .settings-card),
+.employer-settings-container .settings-card,
+.settings-container .settings-card {
+  background: linear-gradient(135deg, rgba(6, 18, 16, 0.98), rgba(0, 0, 0, 0.96)) !important;
+  border: 1px solid rgba(94, 234, 212, 0.24) !important;
+  border-left: 1px solid rgba(94, 234, 212, 0.24) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28) !important;
+  color: #f8fafc !important;
+  overflow: hidden !important;
+  padding: 1rem !important;
+}
+
+.home-page :is(
+  .fresh-application-card,
+  .application-card,
+  .assessment-card,
+  .assessment-summary-card,
+  .assessment-question-card,
+  .saved-post-card,
+  .settings-card,
+  .profile-card,
+  .profile-section,
+  .company-profile-card,
+  .interested-job-card,
+  .resume-playground-panel,
+  .resume-playground-choice-card,
+  .resume-playground-template-card,
+  .resume-playground-saved-card,
+  .notification-card
+)::before,
+.home-page :is(
+  .fresh-application-card,
+  .application-card,
+  .assessment-card,
+  .assessment-summary-card,
+  .assessment-question-card,
+  .saved-post-card,
+  .settings-card,
+  .profile-card,
+  .profile-section,
+  .company-profile-card,
+  .interested-job-card,
+  .resume-playground-panel,
+  .resume-playground-choice-card,
+  .resume-playground-template-card,
+  .resume-playground-saved-card,
+  .notification-card
+)::after,
+.dashboard-container :is(
+  .fresh-application-card,
+  .application-card,
+  .assessment-card,
+  .assessment-summary-card,
+  .assessment-question-card,
+  .saved-post-card,
+  .settings-card,
+  .profile-card,
+  .profile-section,
+  .company-profile-card,
+  .interested-job-card,
+  .resume-playground-panel,
+  .resume-playground-choice-card,
+  .resume-playground-template-card,
+  .resume-playground-saved-card,
+  .notification-card
+)::before,
+.dashboard-container :is(
+  .fresh-application-card,
+  .application-card,
+  .assessment-card,
+  .assessment-summary-card,
+  .assessment-question-card,
+  .saved-post-card,
+  .settings-card,
+  .profile-card,
+  .profile-section,
+  .company-profile-card,
+  .interested-job-card,
+  .resume-playground-panel,
+  .resume-playground-choice-card,
+  .resume-playground-template-card,
+  .resume-playground-saved-card,
+  .notification-card
+)::after {
+  content: none !important;
+  display: none !important;
+}
+
+.home-page :is(
+  .fresh-application-card h3,
+  .application-card h3,
+  .assessment-card h3,
+  .saved-post-card h3,
+  .settings-card h3,
+  .profile-card h3,
+  .profile-section h3,
+  .company-profile-card h3,
+  .interested-job-card h3,
+  .resume-playground-choice-card strong,
+  .resume-playground-template-copy h4,
+  .resume-playground-saved-copy h4
+),
+.dashboard-container :is(
+  .fresh-application-card h3,
+  .application-card h3,
+  .assessment-card h3,
+  .saved-post-card h3,
+  .settings-card h3,
+  .profile-card h3,
+  .profile-section h3,
+  .company-profile-card h3,
+  .interested-job-card h3,
+  .resume-playground-choice-card strong,
+  .resume-playground-template-copy h4,
+  .resume-playground-saved-copy h4
+) {
+  color: #ffffff !important;
+  letter-spacing: 0 !important;
+}
+
+.home-page :is(
+  .application-card p,
+  .assessment-card p,
+  .saved-post-card-body p,
+  .saved-post-card-body span,
+  .settings-card p,
+  .profile-card p,
+  .profile-section p,
+  .company-profile-card p,
+  .interested-job-card p,
+  .resume-playground-choice-card span,
+  .resume-playground-template-copy p,
+  .resume-playground-saved-copy p
+),
+.dashboard-container :is(
+  .application-card p,
+  .assessment-card p,
+  .saved-post-card-body p,
+  .saved-post-card-body span,
+  .settings-card p,
+  .profile-card p,
+  .profile-section p,
+  .company-profile-card p,
+  .interested-job-card p,
+  .resume-playground-choice-card span,
+  .resume-playground-template-copy p,
+  .resume-playground-saved-copy p
+) {
+  color: rgba(248, 250, 252, 0.76) !important;
+}
+
+@media (max-width: 768px) {
+  .home-page :is(.applications-list, .fresh-applications-list, .assessment-card-grid, .saved-posts-list, .resume-playground-choice-grid, .resume-playground-template-grid, .resume-playground-saved-grid),
+  .dashboard-container :is(.applications-list, .fresh-applications-list, .assessment-card-grid, .saved-posts-list, .resume-playground-choice-grid, .resume-playground-template-grid, .resume-playground-saved-grid) {
+    gap: 0.55rem !important;
+  }
+
+  .home-page :is(
+    .fresh-application-card,
+    .application-card,
+    .assessment-card,
+    .assessment-summary-card,
+    .assessment-question-card,
+    .saved-post-card,
+    .settings-card,
+    .profile-card,
+    .profile-section,
+    .company-profile-card,
+    .interested-job-card,
+    .resume-playground-panel,
+    .resume-playground-choice-card,
+    .resume-playground-template-card,
+    .resume-playground-saved-card,
+    .notification-card
+  ),
+  .dashboard-container :is(
+    .fresh-application-card,
+    .application-card,
+    .assessment-card,
+    .assessment-summary-card,
+    .assessment-question-card,
+    .saved-post-card,
+    .settings-card,
+    .profile-card,
+    .profile-section,
+    .company-profile-card,
+    .interested-job-card,
+    .resume-playground-panel,
+    .resume-playground-choice-card,
+    .resume-playground-template-card,
+    .resume-playground-saved-card,
+    .notification-card
+  ),
+  .manage-applications-container .application-card,
+  .job-management-workspace :is(.application-card, .assessment-card, .profile-section, .settings-card),
+  .employer-settings-container .settings-card,
+  .settings-container .settings-card {
+    border-radius: 8px !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24) !important;
+    padding: 0.68rem !important;
+  }
+
+  .home-page .fresh-application-card {
+    gap: 0.55rem !important;
+  }
+
+  .home-page .fresh-application-card-header,
+  .home-page .application-card-header,
+  .dashboard-container .application-card-header,
+  .home-page .assessment-card-top,
+  .dashboard-container .assessment-card-top {
+    gap: 0.45rem !important;
+    margin-bottom: 0.35rem !important;
+  }
+
+  .home-page .fresh-application-title-block h3,
+  .home-page .application-card-header h3,
+  .dashboard-container .application-card-header h3,
+  .home-page .assessment-card h3,
+  .dashboard-container .assessment-card h3,
+  .home-page .profile-card h3,
+  .home-page .profile-section h3,
+  .home-page .settings-card h3,
+  .home-page .saved-post-card-body h3 {
+    font-size: 0.95rem !important;
+    line-height: 1.18 !important;
+    margin-bottom: 0.18rem !important;
+  }
+
+  .home-page .fresh-application-title-block span,
+  .home-page .fresh-application-meta-grid span,
+  .home-page .application-card-header p,
+  .dashboard-container .application-card-header p,
+  .home-page .assessment-card-meta,
+  .home-page .assessment-card-job,
+  .home-page .saved-post-card-body p,
+  .home-page .saved-post-card-body span,
+  .home-page :is(.settings-card, .profile-card, .profile-section, .interested-job-card) p {
+    font-size: 0.72rem !important;
+    line-height: 1.28 !important;
+  }
+
+  .home-page .fresh-application-meta-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.35rem !important;
+  }
+
+  .home-page .fresh-application-meta-grid div {
+    border-radius: 7px !important;
+    padding: 0.42rem !important;
+  }
+
+  .home-page .fresh-application-meta-grid strong {
+    font-size: 0.72rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .home-page .fresh-application-actions,
+  .home-page .application-card-actions,
+  .dashboard-container .application-card-actions,
+  .home-page .assessment-card-actions,
+  .dashboard-container .assessment-card-actions,
+  .saved-post-card-actions {
+    gap: 0.4rem !important;
+    margin-top: 0.25rem !important;
+  }
+
+  .home-page .fresh-application-actions .withdraw-uiverse-button {
+    max-width: 126px !important;
+    min-width: 126px !important;
+    width: 126px !important;
+  }
+
+  .home-page :is(.application-view-details-button, .view-button, .settings-button, .secondary-button, .saved-post-card-actions button, .resume-playground-ats-button) {
+    min-height: 2rem !important;
+    padding: 0.38rem 0.58rem !important;
+    font-size: 0.72rem !important;
+  }
+
+  .home-page .job-interest-grid {
+    gap: 0.38rem !important;
+  }
+
+  .home-page .job-interest-grid button {
+    min-height: 2rem !important;
+    padding: 0.35rem 0.5rem !important;
+    font-size: 0.68rem !important;
+  }
+
+  .home-page .saved-post-card {
+    grid-template-columns: auto minmax(0, 1fr) !important;
+    gap: 0.55rem !important;
+  }
+
+  .home-page .saved-post-card-icon {
+    height: 2rem !important;
+    width: 2rem !important;
+  }
+
+  .home-page .saved-post-card-actions {
+    grid-column: 1 / -1 !important;
+    justify-content: flex-end !important;
+  }
+}
+
+/* Screenshot 228: black glass card surfaces across candidate/employer portal utility sections. */
+.home-page :is(
+  .fresh-application-card,
+  .application-card,
+  .assessment-card,
+  .assessment-summary-card,
+  .assessment-question-card,
+  .saved-post-card,
+  .settings-card,
+  .profile-card,
+  .profile-section,
+  .company-profile-card,
+  .interested-job-card,
+  .resume-playground-panel,
+  .resume-playground-choice-card,
+  .resume-playground-template-card,
+  .resume-playground-saved-card,
+  .notification-card
+),
+.dashboard-container :is(
+  .fresh-application-card,
+  .application-card,
+  .assessment-card,
+  .assessment-summary-card,
+  .assessment-question-card,
+  .saved-post-card,
+  .settings-card,
+  .profile-card,
+  .profile-section,
+  .company-profile-card,
+  .interested-job-card,
+  .resume-playground-panel,
+  .resume-playground-choice-card,
+  .resume-playground-template-card,
+  .resume-playground-saved-card,
+  .notification-card
+),
+.manage-applications-container .application-card,
+.job-management-workspace :is(.application-card, .assessment-card, .profile-section, .settings-card),
+.employer-settings-container .settings-card,
+.settings-container .settings-card {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)),
+    rgba(0, 0, 0, 0.86) !important;
+  border-color: rgba(94, 234, 212, 0.3) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.075),
+    0 12px 28px rgba(0, 0, 0, 0.42) !important;
+  backdrop-filter: blur(16px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(145%) !important;
+}
+
+.home-page :is(
+  .fresh-application-meta-grid div,
+  .application-message-preview,
+  .assessment-instructions,
+  .assessment-response-option,
+  .job-interest-grid button,
+  .saved-post-card-icon,
+  .resume-playground-ats-score-card,
+  .resume-playground-ats-details,
+  .resume-playground-toolbar,
+  .resume-playground-select,
+  .resume-playground-tool-button,
+  .resume-playground-color-picker
+),
+.dashboard-container :is(
+  .fresh-application-meta-grid div,
+  .application-message-preview,
+  .assessment-instructions,
+  .assessment-response-option,
+  .job-interest-grid button,
+  .saved-post-card-icon,
+  .resume-playground-ats-score-card,
+  .resume-playground-ats-details,
+  .resume-playground-toolbar,
+  .resume-playground-select,
+  .resume-playground-tool-button,
+  .resume-playground-color-picker
+) {
+  background: rgba(0, 0, 0, 0.58) !important;
+  border-color: rgba(255, 255, 255, 0.13) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055) !important;
+  color: #f8fafc !important;
+}
+
+.home-page .job-interest-grid button.selected,
+.dashboard-container .job-interest-grid button.selected {
+  background: rgba(14, 116, 144, 0.72) !important;
+  border-color: rgba(125, 211, 252, 0.62) !important;
+}
+
+@media (max-width: 768px) {
+  .home-page :is(
+    .fresh-application-card,
+    .application-card,
+    .assessment-card,
+    .assessment-summary-card,
+    .assessment-question-card,
+    .saved-post-card,
+    .settings-card,
+    .profile-card,
+    .profile-section,
+    .company-profile-card,
+    .interested-job-card,
+    .resume-playground-panel,
+    .resume-playground-choice-card,
+    .resume-playground-template-card,
+    .resume-playground-saved-card,
+    .notification-card
+  ),
+  .dashboard-container :is(
+    .fresh-application-card,
+    .application-card,
+    .assessment-card,
+    .assessment-summary-card,
+    .assessment-question-card,
+    .saved-post-card,
+    .settings-card,
+    .profile-card,
+    .profile-section,
+    .company-profile-card,
+    .interested-job-card,
+    .resume-playground-panel,
+    .resume-playground-choice-card,
+    .resume-playground-template-card,
+    .resume-playground-saved-card,
+    .notification-card
+  ) {
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.008)),
+      rgba(0, 0, 0, 0.9) !important;
+  }
+
+  .mobile-section-post-job.is-open .post-job-container,
+  .mobile-section-post-job .post-job-container,
+  .dashboard-container.mobile-section-open .mobile-section-post-job .post-job-container {
+    width: 100% !important;
+    max-width: none !important;
+    padding-left: 0.2rem !important;
+    padding-right: 0.2rem !important;
+  }
+
+  .mobile-section-post-job.is-open .post-job-content,
+  .mobile-section-post-job .post-job-content,
+  .dashboard-container.mobile-section-open .mobile-section-post-job .post-job-content {
+    width: 100% !important;
+    max-width: none !important;
+    padding-left: 0.62rem !important;
+    padding-right: 0.62rem !important;
+  }
+
+  .mobile-section-post-job .job-form,
+  .mobile-section-post-job .form-section,
+  .mobile-section-post-job .job-form-intro {
+    width: 100% !important;
+    max-width: none !important;
+  }
+}
+
+/* Screenshot 229-232: action button colors, compact widths, and messenger badge fit. */
+.home-page .application-card-actions,
+.dashboard-container .application-card-actions,
+.home-page .fresh-application-actions,
+.dashboard-container .fresh-application-actions,
+.home-page .profile-header-actions,
+.dashboard-container .profile-header-actions,
+.company-profile-container .company-profile-actions,
+.company-profile-container .company-edit-actions,
+.home-page .assessment-card-actions,
+.dashboard-container .assessment-card-actions,
+.home-page .saved-post-card-actions,
+.dashboard-container .saved-post-card-actions {
+  align-items: center !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.5rem !important;
+  justify-content: flex-start !important;
+}
+
+.home-page :is(.view-profile-btn, .view-button, .secondary-button, .settings-button, .edit-profile-button, .save-profile-button, .upload-resume-button, .profile-picture-upload-button),
+.dashboard-container :is(.view-profile-btn, .view-button, .secondary-button, .settings-button, .edit-profile-button, .save-profile-button, .upload-resume-button, .profile-picture-upload-button),
+.company-profile-container :is(.company-logo-upload-button, .edit-profile-button, .save-profile-button, .secondary-button) {
+  border-radius: 0.58rem !important;
+  min-height: 2.16rem !important;
+  min-width: 0 !important;
+  width: auto !important;
+  max-width: 100% !important;
+  padding: 0.46rem 0.9rem !important;
+  white-space: nowrap !important;
+}
+
+.home-page .view-profile-btn.sky-apply-button,
+.dashboard-container .view-profile-btn.sky-apply-button,
+.home-page button.sky-apply-button,
+.dashboard-container button.sky-apply-button {
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9) !important;
+  border: 0 !important;
+  color: #03121b !important;
+  -webkit-text-fill-color: #03121b !important;
+  box-shadow: 0 10px 22px rgba(14, 165, 233, 0.28) !important;
+}
+
+.home-page .view-profile-btn.secondary-action,
+.dashboard-container .view-profile-btn.secondary-action,
+.home-page .application-view-details-button,
+.dashboard-container .application-view-details-button {
+  background: linear-gradient(135deg, #b45309, #7c2d12) !important;
+  border: 0 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: 0 10px 22px rgba(124, 45, 18, 0.3) !important;
+}
+
+.home-page .view-profile-btn.secondary-action:hover,
+.dashboard-container .view-profile-btn.secondary-action:hover,
+.home-page .application-view-details-button:hover,
+.dashboard-container .application-view-details-button:hover {
+  background: linear-gradient(135deg, #f97316, #9a3412) !important;
+}
+
+.home-page .profile-picture-upload-button,
+.dashboard-container .profile-picture-upload-button,
+.company-profile-container .company-logo-upload-button {
+  background: linear-gradient(135deg, #0f766e, #064e3b) !important;
+  border: 0 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.home-page .edit-profile-button,
+.dashboard-container .edit-profile-button,
+.company-profile-container .edit-profile-button {
+  background: linear-gradient(135deg, #f8fafc, #cbd5e1) !important;
+  border: 0 !important;
+  color: #020617 !important;
+  -webkit-text-fill-color: #020617 !important;
+}
+
+.home-page .upload-resume-button,
+.dashboard-container .upload-resume-button,
+.home-page .save-profile-button,
+.dashboard-container .save-profile-button,
+.company-profile-container .save-profile-button {
+  background: linear-gradient(135deg, #0f766e, #052e2b) !important;
+  border: 0 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.home-page .application-card-actions .view-profile-btn,
+.dashboard-container .application-card-actions .view-profile-btn {
+  flex: 0 0 auto !important;
+}
+
+.home-page .fresh-application-actions .application-view-details-button,
+.dashboard-container .fresh-application-actions .application-view-details-button {
+  flex: 0 0 auto !important;
+  min-width: 8.8rem !important;
+}
+
+.home-page .applications-container .applications-list .application-card .application-card-actions .view-profile-btn,
+.dashboard-container .applications-container .applications-list .application-card .application-card-actions .view-profile-btn {
+  min-width: 7.6rem !important;
+}
+
+.home-page .applications-container .applications-list .application-card .application-card-actions .view-profile-btn.sky-apply-button,
+.dashboard-container .applications-container .applications-list .application-card .application-card-actions .view-profile-btn.sky-apply-button {
+  min-width: 7.8rem !important;
+}
+
+.floating-messenger-trigger {
+  overflow: visible !important;
+}
+
+.floating-messenger-badge {
+  top: 0.2rem !important;
+  right: 0.2rem !important;
+  min-width: 1rem !important;
+  width: 1rem !important;
+  height: 1rem !important;
+  padding: 0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.88) !important;
+  border-radius: 999px !important;
+  font-size: 0.56rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+}
+
+@media (max-width: 768px) {
+  .home-page .application-card-actions,
+  .dashboard-container .application-card-actions,
+  .home-page .fresh-application-actions,
+  .dashboard-container .fresh-application-actions,
+  .home-page .profile-header-actions,
+  .dashboard-container .profile-header-actions,
+  .company-profile-container .company-profile-actions,
+  .company-profile-container .company-edit-actions,
+  .home-page .assessment-card-actions,
+  .dashboard-container .assessment-card-actions,
+  .home-page .saved-post-card-actions,
+  .dashboard-container .saved-post-card-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: flex-start !important;
+  }
+
+  .home-page :is(.view-profile-btn, .view-button, .secondary-button, .settings-button, .edit-profile-button, .save-profile-button, .upload-resume-button, .profile-picture-upload-button),
+  .dashboard-container :is(.view-profile-btn, .view-button, .secondary-button, .settings-button, .edit-profile-button, .save-profile-button, .upload-resume-button, .profile-picture-upload-button),
+  .company-profile-container :is(.company-logo-upload-button, .edit-profile-button, .save-profile-button, .secondary-button) {
+    flex: 0 0 auto !important;
+    min-height: 2rem !important;
+    width: auto !important;
+    max-width: calc(100vw - 7rem) !important;
+    padding: 0.4rem 0.74rem !important;
+    font-size: 0.72rem !important;
+  }
+
+  .home-page .fresh-application-actions {
+    grid-template-columns: none !important;
+  }
+
+  .home-page .fresh-application-actions .application-view-details-button,
+  .dashboard-container .fresh-application-actions .application-view-details-button {
+    min-width: 8.2rem !important;
+  }
+
+  .home-page .fresh-application-actions .withdraw-uiverse-button {
+    flex: 0 0 auto !important;
+  }
+
+  .home-page .applications-container .applications-list .application-card .application-card-actions .view-profile-btn,
+  .dashboard-container .applications-container .applications-list .application-card .application-card-actions .view-profile-btn {
+    min-width: 7rem !important;
+  }
+
+  .home-page .profile-picture-panel {
+    align-items: center !important;
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) !important;
+    gap: 0.6rem !important;
+    width: 100% !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-picture-upload-button,
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-header-actions .edit-profile-button,
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-header-actions .upload-resume-button {
+    width: auto !important;
+    min-width: 7.2rem !important;
+    max-width: 13rem !important;
+  }
+
+  .mobile-dashboard-section-panel.mobile-section-profile.is-open .profile-header-actions {
+    align-items: center !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.45rem !important;
+    justify-content: center !important;
+    width: 100% !important;
+  }
+
+  .floating-messenger-badge {
+    top: 0.16rem !important;
+    right: 0.16rem !important;
+    width: 0.96rem !important;
+    min-width: 0.96rem !important;
+    height: 0.96rem !important;
+    font-size: 0.52rem !important;
+  }
+}

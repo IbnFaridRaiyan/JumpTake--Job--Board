@@ -668,20 +668,19 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     }, [activeSection, mobileSectionVisible, user?.id]);
 
     const candidatePrimaryNavItems = [
-        { id: 'home', label: 'Home', icon: 'home' },
-        { id: 'applications', label: 'My Applications', icon: 'profile' },
-        { id: 'resume-playground', label: 'Resume Playground', icon: 'draft' },
-        { id: 'profile', label: 'My Profile', icon: 'user' },
+        { id: 'home', label: 'Dashboard', icon: 'dashboard' },
         { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 },
         { id: 'view-candidates', label: 'Candidates', icon: 'users' },
         { id: 'friend-invitations', label: 'Friends', icon: 'user-plus', notification: pendingFriendInvitationCount > 0 },
         { id: 'bookmarked-candidates', label: 'Bookmarked Candidates', icon: 'heart' },
+        { id: 'applications', label: 'My Applications', icon: 'profile' },
         { id: 'assessments', label: 'My Assessments', icon: 'assessment', notification: pendingAssessmentCount > 0 },
         { id: 'video-interviews', label: 'Video Interviews', icon: 'send', notification: pendingVideoInterviewCount > 0 },
         { id: 'draft-applications', label: 'Draft Applications', icon: 'draft' },
         { id: 'bookmarked-jobs', label: 'Bookmarked Jobs', icon: 'star' },
         { id: 'saved-posts', label: 'Saved Posts', icon: 'star' },
-        { id: 'interested-jobs', label: 'Job Preferences', icon: 'briefcase' }
+        { id: 'interested-jobs', label: 'Job Preferences', icon: 'briefcase' },
+        { id: 'resume-playground', label: 'Resume Playground', icon: 'draft' }
     ].map((item) => ({
         ...item,
         active: item.id === 'home' ? ['home', 'job-feed'].includes(activeSection) : activeSection === item.id,
@@ -689,6 +688,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     }));
 
     const candidateSecondaryNavItems = [
+        { id: 'profile', label: 'My Profile', icon: 'user' },
         { id: 'about-jumptake', label: 'About JumpTake', icon: 'info' },
         { id: 'progress-check', label: 'Progress Check', icon: 'chart' },
         { id: 'settings', label: 'Settings', icon: 'settings' }

@@ -55279,9 +55279,55 @@ button.sky-apply-button,
   max-width: 100% !important;
 }
 
-/* Screenshot 224/225 refinements: share menu layering and dashboard actions moved into the icon rail. */
+/* Screenshot 224/225/226 refinements: share menu layering and icon-only dashboard action rail. */
 .portal-default-actions {
-  display: none !important;
+  align-items: center !important;
+  align-self: center !important;
+  background-color: #000000 !important;
+  border: 1px solid rgba(94, 234, 212, 0.26) !important;
+  border-radius: 5px !important;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.34) !important;
+  display: flex !important;
+  gap: clamp(0.45rem, 2vw, 0.78rem) !important;
+  height: 70px !important;
+  justify-content: space-around !important;
+  margin: 0.75rem auto 0.85rem !important;
+  max-width: min(100%, 340px) !important;
+  padding: 0 0.72rem !important;
+  width: min(100%, 340px) !important;
+}
+
+.portal-default-action {
+  align-items: center !important;
+  appearance: none !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  color: #ffffff !important;
+  cursor: pointer !important;
+  display: flex !important;
+  flex: 0 0 auto !important;
+  height: 40px !important;
+  justify-content: center !important;
+  outline: 0 !important;
+  padding: 0 !important;
+  transition: color 0.14s ease, transform 0.14s ease !important;
+  width: 40px !important;
+}
+
+.portal-default-action:hover,
+.portal-default-action:focus-visible {
+  color: #60a5fa !important;
+  transform: translateY(-3px) !important;
+}
+
+.portal-default-action-svg {
+  display: block !important;
+  fill: currentColor !important;
+  height: 25px !important;
+  stroke: currentColor !important;
+  stroke-width: 0 !important;
+  width: 25px !important;
 }
 
 .portal-social-post-card:has(.portal-share-picker) {
@@ -55314,5 +55360,42 @@ button.sky-apply-button,
   .portal-share-picker {
     width: min(16.5rem, calc(100vw - 5.5rem)) !important;
     max-height: min(16rem, 42vh) !important;
+  }
+}
+
+/* Screenshot 227: keep the dashboard quick actions compact enough for one mobile glance. */
+@media (max-width: 768px) {
+  .portal-default-landing .portal-default-actions {
+    display: grid !important;
+    align-items: center !important;
+    justify-items: center !important;
+    column-gap: 0.12rem !important;
+    row-gap: 0 !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    margin: 0.38rem auto 0.58rem !important;
+    padding: 0 0.24rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .portal-default-landing .portal-default-actions.is-candidate {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .portal-default-landing .portal-default-actions.is-employer {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  }
+
+  .portal-default-landing .portal-default-action {
+    height: 34px !important;
+    min-height: 34px !important;
+    min-width: 34px !important;
+    width: 34px !important;
+  }
+
+  .portal-default-landing .portal-default-action-svg {
+    height: 20px !important;
+    width: 20px !important;
   }
 }

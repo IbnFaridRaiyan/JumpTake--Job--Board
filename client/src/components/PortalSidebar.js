@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 const ICON_PATHS = {
-    home: 'M12 3.1 3 10.3V21h6v-6h6v6h6V10.3l-9-7.2Zm0 2.56 7 5.6V19h-2v-6H7v6H5v-7.74l7-5.6Z',
     dashboard: 'M3 13h8V3H3v10Zm0 8h8v-6H3v6Zm10 0h8V11h-8v10Zm0-18v6h8V3h-8Z',
     briefcase: 'M10 6V5a3 3 0 0 1 3-3h2a3 3 0 0 1 3 3v1h3a2 2 0 0 1 2 2v4.5a4 4 0 0 1-2 3.46V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4.04A4 4 0 0 1 1 12.5V8a2 2 0 0 1 2-2h7Zm2 0h4V5a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v1Zm9 9.72A4 4 0 0 1 20 16H4a4 4 0 0 1-1-.28V20h18v-4.28ZM3 8v4.5A1.5 1.5 0 0 0 4.5 14h15a1.5 1.5 0 0 0 1.5-1.5V8H3Z',
     inbox: 'M4 4h16l3 7v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-7l3-7Zm1.35 2-1.7 4H8a1 1 0 0 1 .92.6 3.37 3.37 0 0 0 6.16 0A1 1 0 0 1 16 10h4.35l-1.7-4H5.35ZM3 12v6h18v-6h-4.42a5.36 5.36 0 0 1-9.16 0H3Z',
@@ -40,7 +39,6 @@ const PortalSidebar = ({
                 type="button"
                 className={`sidebar__link ${item.active ? 'is-active' : ''} ${item.danger ? 'is-danger' : ''}`}
                 data-tooltip={item.label}
-                title={item.label}
                 onClick={() => {
                     setExpanded(false);
                     item.onClick?.();
@@ -81,7 +79,6 @@ const PortalSidebar = ({
                                 type="button"
                                 className="sidebar__link is-danger"
                                 data-tooltip="Log Out"
-                                title="Log Out"
                                 onClick={() => {
                                     setExpanded(false);
                                     onLogout?.();

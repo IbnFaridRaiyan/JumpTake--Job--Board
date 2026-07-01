@@ -399,17 +399,16 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     }, [activeSection, mobileSectionVisible, employer?.companyId]);
 
     const employerPrimaryNavItems = [
-        { id: 'home', label: 'Home', icon: 'home' },
+        { id: 'home', label: 'Dashboard', icon: 'dashboard' },
         { id: 'post-job', label: 'Post a Job', icon: 'briefcase' },
         { id: 'manage-jobs', label: 'Manage Jobs', icon: 'briefcase' },
-        { id: 'create-document', label: 'Create Document', icon: 'profile' },
-        { id: 'company-profile', label: 'Company Profile', icon: 'profile' },
         { id: 'make-assessment', label: 'Make an Assessment', icon: 'assessment' },
         { id: 'general-assessment', label: 'General Assessment', icon: 'assessment' },
         { id: 'talent-pool', label: 'Talent Pool', icon: 'users' },
         { id: 'bookmarked-talents', label: 'Bookmarked Talents', icon: 'star' },
         { id: 'saved-posts', label: 'Saved Posts', icon: 'star' },
-        { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 }
+        { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 },
+        { id: 'create-document', label: 'Create Document', icon: 'profile' }
     ].map((item) => ({
         ...item,
         active: item.id === 'home' ? ['home', 'home-feed'].includes(activeSection) : activeSection === item.id,
@@ -417,6 +416,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     }));
 
     const employerSecondaryNavItems = [
+        { id: 'company-profile', label: 'Company Profile', icon: 'profile' },
         { id: 'about-jumptake', label: 'About JumpTake', icon: 'info' },
         { id: 'application-tracking', label: 'Application Tracking System', icon: 'chart' },
         { id: 'settings', label: 'Settings', icon: 'settings' }

@@ -317,9 +317,22 @@ const getOpenAIModelCandidates = () => {
   const configured = String(process.env.OPENAI_MODEL || '').trim();
   return [...new Set([
     configured,
+    'gpt-5.5',
+    'gpt-5.4',
     'gpt-5',
     'gpt-4.1-mini',
     'gpt-4o-mini'
+  ].filter(Boolean))];
+};
+
+const getOpenAISearchModelCandidates = () => {
+  const configured = String(process.env.OPENAI_MODEL || '').trim();
+  return [...new Set([
+    configured,
+    'gpt-5.5',
+    'gpt-5.4',
+    'gpt-5-search-api',
+    'gpt-4.1-mini'
   ].filter(Boolean))];
 };
 
@@ -354,8 +367,9 @@ const askAdminOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = f
     };
 
     if (useWebSearch) {
-      payload.tools = [{ type: 'web_search_preview' }];
-      payload.tool_choice = 'auto';
+      payload.tools = [{ type: 'web_search', external_web_access: true }];
+      payload.tool_choice = 'required';
+      payload.include = ['web_search_call.action.sources'];
     }
 
     const response = await axios.post(
@@ -376,9 +390,45 @@ const askAdminOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = f
     }
   } catch (error) {
     const message = String(error.response?.data?.error?.message || error.message || '');
+    const shouldRetryWithLegacySearch = useWebSearch && /web_search|tool|unsupported|invalid/i.test(message);
+    if (shouldRetryWithLegacySearch) {
+      const legacyPayload = {
+        model,
+        input: prompt,
+        max_output_tokens: 3000,
+        tools: [{ type: 'web_search_preview' }],
+        tool_choice: 'required',
+        include: ['web_search_call.action.sources']
+      };
+
+      try {
+        const legacyResponse = await axios.post(
+          'https://api.openai.com/v1/responses',
+          legacyPayload,
+          {
+            timeout: 25000,
+            headers: {
+              Authorization: `Bearer ${apiKey}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+
+        const legacyText = extractOpenAIText(legacyResponse.data);
+        if (legacyText) {
+          return legacyText;
+        }
+      } catch (legacyError) {
+        const legacyMessage = String(legacyError.response?.data?.error?.message || legacyError.message || '');
+        if (!/web_search|tool|unsupported|invalid|responses|model|not found/i.test(legacyMessage)) {
+          throw legacyError;
+        }
+      }
+    }
+
     const shouldRetryWithoutSearch = useWebSearch && /web_search|tool|unsupported|invalid/i.test(message);
     if (shouldRetryWithoutSearch) {
-      return askAdminOpenAIWithModel({ apiKey, model, prompt, useWebSearch: false });
+      return askAdminOpenAIChatSearch({ apiKey, prompt });
     }
 
     const shouldTryChat = /responses|output_text|max_output_tokens|unknown|not found|unsupported|model/i.test(message);
@@ -407,6 +457,48 @@ const askAdminOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = f
   return String(chatResponse.data?.choices?.[0]?.message?.content || '').trim();
 };
 
+const askAdminOpenAIChatSearch = async ({ apiKey, prompt }) => {
+  let lastError = null;
+
+  for (const model of ['gpt-5-search-api', 'gpt-4o-search-preview', 'gpt-4o-mini-search-preview']) {
+    try {
+      const chatResponse = await axios.post(
+        'https://api.openai.com/v1/chat/completions',
+        {
+          model,
+          max_tokens: 3000,
+          web_search_options: {},
+          messages: [{ role: 'user', content: prompt }]
+        },
+        {
+          timeout: 25000,
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      const text = String(chatResponse.data?.choices?.[0]?.message?.content || '').trim();
+      if (text) {
+        return text;
+      }
+    } catch (error) {
+      lastError = error;
+      const message = String(error.response?.data?.error?.message || error.message || '');
+      if (!/model|not found|unsupported|deprecated|search|web_search/i.test(message)) {
+        throw error;
+      }
+    }
+  }
+
+  if (lastError) {
+    throw lastError;
+  }
+
+  return '';
+};
+
 const askAdminOpenAI = async (prompt, { useWebSearch = false } = {}) => {
   const apiKey = getOpenAIApiKey();
   if (!apiKey) {
@@ -414,7 +506,8 @@ const askAdminOpenAI = async (prompt, { useWebSearch = false } = {}) => {
   }
 
   let lastError = null;
-  for (const model of getOpenAIModelCandidates()) {
+  const modelCandidates = useWebSearch ? getOpenAISearchModelCandidates() : getOpenAIModelCandidates();
+  for (const model of modelCandidates) {
     try {
       const text = await askAdminOpenAIWithModel({ apiKey, model, prompt, useWebSearch });
       if (text) {
@@ -454,6 +547,11 @@ const parseJsonObjectFromText = (text) => {
     }
   }
 };
+
+const looksLikeWebJobRefusal = (text) => (
+  /\b(can't|cannot|unable|need|without|no access|not able)\b/i.test(String(text || ''))
+  && /\b(web|browse|browsing|internet|source|sources|company details|job feed|live jobs)\b/i.test(String(text || ''))
+);
 
 const extractQuotedOrAfter = (message, labels) => {
   for (const label of labels) {
@@ -553,6 +651,7 @@ Rules:
 - If the admin asks to post/create a job, fill jobForm. If they provide a company ID such as ez1231231, put it in jobForm.company.
 - If the admin asks for multiple/latest/web jobs, return jobDrafts instead of one jobForm.
 - For requests like "post 10 latest jobs from the web", use web search and collect exactly the requested number when possible, otherwise as many reliable current jobs as you can find.
+- When web/latest jobs are requested, you have access to web search through the API tool. Do not claim you cannot browse, cannot access live web jobs, or need a browsing-enabled feed.
 - Search sources such as Gradcracker, RateMyPlacement, LinkedIn, company career pages, and other reliable job pages. Prefer direct application pages or original job posts.
 - For every jobDraft include title, companyName, location, applicationLink/source URL, jobType, description, requirements, responsibilities, skills, and salary if available.
 - jobDraft.company should be a stable admin company ID based on the company name, lowercase words joined with hyphens, unless the prompt provides a specific company ID.
@@ -568,6 +667,7 @@ Rules:
 - jobType must be one of Full-time, Part-time, Contract, Internship, Remote.
 - Do not include markdown.
 
+Today is ${new Date().toISOString().slice(0, 10)}. Treat "latest" as current to this date.
 Current company form: ${JSON.stringify(companyForm || {})}
 Current job form: ${JSON.stringify(jobForm || {})}
 Admin request: ${message}`;
@@ -868,9 +968,27 @@ router.post('/assistant', async (req, res) => {
       && /\b(job|jobs|role|roles|placement|graduate|internship)\b/.test(lowerMessage);
     const hasMissingCompanyDetails = !companyForm.industry || !companyForm.headquarters || !companyForm.website || !companyForm.founded || !companyForm.description;
     const useWebSearch = process.env.OPENAI_ENABLE_WEB_SEARCH !== 'false' && (wantsWebJobs || (wantsCompanyInfo && hasMissingCompanyDetails));
-    const aiText = await askAdminOpenAI(prompt, { useWebSearch });
-    const parsed = parseJsonObjectFromText(aiText) || createFallbackAdminAssistantPlan(message);
-    const jobDrafts = Array.isArray(parsed.jobDrafts) ? parsed.jobDrafts.slice(0, 20) : [];
+    let aiText = await askAdminOpenAI(prompt, { useWebSearch });
+    let parsed = parseJsonObjectFromText(aiText) || createFallbackAdminAssistantPlan(message);
+    let jobDrafts = Array.isArray(parsed.jobDrafts) ? parsed.jobDrafts.slice(0, 20) : [];
+
+    if (wantsWebJobs && useWebSearch && !jobDrafts.length && looksLikeWebJobRefusal(`${parsed.reply || ''} ${aiText || ''}`)) {
+      const retryPrompt = `${prompt}
+
+Strict retry:
+- The admin requested live web job drafts.
+- You must use the web search tool now.
+- Return JSON with jobDrafts filled from current search results.
+- Do not return a refusal or ask the admin for source/company details.
+- If fewer than the requested number are found, return the reliable ones you found.`;
+      aiText = await askAdminOpenAI(retryPrompt, { useWebSearch: true });
+      parsed = parseJsonObjectFromText(aiText) || parsed;
+      jobDrafts = Array.isArray(parsed.jobDrafts) ? parsed.jobDrafts.slice(0, 20) : [];
+    }
+
+    if (wantsWebJobs && !jobDrafts.length && looksLikeWebJobRefusal(`${parsed.reply || ''} ${aiText || ''}`)) {
+      parsed.reply = 'Web search did not return usable job drafts. Check that the OpenAI account has web search access, then try the request again.';
+    }
 
     res.json({
       reply: String(parsed.reply || 'I filled what I could. Review the form before creating the record.'),

@@ -12,7 +12,8 @@ const RESUME_PLAYGROUND_STORAGE_KEY = 'jumptakeResumePlayground:';
 const SAVED_POSTS_STORAGE_PREFIX = 'jumptakeSavedPosts:';
 const BLOCKED_FEED_AUTHORS_STORAGE_PREFIX = 'jumptakeBlockedFeedAuthors:';
 const HOME_JOB_PAGE_SIZE = 7;
-const MOBILE_FEED_MAX_SCROLL_BURST = 360;
+const MOBILE_FEED_MAX_SCROLL_BURST = 144;
+const MOBILE_FEED_FAST_SCROLL_SPEED_RATIO = 0.8;
 
 const escapeHtml = (value = '') => (
     String(value)
@@ -2504,7 +2505,11 @@ const PortalHomeFeed = ({
             && !limitingFeedScrollRef.current
             && Math.abs(delta) > MOBILE_FEED_MAX_SCROLL_BURST
         ) {
-            const limitedScrollTop = previousScrollTop + (Math.sign(delta) * MOBILE_FEED_MAX_SCROLL_BURST);
+            const limitedDelta = Math.sign(delta) * Math.min(
+                Math.abs(delta) * MOBILE_FEED_FAST_SCROLL_SPEED_RATIO,
+                MOBILE_FEED_MAX_SCROLL_BURST
+            );
+            const limitedScrollTop = previousScrollTop + limitedDelta;
             limitingFeedScrollRef.current = true;
             event.currentTarget.scrollTop = limitedScrollTop;
             feedScrollTopRef.current = limitedScrollTop;

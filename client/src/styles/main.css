@@ -54447,11 +54447,23 @@ select {
 @media (max-width: 768px) {
   .portal-job-modal {
     padding-top: 0.58rem !important;
+    padding-bottom: 4.25rem !important;
   }
 
   .portal-job-modal-header {
     margin-top: 0 !important;
+    padding-right: 0 !important;
     padding-top: 0 !important;
+  }
+
+  .portal-job-modal-back-button {
+    bottom: 1.05rem !important;
+    left: 50% !important;
+    position: fixed !important;
+    right: auto !important;
+    top: auto !important;
+    transform: translateX(-50%) !important;
+    z-index: 10020 !important;
   }
 
   .portal-candidate-job-action-row {

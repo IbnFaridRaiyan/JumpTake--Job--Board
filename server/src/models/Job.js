@@ -56,6 +56,28 @@ const JobSchema = new mongoose.Schema({
     type: [String],
     default: []
   },
+  reviews: {
+    type: [{
+      id: String,
+      reviewerId: String,
+      authorName: String,
+      rating: {
+        type: Number,
+        min: 0,
+        max: 5,
+        default: 0
+      },
+      text: {
+        type: String,
+        trim: true
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now
+      }
+    }],
+    default: []
+  },
   active: {
     type: Boolean,
     default: true

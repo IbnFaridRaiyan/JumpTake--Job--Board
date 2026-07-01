@@ -208,6 +208,7 @@ router.put('/job-seekers/:id', async (req, res) => {
 
 router.get('/jobs', jobController.getAllJobs);
 router.get('/jobs/recommendations/:jobSeekerId', jobController.getRecommendedJobs);
+router.post('/jobs/:id/reviews', jobController.submitJobReview);
 router.get('/jobs/:id', jobController.getJobById);
 router.post('/jobs', jobController.createJob);
 router.put('/jobs/:id', jobController.updateJob);

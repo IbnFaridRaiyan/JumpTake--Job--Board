@@ -208,6 +208,58 @@ const deleteJob = async (req, res) => {
     }
 };
 
+const submitJobReview = async (req, res) => {
+    try {
+        const jobId = req.params.id;
+        const reviewerId = String(req.body.reviewerId || '').trim();
+        const authorName = String(req.body.authorName || 'Candidate').trim();
+        const text = String(req.body.text || '').trim();
+        const rating = Math.max(0, Math.min(5, Number(req.body.rating || 0)));
+
+        if (!reviewerId) {
+            return res.status(400).json({ error: 'Reviewer is required' });
+        }
+
+        if (!text && !rating) {
+            return res.status(400).json({ error: 'Write a review or choose a rating' });
+        }
+
+        const job = await Job.findById(jobId);
+        if (!job) {
+            return res.status(404).json({ error: 'Job not found' });
+        }
+
+        const reviews = Array.isArray(job.reviews) ? job.reviews : [];
+        const nextReview = {
+            id: `job-review-${Date.now()}`,
+            reviewerId,
+            authorName,
+            rating,
+            text,
+            createdAt: new Date()
+        };
+
+        job.reviews = [
+            ...reviews.filter((review) => String(review.reviewerId || '') !== reviewerId),
+            nextReview
+        ];
+        job.updatedAt = Date.now();
+
+        await job.save();
+
+        return res.status(200).json({
+            message: 'Job review saved',
+            reviews: job.reviews
+        });
+    } catch (error) {
+        console.error('Error saving job review:', error.message);
+        return res.status(500).json({
+            error: 'Failed to save job review',
+            message: error.message
+        });
+    }
+};
+
 
 const getCompanyJobs = async (req, res) => {
     try {
@@ -339,6 +391,7 @@ module.exports = {
     createJob,
     updateJob,
     deleteJob,
+    submitJobReview,
     getCompanyJobs,
     getRecommendedJobs
 };

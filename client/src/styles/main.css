@@ -54390,6 +54390,24 @@ select {
   }
 }
 
+.portal-home-feed-scroll,
+.home-page .portal-home-feed-scroll,
+.dashboard-container .portal-home-feed-scroll {
+  scroll-behavior: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-gutter: stable !important;
+  transform: translate3d(0, 0, 0) !important;
+  backface-visibility: hidden !important;
+}
+
+.portal-home-feed-scroll :is(.portal-social-post-card, .portal-candidate-job-card, .portal-job-summary-card) {
+  transform: translate3d(0, 0, 0) !important;
+  backface-visibility: hidden !important;
+  content-visibility: auto !important;
+  contain-intrinsic-size: 360px !important;
+}
+
 /* Mobile portal home feeds: keep the page shell fixed and let the feed body scroll independently. */
 @media (max-width: 768px) {
   .home-page .main-content.mobile-section-job-feed,
@@ -54403,6 +54421,7 @@ select {
   .home-page .main-content.mobile-section-home-feed .portal-home-feed {
     display: flex !important;
     flex-direction: column !important;
+    position: relative !important;
     height: calc(100dvh - 5.9rem) !important;
     max-height: calc(100dvh - 5.9rem) !important;
     min-height: 0 !important;
@@ -54422,7 +54441,11 @@ select {
     -webkit-overflow-scrolling: touch !important;
     scroll-behavior: auto !important;
     touch-action: pan-y !important;
-    contain: layout paint !important;
+    contain: content !important;
+    padding-top: 4.8rem !important;
+    transform: translate3d(0, 0, 0) !important;
+    will-change: scroll-position !important;
+    backface-visibility: hidden !important;
   }
 
   .home-page .main-content.mobile-section-job-feed .portal-home-feed-scroll > *,
@@ -54432,41 +54455,214 @@ select {
 
   .home-page .main-content.mobile-section-job-feed .portal-home-feed > .portal-home-tabs,
   .home-page .main-content.mobile-section-home-feed .portal-home-feed > .portal-home-tabs {
-    flex: 0 0 4.4rem !important;
+    position: absolute !important;
+    top: 0.42rem !important;
+    left: 50% !important;
+    right: auto !important;
+    z-index: 42 !important;
+    flex: none !important;
     height: 4.4rem !important;
     min-height: 4.4rem !important;
     max-height: 4.4rem !important;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
+    width: calc(100% - 1rem) !important;
+    margin: 0 !important;
     padding-top: 0.45rem !important;
     padding-bottom: 0.45rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    border-radius: 16px !important;
+    background: rgba(7, 8, 9, 0.82) !important;
+    background-color: rgba(7, 8, 9, 0.82) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      0 12px 26px rgba(0, 0, 0, 0.26) !important;
+    backdrop-filter: blur(12px) saturate(130%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(130%) !important;
     overflow-x: auto !important;
     overflow-y: hidden !important;
-    transform: translate3d(0, 0, 0) scale(1) !important;
+    transform: translate3d(-50%, 0, 0) scale(1) !important;
     will-change: transform, opacity !important;
     backface-visibility: hidden !important;
     contain: paint !important;
     transition:
-      transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
-      opacity 0.18s ease !important;
+      transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.34s ease,
+      flex-basis 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+      height 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+      min-height 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+      max-height 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+      margin 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+      padding 0.42s cubic-bezier(0.22, 1, 0.36, 1) !important;
   }
 
   .home-page .main-content.mobile-section-job-feed .portal-home-feed.is-tabs-hidden > .portal-home-tabs,
   .home-page .main-content.mobile-section-home-feed .portal-home-feed.is-tabs-hidden > .portal-home-tabs {
-    flex-basis: 4.4rem !important;
+    flex-basis: auto !important;
     height: 4.4rem !important;
     min-height: 4.4rem !important;
     max-height: 4.4rem !important;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
+    width: calc(100% - 1rem) !important;
+    margin: 0 !important;
     padding-top: 0.45rem !important;
     padding-bottom: 0.45rem !important;
-    border-width: 0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 16px !important;
+    background: rgba(7, 8, 9, 0.72) !important;
+    background-color: rgba(7, 8, 9, 0.72) !important;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12) !important;
+    outline: 0 !important;
+    backdrop-filter: blur(10px) saturate(125%) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(125%) !important;
     overflow-x: auto !important;
     overflow-y: hidden !important;
     opacity: 0 !important;
     pointer-events: none !important;
-    transform: translate3d(0, -92%, 0) scale(0.985) !important;
+    transform: translate3d(-50%, -115%, 0) scale(0.985) !important;
+  }
+
+  .home-page .main-content.mobile-section-job-feed .portal-home-feed.is-tabs-hidden > .portal-home-tabs .portal-home-tab,
+  .home-page .main-content.mobile-section-home-feed .portal-home-feed.is-tabs-hidden > .portal-home-tabs .portal-home-tab {
+    opacity: 0 !important;
+    transform: translateY(-0.35rem) scale(0.98) !important;
+  }
+
+  .home-page .main-content.mobile-section-job-feed .portal-social-post-card,
+  .home-page .main-content.mobile-section-home-feed .portal-social-post-card,
+  .home-page .main-content.mobile-section-job-feed .portal-candidate-job-card,
+  .home-page .main-content.mobile-section-home-feed .portal-candidate-job-card {
+    transform: translate3d(0, 0, 0) !important;
+    backface-visibility: hidden !important;
+    content-visibility: auto !important;
+    contain-intrinsic-size: 360px !important;
+  }
+}
+
+.job-post-review-reaction.active {
+  color: #59a8ff !important;
+}
+
+.portal-job-review-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1200 !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 1rem !important;
+  background: rgba(0, 0, 0, 0.64) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+.portal-job-review-modal {
+  width: min(92vw, 28rem) !important;
+  max-height: min(88dvh, 40rem) !important;
+  overflow: auto !important;
+  display: grid !important;
+  gap: 0.85rem !important;
+  padding: 1rem !important;
+  border: 1px solid rgba(99, 192, 184, 0.24) !important;
+  border-radius: 0.95rem !important;
+  background: rgba(4, 7, 8, 0.96) !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5) !important;
+  color: #ffffff !important;
+}
+
+.portal-job-review-header {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 0.85rem !important;
+}
+
+.portal-job-review-header h3,
+.portal-job-review-header p {
+  margin: 0 !important;
+}
+
+.portal-job-review-header p {
+  color: rgba(255, 255, 255, 0.72) !important;
+  font-size: 0.76rem !important;
+}
+
+.portal-job-review-close {
+  width: 1.9rem !important;
+  min-width: 1.9rem !important;
+  height: 1.9rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: #ffffff !important;
+  cursor: pointer !important;
+  font-weight: 900 !important;
+}
+
+.portal-job-review-field {
+  display: grid !important;
+  gap: 0.4rem !important;
+  font-size: 0.78rem !important;
+}
+
+.portal-job-review-field textarea {
+  width: 100% !important;
+  min-height: 8rem !important;
+  resize: vertical !important;
+  padding: 0.75rem !important;
+  border: 1px solid rgba(99, 192, 184, 0.24) !important;
+  border-radius: 0.72rem !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: #ffffff !important;
+  outline: none !important;
+}
+
+.portal-job-review-rating {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.65rem !important;
+  flex-wrap: wrap !important;
+  color: #ffffff !important;
+}
+
+.portal-job-review-stars {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  gap: 0.18rem !important;
+}
+
+.portal-job-review-star {
+  width: 1.9rem !important;
+  height: 1.9rem !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.36) !important;
+  cursor: pointer !important;
+  font-size: 1.42rem !important;
+  line-height: 1 !important;
+  transition: color 0.18s ease, transform 0.18s ease !important;
+}
+
+.portal-job-review-star.active,
+.portal-job-review-star:hover,
+.portal-job-review-star:focus-visible {
+  color: #f8d24b !important;
+  transform: translateY(-1px) scale(1.04) !important;
+}
+
+.portal-job-review-actions {
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 0.55rem !important;
+  flex-wrap: wrap !important;
+}
+
+@media (max-width: 768px) {
+  .portal-candidate-job-action-row .job-post-action-reactions {
+    gap: 0.14rem !important;
+    padding-left: 0.28rem !important;
+    padding-right: 0.28rem !important;
+  }
+
+  .portal-job-review-modal {
+    width: min(94vw, 24rem) !important;
+    padding: 0.9rem !important;
   }
 }
 

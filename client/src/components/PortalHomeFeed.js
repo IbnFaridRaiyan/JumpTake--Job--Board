@@ -8,6 +8,7 @@ const WORK_NEWS_STORAGE_KEY = 'jumptakeWorkNewsPosts';
 const TALENT_STORIES_STORAGE_KEY = 'jumptakeTalentStoriesPosts';
 const JOB_REACH_STORAGE_KEY = 'jumptakeJobReachMap';
 const HOME_JOB_LIKE_STORAGE_KEY = 'jumptakeHomeJobLikeMap';
+const HOME_JOB_REVIEW_STORAGE_KEY = 'jumptakeHomeJobReviewMap';
 const RESUME_PLAYGROUND_STORAGE_KEY = 'jumptakeResumePlayground:';
 const SAVED_POSTS_STORAGE_PREFIX = 'jumptakeSavedPosts:';
 const BLOCKED_FEED_AUTHORS_STORAGE_PREFIX = 'jumptakeBlockedFeedAuthors:';
@@ -17,6 +18,8 @@ const MOBILE_FEED_TOUCH_MAX_STEP = 168;
 const MOBILE_FEED_SCROLL_EASE = 0.48;
 const MOBILE_FEED_SCROLL_FRAME_MS = 1000 / 60;
 const MOBILE_FEED_SCROLL_MAX_FRAME_STEP = 86;
+const MOBILE_FEED_RELEASE_DRIFT_RATIO = 0.42;
+const MOBILE_FEED_RELEASE_DRIFT_MAX = 54;
 
 const escapeHtml = (value = '') => (
     String(value)
@@ -47,6 +50,19 @@ const readHomeJobLikeMap = () => {
 
     try {
         const parsed = JSON.parse(localStorage.getItem(HOME_JOB_LIKE_STORAGE_KEY) || '{}');
+        return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (error) {
+        return {};
+    }
+};
+
+const readHomeJobReviewMap = () => {
+    if (typeof window === 'undefined') {
+        return {};
+    }
+
+    try {
+        const parsed = JSON.parse(localStorage.getItem(HOME_JOB_REVIEW_STORAGE_KEY) || '{}');
         return parsed && typeof parsed === 'object' ? parsed : {};
     } catch (error) {
         return {};
@@ -906,6 +922,10 @@ const PortalHomeFeed = ({
     const [animatingReactionKey, setAnimatingReactionKey] = useState('');
     const [jobReachMap, setJobReachMap] = useState(readJobReachMap);
     const [homeJobLikeMap, setHomeJobLikeMap] = useState(readHomeJobLikeMap);
+    const [homeJobReviewMap, setHomeJobReviewMap] = useState(readHomeJobReviewMap);
+    const [reviewingJob, setReviewingJob] = useState(null);
+    const [jobReviewDraft, setJobReviewDraft] = useState('');
+    const [jobReviewRating, setJobReviewRating] = useState(0);
     const [selectedJob, setSelectedJob] = useState(null);
     const [selectedJobMode, setSelectedJobMode] = useState(mode);
     const [applyingHomeJobId, setApplyingHomeJobId] = useState('');
@@ -931,7 +951,8 @@ const PortalHomeFeed = ({
         targetScrollTop: 0,
         frameId: null,
         scroller: null,
-        lastFrameTime: 0
+        lastFrameTime: 0,
+        lastDelta: 0
     });
     const pendingDeepLinkRef = useRef(null);
     const feedDraftTypingTimerRef = useRef(null);
@@ -1333,6 +1354,7 @@ const PortalHomeFeed = ({
         touchState.lastY = 0;
         touchState.targetScrollTop = 0;
         touchState.scroller = null;
+        touchState.lastDelta = 0;
         touchState.lastFrameTime = 0;
         if (touchState.frameId && typeof window !== 'undefined') {
             window.cancelAnimationFrame(touchState.frameId);
@@ -1706,6 +1728,133 @@ const PortalHomeFeed = ({
     const getHomeJobLikeCount = (job) => {
         const entry = getHomeJobLikeEntry(job);
         return Number(entry.count || 0) || 0;
+    };
+
+    const getHomeJobReviews = (job) => {
+        const key = getJobKey(job);
+        if (Array.isArray(homeJobReviewMap[key])) {
+            return homeJobReviewMap[key];
+        }
+
+        return Array.isArray(job?.reviews)
+            ? job.reviews.map((review) => ({
+                ...review,
+                viewerId: review.viewerId || review.reviewerId || '',
+                rating: Number(review.rating || 0) || 0,
+                text: asDisplayText(review.text)
+            }))
+            : [];
+    };
+
+    const getViewerHomeJobReview = (job) => (
+        getHomeJobReviews(job).find((review) => String(review.viewerId || '') === viewerId) || null
+    );
+
+    const openJobReviewModal = (job, event) => {
+        event?.stopPropagation();
+        const existingReview = getViewerHomeJobReview(job);
+
+        setReviewingJob(job);
+        setJobReviewDraft(existingReview?.text || '');
+        setJobReviewRating(Number(existingReview?.rating || 0) || 0);
+        setOpenJobOptionsId('');
+        setOpenReactionPostId('');
+        setOpenCommentPostId('');
+        setOpenSharePostId('');
+    };
+
+    const closeJobReviewModal = () => {
+        setReviewingJob(null);
+        setJobReviewDraft('');
+        setJobReviewRating(0);
+    };
+
+    const saveJobReview = async () => {
+        const key = getJobKey(reviewingJob);
+        const reviewText = jobReviewDraft.trim();
+
+        if (!key) {
+            return;
+        }
+
+        if (!reviewText && !jobReviewRating) {
+            setJobActionMessage('Write a review or choose a rating before saving.');
+            return;
+        }
+
+        const nextReview = {
+            id: `job-review-${Date.now()}`,
+            viewerId,
+            authorName,
+            rating: jobReviewRating,
+            text: reviewText,
+            createdAt: new Date().toISOString()
+        };
+
+        setHomeJobReviewMap((previousMap) => {
+            const previousReviews = Array.isArray(previousMap[key]) ? previousMap[key] : [];
+            const nextReviews = [
+                ...previousReviews.filter((review) => String(review.viewerId || '') !== viewerId),
+                nextReview
+            ];
+            const nextMap = {
+                ...previousMap,
+                [key]: nextReviews
+            };
+
+            if (typeof window !== 'undefined') {
+                localStorage.setItem(HOME_JOB_REVIEW_STORAGE_KEY, JSON.stringify(nextMap));
+            }
+
+            return nextMap;
+        });
+
+        try {
+            const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
+            const jobId = reviewingJob?._id || reviewingJob?.id;
+
+            if (jobId) {
+                const response = await fetch(apiUrl(`/api/jobs/${jobId}/reviews`), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token ? { Authorization: `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({
+                        reviewerId: viewerId,
+                        authorName,
+                        rating: jobReviewRating,
+                        text: reviewText
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (Array.isArray(data.reviews)) {
+                        setHomeJobReviewMap((previousMap) => {
+                            const nextMap = {
+                                ...previousMap,
+                                [key]: data.reviews.map((review) => ({
+                                    ...review,
+                                    viewerId: review.viewerId || review.reviewerId || ''
+                                }))
+                            };
+                            if (typeof window !== 'undefined') {
+                                localStorage.setItem(HOME_JOB_REVIEW_STORAGE_KEY, JSON.stringify(nextMap));
+                            }
+                            return nextMap;
+                        });
+                    }
+                }
+            }
+
+            setJobActionMessage('Job review saved.');
+        } catch (error) {
+            console.error('Error saving job review:', error);
+            setJobActionMessage('Job review saved on this device.');
+        } finally {
+            closeJobReviewModal();
+        }
     };
 
     const handleToggleHomeJobLike = (job, event) => {
@@ -2686,11 +2835,7 @@ const PortalHomeFeed = ({
 
         const getMaxScrollTop = () => Math.max(0, scroller.scrollHeight - scroller.clientHeight);
         const clampScrollTop = (value) => Math.max(0, Math.min(getMaxScrollTop(), value));
-        const isMobileFeedTouch = (event) => (
-            window.innerWidth <= 768
-            && event.touches.length === 1
-            && !event.target?.closest?.('input, textarea, select, [contenteditable="true"]')
-        );
+        const isMobileFeedTouch = () => false;
 
         const handleTouchStart = (event) => {
             if (!isMobileFeedTouch(event)) {
@@ -2708,6 +2853,7 @@ const PortalHomeFeed = ({
             touchState.lastY = event.touches[0].clientY;
             touchState.targetScrollTop = scroller.scrollTop;
             touchState.lastFrameTime = 0;
+            touchState.lastDelta = 0;
         };
 
         const handleTouchMove = (event) => {
@@ -2733,6 +2879,7 @@ const PortalHomeFeed = ({
                 Math.abs(rawDelta) * MOBILE_FEED_TOUCH_SCROLL_RATIO,
                 MOBILE_FEED_TOUCH_MAX_STEP
             );
+            touchState.lastDelta = limitedDelta;
             touchState.targetScrollTop = clampScrollTop(touchState.targetScrollTop + limitedDelta);
             scroller.scrollTop = touchState.targetScrollTop;
             updateFeedTabsVisibility(scroller.scrollTop);
@@ -2742,6 +2889,14 @@ const PortalHomeFeed = ({
             const touchState = feedTouchScrollRef.current;
             touchState.active = false;
             touchState.lastY = 0;
+            if (Math.abs(touchState.lastDelta) > 2) {
+                const releaseDrift = Math.sign(touchState.lastDelta) * Math.min(
+                    Math.abs(touchState.lastDelta) * MOBILE_FEED_RELEASE_DRIFT_RATIO,
+                    MOBILE_FEED_RELEASE_DRIFT_MAX
+                );
+                touchState.targetScrollTop = clampScrollTop(scroller.scrollTop + releaseDrift);
+            }
+            touchState.lastDelta = 0;
             ensureMobileFeedScrollFrame();
         };
 
@@ -3172,6 +3327,8 @@ const PortalHomeFeed = ({
                 const displaySkills = (jobSkills.length ? jobSkills : jobRequirements).slice(0, 3);
                 const fit = calculateCandidateFit(job, profileData);
                 const bookmarked = isHomeJobBookmarked(job);
+                const jobReviewCount = getHomeJobReviews(job).length;
+                const viewerJobReview = getViewerHomeJobReview(job);
                 const statItems = [
                     { key: 'reach', label: 'reach', value: Number(jobReachMap[key] || job.reach || 0) || 0 },
                     { key: 'applicants', label: 'applicants', value: Number(job.applicationCount || applications.length || 0) || 0 },
@@ -3286,6 +3443,21 @@ const PortalHomeFeed = ({
                                 </button>
                                 {bookmarked && (
                                     <span className="job-post-action-count" aria-label="1 bookmark">1</span>
+                                )}
+                                <button
+                                    type="button"
+                                    className={`job-post-reaction-button job-post-review-reaction ${viewerJobReview ? 'active' : ''}`}
+                                    onClick={(event) => openJobReviewModal(job, event)}
+                                    aria-label="Write job review"
+                                    title="Review job"
+                                >
+                                    <ReactionIcon name="Comment" />
+                                    <ReactionTooltip>Review</ReactionTooltip>
+                                </button>
+                                {jobReviewCount > 0 && (
+                                    <span className="job-post-action-count" aria-label={`${jobReviewCount} job reviews`}>
+                                        {formatCompactCount(jobReviewCount)}
+                                    </span>
                                 )}
                                 <button
                                     type="button"
@@ -3687,6 +3859,83 @@ const PortalHomeFeed = ({
             : modalMarkup;
     };
 
+    const renderJobReviewModal = () => {
+        if (!reviewingJob) {
+            return null;
+        }
+
+        const key = getJobKey(reviewingJob);
+        const modalMarkup = (
+            <div className="portal-job-review-backdrop" role="presentation" onClick={closeJobReviewModal}>
+                <article
+                    className="portal-job-review-modal"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label={`Review ${reviewingJob.title || 'job'}`}
+                    onClick={(event) => event.stopPropagation()}
+                >
+                    <div className="portal-job-review-header">
+                        <div>
+                            <h3>Write job review</h3>
+                            <p>{asDisplayText(reviewingJob.title, 'Job post')} · {asDisplayText(reviewingJob.companyName, 'Company')}</p>
+                        </div>
+                        <button
+                            type="button"
+                            className="portal-job-review-close"
+                            onClick={closeJobReviewModal}
+                            aria-label="Close job review"
+                            title="Close"
+                        >
+                            x
+                        </button>
+                    </div>
+
+                    <label className="portal-job-review-field">
+                        <span>Your review</span>
+                        <textarea
+                            value={jobReviewDraft}
+                            onChange={(event) => setJobReviewDraft(event.target.value)}
+                            rows="5"
+                            placeholder="Share your thoughts about this job post..."
+                        />
+                    </label>
+
+                    <div className="portal-job-review-rating" role="radiogroup" aria-label="Rate job">
+                        <span>Rate job:</span>
+                        <div className="portal-job-review-stars">
+                            {[1, 2, 3, 4, 5].map((value) => (
+                                <button
+                                    key={`${key}-rating-${value}`}
+                                    type="button"
+                                    className={`portal-job-review-star ${jobReviewRating >= value ? 'active' : ''}`}
+                                    onClick={() => setJobReviewRating(value)}
+                                    role="radio"
+                                    aria-checked={jobReviewRating === value}
+                                    aria-label={`${value} stars`}
+                                >
+                                    ★
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="portal-job-review-actions">
+                        <button type="button" className="portal-view-job-button secondary" onClick={closeJobReviewModal}>
+                            Cancel
+                        </button>
+                        <button type="button" className="portal-view-job-button" onClick={saveJobReview}>
+                            Save review
+                        </button>
+                    </div>
+                </article>
+            </div>
+        );
+
+        return typeof document !== 'undefined'
+            ? createPortal(modalMarkup, document.body)
+            : modalMarkup;
+    };
+
     const ownTalentStories = talentStories.filter((post) => String(post.authorId) === viewerId);
     const ownCompanyPosts = workNewsPosts.filter((post) => String(post.authorId) === viewerId);
     return (
@@ -3729,6 +3978,7 @@ const PortalHomeFeed = ({
                 {activeTab === 'my-job-posts' && renderMyJobPosts()}
             </div>
             {renderJobDetailsModal()}
+            {renderJobReviewModal()}
         </div>
     );
 };

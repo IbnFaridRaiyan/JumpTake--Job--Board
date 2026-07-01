@@ -2632,6 +2632,12 @@ const PortalHomeFeed = ({
         const touchState = feedTouchScrollRef.current;
         const scroller = touchState.scroller;
 
+        if (touchState.active) {
+            touchState.lastFrameTime = 0;
+            touchState.frameId = null;
+            return;
+        }
+
         if (!scroller || typeof window === 'undefined') {
             touchState.frameId = null;
             return;
@@ -2693,6 +2699,10 @@ const PortalHomeFeed = ({
             }
 
             const touchState = feedTouchScrollRef.current;
+            if (touchState.frameId) {
+                window.cancelAnimationFrame(touchState.frameId);
+                touchState.frameId = null;
+            }
             touchState.active = true;
             touchState.scroller = scroller;
             touchState.lastY = event.touches[0].clientY;
@@ -2724,13 +2734,15 @@ const PortalHomeFeed = ({
                 MOBILE_FEED_TOUCH_MAX_STEP
             );
             touchState.targetScrollTop = clampScrollTop(touchState.targetScrollTop + limitedDelta);
-            ensureMobileFeedScrollFrame();
+            scroller.scrollTop = touchState.targetScrollTop;
+            updateFeedTabsVisibility(scroller.scrollTop);
         };
 
         const handleTouchEnd = () => {
             const touchState = feedTouchScrollRef.current;
             touchState.active = false;
             touchState.lastY = 0;
+            ensureMobileFeedScrollFrame();
         };
 
         scroller.addEventListener('touchstart', handleTouchStart, { passive: true });
@@ -2745,7 +2757,7 @@ const PortalHomeFeed = ({
             scroller.removeEventListener('touchcancel', handleTouchEnd);
             cancelMobileFeedTouchScroll();
         };
-    }, [cancelMobileFeedTouchScroll, ensureMobileFeedScrollFrame]);
+    }, [cancelMobileFeedTouchScroll, ensureMobileFeedScrollFrame, updateFeedTabsVisibility]);
 
     const renderPostList = (posts, key, kind) => {
         const safePosts = Array.isArray(posts)

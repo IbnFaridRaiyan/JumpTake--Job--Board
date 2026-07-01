@@ -12,6 +12,7 @@ const WORKSPACE_SNAPSHOT_KEY = 'jumptakeResumePlaygroundSnapshot';
 const A4_PAGE_WIDTH = 794;
 const A4_PAGE_HEIGHT = 1123;
 const A4_PAGE_GAP = 56;
+const A4_PAGE_SAFE_HEIGHT = A4_PAGE_HEIGHT - 36;
 const RULER_SIZE = 34;
 const MOBILE_RULER_SIZE = 24;
 const A4_TOP_PADDING = 48;
@@ -103,6 +104,7 @@ const looksLikeHeading = (line = '') => {
 
 const normalizeDraftLines = (text = '') => String(text || '')
     .replace(/\r\n/g, '\n')
+    .replace(/\u2022|\u00e2\u20ac\u00a2/g, '-')
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean);
@@ -116,43 +118,43 @@ const createAiDraftHtml = (text = '', { documentMode = false } = {}) => {
 
     if (documentMode) {
         return `
-            <div data-document-template-root="jumptake-ai" style="font-family:Arial, sans-serif;color:#111827;background:#ffffff;line-height:1.42;font-size:14px;">
+            <div data-document-template-root="jumptake-ai" style="font-family:Arial, sans-serif;color:#111827;background:#ffffff;line-height:1.36;font-size:13px;">
                 ${lines.map((line, index) => {
                     const escapedLine = escapeHtml(line.replace(/^[-*•]\s*/, ''));
                     if (index === 0) {
-                        return `<h1 style="font-size:22px;line-height:1.15;margin:0 0 14px;text-align:center;text-transform:uppercase;letter-spacing:0;color:#0f172a;">${escapedLine}</h1>`;
+                        return `<h1 style="font-size:21px;line-height:1.12;margin:0 0 12px;text-align:center;text-transform:uppercase;letter-spacing:0;color:#0f172a;">${escapedLine}</h1>`;
                     }
                     if (looksLikeHeading(line)) {
-                        return `<h2 style="font-size:15px;line-height:1.2;margin:18px 0 7px;padding-bottom:4px;border-bottom:1px solid #cbd5e1;color:#0f172a;text-transform:uppercase;letter-spacing:0;">${escapedLine.replace(/:$/, '')}</h2>`;
+                        return `<h2 style="font-size:14px;line-height:1.18;margin:14px 0 5px;padding-bottom:3px;border-bottom:1px solid #cbd5e1;color:#0f172a;text-transform:uppercase;letter-spacing:0;">${escapedLine.replace(/:$/, '')}</h2>`;
                     }
                     if (/^[-*•]\s*/.test(line)) {
                         return `<p style="margin:4px 0 4px 18px;">• ${escapedLine}</p>`;
                     }
-                    return `<p style="margin:0 0 9px;">${escapedLine}</p>`;
+                    return `<p style="margin:0 0 7px;">${escapedLine}</p>`;
                 }).join('')}
             </div>
-        `.trim();
+        `.trim().replace(/\u00e2\u20ac\u00a2/g, '&#8226;');
     }
 
     const firstLine = lines[0] || 'Candidate';
     const bodyLines = lines.slice(1);
 
     return `
-        <div data-resume-template-root="ai-a4" style="font-family:Arial, sans-serif;color:#111827;background:#ffffff;line-height:1.32;font-size:13px;">
-            <h1 style="font-size:25px;line-height:1.05;margin:0;text-align:center;text-transform:uppercase;letter-spacing:0;color:#0f172a;">${escapeHtml(firstLine)}</h1>
+        <div data-resume-template-root="ai-a4" style="font-family:Arial, sans-serif;color:#111827;background:#ffffff;line-height:1.26;font-size:12.5px;">
+            <h1 style="font-size:23px;line-height:1.04;margin:0 0 4px;text-align:center;text-transform:uppercase;letter-spacing:0;color:#0f172a;">${escapeHtml(firstLine)}</h1>
             ${bodyLines.map((line) => {
                 const isBullet = /^[-*•]\s*/.test(line);
                 const cleanLine = escapeHtml(line.replace(/^[-*•]\s*/, ''));
                 if (looksLikeHeading(line)) {
-                    return `<h2 style="font-size:14px;line-height:1.15;margin:15px 0 6px;padding-bottom:3px;border-bottom:1px solid #94a3b8;color:#0f172a;text-transform:uppercase;letter-spacing:0;">${cleanLine.replace(/:$/, '')}</h2>`;
+                    return `<h2 style="font-size:13.5px;line-height:1.12;margin:11px 0 4px;padding-bottom:2px;border-bottom:1px solid #94a3b8;color:#0f172a;text-transform:uppercase;letter-spacing:0;">${cleanLine.replace(/:$/, '')}</h2>`;
                 }
                 if (isBullet) {
                     return `<p style="margin:3px 0 3px 16px;">• ${cleanLine}</p>`;
                 }
-                return `<p style="margin:0 0 6px;">${cleanLine}</p>`;
+                return `<p style="margin:0 0 4px;">${cleanLine}</p>`;
             }).join('')}
         </div>
-    `.trim();
+    `.trim().replace(/\u00e2\u20ac\u00a2/g, '&#8226;');
 };
 
 const createResumeId = () => (
@@ -1039,6 +1041,8 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         }
 
         const currentHtml = htmlOverride ?? editorRef.current?.innerHTML ?? resume.html ?? '';
+        const editorRect = editorRef.current?.getBoundingClientRect?.();
+        const canvasRect = editorCanvasRef.current?.getBoundingClientRect?.();
         sessionStorage.setItem(WORKSPACE_SNAPSHOT_KEY, JSON.stringify({
             mode,
             type: isDocumentMode ? 'document' : 'resume',
@@ -1046,9 +1050,32 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
             name: resume.name || resourceLabel,
             currentHtml,
             currentText: stripHtml(currentHtml),
+            layout: {
+                a4: {
+                    widthPx: A4_PAGE_WIDTH,
+                    heightPx: A4_PAGE_HEIGHT,
+                    safeHeightPx: A4_PAGE_SAFE_HEIGHT,
+                    gapPx: A4_PAGE_GAP
+                },
+                margins: {
+                    topPx: editorMargins.top,
+                    rightPx: A4_RIGHT_PADDING,
+                    bottomPx: A4_BOTTOM_PADDING,
+                    leftPx: editorMargins.left
+                },
+                pageCount: editorPageCount,
+                editorViewport: editorRect ? {
+                    widthPx: Math.round(editorRect.width),
+                    heightPx: Math.round(editorRect.height)
+                } : null,
+                canvasViewport: canvasRect ? {
+                    widthPx: Math.round(canvasRect.width),
+                    heightPx: Math.round(canvasRect.height)
+                } : null
+            },
             updatedAt: new Date().toISOString()
         }));
-    }, [activeTab, editorResume, isDocumentMode, mode, resourceLabel]);
+    }, [activeTab, editorMargins.left, editorMargins.top, editorPageCount, editorResume, isDocumentMode, mode, resourceLabel]);
 
     useEffect(() => {
         publishWorkspaceSnapshot();
@@ -1333,7 +1360,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         for (let index = 0; index < tokens.length; index += 1) {
             probe.textContent += tokens[index];
 
-            if (measurement.scrollHeight > A4_PAGE_HEIGHT) {
+            if (measurement.scrollHeight > A4_PAGE_SAFE_HEIGHT) {
                 break;
             }
 
@@ -1393,10 +1420,16 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         }
 
         const measurement = createMeasurementContainer(0);
+        if (typeof window !== 'undefined') {
+            const rootStyle = window.getComputedStyle(root);
+            measurement.style.fontFamily = rootStyle.fontFamily;
+            measurement.style.fontSize = rootStyle.fontSize;
+            measurement.style.fontWeight = rootStyle.fontWeight;
+            measurement.style.lineHeight = rootStyle.lineHeight;
+        }
         const nodes = Array.from(root.childNodes);
         let pages = 1;
         let currentPageIndex = 0;
-        let blocksOnCurrentPage = 0;
 
         const getPageTopMargin = (pageIndex) => (editorPageMargins[pageIndex] || editorMargins).top;
         const applyMeasurementPageMargins = (pageIndex) => {
@@ -1425,7 +1458,6 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                 pages += 1;
                 currentPageIndex = pages - 1;
                 applyMeasurementPageMargins(currentPageIndex);
-                blocksOnCurrentPage = 0;
                 return;
             }
 
@@ -1433,34 +1465,31 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
             const nodeClone = node.cloneNode(true);
             measurement.appendChild(nodeClone);
 
-            if (measurement.scrollHeight > A4_PAGE_HEIGHT) {
+            if (measurement.scrollHeight > A4_PAGE_SAFE_HEIGHT) {
                 measurement.removeChild(nodeClone);
 
-                if (blocksOnCurrentPage > 0) {
-                    const splitResult = splitTextBlockToFit(node, measurement);
+                const splitResult = splitTextBlockToFit(node, measurement);
 
-                    if (splitResult) {
-                        const { fittingNode, overflowNode } = splitResult;
-                        root.insertBefore(fittingNode, node);
-                        measurement.appendChild(fittingNode.cloneNode(true));
+                if (splitResult) {
+                    const { fittingNode, overflowNode } = splitResult;
+                    root.insertBefore(fittingNode, node);
+                    measurement.appendChild(fittingNode.cloneNode(true));
 
-                        const autoBreak = document.createElement('div');
-                        autoBreak.className = 'resume-playground-page-break';
-                        autoBreak.setAttribute('data-break-type', 'auto');
-                        autoBreak.setAttribute('contenteditable', 'false');
-                        autoBreak.style.height = `${createBreakHeight(getFlowHeight(), pages)}px`;
-                        root.insertBefore(autoBreak, node);
+                    const autoBreak = document.createElement('div');
+                    autoBreak.className = 'resume-playground-page-break';
+                    autoBreak.setAttribute('data-break-type', 'auto');
+                    autoBreak.setAttribute('contenteditable', 'false');
+                    autoBreak.style.height = `${createBreakHeight(getFlowHeight(), pages)}px`;
+                    root.insertBefore(autoBreak, node);
 
-                        node.replaceWith(overflowNode);
+                    node.replaceWith(overflowNode);
 
-                        pages += 1;
-                        currentPageIndex = pages - 1;
-                        measurement.innerHTML = '';
-                        applyMeasurementPageMargins(currentPageIndex);
-                        measurement.appendChild(overflowNode.cloneNode(true));
-                        blocksOnCurrentPage = 1;
-                        return;
-                    }
+                    pages += 1;
+                    currentPageIndex = pages - 1;
+                    measurement.innerHTML = '';
+                    applyMeasurementPageMargins(currentPageIndex);
+                    measurement.appendChild(overflowNode.cloneNode(true));
+                    return;
                 }
 
                 const autoBreak = document.createElement('div');
@@ -1475,11 +1504,8 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                 measurement.innerHTML = '';
                 applyMeasurementPageMargins(currentPageIndex);
                 measurement.appendChild(node.cloneNode(true));
-                blocksOnCurrentPage = 1;
                 return;
             }
-
-            blocksOnCurrentPage += 1;
         });
 
         document.body.removeChild(measurement);
@@ -1686,6 +1712,9 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                 publishWorkspaceSnapshot(draftRecord, formattedHtml);
                 window.requestAnimationFrame(() => {
                     repaginateEditorContent();
+                    window.requestAnimationFrame(() => {
+                        repaginateEditorContent();
+                    });
                 });
             }
 

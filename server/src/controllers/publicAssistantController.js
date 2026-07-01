@@ -1225,8 +1225,8 @@ const askPublicAssistant = async (req, res) => {
   }, null, 2);
   const actionInstructions = isPortalAction(action) ? `
 The current portal action is ${action}.
-- For candidate-create-resume: write a complete resume draft using the provided user/profile context. Use clear section headings and concise bullet points. Do not say you cannot access profile data if context is present.
-- For candidate-format-resume: rewrite the currently open resume from Portal context workspace.currentText into a polished, A4-ready resume. Keep it concise enough for 1-2 pages, use clear section headings, strong alignment cues, ATS-friendly bullets, and do not invent facts.
+- For candidate-create-resume: write a complete resume draft using the provided user/profile context. Use clear section headings and concise bullet points. Use Portal context workspace.layout when present: fit the draft to the A4 editor size, margins, safe page height, and current viewport. Keep the resume compact, structured, and page-break friendly.
+- For candidate-format-resume: rewrite the currently open resume from Portal context workspace.currentText into a polished, A4-ready resume. Use workspace.layout when present to respect the editor A4 width, height, margins, safe page height, and page count. Keep it concise enough for 1-2 pages, use clear section headings, strong alignment cues, ATS-friendly bullets, and do not invent facts.
 - For employer-create-document: write a polished editable document draft based on the user's request and employer/company context.
 - For employer-format-document: rewrite the currently open document from Portal context workspace.currentText into a polished, A4-ready business document. Use the company profile context for company name, industry, headquarters, website, and tone where relevant.
 - For candidate-create-story: write a polished talent story/feed post ready to paste into the dashboard feed composer. Keep it first person when appropriate.

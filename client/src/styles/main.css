@@ -57271,3 +57271,421 @@ html[data-theme="light"] :is(
     outline: 0 !important;
   }
 }
+
+/* Light-mode hardening pass for header, rails, tabs, filters, and talent cards. */
+html[data-theme="light"] body[data-theme="light"] .home-page > .dashboard-header.candidate-dashboard-header,
+html[data-theme="light"] body[data-theme="light"] .home-page > .dashboard-header.employer-dashboard-header,
+html[data-theme="light"] body[data-theme="light"] .loading-container > .dashboard-header.candidate-dashboard-header,
+html[data-theme="light"] body[data-theme="light"] .loading-container > .dashboard-header.employer-dashboard-header,
+html[data-theme="light"] body[data-theme="light"] .dashboard-header.candidate-dashboard-header,
+html[data-theme="light"] body[data-theme="light"] .dashboard-header.employer-dashboard-header {
+  background: #f7f0e6 !important;
+  background-color: #f7f0e6 !important;
+  border: 1px solid #e4d4bf !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .home-page > .dashboard-header.candidate-dashboard-header::before,
+html[data-theme="light"] body[data-theme="light"] .home-page > .dashboard-header.candidate-dashboard-header::after,
+html[data-theme="light"] body[data-theme="light"] .home-page > .dashboard-header.employer-dashboard-header::before,
+html[data-theme="light"] body[data-theme="light"] .home-page > .dashboard-header.employer-dashboard-header::after,
+html[data-theme="light"] body[data-theme="light"] .dashboard-header.candidate-dashboard-header::before,
+html[data-theme="light"] body[data-theme="light"] .dashboard-header.candidate-dashboard-header::after,
+html[data-theme="light"] body[data-theme="light"] .dashboard-header.employer-dashboard-header::before,
+html[data-theme="light"] body[data-theme="light"] .dashboard-header.employer-dashboard-header::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .dashboard-header :is(.portal-dashboard-identity, .candidate-dashboard-identity, .employer-dashboard-identity, .dashboard-logo-button, .dashboard-logo-static),
+html[data-theme="light"] body[data-theme="light"] .dashboard-header :is(.portal-header-ai-action, .portal-ai-top-button, .dashboard-search, .input__container) {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .dashboard-header .dashboard-logo-button img,
+html[data-theme="light"] body[data-theme="light"] .dashboard-header :is(.candidate-dashboard-logo, .employer-dashboard-logo) {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .dashboard-header .portal-ai-top-button,
+html[data-theme="light"] body[data-theme="light"] .dashboard-header .input__button__shadow {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .dashboard-header .input__search {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-uiverse-sidebar,
+html[data-theme="light"] body[data-theme="light"] .portal-uiverse-sidebar.sidebar,
+html[data-theme="light"] body[data-theme="light"] .portal-sidebar-nav,
+html[data-theme="light"] body[data-theme="light"] .portal-uiverse-rail,
+html[data-theme="light"] body[data-theme="light"] .portal-uiverse-sidebar .sidebar__list,
+html[data-theme="light"] body[data-theme="light"] .home-page .portal-sidebar-nav,
+html[data-theme="light"] body[data-theme="light"] .home-page .portal-uiverse-sidebar,
+html[data-theme="light"] body[data-theme="light"] .home-page .portal-uiverse-rail,
+html[data-theme="light"] body[data-theme="light"] .dashboard-container .portal-sidebar-nav,
+html[data-theme="light"] body[data-theme="light"] .dashboard-container .portal-uiverse-sidebar,
+html[data-theme="light"] body[data-theme="light"] .dashboard-container .portal-uiverse-rail {
+  background: #f7f0e6 !important;
+  background-color: #f7f0e6 !important;
+  border-color: #e4d4bf !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-uiverse-sidebar .sidebar__link,
+html[data-theme="light"] body[data-theme="light"] .portal-uiverse-sidebar .sidebar__link.is-active,
+html[data-theme="light"] body[data-theme="light"] .portal-uiverse-sidebar .sidebar__link:hover,
+html[data-theme="light"] body[data-theme="light"] .portal-uiverse-sidebar .sidebar__link:focus-visible,
+html[data-theme="light"] body[data-theme="light"] .portal-uiverse-sidebar .sidebar__link.is-danger,
+html[data-theme="light"] body[data-theme="light"] .portal-uiverse-rail .sidebar__link,
+html[data-theme="light"] body[data-theme="light"] .portal-sidebar-nav .sidebar__link {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-uiverse-sidebar .sidebar__link::before,
+html[data-theme="light"] body[data-theme="light"] .portal-uiverse-sidebar .sidebar__link::after,
+html[data-theme="light"] body[data-theme="light"] .portal-uiverse-rail::before,
+html[data-theme="light"] body[data-theme="light"] .portal-uiverse-rail::after,
+html[data-theme="light"] body[data-theme="light"] .portal-sidebar-nav::before,
+html[data-theme="light"] body[data-theme="light"] .portal-sidebar-nav::after {
+  display: none !important;
+  content: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-sidebar-menu-icon,
+html[data-theme="light"] body[data-theme="light"] .portal-sidebar-menu-icon input {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-sidebar-menu-icon span {
+  background: #111827 !important;
+  background-color: #111827 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-uiverse-sidebar .sidebar__link :is(.icon, svg, path),
+html[data-theme="light"] body[data-theme="light"] .portal-uiverse-rail .sidebar__link :is(.icon, svg, path) {
+  color: #173a36 !important;
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-uiverse-sidebar .sidebar__link.is-active :is(.icon, svg, path),
+html[data-theme="light"] body[data-theme="light"] .portal-uiverse-rail .sidebar__link.is-active :is(.icon, svg, path) {
+  color: #2563eb !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-default-actions,
+html[data-theme="light"] body[data-theme="light"] .portal-default-actions.is-candidate,
+html[data-theme="light"] body[data-theme="light"] .portal-default-actions.is-employer {
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  margin-inline: auto !important;
+  padding: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-default-actions .portal-default-action {
+  width: 2.2rem !important;
+  height: 2.2rem !important;
+  padding: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-default-actions .portal-default-action svg,
+html[data-theme="light"] body[data-theme="light"] .portal-default-actions .portal-default-action path {
+  color: #173a36 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-feed > .portal-home-tabs,
+html[data-theme="light"] body[data-theme="light"] .portal-home-tabs {
+  background: #fff8ef !important;
+  background-color: #fff8ef !important;
+  border: 1px solid #e4d4bf !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tabs .portal-home-tab,
+html[data-theme="light"] body[data-theme="light"] .portal-home-feed > .portal-home-tabs .portal-home-tab {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #111827 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tabs .portal-home-tab::before {
+  background: var(--tab-accent, #d17842) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab svg,
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab svg path {
+  color: #f8f3ea !important;
+  fill: currentColor !important;
+  stroke: #111827 !important;
+  stroke-width: 1.15px !important;
+  paint-order: stroke fill !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-work-news.active svg,
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-work-news.active svg path {
+  color: #f97316 !important;
+  stroke: #111827 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-job-posts.active svg,
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-job-posts.active svg path,
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-my-job-posts.active svg,
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-my-job-posts.active svg path {
+  color: #0ea5e9 !important;
+  stroke: #111827 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-talent-stories.active svg,
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-talent-stories.active svg path {
+  color: #facc15 !important;
+  stroke: #111827 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-create-story.active svg,
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-create-story.active svg path,
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-create-post.active svg,
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-create-post.active svg path {
+  color: #ffffff !important;
+  stroke: #111827 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-my-feed.active svg,
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-my-feed.active svg path,
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-my-company-posts.active svg,
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-my-company-posts.active svg path {
+  color: #22c55e !important;
+  stroke: #111827 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-post-reach {
+  background: #5b1118 !important;
+  background-color: #5b1118 !important;
+  border-color: #5b1118 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-post-reach * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-job-filter-bar,
+html[data-theme="light"] body[data-theme="light"] .advanced-filters,
+html[data-theme="light"] body[data-theme="light"] .filter-panel,
+html[data-theme="light"] body[data-theme="light"] .filter-row,
+html[data-theme="light"] body[data-theme="light"] .skills-filter {
+  background: #e9dcc9 !important;
+  background-color: #e9dcc9 !important;
+  border-color: #d6c4aa !important;
+  color: #111827 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-job-filter-bar label,
+html[data-theme="light"] body[data-theme="light"] .portal-job-filter-bar label span,
+html[data-theme="light"] body[data-theme="light"] .portal-job-filter-bar label svg,
+html[data-theme="light"] body[data-theme="light"] .filter-group label,
+html[data-theme="light"] body[data-theme="light"] .skills-filter label {
+  color: #111827 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-job-filter-bar label select,
+html[data-theme="light"] body[data-theme="light"] .filter-group :is(input, select),
+html[data-theme="light"] body[data-theme="light"] .skills-filter :is(input, select) {
+  background: #fff8ef !important;
+  background-color: #fff8ef !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #111827 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-candidate-job-stats,
+html[data-theme="light"] body[data-theme="light"] .portal-job-stats-grid {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-candidate-job-stat,
+html[data-theme="light"] body[data-theme="light"] .portal-job-stat {
+  background: #8ea09c !important;
+  background-color: #8ea09c !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #111827 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] :is(.portal-candidate-job-reactions, .job-post-action-row, .job-post-action-reactions, .portal-post-action-row, .portal-post-action-cluster) {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] :is(.portal-job-like-toggle, .portal-job-bookmark-toggle, .portal-glass-mini-button, .portal-reaction-button, .portal-comment-toggle, .portal-share-button, .portal-share-toggle) {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] :is(.portal-job-like-toggle, .portal-job-bookmark-toggle, .portal-glass-mini-button, .portal-reaction-button, .portal-comment-toggle, .portal-share-button, .portal-share-toggle) :is(svg, path, span, strong) {
+  color: #173a36 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .talent-pool-container .talent-pool-header h2,
+html[data-theme="light"] body[data-theme="light"] .candidate-view-candidates .talent-pool-header h2 {
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .talent-pool-container .talent-pool-tagline span,
+html[data-theme="light"] body[data-theme="light"] .candidate-view-candidates .talent-pool-tagline span,
+html[data-theme="light"] body[data-theme="light"] .candidate-community-copy .candidate-grow-together span,
+html[data-theme="light"] body[data-theme="light"] .candidate-grow-together span {
+  color: #f97316 !important;
+  -webkit-text-fill-color: #f97316 !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .talent-pool-container .talent-pool-tagline svg,
+html[data-theme="light"] body[data-theme="light"] .talent-pool-container .talent-pool-tagline svg path,
+html[data-theme="light"] body[data-theme="light"] .candidate-view-candidates .talent-pool-tagline svg,
+html[data-theme="light"] body[data-theme="light"] .candidate-view-candidates .talent-pool-tagline svg path,
+html[data-theme="light"] body[data-theme="light"] .candidate-community-copy .candidate-grow-icon,
+html[data-theme="light"] body[data-theme="light"] .candidate-community-copy .candidate-grow-icon path,
+html[data-theme="light"] body[data-theme="light"] .candidate-grow-icon,
+html[data-theme="light"] body[data-theme="light"] .candidate-grow-icon path {
+  color: #111827 !important;
+  fill: none !important;
+  stroke: #111827 !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .talent-pool-container .candidate-card.uiverse-profile-card,
+html[data-theme="light"] body[data-theme="light"] .candidate-bookmarked-container .candidate-card.uiverse-profile-card,
+html[data-theme="light"] body[data-theme="light"] .candidate-view-candidates .candidate-card.uiverse-profile-card {
+  padding-bottom: 3.25rem !important;
+  overflow: visible !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .talent-pool-container .candidate-card.uiverse-profile-card .candidate-card-socialbar.socialbar,
+html[data-theme="light"] body[data-theme="light"] .candidate-bookmarked-container .candidate-card.uiverse-profile-card .candidate-card-socialbar.socialbar,
+html[data-theme="light"] body[data-theme="light"] .candidate-view-candidates .candidate-card.uiverse-profile-card .candidate-card-socialbar.socialbar {
+  left: 50% !important;
+  right: auto !important;
+  bottom: 0.85rem !important;
+  transform: translateX(-50%) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.42rem !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: calc(100% - 1rem) !important;
+  padding: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .talent-pool-container .candidate-card.uiverse-profile-card .candidate-card-socialbar.socialbar::before,
+html[data-theme="light"] body[data-theme="light"] .talent-pool-container .candidate-card.uiverse-profile-card .candidate-card-socialbar.socialbar::after,
+html[data-theme="light"] body[data-theme="light"] .candidate-bookmarked-container .candidate-card.uiverse-profile-card .candidate-card-socialbar.socialbar::before,
+html[data-theme="light"] body[data-theme="light"] .candidate-bookmarked-container .candidate-card.uiverse-profile-card .candidate-card-socialbar.socialbar::after,
+html[data-theme="light"] body[data-theme="light"] .candidate-view-candidates .candidate-card.uiverse-profile-card .candidate-card-socialbar.socialbar::before,
+html[data-theme="light"] body[data-theme="light"] .candidate-view-candidates .candidate-card.uiverse-profile-card .candidate-card-socialbar.socialbar::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .uiverse-profile-card .candidate-card-socialbar :is(.candidate-card-action, .candidate-like-button, .talent-bookmark-button, .bookmark-star-button) {
+  width: 1.72rem !important;
+  height: 1.72rem !important;
+  min-width: 1.72rem !important;
+  min-height: 1.72rem !important;
+  padding: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .uiverse-profile-card .candidate-card-socialbar :is(.candidate-card-action, .candidate-like-button, .talent-bookmark-button, .bookmark-star-button) :is(svg, path, .like, .candidate-add-friend-icon) {
+  color: #173a36 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  filter: none !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme="light"] body[data-theme="light"] .portal-uiverse-sidebar,
+  html[data-theme="light"] body[data-theme="light"] .portal-sidebar-nav,
+  html[data-theme="light"] body[data-theme="light"] .portal-uiverse-rail,
+  html[data-theme="light"] body[data-theme="light"] .portal-uiverse-sidebar .sidebar__list {
+    background: #f7f0e6 !important;
+    background-color: #f7f0e6 !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] .portal-default-actions {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] .portal-default-actions .portal-default-action {
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+}

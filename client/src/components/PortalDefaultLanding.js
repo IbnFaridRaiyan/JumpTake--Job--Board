@@ -47,14 +47,14 @@ const PortalDefaultLanding = ({
 
     const actions = isEmployer
         ? [
-            { label: 'Home', section: 'home', icon: 'home' },
+            { label: 'Home', section: 'home-feed', icon: 'home' },
             { label: 'Post a Job', section: 'post-job', icon: 'postJob' },
             { label: 'Manage Jobs', section: 'manage-jobs', icon: 'manageJobs' },
             { label: 'Create Document', section: 'create-document', icon: 'document' },
             { label: 'Company Profile', section: 'company-profile', icon: 'company' }
         ]
         : [
-            { label: 'Home', section: 'home', icon: 'home' },
+            { label: 'Home', section: 'job-feed', icon: 'home' },
             { label: 'My Applications', section: 'applications', icon: 'applications' },
             { label: 'Resume Playground', section: 'resume-playground', icon: 'resume' },
             { label: 'My Profile', section: 'profile', icon: 'profile' }

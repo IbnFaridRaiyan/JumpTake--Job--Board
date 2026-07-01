@@ -94,6 +94,62 @@ router.get('/job-seekers', async (req, res) => {
     }
 });
 
+const normalizeManualProfileList = (value, { commaSeparated = false } = {}) => {
+    if (Array.isArray(value)) {
+        return value
+            .flatMap((item) => normalizeManualProfileList(item, { commaSeparated }))
+            .filter(Boolean);
+    }
+
+    if (typeof value !== 'string') {
+        return [];
+    }
+
+    const separator = commaSeparated ? /[\n,;|]+/ : /\r?\n+/;
+    return value
+        .split(separator)
+        .map((item) => item.trim())
+        .filter(Boolean);
+};
+
+router.post('/job-seekers/manual', async (req, res) => {
+    try {
+        const name = String(req.body.name || '').trim();
+        const email = String(req.body.email || '').trim().toLowerCase();
+        const loginUsername = String(req.body.loginUsername || '').trim().toLowerCase();
+
+        if (!name || !email || !loginUsername) {
+            return res.status(400).json({ error: 'Full name, email, and login username are required' });
+        }
+
+        const education = normalizeManualProfileList(req.body.education);
+        const qualifications = normalizeManualProfileList(req.body.qualifications);
+        const manualProfile = {
+            name,
+            email,
+            loginUsername,
+            education: [...education, ...qualifications],
+            degrees: qualifications,
+            experience: normalizeManualProfileList(req.body.experience),
+            skills: normalizeManualProfileList(req.body.skills, { commaSeparated: true }),
+            interests: normalizeManualProfileList(req.body.interests, { commaSeparated: true }),
+            hobbies: normalizeManualProfileList(req.body.hobbies, { commaSeparated: true }),
+            achievements: normalizeManualProfileList(req.body.achievements),
+            resumeText: String(req.body.resumeText || '').trim()
+        };
+
+        const jobSeeker = await JobSeeker.create(manualProfile);
+
+        res.status(201).json({
+            message: 'Manual candidate profile created successfully',
+            jobSeekerId: jobSeeker._id,
+            data: jobSeeker
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 router.get('/job-seekers/:id', async (req, res) => {
     try {

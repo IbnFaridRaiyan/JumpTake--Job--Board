@@ -2,11 +2,46 @@ import React, { useState, useRef } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from 'mammoth';
 import SimplifiedRegisterForm from './SimplifiedRegisterForm';
-import demoCvPdf from '../cv-template.pdf';
 
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
+const createEmptyManualProfile = () => ({
+    name: '',
+    email: '',
+    loginUsername: '',
+    education: '',
+    qualifications: '',
+    experience: '',
+    voluntaryExperience: '',
+    skills: '',
+    interests: '',
+    hobbies: '',
+    achievements: ''
+});
+
+const buildManualResumeText = (profile) => {
+    const sections = [
+        ['Personal Information', [`Name: ${profile.name}`, `Email: ${profile.email}`, `Login Username: ${profile.loginUsername}`]],
+        ['Education And Qualifications', [profile.education, profile.qualifications]],
+        ['Experience', [profile.experience]],
+        ['Voluntary Experience', [profile.voluntaryExperience]],
+        ['Skills & Interests', [
+            profile.skills ? `Skills: ${profile.skills}` : '',
+            profile.interests ? `Interests: ${profile.interests}` : '',
+            profile.hobbies ? `Hobbies: ${profile.hobbies}` : '',
+            profile.achievements ? `Achievements: ${profile.achievements}` : ''
+        ]]
+    ];
+
+    return sections
+        .map(([heading, lines]) => {
+            const content = lines.map((line) => String(line || '').trim()).filter(Boolean);
+            return content.length ? `${heading}\n${content.join('\n')}` : '';
+        })
+        .filter(Boolean)
+        .join('\n\n');
+};
 
 const ResumeDropbox = ({ onLoginClick, goBack }) => {
     const [resume, setResume] = useState('');
@@ -14,6 +49,8 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
     const [isDragging, setIsDragging] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [processedData, setProcessedData] = useState(null);
+    const [manualMode, setManualMode] = useState(false);
+    const [manualProfile, setManualProfile] = useState(createEmptyManualProfile);
     const fileInputRef = useRef(null);
     const [jobSeekerId, setJobSeekerId] = useState(null);
 
@@ -174,27 +211,80 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
         await submitResumeText(resume);
     };
 
-    const handleDemoCv = async () => {
+    const handleManualProfileChange = (event) => {
+        const { name, value } = event.target;
+        setManualProfile((current) => ({
+            ...current,
+            [name]: value
+        }));
+    };
+
+    const handleContinueWithoutResume = () => {
+        setManualMode(true);
+        setResume('');
+        setProcessedData(null);
+        setJobSeekerId(null);
+        setMessage('');
+    };
+
+    const handleManualProfileSubmit = async (event) => {
+        event.preventDefault();
+
+        const requiredName = manualProfile.name.trim();
+        const requiredEmail = manualProfile.email.trim();
+        const requiredUsername = manualProfile.loginUsername.trim();
+
+        if (!requiredName || !requiredEmail || !requiredUsername) {
+            setMessage('Full name, email, and login username are required.');
+            return;
+        }
+
         setIsLoading(true);
         setProcessedData(null);
         setJobSeekerId(null);
-        setMessage('Loading demo CV...');
+        setMessage('Saving your profile details...');
 
         try {
-            const response = await fetch(demoCvPdf);
+            const resumeText = buildManualResumeText(manualProfile);
+            const response = await fetch((process.env.REACT_APP_API_URL || '') + '/api/job-seekers/manual', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    ...manualProfile,
+                    name: requiredName,
+                    email: requiredEmail,
+                    loginUsername: requiredUsername,
+                    experience: [manualProfile.experience, manualProfile.voluntaryExperience]
+                        .map((item) => item.trim())
+                        .filter(Boolean)
+                        .join('\n'),
+                    resumeText
+                })
+            });
+
             if (!response.ok) {
-                throw new Error(`Could not load demo CV: ${response.status}`);
+                const errorBody = await response.json().catch(() => null);
+                throw new Error(errorBody?.error || `Server responded with status: ${response.status}`);
             }
 
-            const blob = await response.blob();
-            const demoFile = new File([blob], 'cv-template.pdf', { type: 'application/pdf' });
-            const text = await parseFileToText(demoFile);
+            const data = await response.json();
+            const nextJobSeekerId = data.jobSeekerId;
 
-            setResume(text);
-            await submitResumeText(text);
+            localStorage.setItem('tempJobSeekerId', nextJobSeekerId);
+            setProcessedData({
+                ...(data.data || {}),
+                name: requiredName,
+                email: requiredEmail,
+                loginUsername: requiredUsername
+            });
+            setJobSeekerId(nextJobSeekerId);
+            setResume('');
+            setMessage('Profile details saved. Create your account to continue.');
         } catch (error) {
-            console.error('Error running demo CV:', error);
-            setMessage(`Error processing demo CV: ${error.message}`);
+            console.error('Error saving manual profile:', error);
+            setMessage(`Error saving profile details: ${error.message}`);
             setProcessedData(null);
         } finally {
             setIsLoading(false);
@@ -266,9 +356,9 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
 
                         <button
                             className="submit-button demo-cv-button"
-                            onClick={handleDemoCv}
+                            onClick={handleContinueWithoutResume}
                         >
-                            Run demo using pre made CV
+                            Continue without resume
                         </button>
 
                         <div className="login-divider">OR</div>
@@ -296,6 +386,152 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
             {/* Message displayed below buttons */}
             {!isLoading && message && <p className="message">{message}</p>}
 
+            {manualMode && !processedData && (
+                <form className="manual-profile-form" onSubmit={handleManualProfileSubmit}>
+                    <h3>Personal Information</h3>
+                    <p className="registration-info">
+                        Add your details manually. Only full name, email, and login username are required.
+                    </p>
+
+                    <div className="form-group">
+                        <label htmlFor="manual-name">Full Name</label>
+                        <input
+                            id="manual-name"
+                            name="name"
+                            type="text"
+                            value={manualProfile.name}
+                            onChange={handleManualProfileChange}
+                            required
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="manual-email">Email</label>
+                        <input
+                            id="manual-email"
+                            name="email"
+                            type="email"
+                            value={manualProfile.email}
+                            onChange={handleManualProfileChange}
+                            required
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="manual-login-username">Login Username</label>
+                        <input
+                            id="manual-login-username"
+                            name="loginUsername"
+                            type="text"
+                            value={manualProfile.loginUsername}
+                            onChange={handleManualProfileChange}
+                            required
+                        />
+                        <div className="form-hint">Choose a username for your JumpTake profile.</div>
+                    </div>
+
+                    <h3>Education And Qualifications</h3>
+                    <div className="form-group">
+                        <label htmlFor="manual-education">Education</label>
+                        <textarea
+                            id="manual-education"
+                            name="education"
+                            value={manualProfile.education}
+                            onChange={handleManualProfileChange}
+                            rows="5"
+                            placeholder="Example: Buckinghamshire Edge University&#10;BA International Business Studies with Spanish"
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="manual-qualifications">Qualifications</label>
+                        <textarea
+                            id="manual-qualifications"
+                            name="qualifications"
+                            value={manualProfile.qualifications}
+                            onChange={handleManualProfileChange}
+                            rows="4"
+                            placeholder="Example: A-Levels, GCSEs, certificates, relevant modules"
+                        />
+                    </div>
+
+                    <h3>Experience</h3>
+                    <div className="form-group">
+                        <label htmlFor="manual-experience">Experience</label>
+                        <textarea
+                            id="manual-experience"
+                            name="experience"
+                            value={manualProfile.experience}
+                            onChange={handleManualProfileChange}
+                            rows="6"
+                            placeholder="Add jobs, placements, duties, dates, and achievements. One item per line works best."
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="manual-voluntary-experience">Voluntary Experience</label>
+                        <textarea
+                            id="manual-voluntary-experience"
+                            name="voluntaryExperience"
+                            value={manualProfile.voluntaryExperience}
+                            onChange={handleManualProfileChange}
+                            rows="4"
+                            placeholder="Optional voluntary work, projects, clubs, or community experience."
+                        />
+                    </div>
+
+                    <h3>Skills & Interests</h3>
+                    <div className="form-group">
+                        <label htmlFor="manual-skills">Skills</label>
+                        <textarea
+                            id="manual-skills"
+                            name="skills"
+                            value={manualProfile.skills}
+                            onChange={handleManualProfileChange}
+                            rows="4"
+                            placeholder="Example: communication, customer service, business planning"
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="manual-interests">Interests</label>
+                        <textarea
+                            id="manual-interests"
+                            name="interests"
+                            value={manualProfile.interests}
+                            onChange={handleManualProfileChange}
+                            rows="3"
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="manual-hobbies">Hobbies</label>
+                        <textarea
+                            id="manual-hobbies"
+                            name="hobbies"
+                            value={manualProfile.hobbies}
+                            onChange={handleManualProfileChange}
+                            rows="3"
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="manual-achievements">Achievements</label>
+                        <textarea
+                            id="manual-achievements"
+                            name="achievements"
+                            value={manualProfile.achievements}
+                            onChange={handleManualProfileChange}
+                            rows="4"
+                        />
+                    </div>
+
+                    <button type="submit" className="submit-button" disabled={isLoading}>
+                        Continue to Account Setup
+                    </button>
+                </form>
+            )}
+
             {/* Resume preview */}
             {resume && (
                 <div className="resume-preview">
@@ -310,7 +546,9 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
                 <div className="simplified-registration">
                     <h3>Create Your Account</h3>
                     <p className="registration-info">
-                        Create an account using the information extracted from your resume. You only need to set a password.
+                        {manualMode
+                            ? 'Create an account using the information you entered. You only need to set a password.'
+                            : 'Create an account using the information extracted from your resume. You only need to set a password.'}
                     </p>
                     
                     <SimplifiedRegisterForm 

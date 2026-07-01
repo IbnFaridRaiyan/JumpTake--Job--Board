@@ -14,6 +14,11 @@ const JobSeekerSchema = new mongoose.Schema({
     trim: true,
     lowercase: true
   },
+  loginUsername: {
+    type: String,
+    trim: true,
+    lowercase: true
+  },
   profileImage: {
     type: String,
     default: ''

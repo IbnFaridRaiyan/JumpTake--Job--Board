@@ -31,7 +31,7 @@ const createAccount = async (req, res) => {
             }
         }
 
-        const displayName = name || jobSeeker?.name || email.split('@')[0];
+        const displayName = jobSeeker?.loginUsername || name || jobSeeker?.name || email.split('@')[0];
         const jumptakeId = await generateJumpTakeId(displayName);
         
       

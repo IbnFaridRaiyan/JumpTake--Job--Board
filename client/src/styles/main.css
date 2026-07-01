@@ -37304,7 +37304,7 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
   max-width: 92% !important;
   margin: 0.34rem auto 0 !important;
   color: rgba(255, 255, 255, 0.56) !important;
-  font-size: 0.58rem !important;
+  font-size: 0.76rem !important;
   line-height: 1.15 !important;
   text-align: center !important;
   overflow-wrap: anywhere !important;
@@ -37339,6 +37339,11 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
   .portal-job-country-button {
     font-size: 0.68rem !important;
     padding: 0.04rem 0 !important;
+  }
+
+  .portal-post-source-link {
+    font-size: 0.66rem !important;
+    line-height: 1.2 !important;
   }
 
   .portal-post-reactions.portal-reaction-rail,

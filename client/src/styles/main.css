@@ -58231,3 +58231,590 @@ html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-acti
   background: transparent !important;
   background-color: transparent !important;
 }
+
+/* Light-mode section cleanup for screenshots 15-31. */
+html[data-theme="light"] body[data-theme="light"] {
+  --jt-light-card: #e5e0d6;
+  --jt-light-card-soft: #eee7dc;
+  --jt-light-cream: #fbf5ea;
+  --jt-dark-brown: #3a2116;
+  --jt-maroon-pill: #4a0b12;
+}
+
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-canvas,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-workbench,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-workbench-scale-box,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-pages-stack,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-page-layer,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-page-frame,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-document {
+  background: var(--jt-light-card) !important;
+  background-color: var(--jt-light-card) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-actions .settings-button.primary,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-actions .settings-button.primary * {
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .profile-header,
+html[data-theme="light"] body[data-theme="light"] .profile-picture-panel,
+html[data-theme="light"] body[data-theme="light"] .profile-header-actions,
+html[data-theme="light"] body[data-theme="light"] .bookmarked-candidate-profile .candidate-profile-header,
+html[data-theme="light"] body[data-theme="light"] .bookmarked-candidate-profile .profile-header {
+  background: var(--jt-light-card) !important;
+  background-color: var(--jt-light-card) !important;
+  border-color: #d6c6b4 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] :is(.profile-picture-avatar, .candidate-initial, .candidate-avatar.profileimage) {
+  background: var(--jt-dark-brown) !important;
+  background-color: var(--jt-dark-brown) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] :is(.profile-picture-avatar, .candidate-initial, .candidate-avatar.profileimage) .candidate-profile-fallback-icon,
+html[data-theme="light"] body[data-theme="light"] :is(.portal-post-avatar, .portal-comment-avatar, .portal-job-company-avatar, .portal-share-friend-avatar) .portal-default-profile-icon,
+html[data-theme="light"] body[data-theme="light"] .candidate-profile-fallback-icon {
+  color: #ffffff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-post-avatar.has-default-profile-icon,
+html[data-theme="light"] body[data-theme="light"] .portal-comment-avatar.has-default-profile-icon,
+html[data-theme="light"] body[data-theme="light"] .portal-job-company-avatar.has-default-profile-icon,
+html[data-theme="light"] body[data-theme="light"] .portal-post-avatar .portal-default-profile-icon,
+html[data-theme="light"] body[data-theme="light"] .portal-comment-avatar .portal-default-profile-icon,
+html[data-theme="light"] body[data-theme="light"] .portal-job-company-avatar .portal-default-profile-icon {
+  background: var(--jt-dark-brown) !important;
+  background-color: var(--jt-dark-brown) !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] :is(.profile-picture-upload-button, .upload-resume-button, .edit-profile-button),
+html[data-theme="light"] body[data-theme="light"] :is(.profile-picture-upload-button, .upload-resume-button, .edit-profile-button) * {
+  background: var(--jt-light-cream) !important;
+  background-color: var(--jt-light-cream) !important;
+  border-color: #d6c6b4 !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .settings-container::before,
+html[data-theme="light"] body[data-theme="light"] .settings-container::after,
+html[data-theme="light"] body[data-theme="light"] .employer-settings-container::before,
+html[data-theme="light"] body[data-theme="light"] .employer-settings-container::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .settings-container .page-footer-actions,
+html[data-theme="light"] body[data-theme="light"] .employer-settings-container .page-footer-actions {
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] :is(.settings-card, .notification-card, .tabs-content, .settings-tab, .profile-section, .personal-info-card),
+html[data-theme="light"] body[data-theme="light"] .settings-container :is(input, select, textarea),
+html[data-theme="light"] body[data-theme="light"] .employer-settings-container :is(input, select, textarea) {
+  background: var(--jt-light-card) !important;
+  background-color: var(--jt-light-card) !important;
+  border-color: #d6c6b4 !important;
+  color: #111111 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .settings-container .tabs-header,
+html[data-theme="light"] body[data-theme="light"] .employer-settings-container .tabs-header {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 0.16rem !important;
+  width: 100% !important;
+  overflow: hidden !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .settings-container .tab-button,
+html[data-theme="light"] body[data-theme="light"] .employer-settings-container .tab-button {
+  min-width: 0 !important;
+  width: 100% !important;
+  padding: 0.5rem 0.32rem !important;
+  gap: 0.24rem !important;
+  font-size: clamp(0.62rem, 2.7vw, 0.86rem) !important;
+  white-space: nowrap !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .talent-pool-container .candidate-card.uiverse-profile-card,
+html[data-theme="light"] body[data-theme="light"] .candidate-bookmarked-container .candidate-card.uiverse-profile-card,
+html[data-theme="light"] body[data-theme="light"] .candidate-view-candidates .candidate-card.uiverse-profile-card {
+  background: var(--jt-light-card) !important;
+  background-color: var(--jt-light-card) !important;
+  border-color: #d6c6b4 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .uiverse-profile-card .candidate-card-socialbar.socialbar,
+html[data-theme="light"] body[data-theme="light"] .uiverse-profile-card .candidate-card-socialbar.socialbar::before,
+html[data-theme="light"] body[data-theme="light"] .uiverse-profile-card .candidate-card-socialbar.socialbar::after {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .uiverse-profile-card .candidate-card-socialbar :is(.candidate-card-action, .candidate-like-button, .talent-bookmark-button, .bookmark-star-button),
+html[data-theme="light"] body[data-theme="light"] .uiverse-profile-card .candidate-card-socialbar :is(.candidate-card-action, .candidate-like-button, .talent-bookmark-button, .bookmark-star-button):hover,
+html[data-theme="light"] body[data-theme="light"] .uiverse-profile-card .candidate-card-socialbar :is(.candidate-card-action, .candidate-like-button, .talent-bookmark-button, .bookmark-star-button):focus-visible {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #143b35 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-feed > .portal-home-tabs,
+html[data-theme="light"] body[data-theme="light"] .portal-home-tabs {
+  background: var(--jt-light-card) !important;
+  background-color: var(--jt-light-card) !important;
+  border-color: var(--jt-light-card) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tabs .portal-home-tab,
+html[data-theme="light"] body[data-theme="light"] .portal-home-feed > .portal-home-tabs .portal-home-tab {
+  background: var(--jt-light-cream) !important;
+  background-color: var(--jt-light-cream) !important;
+  border: 0 !important;
+  color: var(--jt-dark-brown) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab span {
+  color: var(--jt-dark-brown) !important;
+  -webkit-text-fill-color: var(--jt-dark-brown) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab :is(svg, path, i, .icon) {
+  color: var(--jt-dark-brown) !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-work-news:is(:hover, :focus-visible, .active) :is(svg, path, i, .icon) {
+  color: #f97316 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-job-posts:is(:hover, :focus-visible, .active) :is(svg, path, i, .icon),
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-my-job-posts:is(:hover, :focus-visible, .active) :is(svg, path, i, .icon) {
+  color: #0ea5e9 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-talent-stories:is(:hover, :focus-visible, .active) :is(svg, path, i, .icon) {
+  color: #facc15 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-create-story:is(:hover, :focus-visible, .active) :is(svg, path, i, .icon),
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-create-post:is(:hover, :focus-visible, .active) :is(svg, path, i, .icon) {
+  color: #ffffff !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-my-feed:is(:hover, :focus-visible, .active) :is(svg, path, i, .icon),
+html[data-theme="light"] body[data-theme="light"] .portal-home-tab-my-company-posts:is(:hover, :focus-visible, .active) :is(svg, path, i, .icon) {
+  color: #22c55e !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] :is(
+  .portal-post-action-row,
+  .portal-post-action-cluster,
+  .portal-post-reactions,
+  .portal-post-reactions.portal-reaction-rail,
+  .job-post-action-reactions,
+  .portal-candidate-job-action-row .job-post-action-reactions,
+  .job-card-reactions,
+  .bookmarked-job-reactions,
+  .portal-candidate-job-reactions,
+  .reaction-row
+) {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] :is(
+  .portal-reaction-trigger,
+  .portal-reaction-button,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-share-button,
+  .portal-glass-mini-button,
+  .job-post-reaction-button,
+  .job-post-like-reaction,
+  .job-post-bookmark-reaction,
+  .job-post-review-reaction,
+  .job-post-share-reaction,
+  .portal-job-like-toggle,
+  .portal-job-bookmark-toggle,
+  .bookmark-star-button,
+  .job-card-like-button
+),
+html[data-theme="light"] body[data-theme="light"] .job-post-action-reactions :is(button, a),
+html[data-theme="light"] body[data-theme="light"] .portal-post-reactions :is(button, a) {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .resume-playground-tabs {
+  background: var(--jt-light-card) !important;
+  background-color: var(--jt-light-card) !important;
+  border-color: var(--jt-light-card) !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .resume-playground-tabs button,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-tabs button:hover,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-tabs button.is-active {
+  background: var(--jt-light-cream) !important;
+  background-color: var(--jt-light-cream) !important;
+  border: 0 !important;
+  color: var(--jt-dark-brown) !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] :is(.section-header, .dashboard-section-title, .mobile-section-panel-header, .talent-pool-header, .job-feed-title, .employer-dashboard-content-title, .post-job-content-title, .company-profile-header, .profile-header) > h2,
+html[data-theme="light"] body[data-theme="light"] .home-page :is(.dashboard-section-title, .job-feed-title, .employer-dashboard-content-title, .post-job-content-title) h2,
+html[data-theme="light"] body[data-theme="light"] .portal-title-jello-text {
+  background: var(--jt-dark-brown) !important;
+  background-color: var(--jt-dark-brown) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-color: var(--jt-dark-brown) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .notifications-activities-word {
+  color: var(--jt-dark-brown) !important;
+  -webkit-text-fill-color: var(--jt-dark-brown) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] :is(.mobile-dashboard-section-panel.is-open, .main-content, .notifications-page, .talent-pool-container, .settings-container, .profile-container, .applications-container, .bookmarked-jobs-container, .resume-playground-container) {
+  padding-inline: max(0.75rem, env(safe-area-inset-left)) max(0.75rem, env(safe-area-inset-right)) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-panel,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-shell,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-chat,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-card,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .portal-ai-chat-card,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-messages {
+  background: var(--jt-dark-brown) !important;
+  background-color: var(--jt-dark-brown) !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat :is(.public-ai-chat-bubble, .public-ai-chat-time, .public-ai-chat-title, .public-ai-chat-subtitle, p, li, span, strong) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-bubble.is-user {
+  background: #8a3a1f !important;
+  background-color: #8a3a1f !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-reply :is(input, textarea, .public-ai-reply-field) {
+  background: var(--jt-light-cream) !important;
+  background-color: var(--jt-light-cream) !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-reply :is(input, textarea, .public-ai-reply-field)::placeholder {
+  color: #6b5b4b !important;
+  -webkit-text-fill-color: #6b5b4b !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-list-bottom-back {
+  width: auto !important;
+  min-width: 2.25rem !important;
+  max-width: 3.25rem !important;
+  height: 1.85rem !important;
+  min-height: 1.85rem !important;
+  margin: 0.35rem auto 0.45rem !important;
+  padding: 0 0.72rem !important;
+  border-radius: 0.48rem !important;
+  border: 1px solid #d6c6b4 !important;
+  background: var(--jt-light-cream) !important;
+  background-color: var(--jt-light-cream) !important;
+  color: #111111 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] :is(.applications-container, .assessments-container, .video-interviews-container, .draft-applications-container, .bookmarked-jobs-container) :is(button, .settings-button, .secondary-button, .primary-button),
+html[data-theme="light"] body[data-theme="light"] :is(.applications-container, .assessments-container, .video-interviews-container, .draft-applications-container, .bookmarked-jobs-container) :is(button, .settings-button, .secondary-button, .primary-button) * {
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+}
+
+/* Light-mode final correction for screenshots 32-37. */
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-chat-bar,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-chat-head,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-chat-copy,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-chat-copy :is(strong, span) {
+  background: var(--jt-dark-brown) !important;
+  background-color: var(--jt-dark-brown) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-card,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .portal-ai-chat-card,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-messages,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-bubble.is-assistant,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-bubble.is-typing {
+  background: var(--jt-light-card) !important;
+  background-color: var(--jt-light-card) !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  border-color: #d6c6b4 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat :is(.public-ai-chat-bubble.is-assistant, .public-ai-chat-bubble.is-typing, .public-ai-chat-time, .public-ai-chat-messages, .public-ai-chat-messages li, .public-ai-chat-messages span, .public-ai-chat-messages strong, .public-ai-chat-messages p) {
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-header {
+  min-height: 2.7rem !important;
+  padding: 0.38rem 0.56rem !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-title {
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-ai-clear-chat-button {
+  width: auto !important;
+  min-width: 0 !important;
+  min-height: 1.9rem !important;
+  padding: 0.32rem 0.78rem !important;
+  border-radius: 0.52rem !important;
+  border: 1px solid #d6c6b4 !important;
+  background: var(--jt-light-cream) !important;
+  background-color: var(--jt-light-cream) !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-reply,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-reply-row {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-reply-field,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-reply-field textarea,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-reply-field input {
+  border: 0 !important;
+  border-bottom: 0 !important;
+  outline: 0 !important;
+  border-radius: 0.72rem !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-list-bottom-back,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-list-bottom-back:hover,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-list-bottom-back:focus-visible {
+  position: static !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+  flex: 0 0 auto !important;
+  width: 2.55rem !important;
+  min-width: 2.55rem !important;
+  max-width: 2.55rem !important;
+  height: 1.65rem !important;
+  min-height: 1.65rem !important;
+  padding: 0 !important;
+  margin: 0.35rem auto 0.5rem !important;
+  border-radius: 0.42rem !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-feed > .portal-home-tabs,
+html[data-theme="light"] body[data-theme="light"] .portal-home-tabs {
+  background: var(--jt-light-card) !important;
+  background-color: var(--jt-light-card) !important;
+  border-color: var(--jt-light-card) !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-feed > .portal-home-tabs::before,
+html[data-theme="light"] body[data-theme="light"] .portal-home-feed > .portal-home-tabs::after,
+html[data-theme="light"] body[data-theme="light"] .portal-home-tabs::before,
+html[data-theme="light"] body[data-theme="light"] .portal-home-tabs::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-candidate-job-action-row .job-post-action-reactions,
+html[data-theme="light"] body[data-theme="light"] .job-post-action-reactions,
+html[data-theme="light"] body[data-theme="light"] .portal-post-reactions,
+html[data-theme="light"] body[data-theme="light"] .portal-post-action-cluster,
+html[data-theme="light"] body[data-theme="light"] .portal-post-action-row {
+  gap: 0.42rem !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] :is(
+  .portal-candidate-job-action-row .job-post-reaction-button,
+  .job-post-action-reactions .job-post-reaction-button,
+  .job-post-action-reactions button,
+  .portal-post-reactions .portal-reaction-button,
+  .portal-post-reactions .portal-comment-toggle,
+  .portal-post-reactions .portal-share-toggle,
+  .portal-post-reactions .portal-share-button,
+  .portal-post-reactions button,
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-share-button,
+  .portal-glass-mini-button,
+  .portal-job-bookmark-toggle,
+  .bookmark-star-button
+),
+html[data-theme="light"] body[data-theme="light"] :is(
+  .portal-candidate-job-action-row .job-post-reaction-button,
+  .job-post-action-reactions .job-post-reaction-button,
+  .job-post-action-reactions button,
+  .portal-post-reactions .portal-reaction-button,
+  .portal-post-reactions .portal-comment-toggle,
+  .portal-post-reactions .portal-share-toggle,
+  .portal-post-reactions .portal-share-button,
+  .portal-post-reactions button,
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-share-button,
+  .portal-glass-mini-button,
+  .portal-job-bookmark-toggle,
+  .bookmark-star-button
+):is(:hover, :focus, :focus-visible, :active, .active) {
+  width: auto !important;
+  min-width: 1.25rem !important;
+  min-height: 1.25rem !important;
+  padding: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  border-color: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] :is(
+  .job-post-reaction-button,
+  .portal-reaction-button,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-share-button,
+  .portal-glass-mini-button,
+  .portal-job-bookmark-toggle,
+  .bookmark-star-button
+)::before,
+html[data-theme="light"] body[data-theme="light"] :is(
+  .job-post-reaction-button,
+  .portal-reaction-button,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-share-button,
+  .portal-glass-mini-button,
+  .portal-job-bookmark-toggle,
+  .bookmark-star-button
+)::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-post-comments,
+html[data-theme="light"] body[data-theme="light"] .portal-comment-item,
+html[data-theme="light"] body[data-theme="light"] .portal-comment-item p,
+html[data-theme="light"] body[data-theme="light"] .portal-comment-name {
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-comment-avatar,
+html[data-theme="light"] body[data-theme="light"] .portal-comment-avatar.has-default-profile-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #111111 !important;
+  background-color: #111111 !important;
+  border: 2px solid #111111 !important;
+  border-radius: 999px !important;
+  color: #ffffff !important;
+  overflow: hidden !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-comment-avatar img {
+  border-radius: 999px !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] :is(.section-header, .dashboard-section-title, .mobile-section-panel-header, .talent-pool-header, .job-feed-title, .employer-dashboard-content-title, .post-job-content-title, .company-profile-header) {
+  min-height: 3rem !important;
+  padding: 0.4rem 0.8rem !important;
+  background: rgba(149, 69, 80, 0.18) !important;
+  background-color: rgba(149, 69, 80, 0.18) !important;
+  border: 0 !important;
+  border-radius: 1.3rem !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] :is(.section-header, .dashboard-section-title, .mobile-section-panel-header, .talent-pool-header, .job-feed-title, .employer-dashboard-content-title, .post-job-content-title, .company-profile-header) > h2,
+html[data-theme="light"] body[data-theme="light"] .home-page :is(.dashboard-section-title, .job-feed-title, .employer-dashboard-content-title, .post-job-content-title) h2,
+html[data-theme="light"] body[data-theme="light"] .portal-title-jello-text {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+}

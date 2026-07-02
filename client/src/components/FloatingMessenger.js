@@ -739,28 +739,30 @@ const FloatingMessenger = ({
                 </div>
             )}
 
-            <button
-                type="button"
-                className="floating-messenger-trigger"
-                onClick={open ? handleClose : handleOpen}
-                aria-label={open ? 'Close messages' : 'Open messages'}
-            >
-                <svg
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
+            {!open && (
+                <button
+                    type="button"
+                    className="floating-messenger-trigger"
+                    onClick={handleOpen}
+                    aria-label="Open messages"
                 >
-                    <path fill="none" d="M0 0h24v24H0z" stroke="none"></path>
-                    <path d="M8 9h8"></path>
-                    <path d="M8 13h6"></path>
-                    <path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"></path>
-                </svg>
-                {unreadCount > 0 ? <span className="floating-messenger-badge">{unreadCount}</span> : null}
-            </button>
+                    <svg
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                    >
+                        <path fill="none" d="M0 0h24v24H0z" stroke="none"></path>
+                        <path d="M8 9h8"></path>
+                        <path d="M8 13h6"></path>
+                        <path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"></path>
+                    </svg>
+                    {unreadCount > 0 ? <span className="floating-messenger-badge">{unreadCount}</span> : null}
+                </button>
+            )}
         </div>
     );
 };

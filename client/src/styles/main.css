@@ -62968,3 +62968,1596 @@ html[data-theme="light"] .home-page .portal-home-feed :is(.portal-social-post-ca
     0 2px 0 rgba(255, 255, 255, 0.78),
     0 8px 16px rgba(82, 56, 42, 0.08) !important;
 }
+
+/* Light mode: maroon job-post controls and flat Apply Now button. */
+body[data-theme="light"] .portal-home-feed .portal-job-country-row :is(#country-borderless-override, button.portal-job-country-button),
+body[data-theme="light"] .portal-home-feed .portal-job-country-row :is(#country-borderless-override, button.portal-job-country-button):is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] .portal-home-feed .portal-job-country-row :is(#country-borderless-override, button.portal-job-country-button),
+html[data-theme="light"] .portal-home-feed .portal-job-country-row :is(#country-borderless-override, button.portal-job-country-button):is(:hover, :focus, :focus-visible, :active),
+body[data-theme="light"] .portal-home-feed .portal-job-country-row .portal-job-country-button,
+body[data-theme="light"] .portal-home-feed .portal-job-country-row .portal-job-country-button:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] .portal-home-feed .portal-job-country-row .portal-job-country-button,
+html[data-theme="light"] .portal-home-feed .portal-job-country-row .portal-job-country-button:is(:hover, :focus, :focus-visible, :active) {
+  background: #a86a73 !important;
+  background-color: #a86a73 !important;
+  background-image: none !important;
+  border-color: #a86a73 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-job-country-row .portal-job-country-button *,
+html[data-theme="light"] .portal-home-feed .portal-job-country-row .portal-job-country-button * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-stat,
+body[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-job-stat,
+html[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-stat,
+html[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-job-stat {
+  border-color: #ead3d7 !important;
+  box-shadow: inset 0 0 0 1px rgba(234, 211, 215, 0.72) !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button.sky-apply-button,
+body[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button.sky-apply-button:is(:hover, :focus, :focus-visible, :active, :disabled),
+html[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button.sky-apply-button,
+html[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button.sky-apply-button:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  background: #5b1118 !important;
+  background-color: #5b1118 !important;
+  background-image: none !important;
+  border-color: #5b1118 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+  filter: none !important;
+  outline: 0 !important;
+  text-shadow: none !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button.sky-apply-button *,
+html[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button.sky-apply-button * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-shadow: none !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button.sky-apply-button::before,
+body[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button.sky-apply-button::after,
+html[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button.sky-apply-button::before,
+html[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button.sky-apply-button::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Light mode: final hard reset for disabled Apply Now and active job action icons. */
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button,
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button[disabled],
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button:disabled,
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button,
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button[disabled],
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button:disabled,
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button:is(:hover, :focus, :focus-visible, :active) {
+  opacity: 1 !important;
+  background: #5b1118 !important;
+  background-color: #5b1118 !important;
+  background-image: none !important;
+  border: 1px solid #5b1118 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button :is(.portal-apply-button-shaky-text, span, strong),
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button :is(.portal-apply-button-shaky-text, span, strong) {
+  opacity: 1 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-shadow: none !important;
+}
+
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button::before,
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button::after,
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button::before,
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .job-post-action-reactions .job-post-reaction-button:not(.active):not(:active):not(:focus-visible),
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .job-post-action-reactions .job-post-reaction-button:not(.active):not(:active):not(:focus-visible) :is(svg, path, span:not(.portal-reaction-tooltip), strong),
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .job-post-action-reactions .job-post-reaction-button:not(.active):not(:active):not(:focus-visible),
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .job-post-action-reactions .job-post-reaction-button:not(.active):not(:active):not(:focus-visible) :is(svg, path, span:not(.portal-reaction-tooltip), strong) {
+  color: #111111 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .job-post-action-reactions .job-post-like-reaction:is(.active, :active, :focus-visible),
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .job-post-action-reactions .job-post-like-reaction:is(.active, :active, :focus-visible) :is(svg, path, span:not(.portal-reaction-tooltip), strong),
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .job-post-action-reactions .job-post-like-reaction:is(.active, :active, :focus-visible),
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .job-post-action-reactions .job-post-like-reaction:is(.active, :active, :focus-visible) :is(svg, path, span:not(.portal-reaction-tooltip), strong) {
+  color: #2563eb !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .job-post-action-reactions .job-post-bookmark-reaction:is(.active, :active, :focus-visible),
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .job-post-action-reactions .job-post-bookmark-reaction:is(.active, :active, :focus-visible) :is(svg, path, span:not(.portal-reaction-tooltip), strong),
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .job-post-action-reactions .job-post-bookmark-reaction:is(.active, :active, :focus-visible),
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .job-post-action-reactions .job-post-bookmark-reaction:is(.active, :active, :focus-visible) :is(svg, path, span:not(.portal-reaction-tooltip), strong) {
+  color: #f5b82e !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .job-post-action-reactions .job-post-review-reaction:is(.active, :active, :focus-visible),
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .job-post-action-reactions .job-post-review-reaction:is(.active, :active, :focus-visible) :is(svg, path, span:not(.portal-reaction-tooltip), strong),
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .job-post-action-reactions .job-post-review-reaction:is(.active, :active, :focus-visible),
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .job-post-action-reactions .job-post-review-reaction:is(.active, :active, :focus-visible) :is(svg, path, span:not(.portal-reaction-tooltip), strong) {
+  color: #168a45 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .job-post-action-reactions .job-post-share-reaction:is(:active, :focus-visible),
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .job-post-action-reactions .job-post-share-reaction:is(:active, :focus-visible) :is(svg, path, span:not(.portal-reaction-tooltip), strong),
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .job-post-action-reactions .job-post-share-reaction:is(:active, :focus-visible),
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .job-post-action-reactions .job-post-share-reaction:is(:active, :focus-visible) :is(svg, path, span:not(.portal-reaction-tooltip), strong) {
+  color: #9a3f0d !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+/* Light mode: final floating back/assistant controls cleanup. */
+html[data-theme="light"] body[data-theme="light"] .portal-job-modal-back-button,
+html[data-theme="light"] body[data-theme="light"] .portal-job-modal-back-button:is(:hover, :focus, :focus-visible, :active),
+body[data-theme="light"] .portal-job-modal-back-button,
+body[data-theme="light"] .portal-job-modal-back-button:is(:hover, :focus, :focus-visible, :active) {
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-job-modal-back-button :is(svg, path),
+body[data-theme="light"] .portal-job-modal-back-button :is(svg, path) {
+  color: #111111 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-chat:has(.floating-messenger-assistant-chat) .floating-messenger-chat-copy strong,
+body[data-theme="light"] .floating-messenger-chat:has(.floating-messenger-assistant-chat) .floating-messenger-chat-copy strong {
+  display: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-chat:has(.floating-messenger-assistant-chat) .floating-messenger-chat-copy span,
+body[data-theme="light"] .floating-messenger-chat:has(.floating-messenger-assistant-chat) .floating-messenger-chat-copy span {
+  font-size: 1.02rem !important;
+  font-weight: 900 !important;
+  line-height: 1.15 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .floating-messenger .floating-messenger-mobile-back,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger .floating-messenger-mobile-back:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-panel .floating-messenger-mobile-back,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-panel .floating-messenger-mobile-back:is(:hover, :focus, :focus-visible, :active),
+body[data-theme="light"] .floating-messenger .floating-messenger-mobile-back,
+body[data-theme="light"] .floating-messenger .floating-messenger-mobile-back:is(:hover, :focus, :focus-visible, :active) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  filter: none !important;
+  font-size: 1.38rem !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-header,
+body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 0.65rem !important;
+  padding: 0.35rem 0.6rem 0.5rem !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-brand,
+body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-brand {
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-title,
+body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-title {
+  font-size: 1.02rem !important;
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .floating-messenger .portal-ai-clear-chat-button,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger .portal-ai-clear-chat-button:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .portal-ai-clear-chat-button,
+html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .portal-ai-clear-chat-button:is(:hover, :focus, :focus-visible, :active),
+body[data-theme="light"] .floating-messenger .portal-ai-clear-chat-button,
+body[data-theme="light"] .floating-messenger .portal-ai-clear-chat-button:is(:hover, :focus, :focus-visible, :active),
+body[data-theme="light"] .floating-messenger-assistant-chat .portal-ai-clear-chat-button,
+body[data-theme="light"] .floating-messenger-assistant-chat .portal-ai-clear-chat-button:is(:hover, :focus, :focus-visible, :active) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  align-self: center !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  min-height: 0 !important;
+  padding: 0.12rem 0 !important;
+  margin: 0 0 0 auto !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  font-size: 0.82rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  text-align: right !important;
+  text-shadow: none !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme="light"] body[data-theme="light"] .messenger-inbox > .page-footer-actions,
+  body[data-theme="light"] .messenger-inbox > .page-footer-actions,
+  html[data-theme="light"] body[data-theme="light"] .messenger-inbox .section-footer-nav.mobile-subpage-return,
+  body[data-theme="light"] .messenger-inbox .section-footer-nav.mobile-subpage-return {
+    position: fixed !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: max(0.75rem, env(safe-area-inset-bottom)) !important;
+    z-index: 4600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    transform: translateX(-50%) !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] .messenger-inbox > .page-footer-actions .back-button,
+  html[data-theme="light"] body[data-theme="light"] .messenger-inbox .section-footer-nav.mobile-subpage-return .back-button,
+  body[data-theme="light"] .messenger-inbox > .page-footer-actions .back-button,
+  body[data-theme="light"] .messenger-inbox .section-footer-nav.mobile-subpage-return .back-button {
+    display: inline-grid !important;
+    place-items: center !important;
+    width: 2.2rem !important;
+    min-width: 2.2rem !important;
+    max-width: 2.2rem !important;
+    height: 2.2rem !important;
+    min-height: 2.2rem !important;
+    max-height: 2.2rem !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    font-size: 0 !important;
+    line-height: 1 !important;
+    text-shadow: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] .messenger-inbox > .page-footer-actions .back-button::before,
+  html[data-theme="light"] body[data-theme="light"] .messenger-inbox .section-footer-nav.mobile-subpage-return .back-button::before,
+  body[data-theme="light"] .messenger-inbox > .page-footer-actions .back-button::before,
+  body[data-theme="light"] .messenger-inbox .section-footer-nav.mobile-subpage-return .back-button::before {
+    content: "<" !important;
+    display: block !important;
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    background: transparent !important;
+    color: #111111 !important;
+    -webkit-text-fill-color: #111111 !important;
+    font-size: 1.34rem !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    transform: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] .messenger-inbox > .page-footer-actions .back-button::after,
+  html[data-theme="light"] body[data-theme="light"] .messenger-inbox .section-footer-nav.mobile-subpage-return .back-button::after,
+  body[data-theme="light"] .messenger-inbox > .page-footer-actions .back-button::after,
+  body[data-theme="light"] .messenger-inbox .section-footer-nav.mobile-subpage-return .back-button::after {
+    display: none !important;
+    content: none !important;
+  }
+}
+
+/* Light mode: rebuild job card apply/action controls with no inherited button skin. */
+html[data-theme="light"] body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button,
+html[data-theme="light"] body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button[disabled],
+html[data-theme="light"] body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button:disabled,
+html[data-theme="light"] body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button,
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button[disabled],
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button:disabled,
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button:is(:hover, :focus, :focus-visible, :active),
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button,
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button[disabled],
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button:disabled,
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  order: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 7.75rem !important;
+  width: 7.75rem !important;
+  min-width: 7.75rem !important;
+  max-width: 7.75rem !important;
+  height: 2.35rem !important;
+  min-height: 2.35rem !important;
+  max-height: 2.35rem !important;
+  margin: 0 !important;
+  padding: 0.5rem 0.85rem !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: #5b1118 !important;
+  background-color: #5b1118 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+  outline: 0 !important;
+  text-shadow: none !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+}
+
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button:disabled,
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button:disabled {
+  cursor: default !important;
+}
+
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button :is(span, strong, .portal-apply-button-shaky-text),
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button :is(span, strong, .portal-apply-button-shaky-text) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button::before,
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button::after,
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button::before,
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions,
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions {
+  order: 2 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 0.22rem !important;
+  margin: 0 0 0 auto !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-reaction-button,
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-reaction-button:is(:hover, :focus, :focus-visible, :active, .active),
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-reaction-button,
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-reaction-button:is(:hover, :focus, :focus-visible, :active, .active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 1.45rem !important;
+  width: 1.45rem !important;
+  min-width: 1.45rem !important;
+  max-width: 1.45rem !important;
+  height: 1.45rem !important;
+  min-height: 1.45rem !important;
+  max-height: 1.45rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  filter: none !important;
+  outline: 0 !important;
+  text-shadow: none !important;
+  cursor: pointer !important;
+}
+
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-reaction-button::before,
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-reaction-button::after,
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-reaction-button::before,
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-reaction-button::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-reaction-button :is(svg, path, span:not(.portal-reaction-tooltip), strong),
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-reaction-button :is(svg, path, span:not(.portal-reaction-tooltip), strong) {
+  color: currentColor !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-reaction-button :is(svg),
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-reaction-button :is(svg) {
+  width: 1.12rem !important;
+  height: 1.12rem !important;
+  overflow: visible !important;
+}
+
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-like-reaction.active,
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-like-reaction[aria-pressed="true"],
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-like-reaction.active,
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-like-reaction[aria-pressed="true"] {
+  color: #168a45 !important;
+  -webkit-text-fill-color: #168a45 !important;
+}
+
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-bookmark-reaction.active,
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-bookmark-reaction[aria-pressed="true"],
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-bookmark-reaction.active,
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-bookmark-reaction[aria-pressed="true"] {
+  color: #f5b82e !important;
+  -webkit-text-fill-color: #f5b82e !important;
+}
+
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-review-reaction.active,
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-review-reaction.active {
+  color: #0f766e !important;
+  -webkit-text-fill-color: #0f766e !important;
+}
+
+html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-share-reaction:is(:active, :focus-visible),
+body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-share-reaction:is(:active, :focus-visible) {
+  color: #9a3f0d !important;
+  -webkit-text-fill-color: #9a3f0d !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button,
+  body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row button.portal-view-job-button.sky-apply-button {
+    flex-basis: 6.9rem !important;
+    width: 6.9rem !important;
+    min-width: 6.9rem !important;
+    max-width: 6.9rem !important;
+    height: 2.25rem !important;
+    min-height: 2.25rem !important;
+    max-height: 2.25rem !important;
+    padding: 0.48rem 0.68rem !important;
+    font-size: 0.72rem !important;
+  }
+
+  html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions,
+  body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions {
+    gap: 0.16rem !important;
+  }
+
+  html[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-reaction-button,
+  body[data-theme="light"] .home-page .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-reaction-button {
+    flex-basis: 1.36rem !important;
+    width: 1.36rem !important;
+    min-width: 1.36rem !important;
+    max-width: 1.36rem !important;
+    height: 1.36rem !important;
+    min-height: 1.36rem !important;
+    max-height: 1.36rem !important;
+  }
+}
+
+/* Light mode: remove lingering dark-mode button effects from Messages only. */
+html[data-theme="light"] body[data-theme="light"] .home-page .messenger-inbox button,
+html[data-theme="light"] body[data-theme="light"] .home-page .messenger-inbox button:is(:hover, :focus, :focus-visible, :active),
+body[data-theme="light"] .home-page .messenger-inbox button,
+body[data-theme="light"] .home-page .messenger-inbox button:is(:hover, :focus, :focus-visible, :active) {
+  background-image: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  outline: 0 !important;
+  text-shadow: none !important;
+  transform: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .home-page .messenger-inbox button::before,
+html[data-theme="light"] body[data-theme="light"] .home-page .messenger-inbox button::after,
+body[data-theme="light"] .home-page .messenger-inbox button::before,
+body[data-theme="light"] .home-page .messenger-inbox button::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .home-page .messenger-inbox :is(.button-message, .inbox-thread-card.button-message, button.inbox-thread-card),
+html[data-theme="light"] body[data-theme="light"] .home-page .messenger-inbox :is(.button-message, .inbox-thread-card.button-message, button.inbox-thread-card):is(:hover, :focus, :focus-visible, :active, .is-active),
+body[data-theme="light"] .home-page .messenger-inbox :is(.button-message, .inbox-thread-card.button-message, button.inbox-thread-card),
+body[data-theme="light"] .home-page .messenger-inbox :is(.button-message, .inbox-thread-card.button-message, button.inbox-thread-card):is(:hover, :focus, :focus-visible, :active, .is-active) {
+  background: #fffaf1 !important;
+  background-color: #fffaf1 !important;
+  background-image: none !important;
+  border: 1px solid #d8c5a8 !important;
+  border-left: 1px solid #d8c5a8 !important;
+  box-shadow: none !important;
+  color: #102f2a !important;
+  -webkit-text-fill-color: #102f2a !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .home-page .messenger-inbox :is(.button-message, .inbox-thread-card.button-message, button.inbox-thread-card) :is(h1, h2, h3, p, span, strong, time, div),
+body[data-theme="light"] .home-page .messenger-inbox :is(.button-message, .inbox-thread-card.button-message, button.inbox-thread-card) :is(h1, h2, h3, p, span, strong, time, div) {
+  color: inherit !important;
+  -webkit-text-fill-color: currentColor !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .home-page .messenger-inbox :is(.thread-preview, .user-id, .thread-time),
+body[data-theme="light"] .home-page .messenger-inbox :is(.thread-preview, .user-id, .thread-time) {
+  color: #63756d !important;
+  -webkit-text-fill-color: #63756d !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .home-page .messenger-inbox :is(.messenger-back, .page-footer-actions .back-button, .section-footer-nav .back-button, .mobile-bottom-back-button),
+html[data-theme="light"] body[data-theme="light"] .home-page .messenger-inbox :is(.messenger-back, .page-footer-actions .back-button, .section-footer-nav .back-button, .mobile-bottom-back-button):is(:hover, :focus, :focus-visible, :active),
+body[data-theme="light"] .home-page .messenger-inbox :is(.messenger-back, .page-footer-actions .back-button, .section-footer-nav .back-button, .mobile-bottom-back-button),
+body[data-theme="light"] .home-page .messenger-inbox :is(.messenger-back, .page-footer-actions .back-button, .section-footer-nav .back-button, .mobile-bottom-back-button):is(:hover, :focus, :focus-visible, :active) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .home-page .messenger-inbox .message-compose-card,
+html[data-theme="light"] body[data-theme="light"] .home-page .messenger-inbox .messenger-compose-card,
+body[data-theme="light"] .home-page .messenger-inbox .message-compose-card,
+body[data-theme="light"] .home-page .messenger-inbox .messenger-compose-card {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .home-page .messenger-inbox :is(.messenger-compose-card .sendButton, .message-compose-card .sendButton, .public-ai-send-button, .portal-ai-clear-chat-button, .rich-message-toolbar button),
+html[data-theme="light"] body[data-theme="light"] .home-page .messenger-inbox :is(.messenger-compose-card .sendButton, .message-compose-card .sendButton, .public-ai-send-button, .portal-ai-clear-chat-button, .rich-message-toolbar button):is(:hover, :focus, :focus-visible, :active, :disabled),
+body[data-theme="light"] .home-page .messenger-inbox :is(.messenger-compose-card .sendButton, .message-compose-card .sendButton, .public-ai-send-button, .portal-ai-clear-chat-button, .rich-message-toolbar button),
+body[data-theme="light"] .home-page .messenger-inbox :is(.messenger-compose-card .sendButton, .message-compose-card .sendButton, .public-ai-send-button, .portal-ai-clear-chat-button, .rich-message-toolbar button):is(:hover, :focus, :focus-visible, :active, :disabled) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #102f2a !important;
+  -webkit-text-fill-color: #102f2a !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .home-page .messenger-inbox :is(.messenger-compose-card .sendButton, .message-compose-card .sendButton, .public-ai-send-button, .portal-ai-clear-chat-button, .rich-message-toolbar button) :is(svg, path, span, strong),
+body[data-theme="light"] .home-page .messenger-inbox :is(.messenger-compose-card .sendButton, .message-compose-card .sendButton, .public-ai-send-button, .portal-ai-clear-chat-button, .rich-message-toolbar button) :is(svg, path, span, strong) {
+  color: currentColor !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+  filter: none !important;
+}
+
+/* Light mode: hard reset the remaining visible button skins from screenshots 116-118. */
+@media (max-width: 768px) {
+  html[data-theme="light"] :is(.main-content.mobile-section-inbox, .mobile-section-inbox) :is(.messenger-inbox > .page-footer-actions, .mobile-section-fallback-footer, .section-footer-nav.mobile-subpage-return),
+  body[data-theme="light"] :is(.main-content.mobile-section-inbox, .mobile-section-inbox) :is(.messenger-inbox > .page-footer-actions, .mobile-section-fallback-footer, .section-footer-nav.mobile-subpage-return),
+  :is(.main-content.mobile-section-inbox, .mobile-section-inbox) :is(.messenger-inbox > .page-footer-actions, .mobile-section-fallback-footer, .section-footer-nav.mobile-subpage-return) {
+    position: fixed !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: max(0.75rem, env(safe-area-inset-bottom)) !important;
+    z-index: 1200 !important;
+    display: inline-grid !important;
+    place-items: center !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: translateX(-50%) !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    filter: none !important;
+  }
+
+  html[data-theme="light"] :is(.main-content.mobile-section-inbox, .mobile-section-inbox) :is(.messenger-inbox > .page-footer-actions, .mobile-section-fallback-footer, .section-footer-nav.mobile-subpage-return) .back-button,
+  html[data-theme="light"] :is(.main-content.mobile-section-inbox, .mobile-section-inbox) :is(.messenger-inbox > .page-footer-actions, .mobile-section-fallback-footer, .section-footer-nav.mobile-subpage-return) .back-button:is(:hover, :focus, :focus-visible, :active),
+  body[data-theme="light"] :is(.main-content.mobile-section-inbox, .mobile-section-inbox) :is(.messenger-inbox > .page-footer-actions, .mobile-section-fallback-footer, .section-footer-nav.mobile-subpage-return) .back-button,
+  body[data-theme="light"] :is(.main-content.mobile-section-inbox, .mobile-section-inbox) :is(.messenger-inbox > .page-footer-actions, .mobile-section-fallback-footer, .section-footer-nav.mobile-subpage-return) .back-button:is(:hover, :focus, :focus-visible, :active),
+  :is(.main-content.mobile-section-inbox, .mobile-section-inbox) :is(.messenger-inbox > .page-footer-actions, .mobile-section-fallback-footer, .section-footer-nav.mobile-subpage-return) .back-button,
+  :is(.main-content.mobile-section-inbox, .mobile-section-inbox) :is(.messenger-inbox > .page-footer-actions, .mobile-section-fallback-footer, .section-footer-nav.mobile-subpage-return) .back-button:is(:hover, :focus, :focus-visible, :active) {
+    all: unset !important;
+    box-sizing: border-box !important;
+    display: inline-grid !important;
+    place-items: center !important;
+    width: 2.2rem !important;
+    min-width: 2.2rem !important;
+    max-width: 2.2rem !important;
+    height: 2.2rem !important;
+    min-height: 2.2rem !important;
+    max-height: 2.2rem !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    font-size: 0 !important;
+    line-height: 1 !important;
+    cursor: pointer !important;
+  }
+
+  html[data-theme="light"] :is(.main-content.mobile-section-inbox, .mobile-section-inbox) :is(.messenger-inbox > .page-footer-actions, .mobile-section-fallback-footer, .section-footer-nav.mobile-subpage-return) .back-button::before,
+  body[data-theme="light"] :is(.main-content.mobile-section-inbox, .mobile-section-inbox) :is(.messenger-inbox > .page-footer-actions, .mobile-section-fallback-footer, .section-footer-nav.mobile-subpage-return) .back-button::before,
+  :is(.main-content.mobile-section-inbox, .mobile-section-inbox) :is(.messenger-inbox > .page-footer-actions, .mobile-section-fallback-footer, .section-footer-nav.mobile-subpage-return) .back-button::before {
+    content: "<" !important;
+    display: block !important;
+    position: static !important;
+    color: #111111 !important;
+    -webkit-text-fill-color: #111111 !important;
+    font-size: 1.4rem !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+  html[data-theme="light"] :is(.main-content.mobile-section-inbox, .mobile-section-inbox) :is(.messenger-inbox > .page-footer-actions, .mobile-section-fallback-footer, .section-footer-nav.mobile-subpage-return) .back-button::after,
+  body[data-theme="light"] :is(.main-content.mobile-section-inbox, .mobile-section-inbox) :is(.messenger-inbox > .page-footer-actions, .mobile-section-fallback-footer, .section-footer-nav.mobile-subpage-return) .back-button::after,
+  :is(.main-content.mobile-section-inbox, .mobile-section-inbox) :is(.messenger-inbox > .page-footer-actions, .mobile-section-fallback-footer, .section-footer-nav.mobile-subpage-return) .back-button::after {
+    display: none !important;
+    content: none !important;
+  }
+}
+
+html[data-theme="light"] .floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back),
+html[data-theme="light"] .floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back):is(:hover, :focus, :focus-visible, :active),
+body[data-theme="light"] .floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back),
+body[data-theme="light"] .floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back):is(:hover, :focus, :focus-visible, :active),
+.floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back),
+.floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back):is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 2.2rem !important;
+  min-width: 2.2rem !important;
+  max-width: 2.2rem !important;
+  height: 2.2rem !important;
+  min-height: 2.2rem !important;
+  max-height: 2.2rem !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 1.35rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+  transform: none !important;
+  cursor: pointer !important;
+}
+
+html[data-theme="light"] .floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back)::before,
+html[data-theme="light"] .floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back)::after,
+body[data-theme="light"] .floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back)::before,
+body[data-theme="light"] .floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back)::after,
+.floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back)::before,
+.floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back)::after {
+  display: none !important;
+  content: none !important;
+}
+
+html[data-theme="light"] :is(.floating-messenger, .floating-messenger-assistant-chat) .portal-ai-clear-chat-button,
+html[data-theme="light"] :is(.floating-messenger, .floating-messenger-assistant-chat) .portal-ai-clear-chat-button:is(:hover, :focus, :focus-visible, :active),
+body[data-theme="light"] :is(.floating-messenger, .floating-messenger-assistant-chat) .portal-ai-clear-chat-button,
+body[data-theme="light"] :is(.floating-messenger, .floating-messenger-assistant-chat) .portal-ai-clear-chat-button:is(:hover, :focus, :focus-visible, :active),
+:is(.floating-messenger, .floating-messenger-assistant-chat) .portal-ai-clear-chat-button,
+:is(.floating-messenger, .floating-messenger-assistant-chat) .portal-ai-clear-chat-button:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 0 0 auto !important;
+  padding: 0 !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  font-size: 0.82rem !important;
+  font-weight: 900 !important;
+  line-height: 1.2 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+  transform: none !important;
+  cursor: pointer !important;
+}
+
+html[data-theme="light"] :is(.floating-messenger, .floating-messenger-assistant-chat) .portal-ai-clear-chat-button::before,
+html[data-theme="light"] :is(.floating-messenger, .floating-messenger-assistant-chat) .portal-ai-clear-chat-button::after,
+body[data-theme="light"] :is(.floating-messenger, .floating-messenger-assistant-chat) .portal-ai-clear-chat-button::before,
+body[data-theme="light"] :is(.floating-messenger, .floating-messenger-assistant-chat) .portal-ai-clear-chat-button::after,
+:is(.floating-messenger, .floating-messenger-assistant-chat) .portal-ai-clear-chat-button::before,
+:is(.floating-messenger, .floating-messenger-assistant-chat) .portal-ai-clear-chat-button::after {
+  display: none !important;
+  content: none !important;
+}
+
+html[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row,
+body[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row,
+:is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 0.7rem !important;
+  margin: 0.78rem 0 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button,
+html[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button:is(:hover, :focus, :focus-visible, :active, :disabled),
+body[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button,
+body[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button:is(:hover, :focus, :focus-visible, :active, :disabled),
+:is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button,
+:is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  order: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 7.6rem !important;
+  width: 7.6rem !important;
+  min-width: 7.6rem !important;
+  max-width: 7.6rem !important;
+  height: 2.3rem !important;
+  min-height: 2.3rem !important;
+  max-height: 2.3rem !important;
+  padding: 0.5rem 0.85rem !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 0.76rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  background: #5b1118 !important;
+  background-color: #5b1118 !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  box-shadow: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+  transform: none !important;
+  cursor: pointer !important;
+}
+
+html[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button :is(span, strong, .portal-apply-button-shaky-text),
+body[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button :is(span, strong, .portal-apply-button-shaky-text),
+:is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button :is(span, strong, .portal-apply-button-shaky-text) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button::before,
+html[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button::after,
+body[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button::before,
+body[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button::after,
+:is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button::before,
+:is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button::after {
+  display: none !important;
+  content: none !important;
+}
+
+html[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions,
+body[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions,
+:is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions {
+  order: 2 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  flex: 1 1 auto !important;
+  gap: 0.28rem !important;
+  min-width: 0 !important;
+  margin: 0 0 0 auto !important;
+  padding: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions .job-post-reaction-button,
+html[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions .job-post-reaction-button:is(:hover, :focus, :focus-visible, :active, .active),
+body[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions .job-post-reaction-button,
+body[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions .job-post-reaction-button:is(:hover, :focus, :focus-visible, :active, .active),
+:is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions .job-post-reaction-button,
+:is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions .job-post-reaction-button:is(:hover, :focus, :focus-visible, :active, .active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 1.45rem !important;
+  width: 1.45rem !important;
+  min-width: 1.45rem !important;
+  max-width: 1.45rem !important;
+  height: 1.45rem !important;
+  min-height: 1.45rem !important;
+  max-height: 1.45rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  outline: 0 !important;
+  text-shadow: none !important;
+  transform: none !important;
+  cursor: pointer !important;
+}
+
+html[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions .job-post-reaction-button::before,
+html[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions .job-post-reaction-button::after,
+body[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions .job-post-reaction-button::before,
+body[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions .job-post-reaction-button::after,
+:is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions .job-post-reaction-button::before,
+:is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions .job-post-reaction-button::after {
+  display: none !important;
+  content: none !important;
+}
+
+html[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions .job-post-reaction-button :is(svg, path, span:not(.portal-reaction-tooltip), strong),
+body[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions .job-post-reaction-button :is(svg, path, span:not(.portal-reaction-tooltip), strong),
+:is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions .job-post-reaction-button :is(svg, path, span:not(.portal-reaction-tooltip), strong) {
+  color: currentColor !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-like-reaction.active,
+html[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-like-reaction[aria-pressed="true"],
+body[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-like-reaction.active,
+body[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-like-reaction[aria-pressed="true"],
+:is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-like-reaction.active,
+:is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-like-reaction[aria-pressed="true"] {
+  color: #168a45 !important;
+  -webkit-text-fill-color: #168a45 !important;
+}
+
+html[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-bookmark-reaction.active,
+html[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-bookmark-reaction[aria-pressed="true"],
+body[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-bookmark-reaction.active,
+body[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-bookmark-reaction[aria-pressed="true"],
+:is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-bookmark-reaction.active,
+:is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-bookmark-reaction[aria-pressed="true"] {
+  color: #f5b82e !important;
+  -webkit-text-fill-color: #f5b82e !important;
+}
+
+html[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-review-reaction.active,
+body[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-review-reaction.active,
+:is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-review-reaction.active {
+  color: #0f766e !important;
+  -webkit-text-fill-color: #0f766e !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row,
+  body[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row,
+  :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row {
+    gap: 0.4rem !important;
+  }
+
+  html[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button,
+  body[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button,
+  :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button {
+    flex-basis: 6.9rem !important;
+    width: 6.9rem !important;
+    min-width: 6.9rem !important;
+    max-width: 6.9rem !important;
+    height: 2.2rem !important;
+    min-height: 2.2rem !important;
+    max-height: 2.2rem !important;
+    font-size: 0.7rem !important;
+  }
+
+  html[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions,
+  body[data-theme="light"] :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions,
+  :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions {
+    gap: 0.18rem !important;
+  }
+}
+
+/* Light mode: remove the global button chrome/ring layer across both portals. */
+html[data-theme="light"] body[data-theme="light"] #root :is(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a.button,
+  a[class*="-button"],
+  a[class*="button-"],
+  [role="button"]
+),
+html[data-theme="light"] body[data-theme="light"] #root :is(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a.button,
+  a[class*="-button"],
+  a[class*="button-"],
+  [role="button"]
+):is(:hover, :focus, :focus-visible, :active, .active, .is-active, [aria-pressed="true"], :disabled),
+html[data-theme="light"] #root :is(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a.button,
+  a[class*="-button"],
+  a[class*="button-"],
+  [role="button"]
+),
+html[data-theme="light"] #root :is(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a.button,
+  a[class*="-button"],
+  a[class*="button-"],
+  [role="button"]
+):is(:hover, :focus, :focus-visible, :active, .active, .is-active, [aria-pressed="true"], :disabled),
+body[data-theme="light"] #root :is(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a.button,
+  a[class*="-button"],
+  a[class*="button-"],
+  [role="button"]
+),
+body[data-theme="light"] #root :is(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a.button,
+  a[class*="-button"],
+  a[class*="button-"],
+  [role="button"]
+):is(:hover, :focus, :focus-visible, :active, .active, .is-active, [aria-pressed="true"], :disabled) {
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  filter: none !important;
+  text-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a.button,
+  a[class*="-button"],
+  a[class*="button-"],
+  [role="button"]
+)::before,
+html[data-theme="light"] body[data-theme="light"] #root :is(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a.button,
+  a[class*="-button"],
+  a[class*="button-"],
+  [role="button"]
+)::after,
+html[data-theme="light"] #root :is(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a.button,
+  a[class*="-button"],
+  a[class*="button-"],
+  [role="button"]
+)::before,
+html[data-theme="light"] #root :is(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a.button,
+  a[class*="-button"],
+  a[class*="button-"],
+  [role="button"]
+)::after,
+body[data-theme="light"] #root :is(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a.button,
+  a[class*="-button"],
+  a[class*="button-"],
+  [role="button"]
+)::before,
+body[data-theme="light"] #root :is(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a.button,
+  a[class*="-button"],
+  a[class*="button-"],
+  [role="button"]
+)::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  opacity: 0 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a.button,
+  a[class*="-button"],
+  a[class*="button-"],
+  [role="button"]
+) :is(svg, path, span, strong, i),
+html[data-theme="light"] #root :is(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a.button,
+  a[class*="-button"],
+  a[class*="button-"],
+  [role="button"]
+) :is(svg, path, span, strong, i),
+body[data-theme="light"] #root :is(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a.button,
+  a[class*="-button"],
+  a[class*="button-"],
+  [role="button"]
+) :is(svg, path, span, strong, i) {
+  -webkit-text-fill-color: currentColor !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(
+  button,
+  a.button,
+  a[class*="-button"],
+  a[class*="button-"],
+  [role="button"]
+):focus-visible,
+html[data-theme="light"] #root :is(
+  button,
+  a.button,
+  a[class*="-button"],
+  a[class*="button-"],
+  [role="button"]
+):focus-visible,
+body[data-theme="light"] #root :is(
+  button,
+  a.button,
+  a[class*="-button"],
+  a[class*="button-"],
+  [role="button"]
+):focus-visible {
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.portal-post-action-row, .portal-post-action-cluster, .portal-post-reactions, .job-post-action-reactions, .portal-candidate-job-action-row, .page-footer-actions, .section-footer-nav, .floating-messenger-chat-actions),
+html[data-theme="light"] #root :is(.portal-post-action-row, .portal-post-action-cluster, .portal-post-reactions, .job-post-action-reactions, .portal-candidate-job-action-row, .page-footer-actions, .section-footer-nav, .floating-messenger-chat-actions),
+body[data-theme="light"] #root :is(.portal-post-action-row, .portal-post-action-cluster, .portal-post-reactions, .job-post-action-reactions, .portal-candidate-job-action-row, .page-footer-actions, .section-footer-nav, .floating-messenger-chat-actions) {
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme="light"] body[data-theme="light"] #root :is(.main-content.mobile-section-inbox, .mobile-section-inbox) :is(.messenger-inbox > .page-footer-actions, .mobile-section-fallback-footer, .section-footer-nav.mobile-subpage-return) .back-button::before,
+  html[data-theme="light"] #root :is(.main-content.mobile-section-inbox, .mobile-section-inbox) :is(.messenger-inbox > .page-footer-actions, .mobile-section-fallback-footer, .section-footer-nav.mobile-subpage-return) .back-button::before,
+  body[data-theme="light"] #root :is(.main-content.mobile-section-inbox, .mobile-section-inbox) :is(.messenger-inbox > .page-footer-actions, .mobile-section-fallback-footer, .section-footer-nav.mobile-subpage-return) .back-button::before {
+    content: "<" !important;
+    display: block !important;
+    opacity: 1 !important;
+    color: #111111 !important;
+    -webkit-text-fill-color: #111111 !important;
+    font-size: 1.4rem !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+  }
+}
+
+/* Light mode: requested final color/fill corrections for screenshots 119 and 121-127. */
+html[data-theme="light"] body[data-theme="light"] #root :is(
+  .settings-container .settings-button.primary,
+  .employer-settings-container .settings-button.primary,
+  .job-interest-modal .settings-button.primary,
+  .interested-job-suggestion-section .settings-button.primary
+),
+html[data-theme="light"] body[data-theme="light"] #root :is(
+  .settings-container .settings-button.primary,
+  .employer-settings-container .settings-button.primary,
+  .job-interest-modal .settings-button.primary,
+  .interested-job-suggestion-section .settings-button.primary
+):is(:hover, :focus, :focus-visible, :active, :disabled),
+html[data-theme="light"] #root :is(
+  .settings-container .settings-button.primary,
+  .employer-settings-container .settings-button.primary,
+  .job-interest-modal .settings-button.primary,
+  .interested-job-suggestion-section .settings-button.primary
+),
+html[data-theme="light"] #root :is(
+  .settings-container .settings-button.primary,
+  .employer-settings-container .settings-button.primary,
+  .job-interest-modal .settings-button.primary,
+  .interested-job-suggestion-section .settings-button.primary
+):is(:hover, :focus, :focus-visible, :active, :disabled),
+body[data-theme="light"] #root :is(
+  .settings-container .settings-button.primary,
+  .employer-settings-container .settings-button.primary,
+  .job-interest-modal .settings-button.primary,
+  .interested-job-suggestion-section .settings-button.primary
+),
+body[data-theme="light"] #root :is(
+  .settings-container .settings-button.primary,
+  .employer-settings-container .settings-button.primary,
+  .job-interest-modal .settings-button.primary,
+  .interested-job-suggestion-section .settings-button.primary
+):is(:hover, :focus, :focus-visible, :active, :disabled) {
+  background: #5b1118 !important;
+  background-color: #5b1118 !important;
+  background-image: none !important;
+  border: 1px solid #5b1118 !important;
+  border-color: #5b1118 !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(
+  .settings-container .settings-button.primary,
+  .employer-settings-container .settings-button.primary,
+  .job-interest-modal .settings-button.primary,
+  .interested-job-suggestion-section .settings-button.primary
+) :is(span, strong, svg, path),
+html[data-theme="light"] #root :is(
+  .settings-container .settings-button.primary,
+  .employer-settings-container .settings-button.primary,
+  .job-interest-modal .settings-button.primary,
+  .interested-job-suggestion-section .settings-button.primary
+) :is(span, strong, svg, path),
+body[data-theme="light"] #root :is(
+  .settings-container .settings-button.primary,
+  .employer-settings-container .settings-button.primary,
+  .job-interest-modal .settings-button.primary,
+  .interested-job-suggestion-section .settings-button.primary
+) :is(span, strong, svg, path) {
+  color: #ffffff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button,
+html[data-theme="light"] body[data-theme="light"] #root :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button:is(:hover, :focus, :focus-visible, :active, :disabled),
+html[data-theme="light"] #root :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button,
+html[data-theme="light"] #root :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button:is(:hover, :focus, :focus-visible, :active, :disabled),
+body[data-theme="light"] #root :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button,
+body[data-theme="light"] #root :is(.portal-home-feed, .portal-candidate-feed) .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  background: #5b1118 !important;
+  background-color: #5b1118 !important;
+  border: 1px solid #5b1118 !important;
+  border-color: #5b1118 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.resume-playground-toolbar-shell, .resume-playground-toolbar, .resume-playground-toolbar-row, .resume-playground-toolbar-row-fixed, .resume-playground-toolbar-row-scroll),
+html[data-theme="light"] #root :is(.resume-playground-toolbar-shell, .resume-playground-toolbar, .resume-playground-toolbar-row, .resume-playground-toolbar-row-fixed, .resume-playground-toolbar-row-scroll),
+body[data-theme="light"] #root :is(.resume-playground-toolbar-shell, .resume-playground-toolbar, .resume-playground-toolbar-row, .resume-playground-toolbar-row-fixed, .resume-playground-toolbar-row-scroll) {
+  background: #ded7cb !important;
+  background-color: #ded7cb !important;
+  border-color: #cfc6b8 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.resume-playground-editor-canvas, .resume-playground-editor-workbench, .resume-playground-editor-workbench-scale-box, .resume-playground-editor-pages-stack, .resume-playground-editor-page-layer),
+html[data-theme="light"] #root :is(.resume-playground-editor-canvas, .resume-playground-editor-workbench, .resume-playground-editor-workbench-scale-box, .resume-playground-editor-pages-stack, .resume-playground-editor-page-layer),
+body[data-theme="light"] #root :is(.resume-playground-editor-canvas, .resume-playground-editor-workbench, .resume-playground-editor-workbench-scale-box, .resume-playground-editor-pages-stack, .resume-playground-editor-page-layer) {
+  background: #d8d2c6 !important;
+  background-color: #d8d2c6 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.resume-playground-editor-page-frame, .resume-playground-editor-document),
+html[data-theme="light"] #root :is(.resume-playground-editor-page-frame, .resume-playground-editor-document),
+body[data-theme="light"] #root :is(.resume-playground-editor-page-frame, .resume-playground-editor-document) {
+  background: #fbf7ef !important;
+  background-color: #fbf7ef !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .profile-container :is(.profile-header, .profile-picture-panel, .profile-header-actions),
+html[data-theme="light"] #root .profile-container :is(.profile-header, .profile-picture-panel, .profile-header-actions),
+body[data-theme="light"] #root .profile-container :is(.profile-header, .profile-picture-panel, .profile-header-actions) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .profile-container .profile-header,
+html[data-theme="light"] #root .profile-container .profile-header,
+body[data-theme="light"] #root .profile-container .profile-header {
+  border: 0 !important;
+  padding: 0 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.main-content.mobile-section-inbox, .mobile-section-inbox) :is(.messenger-inbox > .page-footer-actions, .mobile-section-fallback-footer, .section-footer-nav.mobile-subpage-return),
+html[data-theme="light"] #root :is(.main-content.mobile-section-inbox, .mobile-section-inbox) :is(.messenger-inbox > .page-footer-actions, .mobile-section-fallback-footer, .section-footer-nav.mobile-subpage-return),
+body[data-theme="light"] #root :is(.main-content.mobile-section-inbox, .mobile-section-inbox) :is(.messenger-inbox > .page-footer-actions, .mobile-section-fallback-footer, .section-footer-nav.mobile-subpage-return) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.floating-messenger-chat, .floating-messenger-assistant-chat, .floating-messenger-assistant-chat .public-ai-chat-card, .floating-messenger-assistant-chat .portal-ai-chat-card, .floating-messenger-assistant-chat .public-ai-chat-messages),
+html[data-theme="light"] #root :is(.floating-messenger-chat, .floating-messenger-assistant-chat, .floating-messenger-assistant-chat .public-ai-chat-card, .floating-messenger-assistant-chat .portal-ai-chat-card, .floating-messenger-assistant-chat .public-ai-chat-messages),
+body[data-theme="light"] #root :is(.floating-messenger-chat, .floating-messenger-assistant-chat, .floating-messenger-assistant-chat .public-ai-chat-card, .floating-messenger-assistant-chat .portal-ai-chat-card, .floating-messenger-assistant-chat .public-ai-chat-messages) {
+  background: #e5dccd !important;
+  background-color: #e5dccd !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back, .portal-ai-clear-chat-button),
+html[data-theme="light"] body[data-theme="light"] #root :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back, .portal-ai-clear-chat-button):is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] #root :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back, .portal-ai-clear-chat-button),
+html[data-theme="light"] #root :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back, .portal-ai-clear-chat-button):is(:hover, :focus, :focus-visible, :active),
+body[data-theme="light"] #root :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back, .portal-ai-clear-chat-button),
+body[data-theme="light"] #root :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back, .portal-ai-clear-chat-button):is(:hover, :focus, :focus-visible, :active) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-color: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  outline: 0 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .floating-messenger .floating-messenger-mobile-back,
+html[data-theme="light"] #root .floating-messenger .floating-messenger-mobile-back,
+body[data-theme="light"] #root .floating-messenger .floating-messenger-mobile-back {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .floating-messenger-assistant-chat .public-ai-chat-header,
+html[data-theme="light"] #root .floating-messenger-assistant-chat .public-ai-chat-header,
+body[data-theme="light"] #root .floating-messenger-assistant-chat .public-ai-chat-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 0.75rem !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding-inline: 0.6rem !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .floating-messenger-assistant-chat .portal-ai-clear-chat-button,
+html[data-theme="light"] #root .floating-messenger-assistant-chat .portal-ai-clear-chat-button,
+body[data-theme="light"] #root .floating-messenger-assistant-chat .portal-ai-clear-chat-button {
+  margin-left: auto !important;
+  padding: 0 !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  text-align: right !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.floating-messenger-message.is-own, .message-bubble.sent, .chat-message.sent),
+html[data-theme="light"] #root :is(.floating-messenger-message.is-own, .message-bubble.sent, .chat-message.sent),
+body[data-theme="light"] #root :is(.floating-messenger-message.is-own, .message-bubble.sent, .chat-message.sent) {
+  background: #a94f18 !important;
+  background-color: #a94f18 !important;
+  border-color: #a94f18 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.floating-messenger-message.is-own, .message-bubble.sent, .chat-message.sent) :is(.floating-messenger-message-meta, .floating-messenger-message-body, p, span, strong, em, time),
+html[data-theme="light"] #root :is(.floating-messenger-message.is-own, .message-bubble.sent, .chat-message.sent) :is(.floating-messenger-message-meta, .floating-messenger-message-body, p, span, strong, em, time),
+body[data-theme="light"] #root :is(.floating-messenger-message.is-own, .message-bubble.sent, .chat-message.sent) :is(.floating-messenger-message-meta, .floating-messenger-message-body, p, span, strong, em, time) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Light mode: final corrections for screenshots 128-131. */
+html[data-theme="light"] body[data-theme="light"] #root .resume-playground-editor-mobile-overlay :is(
+  .resume-playground-toolbar-shell,
+  .resume-playground-toolbar,
+  .resume-playground-toolbar-row,
+  .resume-playground-toolbar-row-fixed,
+  .resume-playground-toolbar-row-scroll
+),
+html[data-theme="light"] #root .resume-playground-editor-mobile-overlay :is(
+  .resume-playground-toolbar-shell,
+  .resume-playground-toolbar,
+  .resume-playground-toolbar-row,
+  .resume-playground-toolbar-row-fixed,
+  .resume-playground-toolbar-row-scroll
+),
+body[data-theme="light"] #root .resume-playground-editor-mobile-overlay :is(
+  .resume-playground-toolbar-shell,
+  .resume-playground-toolbar,
+  .resume-playground-toolbar-row,
+  .resume-playground-toolbar-row-fixed,
+  .resume-playground-toolbar-row-scroll
+),
+html[data-theme="light"] body[data-theme="light"] #root :is(
+  .resume-playground-toolbar-shell,
+  .resume-playground-toolbar,
+  .resume-playground-toolbar-row,
+  .resume-playground-toolbar-row-fixed,
+  .resume-playground-toolbar-row-scroll
+),
+html[data-theme="light"] #root :is(
+  .resume-playground-toolbar-shell,
+  .resume-playground-toolbar,
+  .resume-playground-toolbar-row,
+  .resume-playground-toolbar-row-fixed,
+  .resume-playground-toolbar-row-scroll
+),
+body[data-theme="light"] #root :is(
+  .resume-playground-toolbar-shell,
+  .resume-playground-toolbar,
+  .resume-playground-toolbar-row,
+  .resume-playground-toolbar-row-fixed,
+  .resume-playground-toolbar-row-scroll
+) {
+  background: #ded7cb !important;
+  background-color: #ded7cb !important;
+  background-image: none !important;
+  border-color: #cfc6b8 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.resume-playground-toolbar-row, .resume-playground-toolbar-row-fixed, .resume-playground-toolbar-row-scroll)::before,
+html[data-theme="light"] body[data-theme="light"] #root :is(.resume-playground-toolbar-row, .resume-playground-toolbar-row-fixed, .resume-playground-toolbar-row-scroll)::after,
+html[data-theme="light"] #root :is(.resume-playground-toolbar-row, .resume-playground-toolbar-row-fixed, .resume-playground-toolbar-row-scroll)::before,
+html[data-theme="light"] #root :is(.resume-playground-toolbar-row, .resume-playground-toolbar-row-fixed, .resume-playground-toolbar-row-scroll)::after,
+body[data-theme="light"] #root :is(.resume-playground-toolbar-row, .resume-playground-toolbar-row-fixed, .resume-playground-toolbar-row-scroll)::before,
+body[data-theme="light"] #root :is(.resume-playground-toolbar-row, .resume-playground-toolbar-row-fixed, .resume-playground-toolbar-row-scroll)::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.portal-home-feed > .portal-home-tabs, .portal-home-tabs),
+html[data-theme="light"] #root :is(.portal-home-feed > .portal-home-tabs, .portal-home-tabs),
+body[data-theme="light"] #root :is(.portal-home-feed > .portal-home-tabs, .portal-home-tabs) {
+  background: rgba(250, 247, 239, 0.44) !important;
+  background-color: rgba(250, 247, 239, 0.44) !important;
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.52), rgba(218, 210, 197, 0.28)) !important;
+  border: 1px solid rgba(92, 70, 53, 0.16) !important;
+  box-shadow: 0 10px 22px rgba(59, 42, 30, 0.08) !important;
+  backdrop-filter: blur(12px) saturate(1.18) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(1.18) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .portal-title-jello-text,
+html[data-theme="light"] #root .portal-title-jello-text,
+body[data-theme="light"] #root .portal-title-jello-text {
+  background: rgba(128, 83, 60, 0.28) !important;
+  background-color: rgba(128, 83, 60, 0.28) !important;
+  background-image: none !important;
+  border: 1px solid rgba(128, 83, 60, 0.24) !important;
+  border-color: rgba(128, 83, 60, 0.24) !important;
+  box-shadow: none !important;
+  color: #3a2116 !important;
+  -webkit-text-fill-color: #3a2116 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.portal-publish-button, .settings-button.primary.portal-publish-button),
+html[data-theme="light"] body[data-theme="light"] #root :is(.portal-publish-button, .settings-button.primary.portal-publish-button):is(:hover, :focus, :focus-visible, :active, :disabled),
+html[data-theme="light"] #root :is(.portal-publish-button, .settings-button.primary.portal-publish-button),
+html[data-theme="light"] #root :is(.portal-publish-button, .settings-button.primary.portal-publish-button):is(:hover, :focus, :focus-visible, :active, :disabled),
+body[data-theme="light"] #root :is(.portal-publish-button, .settings-button.primary.portal-publish-button),
+body[data-theme="light"] #root :is(.portal-publish-button, .settings-button.primary.portal-publish-button):is(:hover, :focus, :focus-visible, :active, :disabled),
+html[data-theme="light"] body[data-theme="light"] #root :is(.portal-view-job-button, .sky-apply-button, button.sky-apply-button),
+html[data-theme="light"] body[data-theme="light"] #root :is(.portal-view-job-button, .sky-apply-button, button.sky-apply-button):is(:hover, :focus, :focus-visible, :active, :disabled),
+html[data-theme="light"] #root :is(.portal-view-job-button, .sky-apply-button, button.sky-apply-button),
+html[data-theme="light"] #root :is(.portal-view-job-button, .sky-apply-button, button.sky-apply-button):is(:hover, :focus, :focus-visible, :active, :disabled),
+body[data-theme="light"] #root :is(.portal-view-job-button, .sky-apply-button, button.sky-apply-button),
+body[data-theme="light"] #root :is(.portal-view-job-button, .sky-apply-button, button.sky-apply-button):is(:hover, :focus, :focus-visible, :active, :disabled) {
+  background: #5b1118 !important;
+  background-color: #5b1118 !important;
+  background-image: none !important;
+  border: 1px solid #5b1118 !important;
+  border-color: #5b1118 !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.portal-publish-button, .portal-view-job-button, .sky-apply-button, button.sky-apply-button) :is(span, strong, svg, path, .portal-apply-button-shaky-text),
+html[data-theme="light"] #root :is(.portal-publish-button, .portal-view-job-button, .sky-apply-button, button.sky-apply-button) :is(span, strong, svg, path, .portal-apply-button-shaky-text),
+body[data-theme="light"] #root :is(.portal-publish-button, .portal-view-job-button, .sky-apply-button, button.sky-apply-button) :is(span, strong, svg, path, .portal-apply-button-shaky-text) {
+  color: #ffffff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+}

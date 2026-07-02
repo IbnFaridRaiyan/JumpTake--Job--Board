@@ -59989,26 +59989,26 @@ html[data-theme="light"] body[data-theme="light"] :is(
 
 @keyframes jumptake-logo-soft-motion {
   0%,
-  4%,
-  18%,
+  2%,
+  9%,
   100% {
-    transform: translateZ(0) skew(0deg, 0deg) scale(1);
+    transform: translate3d(0, 0, 0) skew(0deg, 0deg) scale(1);
   }
 
-  7% {
-    transform: translateZ(0) skew(-0.56deg, -0.22deg) scale(1.003);
+  3.4% {
+    transform: translate3d(1.35px, -0.85px, 0) skew(-1.08deg, -0.42deg) scale(1.006);
   }
 
-  10% {
-    transform: translateZ(0) skew(0.29deg, 0.11deg) scale(1.0015);
+  5.1% {
+    transform: translate3d(-0.95px, 0.65px, 0) skew(0.58deg, 0.22deg) scale(1.003);
   }
 
-  13% {
-    transform: translateZ(0) skew(-0.13deg, -0.05deg) scale(1);
+  6.8% {
+    transform: translate3d(0.45px, -0.28px, 0) skew(-0.24deg, -0.1deg) scale(1.0015);
   }
 
-  16% {
-    transform: translateZ(0) skew(0.05deg, 0.02deg) scale(1);
+  8.4% {
+    transform: translate3d(-0.16px, 0.1px, 0) skew(0.08deg, 0.03deg) scale(1);
   }
 }
 
@@ -60041,7 +60041,7 @@ html[data-theme="light"] body[data-theme="light"] .dashboard-header :is(.candida
 html[data-theme="light"] body[data-theme="light"] .dashboard-logo-button :is(.candidate-dashboard-logo, .employer-dashboard-logo),
 html[data-theme="light"] body[data-theme="light"] .dashboard-header .dashboard-logo-button img,
 html[data-theme="light"] body[data-theme="light"] .portal-dashboard-identity .dashboard-logo-button img {
-  animation: jumptake-logo-soft-motion 5.45s ease-in-out 0.9s infinite both !important;
+  animation: jumptake-logo-soft-motion 16.6s ease-in-out 0.9s infinite both !important;
   transform-origin: center !important;
   will-change: transform !important;
 }
@@ -61015,4 +61015,1956 @@ html[data-theme="light"] .portal-home-tabs :is(.portal-home-tab-my-feed, .portal
   fill: currentColor !important;
   stroke: currentColor !important;
   -webkit-text-fill-color: currentColor !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content.mobile-section-job-feed .portal-home-feed > .portal-home-tabs,
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content.mobile-section-home-feed .portal-home-feed > .portal-home-tabs,
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content.mobile-section-job-feed .portal-home-feed.is-tabs-hidden > .portal-home-tabs,
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content.mobile-section-home-feed .portal-home-feed.is-tabs-hidden > .portal-home-tabs {
+    background: #ded7cb !important;
+    background-color: #ded7cb !important;
+    background-image: none !important;
+    border: 1px solid rgba(82, 56, 42, 0.18) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      0 10px 22px rgba(82, 56, 42, 0.16) !important;
+    backdrop-filter: blur(14px) saturate(135%) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(135%) !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content.mobile-section-job-feed .portal-home-feed > .portal-home-tabs .portal-home-tab,
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content.mobile-section-home-feed .portal-home-feed > .portal-home-tabs .portal-home-tab {
+    background: #faf8f2 !important;
+    background-color: #faf8f2 !important;
+    border: 1px solid rgba(82, 56, 42, 0.2) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+    color: #17362f !important;
+    -webkit-text-fill-color: #17362f !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content.mobile-section-job-feed .portal-home-feed > .portal-home-tabs .portal-home-tab :is(svg, path, i, .icon, span),
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content.mobile-section-home-feed .portal-home-feed > .portal-home-tabs .portal-home-tab :is(svg, path, i, .icon, span) {
+    color: #17362f !important;
+    fill: currentColor !important;
+    stroke: currentColor !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tabs .portal-home-tab:not(.active):not(:hover):not(:focus-visible) {
+  color: #17362f !important;
+  -webkit-text-fill-color: #17362f !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tabs .portal-home-tab:not(.active):not(:hover):not(:focus-visible) span {
+  color: #17362f !important;
+  -webkit-text-fill-color: #17362f !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tabs .portal-home-tab-work-news:not(.active):not(:hover):not(:focus-visible) :is(svg, path, i, .icon) {
+  color: #3b2118 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tabs :is(.portal-home-tab-job-posts, .portal-home-tab-my-job-posts):not(.active):not(:hover):not(:focus-visible) :is(svg, path, i, .icon) {
+  color: #123d72 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tabs .portal-home-tab-talent-stories:not(.active):not(:hover):not(:focus-visible) :is(svg, path, i, .icon) {
+  color: #7a5708 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tabs .portal-home-tab-create-story:not(.active):not(:hover):not(:focus-visible) :is(svg, path, i, .icon) {
+  color: #4b5563 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tabs .portal-home-tab-my-feed:not(.active):not(:hover):not(:focus-visible) :is(svg, path, i, .icon) {
+  color: #9a3f0d !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tabs .portal-home-tab-create-post:not(.active):not(:hover):not(:focus-visible) :is(svg, path, i, .icon) {
+  color: #14532d !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tabs .portal-home-tab-my-company-posts:not(.active):not(:hover):not(:focus-visible) :is(svg, path, i, .icon) {
+  color: #3b2118 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-home-tabs .portal-home-tab:is(.active, :hover, :focus-visible),
+html[data-theme="light"] body[data-theme="light"] .portal-home-tabs .portal-home-tab:is(.active, :hover, :focus-visible) :is(svg, path, i, .icon, span) {
+  color: var(--tab-accent, #d17842) !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab:not(.active):not(:hover):not(:focus-visible) > svg,
+html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab:not(.active):not(:hover):not(:focus-visible) > svg path,
+html[data-theme="light"] body[data-theme="light"] .dashboard-container .portal-home-feed .portal-home-tabs .portal-home-tab:not(.active):not(:hover):not(:focus-visible) > svg,
+html[data-theme="light"] body[data-theme="light"] .dashboard-container .portal-home-feed .portal-home-tabs .portal-home-tab:not(.active):not(:hover):not(:focus-visible) > svg path,
+html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab:not(.active):not(:hover):not(:focus-visible) > svg,
+html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab:not(.active):not(:hover):not(:focus-visible) > svg path,
+html[data-theme="light"] .dashboard-container .portal-home-feed .portal-home-tabs .portal-home-tab:not(.active):not(:hover):not(:focus-visible) > svg,
+html[data-theme="light"] .dashboard-container .portal-home-feed .portal-home-tabs .portal-home-tab:not(.active):not(:hover):not(:focus-visible) > svg path {
+  color: var(--tab-inactive-icon, #17362f) !important;
+  fill: var(--tab-inactive-icon, #17362f) !important;
+  stroke: var(--tab-inactive-icon, #17362f) !important;
+  -webkit-text-fill-color: var(--tab-inactive-icon, #17362f) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, :hover, :focus-visible) > svg,
+html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, :hover, :focus-visible) > svg path,
+html[data-theme="light"] body[data-theme="light"] .dashboard-container .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, :hover, :focus-visible) > svg,
+html[data-theme="light"] body[data-theme="light"] .dashboard-container .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, :hover, :focus-visible) > svg path,
+html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, :hover, :focus-visible) > svg,
+html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, :hover, :focus-visible) > svg path,
+html[data-theme="light"] .dashboard-container .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, :hover, :focus-visible) > svg,
+html[data-theme="light"] .dashboard-container .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, :hover, :focus-visible) > svg path {
+  color: var(--tab-accent, #d17842) !important;
+  fill: var(--tab-accent, #d17842) !important;
+  stroke: var(--tab-accent, #d17842) !important;
+  -webkit-text-fill-color: var(--tab-accent, #d17842) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab > svg,
+html[data-theme="light"] body[data-theme="light"] .dashboard-container .portal-home-feed .portal-home-tabs .portal-home-tab > svg,
+html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab > svg,
+html[data-theme="light"] .dashboard-container .portal-home-feed .portal-home-tabs .portal-home-tab > svg {
+  filter: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab > svg path,
+html[data-theme="light"] body[data-theme="light"] .dashboard-container .portal-home-feed .portal-home-tabs .portal-home-tab > svg path,
+html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab > svg path,
+html[data-theme="light"] .dashboard-container .portal-home-feed .portal-home-tabs .portal-home-tab > svg path {
+  stroke: none !important;
+  stroke-width: 0 !important;
+  paint-order: normal !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-my-company-posts):is(.active, :hover, :focus-visible) > svg path,
+html[data-theme="light"] body[data-theme="light"] .dashboard-container .portal-home-feed .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-my-company-posts):is(.active, :hover, :focus-visible) > svg path,
+html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-my-company-posts):is(.active, :hover, :focus-visible) > svg path,
+html[data-theme="light"] .dashboard-container .portal-home-feed .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-my-company-posts):is(.active, :hover, :focus-visible) > svg path {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #3b2118 !important;
+  stroke-width: 0.72px !important;
+  paint-order: stroke fill !important;
+  vector-effect: non-scaling-stroke !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab,
+html[data-theme="light"] body[data-theme="light"] .dashboard-container .portal-home-feed .portal-home-tabs .portal-home-tab,
+html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab,
+html[data-theme="light"] .dashboard-container .portal-home-feed .portal-home-tabs .portal-home-tab {
+  border: 0 !important;
+  outline: 0 !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab,
+  html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab {
+    border: 0 !important;
+    outline: 0 !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab::before,
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab::after,
+  html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab::before,
+  html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab::after {
+    display: none !important;
+    content: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, :active, :hover, :focus-visible),
+  html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, :active, :hover, :focus-visible) {
+    color: var(--tab-accent, #d17842) !important;
+    -webkit-text-fill-color: var(--tab-accent, #d17842) !important;
+    background: #fffaf1 !important;
+    background-color: #fffaf1 !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, :active, :hover, :focus-visible) > svg,
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, :active, :hover, :focus-visible) > svg path,
+  html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, :active, :hover, :focus-visible) > svg,
+  html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, :active, :hover, :focus-visible) > svg path {
+    color: var(--tab-accent, #d17842) !important;
+    fill: var(--tab-accent, #d17842) !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+    paint-order: normal !important;
+    -webkit-text-fill-color: var(--tab-accent, #d17842) !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-my-company-posts):is(.active, :active, :hover, :focus-visible) > svg,
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-my-company-posts):is(.active, :active, :hover, :focus-visible) > svg path,
+  html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-my-company-posts):is(.active, :active, :hover, :focus-visible) > svg,
+  html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-my-company-posts):is(.active, :active, :hover, :focus-visible) > svg path {
+    color: #f4fffd !important;
+    fill: #f4fffd !important;
+    stroke: #3b2118 !important;
+    stroke-width: 0.72px !important;
+    paint-order: stroke fill !important;
+    vector-effect: non-scaling-stroke !important;
+    -webkit-text-fill-color: #f4fffd !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab-work-news:is(.active, :active) > svg,
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab-work-news:is(.active, :active) > svg path,
+  html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab-work-news:is(.active, :active) > svg,
+  html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab-work-news:is(.active, :active) > svg path {
+    color: #9b5724 !important;
+    fill: #9b5724 !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+    -webkit-text-fill-color: #9b5724 !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs :is(.portal-home-tab-job-posts, .portal-home-tab-my-job-posts):is(.active, :active) > svg,
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs :is(.portal-home-tab-job-posts, .portal-home-tab-my-job-posts):is(.active, :active) > svg path,
+  html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs :is(.portal-home-tab-job-posts, .portal-home-tab-my-job-posts):is(.active, :active) > svg,
+  html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs :is(.portal-home-tab-job-posts, .portal-home-tab-my-job-posts):is(.active, :active) > svg path {
+    color: #3b82f6 !important;
+    fill: #3b82f6 !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+    -webkit-text-fill-color: #3b82f6 !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab-talent-stories:is(.active, :active) > svg,
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab-talent-stories:is(.active, :active) > svg path,
+  html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab-talent-stories:is(.active, :active) > svg,
+  html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab-talent-stories:is(.active, :active) > svg path {
+    color: #f5b82e !important;
+    fill: #f5b82e !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+    -webkit-text-fill-color: #f5b82e !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab-create-post:is(.active, :active) > svg,
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab-create-post:is(.active, :active) > svg path,
+  html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab-create-post:is(.active, :active) > svg,
+  html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab-create-post:is(.active, :active) > svg path {
+    color: #22c55e !important;
+    fill: #22c55e !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+    -webkit-text-fill-color: #22c55e !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab-my-feed:is(.active, :active) > svg,
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab-my-feed:is(.active, :active) > svg path,
+  html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab-my-feed:is(.active, :active) > svg,
+  html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab-my-feed:is(.active, :active) > svg path {
+    color: #f97316 !important;
+    fill: #f97316 !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+    -webkit-text-fill-color: #f97316 !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-my-company-posts):is(.active, :active) > svg,
+  html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-my-company-posts):is(.active, :active) > svg path,
+  html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-my-company-posts):is(.active, :active) > svg,
+  html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-my-company-posts):is(.active, :active) > svg path {
+    color: #f4fffd !important;
+    fill: #f4fffd !important;
+    stroke: #3b2118 !important;
+    stroke-width: 0.72px !important;
+    paint-order: stroke fill !important;
+    vector-effect: non-scaling-stroke !important;
+    -webkit-text-fill-color: #f4fffd !important;
+  }
+}
+
+html[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab,
+html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+html[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab::before,
+html[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab::after,
+html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab::before,
+html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab::after {
+  display: none !important;
+  content: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab > svg,
+html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab > svg {
+  filter: none !important;
+}
+
+html[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, :active, :hover, :focus-visible),
+html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, :active, :hover, :focus-visible) {
+  color: var(--tab-accent, #d17842) !important;
+  -webkit-text-fill-color: var(--tab-accent, #d17842) !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, :active, :hover, :focus-visible) > svg,
+html[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, :active, :hover, :focus-visible) > svg path,
+html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, :active, :hover, :focus-visible) > svg,
+html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, :active, :hover, :focus-visible) > svg path {
+  color: var(--tab-accent, #d17842) !important;
+  fill: var(--tab-accent, #d17842) !important;
+  stroke: none !important;
+  stroke-width: 0 !important;
+  paint-order: normal !important;
+  -webkit-text-fill-color: var(--tab-accent, #d17842) !important;
+}
+
+html[data-theme="light"] .portal-home-feed .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-my-company-posts):is(.active, :active, :hover, :focus-visible) > svg,
+html[data-theme="light"] .portal-home-feed .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-my-company-posts):is(.active, :active, :hover, :focus-visible) > svg path,
+html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-my-company-posts):is(.active, :active, :hover, :focus-visible) > svg,
+html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-my-company-posts):is(.active, :active, :hover, :focus-visible) > svg path {
+  color: #f4fffd !important;
+  fill: #f4fffd !important;
+  stroke: #3b2118 !important;
+  stroke-width: 0.72px !important;
+  paint-order: stroke fill !important;
+  vector-effect: non-scaling-stroke !important;
+  -webkit-text-fill-color: #f4fffd !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab,
+  html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab {
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+  }
+
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab:is([data-active="true"], :active, :hover, :focus-visible),
+  html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab:is([data-active="true"], :active, :hover, :focus-visible) {
+    color: var(--tab-accent, #d17842) !important;
+    -webkit-text-fill-color: var(--tab-accent, #d17842) !important;
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+  }
+
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab:is([data-active="true"], :active, :hover, :focus-visible) > svg,
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab:is([data-active="true"], :active, :hover, :focus-visible) > svg path,
+  html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab:is([data-active="true"], :active, :hover, :focus-visible) > svg,
+  html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab:is([data-active="true"], :active, :hover, :focus-visible) > svg path {
+    color: var(--tab-accent, #d17842) !important;
+    fill: var(--tab-accent, #d17842) !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+    paint-order: normal !important;
+    -webkit-text-fill-color: var(--tab-accent, #d17842) !important;
+  }
+
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-my-company-posts):is([data-active="true"], :active, :hover, :focus-visible) > svg,
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-my-company-posts):is([data-active="true"], :active, :hover, :focus-visible) > svg path,
+  html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-my-company-posts):is([data-active="true"], :active, :hover, :focus-visible) > svg,
+  html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-my-company-posts):is([data-active="true"], :active, :hover, :focus-visible) > svg path {
+    color: #f4fffd !important;
+    fill: #f4fffd !important;
+    stroke: #3b2118 !important;
+    stroke-width: 0.72px !important;
+    paint-order: stroke fill !important;
+    vector-effect: non-scaling-stroke !important;
+    -webkit-text-fill-color: #f4fffd !important;
+  }
+}
+
+@media (max-width: 768px) {
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs button.portal-home-tab-work-news:is(.active, [data-active="true"], :active, :hover, :focus-visible) > svg,
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs button.portal-home-tab-work-news:is(.active, [data-active="true"], :active, :hover, :focus-visible) > svg path,
+  html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs button.portal-home-tab-work-news:is(.active, [data-active="true"], :active, :hover, :focus-visible) > svg,
+  html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs button.portal-home-tab-work-news:is(.active, [data-active="true"], :active, :hover, :focus-visible) > svg path {
+    color: #9b5724 !important;
+    fill: #9b5724 !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+    -webkit-text-fill-color: #9b5724 !important;
+  }
+
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs button.portal-home-tab-talent-stories:is(.active, [data-active="true"], :active, :hover, :focus-visible) > svg,
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs button.portal-home-tab-talent-stories:is(.active, [data-active="true"], :active, :hover, :focus-visible) > svg path,
+  html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs button.portal-home-tab-talent-stories:is(.active, [data-active="true"], :active, :hover, :focus-visible) > svg,
+  html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs button.portal-home-tab-talent-stories:is(.active, [data-active="true"], :active, :hover, :focus-visible) > svg path {
+    color: #f5b82e !important;
+    fill: #f5b82e !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+    -webkit-text-fill-color: #f5b82e !important;
+  }
+
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs :is(button.portal-home-tab-job-posts, button.portal-home-tab-my-job-posts):is(.active, [data-active="true"], :active, :hover, :focus-visible) > svg,
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs :is(button.portal-home-tab-job-posts, button.portal-home-tab-my-job-posts):is(.active, [data-active="true"], :active, :hover, :focus-visible) > svg path,
+  html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs :is(button.portal-home-tab-job-posts, button.portal-home-tab-my-job-posts):is(.active, [data-active="true"], :active, :hover, :focus-visible) > svg,
+  html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs :is(button.portal-home-tab-job-posts, button.portal-home-tab-my-job-posts):is(.active, [data-active="true"], :active, :hover, :focus-visible) > svg path {
+    color: #3b82f6 !important;
+    fill: #3b82f6 !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+    -webkit-text-fill-color: #3b82f6 !important;
+  }
+
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs button.portal-home-tab-create-post:is(.active, [data-active="true"], :active, :hover, :focus-visible) > svg,
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs button.portal-home-tab-create-post:is(.active, [data-active="true"], :active, :hover, :focus-visible) > svg path,
+  html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs button.portal-home-tab-create-post:is(.active, [data-active="true"], :active, :hover, :focus-visible) > svg,
+  html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs button.portal-home-tab-create-post:is(.active, [data-active="true"], :active, :hover, :focus-visible) > svg path {
+    color: #22c55e !important;
+    fill: #22c55e !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+    -webkit-text-fill-color: #22c55e !important;
+  }
+
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs button.portal-home-tab-my-feed:is(.active, [data-active="true"], :active, :hover, :focus-visible) > svg,
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs button.portal-home-tab-my-feed:is(.active, [data-active="true"], :active, :hover, :focus-visible) > svg path,
+  html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs button.portal-home-tab-my-feed:is(.active, [data-active="true"], :active, :hover, :focus-visible) > svg,
+  html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home-tabs button.portal-home-tab-my-feed:is(.active, [data-active="true"], :active, :hover, :focus-visible) > svg path {
+    color: #f97316 !important;
+    fill: #f97316 !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+    -webkit-text-fill-color: #f97316 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  body[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab,
+  html[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab {
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  body[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab::before,
+  body[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab::after,
+  html[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab::before,
+  html[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab::after {
+    display: none !important;
+    content: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  body[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab > .portal-home-tab-icon,
+  body[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab > .portal-home-tab-icon path,
+  html[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab > .portal-home-tab-icon,
+  html[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab > .portal-home-tab-icon path {
+    color: var(--tab-current-icon, var(--tab-inactive-icon, #17362f)) !important;
+    fill: var(--tab-current-icon, var(--tab-inactive-icon, #17362f)) !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+    filter: none !important;
+    paint-order: normal !important;
+    -webkit-text-fill-color: var(--tab-current-icon, var(--tab-inactive-icon, #17362f)) !important;
+  }
+
+  body[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, [data-active="true"], :active, :hover, :focus-visible),
+  html[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, [data-active="true"], :active, :hover, :focus-visible) {
+    color: var(--tab-accent, #d17842) !important;
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    -webkit-text-fill-color: var(--tab-accent, #d17842) !important;
+  }
+
+  body[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, [data-active="true"], :active, :hover, :focus-visible) > .portal-home-tab-icon,
+  body[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, [data-active="true"], :active, :hover, :focus-visible) > .portal-home-tab-icon path,
+  html[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, [data-active="true"], :active, :hover, :focus-visible) > .portal-home-tab-icon,
+  html[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, [data-active="true"], :active, :hover, :focus-visible) > .portal-home-tab-icon path {
+    color: var(--tab-accent, #d17842) !important;
+    fill: var(--tab-accent, #d17842) !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+    filter: none !important;
+    paint-order: normal !important;
+    -webkit-text-fill-color: var(--tab-accent, #d17842) !important;
+  }
+
+  body[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab-create-story:is(.active, [data-active="true"], :active, :hover, :focus-visible) > .portal-home-tab-icon,
+  body[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab-create-story:is(.active, [data-active="true"], :active, :hover, :focus-visible) > .portal-home-tab-icon path,
+  html[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab-create-story:is(.active, [data-active="true"], :active, :hover, :focus-visible) > .portal-home-tab-icon,
+  html[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab-create-story:is(.active, [data-active="true"], :active, :hover, :focus-visible) > .portal-home-tab-icon path {
+    color: #f4fffd !important;
+    fill: #f4fffd !important;
+    stroke: #4b5563 !important;
+    stroke-width: 0.72px !important;
+    filter: none !important;
+    paint-order: stroke fill !important;
+    vector-effect: non-scaling-stroke !important;
+    -webkit-text-fill-color: #f4fffd !important;
+  }
+
+  body[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab-my-company-posts:is(.active, [data-active="true"], :active, :hover, :focus-visible) > .portal-home-tab-icon,
+  body[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab-my-company-posts:is(.active, [data-active="true"], :active, :hover, :focus-visible) > .portal-home-tab-icon path,
+  html[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab-my-company-posts:is(.active, [data-active="true"], :active, :hover, :focus-visible) > .portal-home-tab-icon,
+  html[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab-my-company-posts:is(.active, [data-active="true"], :active, :hover, :focus-visible) > .portal-home-tab-icon path {
+    color: #9b5724 !important;
+    fill: #9b5724 !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+    filter: none !important;
+    paint-order: normal !important;
+    -webkit-text-fill-color: #9b5724 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  body[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-color-override, .portal-home-tab) > .portal-home-tab-icon,
+  body[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-color-override, .portal-home-tab) > .portal-home-tab-icon path,
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-color-override, .portal-home-tab) > .portal-home-tab-icon,
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-color-override, .portal-home-tab) > .portal-home-tab-icon path {
+    color: var(--tab-current-icon, var(--tab-inactive-icon, #17362f)) !important;
+    fill: var(--tab-current-icon, var(--tab-inactive-icon, #17362f)) !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+    filter: none !important;
+    paint-order: normal !important;
+    -webkit-text-fill-color: var(--tab-current-icon, var(--tab-inactive-icon, #17362f)) !important;
+  }
+
+  body[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-color-override, .portal-home-tab):is(.active, [data-active="true"], :active, :hover, :focus-visible) > .portal-home-tab-icon,
+  body[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-color-override, .portal-home-tab):is(.active, [data-active="true"], :active, :hover, :focus-visible) > .portal-home-tab-icon path,
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-color-override, .portal-home-tab):is(.active, [data-active="true"], :active, :hover, :focus-visible) > .portal-home-tab-icon,
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-color-override, .portal-home-tab):is(.active, [data-active="true"], :active, :hover, :focus-visible) > .portal-home-tab-icon path {
+    color: var(--tab-accent, #d17842) !important;
+    fill: var(--tab-accent, #d17842) !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+    filter: none !important;
+    paint-order: normal !important;
+    -webkit-text-fill-color: var(--tab-accent, #d17842) !important;
+  }
+
+  body[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-color-override, .portal-home-tab-create-story):is(.active, [data-active="true"], :active, :hover, :focus-visible) > .portal-home-tab-icon,
+  body[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-color-override, .portal-home-tab-create-story):is(.active, [data-active="true"], :active, :hover, :focus-visible) > .portal-home-tab-icon path,
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-color-override, .portal-home-tab-create-story):is(.active, [data-active="true"], :active, :hover, :focus-visible) > .portal-home-tab-icon,
+  html[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-color-override, .portal-home-tab-create-story):is(.active, [data-active="true"], :active, :hover, :focus-visible) > .portal-home-tab-icon path {
+    color: #f4fffd !important;
+    fill: #f4fffd !important;
+    stroke: #4b5563 !important;
+    stroke-width: 0.72px !important;
+    filter: none !important;
+    paint-order: stroke fill !important;
+    vector-effect: non-scaling-stroke !important;
+    -webkit-text-fill-color: #f4fffd !important;
+  }
+}
+
+body[data-theme="light"] .portal-home-feed > .portal-home-tabs :is(#portal-home-tab-surface-override, button.portal-home-tab),
+body[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-surface-override, button.portal-home-tab),
+html[data-theme="light"] .portal-home-feed > .portal-home-tabs :is(#portal-home-tab-surface-override, button.portal-home-tab),
+html[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-surface-override, button.portal-home-tab) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+body[data-theme="light"] .portal-home-feed > .portal-home-tabs :is(#portal-home-tab-surface-override, button.portal-home-tab):is(.active, [data-active="true"], :active, :hover, :focus-visible),
+body[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-surface-override, button.portal-home-tab):is(.active, [data-active="true"], :active, :hover, :focus-visible),
+html[data-theme="light"] .portal-home-feed > .portal-home-tabs :is(#portal-home-tab-surface-override, button.portal-home-tab):is(.active, [data-active="true"], :active, :hover, :focus-visible),
+html[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-surface-override, button.portal-home-tab):is(.active, [data-active="true"], :active, :hover, :focus-visible) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+body[data-theme="light"] .portal-home-feed > .portal-home-tabs :is(#portal-home-tab-surface-override, button.portal-home-tab)::before,
+body[data-theme="light"] .portal-home-feed > .portal-home-tabs :is(#portal-home-tab-surface-override, button.portal-home-tab)::after,
+body[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-surface-override, button.portal-home-tab)::before,
+body[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-surface-override, button.portal-home-tab)::after,
+html[data-theme="light"] .portal-home-feed > .portal-home-tabs :is(#portal-home-tab-surface-override, button.portal-home-tab)::before,
+html[data-theme="light"] .portal-home-feed > .portal-home-tabs :is(#portal-home-tab-surface-override, button.portal-home-tab)::after,
+html[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-surface-override, button.portal-home-tab)::before,
+html[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-surface-override, button.portal-home-tab)::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+body[data-theme="light"] .portal-home-feed > .portal-home-tabs,
+body[data-theme="light"] .portal-home-feed .portal-home-tabs,
+html[data-theme="light"] .portal-home-feed > .portal-home-tabs,
+html[data-theme="light"] .portal-home-feed .portal-home-tabs {
+  background: #e9dcc9 !important;
+  background-color: #e9dcc9 !important;
+  background-image: none !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-home-tabs button.portal-home-tab:not(.active):not([data-active="true"]):not(:active):not(:hover):not(:focus-visible) > .portal-home-tab-icon,
+body[data-theme="light"] .portal-home-feed .portal-home-tabs button.portal-home-tab:not(.active):not([data-active="true"]):not(:active):not(:hover):not(:focus-visible) > .portal-home-tab-icon path,
+html[data-theme="light"] .portal-home-feed .portal-home-tabs button.portal-home-tab:not(.active):not([data-active="true"]):not(:active):not(:hover):not(:focus-visible) > .portal-home-tab-icon,
+html[data-theme="light"] .portal-home-feed .portal-home-tabs button.portal-home-tab:not(.active):not([data-active="true"]):not(:active):not(:hover):not(:focus-visible) > .portal-home-tab-icon path {
+  color: #000000 !important;
+  fill: #000000 !important;
+  stroke: none !important;
+  stroke-width: 0 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(
+  #portal-story-action-border-override,
+  .portal-social-post-card .portal-reaction-trigger,
+  .portal-social-post-card .portal-comment-toggle,
+  .portal-social-post-card .portal-share-toggle,
+  .portal-social-post-card .portal-post-delete-toggle,
+  .portal-social-post-card .portal-comment-button,
+  .portal-social-post-card .portal-post-options-button,
+  .portal-social-post-card .portal-reaction-button,
+  .portal-social-post-card .portal-reaction-icon-button,
+  .portal-social-post-card .portal-share-friend,
+  .portal-candidate-job-card .job-post-reaction-button,
+  .portal-candidate-job-card .portal-post-options-button,
+  .portal-job-bookmark-toggle,
+  .bookmark-star-button,
+  .job-card-like-button,
+  .candidate-like-button,
+  .talent-bookmark-button
+),
+html[data-theme="light"] .portal-home-feed :is(
+  #portal-story-action-border-override,
+  .portal-social-post-card .portal-reaction-trigger,
+  .portal-social-post-card .portal-comment-toggle,
+  .portal-social-post-card .portal-share-toggle,
+  .portal-social-post-card .portal-post-delete-toggle,
+  .portal-social-post-card .portal-comment-button,
+  .portal-social-post-card .portal-post-options-button,
+  .portal-social-post-card .portal-reaction-button,
+  .portal-social-post-card .portal-reaction-icon-button,
+  .portal-social-post-card .portal-share-friend,
+  .portal-candidate-job-card .job-post-reaction-button,
+  .portal-candidate-job-card .portal-post-options-button,
+  .portal-job-bookmark-toggle,
+  .bookmark-star-button,
+  .job-card-like-button,
+  .candidate-like-button,
+  .talent-bookmark-button
+),
+body[data-theme="light"] .portal-home-feed :is(
+  #portal-story-action-border-override,
+  .portal-social-post-card .portal-reaction-trigger,
+  .portal-social-post-card .portal-comment-toggle,
+  .portal-social-post-card .portal-share-toggle,
+  .portal-social-post-card .portal-post-delete-toggle,
+  .portal-social-post-card .portal-comment-button,
+  .portal-social-post-card .portal-post-options-button,
+  .portal-social-post-card .portal-reaction-button,
+  .portal-social-post-card .portal-reaction-icon-button,
+  .portal-social-post-card .portal-share-friend,
+  .portal-candidate-job-card .job-post-reaction-button,
+  .portal-candidate-job-card .portal-post-options-button,
+  .portal-job-bookmark-toggle,
+  .bookmark-star-button,
+  .job-card-like-button,
+  .candidate-like-button,
+  .talent-bookmark-button
+):is(:hover, :focus, :focus-visible, :active, .active),
+html[data-theme="light"] .portal-home-feed :is(
+  #portal-story-action-border-override,
+  .portal-social-post-card .portal-reaction-trigger,
+  .portal-social-post-card .portal-comment-toggle,
+  .portal-social-post-card .portal-share-toggle,
+  .portal-social-post-card .portal-post-delete-toggle,
+  .portal-social-post-card .portal-comment-button,
+  .portal-social-post-card .portal-post-options-button,
+  .portal-social-post-card .portal-reaction-button,
+  .portal-social-post-card .portal-reaction-icon-button,
+  .portal-social-post-card .portal-share-friend,
+  .portal-candidate-job-card .job-post-reaction-button,
+  .portal-candidate-job-card .portal-post-options-button,
+  .portal-job-bookmark-toggle,
+  .bookmark-star-button,
+  .job-card-like-button,
+  .candidate-like-button,
+  .talent-bookmark-button
+):is(:hover, :focus, :focus-visible, :active, .active) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-color: transparent !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(
+  #portal-story-action-border-override,
+  .portal-social-post-card .portal-reaction-trigger,
+  .portal-social-post-card .portal-comment-toggle,
+  .portal-social-post-card .portal-share-toggle,
+  .portal-social-post-card .portal-post-delete-toggle,
+  .portal-social-post-card .portal-comment-button,
+  .portal-social-post-card .portal-post-options-button,
+  .portal-social-post-card .portal-reaction-button,
+  .portal-social-post-card .portal-reaction-icon-button,
+  .portal-social-post-card .portal-share-friend,
+  .portal-candidate-job-card .job-post-reaction-button,
+  .portal-candidate-job-card .portal-post-options-button,
+  .portal-job-bookmark-toggle,
+  .bookmark-star-button,
+  .job-card-like-button,
+  .candidate-like-button,
+  .talent-bookmark-button
+)::before,
+body[data-theme="light"] .portal-home-feed :is(
+  #portal-story-action-border-override,
+  .portal-social-post-card .portal-reaction-trigger,
+  .portal-social-post-card .portal-comment-toggle,
+  .portal-social-post-card .portal-share-toggle,
+  .portal-social-post-card .portal-post-delete-toggle,
+  .portal-social-post-card .portal-comment-button,
+  .portal-social-post-card .portal-post-options-button,
+  .portal-social-post-card .portal-reaction-button,
+  .portal-social-post-card .portal-reaction-icon-button,
+  .portal-social-post-card .portal-share-friend,
+  .portal-candidate-job-card .job-post-reaction-button,
+  .portal-candidate-job-card .portal-post-options-button,
+  .portal-job-bookmark-toggle,
+  .bookmark-star-button,
+  .job-card-like-button,
+  .candidate-like-button,
+  .talent-bookmark-button
+)::after,
+html[data-theme="light"] .portal-home-feed :is(
+  #portal-story-action-border-override,
+  .portal-social-post-card .portal-reaction-trigger,
+  .portal-social-post-card .portal-comment-toggle,
+  .portal-social-post-card .portal-share-toggle,
+  .portal-social-post-card .portal-post-delete-toggle,
+  .portal-social-post-card .portal-comment-button,
+  .portal-social-post-card .portal-post-options-button,
+  .portal-social-post-card .portal-reaction-button,
+  .portal-social-post-card .portal-reaction-icon-button,
+  .portal-social-post-card .portal-share-friend,
+  .portal-candidate-job-card .job-post-reaction-button,
+  .portal-candidate-job-card .portal-post-options-button,
+  .portal-job-bookmark-toggle,
+  .bookmark-star-button,
+  .job-card-like-button,
+  .candidate-like-button,
+  .talent-bookmark-button
+)::before,
+html[data-theme="light"] .portal-home-feed :is(
+  #portal-story-action-border-override,
+  .portal-social-post-card .portal-reaction-trigger,
+  .portal-social-post-card .portal-comment-toggle,
+  .portal-social-post-card .portal-share-toggle,
+  .portal-social-post-card .portal-post-delete-toggle,
+  .portal-social-post-card .portal-comment-button,
+  .portal-social-post-card .portal-post-options-button,
+  .portal-social-post-card .portal-reaction-button,
+  .portal-social-post-card .portal-reaction-icon-button,
+  .portal-social-post-card .portal-share-friend,
+  .portal-candidate-job-card .job-post-reaction-button,
+  .portal-candidate-job-card .portal-post-options-button,
+  .portal-job-bookmark-toggle,
+  .bookmark-star-button,
+  .job-card-like-button,
+  .candidate-like-button,
+  .talent-bookmark-button
+)::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(.portal-reaction-trigger-count, .portal-comment-trigger-count),
+html[data-theme="light"] .portal-home-feed :is(.portal-reaction-trigger-count, .portal-comment-trigger-count) {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+@keyframes portalLightReactionRailOpen {
+  0% {
+    opacity: 0;
+    transform: translateY(0.36rem) scale(0.88);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-0.04rem) scale(1.035);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+body[data-theme="light"] .portal-home-feed .portal-post-reactions.portal-reaction-rail.is-popover,
+body[data-theme="light"] .portal-home-feed .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover,
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.portal-reaction-rail.is-popover,
+html[data-theme="light"] .portal-home-feed .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+  gap: 0.34rem !important;
+  height: 2.38rem !important;
+  min-height: 2.38rem !important;
+  max-height: 2.38rem !important;
+  max-width: min(21rem, calc(100vw - 6rem)) !important;
+  padding: 0.28rem 0.42rem !important;
+  border-radius: 999px !important;
+  animation: portalLightReactionRailOpen 420ms cubic-bezier(0.2, 0.88, 0.22, 1.05) both !important;
+  transform-origin: left center !important;
+  will-change: transform, opacity !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover :is(.portal-reaction-item, .icon-content),
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover :is(.portal-reaction-item, .icon-content) {
+  width: 1.92rem !important;
+  min-width: 1.92rem !important;
+  max-width: 1.92rem !important;
+  height: 1.92rem !important;
+  min-height: 1.92rem !important;
+  max-height: 1.92rem !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button,
+body[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button:is(:hover, :focus, :focus-visible, :active, .active, .is-click-animating),
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button,
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button:is(:hover, :focus, :focus-visible, :active, .active, .is-click-animating) {
+  width: 1.92rem !important;
+  min-width: 1.92rem !important;
+  max-width: 1.92rem !important;
+  height: 1.92rem !important;
+  min-height: 1.92rem !important;
+  max-height: 1.92rem !important;
+  transform: none !important;
+  transition: color 260ms ease, transform 260ms ease, opacity 260ms ease !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button svg,
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button svg {
+  width: 1.18rem !important;
+  height: 1.18rem !important;
+  transform: scale(1) !important;
+  transition: transform 280ms cubic-bezier(0.2, 0.88, 0.22, 1.05), color 260ms ease !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button:is(:hover, :focus-visible, .active, .is-click-animating) svg,
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button:is(:hover, :focus-visible, .active, .is-click-animating) svg {
+  transform: scale(1.18) !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(.portal-reaction-button, .portal-reaction-trigger).reaction-like:is(:hover, :focus-visible, :active, .active, .has-reaction, .is-click-animating),
+html[data-theme="light"] .portal-home-feed :is(.portal-reaction-button, .portal-reaction-trigger).reaction-like:is(:hover, :focus-visible, :active, .active, .has-reaction, .is-click-animating) {
+  color: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(.portal-reaction-button, .portal-reaction-trigger).reaction-love:is(:hover, :focus-visible, :active, .active, .has-reaction, .is-click-animating),
+html[data-theme="light"] .portal-home-feed :is(.portal-reaction-button, .portal-reaction-trigger).reaction-love:is(:hover, :focus-visible, :active, .active, .has-reaction, .is-click-animating) {
+  color: #ef4444 !important;
+  -webkit-text-fill-color: #ef4444 !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(.portal-reaction-button, .portal-reaction-trigger).reaction-appreciate:is(:hover, :focus-visible, :active, .active, .has-reaction, .is-click-animating),
+html[data-theme="light"] .portal-home-feed :is(.portal-reaction-button, .portal-reaction-trigger).reaction-appreciate:is(:hover, :focus-visible, :active, .active, .has-reaction, .is-click-animating) {
+  color: #f5b82e !important;
+  -webkit-text-fill-color: #f5b82e !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(.portal-reaction-button, .portal-reaction-trigger).reaction-empower:is(:hover, :focus-visible, :active, .active, .has-reaction, .is-click-animating),
+html[data-theme="light"] .portal-home-feed :is(.portal-reaction-button, .portal-reaction-trigger).reaction-empower:is(:hover, :focus-visible, :active, .active, .has-reaction, .is-click-animating) {
+  color: #0ea5e9 !important;
+  -webkit-text-fill-color: #0ea5e9 !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(.portal-reaction-button, .portal-reaction-trigger).reaction-congratulate:is(:hover, :focus-visible, :active, .active, .has-reaction, .is-click-animating),
+html[data-theme="light"] .portal-home-feed :is(.portal-reaction-button, .portal-reaction-trigger).reaction-congratulate:is(:hover, :focus-visible, :active, .active, .has-reaction, .is-click-animating) {
+  color: #f97316 !important;
+  -webkit-text-fill-color: #f97316 !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(.portal-reaction-button, .portal-reaction-trigger).reaction-motivate:is(:hover, :focus-visible, :active, .active, .has-reaction, .is-click-animating),
+html[data-theme="light"] .portal-home-feed :is(.portal-reaction-button, .portal-reaction-trigger).reaction-motivate:is(:hover, :focus-visible, :active, .active, .has-reaction, .is-click-animating) {
+  color: #8b5cf6 !important;
+  -webkit-text-fill-color: #8b5cf6 !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(.portal-reaction-button, .portal-reaction-trigger):is(.reaction-angry, .reaction-bad):is(:hover, :focus-visible, :active, .active, .has-reaction, .is-click-animating),
+html[data-theme="light"] .portal-home-feed :is(.portal-reaction-button, .portal-reaction-trigger):is(.reaction-angry, .reaction-bad):is(:hover, :focus-visible, :active, .active, .has-reaction, .is-click-animating) {
+  color: #dc2626 !important;
+  -webkit-text-fill-color: #dc2626 !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(.portal-reaction-button, .portal-reaction-trigger).reaction-sad:is(:hover, :focus-visible, :active, .active, .has-reaction, .is-click-animating),
+html[data-theme="light"] .portal-home-feed :is(.portal-reaction-button, .portal-reaction-trigger).reaction-sad:is(:hover, :focus-visible, :active, .active, .has-reaction, .is-click-animating) {
+  color: #38bdf8 !important;
+  -webkit-text-fill-color: #38bdf8 !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(.portal-reaction-button, .portal-reaction-trigger).reaction-hide:is(:hover, :focus-visible, :active, .active, .has-reaction, .is-click-animating),
+html[data-theme="light"] .portal-home-feed :is(.portal-reaction-button, .portal-reaction-trigger).reaction-hide:is(:hover, :focus-visible, :active, .active, .has-reaction, .is-click-animating) {
+  color: #64748b !important;
+  -webkit-text-fill-color: #64748b !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(.portal-reaction-button, .portal-reaction-trigger):is(.active, .has-reaction, .is-click-animating) :is(svg, path, i, span:not(.portal-reaction-tooltip), strong),
+html[data-theme="light"] .portal-home-feed :is(.portal-reaction-button, .portal-reaction-trigger):is(.active, .has-reaction, .is-click-animating) :is(svg, path, i, span:not(.portal-reaction-tooltip), strong) {
+  color: currentColor !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-post-reactions.portal-reaction-rail.is-popover,
+body[data-theme="light"] .portal-home-feed .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover,
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.portal-reaction-rail.is-popover,
+html[data-theme="light"] .portal-home-feed .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+  width: 16.25rem !important;
+  max-width: min(16.25rem, calc(100vw - 6rem)) !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-post-reactions.portal-reaction-rail.is-popover::-webkit-scrollbar,
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.portal-reaction-rail.is-popover::-webkit-scrollbar {
+  display: none !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-post-action-row :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle
+):not(.active):not(.has-reaction):not(:active):not(:focus-visible),
+body[data-theme="light"] .portal-home-feed .portal-post-action-row :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle
+):not(.active):not(.has-reaction):not(:active):not(:focus-visible) :is(svg, path, i, img, span:not(.portal-reaction-tooltip), strong),
+html[data-theme="light"] .portal-home-feed .portal-post-action-row :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle
+):not(.active):not(.has-reaction):not(:active):not(:focus-visible),
+html[data-theme="light"] .portal-home-feed .portal-post-action-row :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle
+):not(.active):not(.has-reaction):not(:active):not(:focus-visible) :is(svg, path, i, img, span:not(.portal-reaction-tooltip), strong),
+body[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button:not(.active):not(.is-click-animating),
+body[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button:not(.active):not(.is-click-animating) :is(svg, path, i, img, span:not(.portal-reaction-tooltip), strong),
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button:not(.active):not(.is-click-animating),
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button:not(.active):not(.is-click-animating) :is(svg, path, i, img, span:not(.portal-reaction-tooltip), strong) {
+  color: #000000 !important;
+  fill: #000000 !important;
+  stroke: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  filter: none !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-post-action-row :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle
+),
+body[data-theme="light"] .portal-home-feed .portal-post-action-row :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle
+):is(:hover, :focus-visible, :active, .active, .has-reaction),
+html[data-theme="light"] .portal-home-feed .portal-post-action-row :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle
+),
+html[data-theme="light"] .portal-home-feed .portal-post-action-row :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle
+):is(:hover, :focus-visible, :active, .active, .has-reaction),
+body[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button,
+body[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button:is(:hover, :focus-visible, :active, .active, .is-click-animating),
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button,
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button:is(:hover, :focus-visible, :active, .active, .is-click-animating) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-post-action-row .portal-comment-toggle:is(.active, :active, :focus-visible),
+body[data-theme="light"] .portal-home-feed .portal-post-action-row .portal-comment-toggle:is(.active, :active, :focus-visible) :is(svg, path, i, span),
+html[data-theme="light"] .portal-home-feed .portal-post-action-row .portal-comment-toggle:is(.active, :active, :focus-visible),
+html[data-theme="light"] .portal-home-feed .portal-post-action-row .portal-comment-toggle:is(.active, :active, :focus-visible) :is(svg, path, i, span) {
+  color: #0f766e !important;
+  fill: #0f766e !important;
+  stroke: #0f766e !important;
+  -webkit-text-fill-color: #0f766e !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-post-action-row .portal-share-toggle:is(.active, :active, :focus-visible),
+body[data-theme="light"] .portal-home-feed .portal-post-action-row .portal-share-toggle:is(.active, :active, :focus-visible) :is(svg, path, i, span),
+html[data-theme="light"] .portal-home-feed .portal-post-action-row .portal-share-toggle:is(.active, :active, :focus-visible),
+html[data-theme="light"] .portal-home-feed .portal-post-action-row .portal-share-toggle:is(.active, :active, :focus-visible) :is(svg, path, i, span) {
+  color: #2563eb !important;
+  fill: #2563eb !important;
+  stroke: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-like:is(.active, .has-reaction, .is-click-animating),
+body[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-like:is(.active, .has-reaction, .is-click-animating) :is(svg, path, i, span:not(.portal-reaction-tooltip), strong),
+html[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-like:is(.active, .has-reaction, .is-click-animating),
+html[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-like:is(.active, .has-reaction, .is-click-animating) :is(svg, path, i, span:not(.portal-reaction-tooltip), strong) {
+  color: #2563eb !important;
+  fill: #2563eb !important;
+  stroke: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-love:is(.active, .has-reaction, .is-click-animating),
+body[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-love:is(.active, .has-reaction, .is-click-animating) :is(svg, path, i, span:not(.portal-reaction-tooltip), strong),
+html[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-love:is(.active, .has-reaction, .is-click-animating),
+html[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-love:is(.active, .has-reaction, .is-click-animating) :is(svg, path, i, span:not(.portal-reaction-tooltip), strong) {
+  color: #ef4444 !important;
+  fill: #ef4444 !important;
+  stroke: #ef4444 !important;
+  -webkit-text-fill-color: #ef4444 !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-appreciate:is(.active, .has-reaction, .is-click-animating),
+body[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-appreciate:is(.active, .has-reaction, .is-click-animating) :is(svg, path, i, span:not(.portal-reaction-tooltip), strong),
+html[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-appreciate:is(.active, .has-reaction, .is-click-animating),
+html[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-appreciate:is(.active, .has-reaction, .is-click-animating) :is(svg, path, i, span:not(.portal-reaction-tooltip), strong) {
+  color: #f5b82e !important;
+  fill: #f5b82e !important;
+  stroke: #f5b82e !important;
+  -webkit-text-fill-color: #f5b82e !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-empower:is(.active, .has-reaction, .is-click-animating),
+body[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-empower:is(.active, .has-reaction, .is-click-animating) :is(svg, path, i, span:not(.portal-reaction-tooltip), strong),
+html[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-empower:is(.active, .has-reaction, .is-click-animating),
+html[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-empower:is(.active, .has-reaction, .is-click-animating) :is(svg, path, i, span:not(.portal-reaction-tooltip), strong) {
+  color: #0ea5e9 !important;
+  fill: #0ea5e9 !important;
+  stroke: #0ea5e9 !important;
+  -webkit-text-fill-color: #0ea5e9 !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-congratulate:is(.active, .has-reaction, .is-click-animating),
+body[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-congratulate:is(.active, .has-reaction, .is-click-animating) :is(svg, path, i, span:not(.portal-reaction-tooltip), strong),
+html[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-congratulate:is(.active, .has-reaction, .is-click-animating),
+html[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-congratulate:is(.active, .has-reaction, .is-click-animating) :is(svg, path, i, span:not(.portal-reaction-tooltip), strong) {
+  color: #f97316 !important;
+  fill: #f97316 !important;
+  stroke: #f97316 !important;
+  -webkit-text-fill-color: #f97316 !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-motivate:is(.active, .has-reaction, .is-click-animating),
+body[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-motivate:is(.active, .has-reaction, .is-click-animating) :is(svg, path, i, span:not(.portal-reaction-tooltip), strong),
+html[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-motivate:is(.active, .has-reaction, .is-click-animating),
+html[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-motivate:is(.active, .has-reaction, .is-click-animating) :is(svg, path, i, span:not(.portal-reaction-tooltip), strong) {
+  color: #8b5cf6 !important;
+  fill: #8b5cf6 !important;
+  stroke: #8b5cf6 !important;
+  -webkit-text-fill-color: #8b5cf6 !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger):is(.reaction-angry, .reaction-bad):is(.active, .has-reaction, .is-click-animating),
+body[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger):is(.reaction-angry, .reaction-bad):is(.active, .has-reaction, .is-click-animating) :is(svg, path, i, span:not(.portal-reaction-tooltip), strong),
+html[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger):is(.reaction-angry, .reaction-bad):is(.active, .has-reaction, .is-click-animating),
+html[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger):is(.reaction-angry, .reaction-bad):is(.active, .has-reaction, .is-click-animating) :is(svg, path, i, span:not(.portal-reaction-tooltip), strong) {
+  color: #dc2626 !important;
+  fill: #dc2626 !important;
+  stroke: #dc2626 !important;
+  -webkit-text-fill-color: #dc2626 !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-sad:is(.active, .has-reaction, .is-click-animating),
+body[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-sad:is(.active, .has-reaction, .is-click-animating) :is(svg, path, i, span:not(.portal-reaction-tooltip), strong),
+html[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-sad:is(.active, .has-reaction, .is-click-animating),
+html[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-sad:is(.active, .has-reaction, .is-click-animating) :is(svg, path, i, span:not(.portal-reaction-tooltip), strong) {
+  color: #38bdf8 !important;
+  fill: #38bdf8 !important;
+  stroke: #38bdf8 !important;
+  -webkit-text-fill-color: #38bdf8 !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-hide:is(.active, .has-reaction, .is-click-animating),
+body[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-hide:is(.active, .has-reaction, .is-click-animating) :is(svg, path, i, span:not(.portal-reaction-tooltip), strong),
+html[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-hide:is(.active, .has-reaction, .is-click-animating),
+html[data-theme="light"] .portal-home-feed :is(#portal-active-reaction-color-override, .portal-reaction-button, .portal-reaction-trigger).reaction-hide:is(.active, .has-reaction, .is-click-animating) :is(svg, path, i, span:not(.portal-reaction-tooltip), strong) {
+  color: #64748b !important;
+  fill: #64748b !important;
+  stroke: #64748b !important;
+  -webkit-text-fill-color: #64748b !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle,
+  .portal-reaction-button,
+  .portal-reaction-icon-button,
+  .job-post-reaction-button
+),
+html[data-theme="light"] .portal-home-feed :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle,
+  .portal-reaction-button,
+  .portal-reaction-icon-button,
+  .job-post-reaction-button
+) {
+  overflow: visible !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-post-action-row :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle
+),
+html[data-theme="light"] .portal-home-feed .portal-post-action-row :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle
+) {
+  width: 1.92rem !important;
+  min-width: 1.92rem !important;
+  max-width: 1.92rem !important;
+  height: 1.92rem !important;
+  min-height: 1.92rem !important;
+  max-height: 1.92rem !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle,
+  .portal-reaction-button,
+  .portal-reaction-icon-button,
+  .job-post-reaction-button
+) :is(svg, img),
+html[data-theme="light"] .portal-home-feed :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle,
+  .portal-reaction-button,
+  .portal-reaction-icon-button,
+  .job-post-reaction-button
+) :is(svg, img) {
+  width: 1.18rem !important;
+  height: 1.18rem !important;
+  overflow: visible !important;
+  transform-origin: center !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle,
+  .portal-reaction-button,
+  .portal-reaction-icon-button,
+  .job-post-reaction-button
+) :is(svg, path),
+html[data-theme="light"] .portal-home-feed :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle,
+  .portal-reaction-button,
+  .portal-reaction-icon-button,
+  .job-post-reaction-button
+) :is(svg, path) {
+  stroke: none !important;
+  stroke-width: 0 !important;
+  vector-effect: initial !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-social-post-card .portal-post-source-link,
+html[data-theme="light"] .portal-home-feed .portal-social-post-card .portal-post-source-link {
+  display: block !important;
+  width: 100% !important;
+  margin: 0.45rem 0 0.2rem 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+  align-self: stretch !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-social-post-card .portal-post-source-link span,
+body[data-theme="light"] .portal-home-feed .portal-social-post-card .portal-post-source-link a,
+html[data-theme="light"] .portal-home-feed .portal-social-post-card .portal-post-source-link span,
+html[data-theme="light"] .portal-home-feed .portal-social-post-card .portal-post-source-link a {
+  text-align: left !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-social-post-card .portal-post-action-cluster,
+html[data-theme="light"] .portal-home-feed .portal-social-post-card .portal-post-action-cluster {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  width: 100% !important;
+  margin-top: 0.15rem !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-social-post-card .portal-post-action-row,
+html[data-theme="light"] .portal-home-feed .portal-social-post-card .portal-post-action-row {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  align-self: flex-end !important;
+  width: auto !important;
+  margin-left: auto !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover,
+html[data-theme="light"] .portal-home-feed .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+  align-self: flex-end !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row,
+html[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 0.75rem !important;
+  width: 100% !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .sky-apply-button,
+html[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .sky-apply-button {
+  order: 1 !important;
+  margin-right: auto !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions,
+html[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions {
+  order: 2 !important;
+  justify-content: flex-end !important;
+  margin-left: auto !important;
+}
+
+.portal-home-feed .portal-social-post-card,
+.portal-home-feed .portal-candidate-job-card {
+  padding: 0.9rem !important;
+  gap: 0.55rem !important;
+}
+
+.portal-home-feed .portal-post-body-wrap {
+  width: 100% !important;
+  margin: 0.35rem 0 0 !important;
+}
+
+.portal-home-feed .portal-post-body-wrap .portal-post-body {
+  margin: 0 !important;
+  white-space: pre-line !important;
+}
+
+.portal-home-feed .portal-post-body-wrap.is-collapsed .portal-post-body {
+  max-height: 10.6rem !important;
+  overflow: hidden !important;
+}
+
+.portal-home-feed .portal-post-see-more-button,
+.portal-home-feed .portal-post-see-more-button:is(:hover, :focus, :focus-visible, :active) {
+  display: inline-flex !important;
+  align-items: center !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0.18rem 0 !important;
+  margin: 0.22rem 0 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #d17842 !important;
+  font: inherit !important;
+  font-size: 0.78rem !important;
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
+  text-align: left !important;
+  text-transform: none !important;
+  -webkit-text-fill-color: #d17842 !important;
+}
+
+.portal-home-feed .portal-post-see-more-button::before,
+.portal-home-feed .portal-post-see-more-button::after {
+  display: none !important;
+  content: none !important;
+}
+
+.portal-home-feed .portal-post-media {
+  max-height: 17rem !important;
+  overflow: hidden !important;
+}
+
+.portal-home-feed .portal-post-media img,
+.portal-home-feed .portal-post-media video {
+  max-height: 17rem !important;
+  object-fit: cover !important;
+}
+
+@media (max-width: 768px) {
+  .portal-home-feed .portal-social-post-card,
+  .portal-home-feed .portal-candidate-job-card {
+    padding: 0.72rem !important;
+    gap: 0.48rem !important;
+  }
+
+  .portal-home-feed .portal-post-body-wrap.is-collapsed .portal-post-body {
+    max-height: 9.4rem !important;
+  }
+
+  .portal-home-feed .portal-post-media,
+  .portal-home-feed .portal-post-media img,
+  .portal-home-feed .portal-post-media video {
+    max-height: 14rem !important;
+  }
+}
+
+body[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row,
+html[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 0.45rem !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button.sky-apply-button,
+html[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button.sky-apply-button {
+  order: 1 !important;
+  flex: 0 0 7.75rem !important;
+  width: 7.75rem !important;
+  min-width: 7.75rem !important;
+  max-width: 7.75rem !important;
+  height: 2.35rem !important;
+  min-height: 2.35rem !important;
+  max-height: 2.35rem !important;
+  padding: 0.5rem 0.85rem !important;
+  margin: 0 !important;
+  font-size: 0.76rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions,
+html[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions {
+  order: 2 !important;
+  flex: 1 1 auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 0.18rem !important;
+  width: auto !important;
+  max-width: calc(100% - 8.2rem) !important;
+  min-width: 0 !important;
+  margin: 0 0 0 auto !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-reaction-button,
+html[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-reaction-button {
+  flex: 0 0 1.45rem !important;
+  width: 1.45rem !important;
+  min-width: 1.45rem !important;
+  max-width: 1.45rem !important;
+  height: 1.45rem !important;
+  min-height: 1.45rem !important;
+  max-height: 1.45rem !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-count,
+html[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-count {
+  flex: 0 0 auto !important;
+  min-width: 0 !important;
+  margin: 0 0.08rem 0 -0.02rem !important;
+  font-size: 0.7rem !important;
+  line-height: 1 !important;
+}
+
+@media (max-width: 768px) {
+  body[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row,
+  html[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row {
+    gap: 0.32rem !important;
+  }
+
+  body[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button.sky-apply-button,
+  html[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .portal-view-job-button.sky-apply-button {
+    flex-basis: 6.9rem !important;
+    width: 6.9rem !important;
+    min-width: 6.9rem !important;
+    max-width: 6.9rem !important;
+    height: 2.25rem !important;
+    min-height: 2.25rem !important;
+    max-height: 2.25rem !important;
+    padding: 0.48rem 0.68rem !important;
+    font-size: 0.72rem !important;
+  }
+
+  body[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions,
+  html[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-action-reactions {
+    max-width: calc(100% - 7.25rem) !important;
+    gap: 0.12rem !important;
+  }
+
+  body[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-reaction-button,
+  html[data-theme="light"] .portal-home-feed .portal-candidate-job-card .portal-candidate-job-action-row .job-post-reaction-button {
+    flex-basis: 1.36rem !important;
+    width: 1.36rem !important;
+    min-width: 1.36rem !important;
+    max-width: 1.36rem !important;
+    height: 1.36rem !important;
+    min-height: 1.36rem !important;
+    max-height: 1.36rem !important;
+  }
+}
+
+@keyframes jumptakeHomeIconShakeA {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  13% { transform: translate3d(-0.8px, 0.7px, 0) rotate(-4deg) scale(1.04); }
+  31% { transform: translate3d(0.9px, -0.5px, 0) rotate(3deg) scale(0.98); }
+  47% { transform: translate3d(-0.4px, -0.8px, 0) rotate(5deg) scale(1.02); }
+  66% { transform: translate3d(0.7px, 0.4px, 0) rotate(-2deg) scale(1.05); }
+  82% { transform: translate3d(-0.5px, 0.2px, 0) rotate(2deg) scale(1); }
+}
+
+@keyframes jumptakeHomeIconShakeB {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  11% { transform: translate3d(0.7px, -0.9px, 0) rotate(4deg) scale(1.03); }
+  29% { transform: translate3d(-0.9px, 0.4px, 0) rotate(-3deg) scale(0.99); }
+  51% { transform: translate3d(0.5px, 0.8px, 0) rotate(-5deg) scale(1.04); }
+  73% { transform: translate3d(-0.6px, -0.3px, 0) rotate(2deg) scale(1.01); }
+  88% { transform: translate3d(0.4px, 0.5px, 0) rotate(-1deg) scale(1.05); }
+}
+
+@keyframes jumptakeApplyTextShake {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  18% { transform: translate3d(-0.7px, 0.4px, 0) rotate(-1.4deg); }
+  39% { transform: translate3d(0.6px, -0.3px, 0) rotate(1.2deg); }
+  61% { transform: translate3d(-0.3px, -0.5px, 0) rotate(0.8deg); }
+  79% { transform: translate3d(0.4px, 0.3px, 0) rotate(-0.9deg); }
+}
+
+.portal-home-feed .portal-home-tabs .portal-home-tab-icon,
+.portal-home-feed .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle, .portal-post-delete-toggle) > :is(svg, img),
+.portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button > svg,
+.portal-home-feed .portal-candidate-job-action-row .job-post-reaction-button > svg {
+  transform-origin: center !important;
+  will-change: transform !important;
+  animation: jumptakeHomeIconShakeA 1.62s ease-in-out infinite both !important;
+}
+
+.portal-home-feed .portal-home-tabs .portal-home-tab:nth-child(2n) .portal-home-tab-icon,
+.portal-home-feed .portal-post-action-row :is(.portal-comment-toggle, .portal-post-delete-toggle) > svg,
+.portal-home-feed .portal-post-reactions.is-popover .portal-reaction-item:nth-child(2n) .portal-reaction-button > svg,
+.portal-home-feed .portal-candidate-job-action-row .job-post-reaction-button:nth-of-type(2n) > svg {
+  animation-name: jumptakeHomeIconShakeB !important;
+  animation-duration: 1.93s !important;
+}
+
+.portal-home-feed .portal-home-tabs .portal-home-tab:nth-child(1) .portal-home-tab-icon,
+.portal-home-feed .portal-post-reactions.is-popover .portal-reaction-item:nth-child(1) .portal-reaction-button > svg {
+  animation-delay: -0.17s !important;
+}
+
+.portal-home-feed .portal-home-tabs .portal-home-tab:nth-child(2) .portal-home-tab-icon,
+.portal-home-feed .portal-post-reactions.is-popover .portal-reaction-item:nth-child(2) .portal-reaction-button > svg,
+.portal-home-feed .portal-post-action-row .portal-comment-toggle > svg {
+  animation-delay: -0.63s !important;
+}
+
+.portal-home-feed .portal-home-tabs .portal-home-tab:nth-child(3) .portal-home-tab-icon,
+.portal-home-feed .portal-post-reactions.is-popover .portal-reaction-item:nth-child(3) .portal-reaction-button > svg,
+.portal-home-feed .portal-post-action-row .portal-share-toggle > svg {
+  animation-delay: -1.08s !important;
+}
+
+.portal-home-feed .portal-home-tabs .portal-home-tab:nth-child(4) .portal-home-tab-icon,
+.portal-home-feed .portal-post-reactions.is-popover .portal-reaction-item:nth-child(4) .portal-reaction-button > svg {
+  animation-delay: -0.38s !important;
+  animation-duration: 2.17s !important;
+}
+
+.portal-home-feed .portal-home-tabs .portal-home-tab:nth-child(5) .portal-home-tab-icon,
+.portal-home-feed .portal-post-reactions.is-popover .portal-reaction-item:nth-child(5) .portal-reaction-button > svg,
+.portal-home-feed .portal-post-action-row .portal-reaction-trigger > :is(svg, img) {
+  animation-delay: -1.44s !important;
+  animation-duration: 1.76s !important;
+}
+
+.portal-home-feed .portal-post-reactions.is-popover .portal-reaction-item:nth-child(6) .portal-reaction-button > svg,
+.portal-home-feed .portal-candidate-job-action-row .job-post-reaction-button:nth-of-type(3n) > svg {
+  animation-delay: -0.82s !important;
+  animation-duration: 2.04s !important;
+}
+
+.portal-home-feed .portal-post-reactions.is-popover .portal-reaction-item:nth-child(7) .portal-reaction-button > svg,
+.portal-home-feed .portal-candidate-job-action-row .job-post-reaction-button:nth-of-type(4n) > svg {
+  animation-delay: -1.31s !important;
+  animation-duration: 1.69s !important;
+}
+
+.portal-home-feed .portal-post-reactions.is-popover .portal-reaction-item:nth-child(8) .portal-reaction-button > svg,
+.portal-home-feed .portal-post-reactions.is-popover .portal-reaction-item:nth-child(9) .portal-reaction-button > svg,
+.portal-home-feed .portal-post-reactions.is-popover .portal-reaction-item:nth-child(10) .portal-reaction-button > svg {
+  animation-delay: -0.52s !important;
+  animation-duration: 2.31s !important;
+}
+
+.portal-home-feed .portal-candidate-job-action-row .portal-apply-button-shaky-text {
+  display: inline-block !important;
+  transform-origin: center !important;
+  will-change: transform !important;
+  animation: jumptakeApplyTextShake 1.84s ease-in-out infinite both !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal-home-feed .portal-home-tabs .portal-home-tab-icon,
+  .portal-home-feed .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle, .portal-post-delete-toggle) > :is(svg, img),
+  .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button > svg,
+  .portal-home-feed .portal-candidate-job-action-row .job-post-reaction-button > svg,
+  .portal-home-feed .portal-candidate-job-action-row .portal-apply-button-shaky-text {
+    animation: none !important;
+  }
+}
+
+@keyframes jumptakeHomeIconPauseShakeA {
+  0%, 10%, 30%, 100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  13% { transform: translate3d(-0.55px, 0.45px, 0) rotate(-2deg) scale(1.018); }
+  17% { transform: translate3d(0.55px, -0.35px, 0) rotate(1.6deg) scale(0.995); }
+  21% { transform: translate3d(-0.3px, -0.45px, 0) rotate(2.2deg) scale(1.012); }
+  25% { transform: translate3d(0.4px, 0.25px, 0) rotate(-1.2deg) scale(1.01); }
+  29% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+}
+
+@keyframes jumptakeHomeIconPauseShakeB {
+  0%, 10%, 30%, 100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  13% { transform: translate3d(0.55px, -0.45px, 0) rotate(2deg) scale(1.018); }
+  17% { transform: translate3d(-0.55px, 0.35px, 0) rotate(-1.6deg) scale(0.995); }
+  21% { transform: translate3d(0.3px, 0.45px, 0) rotate(-2.2deg) scale(1.012); }
+  25% { transform: translate3d(-0.4px, -0.25px, 0) rotate(1.2deg) scale(1.01); }
+  29% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+}
+
+@keyframes jumptakeApplyTextPauseShake {
+  0%, 10%, 30%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  13% { transform: translate3d(-0.45px, 0.25px, 0) rotate(-0.8deg); }
+  17% { transform: translate3d(0.4px, -0.2px, 0) rotate(0.7deg); }
+  21% { transform: translate3d(-0.2px, -0.3px, 0) rotate(0.5deg); }
+  25% { transform: translate3d(0.25px, 0.2px, 0) rotate(-0.5deg); }
+  29% { transform: translate3d(0, 0, 0) rotate(0deg); }
+}
+
+.portal-home-feed .portal-home-tabs .portal-home-tab-icon,
+.portal-home-feed .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle, .portal-post-delete-toggle) > :is(svg, img),
+.portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button > svg,
+  .portal-home-feed .portal-candidate-job-action-row .job-post-reaction-button > svg {
+  animation-name: jumptakeHomeIconPauseShakeA !important;
+  animation-duration: 7.2s !important;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+  animation-iteration-count: infinite !important;
+}
+
+.portal-home-feed .portal-home-tabs .portal-home-tab:nth-child(2n) .portal-home-tab-icon,
+.portal-home-feed .portal-post-action-row :is(.portal-comment-toggle, .portal-post-delete-toggle) > svg,
+.portal-home-feed .portal-post-reactions.is-popover .portal-reaction-item:nth-child(2n) .portal-reaction-button > svg,
+  .portal-home-feed .portal-candidate-job-action-row .job-post-reaction-button:nth-of-type(2n) > svg {
+  animation-name: jumptakeHomeIconPauseShakeB !important;
+  animation-duration: 7.2s !important;
+}
+
+.portal-home-feed .portal-candidate-job-action-row .portal-apply-button-shaky-text {
+  animation-name: jumptakeApplyTextPauseShake !important;
+  animation-duration: 7.2s !important;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+  animation-iteration-count: infinite !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-post-body-wrap :is(#see-more-borderless-override, button.portal-post-see-more-button),
+body[data-theme="light"] .portal-home-feed .portal-post-body-wrap :is(#see-more-borderless-override, button.portal-post-see-more-button):is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] .portal-home-feed .portal-post-body-wrap :is(#see-more-borderless-override, button.portal-post-see-more-button),
+html[data-theme="light"] .portal-home-feed .portal-post-body-wrap :is(#see-more-borderless-override, button.portal-post-see-more-button):is(:hover, :focus, :focus-visible, :active) {
+  display: inline-flex !important;
+  align-self: flex-end !important;
+  justify-content: flex-end !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  padding: 0.08rem 0 !important;
+  margin: 0.02rem 0 0 auto !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-color: transparent !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-job-country-row :is(#country-borderless-override, button.portal-job-country-button),
+body[data-theme="light"] .portal-home-feed .portal-job-country-row :is(#country-borderless-override, button.portal-job-country-button):is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] .portal-home-feed .portal-job-country-row :is(#country-borderless-override, button.portal-job-country-button),
+html[data-theme="light"] .portal-home-feed .portal-job-country-row :is(#country-borderless-override, button.portal-job-country-button):is(:hover, :focus, :focus-visible, :active) {
+  display: inline-flex !important;
+  justify-content: flex-end !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  padding: 0.18rem 0 !important;
+  margin: 0 0 0 auto !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-color: transparent !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+body[data-theme="light"] .portal-home-feed :is(button.portal-post-see-more-button, button.portal-job-country-button)::before,
+body[data-theme="light"] .portal-home-feed :is(button.portal-post-see-more-button, button.portal-job-country-button)::after,
+html[data-theme="light"] .portal-home-feed :is(button.portal-post-see-more-button, button.portal-job-country-button)::before,
+html[data-theme="light"] .portal-home-feed :is(button.portal-post-see-more-button, button.portal-job-country-button)::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-post-body-wrap,
+html[data-theme="light"] .portal-home-feed .portal-post-body-wrap {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-post-see-more-button,
+body[data-theme="light"] .portal-home-feed .portal-post-see-more-button:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] .portal-home-feed .portal-post-see-more-button,
+html[data-theme="light"] .portal-home-feed .portal-post-see-more-button:is(:hover, :focus, :focus-visible, :active) {
+  align-self: flex-end !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0.08rem 0 !important;
+  margin: 0.02rem 0 0 auto !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-color: transparent !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  color: #d17842 !important;
+  line-height: 1 !important;
+  text-align: right !important;
+  -webkit-text-fill-color: #d17842 !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-post-see-more-button::before,
+body[data-theme="light"] .portal-home-feed .portal-post-see-more-button::after,
+html[data-theme="light"] .portal-home-feed .portal-post-see-more-button::before,
+html[data-theme="light"] .portal-home-feed .portal-post-see-more-button::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-job-country-row .portal-job-country-button,
+body[data-theme="light"] .portal-home-feed .portal-job-country-row .portal-job-country-button:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] .portal-home-feed .portal-job-country-row .portal-job-country-button,
+html[data-theme="light"] .portal-home-feed .portal-job-country-row .portal-job-country-button:is(:hover, :focus, :focus-visible, :active) {
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0.18rem 0 !important;
+  margin: 0 0 0 auto !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-color: transparent !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  color: #17362f !important;
+  line-height: 1 !important;
+  text-align: right !important;
+  -webkit-text-fill-color: #17362f !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-job-country-row .portal-job-country-button::before,
+body[data-theme="light"] .portal-home-feed .portal-job-country-row .portal-job-country-button::after,
+html[data-theme="light"] .portal-home-feed .portal-job-country-row .portal-job-country-button::before,
+html[data-theme="light"] .portal-home-feed .portal-job-country-row .portal-job-country-button::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+@keyframes jumptakeHomeIconLongPauseShakeA {
+  0%, 8%, 20%, 100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  10% { transform: translate3d(-0.42px, 0.34px, 0) rotate(-1.35deg) scale(1.01); }
+  12.5% { transform: translate3d(0.42px, -0.26px, 0) rotate(1.1deg) scale(0.998); }
+  15% { transform: translate3d(-0.22px, -0.32px, 0) rotate(1.35deg) scale(1.008); }
+  17.5% { transform: translate3d(0.28px, 0.18px, 0) rotate(-0.8deg) scale(1.006); }
+  20% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+}
+
+@keyframes jumptakeHomeIconLongPauseShakeB {
+  0%, 8%, 20%, 100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  10% { transform: translate3d(0.42px, -0.34px, 0) rotate(1.35deg) scale(1.01); }
+  12.5% { transform: translate3d(-0.42px, 0.26px, 0) rotate(-1.1deg) scale(0.998); }
+  15% { transform: translate3d(0.22px, 0.32px, 0) rotate(-1.35deg) scale(1.008); }
+  17.5% { transform: translate3d(-0.28px, -0.18px, 0) rotate(0.8deg) scale(1.006); }
+  20% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+}
+
+@keyframes jumptakeApplyTextLongPauseShake {
+  0%, 8%, 20%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  10% { transform: translate3d(-0.34px, 0.18px, 0) rotate(-0.55deg); }
+  12.5% { transform: translate3d(0.3px, -0.16px, 0) rotate(0.5deg); }
+  15% { transform: translate3d(-0.16px, -0.22px, 0) rotate(0.35deg); }
+  17.5% { transform: translate3d(0.18px, 0.14px, 0) rotate(-0.35deg); }
+  20% { transform: translate3d(0, 0, 0) rotate(0deg); }
+}
+
+.portal-home-feed .portal-home-tabs .portal-home-tab-icon,
+.portal-home-feed .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle, .portal-post-delete-toggle) > :is(svg, img),
+.portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button > svg,
+.portal-home-feed .portal-candidate-job-action-row .job-post-reaction-button > svg {
+  animation-name: jumptakeHomeIconLongPauseShakeA !important;
+  animation-duration: 6.25s !important;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+  animation-iteration-count: infinite !important;
+}
+
+.portal-home-feed .portal-home-tabs .portal-home-tab:nth-child(2n) .portal-home-tab-icon,
+.portal-home-feed .portal-post-action-row :is(.portal-comment-toggle, .portal-post-delete-toggle) > svg,
+.portal-home-feed .portal-post-reactions.is-popover .portal-reaction-item:nth-child(2n) .portal-reaction-button > svg,
+.portal-home-feed .portal-candidate-job-action-row .job-post-reaction-button:nth-of-type(2n) > svg {
+  animation-name: jumptakeHomeIconLongPauseShakeB !important;
+  animation-duration: 6.25s !important;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.portal-home-feed .portal-home-tabs .portal-home-tab:nth-child(5) .portal-home-tab-icon {
+  animation-name: jumptakeHomeIconLongPauseShakeA !important;
+  animation-duration: 6.25s !important;
+  animation-delay: -0.92s !important;
+}
+
+.portal-home-feed .portal-candidate-job-action-row .portal-apply-button-shaky-text {
+  animation-name: jumptakeApplyTextLongPauseShake !important;
+  animation-duration: 6.25s !important;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+  animation-iteration-count: infinite !important;
+}
+
+/* Home feed width correction: let post pages use the full available panel width. */
+.home-page .portal-home-feed,
+.home-page .portal-home-feed-scroll,
+.home-page .portal-home-feed > .portal-home-tabs,
+.home-page .portal-home-feed .portal-home-tabs,
+.home-page .portal-home-feed :is(
+  .portal-social-post-card,
+  .portal-candidate-job-card,
+  .portal-job-summary-card,
+  .portal-post-media,
+  .portal-post-media img,
+  .portal-post-media video
+) {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.home-page .portal-home-feed-scroll {
+  padding-inline: 0 !important;
+}
+
+.home-page .portal-home-feed :is(.portal-social-post-card, .portal-candidate-job-card, .portal-job-summary-card) {
+  align-self: stretch !important;
+  margin-inline: 0 !important;
+}
+
+@media (max-width: 768px) {
+  .home-page .dashboard-container.mobile-section-open .mobile-dashboard-section-panel:is(.mobile-section-home-feed, .mobile-section-job-feed).is-open {
+    padding-left: 0.32rem !important;
+    padding-right: 0.32rem !important;
+  }
+
+  html[data-theme="light"] .home-page .dashboard-container.mobile-section-open .mobile-dashboard-section-panel:is(.mobile-section-home-feed, .mobile-section-job-feed).is-open,
+  body[data-theme="light"] .home-page .dashboard-container.mobile-section-open .mobile-dashboard-section-panel:is(.mobile-section-home-feed, .mobile-section-job-feed).is-open {
+    padding-left: 0.32rem !important;
+    padding-right: 0.32rem !important;
+  }
+
+  .home-page .main-content.mobile-section-job-feed .portal-home-feed,
+  .home-page .main-content.mobile-section-home-feed .portal-home-feed {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .home-page .main-content.mobile-section-job-feed .portal-home-feed-scroll,
+  .home-page .main-content.mobile-section-home-feed .portal-home-feed-scroll {
+    width: 100% !important;
+    max-width: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .home-page .main-content.mobile-section-job-feed .portal-home-feed > .portal-home-tabs,
+  .home-page .main-content.mobile-section-home-feed .portal-home-feed > .portal-home-tabs,
+  .home-page .main-content.mobile-section-job-feed .portal-home-feed.is-tabs-hidden > .portal-home-tabs,
+  .home-page .main-content.mobile-section-home-feed .portal-home-feed.is-tabs-hidden > .portal-home-tabs {
+    width: calc(100% - 0.28rem) !important;
+    max-width: calc(100% - 0.28rem) !important;
+  }
+
+  .home-page .main-content.mobile-section-job-feed .portal-home-feed :is(.portal-social-post-card, .portal-candidate-job-card, .portal-job-summary-card),
+  .home-page .main-content.mobile-section-home-feed .portal-home-feed :is(.portal-social-post-card, .portal-candidate-job-card, .portal-job-summary-card) {
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0.66rem !important;
+    padding-right: 0.66rem !important;
+  }
+}
+
+/* Light mode: requested job country capsule and darker post See more text. */
+body[data-theme="light"] .portal-home-feed .portal-post-see-more-button,
+body[data-theme="light"] .portal-home-feed .portal-post-see-more-button:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] .portal-home-feed .portal-post-see-more-button,
+html[data-theme="light"] .portal-home-feed .portal-post-see-more-button:is(:hover, :focus, :focus-visible, :active) {
+  color: #9a3f0d !important;
+  -webkit-text-fill-color: #9a3f0d !important;
+}
+
+body[data-theme="light"] .portal-home-feed .portal-job-country-row :is(#country-borderless-override, button.portal-job-country-button),
+body[data-theme="light"] .portal-home-feed .portal-job-country-row :is(#country-borderless-override, button.portal-job-country-button):is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] .portal-home-feed .portal-job-country-row :is(#country-borderless-override, button.portal-job-country-button),
+html[data-theme="light"] .portal-home-feed .portal-job-country-row :is(#country-borderless-override, button.portal-job-country-button):is(:hover, :focus, :focus-visible, :active),
+body[data-theme="light"] .portal-home-feed .portal-job-country-row .portal-job-country-button,
+body[data-theme="light"] .portal-home-feed .portal-job-country-row .portal-job-country-button:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] .portal-home-feed .portal-job-country-row .portal-job-country-button,
+html[data-theme="light"] .portal-home-feed .portal-job-country-row .portal-job-country-button:is(:hover, :focus, :focus-visible, :active) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  min-height: 2.05rem !important;
+  padding: 0.42rem 0.86rem !important;
+  margin: 0.28rem 0 0 auto !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 1px solid rgba(154, 63, 13, 0.34) !important;
+  border-radius: 999px !important;
+  box-shadow: none !important;
+  color: #17362f !important;
+  line-height: 1 !important;
+  -webkit-text-fill-color: #17362f !important;
+}
+
+/* Light mode: tiny floating shadow below home feed post cards. */
+body[data-theme="light"] .home-page .portal-home-feed :is(.portal-social-post-card, .portal-candidate-job-card, .portal-job-summary-card),
+html[data-theme="light"] .home-page .portal-home-feed :is(.portal-social-post-card, .portal-candidate-job-card, .portal-job-summary-card) {
+  box-shadow:
+    0 2px 0 rgba(255, 255, 255, 0.78),
+    0 8px 16px rgba(82, 56, 42, 0.08) !important;
 }

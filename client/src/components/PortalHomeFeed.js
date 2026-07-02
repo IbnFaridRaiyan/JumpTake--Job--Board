@@ -20,6 +20,7 @@ const MOBILE_FEED_SCROLL_FRAME_MS = 1000 / 60;
 const MOBILE_FEED_SCROLL_MAX_FRAME_STEP = 86;
 const MOBILE_FEED_RELEASE_DRIFT_RATIO = 0.42;
 const MOBILE_FEED_RELEASE_DRIFT_MAX = 54;
+const POST_BODY_PREVIEW_LENGTH = 430;
 
 const escapeHtml = (value = '') => (
     String(value)
@@ -29,6 +30,25 @@ const escapeHtml = (value = '') => (
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;')
 );
+
+const getPostBodyPreview = (body, maxLength = POST_BODY_PREVIEW_LENGTH) => {
+    const text = asDisplayText(body);
+
+    if (text.length <= maxLength) {
+        return text;
+    }
+
+    const slice = text.slice(0, maxLength);
+    const lastBreak = Math.max(slice.lastIndexOf('\n'), slice.lastIndexOf('. '), slice.lastIndexOf('! '), slice.lastIndexOf('? '));
+    const lastSpace = slice.lastIndexOf(' ');
+    const cutIndex = lastBreak > maxLength * 0.55
+        ? lastBreak + 1
+        : lastSpace > maxLength * 0.55
+            ? lastSpace
+            : maxLength;
+
+    return `${text.slice(0, cutIndex).trim()}...`;
+};
 
 const readJobReachMap = () => {
     if (typeof window === 'undefined') {
@@ -620,9 +640,20 @@ const tabAccentColors = {
     'job-posts': '#3b82f6',
     'create-post': '#22c55e',
     'create-story': '#ffffff',
-    'my-company-posts': '#ffffff',
+    'my-company-posts': '#9b5724',
     'my-job-posts': '#3b82f6',
     'my-feed': '#f97316'
+};
+
+const tabInactiveIconColors = {
+    'work-news': '#000000',
+    'job-posts': '#000000',
+    'talent-stories': '#000000',
+    'create-story': '#000000',
+    'my-feed': '#000000',
+    'create-post': '#000000',
+    'my-company-posts': '#000000',
+    'my-job-posts': '#000000'
 };
 
 const statIconPaths = {
@@ -770,8 +801,8 @@ const ReactionTooltip = ({ children }) => (
     <span className="portal-reaction-tooltip" role="tooltip">{children}</span>
 );
 
-const SimpleIcon = ({ path }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+const SimpleIcon = ({ path, className = '' }) => (
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
         {(Array.isArray(path) ? path : [path]).map((pathValue, index) => (
             <path key={index} d={pathValue} />
         ))}
@@ -1004,6 +1035,7 @@ const PortalHomeFeed = ({
     const [composerMedia, setComposerMedia] = useState(null);
     const [composerAudience, setComposerAudience] = useState('everyone');
     const [commentDrafts, setCommentDrafts] = useState({});
+    const [expandedPostBodies, setExpandedPostBodies] = useState({});
     const [openReactionPostId, setOpenReactionPostId] = useState('');
     const [openCommentPostId, setOpenCommentPostId] = useState('');
     const [openSharePostId, setOpenSharePostId] = useState('');
@@ -3071,6 +3103,12 @@ const PortalHomeFeed = ({
                     const commentTotal = postComments.length;
                     const canDeletePost = String(post.authorId) === viewerId
                         && ['my-feed', 'my-company-posts'].includes(activeTab);
+                    const postBodyText = asDisplayText(post.body);
+                    const isLongPostBody = postBodyText.length > POST_BODY_PREVIEW_LENGTH;
+                    const isPostBodyExpanded = Boolean(expandedPostBodies[postKey]);
+                    const visiblePostBody = isLongPostBody && !isPostBodyExpanded
+                        ? getPostBodyPreview(postBodyText)
+                        : postBodyText;
 
                     return (
                     <article key={postKey} className="portal-social-post-card" data-post-id={postKey}>
@@ -3119,7 +3157,27 @@ const PortalHomeFeed = ({
                             </div>
                             <span className="portal-post-reach">{formatCompactCount(post.reach || 0)} reach</span>
                         </div>
-                        {asDisplayText(post.body) && <p className="portal-post-body">{asDisplayText(post.body)}</p>}
+                        {postBodyText && (
+                            <div className={`portal-post-body-wrap ${isLongPostBody && !isPostBodyExpanded ? 'is-collapsed' : 'is-expanded'}`}>
+                                <p className="portal-post-body">{visiblePostBody}</p>
+                                {isLongPostBody && (
+                                    <button
+                                        type="button"
+                                        className="portal-post-see-more-button"
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                            setExpandedPostBodies((expanded) => ({
+                                                ...expanded,
+                                                [postKey]: !expanded[postKey]
+                                            }));
+                                        }}
+                                        aria-expanded={isPostBodyExpanded}
+                                    >
+                                        {isPostBodyExpanded ? 'Show less' : 'See more'}
+                                    </button>
+                                )}
+                            </div>
+                        )}
                         {post.media?.dataUrl && (
                             <div className="portal-post-media">
                                 {post.media.type === 'video' ? (
@@ -3129,6 +3187,19 @@ const PortalHomeFeed = ({
                                 )}
                             </div>
                         )}
+                        {post.authorType === 'employer' && post.source ? (
+                            <p className="portal-post-source-link">
+                                <span>Source:</span>{' '}
+                                <a
+                                    href={post.source}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    onClick={(event) => event.stopPropagation()}
+                                >
+                                    {post.sourceTitle || post.source}
+                                </a>
+                            </p>
+                        ) : null}
                         <div className="portal-post-action-cluster">
                             {isReactionMenuOpen && (
                                 <ul className="portal-post-reactions portal-reaction-rail example-1 is-popover" aria-label="Post reactions" onWheelCapture={handleHorizontalRailWheel}>
@@ -3271,19 +3342,6 @@ const PortalHomeFeed = ({
                                 )}
                             </div>
                         </div>
-                        {post.authorType === 'employer' && post.source ? (
-                            <p className="portal-post-source-link">
-                                <span>Source:</span>{' '}
-                                <a
-                                    href={post.source}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    onClick={(event) => event.stopPropagation()}
-                                >
-                                    {post.sourceTitle || post.source}
-                                </a>
-                            </p>
-                        ) : null}
                         <div className="portal-post-comments">
                             {postComments.slice(-3).map((comment, commentIndex) => (
                                 <div key={comment.id || `comment-${commentIndex}`} className="portal-comment-item">
@@ -3658,11 +3716,13 @@ const PortalHomeFeed = ({
                                 onClick={(event) => openApplicationWorkspace(job, event)}
                                 disabled={applyingHomeJobId === key || hasAppliedToJob(job)}
                             >
-                                {hasAppliedToJob(job)
-                                    ? 'Applied'
-                                    : applyingHomeJobId === key
-                                        ? 'Applying...'
-                                        : 'Apply Now'}
+                                <span className="portal-apply-button-shaky-text">
+                                    {hasAppliedToJob(job)
+                                        ? 'Applied'
+                                        : applyingHomeJobId === key
+                                            ? 'Applying...'
+                                            : 'Apply Now'}
+                                </span>
                             </button>
                         </div>
 
@@ -4125,17 +4185,25 @@ const PortalHomeFeed = ({
                     const tabPath = mode === 'candidate' && tab.id === 'talent-stories'
                         ? tabIconPaths['candidate-talent-stories']
                         : tabIconPaths[tab.id];
+                    const isActiveTab = activeTab === tab.id;
+                    const tabAccent = tabAccentColors[tab.id] || '#d17842';
+                    const tabInactiveIcon = tabInactiveIconColors[tab.id] || '#17362f';
 
                     return (
                         <button
                             key={tab.id}
                             type="button"
-                            className={`portal-home-tab portal-home-tab-${tab.id} ${activeTab === tab.id ? 'active' : ''}`}
-                            style={{ '--tab-accent': tabAccentColors[tab.id] || '#d17842' }}
+                            className={`portal-home-tab portal-home-tab-${tab.id} ${isActiveTab ? 'active' : ''}`}
+                            data-active={isActiveTab ? 'true' : 'false'}
+                            style={{
+                                '--tab-accent': tabAccent,
+                                '--tab-inactive-icon': tabInactiveIcon,
+                                '--tab-current-icon': isActiveTab ? tabAccent : tabInactiveIcon
+                            }}
                             onClick={() => setActiveTab(tab.id)}
                             title={tab.label}
                         >
-                            <SimpleIcon path={tabPath || tabIconPaths['work-news']} />
+                            <SimpleIcon className="portal-home-tab-icon" path={tabPath || tabIconPaths['work-news']} />
                             <span>{tab.label}</span>
                         </button>
                     );

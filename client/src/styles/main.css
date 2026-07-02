@@ -55191,8 +55191,8 @@ html[data-theme="light"] body[data-theme="light"] .candidate-community-copy .can
 }
 
 /* Screenshot 221 refinements: portal tabs, feed actions, apply buttons, and public auth hover. */
-.portal-home-feed > .portal-home-tabs,
-.portal-home-tabs {
+html[data-theme="dark"] .portal-home-feed > .portal-home-tabs,
+html[data-theme="dark"] .portal-home-tabs {
   background: rgba(24, 24, 24, 0.92) !important;
   background-color: rgba(24, 24, 24, 0.92) !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
@@ -55201,8 +55201,8 @@ html[data-theme="light"] body[data-theme="light"] .candidate-community-copy .can
   -webkit-backdrop-filter: blur(12px) !important;
 }
 
-.portal-home-tabs .portal-home-tab,
-.portal-home-feed > .portal-home-tabs .portal-home-tab {
+html[data-theme="dark"] .portal-home-tabs .portal-home-tab,
+html[data-theme="dark"] .portal-home-feed > .portal-home-tabs .portal-home-tab {
   background: transparent !important;
   background-color: transparent !important;
 }
@@ -55229,8 +55229,8 @@ html[data-theme="light"] body[data-theme="light"] .candidate-community-copy .can
   padding-right: 0 !important;
 }
 
-.portal-post-reactions.portal-reaction-rail.is-popover,
-.portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+html[data-theme="dark"] .portal-post-reactions.portal-reaction-rail.is-popover,
+html[data-theme="dark"] .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
   background: #000000 !important;
   border: 1px solid rgba(143, 242, 221, 0.18) !important;
 }
@@ -60484,4 +60484,535 @@ html[data-theme="light"] :is(
   color: #000000 !important;
   -webkit-text-fill-color: #000000 !important;
   text-shadow: none !important;
+}
+
+/* Light mode hard override: feed tabs and reaction controls do not rely on body theme attributes. */
+html[data-theme="light"] .portal-home-feed > .portal-home-tabs,
+html[data-theme="light"] .portal-home-feed .portal-home-tabs,
+html[data-theme="light"] .portal-home-tabs {
+  background: #ded7cb !important;
+  background-color: #ded7cb !important;
+  background-image: none !important;
+  border: 1px solid #ded7cb !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] .portal-home-feed > .portal-home-tabs::before,
+html[data-theme="light"] .portal-home-feed > .portal-home-tabs::after,
+html[data-theme="light"] .portal-home-feed .portal-home-tabs::before,
+html[data-theme="light"] .portal-home-feed .portal-home-tabs::after,
+html[data-theme="light"] .portal-home-tabs::before,
+html[data-theme="light"] .portal-home-tabs::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab {
+  background: #fffaf1 !important;
+  background-color: #fffaf1 !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #3b2118 !important;
+  -webkit-text-fill-color: #3b2118 !important;
+}
+
+html[data-theme="light"] .portal-home-feed .portal-home-tabs .portal-home-tab :is(svg, path, i, .icon, span) {
+  color: #3b2118 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html[data-theme="light"] .portal-home-feed :is(
+  .job-post-action-reactions,
+  .portal-post-action-row,
+  .portal-post-action-cluster,
+  .portal-post-reactions:not(.is-popover)
+) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] .portal-home-feed :is(
+  .job-post-action-reactions .job-post-reaction-button,
+  .portal-post-action-row .portal-reaction-trigger,
+  .portal-post-action-row .portal-comment-toggle,
+  .portal-post-action-row .portal-share-toggle,
+  .portal-post-action-row .portal-post-delete-toggle,
+  .portal-post-reactions:not(.is-popover) .portal-reaction-button
+),
+html[data-theme="light"] .portal-home-feed :is(
+  .job-post-action-reactions .job-post-reaction-button,
+  .portal-post-action-row .portal-reaction-trigger,
+  .portal-post-action-row .portal-comment-toggle,
+  .portal-post-action-row .portal-share-toggle,
+  .portal-post-action-row .portal-post-delete-toggle,
+  .portal-post-reactions:not(.is-popover) .portal-reaction-button
+):is(:hover, :focus, :focus-visible, :active, .active) {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 1.65rem !important;
+  min-width: 1.65rem !important;
+  max-width: 1.65rem !important;
+  height: 1.65rem !important;
+  min-height: 1.65rem !important;
+  max-height: 1.65rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-color: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  filter: none !important;
+  color: #173a33 !important;
+  -webkit-text-fill-color: #173a33 !important;
+}
+
+html[data-theme="light"] .portal-home-feed :is(
+  .job-post-action-reactions .job-post-reaction-button,
+  .portal-post-action-row .portal-reaction-trigger,
+  .portal-post-action-row .portal-comment-toggle,
+  .portal-post-action-row .portal-share-toggle,
+  .portal-post-action-row .portal-post-delete-toggle,
+  .portal-post-reactions:not(.is-popover) .portal-reaction-button
+)::before,
+html[data-theme="light"] .portal-home-feed :is(
+  .job-post-action-reactions .job-post-reaction-button,
+  .portal-post-action-row .portal-reaction-trigger,
+  .portal-post-action-row .portal-comment-toggle,
+  .portal-post-action-row .portal-post-delete-toggle,
+  .portal-post-action-row .portal-share-toggle,
+  .portal-post-reactions:not(.is-popover) .portal-reaction-button
+)::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.portal-reaction-rail.is-popover,
+html[data-theme="light"] .portal-home-feed .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.16rem !important;
+  width: auto !important;
+  max-width: min(18rem, calc(100vw - 7.25rem)) !important;
+  min-height: 1.85rem !important;
+  padding: 0.18rem 0.28rem !important;
+  background: rgba(255, 250, 241, 0.94) !important;
+  background-color: rgba(255, 250, 241, 0.94) !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-color: transparent !important;
+  border-radius: 999px !important;
+  box-shadow: 0 0.55rem 1.3rem rgba(59, 33, 24, 0.12) !important;
+  filter: none !important;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+}
+
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover :is(.portal-reaction-item, .icon-content) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  list-style: none !important;
+}
+
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button,
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button:is(:hover, :focus, :focus-visible, :active, .active, .is-click-animating) {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 1.38rem !important;
+  min-width: 1.38rem !important;
+  max-width: 1.38rem !important;
+  height: 1.38rem !important;
+  min-height: 1.38rem !important;
+  max-height: 1.38rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-color: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button::before,
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button::after,
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button .portal-reaction-tooltip::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button :is(svg, path, i, img, span:not(.portal-reaction-tooltip), strong),
+html[data-theme="light"] .portal-home-feed :is(
+  .job-post-action-reactions .job-post-reaction-button,
+  .portal-post-action-row .portal-reaction-trigger,
+  .portal-post-action-row .portal-comment-toggle,
+  .portal-post-action-row .portal-share-toggle,
+  .portal-post-action-row .portal-post-delete-toggle,
+  .portal-post-reactions:not(.is-popover) .portal-reaction-button
+) :is(svg, path, i, img, span:not(.portal-reaction-tooltip), strong) {
+  color: currentColor !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+  filter: none !important;
+}
+
+/* Light mode final correction: compact messenger controls, clean feed rail, black action labels. */
+html[data-theme="light"] .portal-home-feed > .portal-home-tabs,
+html[data-theme="light"] .portal-home-feed .portal-home-tabs,
+html[data-theme="light"] .home-page .portal-home-feed > .portal-home-tabs,
+html[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs,
+html[data-theme="light"] .dashboard-container .portal-home-feed > .portal-home-tabs,
+html[data-theme="light"] .dashboard-container .portal-home-feed .portal-home-tabs {
+  background: #ded7cb !important;
+  background-color: #ded7cb !important;
+  background-image: none !important;
+  border-color: #ded7cb !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html[data-theme="light"] .portal-home-feed > .portal-home-tabs :is(.portal-home-tab, button),
+html[data-theme="light"] .home-page .portal-home-feed > .portal-home-tabs :is(.portal-home-tab, button),
+html[data-theme="light"] .dashboard-container .portal-home-feed > .portal-home-tabs :is(.portal-home-tab, button) {
+  background: #fffaf1 !important;
+  background-color: #fffaf1 !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.portal-reaction-rail.is-popover,
+html[data-theme="light"] .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover,
+html[data-theme="light"] .home-page .portal-post-reactions.portal-reaction-rail.is-popover {
+  align-items: center !important;
+  gap: 0.12rem !important;
+  height: 1.82rem !important;
+  min-height: 1.82rem !important;
+  max-height: 1.82rem !important;
+  padding: 0.18rem 0.28rem !important;
+  background: rgba(255, 250, 241, 0.96) !important;
+  background-color: rgba(255, 250, 241, 0.96) !important;
+  border: 0 !important;
+  box-shadow: 0 0.45rem 1rem rgba(59, 33, 24, 0.12) !important;
+  border-radius: 999px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+
+html[data-theme="light"] .portal-post-reactions.is-popover :is(.portal-reaction-item, .icon-content),
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover :is(.portal-reaction-item, .icon-content) {
+  align-items: center !important;
+  justify-content: center !important;
+  width: 1.36rem !important;
+  min-width: 1.36rem !important;
+  max-width: 1.36rem !important;
+  height: 1.36rem !important;
+  min-height: 1.36rem !important;
+  max-height: 1.36rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+html[data-theme="light"] .portal-post-reactions.is-popover .portal-reaction-button,
+html[data-theme="light"] .portal-post-reactions.is-popover .portal-reaction-button:is(:hover, :focus, :focus-visible, :active, .active, .is-click-animating),
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button,
+html[data-theme="light"] .portal-home-feed .portal-post-reactions.is-popover .portal-reaction-button:is(:hover, :focus, :focus-visible, :active, .active, .is-click-animating) {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 1.36rem !important;
+  min-width: 1.36rem !important;
+  max-width: 1.36rem !important;
+  height: 1.36rem !important;
+  min-height: 1.36rem !important;
+  max-height: 1.36rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+html[data-theme="light"] .portal-post-reactions.is-popover .portal-reaction-button::before,
+html[data-theme="light"] .portal-post-reactions.is-popover .portal-reaction-button::after,
+html[data-theme="light"] .portal-post-reactions.is-popover .portal-reaction-button .portal-reaction-tooltip::after {
+  display: none !important;
+  content: none !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .floating-messenger .floating-messenger-list-bottom-back,
+html[data-theme="light"] .floating-messenger .floating-messenger-list-bottom-back:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] .floating-messenger-panel .floating-messenger-list-bottom-back,
+html[data-theme="light"] .floating-messenger-panel .floating-messenger-list-bottom-back:is(:hover, :focus, :focus-visible, :active) {
+  display: inline-grid !important;
+  place-items: center !important;
+  align-self: flex-start !important;
+  width: 2.15rem !important;
+  min-width: 2.15rem !important;
+  max-width: 2.15rem !important;
+  height: 1.7rem !important;
+  min-height: 1.7rem !important;
+  max-height: 1.7rem !important;
+  padding: 0 !important;
+  margin: 0.28rem 0 0.5rem 0.55rem !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0.35rem !important;
+  box-shadow: none !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+}
+
+html[data-theme="light"] .floating-messenger .portal-ai-clear-chat-button,
+html[data-theme="light"] .floating-messenger .portal-ai-clear-chat-button:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] .floating-messenger-assistant-chat .portal-ai-clear-chat-button,
+html[data-theme="light"] .floating-messenger-assistant-chat .portal-ai-clear-chat-button:is(:hover, :focus, :focus-visible, :active) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+  width: auto !important;
+  min-width: 7rem !important;
+  max-width: 9rem !important;
+  min-height: 1.85rem !important;
+  padding: 0.34rem 0.85rem !important;
+  margin: 0.45rem auto 0.35rem !important;
+  background: #fffaf1 !important;
+  background-color: #fffaf1 !important;
+  border: 1px solid #d6c4aa !important;
+  border-radius: 0.65rem !important;
+  box-shadow: none !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  font-size: 0.78rem !important;
+}
+
+html[data-theme="light"] :is(
+  .settings-container,
+  .employer-settings-container,
+  .interested-job-suggestion-section,
+  .job-interest-modal,
+  .profile-container,
+  .about-jumptake-section,
+  .home-page,
+  .dashboard-container
+) :is(
+  button.settings-button.primary,
+  button.upload-resume-button,
+  button.about-tour-button,
+  .notification-actions button,
+  .assessment-footer-actions button,
+  .message-compose-actions button
+):not(.danger-button):not(.delete-account-button):not(.animated-delete-button):not(.resume-playground-close-editor-button),
+html[data-theme="light"] :is(
+  .settings-container,
+  .employer-settings-container,
+  .interested-job-suggestion-section,
+  .job-interest-modal,
+  .profile-container,
+  .about-jumptake-section,
+  .home-page,
+  .dashboard-container
+) :is(
+  button.settings-button.primary,
+  button.upload-resume-button,
+  button.about-tour-button,
+  .notification-actions button,
+  .assessment-footer-actions button,
+  .message-compose-actions button
+):not(.danger-button):not(.delete-account-button):not(.animated-delete-button):not(.resume-playground-close-editor-button):is(:hover, :focus, :focus-visible, :active, :disabled),
+html[data-theme="light"] :is(
+  .settings-container,
+  .employer-settings-container,
+  .interested-job-suggestion-section,
+  .job-interest-modal,
+  .profile-container,
+  .about-jumptake-section,
+  .home-page,
+  .dashboard-container
+) :is(
+  button.settings-button.primary,
+  button.upload-resume-button,
+  button.about-tour-button,
+  .notification-actions button,
+  .assessment-footer-actions button,
+  .message-compose-actions button
+):not(.danger-button):not(.delete-account-button):not(.animated-delete-button):not(.resume-playground-close-editor-button) * {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+/* Light mode requested: lighter A4 page, dark-mode feed tabs copied exactly. */
+html[data-theme="light"] .resume-playground-editor-page-layer,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-page-layer {
+  background: #f8f5ee !important;
+  background-color: #f8f5ee !important;
+}
+
+html[data-theme="light"] .portal-home-feed > .portal-home-tabs,
+html[data-theme="light"] .portal-home-tabs,
+html[data-theme="light"] .home-page .portal-home-feed > .portal-home-tabs,
+html[data-theme="light"] .home-page .portal-home-tabs,
+html[data-theme="light"] .dashboard-container .portal-home-feed > .portal-home-tabs,
+html[data-theme="light"] .dashboard-container .portal-home-tabs {
+  background: #ded7cb !important;
+  background-color: #ded7cb !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: inset 0 0 0 1px rgba(82, 56, 42, 0.16) !important;
+  filter: none !important;
+  backdrop-filter: blur(14px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(140%) !important;
+}
+
+html[data-theme="light"] .portal-home-tabs .portal-home-tab,
+html[data-theme="light"] .portal-home-feed > .portal-home-tabs .portal-home-tab,
+html[data-theme="light"] .home-page .portal-home-tabs .portal-home-tab,
+html[data-theme="light"] .dashboard-container .portal-home-tabs .portal-home-tab {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  box-shadow: none !important;
+  color: #aeaeae !important;
+  -webkit-text-fill-color: #aeaeae !important;
+}
+
+html[data-theme="light"] .portal-home-tabs .portal-home-tab :is(svg, path, i, .icon, span),
+html[data-theme="light"] .portal-home-feed > .portal-home-tabs .portal-home-tab :is(svg, path, i, .icon, span),
+html[data-theme="light"] .home-page .portal-home-tabs .portal-home-tab :is(svg, path, i, .icon, span),
+html[data-theme="light"] .dashboard-container .portal-home-tabs .portal-home-tab :is(svg, path, i, .icon, span) {
+  color: #aeaeae !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html[data-theme="light"] .portal-home-tabs .portal-home-tab.active,
+html[data-theme="light"] .portal-home-tabs .portal-home-tab:hover,
+html[data-theme="light"] .portal-home-feed > .portal-home-tabs .portal-home-tab.active,
+html[data-theme="light"] .portal-home-feed > .portal-home-tabs .portal-home-tab:hover {
+  color: var(--tab-accent, #d17842) !important;
+  -webkit-text-fill-color: var(--tab-accent, #d17842) !important;
+}
+
+html[data-theme="light"] .portal-home-tabs .portal-home-tab.active :is(svg, path, i, .icon, span),
+html[data-theme="light"] .portal-home-tabs .portal-home-tab:hover :is(svg, path, i, .icon, span),
+html[data-theme="light"] .portal-home-feed > .portal-home-tabs .portal-home-tab.active :is(svg, path, i, .icon, span),
+html[data-theme="light"] .portal-home-feed > .portal-home-tabs .portal-home-tab:hover :is(svg, path, i, .icon, span) {
+  color: var(--tab-accent, #d17842) !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html[data-theme="light"] .portal-home-tabs .portal-home-tab.active svg,
+html[data-theme="light"] .portal-home-feed > .portal-home-tabs .portal-home-tab.active svg {
+  transform: scale(1.16) translateY(-2px) !important;
+}
+
+html[data-theme="light"] .portal-home-tabs .portal-home-tab.active::before,
+html[data-theme="light"] .portal-home-feed > .portal-home-tabs .portal-home-tab.active::before {
+  width: 58% !important;
+  left: 21% !important;
+  background: var(--tab-accent, #d17842) !important;
+}
+
+html[data-theme="light"] .portal-home-tabs .portal-home-tab-work-news:is(.active, :hover),
+html[data-theme="light"] .portal-home-tabs .portal-home-tab-work-news:is(.active, :hover) :is(svg, path, i, .icon, span) {
+  color: #d17842 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html[data-theme="light"] .portal-home-tabs :is(.portal-home-tab-job-posts, .portal-home-tab-my-job-posts):is(.active, :hover),
+html[data-theme="light"] .portal-home-tabs :is(.portal-home-tab-job-posts, .portal-home-tab-my-job-posts):is(.active, :hover) :is(svg, path, i, .icon, span) {
+  color: #4aa3ff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html[data-theme="light"] .portal-home-tabs .portal-home-tab-talent-stories:is(.active, :hover),
+html[data-theme="light"] .portal-home-tabs .portal-home-tab-talent-stories:is(.active, :hover) :is(svg, path, i, .icon, span) {
+  color: #f3c84b !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html[data-theme="light"] .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-create-post):is(.active, :hover),
+html[data-theme="light"] .portal-home-tabs :is(.portal-home-tab-create-story, .portal-home-tab-create-post):is(.active, :hover) :is(svg, path, i, .icon, span) {
+  color: #f4fffd !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html[data-theme="light"] .portal-home-tabs :is(.portal-home-tab-my-feed, .portal-home-tab-my-company-posts):is(.active, :hover),
+html[data-theme="light"] .portal-home-tabs :is(.portal-home-tab-my-feed, .portal-home-tab-my-company-posts):is(.active, :hover) :is(svg, path, i, .icon, span) {
+  color: #62c9bf !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
 }

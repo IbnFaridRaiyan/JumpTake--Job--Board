@@ -64561,3 +64561,176 @@ body[data-theme="light"] #root :is(.portal-publish-button, .portal-view-job-butt
   -webkit-text-fill-color: #ffffff !important;
   opacity: 1 !important;
 }
+
+/* Light mode: final section-title, candidate-card, page-card, and editor toolbar cleanup for screenshots 132-136. */
+html[data-theme="light"] body[data-theme="light"] #root :is(.dashboard-section-title, .mobile-section-panel-header) h2,
+html[data-theme="light"] body[data-theme="light"] #root :is(.dashboard-section-title, .mobile-section-panel-header),
+html[data-theme="light"] #root :is(.dashboard-section-title, .mobile-section-panel-header) h2,
+html[data-theme="light"] #root :is(.dashboard-section-title, .mobile-section-panel-header),
+body[data-theme="light"] #root :is(.dashboard-section-title, .mobile-section-panel-header) h2,
+body[data-theme="light"] #root :is(.dashboard-section-title, .mobile-section-panel-header) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.dashboard-section-title, .mobile-section-panel-header) h2::before,
+html[data-theme="light"] body[data-theme="light"] #root :is(.dashboard-section-title, .mobile-section-panel-header) h2::after,
+html[data-theme="light"] body[data-theme="light"] #root :is(.dashboard-section-title, .mobile-section-panel-header)::before,
+html[data-theme="light"] body[data-theme="light"] #root :is(.dashboard-section-title, .mobile-section-panel-header)::after,
+html[data-theme="light"] #root :is(.dashboard-section-title, .mobile-section-panel-header) h2::before,
+html[data-theme="light"] #root :is(.dashboard-section-title, .mobile-section-panel-header) h2::after,
+body[data-theme="light"] #root :is(.dashboard-section-title, .mobile-section-panel-header) h2::before,
+body[data-theme="light"] #root :is(.dashboard-section-title, .mobile-section-panel-header) h2::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.dashboard-section-title, .mobile-section-panel-header) h2 .portal-title-jello-text,
+html[data-theme="light"] body[data-theme="light"] #root .portal-title-jello-text,
+html[data-theme="light"] #root :is(.dashboard-section-title, .mobile-section-panel-header) h2 .portal-title-jello-text,
+html[data-theme="light"] #root .portal-title-jello-text,
+body[data-theme="light"] #root :is(.dashboard-section-title, .mobile-section-panel-header) h2 .portal-title-jello-text,
+body[data-theme="light"] #root .portal-title-jello-text {
+  background: rgba(255, 250, 241, 0.58) !important;
+  background-color: rgba(255, 250, 241, 0.58) !important;
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.58), rgba(222, 215, 203, 0.3)) !important;
+  border: 1px solid rgba(214, 198, 180, 0.32) !important;
+  border-color: rgba(214, 198, 180, 0.32) !important;
+  border-radius: 999px !important;
+  box-shadow: 0 6px 14px rgba(73, 50, 34, 0.06) !important;
+  backdrop-filter: blur(10px) saturate(1.12) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(1.12) !important;
+  color: #3a2116 !important;
+  -webkit-text-fill-color: #3a2116 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.talent-pool-container, .candidate-bookmarked-container, .bookmarked-talents-container) .candidate-card.uiverse-profile-card,
+html[data-theme="light"] body[data-theme="light"] #root :is(.talent-pool-container, .candidate-bookmarked-container, .bookmarked-talents-container) .candidate-card,
+html[data-theme="light"] #root :is(.talent-pool-container, .candidate-bookmarked-container, .bookmarked-talents-container) .candidate-card.uiverse-profile-card,
+html[data-theme="light"] #root :is(.talent-pool-container, .candidate-bookmarked-container, .bookmarked-talents-container) .candidate-card,
+body[data-theme="light"] #root :is(.talent-pool-container, .candidate-bookmarked-container, .bookmarked-talents-container) .candidate-card.uiverse-profile-card,
+body[data-theme="light"] #root :is(.talent-pool-container, .candidate-bookmarked-container, .bookmarked-talents-container) .candidate-card {
+  background: #e5e0d6 !important;
+  background-color: #e5e0d6 !important;
+  border-color: #d6c6b4 !important;
+  box-shadow: 0 8px 18px rgba(66, 45, 31, 0.07) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .candidate-card .candidate-card-socialbar.socialbar,
+html[data-theme="light"] #root .candidate-card .candidate-card-socialbar.socialbar,
+body[data-theme="light"] #root .candidate-card .candidate-card-socialbar.socialbar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.45rem !important;
+  width: 100% !important;
+  margin: 0.72rem auto 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .candidate-card .candidate-card-socialbar.socialbar::before,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-card .candidate-card-socialbar.socialbar::after,
+html[data-theme="light"] #root .candidate-card .candidate-card-socialbar.socialbar::before,
+html[data-theme="light"] #root .candidate-card .candidate-card-socialbar.socialbar::after,
+body[data-theme="light"] #root .candidate-card .candidate-card-socialbar.socialbar::before,
+body[data-theme="light"] #root .candidate-card .candidate-card-socialbar.socialbar::after {
+  display: none !important;
+  content: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .candidate-card .candidate-card-socialbar.socialbar :is(.candidate-card-action, .candidate-like-button, .candidate-add-friend-button, .talent-bookmark-button, .bookmark-star-button),
+html[data-theme="light"] body[data-theme="light"] #root .candidate-card .candidate-card-socialbar.socialbar :is(.candidate-card-action, .candidate-like-button, .candidate-add-friend-button, .talent-bookmark-button, .bookmark-star-button):is(:hover, :focus, :focus-visible, :active, .active),
+html[data-theme="light"] #root .candidate-card .candidate-card-socialbar.socialbar :is(.candidate-card-action, .candidate-like-button, .candidate-add-friend-button, .talent-bookmark-button, .bookmark-star-button),
+html[data-theme="light"] #root .candidate-card .candidate-card-socialbar.socialbar :is(.candidate-card-action, .candidate-like-button, .candidate-add-friend-button, .talent-bookmark-button, .bookmark-star-button):is(:hover, :focus, :focus-visible, :active, .active),
+body[data-theme="light"] #root .candidate-card .candidate-card-socialbar.socialbar :is(.candidate-card-action, .candidate-like-button, .candidate-add-friend-button, .talent-bookmark-button, .bookmark-star-button),
+body[data-theme="light"] #root .candidate-card .candidate-card-socialbar.socialbar :is(.candidate-card-action, .candidate-like-button, .candidate-add-friend-button, .talent-bookmark-button, .bookmark-star-button):is(:hover, :focus, :focus-visible, :active, .active) {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 1.45rem !important;
+  min-width: 1.45rem !important;
+  max-width: 1.45rem !important;
+  height: 1.45rem !important;
+  min-height: 1.45rem !important;
+  max-height: 1.45rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #123b34 !important;
+  -webkit-text-fill-color: #123b34 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.notifications-page, .talent-pool-container, .candidate-bookmarked-container, .bookmarked-talents-container, .applications-container, .assessments-container, .video-interviews-container, .draft-applications-container, .bookmarked-jobs-container, .interested-job-suggestion-section, .resume-playground-section, .profile-container, .settings-container, .about-jumptake-section, .progress-check-section),
+html[data-theme="light"] #root :is(.notifications-page, .talent-pool-container, .candidate-bookmarked-container, .bookmarked-talents-container, .applications-container, .assessments-container, .video-interviews-container, .draft-applications-container, .bookmarked-jobs-container, .interested-job-suggestion-section, .resume-playground-section, .profile-container, .settings-container, .about-jumptake-section, .progress-check-section),
+body[data-theme="light"] #root :is(.notifications-page, .talent-pool-container, .candidate-bookmarked-container, .bookmarked-talents-container, .applications-container, .assessments-container, .video-interviews-container, .draft-applications-container, .bookmarked-jobs-container, .interested-job-suggestion-section, .resume-playground-section, .profile-container, .settings-container, .about-jumptake-section, .progress-check-section) {
+  padding: clamp(0.9rem, 3vw, 1.4rem) !important;
+  background: rgba(255, 250, 241, 0.72) !important;
+  background-color: rgba(255, 250, 241, 0.72) !important;
+  border: 1px solid rgba(214, 198, 180, 0.55) !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 8px 20px rgba(66, 45, 31, 0.06) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .main-content.mobile-dashboard-section-panel.is-open,
+html[data-theme="light"] #root .main-content.mobile-dashboard-section-panel.is-open,
+body[data-theme="light"] #root .main-content.mobile-dashboard-section-panel.is-open {
+  padding-inline: clamp(0.72rem, 3vw, 1.05rem) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.resume-playground-editor-mobile-overlay, .resume-playground-editor-shell) :is(.resume-playground-toolbar-shell, .resume-playground-toolbar, .resume-playground-toolbar-row, .resume-playground-toolbar-row-fixed, .resume-playground-toolbar-row-scroll),
+html[data-theme="light"] #root :is(.resume-playground-editor-mobile-overlay, .resume-playground-editor-shell) :is(.resume-playground-toolbar-shell, .resume-playground-toolbar, .resume-playground-toolbar-row, .resume-playground-toolbar-row-fixed, .resume-playground-toolbar-row-scroll),
+body[data-theme="light"] #root :is(.resume-playground-editor-mobile-overlay, .resume-playground-editor-shell) :is(.resume-playground-toolbar-shell, .resume-playground-toolbar, .resume-playground-toolbar-row, .resume-playground-toolbar-row-fixed, .resume-playground-toolbar-row-scroll) {
+  background: #ded7cb !important;
+  background-color: #ded7cb !important;
+  background-image: none !important;
+  border-color: #d1c6b7 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+/* Light mode: no off-white layer directly under animated section title text. */
+html[data-theme="light"] body[data-theme="light"] #root .portal-title-jello-text,
+html[data-theme="light"] body[data-theme="light"] #root :is(.dashboard-section-title, .mobile-section-panel-header) h2 .portal-title-jello-text,
+html[data-theme="light"] #root .portal-title-jello-text,
+html[data-theme="light"] #root :is(.dashboard-section-title, .mobile-section-panel-header) h2 .portal-title-jello-text,
+body[data-theme="light"] #root .portal-title-jello-text,
+body[data-theme="light"] #root :is(.dashboard-section-title, .mobile-section-panel-header) h2 .portal-title-jello-text {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #3a2116 !important;
+  -webkit-text-fill-color: #3a2116 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .portal-title-jello-text::before,
+html[data-theme="light"] body[data-theme="light"] #root .portal-title-jello-text::after,
+html[data-theme="light"] #root .portal-title-jello-text::before,
+html[data-theme="light"] #root .portal-title-jello-text::after,
+body[data-theme="light"] #root .portal-title-jello-text::before,
+body[data-theme="light"] #root .portal-title-jello-text::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  opacity: 0 !important;
+}

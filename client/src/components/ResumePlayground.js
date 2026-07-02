@@ -211,6 +211,8 @@ const normalizeDraftLines = (text = '') => String(text || '')
 
 const cleanResumeLine = (line = '') => stripDraftMarkdown(line).replace(/^[-*]\s*/, '').trim();
 
+const isPlaceholderResumeName = (line = '') => /^(candidate|your name|name|available upon request|available on request|n\/a|na)$/i.test(cleanResumeLine(line));
+
 const isLikelyResumeNameLine = (line = '') => {
     const clean = cleanResumeLine(line).replace(/:$/, '');
 
@@ -218,13 +220,14 @@ const isLikelyResumeNameLine = (line = '') => {
         && clean.length <= 64
         && clean.split(/\s+/).length <= 6
         && /^[A-Za-z][A-Za-z .'-]+$/.test(clean)
+        && !isPlaceholderResumeName(clean)
         && !looksLikeHeading(clean)
         && !/\b(resume|curriculum vitae|cv|email|phone|linkedin|github|portfolio|summary|profile|objective)\b/i.test(clean);
 };
 
 const isLikelyContactLine = (line = '') => /(@|\||\+?\d[\d\s().-]{6,}|linkedin|github|portfolio|email|phone|mobile|address)/i.test(line);
 
-const createAiDraftHtml = (text = '', { documentMode = false } = {}) => {
+const createAiDraftHtml = (text = '', { documentMode = false, fallbackName = '' } = {}) => {
     const lines = normalizeDraftLines(text);
 
     if (!lines.length) {
@@ -254,7 +257,7 @@ const createAiDraftHtml = (text = '', { documentMode = false } = {}) => {
     const nameIndex = lines.findIndex((line, index) => index < 4 && isLikelyResumeNameLine(line));
     const candidateName = nameIndex >= 0
         ? cleanResumeLine(lines[nameIndex])
-        : (looksLikeHeading(lines[0]) ? 'Candidate' : cleanResumeLine(lines[0] || 'Candidate'));
+        : cleanResumeLine(fallbackName || (looksLikeHeading(lines[0]) || isPlaceholderResumeName(lines[0]) ? 'Candidate' : lines[0] || 'Candidate'));
     const remainingLines = lines.filter((_, index) => index !== (nameIndex >= 0 ? nameIndex : 0));
     const contactIndex = remainingLines.findIndex((line, index) => index < 3 && isLikelyContactLine(line));
     const contactLine = contactIndex >= 0 ? cleanResumeLine(remainingLines[contactIndex]) : '';
@@ -1870,11 +1873,13 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
             }
 
             const draftText = String(draft.text || '').trim();
-            if (!draftText) {
+            const cleanedDraftText = normalizeDraftLines(draftText).join('\n');
+            if (!cleanedDraftText) {
                 return;
             }
 
-            const formattedHtml = sanitizeEditorHtml(createAiDraftHtml(draftText, { documentMode: isDocumentMode }));
+            const fallbackName = getCurrentTailorProfile().name || displayName;
+            const formattedHtml = sanitizeEditorHtml(createAiDraftHtml(cleanedDraftText, { documentMode: isDocumentMode, fallbackName }));
             const draftRecord = createResumeRecord({
                 name: draft.name || (isDocumentMode ? 'AI Generated Document' : 'AI Generated Resume'),
                 html: formattedHtml,
@@ -1883,7 +1888,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
 
             setCreateMode('scratch');
             openEditor(draftRecord, 'edit');
-            animateAiDraftIntoEditor(draftRecord, draftText, formattedHtml);
+            animateAiDraftIntoEditor(draftRecord, cleanedDraftText, formattedHtml);
         };
 
         const readStoredDraft = () => {

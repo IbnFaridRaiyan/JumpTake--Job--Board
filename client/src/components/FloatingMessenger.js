@@ -14,6 +14,36 @@ const normalizeSearchText = (value = '') => String(value || '')
     .trim();
 const RESUME_WORKSPACE_SNAPSHOT_KEY = 'jumptakeResumePlaygroundSnapshot';
 
+const stripAssistantDraftMarkdown = (line = '') => String(line || '')
+    .replace(/\u2022|\u00e2\u20ac\u00a2/g, '-')
+    .trim()
+    .replace(/^```[\w-]*\s*$/i, '')
+    .replace(/^#{1,6}\s*/, '')
+    .replace(/^>\s*/, '')
+    .replace(/^\s*[-*_]{3,}\s*$/, '')
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/__([^_]+)__/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1')
+    .replace(/_([^_]+)_/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\*/g, '')
+    .trim();
+
+const isAssistantDraftPreambleLine = (line = '') => {
+    const normalized = normalizeSearchText(line).replace(/\bats friendly\b/g, 'ats-friendly');
+    return /^(absolutely|certainly|sure|of course|here|below|based|i ve|i have)\b/.test(normalized)
+        && /\b(post|story|document|draft|message|content|caption|resume|profile|based on your profile)\b/.test(normalized);
+};
+
+const cleanAssistantDraftText = (value = '') => String(value || '')
+    .replace(/\r\n/g, '\n')
+    .split('\n')
+    .map(stripAssistantDraftMarkdown)
+    .filter(Boolean)
+    .filter((line) => !isAssistantDraftPreambleLine(line))
+    .join('\n')
+    .trim();
+
 const readWorkspaceSnapshot = () => {
     if (typeof window === 'undefined') {
         return null;
@@ -426,6 +456,7 @@ const FloatingMessenger = ({
         const answer = String(payload.answer || '').trim();
         const question = String(payload.question || '').trim();
         const actionName = String(action || '');
+        const draftText = cleanAssistantDraftText(answer || question) || answer || question;
 
         if (actionName.startsWith('open-section:')) {
             const section = actionName.split(':')[1];
@@ -440,7 +471,7 @@ const FloatingMessenger = ({
             storeAndOpenSection('resume-playground', 'jumptakeResumePlaygroundAiDraft', {
                 mode: 'resume',
                 name: 'AI Generated Resume',
-                text: answer || question,
+                text: draftText,
                 source: 'ai-tailor',
                 style: 'professional'
             }, 'jumptake-resume-playground-ai-draft');
@@ -452,7 +483,7 @@ const FloatingMessenger = ({
             storeAndOpenSection('resume-playground', 'jumptakeResumePlaygroundAiDraft', {
                 mode: 'resume',
                 name: 'AI Formatted Resume',
-                text: answer || question,
+                text: draftText,
                 source: 'ai-tailor',
                 style: 'professional'
             }, 'jumptake-resume-playground-ai-draft');
@@ -464,7 +495,7 @@ const FloatingMessenger = ({
             storeAndOpenSection('create-document', 'jumptakeResumePlaygroundAiDraft', {
                 mode: 'document',
                 name: 'AI Generated Document',
-                text: answer || question,
+                text: draftText,
                 source: 'ai-tailor',
                 style: 'business'
             }, 'jumptake-resume-playground-ai-draft');
@@ -476,7 +507,7 @@ const FloatingMessenger = ({
             storeAndOpenSection('create-document', 'jumptakeResumePlaygroundAiDraft', {
                 mode: 'document',
                 name: 'AI Formatted Document',
-                text: answer || question,
+                text: draftText,
                 source: 'ai-tailor',
                 style: 'business'
             }, 'jumptake-resume-playground-ai-draft');
@@ -488,7 +519,7 @@ const FloatingMessenger = ({
             storeAndOpenSection('job-feed', 'jumptakeFeedAiDraft', {
                 mode: 'candidate',
                 tab: 'create-story',
-                text: answer || question
+                text: draftText
             }, 'jumptake-feed-ai-draft');
             minimizeAfterMobileAssistantAction();
             return;
@@ -498,7 +529,7 @@ const FloatingMessenger = ({
             storeAndOpenSection('home-feed', 'jumptakeFeedAiDraft', {
                 mode: 'employer',
                 tab: 'create-post',
-                text: answer || question
+                text: draftText
             }, 'jumptake-feed-ai-draft');
             minimizeAfterMobileAssistantAction();
             return;
@@ -507,7 +538,7 @@ const FloatingMessenger = ({
         if (action === 'employer-create-assessment' && isEmployer) {
             storeAndOpenSection('make-assessment', 'jumptakeAssessmentAiDraft', {
                 mode: 'employer',
-                text: answer || question
+                text: draftText
             }, 'jumptake-assessment-ai-draft');
             minimizeAfterMobileAssistantAction();
             return;

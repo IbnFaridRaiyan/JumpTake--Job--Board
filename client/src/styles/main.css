@@ -58181,3 +58181,53 @@ html[data-theme="light"] body[data-theme="light"] .resume-playground-ats-details
   border-color: #5b1118 !important;
   color: #ffffff !important;
 }
+
+/* Light-mode editor color refinement from screenshot 14. */
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-shell,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-topbar {
+  background: #3f070d !important;
+  background-color: #3f070d !important;
+  border-color: #3f070d !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .resume-playground-toolbar-shell,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-toolbar,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-toolbar-row,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-toolbar-row-fixed,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-toolbar-row-scroll {
+  background: #3a2116 !important;
+  background-color: #3a2116 !important;
+  border-color: rgba(251, 242, 227, 0.32) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-canvas,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-workbench,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-workbench-scale-box,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-pages-stack,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-page-layer,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-page-frame,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-document {
+  background: #fbf2e3 !important;
+  background-color: #fbf2e3 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-actions .resume-playground-close-editor-button,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-actions .resume-playground-close-editor-button:hover,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-actions .resume-playground-close-editor-button:focus-visible,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-actions .resume-playground-close-editor-button *,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-actions .resume-playground-close-editor-button:hover *,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-actions .resume-playground-close-editor-button:focus-visible * {
+  background: #a85861 !important;
+  background-color: #a85861 !important;
+  border-color: #b86a72 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-actions .resume-playground-close-editor-button *,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-actions .resume-playground-close-editor-button:hover *,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-actions .resume-playground-close-editor-button:focus-visible * {
+  background: transparent !important;
+  background-color: transparent !important;
+}

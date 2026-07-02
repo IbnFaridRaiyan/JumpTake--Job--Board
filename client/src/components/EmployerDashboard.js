@@ -57,6 +57,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     const [employer, setEmployer] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeSection, setActiveSection] = useState('home');
+    const [titleAnimationReplayKey, setTitleAnimationReplayKey] = useState(0);
     const sectionHistoryRef = useRef([]);
     const manageJobsRef = useRef(null);
     const generalAssessmentsRef = useRef(null);
@@ -78,6 +79,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
             return;
         }
 
+        setTitleAnimationReplayKey((key) => key + 1);
         setActiveSection(nextSectionValue);
         sessionStorage.setItem(EMPLOYER_SECTION_STORAGE_KEY, nextSectionValue);
 
@@ -139,6 +141,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
             }
 
             const nextSection = normalizeEmployerSection(section);
+            setTitleAnimationReplayKey((key) => key + 1);
             setActiveSection(nextSection);
             sessionStorage.setItem(EMPLOYER_SECTION_STORAGE_KEY, nextSection);
             if (isMobileViewport()) {
@@ -336,6 +339,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
 
     const switchSection = (nextSection) => {
         if (!nextSection || nextSection === activeSection) {
+            setTitleAnimationReplayKey((key) => key + 1);
             setMobileSectionVisible(!isMobileViewport() || nextSection !== 'home');
             resetMobilePanelScroll();
             return;
@@ -363,6 +367,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         }
 
         if (nextSection === activeSection) {
+            setTitleAnimationReplayKey((key) => key + 1);
             setMobileSectionVisible(!isMobileViewport() || nextSection !== 'home');
             return;
         }
@@ -797,7 +802,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                 <main ref={mobilePanelRef} className={`main-content mobile-dashboard-section-panel mobile-section-${activeSection} ${mobileSectionVisible ? 'is-open' : ''}`}>
                     {showSectionTitle && (
                         <div className="dashboard-section-title">
-                            <h2><span key={`desktop-${activeSection}`} className="portal-title-jello-text">{sectionTitles[activeSection] || 'Dashboard Section'}</span></h2>
+                            <h2><span key={`desktop-${activeSection}-${titleAnimationReplayKey}`} className="portal-title-jello-text">{sectionTitles[activeSection] || 'Dashboard Section'}</span></h2>
                         </div>
                     )}
                     {showSectionTitle && mobileSectionVisible && (
@@ -805,7 +810,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                             <button type="button" className="back-button" onClick={goToPreviousSection}>
                                 {activeSection === 'manage-jobs' && isManagingEmployerJob ? 'Back to Manage Jobs' : 'Back'}
                             </button>
-                            <h2><span key={`mobile-${activeSection}`} className="portal-title-jello-text">{sectionTitles[activeSection] || 'Dashboard Section'}</span></h2>
+                            <h2><span key={`mobile-${activeSection}-${titleAnimationReplayKey}`} className="portal-title-jello-text">{sectionTitles[activeSection] || 'Dashboard Section'}</span></h2>
                         </div>
                     )}
                     {renderContent()}

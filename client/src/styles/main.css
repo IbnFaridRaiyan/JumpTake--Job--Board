@@ -30,7 +30,6 @@
   --shadow-color: rgba(0, 0, 0, 0.1);
 }
 
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -65964,4 +65963,264 @@ body[data-theme="light"] #root .bookmarked-talents-container .uiverse-profile-ca
     gap: 0.28rem !important;
     max-width: calc(100% - 0.8rem) !important;
   }
+}
+
+/* Final winning light-mode pass: compact mobile job actions and force the resume toolbar off the old brown overlay. */
+@media (max-width: 768px) {
+  html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-view-job-button.sky-apply-button,
+  html[data-theme="light"] #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-view-job-button.sky-apply-button,
+  body[data-theme="light"] #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-view-job-button.sky-apply-button,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.apply-button.sky-apply-button, .preview-apply-button.sky-apply-button),
+  html[data-theme="light"] #root .home-page :is(.apply-button.sky-apply-button, .preview-apply-button.sky-apply-button),
+  body[data-theme="light"] #root .home-page :is(.apply-button.sky-apply-button, .preview-apply-button.sky-apply-button) {
+    width: auto !important;
+    min-width: 5.75rem !important;
+    max-width: 7.2rem !important;
+    height: 2.12rem !important;
+    min-height: 2.12rem !important;
+    max-height: 2.12rem !important;
+    padding: 0 0.92rem !important;
+    border-radius: 999px !important;
+    font-size: 0.74rem !important;
+    line-height: 1 !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-view-job-button.sky-apply-button .portal-apply-button-shaky-text,
+  html[data-theme="light"] #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-view-job-button.sky-apply-button .portal-apply-button-shaky-text,
+  body[data-theme="light"] #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-view-job-button.sky-apply-button .portal-apply-button-shaky-text {
+    font-size: 0.74rem !important;
+    line-height: 1 !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-filter-bar,
+  html[data-theme="light"] #root .home-page .portal-job-filter-bar,
+  body[data-theme="light"] #root .home-page .portal-job-filter-bar {
+    margin-bottom: 0.36rem !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-country-row,
+  html[data-theme="light"] #root .home-page .portal-job-country-row,
+  body[data-theme="light"] #root .home-page .portal-job-country-row {
+    margin-top: 0.34rem !important;
+    margin-bottom: 0.46rem !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-candidate-job-list,
+  html[data-theme="light"] #root .home-page .portal-candidate-job-list,
+  body[data-theme="light"] #root .home-page .portal-candidate-job-list {
+    gap: 0.7rem !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-candidate-job-card,
+  html[data-theme="light"] #root .home-page .portal-candidate-job-card,
+  body[data-theme="light"] #root .home-page .portal-candidate-job-card {
+    margin-top: 0 !important;
+  }
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.resume-playground-toolbar-shell, .resume-playground-editor-mobile-overlay .resume-playground-toolbar-shell),
+html[data-theme="light"] #root :is(.resume-playground-toolbar-shell, .resume-playground-editor-mobile-overlay .resume-playground-toolbar-shell),
+body[data-theme="light"] #root :is(.resume-playground-toolbar-shell, .resume-playground-editor-mobile-overlay .resume-playground-toolbar-shell) {
+  background: #d3cabb !important;
+  background-color: #d3cabb !important;
+  background-image: none !important;
+  border-color: #b5a58d !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.resume-playground-toolbar, .resume-playground-editor-mobile-overlay .resume-playground-toolbar),
+html[data-theme="light"] #root :is(.resume-playground-toolbar, .resume-playground-editor-mobile-overlay .resume-playground-toolbar),
+body[data-theme="light"] #root :is(.resume-playground-toolbar, .resume-playground-editor-mobile-overlay .resume-playground-toolbar) {
+  background: #ddd4c4 !important;
+  background-color: #ddd4c4 !important;
+  background-image: none !important;
+  border-color: #b9aa94 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.resume-playground-toolbar-row, .resume-playground-toolbar-row-fixed, .resume-playground-toolbar-row-scroll, .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row, .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-fixed, .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-scroll),
+html[data-theme="light"] #root :is(.resume-playground-toolbar-row, .resume-playground-toolbar-row-fixed, .resume-playground-toolbar-row-scroll, .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row, .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-fixed, .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-scroll),
+body[data-theme="light"] #root :is(.resume-playground-toolbar-row, .resume-playground-toolbar-row-fixed, .resume-playground-toolbar-row-scroll, .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row, .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-fixed, .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-scroll) {
+  background: #e5dccd !important;
+  background-color: #e5dccd !important;
+  background-image: none !important;
+  border-color: #beae97 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root :is(.resume-playground-toolbar-row, .resume-playground-toolbar-row-fixed, .resume-playground-toolbar-row-scroll)::before,
+html[data-theme="light"] body[data-theme="light"] #root :is(.resume-playground-toolbar-row, .resume-playground-toolbar-row-fixed, .resume-playground-toolbar-row-scroll)::after,
+html[data-theme="light"] #root :is(.resume-playground-toolbar-row, .resume-playground-toolbar-row-fixed, .resume-playground-toolbar-row-scroll)::before,
+html[data-theme="light"] #root :is(.resume-playground-toolbar-row, .resume-playground-toolbar-row-fixed, .resume-playground-toolbar-row-scroll)::after,
+body[data-theme="light"] #root :is(.resume-playground-toolbar-row, .resume-playground-toolbar-row-fixed, .resume-playground-toolbar-row-scroll)::before,
+body[data-theme="light"] #root :is(.resume-playground-toolbar-row, .resume-playground-toolbar-row-fixed, .resume-playground-toolbar-row-scroll)::after {
+  display: none !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .resume-playground-toolbar :is(.resume-playground-toolbar-group, .resume-playground-toolbar-group-wide, .resume-playground-tool-button, .resume-playground-icon-button, .resume-playground-select, .resume-playground-color-picker),
+html[data-theme="light"] #root .resume-playground-toolbar :is(.resume-playground-toolbar-group, .resume-playground-toolbar-group-wide, .resume-playground-tool-button, .resume-playground-icon-button, .resume-playground-select, .resume-playground-color-picker),
+body[data-theme="light"] #root .resume-playground-toolbar :is(.resume-playground-toolbar-group, .resume-playground-toolbar-group-wide, .resume-playground-tool-button, .resume-playground-icon-button, .resume-playground-select, .resume-playground-color-picker) {
+  background: #fffaf2 !important;
+  background-color: #fffaf2 !important;
+  background-image: none !important;
+  border-color: #c9b89f !important;
+  box-shadow: none !important;
+  color: #111827 !important;
+}
+
+/* Resume editor mobile toolbar is portaled to body, so it needs body-level light-mode overrides. */
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay .resume-playground-toolbar-shell,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay .resume-playground-toolbar,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-fixed,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-scroll,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay .resume-playground-toolbar-group,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay .resume-playground-toolbar-group-wide {
+  background-image: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  outline: 0 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay .resume-playground-toolbar-shell {
+  background: #d2cabd !important;
+  background-color: #d2cabd !important;
+  border: 1px solid #b9aa94 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay .resume-playground-toolbar {
+  background: #dbd2c3 !important;
+  background-color: #dbd2c3 !important;
+  border: 1px solid #b8a992 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-fixed,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-scroll,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay .resume-playground-toolbar-group,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay .resume-playground-toolbar-group-wide {
+  background: #e7dece !important;
+  background-color: #e7dece !important;
+  border: 1px solid #c7b9a3 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row::before,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row::after,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-fixed::before,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-fixed::after,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-scroll::before,
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay .resume-playground-toolbar-row-scroll::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .resume-playground-editor-mobile-overlay :is(.resume-playground-select, .resume-playground-tool-button, .resume-playground-icon-button, .resume-playground-color-picker) {
+  background: #fffaf2 !important;
+  background-color: #fffaf2 !important;
+  background-image: none !important;
+  border: 1px solid #c8b79f !important;
+  box-shadow: none !important;
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+  outline: 0 !important;
+}
+
+/* Light mode: dashboard landing shortcut buttons keep white fill with black borders. */
+html[data-theme="light"] body[data-theme="light"] #root .portal-default-actions .portal-default-action,
+html[data-theme="light"] body[data-theme="light"] #root .portal-default-actions .portal-default-action:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] #root .portal-default-actions .portal-default-action,
+html[data-theme="light"] #root .portal-default-actions .portal-default-action:is(:hover, :focus, :focus-visible, :active),
+body[data-theme="light"] #root .portal-default-actions .portal-default-action,
+body[data-theme="light"] #root .portal-default-actions .portal-default-action:is(:hover, :focus, :focus-visible, :active) {
+  background: #fffdf8 !important;
+  background-color: #fffdf8 !important;
+  background-image: none !important;
+  border: 1px solid #111111 !important;
+  border-color: #111111 !important;
+  box-shadow: none !important;
+  color: #123b34 !important;
+  -webkit-text-fill-color: #123b34 !important;
+  outline: 0 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .portal-default-actions .portal-default-action :is(svg, path),
+html[data-theme="light"] #root .portal-default-actions .portal-default-action :is(svg, path),
+body[data-theme="light"] #root .portal-default-actions .portal-default-action :is(svg, path) {
+  color: #123b34 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: #123b34 !important;
+}
+
+/* Mobile dashboard title: keep "Start your" and "JumpTake day" as two clean lines. */
+@media (max-width: 768px) {
+  html[data-theme="light"] body[data-theme="light"] #root .portal-default-landing.is-candidate .portal-default-title-animated,
+  html[data-theme="light"] #root .portal-default-landing.is-candidate .portal-default-title-animated,
+  body[data-theme="light"] #root .portal-default-landing.is-candidate .portal-default-title-animated {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0 !important;
+    max-width: 100% !important;
+    font-size: clamp(2rem, 10.4vw, 2.82rem) !important;
+    line-height: 1.02 !important;
+    white-space: normal !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root .portal-default-landing.is-candidate .portal-default-title-line,
+  html[data-theme="light"] #root .portal-default-landing.is-candidate .portal-default-title-line,
+  body[data-theme="light"] #root .portal-default-landing.is-candidate .portal-default-title-line {
+    display: block !important;
+    white-space: nowrap !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root .portal-default-landing.is-candidate .portal-default-title-line-brand,
+  html[data-theme="light"] #root .portal-default-landing.is-candidate .portal-default-title-line-brand,
+  body[data-theme="light"] #root .portal-default-landing.is-candidate .portal-default-title-line-brand {
+    display: inline-flex !important;
+    align-items: baseline !important;
+    gap: 0.12em !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Home feed nav: make active/click scale feel slower and smoother. */
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab,
+html[data-theme="light"] #root .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab,
+body[data-theme="light"] #root .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab,
+.home-page .portal-home-feed .portal-home-tabs button.portal-home-tab {
+  transition:
+    color 360ms ease,
+    opacity 360ms ease,
+    transform 520ms cubic-bezier(0.2, 0.82, 0.2, 1),
+    background-color 420ms ease,
+    border-color 420ms ease !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab :is(.portal-home-tab-icon, svg),
+html[data-theme="light"] #root .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab :is(.portal-home-tab-icon, svg),
+body[data-theme="light"] #root .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab :is(.portal-home-tab-icon, svg),
+.home-page .portal-home-feed .portal-home-tabs button.portal-home-tab :is(.portal-home-tab-icon, svg) {
+  transition:
+    color 360ms ease,
+    fill 360ms ease,
+    stroke 360ms ease,
+    margin 420ms ease,
+    transform 620ms cubic-bezier(0.16, 0.82, 0.18, 1) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab:is(:active, .active, [data-active="true"]) :is(.portal-home-tab-icon, svg),
+html[data-theme="light"] #root .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab:is(:active, .active, [data-active="true"]) :is(.portal-home-tab-icon, svg),
+body[data-theme="light"] #root .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab:is(:active, .active, [data-active="true"]) :is(.portal-home-tab-icon, svg),
+.home-page .portal-home-feed .portal-home-tabs button.portal-home-tab:is(:active, .active, [data-active="true"]) :is(.portal-home-tab-icon, svg) {
+  transform: scale(1.14) translateY(-1px) !important;
 }

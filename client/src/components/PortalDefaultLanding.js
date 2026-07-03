@@ -88,9 +88,11 @@ const PortalDefaultLanding = ({
                         </>
                     ) : (
                         <>
-                            <span>Start your </span>
-                            <span className="portal-default-title-brand">JumpTake</span>
-                            <span> day</span>
+                            <span className="portal-default-title-line">Start your</span>
+                            <span className="portal-default-title-line portal-default-title-line-brand">
+                                <span className="portal-default-title-brand">JumpTake</span>
+                                <span>day</span>
+                            </span>
                         </>
                     )}
                 </h3>

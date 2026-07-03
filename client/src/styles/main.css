@@ -69249,3 +69249,84 @@ html body .portal-post-detail-modal .portal-post-detail-comments .portal-comment
   object-fit: cover !important;
   overflow: hidden !important;
 }
+
+/* Settings page: remove the off-white wrapper layer and let content breathe wider. */
+html[data-theme="light"] body[data-theme="light"] #root .settings-container,
+html[data-theme="light"] #root .settings-container,
+body[data-theme="light"] #root .settings-container,
+#root .settings-container {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: clamp(0.35rem, 1.8vw, 0.85rem) !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .settings-container :is(.settings-tabs, .tabs-content, .settings-tab),
+html[data-theme="light"] #root .settings-container :is(.settings-tabs, .tabs-content, .settings-tab),
+body[data-theme="light"] #root .settings-container :is(.settings-tabs, .tabs-content, .settings-tab),
+#root .settings-container :is(.settings-tabs, .tabs-content, .settings-tab) {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border-left: 0 !important;
+  border-right: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .settings-container .settings-tab,
+html[data-theme="light"] #root .settings-container .settings-tab,
+body[data-theme="light"] #root .settings-container .settings-tab,
+#root .settings-container .settings-tab {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 0.72rem !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .settings-container :is(.settings-card, .notification-card),
+html[data-theme="light"] #root .settings-container :is(.settings-card, .notification-card),
+body[data-theme="light"] #root .settings-container :is(.settings-card, .notification-card),
+#root .settings-container :is(.settings-card, .notification-card) {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-inline: clamp(0.95rem, 4vw, 1.35rem) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .settings-container :is(form, .form-group, input, select, textarea),
+html[data-theme="light"] #root .settings-container :is(form, .form-group, input, select, textarea),
+body[data-theme="light"] #root .settings-container :is(form, .form-group, input, select, textarea),
+#root .settings-container :is(form, .form-group, input, select, textarea) {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme="light"] body[data-theme="light"] #root .settings-container,
+  html[data-theme="light"] #root .settings-container,
+  body[data-theme="light"] #root .settings-container,
+  #root .settings-container {
+    padding: 0 0 2.25rem !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root .settings-container :is(.settings-card, .notification-card),
+  html[data-theme="light"] #root .settings-container :is(.settings-card, .notification-card),
+  body[data-theme="light"] #root .settings-container :is(.settings-card, .notification-card),
+  #root .settings-container :is(.settings-card, .notification-card) {
+    padding-inline: 0.9rem !important;
+  }
+}

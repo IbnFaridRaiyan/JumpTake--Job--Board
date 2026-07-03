@@ -846,7 +846,13 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                             <h2><span key={`mobile-${activeSection}-${titleAnimationReplayKey}`} className="portal-title-jello-text">{sectionTitles[activeSection] || 'Dashboard Section'}</span></h2>
                         </div>
                     )}
-                    {renderContent()}
+                    <div
+                        key={`employer-section-${activeSection}`}
+                        className="portal-section-transition-shell"
+                        data-section={activeSection}
+                    >
+                        {renderContent()}
+                    </div>
                 </main>
             </div>
             <FloatingMessenger

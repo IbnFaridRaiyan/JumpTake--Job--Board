@@ -69330,3 +69330,791 @@ body[data-theme="light"] #root .settings-container :is(form, .form-group, input,
     padding-inline: 0.9rem !important;
   }
 }
+
+/* Shared popup entrance: all modal cards open smoothly from small to full size. */
+@keyframes jt-popup-backdrop-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes jt-popup-card-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(0.7rem) scale(0.84);
+    filter: blur(1.5px);
+  }
+  62% {
+    opacity: 1;
+    transform: translateY(0) scale(1.018);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes jt-inline-popover-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(0.28rem) scale(0.86);
+    filter: blur(1px);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(0) scale(1.025);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+html body :is(
+  .modal-overlay,
+  .modern-modal-overlay,
+  .job-preview-overlay,
+  .application-workspace-overlay,
+  .candidate-modal-overlay,
+  .job-detail-modal-overlay,
+  .analytics-detail-overlay,
+  .about-tour-overlay,
+  .terms-modal-overlay,
+  .public-landing-modal-backdrop,
+  .portal-job-modal-backdrop,
+  .portal-job-review-backdrop,
+  .portal-create-story-backdrop,
+  .portal-post-detail-backdrop,
+  .portal-profile-detail-backdrop
+) {
+  animation: jt-popup-backdrop-enter 260ms ease-out both !important;
+}
+
+html body :is(
+  .login-modal,
+  .modern-login-modal,
+  .modal-content,
+  .register-modal,
+  .job-interest-modal,
+  .job-preview-modal,
+  .application-workspace-modal,
+  .candidate-profile-modal,
+  .job-detail-modal,
+  .analytics-detail-modal,
+  .about-tour-modal,
+  .terms-modal,
+  .public-auth-card,
+  .public-assistant-dialog,
+  .public-jobs-dialog,
+  .portal-job-modal,
+  .portal-job-review-modal,
+  .portal-create-story-modal,
+  .portal-post-detail-modal,
+  .portal-profile-detail-modal
+) {
+  animation: jt-popup-card-enter 480ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+  transform-origin: center center !important;
+  will-change: transform, opacity, filter !important;
+}
+
+html body :is(
+  .portal-post-reactions.portal-reaction-rail.is-popover,
+  .portal-comment-row.is-open,
+  .portal-share-picker,
+  .portal-post-options-menu,
+  .tailor-social-popover
+) {
+  animation: jt-inline-popover-enter 360ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+  transform-origin: center bottom !important;
+  will-change: transform, opacity, filter !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body :is(
+    .modal-overlay,
+    .modern-modal-overlay,
+    .job-preview-overlay,
+    .application-workspace-overlay,
+    .candidate-modal-overlay,
+    .job-detail-modal-overlay,
+    .analytics-detail-overlay,
+    .about-tour-overlay,
+    .terms-modal-overlay,
+    .public-landing-modal-backdrop,
+    .portal-job-modal-backdrop,
+    .portal-job-review-backdrop,
+    .portal-create-story-backdrop,
+    .portal-post-detail-backdrop,
+    .portal-profile-detail-backdrop,
+    .login-modal,
+    .modern-login-modal,
+    .modal-content,
+    .register-modal,
+    .job-interest-modal,
+    .job-preview-modal,
+    .application-workspace-modal,
+    .candidate-profile-modal,
+    .job-detail-modal,
+    .analytics-detail-modal,
+    .about-tour-modal,
+    .terms-modal,
+    .public-auth-card,
+    .public-assistant-dialog,
+    .public-jobs-dialog,
+    .portal-job-modal,
+    .portal-job-review-modal,
+    .portal-create-story-modal,
+    .portal-post-detail-modal,
+    .portal-profile-detail-modal
+  ) {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+
+  html body :is(
+    .portal-post-reactions.portal-reaction-rail.is-popover,
+    .portal-comment-row.is-open,
+    .portal-share-picker,
+    .portal-post-options-menu,
+    .tailor-social-popover
+  ) {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+/* Post detail popup header: larger avatar with name/date stacked directly beside it. */
+html body .portal-post-detail-modal .portal-post-detail-header {
+  display: grid !important;
+  grid-template-columns: 3.25rem minmax(0, 1fr) !important;
+  align-items: center !important;
+  justify-items: start !important;
+  column-gap: 0.62rem !important;
+  row-gap: 0 !important;
+  width: 100% !important;
+  margin: 0 0 0.95rem !important;
+  padding: 0.08rem 1.35rem 0 0 !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-header .portal-author-open-button.portal-post-avatar {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 3.25rem !important;
+  min-width: 3.25rem !important;
+  max-width: 3.25rem !important;
+  height: 3.25rem !important;
+  min-height: 3.25rem !important;
+  max-height: 3.25rem !important;
+  margin: 0 !important;
+  border-radius: 0.42rem !important;
+  overflow: hidden !important;
+  transform: none !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-header .portal-author-open-button.portal-post-avatar img,
+html body .portal-post-detail-modal .portal-post-detail-header .portal-author-open-button.portal-post-avatar .portal-default-profile-icon {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: inherit !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-header .portal-post-title-block {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  display: grid !important;
+  align-content: center !important;
+  justify-items: start !important;
+  gap: 0.12rem !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+  transform: none !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-header .portal-post-author-name {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  font-size: 1.28rem !important;
+  font-weight: 950 !important;
+  line-height: 1.08 !important;
+  text-align: left !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-header .portal-author-name-button {
+  all: unset !important;
+  display: inline !important;
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+  cursor: pointer !important;
+  font: inherit !important;
+  line-height: inherit !important;
+  text-align: left !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-header .portal-post-title-block p {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  font-size: 0.82rem !important;
+  font-weight: 650 !important;
+  line-height: 1.2 !important;
+  text-align: left !important;
+}
+
+@media (max-width: 768px) {
+  html body .portal-post-detail-modal .portal-post-detail-header {
+    grid-template-columns: 3rem minmax(0, 1fr) !important;
+    column-gap: 0.56rem !important;
+    padding-right: 1.2rem !important;
+  }
+
+  html body .portal-post-detail-modal .portal-post-detail-header .portal-author-open-button.portal-post-avatar {
+    width: 3rem !important;
+    min-width: 3rem !important;
+    max-width: 3rem !important;
+    height: 3rem !important;
+    min-height: 3rem !important;
+    max-height: 3rem !important;
+  }
+
+  html body .portal-post-detail-modal .portal-post-detail-header .portal-post-author-name {
+    font-size: 1.08rem !important;
+  }
+}
+
+@keyframes jt-reaction-rail-open-slow {
+  0% {
+    opacity: 0;
+    clip-path: inset(0 48% 0 48% round 999px);
+    filter: blur(1px);
+  }
+  55% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0 round 999px);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0 round 999px);
+    filter: blur(0);
+  }
+}
+
+html body .portal-home-feed .portal-post-reactions.portal-reaction-rail.is-popover,
+html body .portal-home-feed .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover,
+html body .portal-post-reactions.portal-reaction-rail.is-popover {
+  animation: jt-reaction-rail-open-slow 720ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+  transform-origin: center center !important;
+  will-change: opacity, clip-path, filter !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body .portal-home-feed .portal-post-reactions.portal-reaction-rail.is-popover,
+  html body .portal-home-feed .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover,
+  html body .portal-post-reactions.portal-reaction-rail.is-popover {
+    animation-duration: 1ms !important;
+  }
+}
+
+/* Reach insight graph: every post reach counter opens a compact maroon 7-day view. */
+html body .portal-reach-insight-wrap {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  z-index: 6 !important;
+}
+
+html body .portal-reach-button.portal-post-reach {
+  all: unset !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.28rem !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  min-height: 1.72rem !important;
+  padding: 0.3rem 0.58rem !important;
+  border-radius: 999px !important;
+  background: #9b5a68 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: 0 0.4rem 0.9rem rgba(91, 24, 40, 0.18) !important;
+  cursor: pointer !important;
+  font-size: 0.72rem !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+html body .portal-reach-button.portal-post-reach:hover,
+html body .portal-reach-button.portal-post-reach:focus-visible {
+  background: #7d3044 !important;
+  transform: translateY(-1px) !important;
+}
+
+html body .portal-reach-button-icon {
+  display: block !important;
+  width: 0.82rem !important;
+  height: 0.82rem !important;
+  flex: 0 0 auto !important;
+}
+
+html body .portal-reach-insight-popover {
+  position: absolute !important;
+  left: 0 !important;
+  top: calc(100% + 0.42rem) !important;
+  z-index: 80 !important;
+  width: min(16rem, 78vw) !important;
+  padding: 0.7rem !important;
+  border: 1px solid rgba(125, 48, 68, 0.2) !important;
+  border-radius: 0.85rem !important;
+  background: #fffaf6 !important;
+  box-shadow: 0 1rem 2.4rem rgba(25, 18, 17, 0.22) !important;
+  animation: jt-inline-popover-enter 220ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+}
+
+html body .portal-reach-insight-header {
+  display: flex !important;
+  align-items: baseline !important;
+  justify-content: space-between !important;
+  gap: 0.5rem !important;
+  margin-bottom: 0.58rem !important;
+  color: #381620 !important;
+  -webkit-text-fill-color: #381620 !important;
+}
+
+html body .portal-reach-insight-header strong {
+  font-size: 0.85rem !important;
+  font-weight: 950 !important;
+}
+
+html body .portal-reach-insight-header span {
+  color: #875462 !important;
+  -webkit-text-fill-color: #875462 !important;
+  font-size: 0.62rem !important;
+  font-weight: 850 !important;
+}
+
+html body .portal-reach-chart {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  align-items: end !important;
+  gap: 0.34rem !important;
+  height: 6.2rem !important;
+}
+
+html body .portal-reach-chart-day {
+  display: grid !important;
+  grid-template-rows: 1fr auto auto !important;
+  align-items: end !important;
+  justify-items: center !important;
+  gap: 0.12rem !important;
+  min-width: 0 !important;
+  height: 100% !important;
+}
+
+html body .portal-reach-chart-bar {
+  display: block !important;
+  width: 100% !important;
+  max-width: 1.1rem !important;
+  height: var(--reach-bar-height, 10%) !important;
+  min-height: 0.4rem !important;
+  border-radius: 999px 999px 0.22rem 0.22rem !important;
+  background: linear-gradient(180deg, #a84f64 0%, #6e2438 100%) !important;
+  box-shadow: 0 0.3rem 0.75rem rgba(110, 36, 56, 0.22) !important;
+}
+
+html body .portal-reach-chart-value {
+  color: #381620 !important;
+  -webkit-text-fill-color: #381620 !important;
+  font-size: 0.58rem !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+}
+
+html body .portal-reach-chart-label {
+  color: #875462 !important;
+  -webkit-text-fill-color: #875462 !important;
+  font-size: 0.54rem !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-header {
+  column-gap: 0.9rem !important;
+  margin-bottom: 0.72rem !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-reach-row {
+  display: flex !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+  margin: 0.15rem 0 0.6rem !important;
+}
+
+html body .portal-post-detail-modal .portal-detail-stat-reach-wrap {
+  justify-self: center !important;
+  align-self: center !important;
+}
+
+html body .portal-post-detail-modal .portal-detail-stat-reach-wrap .portal-reach-button {
+  flex-direction: column !important;
+  gap: 0.12rem !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #4b5563 !important;
+  -webkit-text-fill-color: #4b5563 !important;
+  box-shadow: none !important;
+  font-size: 0.72rem !important;
+  line-height: 1.08 !important;
+}
+
+html body .portal-post-detail-modal .portal-detail-stat-reach-wrap .portal-reach-button-icon {
+  display: none !important;
+}
+
+html body .portal-post-detail-modal .portal-detail-stat-reach-wrap .portal-reach-button span {
+  display: grid !important;
+  gap: 0.12rem !important;
+}
+
+html body .portal-post-detail-modal .portal-detail-stat-reach-wrap .portal-reach-button span::first-line {
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  font-size: 1.02rem !important;
+  font-weight: 950 !important;
+}
+
+html body .portal-post-detail-modal .portal-detail-stat-reach-wrap .portal-reach-insight-popover {
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+}
+
+html body .portal-profile-detail-posts .portal-social-post-card .portal-social-post-header {
+  grid-template-columns: 2.7rem minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  column-gap: 0.72rem !important;
+}
+
+html body .portal-profile-detail-posts .portal-social-post-card .portal-post-title-block {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  gap: 0.12rem !important;
+  width: auto !important;
+  min-width: 0 !important;
+}
+
+html body .portal-profile-detail-posts .portal-social-post-card .portal-author-name-button {
+  all: unset !important;
+  display: inline !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  cursor: pointer !important;
+  font: inherit !important;
+  line-height: inherit !important;
+  text-align: left !important;
+}
+
+@media (max-width: 768px) {
+  html body .portal-post-detail-modal .portal-post-detail-header {
+    column-gap: 0.78rem !important;
+  }
+
+  html body .portal-reach-insight-popover {
+    width: min(15rem, 82vw) !important;
+  }
+}
+
+/* Portal-wide opening motion: side-nav sections and opened panels scale in smoothly. */
+@keyframes jt-portal-open-scale {
+  0% {
+    opacity: 0;
+    transform: translateY(0.45rem) scale(0.955);
+    filter: blur(1px);
+  }
+  72% {
+    opacity: 1;
+    transform: translateY(0) scale(1.006);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+html body .portal-section-transition-shell {
+  width: 100% !important;
+  min-width: 0 !important;
+  animation: jt-portal-open-scale 340ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+  transform-origin: center top !important;
+  will-change: transform, opacity, filter !important;
+}
+
+html body .mobile-dashboard-section-panel.is-open .portal-section-transition-shell {
+  animation-duration: 380ms !important;
+  transform-origin: center center !important;
+}
+
+html body .floating-messenger.is-open .floating-messenger-panel,
+html body .floating-messenger-panel.is-mobile-chat-open .floating-messenger-chat,
+html body .floating-messenger-panel.is-mobile-thread-list .floating-messenger-contacts,
+html body .contact-candidate-panel,
+html body .dashboard-search,
+html body .portal-default-search-container,
+html body .emoji-picker-popover,
+html body .resume-playground-ats-details,
+html body .resume-playground-editor-mobile-sidepanel,
+html body .resume-playground-editor-mobile-overlay {
+  animation: jt-portal-open-scale 300ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+  transform-origin: center center !important;
+  will-change: transform, opacity, filter !important;
+}
+
+@media (max-width: 768px) {
+  html body .portal-section-transition-shell {
+    animation-duration: 360ms !important;
+  }
+
+  html body .mobile-dashboard-section-panel.is-open,
+  html body .floating-messenger.is-open .floating-messenger-panel {
+    animation: jt-portal-open-scale 360ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+    transform-origin: center center !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body .portal-section-transition-shell,
+  html body .mobile-dashboard-section-panel.is-open,
+  html body .floating-messenger.is-open .floating-messenger-panel,
+  html body .floating-messenger-panel.is-mobile-chat-open .floating-messenger-chat,
+  html body .floating-messenger-panel.is-mobile-thread-list .floating-messenger-contacts,
+  html body .contact-candidate-panel,
+  html body .dashboard-search,
+  html body .portal-default-search-container,
+  html body .emoji-picker-popover,
+  html body .resume-playground-ats-details,
+  html body .resume-playground-editor-mobile-sidepanel,
+  html body .resume-playground-editor-mobile-overlay {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+/* Mobile post popup final lock: avatar, name, and date stay as compact profile text. */
+html body .portal-post-detail-modal .portal-post-detail-header {
+  display: grid !important;
+  grid-template-columns: 3.35rem minmax(0, 1fr) !important;
+  align-items: center !important;
+  justify-content: start !important;
+  justify-items: start !important;
+  column-gap: 0.7rem !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 0 0.9rem !important;
+  padding: 0.1rem 1.45rem 0 0 !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-header .portal-author-open-button.portal-post-avatar {
+  all: unset !important;
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 3.35rem !important;
+  min-width: 3.35rem !important;
+  max-width: 3.35rem !important;
+  height: 3.35rem !important;
+  min-height: 3.35rem !important;
+  max-height: 3.35rem !important;
+  aspect-ratio: 1 / 1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0.52rem !important;
+  overflow: hidden !important;
+  cursor: pointer !important;
+  background: var(--jt-dark-brown, #32180f) !important;
+  box-shadow: none !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-header .portal-author-open-button.portal-post-avatar:not(.has-default-profile-icon) {
+  background: transparent !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-header .portal-author-open-button.portal-post-avatar img,
+html body .portal-post-detail-modal .portal-post-detail-header .portal-author-open-button.portal-post-avatar .portal-default-profile-icon {
+  display: block !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  max-height: 100% !important;
+  border-radius: inherit !important;
+  object-fit: cover !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-header .portal-post-title-block {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  gap: 0.12rem !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-header .portal-post-author-name {
+  display: block !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  font-size: 1.18rem !important;
+  font-weight: 950 !important;
+  line-height: 1.08 !important;
+  text-align: left !important;
+  white-space: normal !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-header .portal-author-name-button {
+  all: unset !important;
+  display: inline !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+  cursor: pointer !important;
+  font: inherit !important;
+  line-height: inherit !important;
+  text-align: left !important;
+  white-space: normal !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-header .portal-post-title-block p {
+  display: block !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  font-size: 0.82rem !important;
+  font-weight: 650 !important;
+  line-height: 1.2 !important;
+  text-align: left !important;
+}
+
+@keyframes jt-reaction-rail-open-snappy {
+  0% {
+    opacity: 0;
+    transform: translateY(0.18rem) scale(0.94);
+    clip-path: inset(0 38% 0 38% round 999px);
+    filter: blur(0.6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    clip-path: inset(0 0 0 0 round 999px);
+    filter: blur(0);
+  }
+}
+
+html body .portal-home-feed .portal-post-reactions.portal-reaction-rail.is-popover,
+html body .portal-home-feed .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover,
+html body .portal-post-reactions.portal-reaction-rail.is-popover {
+  animation: jt-reaction-rail-open-snappy 180ms cubic-bezier(0.2, 0.9, 0.2, 1) both !important;
+  transform-origin: left center !important;
+  will-change: transform, opacity, clip-path !important;
+}
+
+@media (max-width: 768px) {
+  html body .portal-post-detail-modal .portal-post-detail-header {
+    grid-template-columns: 3rem minmax(0, 1fr) !important;
+    column-gap: 0.64rem !important;
+    padding-right: 1.35rem !important;
+  }
+
+  html body .portal-post-detail-modal .portal-post-detail-header .portal-author-open-button.portal-post-avatar {
+    width: 3rem !important;
+    min-width: 3rem !important;
+    max-width: 3rem !important;
+    height: 3rem !important;
+    min-height: 3rem !important;
+    max-height: 3rem !important;
+  }
+
+  html body .portal-post-detail-modal .portal-post-detail-header .portal-post-author-name {
+    font-size: 1rem !important;
+  }
+
+  html body .portal-post-detail-modal .portal-post-detail-header .portal-post-title-block p {
+    font-size: 0.78rem !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body .portal-home-feed .portal-post-reactions.portal-reaction-rail.is-popover,
+  html body .portal-home-feed .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover,
+  html body .portal-post-reactions.portal-reaction-rail.is-popover {
+    animation-duration: 1ms !important;
+  }
+}

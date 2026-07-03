@@ -1130,7 +1130,13 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                             setMobileSectionVisible(false);
                         }}
                     >
-                        {renderContent()}
+                        <div
+                            key={`candidate-section-${activeSection}`}
+                            className="portal-section-transition-shell"
+                            data-section={activeSection}
+                        >
+                            {renderContent()}
+                        </div>
                     </CandidatePortalErrorBoundary>
                     {mobileSectionVisible && ['notifications', 'about-jumptake', 'progress-check'].includes(activeSection) && (
                         <div className="page-footer-actions mobile-section-fallback-footer">

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { sendPasswordResetEmail, validateEmailAddress } from '../utils/emailVerification';
+import { persistEmployerSession } from '../utils/authStorage';
 import SocialAuthButtons from './SocialAuthButtons';
 
 const EmployerLogin = ({ onClose }) => {
@@ -40,13 +41,15 @@ const EmployerLogin = ({ onClose }) => {
                 throw new Error(data.error || 'Login failed');
             }
 
-            localStorage.setItem('employerToken', data.token);
-            localStorage.setItem('employer', JSON.stringify({
-                id: data.employer.id,
-                username: data.employer.username,
-                companyId: data.employer.companyId,
-                companyName: data.employer.companyName
-            }));
+            persistEmployerSession({
+                token: data.token,
+                employer: {
+                    id: data.employer.id,
+                    username: data.employer.username,
+                    companyId: data.employer.companyId,
+                    companyName: data.employer.companyName
+                }
+            });
 
             setIsSuccess(true);
             setMessage('Login successful!');

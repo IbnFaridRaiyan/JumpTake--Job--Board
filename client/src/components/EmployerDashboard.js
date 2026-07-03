@@ -19,6 +19,7 @@ import PortalHomeFeed from './PortalHomeFeed';
 import PortalDefaultLanding from './PortalDefaultLanding';
 import PortalAiButton from './PortalAiButton';
 import SavedPosts from './SavedPosts';
+import { clearBrowserAccountState } from '../utils/authStorage';
 import logoDark from './media/logo4.png';
 import logoLight from './media/jumptake-logo-main-light.png';
 
@@ -115,21 +116,56 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
 
     useEffect(() => {
         const employerData = localStorage.getItem('employer');
-        if (!employerData || !localStorage.getItem('employerToken')) {
-            localStorage.removeItem('jumptakeEmployerManagedJobId');
-            sessionStorage.removeItem(EMPLOYER_SECTION_STORAGE_KEY);
+        const token = localStorage.getItem('employerToken');
+        if (!employerData || !token) {
+            clearBrowserAccountState();
             navigate('/company');
             return;
         }
 
-        const parsedEmployer = JSON.parse(employerData);
-        setEmployer(parsedEmployer);
+        let parsedEmployer = null;
+        try {
+            parsedEmployer = JSON.parse(employerData);
+        } catch (error) {
+            console.error('Could not restore employer session:', error);
+            clearBrowserAccountState();
+            navigate('/company');
+            return;
+        }
 
-        fetchCompanyData(parsedEmployer.companyId);
-        fetchCompanyJobs(parsedEmployer.companyId);
-        fetchApplicationCount(parsedEmployer.companyId);
-        fetchEmployerInboxNotifications(parsedEmployer.companyId);
-        fetchEmployerPortalNotifications(parsedEmployer.companyId);
+        const initializeEmployer = (nextEmployer) => {
+            setEmployer(nextEmployer);
+            fetchCompanyData(nextEmployer.companyId);
+            fetchCompanyJobs(nextEmployer.companyId);
+            fetchApplicationCount(nextEmployer.companyId);
+            fetchEmployerInboxNotifications(nextEmployer.companyId);
+            fetchEmployerPortalNotifications(nextEmployer.companyId);
+        };
+
+        const restoreLiveEmployerSession = async () => {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/session/employer`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Employer session is no longer valid');
+                }
+
+                const data = await response.json();
+                const liveEmployer = data.employer || parsedEmployer;
+                localStorage.setItem('employer', JSON.stringify(liveEmployer));
+                initializeEmployer(liveEmployer);
+            } catch (error) {
+                console.error('Could not restore live employer session:', error);
+                clearBrowserAccountState();
+                navigate('/company');
+            }
+        };
+
+        restoreLiveEmployerSession();
     }, [navigate]);
 
     useEffect(() => {
@@ -285,10 +321,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('employerToken');
-        localStorage.removeItem('employer');
-        localStorage.removeItem('jumptakeEmployerManagedJobId');
-        sessionStorage.removeItem(EMPLOYER_SECTION_STORAGE_KEY);
+        clearBrowserAccountState();
         window.history.replaceState(null, '', window.location.pathname);
         navigate('/');
     };

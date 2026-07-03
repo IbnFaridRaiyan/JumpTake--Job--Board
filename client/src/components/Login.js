@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { sendPasswordResetEmail, validateEmailAddress } from '../utils/emailVerification';
+import { persistCandidateSession } from '../utils/authStorage';
 import SocialAuthButtons from './SocialAuthButtons';
 
 const Login = ({ onClose }) => {
@@ -40,14 +41,16 @@ const Login = ({ onClose }) => {
                 throw new Error(data.error || 'Login failed');
             }
 
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify({
-                id: data.user.id,
-                email: data.user.email,
-                jobSeekerId: data.user.jobSeekerId,
-                jobInterests: data.user.jobInterests || [],
-                jumptakeId: data.user.jumptakeId || null
-            }));
+            persistCandidateSession({
+                token: data.token,
+                user: {
+                    id: data.user.id,
+                    email: data.user.email,
+                    jobSeekerId: data.user.jobSeekerId,
+                    jobInterests: data.user.jobInterests || [],
+                    jumptakeId: data.user.jumptakeId || null
+                }
+            });
 
             setIsSuccess(true);
             setMessage('Login successful!');

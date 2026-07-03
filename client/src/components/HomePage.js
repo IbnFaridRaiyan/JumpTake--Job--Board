@@ -22,6 +22,7 @@ import PortalHomeFeed from './PortalHomeFeed';
 import PortalDefaultLanding from './PortalDefaultLanding';
 import PortalAiButton from './PortalAiButton';
 import SavedPosts from './SavedPosts';
+import { clearBrowserAccountState } from '../utils/authStorage';
 import logoDark from './media/logo4.png';
 import logoLight from './media/jumptake-logo-main-light.png';
 
@@ -232,55 +233,80 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
 
     useEffect(() => {
         const userData = localStorage.getItem('user');
-        if (!userData || !localStorage.getItem('token')) {
-            sessionStorage.removeItem(CANDIDATE_SECTION_STORAGE_KEY);
+        const token = localStorage.getItem('token');
+        if (!userData || !token) {
+            clearBrowserAccountState();
             navigate('/job-seeker');
             return;
         }
 
-        let parsedUser;
+        const initializeCandidate = (candidateUser) => {
+            setUser(candidateUser);
+            const savedInterests = Array.isArray(candidateUser.jobInterests) ? candidateUser.jobInterests : [];
+            setSelectedJobInterests(savedInterests);
+            setShowInterestPopup(false);
+
+            fetchJobs();
+            fetchCandidateNotifications(candidateUser.id);
+            fetchCandidateInboxNotifications(candidateUser.id);
+            fetchCandidatePortalNotifications(candidateUser.id);
+            fetchCandidateFriendNotifications(candidateUser.id);
+
+            let seekerId = candidateUser.jobSeekerId;
+
+            if (!seekerId) {
+                seekerId = localStorage.getItem('jobSeekerId') || localStorage.getItem('tempJobSeekerId');
+
+                if (seekerId && !candidateUser.jobSeekerId) {
+                    const nextCandidateUser = { ...candidateUser, jobSeekerId: seekerId };
+                    localStorage.setItem('user', JSON.stringify(nextCandidateUser));
+                    setUser(nextCandidateUser);
+
+                    linkJobSeekerToUser(nextCandidateUser.id, seekerId);
+                }
+            }
+
+            if (seekerId) {
+                fetchJobSeekerData(seekerId, candidateUser.id);
+            } else {
+                setLoading(false);
+            }
+        };
+
+        let parsedUser = null;
         try {
             parsedUser = JSON.parse(userData);
         } catch (error) {
             console.error('Could not restore candidate session:', error);
-            localStorage.removeItem('user');
-            localStorage.removeItem('token');
-            sessionStorage.removeItem(CANDIDATE_SECTION_STORAGE_KEY);
+            clearBrowserAccountState();
             navigate('/job-seeker');
             return;
         }
-        setUser(parsedUser);
-        const savedInterests = Array.isArray(parsedUser.jobInterests) ? parsedUser.jobInterests : [];
-        setSelectedJobInterests(savedInterests);
-        setShowInterestPopup(false);
 
-        fetchJobs();
-        fetchCandidateNotifications(parsedUser.id);
-        fetchCandidateInboxNotifications(parsedUser.id);
-        fetchCandidatePortalNotifications(parsedUser.id);
-        fetchCandidateFriendNotifications(parsedUser.id);
+        const restoreLiveCandidateSession = async () => {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/session/candidate`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
 
-        let seekerId = parsedUser.jobSeekerId;
+                if (!response.ok) {
+                    throw new Error('Candidate session is no longer valid');
+                }
 
-        if (!seekerId) {
-            seekerId = localStorage.getItem('jobSeekerId') || localStorage.getItem('tempJobSeekerId');
-
-            if (seekerId && !parsedUser.jobSeekerId) {
-                console.log('Found jobSeekerId in localStorage but not in user object, updating...');
-                parsedUser.jobSeekerId = seekerId;
-                localStorage.setItem('user', JSON.stringify(parsedUser));
-                setUser(parsedUser);
-
-                linkJobSeekerToUser(parsedUser.id, seekerId);
+                const data = await response.json();
+                const liveUser = data.user || parsedUser;
+                localStorage.setItem('user', JSON.stringify(liveUser));
+                initializeCandidate(liveUser);
+            } catch (error) {
+                console.error('Could not restore live candidate session:', error);
+                clearBrowserAccountState();
+                navigate('/job-seeker');
             }
-        }
+        };
 
-        if (seekerId) {
-            fetchJobSeekerData(seekerId);
-        } else {
-            console.log('No jobSeekerId found, profile data will not be available');
-            setLoading(false);
-        }
+        restoreLiveCandidateSession();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [navigate]);
 
@@ -397,7 +423,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         }
     };
 
-    const fetchJobSeekerData = async (jobSeekerId) => {
+    const fetchJobSeekerData = async (jobSeekerId, userIdOverride = null) => {
         try {
             setLoading(true);
             console.log('Fetching job seeker data for ID:', jobSeekerId);
@@ -419,7 +445,12 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             setJobSeekerData(normalizedData);
 
             try {
-                const analysisResponse = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/resume/analysis/${user.id}`, {
+                const analysisUserId = userIdOverride || user?.id;
+                if (!analysisUserId) {
+                    return;
+                }
+
+                const analysisResponse = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/resume/analysis/${analysisUserId}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -443,9 +474,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        sessionStorage.removeItem(CANDIDATE_SECTION_STORAGE_KEY);
+        clearBrowserAccountState();
         window.history.replaceState(null, '', window.location.pathname);
         navigate('/');
     };

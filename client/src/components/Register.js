@@ -6,6 +6,7 @@ import {
     sendVerificationCodeEmail,
     validateEmailAddress
 } from '../utils/emailVerification';
+import { persistCandidateSession } from '../utils/authStorage';
 import TermsAgreement from './TermsAgreement';
 
 
@@ -190,14 +191,17 @@ const Register = ({ jobSeekerId, initialName = '', initialEmail = '', onClose, o
             }
             
           
-            localStorage.setItem('token', loginData.token);
-            localStorage.setItem('user', JSON.stringify({
-                id: loginData.user.id,
-                email: loginData.user.email,
-                jobSeekerId: jobSeekerId,
-                jobInterests: loginData.user.jobInterests || [],
-                jumptakeId: loginData.user.jumptakeId || registerData.user?.jumptakeId || null
-            }));
+            persistCandidateSession({
+                token: loginData.token,
+                user: {
+                    id: loginData.user.id,
+                    email: loginData.user.email,
+                    jobSeekerId: jobSeekerId,
+                    jobInterests: loginData.user.jobInterests || [],
+                    jumptakeId: loginData.user.jumptakeId || registerData.user?.jumptakeId || null
+                },
+                jobSeekerId
+            });
             
             if (jobSeekerId) {
                 const linkResponse = await fetch((process.env.REACT_APP_API_URL || '') + '/api/resume/link', {

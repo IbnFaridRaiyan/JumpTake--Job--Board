@@ -7,6 +7,7 @@ import {
     sendVerificationCodeEmail,
     validateEmailAddress
 } from '../utils/emailVerification';
+import { persistCandidateSession } from '../utils/authStorage';
 import TermsAgreement from './TermsAgreement';
 
 const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSuccess }) => {
@@ -236,21 +237,22 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
             }
             
             const loginData = await loginResponse.json();
-            
-           
-            localStorage.setItem('token', loginData.token);
-            localStorage.setItem('user', JSON.stringify({
-                id: loginData.user.id,
-                email: loginData.user.email,
-                jobSeekerId: jobSeekerId,
-                jobInterests: loginData.user.jobInterests || []
-            }));
+            const jobSeekerIdToUse = jobSeekerId || localStorage.getItem('tempJobSeekerId');
+
+            persistCandidateSession({
+                token: loginData.token,
+                user: {
+                    id: loginData.user.id,
+                    email: loginData.user.email,
+                    jobSeekerId: jobSeekerIdToUse || loginData.user.jobSeekerId,
+                    jobInterests: loginData.user.jobInterests || [],
+                    jumptakeId: loginData.user.jumptakeId || null
+                },
+                jobSeekerId: jobSeekerIdToUse || loginData.user.jobSeekerId
+            });
             
         
             try {
-                
-                const jobSeekerIdToUse = jobSeekerId || localStorage.getItem('tempJobSeekerId');
-                
                 if (jobSeekerIdToUse) {
                     if (!String(jobSeekerIdToUse).startsWith('temp_')) {
                         const updateProfileResponse = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/job-seekers/${jobSeekerIdToUse}`, {
@@ -287,8 +289,6 @@ const SimplifiedRegisterForm = ({ jobSeekerId, initialName, initialEmail, onSucc
                        
                     } else {
                         console.log('Successfully linked resume data to user account');
-                       
-                        localStorage.setItem('jobSeekerId', jobSeekerIdToUse);
                     }
                 }
             } catch (linkError) {

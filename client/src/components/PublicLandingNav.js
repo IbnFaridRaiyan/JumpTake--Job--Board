@@ -5,6 +5,7 @@ import ProfileAvatar from './ProfileAvatar';
 import SocialAuthButtons from './SocialAuthButtons';
 import logoDark from './media/logo4.png';
 import { sendPasswordResetEmail, validateEmailAddress } from '../utils/emailVerification';
+import { persistCandidateSession, persistEmployerSession } from '../utils/authStorage';
 
 const PublicLandingIcon = ({ name, className = '' }) => {
     if (name === 'candidate') {
@@ -259,22 +260,26 @@ const PublicLoginDialog = ({ apiBase, onClose, onOpenRegister, onSuccessCandidat
             }
 
             if (loggedInType === 'employer') {
-                localStorage.setItem('employerToken', data.token);
-                localStorage.setItem('employer', JSON.stringify({
-                    id: data.employer.id,
-                    username: data.employer.username,
-                    companyId: data.employer.companyId,
-                    companyName: data.employer.companyName
-                }));
+                persistEmployerSession({
+                    token: data.token,
+                    employer: {
+                        id: data.employer.id,
+                        username: data.employer.username,
+                        companyId: data.employer.companyId,
+                        companyName: data.employer.companyName
+                    }
+                });
             } else {
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('user', JSON.stringify({
-                    id: data.user.id,
-                    email: data.user.email,
-                    jobSeekerId: data.user.jobSeekerId,
-                    jobInterests: data.user.jobInterests || [],
-                    jumptakeId: data.user.jumptakeId || null
-                }));
+                persistCandidateSession({
+                    token: data.token,
+                    user: {
+                        id: data.user.id,
+                        email: data.user.email,
+                        jobSeekerId: data.user.jobSeekerId,
+                        jobInterests: data.user.jobInterests || [],
+                        jumptakeId: data.user.jumptakeId || null
+                    }
+                });
             }
 
             setIsSuccess(true);

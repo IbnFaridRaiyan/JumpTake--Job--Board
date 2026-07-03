@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { persistCandidateSession, persistEmployerSession } from '../utils/authStorage';
 
 const decodePayload = (payload) => {
   const normalized = String(payload || '').replace(/-/g, '+').replace(/_/g, '/');
@@ -33,14 +34,12 @@ const SocialAuthComplete = () => {
       const data = decodePayload(payload);
 
       if (role === 'employer' || data.role === 'employer') {
-        localStorage.setItem('employerToken', data.token);
-        localStorage.setItem('employer', JSON.stringify(data.employer));
+        persistEmployerSession({ token: data.token, employer: data.employer });
         navigate('/employer-dashboard#employer:home', { replace: true });
         return;
       }
 
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      persistCandidateSession({ token: data.token, user: data.user });
       navigate('/home#candidate:home', { replace: true });
     } catch (parseError) {
       setMessage('Social sign in finished without a valid session. Please try again.');

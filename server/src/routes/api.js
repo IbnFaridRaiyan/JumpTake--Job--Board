@@ -6,6 +6,7 @@ const userController = require('../controllers/userController');
 const jobController = require('../controllers/jobController');
 const employerController = require('../controllers/employerController');
 const Company = require('../models/Company');
+const Employer = require('../models/Employer');
 const JobSeeker = require('../models/JobSeeker');
 const applicationController = require('../controllers/applicationController');
 const assessmentController = require('../controllers/assessmentController');
@@ -49,6 +50,57 @@ router.post('/users/login', userController.login);
 router.post('/password-reset/request', passwordResetController.requestPasswordReset);
 router.get('/password-reset/validate', passwordResetController.validatePasswordResetToken);
 router.post('/password-reset/confirm', passwordResetController.confirmPasswordReset);
+
+router.get('/session/candidate', async (req, res) => {
+    try {
+        const payload = getAuthenticatedPayload(req);
+        const user = await User.findById(payload.id)
+            .select('_id email jobSeekerId jobInterests jumptakeId');
+
+        if (!user) {
+            return res.status(401).json({ error: 'Candidate account no longer exists' });
+        }
+
+        res.json({
+            user: {
+                id: user._id,
+                email: user.email,
+                jobSeekerId: user.jobSeekerId || null,
+                jobInterests: user.jobInterests || [],
+                jumptakeId: user.jumptakeId || null
+            }
+        });
+    } catch (error) {
+        res.status(error.status || 500).json({ error: error.message });
+    }
+});
+
+router.get('/session/employer', async (req, res) => {
+    try {
+        const payload = getAuthenticatedPayload(req);
+        const employer = await Employer.findById(payload.id)
+            .select('_id username email phone companyId');
+
+        if (!employer) {
+            return res.status(401).json({ error: 'Employer account no longer exists' });
+        }
+
+        const company = await Company.findById(employer.companyId).select('name');
+
+        res.json({
+            employer: {
+                id: employer._id,
+                username: employer.username,
+                companyId: employer.companyId,
+                companyName: company?.name || 'Unknown Company',
+                email: employer.email || '',
+                phone: employer.phone || ''
+            }
+        });
+    } catch (error) {
+        res.status(error.status || 500).json({ error: error.message });
+    }
+});
 
 
 router.get('/companies', async (req, res) => {

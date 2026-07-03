@@ -3,6 +3,7 @@ const FeedPost = require('../models/FeedPost');
 const VALID_TYPES = new Set(['work-news', 'talent-story']);
 const VALID_AUDIENCES = new Set(['everyone', 'friends', 'only-me']);
 const VALID_AUTHOR_TYPES = new Set(['candidate', 'employer']);
+const VALID_MEDIA_TYPES = new Set(['image', 'video', 'document', 'file']);
 
 const serializePost = (post) => {
     const plain = post?.toObject ? post.toObject() : post;
@@ -23,7 +24,8 @@ const sanitizeMedia = (media) => {
 
     return {
         dataUrl: media.dataUrl,
-        type: media.type === 'video' ? 'video' : 'image',
+        type: VALID_MEDIA_TYPES.has(media.type) ? media.type : 'image',
+        mimeType: String(media.mimeType || '').slice(0, 180),
         name: String(media.name || 'Post attachment').slice(0, 180)
     };
 };

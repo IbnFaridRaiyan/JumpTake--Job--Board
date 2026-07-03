@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom';
 import ResumeFilePreview from './ResumeFilePreview';
 import { apiUrl } from '../utils/apiUrl';
+import { createSquareProfileImage } from '../utils/profileImages';
 import reactionButtonIcon from './media/reaction.png';
 
 const WORK_NEWS_STORAGE_KEY = 'jumptakeWorkNewsPosts';
@@ -9,6 +10,9 @@ const TALENT_STORIES_STORAGE_KEY = 'jumptakeTalentStoriesPosts';
 const JOB_REACH_STORAGE_KEY = 'jumptakeJobReachMap';
 const HOME_JOB_LIKE_STORAGE_KEY = 'jumptakeHomeJobLikeMap';
 const HOME_JOB_REVIEW_STORAGE_KEY = 'jumptakeHomeJobReviewMap';
+const TAILOR_PROFILE_STORAGE_PREFIX = 'jumptakeTailorProfile:';
+const CANDIDATE_PROFILE_RATING_PREFIX = 'jumptakeCandidateProfileRatings:';
+const PROFILE_IMAGE_UPDATED_EVENT = 'jumptake-profile-image-updated';
 const RESUME_PLAYGROUND_STORAGE_KEY = 'jumptakeResumePlayground:';
 const SAVED_POSTS_STORAGE_PREFIX = 'jumptakeSavedPosts:';
 const BLOCKED_FEED_AUTHORS_STORAGE_PREFIX = 'jumptakeBlockedFeedAuthors:';
@@ -645,6 +649,40 @@ const tabAccentColors = {
     'my-feed': '#f97316'
 };
 
+const getTailorProfileStorageKey = (viewerId = 'guest') => `${TAILOR_PROFILE_STORAGE_PREFIX}${viewerId || 'guest'}`;
+const getCandidateProfileRatingStorageKey = (candidateId = 'guest') => `${CANDIDATE_PROFILE_RATING_PREFIX}${candidateId || 'guest'}`;
+
+const readTailorProfileDraft = (viewerId = 'guest') => {
+    if (typeof window === 'undefined') {
+        return {};
+    }
+
+    try {
+        const parsed = JSON.parse(localStorage.getItem(getTailorProfileStorageKey(viewerId)) || '{}');
+        return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (error) {
+        return {};
+    }
+};
+
+const readCandidateRatingSummary = (candidateId = 'guest') => {
+    if (typeof window === 'undefined') {
+        return { average: 0, count: 0 };
+    }
+
+    try {
+        const parsed = JSON.parse(localStorage.getItem(getCandidateProfileRatingStorageKey(candidateId)) || '[]');
+        const ratings = (Array.isArray(parsed) ? parsed : [])
+            .map((item) => Number(item?.rating || item))
+            .filter((rating) => Number.isFinite(rating) && rating > 0);
+        const count = ratings.length;
+        const average = count ? ratings.reduce((total, rating) => total + rating, 0) / count : 0;
+        return { average, count };
+    } catch (error) {
+        return { average: 0, count: 0 };
+    }
+};
+
 const tabInactiveIconColors = {
     'work-news': '#000000',
     'job-posts': '#000000',
@@ -773,8 +811,8 @@ const DefaultProfileIcon = () => (
         aria-hidden="true"
         focusable="false"
     >
-        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-        <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1v-1c0-1-1-4-6-4s-6 3-6 4v1a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z" />
+        <path d="M8 8.15a3.55 3.55 0 1 0 0-7.1 3.55 3.55 0 0 0 0 7.1" />
+        <path d="M1.65 14.95c.58-3.56 3.08-5.63 6.35-5.63s5.77 2.07 6.35 5.63a.5.5 0 0 1-.49.58H2.14a.5.5 0 0 1-.49-.58" />
     </svg>
 );
 
@@ -793,6 +831,25 @@ const PortalActionIcon = ({ type }) => {
     return (
         <svg className="portal-action-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
             <path d={paths[type] || paths.submit} />
+        </svg>
+    );
+};
+
+const AttachmentIcon = ({ type }) => {
+    const paths = {
+        camera: [
+            'M5 8c0-1.657 2.343-3 4-3V4a4 4 0 0 0-4 4',
+            'M12.318 3h2.015C15.253 3 16 3.746 16 4.667v6.666c0 .92-.746 1.667-1.667 1.667h-2.015A5.97 5.97 0 0 1 9 14a5.97 5.97 0 0 1-3.318-1H1.667C.747 13 0 12.254 0 11.333V4.667C0 3.747.746 3 1.667 3H2a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1h.682A5.97 5.97 0 0 1 9 2c1.227 0 2.367.368 3.318 1M2 4.5a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0M14 8A5 5 0 1 0 4 8a5 5 0 0 0 10 0'
+        ],
+        paperclip: 'M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0z',
+        folder: 'M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7A2 2 0 0 1 .54 3.87M2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139q.323-.119.684-.12h5.396z'
+    };
+
+    return (
+        <svg className="portal-attachment-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            {(Array.isArray(paths[type]) ? paths[type] : [paths[type] || paths.camera]).map((pathValue, index) => (
+                <path key={index} d={pathValue} />
+            ))}
         </svg>
     );
 };
@@ -1013,7 +1070,7 @@ const PortalHomeFeed = ({
         { id: 'work-news', label: 'Work News' },
         { id: 'job-posts', label: 'Job Posts' },
         { id: 'talent-stories', label: 'Talent Stories' },
-        { id: 'create-story', label: 'Create a story' },
+        { id: 'create-story', label: 'Tailor Profile' },
         { id: 'my-feed', label: 'My feed' }
     ];
     const employerTabs = [
@@ -1034,6 +1091,8 @@ const PortalHomeFeed = ({
     const [composerText, setComposerText] = useState('');
     const [composerMedia, setComposerMedia] = useState(null);
     const [composerAudience, setComposerAudience] = useState('everyone');
+    const [createStoryModalOpen, setCreateStoryModalOpen] = useState(false);
+    const [createStoryAudienceOpen, setCreateStoryAudienceOpen] = useState(false);
     const [commentDrafts, setCommentDrafts] = useState({});
     const [expandedPostBodies, setExpandedPostBodies] = useState({});
     const [openReactionPostId, setOpenReactionPostId] = useState('');
@@ -1041,6 +1100,8 @@ const PortalHomeFeed = ({
     const [openSharePostId, setOpenSharePostId] = useState('');
     const [openOptionsPostId, setOpenOptionsPostId] = useState('');
     const [openJobOptionsId, setOpenJobOptionsId] = useState('');
+    const [openPostDetail, setOpenPostDetail] = useState(null);
+    const [openProfileDetail, setOpenProfileDetail] = useState(null);
     const [, setSavedPosts] = useState([]);
     const [blockedFeedAuthors, setBlockedFeedAuthors] = useState([]);
     const [feedFriends, setFeedFriends] = useState([]);
@@ -1067,12 +1128,18 @@ const PortalHomeFeed = ({
     const [homeJobSalarySort, setHomeJobSalarySort] = useState('');
     const [homeJobTypeFilter, setHomeJobTypeFilter] = useState('');
     const [homeJobFieldFilter, setHomeJobFieldFilter] = useState('');
+    const [tailorProfile, setTailorProfile] = useState(() => readTailorProfileDraft('guest'));
+    const [profileAvatarOverride, setProfileAvatarOverride] = useState('');
+    const [activeTailorSocialEditor, setActiveTailorSocialEditor] = useState('');
     const [activeDraftId, setActiveDraftId] = useState(null);
     const [savingApplicationDraft, setSavingApplicationDraft] = useState(false);
     const applicationResumeInputRef = useRef(null);
+    const tailorProfileImageInputRef = useRef(null);
     const reactionTooltipTimerRef = useRef(null);
     const reactionCloseTimerRef = useRef(null);
     const feedScrollTopRef = useRef(0);
+    const feedScrollPositionsRef = useRef({});
+    const feedScrollRestoreFrameRef = useRef(null);
     const tabsHiddenRef = useRef(false);
     const feedScrollerRef = useRef(null);
     const feedTouchScrollRef = useRef({
@@ -1104,7 +1171,7 @@ const PortalHomeFeed = ({
     );
     const authorAvatar = mode === 'employer'
         ? companyData?.logo
-        : profileData?.profileImage;
+        : profileAvatarOverride || profileData?.profileImage || '';
     const candidateUserId = currentUser?.id || currentUser?._id || currentUser?.userId;
 
     useEffect(() => {
@@ -1115,6 +1182,15 @@ const PortalHomeFeed = ({
         setSavedPosts(readStorageArray(getSavedPostsStorageKey(viewerId)));
         setBlockedFeedAuthors(readStorageArray(getBlockedFeedAuthorsStorageKey(viewerId)).map(String));
     }, [viewerId]);
+
+    useEffect(() => {
+        setTailorProfile(readTailorProfileDraft(viewerId));
+        setActiveTailorSocialEditor('');
+    }, [viewerId]);
+
+    useEffect(() => {
+        setProfileAvatarOverride('');
+    }, [profileData?.profileImage, viewerId]);
 
     useEffect(() => {
         if (!openReactionPostId && !openCommentPostId && !openSharePostId && !openOptionsPostId && !openJobOptionsId) {
@@ -1517,10 +1593,37 @@ const PortalHomeFeed = ({
             window.cancelAnimationFrame(touchState.frameId);
             touchState.frameId = null;
         }
-        tabsHiddenRef.current = false;
-        setTabsHidden(false);
-        feedScrollTopRef.current = 0;
-    }, [activeTab]);
+
+        const scroller = feedScrollerRef.current;
+        if (!scroller || typeof window === 'undefined') {
+            return undefined;
+        }
+
+        if (feedScrollRestoreFrameRef.current) {
+            window.cancelAnimationFrame(feedScrollRestoreFrameRef.current);
+        }
+
+        const scrollKey = `${mode}:${activeTab}`;
+        const rememberedTop = feedScrollPositionsRef.current[scrollKey] || 0;
+
+        feedScrollRestoreFrameRef.current = window.requestAnimationFrame(() => {
+            const maxScrollTop = Math.max(0, scroller.scrollHeight - scroller.clientHeight);
+            const nextScrollTop = Math.max(0, Math.min(maxScrollTop, rememberedTop));
+            scroller.scrollTop = nextScrollTop;
+            feedScrollTopRef.current = nextScrollTop;
+            const shouldHideTabs = nextScrollTop > 12;
+            tabsHiddenRef.current = shouldHideTabs;
+            setTabsHidden(shouldHideTabs);
+            feedScrollRestoreFrameRef.current = null;
+        });
+
+        return () => {
+            if (feedScrollRestoreFrameRef.current && typeof window !== 'undefined') {
+                window.cancelAnimationFrame(feedScrollRestoreFrameRef.current);
+                feedScrollRestoreFrameRef.current = null;
+            }
+        };
+    }, [activeTab, mode]);
 
     useEffect(() => {
         const key = activeTab === 'work-news' || activeTab === 'my-company-posts'
@@ -1606,6 +1709,107 @@ const PortalHomeFeed = ({
 
             return nextPosts;
         });
+    };
+
+    const isCurrentCandidateAuthor = (authorId, authorType = 'candidate') => (
+        mode === 'candidate'
+        && authorType !== 'employer'
+        && String(authorId || '') === viewerId
+    );
+
+    const getLiveProfileAvatar = (authorId, authorType, fallback = '') => (
+        isCurrentCandidateAuthor(authorId, authorType)
+            ? authorAvatar || ''
+            : fallback || ''
+    );
+
+    const applyProfileImageToPost = (post, profileImage) => {
+        if (!post || typeof post !== 'object') {
+            return post;
+        }
+
+        const nextPost = isCurrentCandidateAuthor(post.authorId, post.authorType)
+            ? { ...post, authorAvatar: profileImage || '' }
+            : { ...post };
+
+        if (Array.isArray(nextPost.comments)) {
+            nextPost.comments = nextPost.comments.map((comment) => (
+                isCurrentCandidateAuthor(comment?.authorId, 'candidate')
+                    ? { ...comment, authorAvatar: profileImage || '' }
+                    : comment
+            ));
+        }
+
+        return nextPost;
+    };
+
+    const updateStoredCurrentUserProfileImage = (profileImage) => {
+        if (typeof window === 'undefined') {
+            return;
+        }
+
+        try {
+            const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+            if (storedUser && typeof storedUser === 'object') {
+                localStorage.setItem('user', JSON.stringify({ ...storedUser, profileImage: profileImage || '' }));
+            }
+        } catch (error) {
+            console.warn('Could not update stored user profile image:', error);
+        }
+    };
+
+    const applyUniversalProfileImage = (profileImage) => {
+        const normalizedProfileImage = profileImage || '';
+
+        setProfileAvatarOverride(normalizedProfileImage);
+        updateTailorProfile({
+            profileImage: normalizedProfileImage,
+            profileImageRemoved: !normalizedProfileImage
+        });
+        setApplicationProfile((currentProfile) => ({
+            ...currentProfile,
+            profileImage: normalizedProfileImage
+        }));
+        updateStoredCurrentUserProfileImage(normalizedProfileImage);
+        updatePosts(TALENT_STORIES_STORAGE_KEY, (posts) => (
+            posts.map((post) => applyProfileImageToPost(post, normalizedProfileImage))
+        ));
+        updatePosts(WORK_NEWS_STORAGE_KEY, (posts) => (
+            posts.map((post) => applyProfileImageToPost(post, normalizedProfileImage))
+        ));
+
+        if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent(PROFILE_IMAGE_UPDATED_EVENT, {
+                detail: {
+                    userId: viewerId,
+                    jobSeekerId: profileData?._id || profileData?.id || currentUser?.jobSeekerId || '',
+                    profileImage: normalizedProfileImage
+                }
+            }));
+        }
+    };
+
+    const saveUniversalProfileImage = async (profileImage) => {
+        const jobSeekerId = profileData?._id || profileData?.id || currentUser?.jobSeekerId;
+        if (!jobSeekerId) {
+            return null;
+        }
+
+        const response = await fetch(apiUrl(`/api/job-seekers/${jobSeekerId}`), {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token') || ''}`
+            },
+            body: JSON.stringify({ profileImage: profileImage || '' })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.error || data.message || 'Could not update profile picture.');
+        }
+
+        onRefresh?.();
+        return data;
     };
 
     const handleDeletePost = (key, post) => {
@@ -1749,7 +1953,7 @@ const PortalHomeFeed = ({
         }
     };
 
-    const handleMediaChange = async (event) => {
+    const handleMediaChange = async (event, attachmentKind = 'media') => {
         const file = event.target.files?.[0];
         if (!file) {
             return;
@@ -1757,13 +1961,24 @@ const PortalHomeFeed = ({
 
         try {
             const dataUrl = await readFileAsDataUrl(file);
+            const fileType = file.type || '';
+            const normalizedType = attachmentKind === 'media'
+                ? fileType.startsWith('video/')
+                    ? 'video'
+                    : 'image'
+                : attachmentKind === 'document'
+                    ? 'document'
+                    : 'file';
             setComposerMedia({
                 dataUrl,
-                type: file.type.startsWith('video/') ? 'video' : 'image',
+                type: normalizedType,
+                mimeType: fileType,
                 name: file.name
             });
         } catch (error) {
-            console.error('Could not attach post media:', error);
+            console.error('Could not attach post file:', error);
+        } finally {
+            event.target.value = '';
         }
     };
 
@@ -1801,6 +2016,8 @@ const PortalHomeFeed = ({
             setComposerText('');
             setComposerMedia(null);
             setComposerAudience('everyone');
+            setCreateStoryModalOpen(false);
+            setCreateStoryAudienceOpen(false);
             setFeedError('');
             setActiveTab(isCompanyPost ? 'my-company-posts' : 'my-feed');
         } catch (error) {
@@ -2900,6 +3117,17 @@ const PortalHomeFeed = ({
         scroller.scrollLeft = nextScrollLeft;
     }, []);
 
+    const rememberFeedScrollPosition = useCallback((tabId = activeTab, nextScrollTop = null) => {
+        const scroller = feedScrollerRef.current;
+        const scrollTop = typeof nextScrollTop === 'number' ? nextScrollTop : scroller?.scrollTop;
+
+        if (typeof scrollTop !== 'number') {
+            return;
+        }
+
+        feedScrollPositionsRef.current[`${mode}:${tabId}`] = scrollTop;
+    }, [activeTab, mode]);
+
     const updateFeedTabsVisibility = useCallback((nextScrollTop) => {
         const previousScrollTop = feedScrollTopRef.current;
         const delta = nextScrollTop - previousScrollTop;
@@ -2917,8 +3145,10 @@ const PortalHomeFeed = ({
     }, []);
 
     const handleFeedScroll = useCallback((event) => {
-        updateFeedTabsVisibility(event.currentTarget.scrollTop);
-    }, [updateFeedTabsVisibility]);
+        const nextScrollTop = event.currentTarget.scrollTop;
+        rememberFeedScrollPosition(activeTab, nextScrollTop);
+        updateFeedTabsVisibility(nextScrollTop);
+    }, [activeTab, rememberFeedScrollPosition, updateFeedTabsVisibility]);
 
     const cancelMobileFeedTouchScroll = useCallback(() => {
         const touchState = feedTouchScrollRef.current;
@@ -2952,6 +3182,7 @@ const PortalHomeFeed = ({
         const diff = touchState.targetScrollTop - scroller.scrollTop;
         if (Math.abs(diff) < 0.7) {
             scroller.scrollTop = touchState.targetScrollTop;
+            rememberFeedScrollPosition(activeTab, scroller.scrollTop);
             updateFeedTabsVisibility(scroller.scrollTop);
             touchState.lastFrameTime = 0;
             touchState.frameId = null;
@@ -2970,9 +3201,10 @@ const PortalHomeFeed = ({
 
         touchState.lastFrameTime = timestamp;
         scroller.scrollTop += cappedStep;
+        rememberFeedScrollPosition(activeTab, scroller.scrollTop);
         updateFeedTabsVisibility(scroller.scrollTop);
         touchState.frameId = window.requestAnimationFrame(runMobileFeedScrollFrame);
-    }, [updateFeedTabsVisibility]);
+    }, [activeTab, rememberFeedScrollPosition, updateFeedTabsVisibility]);
 
     const ensureMobileFeedScrollFrame = useCallback(() => {
         const touchState = feedTouchScrollRef.current;
@@ -3039,6 +3271,7 @@ const PortalHomeFeed = ({
             touchState.lastDelta = limitedDelta;
             touchState.targetScrollTop = clampScrollTop(touchState.targetScrollTop + limitedDelta);
             scroller.scrollTop = touchState.targetScrollTop;
+            rememberFeedScrollPosition(activeTab, scroller.scrollTop);
             updateFeedTabsVisibility(scroller.scrollTop);
         };
 
@@ -3069,9 +3302,125 @@ const PortalHomeFeed = ({
             scroller.removeEventListener('touchcancel', handleTouchEnd);
             cancelMobileFeedTouchScroll();
         };
-    }, [cancelMobileFeedTouchScroll, ensureMobileFeedScrollFrame, updateFeedTabsVisibility]);
+    }, [activeTab, cancelMobileFeedTouchScroll, ensureMobileFeedScrollFrame, rememberFeedScrollPosition, updateFeedTabsVisibility]);
 
-    const renderPostList = (posts, key, kind) => {
+    const shouldIgnorePostDetailClick = (event) => Boolean(event.target.closest(
+        'button, a, input, textarea, select, label, video, [role="button"], [role="menu"], [role="dialog"], .portal-post-reactions'
+    ));
+
+    const openPostDetailModal = ({ postKey, storageKey, kind }) => {
+        setOpenPostDetail({ postKey, storageKey, kind });
+        setOpenProfileDetail(null);
+        setOpenReactionPostId('');
+        setOpenCommentPostId('');
+        setOpenSharePostId('');
+        setOpenOptionsPostId('');
+        setShareStatus('');
+    };
+
+    const closePostDetailModal = () => {
+        setOpenPostDetail(null);
+    };
+
+    const getPostDetailRecord = () => {
+        if (!openPostDetail?.postKey) {
+            return null;
+        }
+
+        const sourcePosts = openPostDetail.storageKey === WORK_NEWS_STORAGE_KEY
+            ? workNewsPosts
+            : talentStories;
+
+        return (Array.isArray(sourcePosts) ? sourcePosts : [])
+            .map((post, index) => normalizePostForDisplay(post, index))
+            .filter(canViewPost)
+            .find((post, index) => getPostKey(post, index) === openPostDetail.postKey) || null;
+    };
+
+    const openProfileDetailModal = (author) => {
+        if (!author) {
+            return;
+        }
+
+        setOpenProfileDetail({
+            authorId: asDisplayText(author.authorId || author.id),
+            authorName: asDisplayText(author.authorName || author.name, 'Unknown user'),
+            authorAvatar: asDisplayText(author.authorAvatar || author.profileImage),
+            authorType: author.authorType === 'employer' ? 'employer' : 'candidate',
+            jumptakeId: asDisplayText(author.jumptakeId || author.jumpTakeId)
+        });
+        setOpenReactionPostId('');
+        setOpenCommentPostId('');
+        setOpenSharePostId('');
+        setOpenOptionsPostId('');
+        setShareStatus('');
+    };
+
+    const closeProfileDetailModal = () => {
+        setOpenProfileDetail(null);
+    };
+
+    const getProfileDetailRecord = () => {
+        if (!openProfileDetail) {
+            return null;
+        }
+
+        const authorId = asDisplayText(openProfileDetail.authorId);
+        const isCurrentViewer = authorId && authorId === viewerId;
+        const friendMatch = feedFriends.find((friend) => (
+            [friend.id, friend.userId, friend.candidateId].map(String).includes(authorId)
+        ));
+        const storedTailorProfile = isCurrentViewer ? tailorProfile : readTailorProfileDraft(authorId);
+        const authorWorkPosts = workNewsPosts.filter((post) => String(post?.authorId || '') === authorId);
+        const authorTalentPosts = talentStories.filter((post) => String(post?.authorId || '') === authorId);
+        const authorPosts = [...authorWorkPosts, ...authorTalentPosts];
+        const likeCount = authorPosts.reduce((total, post) => total + (Number(post?.reactions?.Like || 0) || 0), 0);
+        const ratingSummary = readCandidateRatingSummary(authorId);
+        const currentJumpTakeId = profileData?.jumptakeId
+            || profileData?.jumpTakeId
+            || currentUser?.jumptakeId
+            || currentUser?.jumpTakeId
+            || currentUser?.username
+            || '';
+        const rawJumpTakeId = openProfileDetail.jumptakeId
+            || friendMatch?.jumptakeId
+            || (isCurrentViewer ? currentJumpTakeId : '')
+            || '';
+        const jumpTakeId = rawJumpTakeId
+            ? (String(rawJumpTakeId).startsWith('@') ? rawJumpTakeId : `@${rawJumpTakeId}`)
+            : '@JumpTakeID';
+        const avatar = isCurrentViewer
+            ? getLiveProfileAvatar(authorId, openProfileDetail.authorType, openProfileDetail.authorAvatar)
+            : openProfileDetail.authorAvatar || friendMatch?.profileImage || storedTailorProfile.profileImage || '';
+        const bio = asDisplayText(
+            storedTailorProfile.bio || (isCurrentViewer ? profileData?.bio : ''),
+            'No bio yet.'
+        ).slice(0, 150);
+
+        return {
+            id: authorId,
+            name: openProfileDetail.authorName || friendMatch?.name || (isCurrentViewer ? authorName : 'Unknown user'),
+            avatar,
+            type: openProfileDetail.authorType,
+            jumpTakeId,
+            bio,
+            coverImage: storedTailorProfile.coverImage || '',
+            socialLinks: {
+                twitter: storedTailorProfile.twitter || '',
+                instagram: storedTailorProfile.instagram || '',
+                linkedin: storedTailorProfile.linkedin || '',
+                github: storedTailorProfile.github || ''
+            },
+            likeCount,
+            postCount: authorPosts.length,
+            workPosts: authorWorkPosts,
+            talentPosts: authorTalentPosts,
+            ratingSummary,
+            isCurrentViewer
+        };
+    };
+
+    const renderPostList = (posts, key, kind, options = {}) => {
         const safePosts = Array.isArray(posts)
             ? posts
                 .filter((post) => post && typeof post === 'object')
@@ -3102,26 +3451,64 @@ const PortalHomeFeed = ({
                     const reactionTotal = getTotalReactionCount(post);
                     const commentTotal = postComments.length;
                     const canDeletePost = String(post.authorId) === viewerId
-                        && ['my-feed', 'my-company-posts'].includes(activeTab);
+                        && (options.allowOwnDelete || ['my-feed', 'my-company-posts'].includes(activeTab));
                     const postBodyText = asDisplayText(post.body);
                     const isLongPostBody = postBodyText.length > POST_BODY_PREVIEW_LENGTH;
                     const isPostBodyExpanded = Boolean(expandedPostBodies[postKey]);
                     const visiblePostBody = isLongPostBody && !isPostBodyExpanded
                         ? getPostBodyPreview(postBodyText)
                         : postBodyText;
+                    const postAvatar = getLiveProfileAvatar(post.authorId, post.authorType, post.authorAvatar);
 
                     return (
-                    <article key={postKey} className="portal-social-post-card" data-post-id={postKey}>
+                    <article
+                        key={postKey}
+                        className="portal-social-post-card"
+                        data-post-id={postKey}
+                        tabIndex={0}
+                        onClick={(event) => {
+                            if (shouldIgnorePostDetailClick(event)) {
+                                return;
+                            }
+                            openPostDetailModal({ postKey, storageKey: key, kind });
+                        }}
+                        onKeyDown={(event) => {
+                            if ((event.key === 'Enter' || event.key === ' ') && !shouldIgnorePostDetailClick(event)) {
+                                event.preventDefault();
+                                openPostDetailModal({ postKey, storageKey: key, kind });
+                            }
+                        }}
+                        aria-label={`Open post by ${asDisplayText(post.authorName, 'Unknown author')}`}
+                    >
                         <div className="portal-social-post-header">
-                            <div className={`portal-post-avatar ${post.authorAvatar ? '' : 'has-default-profile-icon'}`}>
-                                {post.authorAvatar ? (
-                                    <img src={post.authorAvatar} alt={asDisplayText(post.authorName, 'Post author')} />
+                            <button
+                                type="button"
+                                className={`portal-author-open-button portal-post-avatar ${postAvatar ? '' : 'has-default-profile-icon'}`}
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    openProfileDetailModal({ ...post, authorAvatar: postAvatar });
+                                }}
+                                aria-label={`Open ${asDisplayText(post.authorName, 'Unknown author')} profile`}
+                            >
+                                {postAvatar ? (
+                                    <img src={postAvatar} alt={asDisplayText(post.authorName, 'Post author')} />
                                 ) : (
                                     <span className="portal-default-profile-icon"><DefaultProfileIcon /></span>
                                 )}
-                            </div>
+                            </button>
                             <div className="portal-post-title-block">
-                                <h3 className="portal-post-author-name">{asDisplayText(post.authorName, 'Unknown author')}</h3>
+                                <h3 className="portal-post-author-name">
+                                    <button
+                                        type="button"
+                                        className="portal-author-name-button"
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                            openProfileDetailModal({ ...post, authorAvatar: postAvatar });
+                                        }}
+                                    >
+                                        {asDisplayText(post.authorName, 'Unknown author')}
+                                    </button>
+                                </h3>
                                 <p>{post.authorType === 'employer' ? 'Company update' : 'Talent story'} - {safeDateLabel(post.createdAt)}</p>
                                 {post.audience && post.audience !== 'everyone' && (
                                     <small className="portal-audience-pill">{post.audience === 'only-me' ? 'Only me' : 'Friends only'}</small>
@@ -3179,13 +3566,25 @@ const PortalHomeFeed = ({
                             </div>
                         )}
                         {post.media?.dataUrl && (
-                            <div className="portal-post-media">
-                                {post.media.type === 'video' ? (
-                                    <video src={post.media.dataUrl} controls playsInline />
-                                ) : (
-                                    <img src={post.media.dataUrl} alt={post.media.name} />
-                                )}
-                            </div>
+                            post.media.type === 'video' || post.media.type === 'image' ? (
+                                <div className="portal-post-media">
+                                    {post.media.type === 'video' ? (
+                                        <video src={post.media.dataUrl} controls playsInline />
+                                    ) : (
+                                        <img src={post.media.dataUrl} alt={post.media.name} />
+                                    )}
+                                </div>
+                            ) : (
+                                <a
+                                    className="portal-post-file-attachment"
+                                    href={post.media.dataUrl}
+                                    download={post.media.name || 'attachment'}
+                                    onClick={(event) => event.stopPropagation()}
+                                >
+                                    <AttachmentIcon type={post.media.type === 'document' ? 'paperclip' : 'folder'} />
+                                    <span>{post.media.name || 'Attached file'}</span>
+                                </a>
+                            )
                         )}
                         {post.authorType === 'employer' && post.source ? (
                             <p className="portal-post-source-link">
@@ -3343,20 +3742,41 @@ const PortalHomeFeed = ({
                             </div>
                         </div>
                         <div className="portal-post-comments">
-                            {postComments.slice(-3).map((comment, commentIndex) => (
+                            {postComments.slice(-3).map((comment, commentIndex) => {
+                                const commentAvatar = getLiveProfileAvatar(comment.authorId, 'candidate', comment.authorAvatar);
+
+                                return (
                                 <div key={comment.id || `comment-${commentIndex}`} className="portal-comment-item">
-                                    <div className={`portal-comment-avatar ${comment.authorAvatar ? '' : 'has-default-profile-icon'}`}>
-                                        {comment.authorAvatar ? (
-                                            <img src={comment.authorAvatar} alt={asDisplayText(comment.authorName, 'Comment author')} />
+                                    <button
+                                        type="button"
+                                        className={`portal-author-open-button portal-comment-avatar ${commentAvatar ? '' : 'has-default-profile-icon'}`}
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                            openProfileDetailModal({ ...comment, authorAvatar: commentAvatar });
+                                        }}
+                                        aria-label={`Open ${asDisplayText(comment.authorName, 'User')} profile`}
+                                    >
+                                        {commentAvatar ? (
+                                            <img src={commentAvatar} alt={asDisplayText(comment.authorName, 'Comment author')} />
                                         ) : (
                                             <span className="portal-default-profile-icon"><DefaultProfileIcon /></span>
                                         )}
-                                    </div>
+                                    </button>
                                     <p>
-                                        <strong className="portal-comment-name">{asDisplayText(comment.authorName, 'User')}</strong>: {asDisplayText(comment.text)}
+                                        <button
+                                            type="button"
+                                            className="portal-comment-name portal-author-name-button"
+                                            onClick={(event) => {
+                                                event.stopPropagation();
+                                                openProfileDetailModal({ ...comment, authorAvatar: commentAvatar });
+                                            }}
+                                        >
+                                            {asDisplayText(comment.authorName, 'User')}
+                                        </button>: {asDisplayText(comment.text)}
                                     </p>
                                 </div>
-                            ))}
+                                );
+                            })}
                             {isCommentOpen && (
                                 <div className="portal-comment-row is-open">
                                     <input
@@ -3379,41 +3799,19 @@ const PortalHomeFeed = ({
         );
     };
 
-    const renderComposer = () => (
-        <div className="portal-post-composer">
-            <h3>{mode === 'employer' ? 'Create a company post' : 'Create a talent story'}</h3>
-            <p>
-                {mode === 'employer'
-                    ? 'Share company news, hiring updates, wins, challenges, or announcements to Work News.'
-                    : 'Share a career story, project, job-market thought, invention, social work, or anything useful to the talent community.'}
-            </p>
-            <textarea
-                value={composerText}
-                onChange={(event) => setComposerText(event.target.value)}
-                placeholder="Write your post..."
-            />
-            <div className="portal-composer-tools">
-                <label className="portal-audience-select">
-                    Audience
-                    <select value={composerAudience} onChange={(event) => setComposerAudience(event.target.value)}>
-                        <option value="everyone">Everyone</option>
-                        <option value="friends">Friends only</option>
-                        <option value="only-me">Only me</option>
-                    </select>
-                </label>
-                <div className="portal-post-media-picker">
-                    <label>
-                        Add media
-                        <input type="file" accept="image/*,video/*" onChange={handleMediaChange} />
-                    </label>
-                    {composerMedia && (
-                        <button type="button" className="portal-media-clear-button" onClick={() => setComposerMedia(null)}>
-                            Remove {composerMedia.type}
-                        </button>
-                    )}
-                </div>
-            </div>
-            {composerMedia?.dataUrl && (
+    const audienceOptions = [
+        { value: 'everyone', label: 'Everyone' },
+        { value: 'friends', label: 'Friends only' },
+        { value: 'only-me', label: 'Only me' }
+    ];
+
+    const renderAttachmentPreview = () => {
+        if (!composerMedia?.dataUrl) {
+            return null;
+        }
+
+        if (composerMedia.type === 'video' || composerMedia.type === 'image') {
+            return (
                 <div className="portal-post-media portal-post-media-preview">
                     {composerMedia.type === 'video' ? (
                         <video src={composerMedia.dataUrl} controls playsInline />
@@ -3421,12 +3819,140 @@ const PortalHomeFeed = ({
                         <img src={composerMedia.dataUrl} alt={composerMedia.name || 'Selected attachment'} />
                     )}
                 </div>
-            )}
-            <button type="button" className="settings-button primary portal-publish-button" onClick={handleCreatePost}>
-                Publish
-            </button>
-        </div>
-    );
+            );
+        }
+
+        return (
+            <a
+                className="portal-post-file-attachment portal-post-media-preview"
+                href={composerMedia.dataUrl}
+                download={composerMedia.name || 'attachment'}
+            >
+                <AttachmentIcon type={composerMedia.type === 'document' ? 'paperclip' : 'folder'} />
+                <span>{composerMedia.name || 'Selected file'}</span>
+            </a>
+        );
+    };
+
+    const renderComposer = ({ inModal = false } = {}) => {
+        const composerTitle = mode === 'employer' ? 'Create a company post' : 'Create a talent story';
+        const composerDescription = mode === 'employer'
+            ? 'Share company news, hiring updates, wins, challenges, or announcements to Work News.'
+            : 'Share a career story, project, job-market thought, invention, social work, or anything useful to the talent community.';
+        const selectedAudienceLabel = audienceOptions.find((option) => option.value === composerAudience)?.label || 'Set Audience';
+
+        return (
+            <div className={`portal-post-composer ${inModal ? 'portal-post-composer-modal-body' : ''}`}>
+                {inModal ? (
+                    <div className="portal-create-story-composer-header">
+                        <h3>{composerTitle}</h3>
+                        <div className="portal-create-story-audience-menu">
+                            <button
+                                type="button"
+                                className="portal-create-story-audience-trigger"
+                                onClick={() => setCreateStoryAudienceOpen((isOpen) => !isOpen)}
+                                aria-expanded={createStoryAudienceOpen}
+                            >
+                                <PortalActionIcon type="filter" />
+                                <span>{selectedAudienceLabel}</span>
+                            </button>
+                            {createStoryAudienceOpen && (
+                                <div className="portal-create-story-audience-options" role="menu">
+                                    {audienceOptions.map((option) => (
+                                        <button
+                                            key={option.value}
+                                            type="button"
+                                            className={composerAudience === option.value ? 'active' : ''}
+                                            onClick={() => {
+                                                setComposerAudience(option.value);
+                                                setCreateStoryAudienceOpen(false);
+                                            }}
+                                            role="menuitemradio"
+                                            aria-checked={composerAudience === option.value}
+                                        >
+                                            {option.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                ) : (
+                    <h3>{composerTitle}</h3>
+                )}
+                <p>{composerDescription}</p>
+                <textarea
+                    value={composerText}
+                    onChange={(event) => setComposerText(event.target.value)}
+                    placeholder="Write your post..."
+                />
+                <div className={`portal-composer-tools ${inModal ? 'portal-composer-tools-modal' : ''}`}>
+                    {inModal ? (
+                        <>
+                            <div className="portal-composer-attachment-rail" aria-label="Post attachments">
+                                <label className="portal-composer-icon-upload" title="Add media" aria-label="Add media">
+                                    <AttachmentIcon type="camera" />
+                                    <input type="file" accept="image/*,video/*" onChange={(event) => handleMediaChange(event, 'media')} />
+                                </label>
+                                <label className="portal-composer-icon-upload" title="Add document" aria-label="Add document">
+                                    <AttachmentIcon type="paperclip" />
+                                    <input
+                                        type="file"
+                                        accept=".pdf,.doc,.docx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+                                        onChange={(event) => handleMediaChange(event, 'document')}
+                                    />
+                                </label>
+                                <label className="portal-composer-icon-upload" title="Add file" aria-label="Add file">
+                                    <AttachmentIcon type="folder" />
+                                    <input type="file" onChange={(event) => handleMediaChange(event, 'file')} />
+                                </label>
+                            </div>
+                            {composerMedia && (
+                                <button type="button" className="portal-media-clear-button portal-media-clear-button-inline" onClick={() => setComposerMedia(null)}>
+                                    Remove {composerMedia.type}
+                                </button>
+                            )}
+                        </>
+                    ) : (
+                        <>
+                            <label className="portal-audience-select">
+                                Audience
+                                <select value={composerAudience} onChange={(event) => setComposerAudience(event.target.value)}>
+                                    {audienceOptions.map((option) => (
+                                        <option key={option.value} value={option.value}>{option.label}</option>
+                                    ))}
+                                </select>
+                            </label>
+                            <div className="portal-post-media-picker">
+                                <label>
+                                    Add media
+                                    <input type="file" accept="image/*,video/*" onChange={(event) => handleMediaChange(event, 'media')} />
+                                </label>
+                                {composerMedia && (
+                                    <button type="button" className="portal-media-clear-button" onClick={() => setComposerMedia(null)}>
+                                        Remove {composerMedia.type}
+                                    </button>
+                                )}
+                            </div>
+                        </>
+                    )}
+                </div>
+                {renderAttachmentPreview()}
+                <button
+                    type="button"
+                    className={`settings-button primary portal-publish-button ${inModal ? 'portal-create-story-publish-button' : ''}`}
+                    onClick={handleCreatePost}
+                >
+                    Publish
+                </button>
+            </div>
+        );
+    };
+
+    const closeCreateStoryModal = () => {
+        setCreateStoryModalOpen(false);
+        setCreateStoryAudienceOpen(false);
+    };
 
     const renderJobMeta = (job, { compact = false } = {}) => (
         <div className={`portal-job-meta-icons ${compact ? 'compact' : ''}`}>
@@ -4175,6 +4701,545 @@ const PortalHomeFeed = ({
             : modalMarkup;
     };
 
+    const updateTailorProfile = (updates) => {
+        setTailorProfile((currentDraft) => {
+            const nextDraft = { ...currentDraft, ...updates };
+            if (typeof window !== 'undefined') {
+                localStorage.setItem(getTailorProfileStorageKey(viewerId), JSON.stringify(nextDraft));
+            }
+            return nextDraft;
+        });
+    };
+
+    const handleTailorCoverChange = async (event) => {
+        const file = event.target.files?.[0];
+        if (!file) {
+            return;
+        }
+
+        try {
+            const dataUrl = await readFileAsDataUrl(file);
+            updateTailorProfile({ coverImage: dataUrl });
+        } catch (error) {
+            setFeedError(error.message || 'Could not upload that cover picture.');
+        } finally {
+            event.target.value = '';
+        }
+    };
+
+    const handleTailorProfileImageChange = async (event) => {
+        const file = event.target.files?.[0];
+        if (!file) {
+            return;
+        }
+
+        try {
+            const profileImage = await createSquareProfileImage(file);
+            applyUniversalProfileImage(profileImage);
+            await saveUniversalProfileImage(profileImage);
+            setFeedError('');
+        } catch (error) {
+            setFeedError(error.message || 'Could not upload that profile picture.');
+        } finally {
+            event.target.value = '';
+        }
+    };
+
+    const handleTailorProfileImageDelete = async () => {
+        try {
+            applyUniversalProfileImage('');
+            await saveUniversalProfileImage('');
+            setFeedError('');
+        } catch (error) {
+            setFeedError(error.message || 'Could not delete that profile picture.');
+        }
+    };
+
+    const renderTailorSocialIcon = (platform) => {
+        const paths = {
+            twitter: 'M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84 0 0 0 .497-3.753C20.18 7.773 21.692 5.25 22 4.009z',
+            instagram: 'M16.98 0a6.9 6.9 0 0 1 5.08 1.98A6.94 6.94 0 0 1 24 7.02v9.96c0 2.08-.68 3.87-1.98 5.13A7.14 7.14 0 0 1 16.94 24H7.06a7.06 7.06 0 0 1-5.03-1.89A6.96 6.96 0 0 1 0 16.94V7.02C0 2.8 2.8 0 7.02 0h9.96zm.05 2.23H7.06c-1.45 0-2.7.43-3.53 1.25a4.82 4.82 0 0 0-1.3 3.54v9.92c0 1.5.43 2.7 1.3 3.58a5 5 0 0 0 3.53 1.25h9.88a5 5 0 0 0 3.53-1.25 4.73 4.73 0 0 0 1.4-3.54V7.02a5 5 0 0 0-1.3-3.49 4.82 4.82 0 0 0-3.54-1.3zM12 5.76c3.39 0 6.2 2.8 6.2 6.2a6.2 6.2 0 0 1-12.4 0 6.2 6.2 0 0 1 6.2-6.2zm0 2.22a3.99 3.99 0 0 0-3.97 3.97A3.99 3.99 0 0 0 12 15.92a3.99 3.99 0 0 0 3.97-3.97A3.99 3.99 0 0 0 12 7.98z',
+            linkedin: 'M22.23 0H1.77C.8 0 0 .8 0 1.77v20.46C0 23.2.8 24 1.77 24h20.46c.98 0 1.77-.8 1.77-1.77V1.77C24 .8 23.2 0 22.23 0zM7.27 20.1H3.65V9.24h3.62V20.1zM5.47 7.76h-.03c-1.22 0-2-.83-2-1.87 0-1.06.8-1.87 2.05-1.87 1.24 0 2 .8 2.02 1.87 0 1.04-.78 1.87-2.05 1.87zM20.34 20.1h-3.63v-5.8c0-1.45-.52-2.45-1.83-2.45-1 0-1.6.67-1.87 1.32-.1.23-.11.55-.11.88v6.05H9.28s.05-9.82 0-10.84h3.63v1.54a3.6 3.6 0 0 1 3.26-1.8c2.39 0 4.18 1.56 4.18 4.89v6.21z',
+            github: 'M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z'
+        };
+
+        return (
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d={paths[platform]} />
+            </svg>
+        );
+    };
+
+    const renderTailorProfileSection = () => {
+        const fullName = profileData?.name || currentUser?.name || authorName || 'Your Name';
+        const rawJumpTakeId = profileData?.jumptakeId || profileData?.jumpTakeId || currentUser?.jumptakeId || currentUser?.jumpTakeId || currentUser?.username || 'JumpTakeID';
+        const jumpTakeId = String(rawJumpTakeId).startsWith('@') ? rawJumpTakeId : `@${rawJumpTakeId}`;
+        const bio = (typeof tailorProfile.bio === 'string'
+            ? tailorProfile.bio
+            : profileData?.bio || 'Creative design and web enthusiast. Building digital experiences that matter.').slice(0, 150);
+        const socialLinks = {
+            twitter: tailorProfile.twitter || '',
+            instagram: tailorProfile.instagram || '',
+            linkedin: tailorProfile.linkedin || '',
+            github: tailorProfile.github || ''
+        };
+        const ownPosts = talentStories.filter((post) => String(post.authorId) === viewerId);
+        const likeCount = ownPosts.reduce((total, post) => total + (Number(post.reactions?.Like || 0) || 0), 0);
+        const ratingSummary = readCandidateRatingSummary(viewerId);
+        const coverStyle = tailorProfile.coverImage
+            ? { '--tailor-cover-image': `url("${tailorProfile.coverImage}")` }
+            : undefined;
+        const socialPlatforms = ['twitter', 'instagram', 'linkedin', 'github'];
+        const activeSocialLabel = activeTailorSocialEditor
+            ? `${activeTailorSocialEditor.charAt(0).toUpperCase()}${activeTailorSocialEditor.slice(1)} profile link`
+            : '';
+        const displayAvatar = tailorProfile.profileImageRemoved ? '' : (authorAvatar || tailorProfile.profileImage);
+        const canRemoveAvatar = Boolean(displayAvatar);
+
+        return (
+            <section className="tailor-profile-section" aria-label="Tailor profile">
+                <div className="tailor-profile-card" style={coverStyle}>
+                    <div className="tailor-cover-controls">
+                        <label className="tailor-cover-upload" title="Upload cover picture">
+                            <span>Cover</span>
+                            <input type="file" accept="image/*" onChange={handleTailorCoverChange} />
+                        </label>
+                        {tailorProfile.coverImage && (
+                            <button type="button" className="tailor-cover-remove" onClick={() => updateTailorProfile({ coverImage: '' })}>
+                                Remove
+                            </button>
+                        )}
+                    </div>
+                    <div className={`tailor-profile-image ${displayAvatar ? '' : 'has-default-profile-icon'}`}>
+                        {displayAvatar ? (
+                            <img src={displayAvatar} alt={fullName} />
+                        ) : (
+                            <span className="portal-default-profile-icon">
+                                <DefaultProfileIcon />
+                            </span>
+                        )}
+                    </div>
+                    <div className="tailor-photo-actions" aria-label="Tailor profile picture actions">
+                        <button
+                            type="button"
+                            className="tailor-photo-icon-button tailor-photo-add"
+                            onClick={() => tailorProfileImageInputRef.current?.click()}
+                            aria-label="Upload profile picture"
+                            title="Upload profile picture"
+                        >
+                            +
+                        </button>
+                        {canRemoveAvatar && (
+                            <button
+                                type="button"
+                                className="tailor-photo-icon-button tailor-photo-delete"
+                                onClick={handleTailorProfileImageDelete}
+                                aria-label="Delete profile picture"
+                                title="Delete profile picture"
+                            >
+                                x
+                            </button>
+                        )}
+                        <input
+                            ref={tailorProfileImageInputRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={handleTailorProfileImageChange}
+                        />
+                    </div>
+                    <div className="tailor-profile-info">
+                        <p className="tailor-profile-name">{fullName}</p>
+                        <div className="tailor-profile-title">{jumpTakeId}</div>
+                        <textarea
+                            className="tailor-profile-bio"
+                            value={bio}
+                            rows={2}
+                            maxLength={150}
+                            onChange={(event) => updateTailorProfile({ bio: event.target.value.slice(0, 150) })}
+                            aria-label="Tailor profile bio"
+                        />
+                    </div>
+                    <div className="tailor-social-links">
+                        {socialPlatforms.map((platform) => (
+                            <button
+                                key={platform}
+                                type="button"
+                                className={`tailor-social-btn ${platform} ${socialLinks[platform] ? '' : 'is-empty'}`}
+                                aria-label={`Edit ${platform} profile link`}
+                                onClick={() => setActiveTailorSocialEditor((current) => current === platform ? '' : platform)}
+                            >
+                                {renderTailorSocialIcon(platform)}
+                            </button>
+                        ))}
+                    </div>
+                    {activeTailorSocialEditor && (
+                        <div className="tailor-social-popover">
+                            <div className="tailor-social-popover-header">
+                                <span>{activeSocialLabel}</span>
+                                <button type="button" onClick={() => setActiveTailorSocialEditor('')} aria-label="Close social link editor">
+                                    x
+                                </button>
+                            </div>
+                            <input
+                                type="url"
+                                value={socialLinks[activeTailorSocialEditor]}
+                                placeholder={activeSocialLabel}
+                                onChange={(event) => updateTailorProfile({ [activeTailorSocialEditor]: event.target.value })}
+                                aria-label={activeSocialLabel}
+                            />
+                            <div className="tailor-social-popover-actions">
+                                {socialLinks[activeTailorSocialEditor] && (
+                                    <a href={socialLinks[activeTailorSocialEditor]} target="_blank" rel="noreferrer">
+                                        Open
+                                    </a>
+                                )}
+                                <button type="button" onClick={() => updateTailorProfile({ [activeTailorSocialEditor]: '' })}>
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                    <div className="tailor-profile-stats">
+                        <div className="tailor-stat-item">
+                            <div className="tailor-stat-value">{formatCompactCount(likeCount)}</div>
+                            <div className="tailor-stat-label">{likeCount === 1 ? 'Like' : 'Likes'}</div>
+                        </div>
+                        <div className="tailor-stat-item">
+                            <div className="tailor-stat-value">{formatCompactCount(ownPosts.length)}</div>
+                            <div className="tailor-stat-label">Posts</div>
+                        </div>
+                        <div className="tailor-stat-item">
+                            <div className="tailor-stat-value">{ratingSummary.count ? ratingSummary.average.toFixed(1) : '0.0'}</div>
+                            <div className="tailor-stat-label">Rating</div>
+                        </div>
+                    </div>
+                </div>
+                <div className="tailor-profile-posts" aria-label="Tailor profile posts">
+                    <div className="tailor-profile-posts-header">
+                        <button
+                            type="button"
+                            className="tailor-profile-post-create"
+                            onClick={() => {
+                                setCreateStoryAudienceOpen(false);
+                                setCreateStoryModalOpen(true);
+                            }}
+                            aria-label="Create talent post"
+                            title="Create talent post"
+                        >
+                            +
+                        </button>
+                    </div>
+                    {renderPostList(ownPosts, TALENT_STORIES_STORAGE_KEY, 'talent', { allowOwnDelete: true })}
+                </div>
+            </section>
+        );
+    };
+
+    const renderCreateStoryModal = () => {
+        if (!createStoryModalOpen || mode !== 'candidate') {
+            return null;
+        }
+
+        const modalMarkup = (
+            <div className="portal-create-story-backdrop" role="presentation" onClick={closeCreateStoryModal}>
+                <article
+                    className="portal-create-story-modal"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Create talent story"
+                    onClick={(event) => event.stopPropagation()}
+                >
+                    <span
+                        role="button"
+                        tabIndex={0}
+                        className="portal-create-story-close"
+                        onClick={closeCreateStoryModal}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault();
+                                closeCreateStoryModal();
+                            }
+                        }}
+                        aria-label="Close create story"
+                        title="Close"
+                    >
+                        &times;
+                    </span>
+                    {renderComposer({ inModal: true })}
+                </article>
+            </div>
+        );
+
+        return typeof document !== 'undefined'
+            ? createPortal(modalMarkup, document.body)
+            : modalMarkup;
+    };
+
+    const renderPostDetailModal = () => {
+        const post = getPostDetailRecord();
+        if (!post) {
+            return null;
+        }
+
+        const postAvatar = getLiveProfileAvatar(post.authorId, post.authorType, post.authorAvatar);
+        const postComments = normalizePostComments(post.comments);
+        const reactionTotal = getTotalReactionCount(post);
+        const postTypeLabel = post.authorType === 'employer' ? 'Company update' : 'Talent story';
+        const modalMarkup = (
+            <div className="portal-post-detail-backdrop" role="presentation" onClick={closePostDetailModal}>
+                <article
+                    className="portal-post-detail-modal"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label={`Post by ${asDisplayText(post.authorName, 'Unknown author')}`}
+                    onClick={(event) => event.stopPropagation()}
+                >
+                    <span
+                        role="button"
+                        tabIndex={0}
+                        className="portal-post-detail-close"
+                        onClick={closePostDetailModal}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault();
+                                closePostDetailModal();
+                            }
+                        }}
+                        aria-label="Close post"
+                        title="Close"
+                    >
+                        &times;
+                    </span>
+                    <div className="portal-post-detail-header">
+                        <button
+                            type="button"
+                            className={`portal-author-open-button portal-post-avatar ${postAvatar ? '' : 'has-default-profile-icon'}`}
+                            onClick={() => openProfileDetailModal({ ...post, authorAvatar: postAvatar })}
+                            aria-label={`Open ${asDisplayText(post.authorName, 'Unknown author')} profile`}
+                        >
+                            {postAvatar ? (
+                                <img src={postAvatar} alt={asDisplayText(post.authorName, 'Post author')} />
+                            ) : (
+                                <span className="portal-default-profile-icon"><DefaultProfileIcon /></span>
+                            )}
+                        </button>
+                        <div className="portal-post-title-block">
+                            <h3 className="portal-post-author-name">
+                                <button
+                                    type="button"
+                                    className="portal-author-name-button"
+                                    onClick={() => openProfileDetailModal({ ...post, authorAvatar: postAvatar })}
+                                >
+                                    {asDisplayText(post.authorName, 'Unknown author')}
+                                </button>
+                            </h3>
+                            <p>{postTypeLabel} - {safeDateLabel(post.createdAt)}</p>
+                            {post.audience && post.audience !== 'everyone' && (
+                                <small className="portal-audience-pill">{post.audience === 'only-me' ? 'Only me' : 'Friends only'}</small>
+                            )}
+                        </div>
+                    </div>
+                    {post.body ? <p className="portal-post-detail-body">{asDisplayText(post.body)}</p> : null}
+                    {post.media?.dataUrl && (
+                        post.media.type === 'video' || post.media.type === 'image' ? (
+                            <div className="portal-post-media portal-post-detail-media">
+                                {post.media.type === 'video' ? (
+                                    <video src={post.media.dataUrl} controls playsInline />
+                                ) : (
+                                    <img src={post.media.dataUrl} alt={post.media.name || 'Post media'} />
+                                )}
+                            </div>
+                        ) : (
+                            <a
+                                className="portal-post-file-attachment portal-post-detail-file"
+                                href={post.media.dataUrl}
+                                download={post.media.name || 'attachment'}
+                            >
+                                <AttachmentIcon type={post.media.type === 'document' ? 'paperclip' : 'folder'} />
+                                <span>{post.media.name || 'Attached file'}</span>
+                            </a>
+                        )
+                    )}
+                    {post.authorType === 'employer' && post.source ? (
+                        <p className="portal-post-source-link portal-post-detail-source">
+                            <span>Source:</span>{' '}
+                            <a href={post.source} target="_blank" rel="noreferrer">
+                                {post.sourceTitle || post.source}
+                            </a>
+                        </p>
+                    ) : null}
+                    <div className="portal-post-detail-stats" aria-label="Post stats">
+                        <span><strong>{formatCompactCount(post.reach || 0)}</strong> reach</span>
+                        <span><strong>{formatCompactCount(reactionTotal)}</strong> reactions</span>
+                        <span><strong>{formatCompactCount(postComments.length)}</strong> comments</span>
+                    </div>
+                    <div className="portal-post-detail-comments" aria-label="Post comments">
+                        {postComments.length ? (
+                            postComments.map((comment, commentIndex) => {
+                                const commentAvatar = getLiveProfileAvatar(comment.authorId, 'candidate', comment.authorAvatar);
+
+                                return (
+                                    <div key={comment.id || `detail-comment-${commentIndex}`} className="portal-comment-item">
+                                        <button
+                                            type="button"
+                                            className={`portal-author-open-button portal-comment-avatar ${commentAvatar ? '' : 'has-default-profile-icon'}`}
+                                            onClick={() => openProfileDetailModal({ ...comment, authorAvatar: commentAvatar })}
+                                            aria-label={`Open ${asDisplayText(comment.authorName, 'User')} profile`}
+                                        >
+                                            {commentAvatar ? (
+                                                <img src={commentAvatar} alt={asDisplayText(comment.authorName, 'Comment author')} />
+                                            ) : (
+                                                <span className="portal-default-profile-icon"><DefaultProfileIcon /></span>
+                                            )}
+                                        </button>
+                                        <p className="portal-comment-line">
+                                            <span
+                                                role="button"
+                                                tabIndex={0}
+                                                className="portal-comment-author-inline"
+                                                onClick={() => openProfileDetailModal({ ...comment, authorAvatar: commentAvatar })}
+                                                onKeyDown={(event) => {
+                                                    if (event.key === 'Enter' || event.key === ' ') {
+                                                        event.preventDefault();
+                                                        openProfileDetailModal({ ...comment, authorAvatar: commentAvatar });
+                                                    }
+                                                }}
+                                            >
+                                                {asDisplayText(comment.authorName, 'User')}
+                                            </span>
+                                            <span className="portal-comment-copy">: {asDisplayText(comment.text)}</span>
+                                        </p>
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <p className="portal-post-detail-empty">No comments yet.</p>
+                        )}
+                    </div>
+                </article>
+            </div>
+        );
+
+        return typeof document !== 'undefined'
+            ? createPortal(modalMarkup, document.body)
+            : modalMarkup;
+    };
+
+    const renderProfileDetailModal = () => {
+        const profile = getProfileDetailRecord();
+        if (!profile) {
+            return null;
+        }
+
+        const socialPlatforms = ['twitter', 'instagram', 'linkedin', 'github'];
+        const canMessage = mode === 'candidate' && !profile.isCurrentViewer && profile.type !== 'employer';
+        const coverStyle = profile.coverImage
+            ? { '--tailor-cover-image': `url("${profile.coverImage}")` }
+            : undefined;
+        const modalMarkup = (
+            <div className="portal-profile-detail-backdrop" role="presentation" onClick={closeProfileDetailModal}>
+                <article
+                    className="portal-profile-detail-modal"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label={`${profile.name} tailor profile`}
+                    onClick={(event) => event.stopPropagation()}
+                >
+                    <span
+                        role="button"
+                        tabIndex={0}
+                        className="portal-profile-detail-close"
+                        onClick={closeProfileDetailModal}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault();
+                                closeProfileDetailModal();
+                            }
+                        }}
+                        aria-label="Close profile"
+                        title="Close"
+                    >
+                        &times;
+                    </span>
+                    <div className="portal-profile-detail-card" style={coverStyle}>
+                        <div className={`tailor-profile-image ${profile.avatar ? '' : 'has-default-profile-icon'}`}>
+                            {profile.avatar ? (
+                                <img src={profile.avatar} alt={profile.name} />
+                            ) : (
+                                <span className="portal-default-profile-icon">
+                                    <DefaultProfileIcon />
+                                </span>
+                            )}
+                        </div>
+                        <div className="tailor-profile-info">
+                            <p className="tailor-profile-name">{profile.name}</p>
+                            <div className="tailor-profile-title">{profile.jumpTakeId}</div>
+                            <p className="portal-profile-detail-bio">{profile.bio}</p>
+                        </div>
+                        <div className="tailor-social-links" aria-label={`${profile.name} social links`}>
+                            {socialPlatforms.map((platform) => {
+                                const href = profile.socialLinks[platform];
+
+                                return href ? (
+                                    <a
+                                        key={platform}
+                                        className={`tailor-social-btn ${platform}`}
+                                        href={href}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        aria-label={`Open ${platform} profile`}
+                                    >
+                                        {renderTailorSocialIcon(platform)}
+                                    </a>
+                                ) : (
+                                    <span key={platform} className={`tailor-social-btn ${platform} is-empty`} aria-hidden="true">
+                                        {renderTailorSocialIcon(platform)}
+                                    </span>
+                                );
+                            })}
+                        </div>
+                        {canMessage && (
+                            <button
+                                type="button"
+                                className="portal-profile-detail-message"
+                                onClick={() => {
+                                    closeProfileDetailModal();
+                                    switchSection?.('inbox');
+                                }}
+                            >
+                                Message
+                            </button>
+                        )}
+                        <div className="tailor-profile-stats">
+                            <div className="tailor-stat-item">
+                                <div className="tailor-stat-value">{formatCompactCount(profile.likeCount)}</div>
+                                <div className="tailor-stat-label">{profile.likeCount === 1 ? 'Like' : 'Likes'}</div>
+                            </div>
+                            <div className="tailor-stat-item">
+                                <div className="tailor-stat-value">{formatCompactCount(profile.postCount)}</div>
+                                <div className="tailor-stat-label">Posts</div>
+                            </div>
+                            <div className="tailor-stat-item">
+                                <div className="tailor-stat-value">{profile.ratingSummary.count ? profile.ratingSummary.average.toFixed(1) : '0.0'}</div>
+                                <div className="tailor-stat-label">Rating</div>
+                            </div>
+                        </div>
+                    </div>
+                    {(profile.workPosts.length || profile.talentPosts.length) ? (
+                        <div className="portal-profile-detail-posts" aria-label={`${profile.name} posts`}>
+                            {profile.workPosts.length ? renderPostList(profile.workPosts, WORK_NEWS_STORAGE_KEY, 'work') : null}
+                            {profile.talentPosts.length ? renderPostList(profile.talentPosts, TALENT_STORIES_STORAGE_KEY, 'talent') : null}
+                        </div>
+                    ) : null}
+                </article>
+            </div>
+        );
+
+        return typeof document !== 'undefined'
+            ? createPortal(modalMarkup, document.body)
+            : modalMarkup;
+    };
+
     const ownTalentStories = talentStories.filter((post) => String(post.authorId) === viewerId);
     const ownCompanyPosts = workNewsPosts.filter((post) => String(post.authorId) === viewerId);
     return (
@@ -4200,7 +5265,10 @@ const PortalHomeFeed = ({
                                 '--tab-inactive-icon': tabInactiveIcon,
                                 '--tab-current-icon': isActiveTab ? tabAccent : tabInactiveIcon
                             }}
-                            onClick={() => setActiveTab(tab.id)}
+                            onClick={() => {
+                                rememberFeedScrollPosition(activeTab);
+                                setActiveTab(tab.id);
+                            }}
                             title={tab.label}
                         >
                             <SimpleIcon className="portal-home-tab-icon" path={tabPath || tabIconPaths['work-news']} />
@@ -4218,14 +5286,31 @@ const PortalHomeFeed = ({
                 {feedLoading ? <div className="loading-spinner">Loading live feed...</div> : null}
                 {activeTab === 'work-news' && renderPostList(workNewsPosts, WORK_NEWS_STORAGE_KEY, 'work')}
                 {activeTab === 'job-posts' && renderCandidateJobPosts()}
-                {activeTab === 'talent-stories' && renderPostList(talentStories, TALENT_STORIES_STORAGE_KEY, 'talent')}
-                {(activeTab === 'create-story' || activeTab === 'create-post') && renderComposer()}
+                {activeTab === 'talent-stories' && (
+                    <>
+                        <div className="portal-create-story-action-row">
+                            <button
+                                type="button"
+                                className="portal-create-story-button"
+                                onClick={() => setCreateStoryModalOpen(true)}
+                            >
+                                Create <strong>+</strong>
+                            </button>
+                        </div>
+                        {renderPostList(talentStories, TALENT_STORIES_STORAGE_KEY, 'talent')}
+                    </>
+                )}
+                {activeTab === 'create-story' && mode === 'candidate' && renderTailorProfileSection()}
+                {activeTab === 'create-post' && renderComposer()}
                 {activeTab === 'my-feed' && renderPostList(ownTalentStories, TALENT_STORIES_STORAGE_KEY, 'talent')}
                 {activeTab === 'my-company-posts' && renderPostList(ownCompanyPosts, WORK_NEWS_STORAGE_KEY, 'work')}
                 {activeTab === 'my-job-posts' && renderMyJobPosts()}
             </div>
             {renderJobDetailsModal()}
             {renderJobReviewModal()}
+            {renderCreateStoryModal()}
+            {renderPostDetailModal()}
+            {renderProfileDetailModal()}
         </div>
     );
 };

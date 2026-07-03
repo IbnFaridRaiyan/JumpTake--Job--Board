@@ -72,6 +72,7 @@ const CANDIDATE_SECTION_IDS = new Set([
 ]);
 
 const CANDIDATE_SECTION_STORAGE_KEY = 'jumptakeCandidateSection';
+const PROFILE_IMAGE_UPDATED_EVENT = 'jumptake-profile-image-updated';
 
 const normalizeCandidateSection = (section) => section;
 
@@ -186,6 +187,47 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const displayEmail = typeof user?.email === 'string' ? user.email : '';
     const displayName = displayEmail.includes('@') ? displayEmail.split('@')[0] : (displayEmail || 'User');
     const displayInitial = displayName ? displayName.charAt(0).toUpperCase() : 'U';
+
+    useEffect(() => {
+        const handleProfileImageUpdated = (event) => {
+            const detail = event.detail || {};
+            const nextProfileImage = detail.profileImage || '';
+            const detailUserId = String(detail.userId || '');
+            const detailJobSeekerId = String(detail.jobSeekerId || '');
+            const matchesUser = detailUserId && [
+                user?.id,
+                user?._id,
+                user?.userId
+            ].some((id) => String(id || '') === detailUserId);
+            const matchesProfile = detailJobSeekerId && [
+                jobSeekerData?._id,
+                jobSeekerData?.id,
+                user?.jobSeekerId
+            ].some((id) => String(id || '') === detailJobSeekerId);
+
+            if (!matchesUser && !matchesProfile) {
+                return;
+            }
+
+            setJobSeekerData((currentProfile) => (
+                currentProfile
+                    ? { ...currentProfile, profileImage: nextProfileImage }
+                    : currentProfile
+            ));
+            setUser((currentUser) => {
+                if (!currentUser) {
+                    return currentUser;
+                }
+
+                const nextUser = { ...currentUser, profileImage: nextProfileImage };
+                localStorage.setItem('user', JSON.stringify(nextUser));
+                return nextUser;
+            });
+        };
+
+        window.addEventListener(PROFILE_IMAGE_UPDATED_EVENT, handleProfileImageUpdated);
+        return () => window.removeEventListener(PROFILE_IMAGE_UPDATED_EVENT, handleProfileImageUpdated);
+    }, [jobSeekerData?._id, jobSeekerData?.id, user?.id, user?._id, user?.userId, user?.jobSeekerId]);
 
     const updateActiveSection = (section, { push = true } = {}) => {
         const nextSectionValue = normalizeCandidateSection(section);

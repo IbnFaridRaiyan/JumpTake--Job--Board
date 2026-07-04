@@ -1140,6 +1140,7 @@ const PortalHomeFeed = ({
     const [openCommentPostId, setOpenCommentPostId] = useState('');
     const [openSharePostId, setOpenSharePostId] = useState('');
     const [openOptionsPostId, setOpenOptionsPostId] = useState('');
+    const [postOptionsAnchor, setPostOptionsAnchor] = useState(null);
     const [openJobOptionsId, setOpenJobOptionsId] = useState('');
     const [openReachInsightPostId, setOpenReachInsightPostId] = useState('');
     const [reachInsightPost, setReachInsightPost] = useState(null);
@@ -1245,6 +1246,7 @@ const PortalHomeFeed = ({
                 event.target.closest?.('.portal-post-action-cluster') ||
                 event.target.closest?.('.portal-comment-row') ||
                 event.target.closest?.('.portal-post-options-wrap') ||
+                event.target.closest?.('.portal-post-options-menu') ||
                 event.target.closest?.('.portal-reach-insight-wrap')
             ) {
                 return;
@@ -1259,6 +1261,7 @@ const PortalHomeFeed = ({
             setOpenCommentPostId('');
             setOpenSharePostId('');
             setOpenOptionsPostId('');
+            setPostOptionsAnchor(null);
             setOpenJobOptionsId('');
             setOpenReachInsightPostId('');
             setReachInsightPost(null);
@@ -1789,7 +1792,46 @@ const PortalHomeFeed = ({
         setOpenCommentPostId('');
         setOpenSharePostId('');
         setOpenOptionsPostId('');
+        setPostOptionsAnchor(null);
         setOpenJobOptionsId('');
+    };
+
+    const closePostOptionsMenu = () => {
+        setOpenOptionsPostId('');
+        setPostOptionsAnchor(null);
+    };
+
+    const openPostOptionsMenu = (event, postKey) => {
+        event.stopPropagation();
+
+        if (openOptionsPostId === postKey) {
+            closePostOptionsMenu();
+            return;
+        }
+
+        if (typeof window !== 'undefined') {
+            const rect = event.currentTarget.getBoundingClientRect();
+            const menuWidth = 136;
+            const menuHeight = 176;
+            const viewportPadding = 12;
+            const left = Math.min(
+                Math.max(viewportPadding, rect.right - menuWidth),
+                Math.max(viewportPadding, window.innerWidth - menuWidth - viewportPadding)
+            );
+            const top = Math.min(
+                rect.bottom + 8,
+                Math.max(viewportPadding, window.innerHeight - menuHeight - viewportPadding)
+            );
+
+            setPostOptionsAnchor({ top, left });
+        }
+
+        setOpenOptionsPostId(postKey);
+        setOpenReactionPostId('');
+        setOpenCommentPostId('');
+        setOpenSharePostId('');
+        setOpenReachInsightPostId('');
+        setReachInsightPost(null);
     };
 
     const renderReachInsightModal = () => {
@@ -1860,6 +1902,38 @@ const PortalHomeFeed = ({
                 </button>
             </span>
         );
+    };
+
+    const renderPostOptionsMenu = (storageKey, post) => {
+        if (!postOptionsAnchor) {
+            return null;
+        }
+
+        const runPostOption = (event, action) => {
+            event.stopPropagation();
+            action();
+            closePostOptionsMenu();
+        };
+        const menuMarkup = (
+            <div
+                className="portal-post-options-menu portal-post-options-menu-floating"
+                role="menu"
+                style={{
+                    top: `${postOptionsAnchor.top}px`,
+                    left: `${postOptionsAnchor.left}px`
+                }}
+                onClick={(event) => event.stopPropagation()}
+            >
+                <button type="button" onClick={(event) => runPostOption(event, () => handleSavePost(storageKey, post))} role="menuitem">Save post</button>
+                <button type="button" onClick={(event) => runPostOption(event, () => handleReportPost(post))} role="menuitem">Report</button>
+                <button type="button" onClick={(event) => runPostOption(event, () => handleHidePost(storageKey, post))} role="menuitem">Hide post</button>
+                <button type="button" onClick={(event) => runPostOption(event, () => handleBlockPostOwner(post))} role="menuitem">Block user</button>
+            </div>
+        );
+
+        return typeof document !== 'undefined'
+            ? createPortal(menuMarkup, document.body)
+            : menuMarkup;
     };
 
     const applyProfileImageToPost = (post, profileImage) => {
@@ -3454,6 +3528,7 @@ const PortalHomeFeed = ({
         setOpenCommentPostId('');
         setOpenSharePostId('');
         setOpenOptionsPostId('');
+        setPostOptionsAnchor(null);
         setOpenReachInsightPostId('');
         setReachInsightPost(null);
         setShareStatus('');
@@ -3496,6 +3571,7 @@ const PortalHomeFeed = ({
         setOpenCommentPostId('');
         setOpenSharePostId('');
         setOpenOptionsPostId('');
+        setPostOptionsAnchor(null);
         setOpenReachInsightPostId('');
         setReachInsightPost(null);
         setShareStatus('');
@@ -3674,31 +3750,18 @@ const PortalHomeFeed = ({
                                     <button
                                         type="button"
                                         className="portal-post-options-button"
-                                        onClick={(event) => {
-                                            event.stopPropagation();
-                                            setOpenOptionsPostId((openId) => (openId === postKey ? '' : postKey));
-                                            setOpenReactionPostId('');
-                                            setOpenCommentPostId('');
-                                            setOpenSharePostId('');
-                                            setOpenReachInsightPostId('');
-                                            setReachInsightPost(null);
-                                        }}
+                                        onClick={(event) => openPostOptionsMenu(event, postKey)}
                                         aria-expanded={isOptionsOpen}
                                         aria-label="Post options"
                                         title="Post options"
                                     >
                                         <MoreOptionsIcon />
                                     </button>
-                                    {isOptionsOpen && (
-                                        <span className="portal-post-options-menu" role="menu">
-                                            <button type="button" onClick={() => handleSavePost(key, post)} role="menuitem">Save post</button>
-                                            <button type="button" onClick={() => handleReportPost(post)} role="menuitem">Report</button>
-                                            <button type="button" onClick={() => handleHidePost(key, post)} role="menuitem">Hide post</button>
-                                            <button type="button" onClick={() => handleBlockPostOwner(post)} role="menuitem">Block user</button>
-                                        </span>
-                                    )}
+                                    {isOptionsOpen && renderPostOptionsMenu(key, post)}
                                 </span>
                             </div>
+                        </div>
+                        <div className="portal-post-reach-row">
                             {renderReachButton(post, postKey, 'portal-feed-reach-wrap')}
                         </div>
                         {postBodyText && (
@@ -5148,7 +5211,6 @@ const PortalHomeFeed = ({
         const postComments = normalizePostComments(post.comments);
         const reactionTotal = getTotalReactionCount(post);
         const postTypeLabel = post.authorType === 'employer' ? 'Company update' : 'Talent story';
-        const detailPostKey = openPostDetail?.postKey || getPostKey(post);
         const modalMarkup = (
             <div className="portal-post-detail-backdrop" role="presentation" onClick={closePostDetailModal}>
                 <article
@@ -5210,9 +5272,6 @@ const PortalHomeFeed = ({
                             )}
                         </div>
                     </div>
-                    <div className="portal-post-detail-reach-row">
-                        {renderReachButton(post, detailPostKey, 'portal-detail-reach-wrap')}
-                    </div>
                     {post.body ? <p className="portal-post-detail-body">{asDisplayText(post.body)}</p> : null}
                     {post.media?.dataUrl && (
                         post.media.type === 'video' || post.media.type === 'image' ? (
@@ -5243,7 +5302,7 @@ const PortalHomeFeed = ({
                         </p>
                     ) : null}
                     <div className="portal-post-detail-stats" aria-label="Post stats">
-                        {renderReachButton(post, `${detailPostKey}:stats`, 'portal-detail-stat-reach-wrap')}
+                        <span><strong>{formatCompactCount(post.reach)}</strong> reach</span>
                         <span><strong>{formatCompactCount(reactionTotal)}</strong> reactions</span>
                         <span><strong>{formatCompactCount(postComments.length)}</strong> comments</span>
                     </div>

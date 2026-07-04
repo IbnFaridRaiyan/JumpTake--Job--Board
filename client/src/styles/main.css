@@ -69861,6 +69861,131 @@ html body .portal-profile-detail-posts .portal-social-post-card .portal-author-n
   }
 }
 
+/* Reach graph opens like other previews, while the counter remains a simple light maroon pill. */
+html body .portal-reach-button.portal-post-reach,
+html body .portal-post-detail-modal .portal-detail-stat-reach-wrap .portal-reach-button {
+  all: unset !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 0.34rem 0.66rem !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: #a86a78 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+  font-size: 0.72rem !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  transform: none !important;
+}
+
+html body .portal-reach-button.portal-post-reach:hover,
+html body .portal-reach-button.portal-post-reach:focus-visible,
+html body .portal-post-detail-modal .portal-detail-stat-reach-wrap .portal-reach-button:hover,
+html body .portal-post-detail-modal .portal-detail-stat-reach-wrap .portal-reach-button:focus-visible {
+  background: #925969 !important;
+  transform: none !important;
+}
+
+html body .portal-reach-button-icon,
+html body .portal-post-detail-modal .portal-detail-stat-reach-wrap .portal-reach-button-icon {
+  display: none !important;
+}
+
+html body .portal-post-detail-modal .portal-detail-stat-reach-wrap .portal-reach-button span,
+html body .portal-reach-button.portal-post-reach span {
+  display: inline !important;
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+  font: inherit !important;
+  line-height: inherit !important;
+}
+
+html body .portal-post-detail-modal .portal-detail-stat-reach-wrap .portal-reach-button span::first-line {
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+  font: inherit !important;
+}
+
+html body .portal-reach-insight-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 10050 !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 1.2rem !important;
+  background: rgba(16, 13, 12, 0.52) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  animation: jt-popup-backdrop-enter 220ms ease-out both !important;
+}
+
+html body .portal-reach-insight-backdrop .portal-reach-insight-popover {
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  z-index: 1 !important;
+  width: min(18rem, 90vw) !important;
+  max-width: 90vw !important;
+  padding: 0.82rem 0.82rem 0.78rem !important;
+  border: 1px solid rgba(125, 48, 68, 0.2) !important;
+  border-radius: 0.95rem !important;
+  background: #fffaf6 !important;
+  box-shadow: 0 1.4rem 3.4rem rgba(16, 13, 12, 0.36) !important;
+  transform: none !important;
+  animation: jt-popup-card-enter 320ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+}
+
+html body .portal-reach-insight-close {
+  all: unset !important;
+  position: absolute !important;
+  top: 0.42rem !important;
+  right: 0.5rem !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 1.45rem !important;
+  height: 1.45rem !important;
+  border-radius: 999px !important;
+  color: #381620 !important;
+  -webkit-text-fill-color: #381620 !important;
+  cursor: pointer !important;
+  font-size: 1rem !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+}
+
+html body .portal-reach-insight-close:hover,
+html body .portal-reach-insight-close:focus-visible {
+  background: rgba(125, 48, 68, 0.1) !important;
+}
+
+html body .portal-post-detail-modal .portal-detail-reach-wrap,
+html body .portal-post-detail-modal .portal-detail-stat-reach-wrap {
+  position: static !important;
+  z-index: auto !important;
+}
+
+@media (max-width: 768px) {
+  html body .portal-reach-button.portal-post-reach,
+  html body .portal-post-detail-modal .portal-detail-stat-reach-wrap .portal-reach-button {
+    padding: 0.32rem 0.6rem !important;
+    font-size: 0.68rem !important;
+  }
+
+  html body .portal-reach-insight-backdrop .portal-reach-insight-popover {
+    width: min(17rem, 88vw) !important;
+  }
+}
+
 /* Portal-wide opening motion: side-nav sections and opened panels scale in smoothly. */
 @keyframes jt-portal-open-scale {
   0% {

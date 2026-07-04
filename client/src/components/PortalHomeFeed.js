@@ -1142,6 +1142,7 @@ const PortalHomeFeed = ({
     const [openOptionsPostId, setOpenOptionsPostId] = useState('');
     const [openJobOptionsId, setOpenJobOptionsId] = useState('');
     const [openReachInsightPostId, setOpenReachInsightPostId] = useState('');
+    const [reachInsightPost, setReachInsightPost] = useState(null);
     const [openPostDetail, setOpenPostDetail] = useState(null);
     const [openProfileDetail, setOpenProfileDetail] = useState(null);
     const [, setSavedPosts] = useState([]);
@@ -1260,6 +1261,7 @@ const PortalHomeFeed = ({
             setOpenOptionsPostId('');
             setOpenJobOptionsId('');
             setOpenReachInsightPostId('');
+            setReachInsightPost(null);
             setAnimatingReactionKey('');
         };
 
@@ -1767,9 +1769,22 @@ const PortalHomeFeed = ({
             : fallback || ''
     );
 
-    const toggleReachInsight = (event, postKey) => {
+    const closeReachInsight = () => {
+        setOpenReachInsightPostId('');
+        setReachInsightPost(null);
+    };
+
+    const toggleReachInsight = (event, postKey, post) => {
         event.stopPropagation();
-        setOpenReachInsightPostId((openId) => (openId === postKey ? '' : postKey));
+        setOpenReachInsightPostId((openId) => {
+            if (openId === postKey) {
+                setReachInsightPost(null);
+                return '';
+            }
+
+            setReachInsightPost(post);
+            return postKey;
+        });
         setOpenReactionPostId('');
         setOpenCommentPostId('');
         setOpenSharePostId('');
@@ -1777,31 +1792,55 @@ const PortalHomeFeed = ({
         setOpenJobOptionsId('');
     };
 
-    const renderReachInsight = (post) => {
-        const history = getReachHistory(post);
-        const maxReach = Math.max(1, ...history.map((item) => item.value));
-        const totalReach = Math.max(0, Number(post?.reach || 0) || 0);
+    const renderReachInsightModal = () => {
+        if (!reachInsightPost) {
+            return null;
+        }
 
-        return (
-            <div className="portal-reach-insight-popover" role="dialog" aria-label="Last 7 days reach">
-                <div className="portal-reach-insight-header">
-                    <strong>{formatCompactCount(totalReach)} reach</strong>
-                    <span>Last 7 days</span>
-                </div>
-                <div className="portal-reach-chart" aria-hidden="true">
-                    {history.map((item) => (
-                        <div className="portal-reach-chart-day" key={`${item.label}-${item.value}`}>
-                            <span
-                                className="portal-reach-chart-bar"
-                                style={{ '--reach-bar-height': `${Math.max(10, Math.round((item.value / maxReach) * 100))}%` }}
-                            />
-                            <span className="portal-reach-chart-value">{formatCompactCount(item.value)}</span>
-                            <span className="portal-reach-chart-label">{item.label}</span>
-                        </div>
-                    ))}
+        const history = getReachHistory(reachInsightPost);
+        const maxReach = Math.max(1, ...history.map((item) => item.value));
+        const totalReach = Math.max(0, Number(reachInsightPost?.reach || 0) || 0);
+        const modalMarkup = (
+            <div className="portal-reach-insight-backdrop" role="presentation" onClick={closeReachInsight}>
+                <div
+                    className="portal-reach-insight-popover"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Last 7 days reach"
+                    onClick={(event) => event.stopPropagation()}
+                >
+                    <button
+                        type="button"
+                        className="portal-reach-insight-close"
+                        onClick={closeReachInsight}
+                        aria-label="Close reach graph"
+                        title="Close"
+                    >
+                        &times;
+                    </button>
+                    <div className="portal-reach-insight-header">
+                        <strong>{formatCompactCount(totalReach)} reach</strong>
+                        <span>Last 7 days</span>
+                    </div>
+                    <div className="portal-reach-chart" aria-hidden="true">
+                        {history.map((item) => (
+                            <div className="portal-reach-chart-day" key={`${item.label}-${item.value}`}>
+                                <span
+                                    className="portal-reach-chart-bar"
+                                    style={{ '--reach-bar-height': `${Math.max(10, Math.round((item.value / maxReach) * 100))}%` }}
+                                />
+                                <span className="portal-reach-chart-value">{formatCompactCount(item.value)}</span>
+                                <span className="portal-reach-chart-label">{item.label}</span>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         );
+
+        return typeof document !== 'undefined'
+            ? createPortal(modalMarkup, document.body)
+            : modalMarkup;
     };
 
     const renderReachButton = (post, postKey, className = '') => {
@@ -1813,14 +1852,12 @@ const PortalHomeFeed = ({
                 <button
                     type="button"
                     className="portal-post-reach portal-reach-button"
-                    onClick={(event) => toggleReachInsight(event, postKey)}
+                    onClick={(event) => toggleReachInsight(event, postKey, post)}
                     aria-expanded={isOpen}
                     aria-label={`Show reach graph for ${formatCompactCount(totalReach)} reach`}
                 >
-                    <SimpleIcon path={statIconPaths.reach} className="portal-reach-button-icon" />
                     <span>{formatCompactCount(totalReach)} reach</span>
                 </button>
-                {isOpen ? renderReachInsight(post) : null}
             </span>
         );
     };
@@ -3418,12 +3455,14 @@ const PortalHomeFeed = ({
         setOpenSharePostId('');
         setOpenOptionsPostId('');
         setOpenReachInsightPostId('');
+        setReachInsightPost(null);
         setShareStatus('');
     };
 
     const closePostDetailModal = () => {
         setOpenPostDetail(null);
         setOpenReachInsightPostId('');
+        setReachInsightPost(null);
     };
 
     const getPostDetailRecord = () => {
@@ -3458,12 +3497,14 @@ const PortalHomeFeed = ({
         setOpenSharePostId('');
         setOpenOptionsPostId('');
         setOpenReachInsightPostId('');
+        setReachInsightPost(null);
         setShareStatus('');
     };
 
     const closeProfileDetailModal = () => {
         setOpenProfileDetail(null);
         setOpenReachInsightPostId('');
+        setReachInsightPost(null);
     };
 
     const getProfileDetailRecord = () => {
@@ -3640,6 +3681,7 @@ const PortalHomeFeed = ({
                                             setOpenCommentPostId('');
                                             setOpenSharePostId('');
                                             setOpenReachInsightPostId('');
+                                            setReachInsightPost(null);
                                         }}
                                         aria-expanded={isOptionsOpen}
                                         aria-label="Post options"
@@ -3747,6 +3789,7 @@ const PortalHomeFeed = ({
                                         setOpenSharePostId('');
                                         setOpenOptionsPostId('');
                                         setOpenReachInsightPostId('');
+                                        setReachInsightPost(null);
                                         setAnimatingReactionKey('');
                                     }}
                                     aria-expanded={isReactionMenuOpen}
@@ -3775,6 +3818,7 @@ const PortalHomeFeed = ({
                                         setOpenSharePostId('');
                                         setOpenOptionsPostId('');
                                         setOpenReachInsightPostId('');
+                                        setReachInsightPost(null);
                                     }}
                                     aria-expanded={isCommentOpen}
                                     aria-label="Comment"
@@ -3796,6 +3840,7 @@ const PortalHomeFeed = ({
                                         setOpenCommentPostId('');
                                         setOpenOptionsPostId('');
                                         setOpenReachInsightPostId('');
+                                        setReachInsightPost(null);
                                         setShareStatus('');
                                     }}
                                     aria-expanded={isShareOpen}
@@ -5440,6 +5485,7 @@ const PortalHomeFeed = ({
             {renderCreateStoryModal()}
             {renderPostDetailModal()}
             {renderProfileDetailModal()}
+            {renderReachInsightModal()}
         </div>
     );
 };

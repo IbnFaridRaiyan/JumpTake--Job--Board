@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import Landing from './Landing';
-import Company from './Company';
-import HomePage from './HomePage';
-import EmployerDashboard from './EmployerDashboard';
-import JobSeeker from './JobSeeker'; 
-import ResetPasswordPage from './ResetPasswordPage';
-import AdminPanel from './AdminPanel';
-import SocialAuthComplete from './SocialAuthComplete';
+
+const Landing = lazy(() => import('./Landing'));
+const Company = lazy(() => import('./Company'));
+const HomePage = lazy(() => import('./HomePage'));
+const EmployerDashboard = lazy(() => import('./EmployerDashboard'));
+const JobSeeker = lazy(() => import('./JobSeeker'));
+const ResetPasswordPage = lazy(() => import('./ResetPasswordPage'));
+const AdminPanel = lazy(() => import('./AdminPanel'));
+const SocialAuthComplete = lazy(() => import('./SocialAuthComplete'));
 
 const APP_MODE_STORAGE_KEY = 'jumptakeAppMode';
 const COOKIE_CONSENT_STORAGE_KEY = 'jumptakeCookieConsent';
@@ -58,6 +59,14 @@ const CookieStartPage = ({ onChoice }) => (
   </main>
 );
 
+const RouteLoadingFallback = () => (
+  <main className="cookie-start-page" aria-label="Loading">
+    <section className="cookie-start-card">
+      <p className="cookie-start-heading">Loading</p>
+    </section>
+  </main>
+);
+
 const AppRoutes = ({ appMode, setAppMode }) => {
   const location = useLocation();
 
@@ -78,16 +87,18 @@ const AppRoutes = ({ appMode, setAppMode }) => {
 
   return (
     <div className="app-container">
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/job-seeker" element={<JobSeeker />} />
-        <Route path="/company" element={<Company />} />
-        <Route path="/home" element={<HomePage appMode={appMode} onAppModeChange={setAppMode} />} />
-        <Route path="/employer-dashboard" element={<EmployerDashboard appMode={appMode} onAppModeChange={setAppMode} />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/social-auth-complete" element={<SocialAuthComplete />} />
-        <Route path={ADMIN_PANEL_PATH} element={<AdminPanel />} />
-      </Routes>
+      <Suspense fallback={<RouteLoadingFallback />}>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/job-seeker" element={<JobSeeker />} />
+          <Route path="/company" element={<Company />} />
+          <Route path="/home" element={<HomePage appMode={appMode} onAppModeChange={setAppMode} />} />
+          <Route path="/employer-dashboard" element={<EmployerDashboard appMode={appMode} onAppModeChange={setAppMode} />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/social-auth-complete" element={<SocialAuthComplete />} />
+          <Route path={ADMIN_PANEL_PATH} element={<AdminPanel />} />
+        </Routes>
+      </Suspense>
     </div>
   );
 };

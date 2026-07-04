@@ -71662,3 +71662,567 @@ html body .portal-post-detail-modal .portal-post-detail-header {
     gap: 0.4rem !important;
   }
 }
+
+/* Screenshot 51-56 mobile feed interaction pass. Keep this block last. */
+@keyframes jt-home-tab-panel-pop {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0.36rem, 0) scale(0.94);
+    filter: blur(0.5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+html body .portal-home-feed-scroll > .portal-home-tab-panel {
+  display: grid !important;
+  gap: inherit !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  transform-origin: center top !important;
+  animation: jt-home-tab-panel-pop 190ms cubic-bezier(0.2, 0.9, 0.2, 1) both !important;
+  backface-visibility: hidden !important;
+  will-change: transform, opacity !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body .portal-home-feed-scroll > .portal-home-tab-panel {
+    animation: none !important;
+  }
+}
+
+html body .portal-home-feed :is(.portal-social-post-card, .portal-candidate-job-card) .portal-post-options-button,
+html body .portal-home-feed :is(.portal-social-post-card, .portal-candidate-job-card) .portal-post-options-button:is(:hover, :focus, :focus-visible, :active, [aria-expanded="true"]) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  z-index: 8 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 1.9rem !important;
+  min-width: 1.9rem !important;
+  max-width: 1.9rem !important;
+  height: 1.9rem !important;
+  min-height: 1.9rem !important;
+  max-height: 1.9rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
+
+html body .portal-home-feed :is(.portal-social-post-card, .portal-candidate-job-card) .portal-post-options-button::before,
+html body .portal-home-feed :is(.portal-social-post-card, .portal-candidate-job-card) .portal-post-options-button::after {
+  display: none !important;
+  content: none !important;
+  pointer-events: none !important;
+}
+
+html body .portal-home-feed :is(.portal-social-post-card, .portal-candidate-job-card) .portal-post-options-button svg {
+  width: 1rem !important;
+  height: 1rem !important;
+  pointer-events: none !important;
+}
+
+html body .portal-post-options-menu.portal-post-options-menu-floating,
+html body .portal-home-feed .portal-candidate-job-card .portal-job-options-menu {
+  box-sizing: border-box !important;
+  display: grid !important;
+  gap: 0 !important;
+  width: 8rem !important;
+  min-width: 8rem !important;
+  max-width: 8rem !important;
+  padding: 0.34rem !important;
+  border: 1px solid rgba(23, 32, 51, 0.14) !important;
+  border-radius: 0.58rem !important;
+  background: #f3eee6 !important;
+  background-color: #f3eee6 !important;
+  background-image: none !important;
+  box-shadow: 0 12px 28px rgba(16, 13, 12, 0.2) !important;
+  overflow: hidden !important;
+  animation: jt-inline-popover-enter 160ms cubic-bezier(0.2, 0.9, 0.2, 1) both !important;
+}
+
+html body .portal-post-options-menu.portal-post-options-menu-floating {
+  position: fixed !important;
+  z-index: 10080 !important;
+}
+
+html body .portal-home-feed .portal-candidate-job-card .portal-job-options-menu {
+  position: absolute !important;
+  top: calc(100% + 0.34rem) !important;
+  right: 0 !important;
+  left: auto !important;
+  z-index: 40 !important;
+}
+
+html body .portal-post-options-menu.portal-post-options-menu-floating button,
+html body .portal-post-options-menu.portal-post-options-menu-floating button:is(:hover, :focus, :focus-visible, :active),
+html body .portal-home-feed .portal-candidate-job-card .portal-job-options-menu button,
+html body .portal-home-feed .portal-candidate-job-card .portal-job-options-menu button:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-height: 2.15rem !important;
+  padding: 0.42rem 0.54rem !important;
+  border: 0 !important;
+  border-radius: 0.42rem !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  cursor: pointer !important;
+  font-size: 0.78rem !important;
+  font-weight: 760 !important;
+  line-height: 1.12 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+html body .portal-post-options-menu.portal-post-options-menu-floating button:first-child,
+html body .portal-home-feed .portal-candidate-job-card .portal-job-options-menu button:first-child {
+  background: rgba(168, 78, 99, 0.16) !important;
+}
+
+html body .portal-post-options-menu.portal-post-options-menu-floating button:hover,
+html body .portal-post-options-menu.portal-post-options-menu-floating button:focus-visible,
+html body .portal-home-feed .portal-candidate-job-card .portal-job-options-menu button:hover,
+html body .portal-home-feed .portal-candidate-job-card .portal-job-options-menu button:focus-visible {
+  background: rgba(168, 78, 99, 0.22) !important;
+  outline: 0 !important;
+}
+
+html body .portal-job-modal {
+  isolation: isolate !important;
+}
+
+html body .portal-job-modal .portal-job-modal-header {
+  position: relative !important;
+  align-items: flex-start !important;
+  padding-right: 2.3rem !important;
+}
+
+html body .portal-job-modal .portal-job-modal-title-block {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  max-width: min(13rem, calc(100% - 3.8rem)) !important;
+}
+
+html body .portal-job-modal .portal-job-modal-title-block h3 {
+  display: block !important;
+  max-width: 12.4rem !important;
+  margin: 0 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  overflow-wrap: break-word !important;
+  word-break: normal !important;
+  line-height: 1.08 !important;
+}
+
+html body .portal-job-modal .portal-job-modal-title-block p {
+  max-width: 12.4rem !important;
+  margin: 0.14rem 0 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+html body .portal-job-modal .portal-job-modal-back-button,
+html body .portal-job-modal .portal-job-modal-back-button:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  position: absolute !important;
+  top: 0.58rem !important;
+  right: 0.68rem !important;
+  z-index: 4 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 1.62rem !important;
+  min-width: 1.62rem !important;
+  max-width: 1.62rem !important;
+  height: 1.62rem !important;
+  min-height: 1.62rem !important;
+  max-height: 1.62rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
+
+html body .portal-job-modal .portal-job-modal-back-button::before,
+html body .portal-job-modal .portal-job-modal-back-button::after {
+  display: none !important;
+  content: none !important;
+  pointer-events: none !important;
+}
+
+html body .portal-job-modal .portal-job-modal-back-button svg {
+  width: 1.02rem !important;
+  height: 1.02rem !important;
+  pointer-events: none !important;
+}
+
+html body .portal-reach-insight-popover,
+html body .portal-reaction-stats-modal {
+  position: relative !important;
+  isolation: isolate !important;
+}
+
+html body .portal-reach-insight-header,
+html body .portal-reaction-stats-header {
+  padding-right: 1.72rem !important;
+}
+
+html body .portal-reach-insight-close,
+html body .portal-reaction-stats-close,
+html body .portal-reach-insight-close:is(:hover, :focus, :focus-visible, :active),
+html body .portal-reaction-stats-close:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  position: absolute !important;
+  top: 0.64rem !important;
+  right: 0.72rem !important;
+  z-index: 5 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 1.1rem !important;
+  min-width: 1.1rem !important;
+  max-width: 1.1rem !important;
+  height: 1.1rem !important;
+  min-height: 1.1rem !important;
+  max-height: 1.1rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #381620 !important;
+  -webkit-text-fill-color: #381620 !important;
+  cursor: pointer !important;
+  font-size: 0.95rem !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
+
+html body .portal-reach-insight-close::before,
+html body .portal-reach-insight-close::after,
+html body .portal-reaction-stats-close::before,
+html body .portal-reaction-stats-close::after {
+  display: none !important;
+  content: none !important;
+  pointer-events: none !important;
+}
+
+html body .portal-reach-insight-close:hover,
+html body .portal-reach-insight-close:focus-visible,
+html body .portal-reaction-stats-close:hover,
+html body .portal-reaction-stats-close:focus-visible {
+  background: rgba(125, 48, 68, 0.1) !important;
+  outline: 0 !important;
+}
+
+html body .portal-comment-row-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 10075 !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 1rem !important;
+  background: rgba(16, 13, 12, 0.54) !important;
+  backdrop-filter: blur(9px) !important;
+  -webkit-backdrop-filter: blur(9px) !important;
+  animation: jt-popup-backdrop-enter 180ms linear both !important;
+  touch-action: none !important;
+}
+
+html body .portal-comment-row-backdrop .portal-comment-row.is-open {
+  box-sizing: border-box !important;
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 0.54rem !important;
+  width: min(22rem, calc(100vw - 2rem)) !important;
+  max-width: calc(100vw - 2rem) !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0.7rem !important;
+  border: 1px solid rgba(125, 48, 68, 0.18) !important;
+  border-radius: 0.86rem !important;
+  background: #fffaf6 !important;
+  background-color: #fffaf6 !important;
+  background-image: none !important;
+  box-shadow: 0 1.4rem 3.4rem rgba(16, 13, 12, 0.34) !important;
+  animation: jt-popup-card-enter 210ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+  touch-action: auto !important;
+}
+
+html body .portal-comment-row-backdrop .portal-comment-row.is-open input {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+html body .portal-comment-row-backdrop .portal-comment-row.is-open .portal-comment-button {
+  width: auto !important;
+  min-width: 3.8rem !important;
+  max-width: none !important;
+  height: 2.25rem !important;
+  min-height: 2.25rem !important;
+  padding: 0 0.72rem !important;
+  border-radius: 999px !important;
+}
+
+@media (max-width: 768px) {
+  html body .portal-job-modal .portal-job-modal-title-block {
+    max-width: min(11.8rem, calc(100% - 3.6rem)) !important;
+  }
+
+  html body .portal-job-modal .portal-job-modal-title-block h3,
+  html body .portal-job-modal .portal-job-modal-title-block p {
+    max-width: 11.6rem !important;
+  }
+
+  html body .portal-post-options-menu.portal-post-options-menu-floating,
+  html body .portal-home-feed .portal-candidate-job-card .portal-job-options-menu {
+    width: 7.75rem !important;
+    min-width: 7.75rem !important;
+    max-width: 7.75rem !important;
+  }
+}
+
+/* Screenshot 57-59 follow-up: smooth exits, full-page comment composer, and precise mobile hit areas. */
+@keyframes jt-popup-backdrop-exit {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes jt-popup-card-exit {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 0.36rem, 0) scale(0.86);
+    filter: blur(0.4px);
+  }
+}
+
+html body :is(
+  .portal-reach-insight-backdrop,
+  .portal-reaction-stats-backdrop,
+  .portal-comment-row-backdrop,
+  .portal-job-modal-backdrop,
+  .portal-job-review-backdrop,
+  .portal-create-story-backdrop,
+  .portal-post-detail-backdrop,
+  .portal-profile-detail-backdrop
+).is-closing {
+  animation: jt-popup-backdrop-exit 260ms cubic-bezier(0.4, 0, 0.2, 1) both !important;
+  pointer-events: none !important;
+}
+
+html body .portal-reach-insight-backdrop.is-closing .portal-reach-insight-popover,
+html body .portal-reaction-stats-backdrop.is-closing .portal-reaction-stats-modal,
+html body .portal-comment-row-backdrop.is-closing .portal-comment-row.is-open,
+html body .portal-job-modal-backdrop.is-closing .portal-job-modal,
+html body .portal-job-review-backdrop.is-closing .portal-job-review-modal,
+html body .portal-create-story-backdrop.is-closing .portal-create-story-modal,
+html body .portal-post-detail-backdrop.is-closing .portal-post-detail-modal,
+html body .portal-profile-detail-backdrop.is-closing .portal-profile-detail-modal {
+  animation: jt-popup-card-exit 260ms cubic-bezier(0.4, 0, 0.2, 1) both !important;
+  transform-origin: center center !important;
+}
+
+html body .portal-comment-row-backdrop {
+  z-index: 10120 !important;
+  display: grid !important;
+  place-items: center !important;
+  background: rgba(16, 13, 12, 0.6) !important;
+  backdrop-filter: blur(11px) saturate(0.9) !important;
+  -webkit-backdrop-filter: blur(11px) saturate(0.9) !important;
+  pointer-events: auto !important;
+}
+
+html body .portal-comment-row-backdrop .portal-comment-row.is-open {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 2.35rem !important;
+  align-items: center !important;
+  gap: 0.48rem !important;
+  width: min(22rem, calc(100vw - 2.2rem)) !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+html body .portal-comment-row-backdrop .portal-comment-row.is-open input,
+html body .portal-comment-row-backdrop .portal-comment-row.is-open input:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 2.36rem !important;
+  min-height: 2.36rem !important;
+  padding: 0 0.9rem !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: #fffaf6 !important;
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  box-shadow: 0 0.55rem 1.4rem rgba(16, 13, 12, 0.22) !important;
+  font-size: 0.84rem !important;
+  font-weight: 700 !important;
+  line-height: 1.1 !important;
+  outline: 0 !important;
+}
+
+html body .portal-comment-row-backdrop .portal-comment-row.is-open input::placeholder {
+  color: rgba(23, 32, 51, 0.68) !important;
+  -webkit-text-fill-color: rgba(23, 32, 51, 0.68) !important;
+}
+
+html body .portal-comment-row-backdrop .portal-comment-row.is-open .portal-comment-button,
+html body .portal-comment-row-backdrop .portal-comment-row.is-open .portal-comment-button:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 2.35rem !important;
+  min-width: 2.35rem !important;
+  max-width: 2.35rem !important;
+  height: 2.35rem !important;
+  min-height: 2.35rem !important;
+  max-height: 2.35rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: #fffaf6 !important;
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  box-shadow: 0 0.55rem 1.4rem rgba(16, 13, 12, 0.22) !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
+
+html body .portal-comment-row-backdrop .portal-comment-row.is-open .portal-comment-button svg {
+  width: 1.08rem !important;
+  height: 1.08rem !important;
+}
+
+html body .portal-home-feed .portal-social-post-card {
+  isolation: isolate !important;
+}
+
+html body .portal-home-feed .portal-social-post-card .portal-post-header-actions,
+html body .portal-home-feed .portal-social-post-card .portal-post-options-wrap,
+html body .portal-home-feed .portal-candidate-job-card .portal-job-card-options {
+  position: relative !important;
+  z-index: 35 !important;
+  pointer-events: auto !important;
+}
+
+html body .portal-home-feed .portal-social-post-card .portal-post-options-button,
+html body .portal-home-feed .portal-social-post-card .portal-post-options-button:is(:hover, :focus, :focus-visible, :active, [aria-expanded="true"]) {
+  z-index: 36 !important;
+  pointer-events: auto !important;
+}
+
+html body .portal-reach-insight-popover,
+html body .portal-reaction-stats-modal {
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+html body .portal-reach-insight-close,
+html body .portal-reaction-stats-close,
+html body .portal-reach-insight-close:is(:hover, :focus, :focus-visible, :active),
+html body .portal-reaction-stats-close:is(:hover, :focus, :focus-visible, :active) {
+  top: 0.42rem !important;
+  right: 0.5rem !important;
+  width: 1.05rem !important;
+  min-width: 1.05rem !important;
+  max-width: 1.05rem !important;
+  height: 1.05rem !important;
+  min-height: 1.05rem !important;
+  max-height: 1.05rem !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  pointer-events: auto !important;
+}
+
+html body .portal-reach-insight-close::before,
+html body .portal-reach-insight-close::after,
+html body .portal-reaction-stats-close::before,
+html body .portal-reaction-stats-close::after {
+  display: none !important;
+  content: none !important;
+}
+
+html body .portal-reach-insight-header,
+html body .portal-reaction-stats-header {
+  padding-right: 1.65rem !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body :is(
+    .portal-reach-insight-backdrop,
+    .portal-reaction-stats-backdrop,
+    .portal-comment-row-backdrop,
+    .portal-job-modal-backdrop,
+    .portal-job-review-backdrop,
+    .portal-create-story-backdrop,
+    .portal-post-detail-backdrop,
+    .portal-profile-detail-backdrop
+  ).is-closing,
+  html body .portal-reach-insight-backdrop.is-closing .portal-reach-insight-popover,
+  html body .portal-reaction-stats-backdrop.is-closing .portal-reaction-stats-modal,
+  html body .portal-comment-row-backdrop.is-closing .portal-comment-row.is-open,
+  html body .portal-job-modal-backdrop.is-closing .portal-job-modal,
+  html body .portal-job-review-backdrop.is-closing .portal-job-review-modal,
+  html body .portal-create-story-backdrop.is-closing .portal-create-story-modal,
+  html body .portal-post-detail-backdrop.is-closing .portal-post-detail-modal,
+  html body .portal-profile-detail-backdrop.is-closing .portal-profile-detail-modal {
+    animation-duration: 1ms !important;
+  }
+}

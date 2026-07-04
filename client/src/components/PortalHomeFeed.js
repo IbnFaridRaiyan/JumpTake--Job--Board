@@ -25,6 +25,8 @@ const MOBILE_FEED_SCROLL_MAX_FRAME_STEP = 86;
 const MOBILE_FEED_RELEASE_DRIFT_RATIO = 0.42;
 const MOBILE_FEED_RELEASE_DRIFT_MAX = 54;
 const POST_BODY_PREVIEW_LENGTH = 430;
+const POPUP_CLOSE_ANIMATION_MS = 260;
+const OPTION_POINTER_GUARD_MS = 420;
 
 const escapeHtml = (value = '') => (
     String(value)
@@ -1142,6 +1144,14 @@ const PortalHomeFeed = ({
     const [openReachInsightPostId, setOpenReachInsightPostId] = useState('');
     const [reachInsightPost, setReachInsightPost] = useState(null);
     const [reactionStatsPost, setReactionStatsPost] = useState(null);
+    const [closingReachInsight, setClosingReachInsight] = useState(false);
+    const [closingReactionStats, setClosingReactionStats] = useState(false);
+    const [closingCommentPostId, setClosingCommentPostId] = useState('');
+    const [closingJobModal, setClosingJobModal] = useState(false);
+    const [closingJobReviewModal, setClosingJobReviewModal] = useState(false);
+    const [closingCreateStoryModal, setClosingCreateStoryModal] = useState(false);
+    const [closingPostDetailModal, setClosingPostDetailModal] = useState(false);
+    const [closingProfileDetailModal, setClosingProfileDetailModal] = useState(false);
     const [openPostDetail, setOpenPostDetail] = useState(null);
     const [openProfileDetail, setOpenProfileDetail] = useState(null);
     const [, setSavedPosts] = useState([]);
@@ -1179,6 +1189,15 @@ const PortalHomeFeed = ({
     const tailorProfileImageInputRef = useRef(null);
     const reactionTooltipTimerRef = useRef(null);
     const reactionCloseTimerRef = useRef(null);
+    const reachInsightCloseTimerRef = useRef(null);
+    const reactionStatsCloseTimerRef = useRef(null);
+    const commentCloseTimerRef = useRef(null);
+    const jobModalCloseTimerRef = useRef(null);
+    const jobReviewCloseTimerRef = useRef(null);
+    const createStoryCloseTimerRef = useRef(null);
+    const postDetailCloseTimerRef = useRef(null);
+    const profileDetailCloseTimerRef = useRef(null);
+    const optionPointerOpenRef = useRef({ id: '', source: '', at: 0 });
     const feedScrollTopRef = useRef(0);
     const feedScrollPositionsRef = useRef({});
     const feedScrollRestoreFrameRef = useRef(null);
@@ -1215,6 +1234,23 @@ const PortalHomeFeed = ({
         ? companyData?.logo
         : profileAvatarOverride || profileData?.profileImage || '';
     const candidateUserId = currentUser?.id || currentUser?._id || currentUser?.userId;
+
+    useEffect(() => () => {
+        [
+            reachInsightCloseTimerRef.current,
+            reactionStatsCloseTimerRef.current,
+            commentCloseTimerRef.current,
+            jobModalCloseTimerRef.current,
+            jobReviewCloseTimerRef.current,
+            createStoryCloseTimerRef.current,
+            postDetailCloseTimerRef.current,
+            profileDetailCloseTimerRef.current
+        ].forEach((timerId) => {
+            if (timerId) {
+                window.clearTimeout(timerId);
+            }
+        });
+    }, []);
 
     useEffect(() => {
         setActiveTab(defaultTab);
@@ -1256,13 +1292,12 @@ const PortalHomeFeed = ({
             }
 
             setOpenReactionPostId('');
-            setOpenCommentPostId('');
+            closeCommentComposer();
             setOpenSharePostId('');
             setOpenOptionsPostId('');
             setPostOptionsAnchor(null);
             setOpenJobOptionsId('');
-            setOpenReachInsightPostId('');
-            setReachInsightPost(null);
+            closeReachInsight();
             setAnimatingReactionKey('');
         };
 
@@ -1793,13 +1828,96 @@ const PortalHomeFeed = ({
             : fallback || ''
     );
 
+    const stopPopupButtonPress = (event) => {
+        event.stopPropagation();
+    };
+
+    const shouldUsePointerOpen = (event) => (
+        event?.pointerType && event.pointerType !== 'mouse'
+    );
+
     const closeReachInsight = () => {
-        setOpenReachInsightPostId('');
-        setReachInsightPost(null);
+        if (!reachInsightPost || closingReachInsight) {
+            return;
+        }
+
+        if (reachInsightCloseTimerRef.current) {
+            window.clearTimeout(reachInsightCloseTimerRef.current);
+        }
+
+        setClosingReachInsight(true);
+        reachInsightCloseTimerRef.current = window.setTimeout(() => {
+            setOpenReachInsightPostId('');
+            setReachInsightPost(null);
+            setClosingReachInsight(false);
+            reachInsightCloseTimerRef.current = null;
+        }, POPUP_CLOSE_ANIMATION_MS);
     };
 
     const closeReactionStats = () => {
-        setReactionStatsPost(null);
+        if (!reactionStatsPost || closingReactionStats) {
+            return;
+        }
+
+        if (reactionStatsCloseTimerRef.current) {
+            window.clearTimeout(reactionStatsCloseTimerRef.current);
+        }
+
+        setClosingReactionStats(true);
+        reactionStatsCloseTimerRef.current = window.setTimeout(() => {
+            setReactionStatsPost(null);
+            setClosingReactionStats(false);
+            reactionStatsCloseTimerRef.current = null;
+        }, POPUP_CLOSE_ANIMATION_MS);
+    };
+
+    const closeCommentComposer = (postKey = openCommentPostId) => {
+        if (!postKey || closingCommentPostId) {
+            return;
+        }
+
+        if (commentCloseTimerRef.current) {
+            window.clearTimeout(commentCloseTimerRef.current);
+        }
+
+        setClosingCommentPostId(postKey);
+        commentCloseTimerRef.current = window.setTimeout(() => {
+            setOpenCommentPostId('');
+            setClosingCommentPostId('');
+            commentCloseTimerRef.current = null;
+        }, POPUP_CLOSE_ANIMATION_MS);
+    };
+
+    const toggleCommentComposer = (postKey) => {
+        if (openCommentPostId === postKey && closingCommentPostId !== postKey) {
+            closeCommentComposer(postKey);
+            return;
+        }
+
+        if (commentCloseTimerRef.current) {
+            window.clearTimeout(commentCloseTimerRef.current);
+            commentCloseTimerRef.current = null;
+        }
+
+        setClosingCommentPostId('');
+        setOpenCommentPostId(postKey);
+        setOpenReactionPostId('');
+        setOpenSharePostId('');
+        setOpenOptionsPostId('');
+        setPostOptionsAnchor(null);
+        closeReachInsight();
+    };
+
+    const closeReachInsightFromButton = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        closeReachInsight();
+    };
+
+    const closeReactionStatsFromButton = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        closeReactionStats();
     };
 
     const stopOverlayTouchMove = (event) => {
@@ -1811,15 +1929,20 @@ const PortalHomeFeed = ({
         event.stopPropagation();
         setOpenReachInsightPostId((openId) => {
             if (openId === postKey) {
-                setReachInsightPost(null);
-                return '';
+                closeReachInsight();
+                return openId;
             }
 
+            if (reachInsightCloseTimerRef.current) {
+                window.clearTimeout(reachInsightCloseTimerRef.current);
+                reachInsightCloseTimerRef.current = null;
+            }
+            setClosingReachInsight(false);
             setReachInsightPost(post);
             return postKey;
         });
         setOpenReactionPostId('');
-        setOpenCommentPostId('');
+        closeCommentComposer();
         setOpenSharePostId('');
         setOpenOptionsPostId('');
         setPostOptionsAnchor(null);
@@ -1828,9 +1951,14 @@ const PortalHomeFeed = ({
 
     const openReactionStats = (event, post) => {
         event.stopPropagation();
+        if (reactionStatsCloseTimerRef.current) {
+            window.clearTimeout(reactionStatsCloseTimerRef.current);
+            reactionStatsCloseTimerRef.current = null;
+        }
+        setClosingReactionStats(false);
         setReactionStatsPost(post);
         setOpenReactionPostId('');
-        setOpenCommentPostId('');
+        closeCommentComposer();
         setOpenSharePostId('');
         setOpenOptionsPostId('');
         setPostOptionsAnchor(null);
@@ -1869,10 +1997,81 @@ const PortalHomeFeed = ({
 
         setOpenOptionsPostId(postKey);
         setOpenReactionPostId('');
-        setOpenCommentPostId('');
+        closeCommentComposer();
         setOpenSharePostId('');
-        setOpenReachInsightPostId('');
-        setReachInsightPost(null);
+        closeReachInsight();
+    };
+
+    const openPostOptionsFromPointer = (event, postKey) => {
+        event.stopPropagation();
+
+        if (!shouldUsePointerOpen(event)) {
+            return;
+        }
+
+        event.preventDefault();
+        optionPointerOpenRef.current = {
+            id: postKey,
+            source: 'post',
+            at: Date.now()
+        };
+        openPostOptionsMenu(event, postKey);
+    };
+
+    const openPostOptionsFromClick = (event, postKey) => {
+        event.stopPropagation();
+
+        const guard = optionPointerOpenRef.current;
+        if (
+            guard.source === 'post'
+            && guard.id === postKey
+            && Date.now() - guard.at < OPTION_POINTER_GUARD_MS
+        ) {
+            return;
+        }
+
+        openPostOptionsMenu(event, postKey);
+    };
+
+    const toggleJobOptionsMenu = (event, jobKey) => {
+        event.stopPropagation();
+        setOpenJobOptionsId((openId) => (openId === jobKey ? '' : jobKey));
+        setOpenReactionPostId('');
+        closeCommentComposer();
+        setOpenSharePostId('');
+        setOpenOptionsPostId('');
+        setPostOptionsAnchor(null);
+    };
+
+    const openJobOptionsFromPointer = (event, jobKey) => {
+        event.stopPropagation();
+
+        if (!shouldUsePointerOpen(event)) {
+            return;
+        }
+
+        event.preventDefault();
+        optionPointerOpenRef.current = {
+            id: jobKey,
+            source: 'job',
+            at: Date.now()
+        };
+        toggleJobOptionsMenu(event, jobKey);
+    };
+
+    const openJobOptionsFromClick = (event, jobKey) => {
+        event.stopPropagation();
+
+        const guard = optionPointerOpenRef.current;
+        if (
+            guard.source === 'job'
+            && guard.id === jobKey
+            && Date.now() - guard.at < OPTION_POINTER_GUARD_MS
+        ) {
+            return;
+        }
+
+        toggleJobOptionsMenu(event, jobKey);
     };
 
     const renderReachInsightModal = () => {
@@ -1885,7 +2084,7 @@ const PortalHomeFeed = ({
         const totalReach = Math.max(0, Number(reachInsightPost?.reach || 0) || 0);
         const modalMarkup = (
             <div
-                className="portal-reach-insight-backdrop"
+                className={`portal-reach-insight-backdrop ${closingReachInsight ? 'is-closing' : ''}`}
                 role="presentation"
                 onClick={closeReachInsight}
                 onTouchMove={stopOverlayTouchMove}
@@ -1900,7 +2099,9 @@ const PortalHomeFeed = ({
                     <button
                         type="button"
                         className="portal-reach-insight-close"
-                        onClick={closeReachInsight}
+                        onPointerDown={stopPopupButtonPress}
+                        onTouchStart={stopPopupButtonPress}
+                        onClick={closeReachInsightFromButton}
                         aria-label="Close reach graph"
                         title="Close"
                     >
@@ -1960,7 +2161,7 @@ const PortalHomeFeed = ({
         const maxCount = Math.max(1, ...breakdown.map((item) => item.count));
         const modalMarkup = (
             <div
-                className="portal-reaction-stats-backdrop"
+                className={`portal-reaction-stats-backdrop ${closingReactionStats ? 'is-closing' : ''}`}
                 role="presentation"
                 onClick={closeReactionStats}
                 onTouchMove={stopOverlayTouchMove}
@@ -1975,7 +2176,9 @@ const PortalHomeFeed = ({
                     <button
                         type="button"
                         className="portal-reaction-stats-close"
-                        onClick={closeReactionStats}
+                        onPointerDown={stopPopupButtonPress}
+                        onTouchStart={stopPopupButtonPress}
+                        onClick={closeReactionStatsFromButton}
                         aria-label="Close reaction stats"
                         title="Close"
                     >
@@ -2044,6 +2247,54 @@ const PortalHomeFeed = ({
         return typeof document !== 'undefined'
             ? createPortal(menuMarkup, document.body)
             : menuMarkup;
+    };
+
+    const renderCommentComposerOverlay = (storageKey, postKey) => {
+        const isClosing = closingCommentPostId === postKey;
+        const overlayMarkup = (
+            <div
+                className={`portal-comment-row-backdrop ${isClosing ? 'is-closing' : ''}`}
+                role="presentation"
+                onPointerDown={stopPopupButtonPress}
+                onMouseDown={stopPopupButtonPress}
+                onTouchStart={stopPopupButtonPress}
+                onClick={(event) => {
+                    event.stopPropagation();
+                    closeCommentComposer(postKey);
+                }}
+            >
+                <div
+                    className="portal-comment-row is-open"
+                    role="dialog"
+                    aria-label="Write a comment"
+                    onClick={(event) => event.stopPropagation()}
+                >
+                    <input
+                        type="text"
+                        value={commentDrafts[postKey] || ''}
+                        placeholder="Comment or mention with @JumpTakeID..."
+                        onChange={(event) => setCommentDrafts((drafts) => ({ ...drafts, [postKey]: event.target.value }))}
+                        autoFocus
+                    />
+                    <button
+                        type="button"
+                        className="portal-comment-button"
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            handleComment(storageKey, postKey);
+                        }}
+                        aria-label="Post comment"
+                        title="Post comment"
+                    >
+                        <ReactionIcon name="Comment" />
+                    </button>
+                </div>
+            </div>
+        );
+
+        return typeof document !== 'undefined'
+            ? createPortal(overlayMarkup, document.body)
+            : overlayMarkup;
     };
 
     const applyProfileImageToPost = (post, profileImage) => {
@@ -2144,7 +2395,7 @@ const PortalHomeFeed = ({
         const setPosts = key === WORK_NEWS_STORAGE_KEY ? setWorkNewsPosts : setTalentStories;
         setPosts((currentPosts) => currentPosts.filter((item) => getPostKey(item) !== postKey));
         setOpenReactionPostId('');
-        setOpenCommentPostId('');
+        closeCommentComposer(postKey);
         setOpenSharePostId('');
         deleteFeedPostRecord(post);
     };
@@ -2339,8 +2590,7 @@ const PortalHomeFeed = ({
             setComposerText('');
             setComposerMedia(null);
             setComposerAudience('everyone');
-            setCreateStoryModalOpen(false);
-            setCreateStoryAudienceOpen(false);
+            closeCreateStoryModal();
             setFeedError('');
             setActiveTab(isCompanyPost ? 'my-company-posts' : 'my-feed');
         } catch (error) {
@@ -2366,6 +2616,11 @@ const PortalHomeFeed = ({
     };
 
     const openJobModal = (job, modalMode = mode) => {
+        if (jobModalCloseTimerRef.current) {
+            window.clearTimeout(jobModalCloseTimerRef.current);
+            jobModalCloseTimerRef.current = null;
+        }
+        setClosingJobModal(false);
         recordJobReach(job);
         setSelectedJob(job);
         setSelectedJobMode(modalMode);
@@ -2373,15 +2628,28 @@ const PortalHomeFeed = ({
     };
 
     const closeJobModal = () => {
-        setSelectedJob(null);
-        setApplicationJob(null);
-        setApplicationMessage('');
-        setCoverLetterText('');
-        setApplicationResumeUpload(null);
-        setApplicationProfile(createApplicationProfileDraft(profileData, currentUser));
-        setActiveDraftId(null);
-        setSavingApplicationDraft(false);
-        setJobActionMessage('');
+        if ((!selectedJob && !applicationJob) || closingJobModal) {
+            return;
+        }
+
+        if (jobModalCloseTimerRef.current) {
+            window.clearTimeout(jobModalCloseTimerRef.current);
+        }
+
+        setClosingJobModal(true);
+        jobModalCloseTimerRef.current = window.setTimeout(() => {
+            setSelectedJob(null);
+            setApplicationJob(null);
+            setApplicationMessage('');
+            setCoverLetterText('');
+            setApplicationResumeUpload(null);
+            setApplicationProfile(createApplicationProfileDraft(profileData, currentUser));
+            setActiveDraftId(null);
+            setSavingApplicationDraft(false);
+            setJobActionMessage('');
+            setClosingJobModal(false);
+            jobModalCloseTimerRef.current = null;
+        }, POPUP_CLOSE_ANIMATION_MS);
     };
 
     const hasAppliedToJob = (job) => {
@@ -2451,19 +2719,37 @@ const PortalHomeFeed = ({
         event?.stopPropagation();
         const existingReview = getViewerHomeJobReview(job);
 
+        if (jobReviewCloseTimerRef.current) {
+            window.clearTimeout(jobReviewCloseTimerRef.current);
+            jobReviewCloseTimerRef.current = null;
+        }
+        setClosingJobReviewModal(false);
         setReviewingJob(job);
         setJobReviewDraft(existingReview?.text || '');
         setJobReviewRating(Number(existingReview?.rating || 0) || 0);
         setOpenJobOptionsId('');
         setOpenReactionPostId('');
-        setOpenCommentPostId('');
+        closeCommentComposer();
         setOpenSharePostId('');
     };
 
     const closeJobReviewModal = () => {
-        setReviewingJob(null);
-        setJobReviewDraft('');
-        setJobReviewRating(0);
+        if (!reviewingJob || closingJobReviewModal) {
+            return;
+        }
+
+        if (jobReviewCloseTimerRef.current) {
+            window.clearTimeout(jobReviewCloseTimerRef.current);
+        }
+
+        setClosingJobReviewModal(true);
+        jobReviewCloseTimerRef.current = window.setTimeout(() => {
+            setReviewingJob(null);
+            setJobReviewDraft('');
+            setJobReviewRating(0);
+            setClosingJobReviewModal(false);
+            jobReviewCloseTimerRef.current = null;
+        }, POPUP_CLOSE_ANIMATION_MS);
     };
 
     const saveJobReview = async () => {
@@ -2658,6 +2944,11 @@ const PortalHomeFeed = ({
             return;
         }
 
+        if (jobModalCloseTimerRef.current) {
+            window.clearTimeout(jobModalCloseTimerRef.current);
+            jobModalCloseTimerRef.current = null;
+        }
+        setClosingJobModal(false);
         setSelectedJob(job);
         setSelectedJobMode('candidate');
         setApplicationJob(job);
@@ -2712,6 +3003,11 @@ const PortalHomeFeed = ({
             if (matchingIndex >= 0) {
                 setJobPage(Math.floor(matchingIndex / HOME_JOB_PAGE_SIZE) + 1);
             }
+            if (jobModalCloseTimerRef.current) {
+                window.clearTimeout(jobModalCloseTimerRef.current);
+                jobModalCloseTimerRef.current = null;
+            }
+            setClosingJobModal(false);
             setSelectedJob(jobForDraft);
             setSelectedJobMode('candidate');
             setApplicationJob(jobForDraft);
@@ -3310,7 +3606,7 @@ const PortalHomeFeed = ({
                 : post
         )));
         setCommentDrafts((drafts) => ({ ...drafts, [postId]: '' }));
-        setOpenCommentPostId('');
+        closeCommentComposer(postId);
     };
 
     const handleCopyPostShare = async (key, post) => {
@@ -3632,22 +3928,38 @@ const PortalHomeFeed = ({
     ));
 
     const openPostDetailModal = ({ postKey, storageKey, kind }) => {
+        if (postDetailCloseTimerRef.current) {
+            window.clearTimeout(postDetailCloseTimerRef.current);
+            postDetailCloseTimerRef.current = null;
+        }
+        setClosingPostDetailModal(false);
         setOpenPostDetail({ postKey, storageKey, kind });
         setOpenProfileDetail(null);
         setOpenReactionPostId('');
-        setOpenCommentPostId('');
+        closeCommentComposer();
         setOpenSharePostId('');
         setOpenOptionsPostId('');
         setPostOptionsAnchor(null);
-        setOpenReachInsightPostId('');
-        setReachInsightPost(null);
+        closeReachInsight();
         setShareStatus('');
     };
 
     const closePostDetailModal = () => {
-        setOpenPostDetail(null);
-        setOpenReachInsightPostId('');
-        setReachInsightPost(null);
+        if (!openPostDetail || closingPostDetailModal) {
+            return;
+        }
+
+        if (postDetailCloseTimerRef.current) {
+            window.clearTimeout(postDetailCloseTimerRef.current);
+        }
+
+        setClosingPostDetailModal(true);
+        closeReachInsight();
+        postDetailCloseTimerRef.current = window.setTimeout(() => {
+            setOpenPostDetail(null);
+            setClosingPostDetailModal(false);
+            postDetailCloseTimerRef.current = null;
+        }, POPUP_CLOSE_ANIMATION_MS);
     };
 
     const getPostDetailRecord = () => {
@@ -3670,6 +3982,11 @@ const PortalHomeFeed = ({
             return;
         }
 
+        if (profileDetailCloseTimerRef.current) {
+            window.clearTimeout(profileDetailCloseTimerRef.current);
+            profileDetailCloseTimerRef.current = null;
+        }
+        setClosingProfileDetailModal(false);
         setOpenProfileDetail({
             authorId: asDisplayText(author.authorId || author.id),
             authorName: asDisplayText(author.authorName || author.name, 'Unknown user'),
@@ -3678,19 +3995,30 @@ const PortalHomeFeed = ({
             jumptakeId: asDisplayText(author.jumptakeId || author.jumpTakeId)
         });
         setOpenReactionPostId('');
-        setOpenCommentPostId('');
+        closeCommentComposer();
         setOpenSharePostId('');
         setOpenOptionsPostId('');
         setPostOptionsAnchor(null);
-        setOpenReachInsightPostId('');
-        setReachInsightPost(null);
+        closeReachInsight();
         setShareStatus('');
     };
 
     const closeProfileDetailModal = () => {
-        setOpenProfileDetail(null);
-        setOpenReachInsightPostId('');
-        setReachInsightPost(null);
+        if (!openProfileDetail || closingProfileDetailModal) {
+            return;
+        }
+
+        if (profileDetailCloseTimerRef.current) {
+            window.clearTimeout(profileDetailCloseTimerRef.current);
+        }
+
+        setClosingProfileDetailModal(true);
+        closeReachInsight();
+        profileDetailCloseTimerRef.current = window.setTimeout(() => {
+            setOpenProfileDetail(null);
+            setClosingProfileDetailModal(false);
+            profileDetailCloseTimerRef.current = null;
+        }, POPUP_CLOSE_ANIMATION_MS);
     };
 
     const getProfileDetailRecord = () => {
@@ -3857,7 +4185,10 @@ const PortalHomeFeed = ({
                                     <button
                                         type="button"
                                         className="portal-post-options-button"
-                                        onClick={(event) => openPostOptionsMenu(event, postKey)}
+                                        onPointerDown={(event) => openPostOptionsFromPointer(event, postKey)}
+                                        onMouseDown={stopPopupButtonPress}
+                                        onTouchStart={stopPopupButtonPress}
+                                        onClick={(event) => openPostOptionsFromClick(event, postKey)}
                                         aria-expanded={isOptionsOpen}
                                         aria-label="Post options"
                                         title="Post options"
@@ -3955,11 +4286,10 @@ const PortalHomeFeed = ({
                                     className={`portal-reaction-trigger ${selectedReaction ? `has-reaction reaction-${selectedReaction.toLowerCase()}` : ''}`}
                                     onClick={() => {
                                         setOpenReactionPostId((openId) => (openId === postKey ? '' : postKey));
-                                        setOpenCommentPostId('');
+                                        closeCommentComposer();
                                         setOpenSharePostId('');
                                         setOpenOptionsPostId('');
-                                        setOpenReachInsightPostId('');
-                                        setReachInsightPost(null);
+                                        closeReachInsight();
                                         setAnimatingReactionKey('');
                                     }}
                                     aria-expanded={isReactionMenuOpen}
@@ -3982,14 +4312,7 @@ const PortalHomeFeed = ({
                                 <button
                                     type="button"
                                     className={`portal-comment-toggle ${hasViewerComment ? 'active' : ''}`}
-                                    onClick={() => {
-                                        setOpenCommentPostId((openId) => (openId === postKey ? '' : postKey));
-                                        setOpenReactionPostId('');
-                                        setOpenSharePostId('');
-                                        setOpenOptionsPostId('');
-                                        setOpenReachInsightPostId('');
-                                        setReachInsightPost(null);
-                                    }}
+                                    onClick={() => toggleCommentComposer(postKey)}
                                     aria-expanded={isCommentOpen}
                                     aria-label="Comment"
                                     title="Comment"
@@ -4007,10 +4330,9 @@ const PortalHomeFeed = ({
                                     onClick={() => {
                                         setOpenSharePostId((openId) => (openId === postKey ? '' : postKey));
                                         setOpenReactionPostId('');
-                                        setOpenCommentPostId('');
+                                        closeCommentComposer();
                                         setOpenOptionsPostId('');
-                                        setOpenReachInsightPostId('');
-                                        setReachInsightPost(null);
+                                        closeReachInsight();
                                         setShareStatus('');
                                     }}
                                     aria-expanded={isShareOpen}
@@ -4110,20 +4432,7 @@ const PortalHomeFeed = ({
                                 </div>
                                 );
                             })}
-                            {isCommentOpen && (
-                                <div className="portal-comment-row is-open">
-                                    <input
-                                        type="text"
-                                        value={commentDrafts[postKey] || ''}
-                                        placeholder="Comment or mention with @JumpTakeID..."
-                                        onChange={(event) => setCommentDrafts((drafts) => ({ ...drafts, [postKey]: event.target.value }))}
-                                    />
-                                    <button type="button" className="portal-comment-button" onClick={() => handleComment(key, postKey)} aria-label="Post comment">
-                                        <ReactionIcon name="Comment" />
-                                        <span>Post</span>
-                                    </button>
-                                </div>
-                            )}
+                            {(isCommentOpen || closingCommentPostId === postKey) && renderCommentComposerOverlay(key, postKey)}
                         </div>
                     </article>
                 );
@@ -4282,9 +4591,32 @@ const PortalHomeFeed = ({
         );
     };
 
+    const openCreateStoryModal = () => {
+        if (createStoryCloseTimerRef.current) {
+            window.clearTimeout(createStoryCloseTimerRef.current);
+            createStoryCloseTimerRef.current = null;
+        }
+
+        setClosingCreateStoryModal(false);
+        setCreateStoryModalOpen(true);
+    };
+
     const closeCreateStoryModal = () => {
-        setCreateStoryModalOpen(false);
-        setCreateStoryAudienceOpen(false);
+        if (!createStoryModalOpen || closingCreateStoryModal) {
+            return;
+        }
+
+        if (createStoryCloseTimerRef.current) {
+            window.clearTimeout(createStoryCloseTimerRef.current);
+        }
+
+        setClosingCreateStoryModal(true);
+        createStoryCloseTimerRef.current = window.setTimeout(() => {
+            setCreateStoryModalOpen(false);
+            setCreateStoryAudienceOpen(false);
+            setClosingCreateStoryModal(false);
+            createStoryCloseTimerRef.current = null;
+        }, POPUP_CLOSE_ANIMATION_MS);
     };
 
     const renderJobMeta = (job, { compact = false } = {}) => (
@@ -4454,13 +4786,10 @@ const PortalHomeFeed = ({
                             <button
                                 type="button"
                                 className="portal-post-options-button"
-                                onClick={(event) => {
-                                    event.stopPropagation();
-                                    setOpenJobOptionsId((openId) => (openId === key ? '' : key));
-                                    setOpenReactionPostId('');
-                                    setOpenCommentPostId('');
-                                    setOpenSharePostId('');
-                                }}
+                                onPointerDown={(event) => openJobOptionsFromPointer(event, key)}
+                                onMouseDown={stopPopupButtonPress}
+                                onTouchStart={stopPopupButtonPress}
+                                onClick={(event) => openJobOptionsFromClick(event, key)}
                                 aria-expanded={openJobOptionsId === key}
                                 aria-label="Job options"
                                 title="Job options"
@@ -4851,7 +5180,7 @@ const PortalHomeFeed = ({
         const selectedJobRequirements = Array.isArray(selectedJob.requirements) ? selectedJob.requirements : [];
         const modalSkills = selectedJobSkills.length ? selectedJobSkills : selectedJobRequirements;
         const modalMarkup = (
-            <div className="portal-job-modal-backdrop" role="presentation" onClick={closeJobModal}>
+            <div className={`portal-job-modal-backdrop ${closingJobModal ? 'is-closing' : ''}`} role="presentation" onClick={closeJobModal}>
                 <article className="portal-job-modal" role="dialog" aria-modal="true" aria-label={`${selectedJob.title} job details`} onClick={(event) => event.stopPropagation()}>
                     <div className="portal-candidate-job-header portal-job-modal-header">
                         <div className={`portal-job-company-avatar ${selectedJob.companyLogo ? '' : 'has-default-profile-icon'}`}>
@@ -4861,7 +5190,7 @@ const PortalHomeFeed = ({
                                 <span className="portal-default-profile-icon"><DefaultProfileIcon /></span>
                             )}
                         </div>
-                        <div>
+                        <div className="portal-job-modal-title-block">
                             <h3>{selectedJob.title}</h3>
                             <p>{selectedJob.companyName}</p>
                         </div>
@@ -4967,7 +5296,7 @@ const PortalHomeFeed = ({
 
         const key = getJobKey(reviewingJob);
         const modalMarkup = (
-            <div className="portal-job-review-backdrop" role="presentation" onClick={closeJobReviewModal}>
+            <div className={`portal-job-review-backdrop ${closingJobReviewModal ? 'is-closing' : ''}`} role="presentation" onClick={closeJobReviewModal}>
                 <article
                     className="portal-job-review-modal"
                     role="dialog"
@@ -5254,7 +5583,7 @@ const PortalHomeFeed = ({
                             className="tailor-profile-post-create"
                             onClick={() => {
                                 setCreateStoryAudienceOpen(false);
-                                setCreateStoryModalOpen(true);
+                                openCreateStoryModal();
                             }}
                             aria-label="Create talent post"
                             title="Create talent post"
@@ -5274,7 +5603,7 @@ const PortalHomeFeed = ({
         }
 
         const modalMarkup = (
-            <div className="portal-create-story-backdrop" role="presentation" onClick={closeCreateStoryModal}>
+            <div className={`portal-create-story-backdrop ${closingCreateStoryModal ? 'is-closing' : ''}`} role="presentation" onClick={closeCreateStoryModal}>
                 <article
                     className="portal-create-story-modal"
                     role="dialog"
@@ -5320,7 +5649,7 @@ const PortalHomeFeed = ({
         const postTypeLabel = post.authorType === 'employer' ? 'Company update' : 'Talent story';
         const detailPostKey = openPostDetail?.postKey || getPostKey(post);
         const modalMarkup = (
-            <div className="portal-post-detail-backdrop" role="presentation" onClick={closePostDetailModal}>
+            <div className={`portal-post-detail-backdrop ${closingPostDetailModal ? 'is-closing' : ''}`} role="presentation" onClick={closePostDetailModal}>
                 <article
                     className="portal-post-detail-modal"
                     role="dialog"
@@ -5494,7 +5823,7 @@ const PortalHomeFeed = ({
             ? { '--tailor-cover-image': `url("${profile.coverImage}")` }
             : undefined;
         const modalMarkup = (
-            <div className="portal-profile-detail-backdrop" role="presentation" onClick={closeProfileDetailModal}>
+            <div className={`portal-profile-detail-backdrop ${closingProfileDetailModal ? 'is-closing' : ''}`} role="presentation" onClick={closeProfileDetailModal}>
                 <article
                     className="portal-profile-detail-modal"
                     role="dialog"
@@ -5640,28 +5969,30 @@ const PortalHomeFeed = ({
                 className="portal-home-feed-scroll"
                 onScroll={handleFeedScroll}
             >
-                {feedLoading ? <div className="loading-spinner">Loading live feed...</div> : null}
-                {activeTab === 'work-news' && renderPostList(workNewsPosts, WORK_NEWS_STORAGE_KEY, 'work')}
-                {activeTab === 'job-posts' && renderCandidateJobPosts()}
-                {activeTab === 'talent-stories' && (
-                    <>
-                        <div className="portal-create-story-action-row">
-                            <button
-                                type="button"
-                                className="portal-create-story-button"
-                                onClick={() => setCreateStoryModalOpen(true)}
-                            >
-                                Create <strong>+</strong>
-                            </button>
-                        </div>
-                        {renderPostList(talentStories, TALENT_STORIES_STORAGE_KEY, 'talent')}
-                    </>
-                )}
-                {activeTab === 'create-story' && mode === 'candidate' && renderTailorProfileSection()}
-                {activeTab === 'create-post' && renderComposer()}
-                {activeTab === 'my-feed' && renderPostList(ownTalentStories, TALENT_STORIES_STORAGE_KEY, 'talent')}
-                {activeTab === 'my-company-posts' && renderPostList(ownCompanyPosts, WORK_NEWS_STORAGE_KEY, 'work')}
-                {activeTab === 'my-job-posts' && renderMyJobPosts()}
+                <div key={activeTab} className="portal-home-tab-panel">
+                    {feedLoading ? <div className="loading-spinner">Loading live feed...</div> : null}
+                    {activeTab === 'work-news' && renderPostList(workNewsPosts, WORK_NEWS_STORAGE_KEY, 'work')}
+                    {activeTab === 'job-posts' && renderCandidateJobPosts()}
+                    {activeTab === 'talent-stories' && (
+                        <>
+                            <div className="portal-create-story-action-row">
+                                <button
+                                    type="button"
+                                    className="portal-create-story-button"
+                                    onClick={openCreateStoryModal}
+                                >
+                                    Create <strong>+</strong>
+                                </button>
+                            </div>
+                            {renderPostList(talentStories, TALENT_STORIES_STORAGE_KEY, 'talent')}
+                        </>
+                    )}
+                    {activeTab === 'create-story' && mode === 'candidate' && renderTailorProfileSection()}
+                    {activeTab === 'create-post' && renderComposer()}
+                    {activeTab === 'my-feed' && renderPostList(ownTalentStories, TALENT_STORIES_STORAGE_KEY, 'talent')}
+                    {activeTab === 'my-company-posts' && renderPostList(ownCompanyPosts, WORK_NEWS_STORAGE_KEY, 'work')}
+                    {activeTab === 'my-job-posts' && renderMyJobPosts()}
+                </div>
             </div>
             {renderJobDetailsModal()}
             {renderJobReviewModal()}

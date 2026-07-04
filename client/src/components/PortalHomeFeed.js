@@ -35,25 +35,6 @@ const escapeHtml = (value = '') => (
         .replace(/'/g, '&#39;')
 );
 
-const getPostBodyPreview = (body, maxLength = POST_BODY_PREVIEW_LENGTH) => {
-    const text = asDisplayText(body);
-
-    if (text.length <= maxLength) {
-        return text;
-    }
-
-    const slice = text.slice(0, maxLength);
-    const lastBreak = Math.max(slice.lastIndexOf('\n'), slice.lastIndexOf('. '), slice.lastIndexOf('! '), slice.lastIndexOf('? '));
-    const lastSpace = slice.lastIndexOf(' ');
-    const cutIndex = lastBreak > maxLength * 0.55
-        ? lastBreak + 1
-        : lastSpace > maxLength * 0.55
-            ? lastSpace
-            : maxLength;
-
-    return `${text.slice(0, cutIndex).trim()}...`;
-};
-
 const readJobReachMap = () => {
     if (typeof window === 'undefined') {
         return {};
@@ -871,6 +852,22 @@ const getTotalReactionCount = (post) => Object.entries(post.reactions || {}).red
     0
 );
 
+const getReactionBreakdown = (post) => {
+    const reactions = post?.reactions && typeof post.reactions === 'object' ? post.reactions : {};
+    const orderedLabels = [...new Set([
+        ...reactionLabels.work,
+        ...reactionLabels.talent,
+        ...Object.keys(reactions)
+    ])].filter((reaction) => reaction && reaction !== 'Hide');
+
+    return orderedLabels
+        .map((reaction) => ({
+            reaction,
+            count: Math.max(0, Number(reactions[reaction] || 0) || 0)
+        }))
+        .filter((item) => item.count > 0);
+};
+
 const getReachSeed = (post) => String(post?._id || post?.id || post?.authorId || post?.createdAt || 'reach')
     .split('')
     .reduce((total, character) => total + character.charCodeAt(0), 0);
@@ -1144,6 +1141,7 @@ const PortalHomeFeed = ({
     const [openJobOptionsId, setOpenJobOptionsId] = useState('');
     const [openReachInsightPostId, setOpenReachInsightPostId] = useState('');
     const [reachInsightPost, setReachInsightPost] = useState(null);
+    const [reactionStatsPost, setReactionStatsPost] = useState(null);
     const [openPostDetail, setOpenPostDetail] = useState(null);
     const [openProfileDetail, setOpenProfileDetail] = useState(null);
     const [, setSavedPosts] = useState([]);
@@ -1332,6 +1330,29 @@ const PortalHomeFeed = ({
             isMounted = false;
         };
     }, [mode, candidateUserId]);
+
+    useEffect(() => {
+        const hasBlockingOverlay = Boolean(
+            reachInsightPost
+            || reactionStatsPost
+            || openPostDetail
+            || openProfileDetail
+            || createStoryModalOpen
+            || selectedJob
+            || reviewingJob
+        );
+
+        if (!hasBlockingOverlay || typeof document === 'undefined') {
+            return undefined;
+        }
+
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [reachInsightPost, reactionStatsPost, openPostDetail, openProfileDetail, createStoryModalOpen, selectedJob, reviewingJob]);
 
     useEffect(() => {
         setJobPage(1);
@@ -1777,6 +1798,15 @@ const PortalHomeFeed = ({
         setReachInsightPost(null);
     };
 
+    const closeReactionStats = () => {
+        setReactionStatsPost(null);
+    };
+
+    const stopOverlayTouchMove = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+    };
+
     const toggleReachInsight = (event, postKey, post) => {
         event.stopPropagation();
         setOpenReachInsightPostId((openId) => {
@@ -1788,6 +1818,17 @@ const PortalHomeFeed = ({
             setReachInsightPost(post);
             return postKey;
         });
+        setOpenReactionPostId('');
+        setOpenCommentPostId('');
+        setOpenSharePostId('');
+        setOpenOptionsPostId('');
+        setPostOptionsAnchor(null);
+        setOpenJobOptionsId('');
+    };
+
+    const openReactionStats = (event, post) => {
+        event.stopPropagation();
+        setReactionStatsPost(post);
         setOpenReactionPostId('');
         setOpenCommentPostId('');
         setOpenSharePostId('');
@@ -1843,7 +1884,12 @@ const PortalHomeFeed = ({
         const maxReach = Math.max(1, ...history.map((item) => item.value));
         const totalReach = Math.max(0, Number(reachInsightPost?.reach || 0) || 0);
         const modalMarkup = (
-            <div className="portal-reach-insight-backdrop" role="presentation" onClick={closeReachInsight}>
+            <div
+                className="portal-reach-insight-backdrop"
+                role="presentation"
+                onClick={closeReachInsight}
+                onTouchMove={stopOverlayTouchMove}
+            >
                 <div
                     className="portal-reach-insight-popover"
                     role="dialog"
@@ -1902,6 +1948,70 @@ const PortalHomeFeed = ({
                 </button>
             </span>
         );
+    };
+
+    const renderReactionStatsModal = () => {
+        if (!reactionStatsPost) {
+            return null;
+        }
+
+        const breakdown = getReactionBreakdown(reactionStatsPost);
+        const total = breakdown.reduce((sum, item) => sum + item.count, 0);
+        const maxCount = Math.max(1, ...breakdown.map((item) => item.count));
+        const modalMarkup = (
+            <div
+                className="portal-reaction-stats-backdrop"
+                role="presentation"
+                onClick={closeReactionStats}
+                onTouchMove={stopOverlayTouchMove}
+            >
+                <div
+                    className="portal-reaction-stats-modal"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Post reaction stats"
+                    onClick={(event) => event.stopPropagation()}
+                >
+                    <button
+                        type="button"
+                        className="portal-reaction-stats-close"
+                        onClick={closeReactionStats}
+                        aria-label="Close reaction stats"
+                        title="Close"
+                    >
+                        &times;
+                    </button>
+                    <div className="portal-reaction-stats-header">
+                        <strong>{formatCompactCount(total)} reactions</strong>
+                        <span>Reaction stats</span>
+                    </div>
+                    {breakdown.length ? (
+                        <div className="portal-reaction-stats-list">
+                            {breakdown.map(({ reaction, count }) => (
+                                <div className="portal-reaction-stats-row" key={reaction}>
+                                    <span className={`portal-reaction-stats-icon reaction-${reaction.toLowerCase()}`}>
+                                        <ReactionIcon name={reaction} />
+                                    </span>
+                                    <span className="portal-reaction-stats-name">{reaction}</span>
+                                    <span
+                                        className="portal-reaction-stats-bar"
+                                        style={{ '--reaction-stat-width': `${Math.max(8, Math.round((count / maxCount) * 100))}%` }}
+                                        aria-hidden="true"
+                                    />
+                                    <strong>{formatCompactCount(count)}</strong>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="portal-reaction-stats-empty">No reactions yet.</p>
+                    )}
+                </div>
+            </div>
+        );
+
+        return typeof document !== 'undefined'
+            ? createPortal(modalMarkup, document.body)
+            : modalMarkup;
     };
 
     const renderPostOptionsMenu = (storageKey, post) => {
@@ -3678,9 +3788,6 @@ const PortalHomeFeed = ({
                     const postBodyText = asDisplayText(post.body);
                     const isLongPostBody = postBodyText.length > POST_BODY_PREVIEW_LENGTH;
                     const isPostBodyExpanded = Boolean(expandedPostBodies[postKey]);
-                    const visiblePostBody = isLongPostBody && !isPostBodyExpanded
-                        ? getPostBodyPreview(postBodyText)
-                        : postBodyText;
                     const postAvatar = getLiveProfileAvatar(post.authorId, post.authorType, post.authorAvatar);
 
                     return (
@@ -3766,7 +3873,7 @@ const PortalHomeFeed = ({
                         </div>
                         {postBodyText && (
                             <div className={`portal-post-body-wrap ${isLongPostBody && !isPostBodyExpanded ? 'is-collapsed' : 'is-expanded'}`}>
-                                <p className="portal-post-body">{visiblePostBody}</p>
+                                <p className="portal-post-body">{postBodyText}</p>
                                 {isLongPostBody && (
                                     <button
                                         type="button"
@@ -5211,6 +5318,7 @@ const PortalHomeFeed = ({
         const postComments = normalizePostComments(post.comments);
         const reactionTotal = getTotalReactionCount(post);
         const postTypeLabel = post.authorType === 'employer' ? 'Company update' : 'Talent story';
+        const detailPostKey = openPostDetail?.postKey || getPostKey(post);
         const modalMarkup = (
             <div className="portal-post-detail-backdrop" role="presentation" onClick={closePostDetailModal}>
                 <article
@@ -5302,8 +5410,24 @@ const PortalHomeFeed = ({
                         </p>
                     ) : null}
                     <div className="portal-post-detail-stats" aria-label="Post stats">
-                        <span><strong>{formatCompactCount(post.reach)}</strong> reach</span>
-                        <span><strong>{formatCompactCount(reactionTotal)}</strong> reactions</span>
+                        <button
+                            type="button"
+                            className="portal-post-detail-stat-button"
+                            onClick={(event) => toggleReachInsight(event, `${detailPostKey}:detail-stats`, post)}
+                            aria-label={`Show reach graph for ${formatCompactCount(post.reach)} reach`}
+                        >
+                            <strong>{formatCompactCount(post.reach)}</strong>
+                            <span>reach</span>
+                        </button>
+                        <button
+                            type="button"
+                            className="portal-post-detail-stat-button"
+                            onClick={(event) => openReactionStats(event, post)}
+                            aria-label={`Show reaction stats for ${formatCompactCount(reactionTotal)} reactions`}
+                        >
+                            <strong>{formatCompactCount(reactionTotal)}</strong>
+                            <span>reactions</span>
+                        </button>
                         <span><strong>{formatCompactCount(postComments.length)}</strong> comments</span>
                     </div>
                     <div className="portal-post-detail-comments" aria-label="Post comments">
@@ -5545,6 +5669,7 @@ const PortalHomeFeed = ({
             {renderPostDetailModal()}
             {renderProfileDetailModal()}
             {renderReachInsightModal()}
+            {renderReactionStatsModal()}
         </div>
     );
 };

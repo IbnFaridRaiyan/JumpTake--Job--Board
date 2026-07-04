@@ -71313,3 +71313,352 @@ html body .portal-profile-detail-posts .portal-author-open-button.portal-comment
   border-radius: 999px !important;
   object-fit: cover !important;
 }
+
+/* Smooth popup/stat interactions. Keep this last. */
+@keyframes jt-popup-backdrop-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes jt-popup-card-enter {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0.5rem, 0) scale(0.9);
+  }
+  68% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes jt-inline-popover-enter {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0.22rem, 0) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+html body :is(
+  .portal-reach-insight-backdrop,
+  .portal-reaction-stats-backdrop,
+  .portal-post-detail-backdrop,
+  .portal-profile-detail-backdrop,
+  .portal-create-story-backdrop,
+  .portal-job-modal-backdrop,
+  .portal-job-review-backdrop,
+  .modal-overlay,
+  .modern-modal-overlay,
+  .job-preview-overlay,
+  .application-workspace-overlay,
+  .candidate-modal-overlay,
+  .job-detail-modal-overlay,
+  .analytics-detail-overlay,
+  .about-tour-overlay,
+  .terms-modal-overlay,
+  .public-landing-modal-backdrop
+) {
+  animation: jt-popup-backdrop-enter 180ms linear both !important;
+  pointer-events: auto !important;
+  overscroll-behavior: contain !important;
+}
+
+html body :is(
+  .portal-reach-insight-popover,
+  .portal-reaction-stats-modal,
+  .portal-post-detail-modal,
+  .portal-profile-detail-modal,
+  .portal-create-story-modal,
+  .portal-job-modal,
+  .portal-job-review-modal,
+  .login-modal,
+  .modern-login-modal,
+  .modal-content,
+  .register-modal,
+  .job-interest-modal,
+  .job-preview-modal,
+  .application-workspace-modal,
+  .candidate-profile-modal,
+  .job-detail-modal,
+  .analytics-detail-modal,
+  .about-tour-modal,
+  .terms-modal,
+  .public-auth-card,
+  .public-assistant-dialog,
+  .public-jobs-dialog
+) {
+  animation: jt-popup-card-enter 240ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+  backface-visibility: hidden !important;
+  transform-origin: center center !important;
+  will-change: transform, opacity !important;
+}
+
+html body :is(
+  .portal-post-reactions.portal-reaction-rail.is-popover,
+  .portal-comment-row.is-open,
+  .portal-share-picker,
+  .portal-post-options-menu,
+  .tailor-social-popover,
+  .emoji-picker-popover
+) {
+  animation: jt-inline-popover-enter 180ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+  backface-visibility: hidden !important;
+  transform-origin: center bottom !important;
+  will-change: transform, opacity !important;
+}
+
+html body .portal-reach-insight-backdrop,
+html body .portal-reaction-stats-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 10070 !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 1.2rem !important;
+  overflow: hidden !important;
+  touch-action: none !important;
+  background: rgba(16, 13, 12, 0.52) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+html body .portal-reach-insight-popover,
+html body .portal-reaction-stats-modal {
+  touch-action: auto !important;
+  overscroll-behavior: contain !important;
+}
+
+html body .portal-reach-insight-close,
+html body .portal-reaction-stats-close {
+  all: unset !important;
+  position: absolute !important;
+  top: 0.48rem !important;
+  right: 0.56rem !important;
+  z-index: 2 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 1rem !important;
+  min-width: 1rem !important;
+  max-width: 1rem !important;
+  height: 1rem !important;
+  min-height: 1rem !important;
+  max-height: 1rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #381620 !important;
+  -webkit-text-fill-color: #381620 !important;
+  cursor: pointer !important;
+  font-size: 0.95rem !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+}
+
+html body .portal-reach-insight-close:hover,
+html body .portal-reach-insight-close:focus-visible,
+html body .portal-reaction-stats-close:hover,
+html body .portal-reaction-stats-close:focus-visible {
+  background: rgba(125, 48, 68, 0.1) !important;
+  outline: 0 !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-stats :is(span, button.portal-post-detail-stat-button),
+html body .portal-post-detail-modal .portal-post-detail-stats button.portal-post-detail-stat-button:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: grid !important;
+  justify-items: center !important;
+  align-content: center !important;
+  gap: 0.18rem !important;
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+  cursor: default !important;
+  font-size: 0.74rem !important;
+  font-weight: 850 !important;
+  line-height: 1.18 !important;
+  text-align: center !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-stats button.portal-post-detail-stat-button {
+  cursor: pointer !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-stats button.portal-post-detail-stat-button:hover,
+html body .portal-post-detail-modal .portal-post-detail-stats button.portal-post-detail-stat-button:focus-visible {
+  color: #7d3044 !important;
+  -webkit-text-fill-color: #7d3044 !important;
+  outline: 0 !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-stats :is(span, button.portal-post-detail-stat-button) strong {
+  display: block !important;
+  color: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+  font-size: 1.06rem !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+}
+
+html body .portal-reaction-stats-modal {
+  position: relative !important;
+  width: min(19rem, calc(100vw - 2.4rem)) !important;
+  max-width: calc(100vw - 2.4rem) !important;
+  max-height: calc(100vh - 2.4rem) !important;
+  padding: 0.92rem !important;
+  border: 1px solid rgba(125, 48, 68, 0.2) !important;
+  border-radius: 0.95rem !important;
+  background: #fffaf6 !important;
+  box-shadow: 0 1.4rem 3.4rem rgba(16, 13, 12, 0.36) !important;
+  overflow: hidden auto !important;
+}
+
+html body .portal-reaction-stats-header {
+  display: flex !important;
+  align-items: baseline !important;
+  justify-content: space-between !important;
+  gap: 0.6rem !important;
+  padding-right: 1.2rem !important;
+  margin-bottom: 0.72rem !important;
+  color: #381620 !important;
+  -webkit-text-fill-color: #381620 !important;
+}
+
+html body .portal-reaction-stats-header strong {
+  font-size: 0.94rem !important;
+  font-weight: 950 !important;
+}
+
+html body .portal-reaction-stats-header span {
+  color: #875462 !important;
+  -webkit-text-fill-color: #875462 !important;
+  font-size: 0.64rem !important;
+  font-weight: 850 !important;
+}
+
+html body .portal-reaction-stats-list {
+  display: grid !important;
+  gap: 0.52rem !important;
+}
+
+html body .portal-reaction-stats-row {
+  display: grid !important;
+  grid-template-columns: 1.6rem minmax(4.4rem, auto) minmax(3rem, 1fr) auto !important;
+  align-items: center !important;
+  gap: 0.48rem !important;
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+}
+
+html body .portal-reaction-stats-icon {
+  display: grid !important;
+  place-items: center !important;
+  width: 1.6rem !important;
+  height: 1.6rem !important;
+  border-radius: 999px !important;
+  background: rgba(168, 78, 99, 0.14) !important;
+  color: #a84e63 !important;
+}
+
+html body .portal-reaction-stats-icon svg {
+  width: 0.88rem !important;
+  height: 0.88rem !important;
+}
+
+html body .portal-reaction-stats-name {
+  font-size: 0.76rem !important;
+  font-weight: 900 !important;
+}
+
+html body .portal-reaction-stats-bar {
+  position: relative !important;
+  display: block !important;
+  height: 0.42rem !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  background: rgba(125, 48, 68, 0.12) !important;
+}
+
+html body .portal-reaction-stats-bar::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 auto 0 0 !important;
+  width: var(--reaction-stat-width, 0%) !important;
+  border-radius: inherit !important;
+  background: linear-gradient(90deg, #b16b7a, #7d3044) !important;
+}
+
+html body .portal-reaction-stats-row strong {
+  color: #381620 !important;
+  -webkit-text-fill-color: #381620 !important;
+  font-size: 0.78rem !important;
+  font-weight: 950 !important;
+}
+
+html body .portal-reaction-stats-empty {
+  margin: 0 !important;
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  font-size: 0.82rem !important;
+  font-weight: 800 !important;
+}
+
+html body .portal-home-feed .portal-post-body-wrap .portal-post-body {
+  max-height: 60rem !important;
+  overflow: hidden !important;
+  transition: max-height 320ms cubic-bezier(0.16, 1, 0.3, 1), opacity 240ms ease !important;
+  will-change: max-height !important;
+}
+
+html body .portal-home-feed .portal-post-body-wrap.is-collapsed .portal-post-body {
+  max-height: 8.7rem !important;
+  -webkit-mask-image: linear-gradient(180deg, #000 72%, transparent 100%) !important;
+  mask-image: linear-gradient(180deg, #000 72%, transparent 100%) !important;
+}
+
+html body .portal-home-feed .portal-post-body-wrap.is-expanded .portal-post-body {
+  max-height: 60rem !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+}
+
+html body .portal-social-post-header,
+html body .portal-profile-detail-posts .portal-social-post-card .portal-social-post-header {
+  column-gap: 0.82rem !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-header {
+  column-gap: 1rem !important;
+}
+
+@media (max-width: 768px) {
+  html body .portal-social-post-header,
+  html body .portal-profile-detail-posts .portal-social-post-card .portal-social-post-header {
+    column-gap: 0.7rem !important;
+  }
+
+  html body .portal-post-detail-modal .portal-post-detail-header {
+    column-gap: 0.86rem !important;
+  }
+
+  html body .portal-home-feed .portal-post-body-wrap.is-collapsed .portal-post-body {
+    max-height: 9.2rem !important;
+  }
+
+  html body .portal-reaction-stats-row {
+    grid-template-columns: 1.5rem minmax(3.8rem, auto) minmax(2.4rem, 1fr) auto !important;
+    gap: 0.4rem !important;
+  }
+}

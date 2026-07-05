@@ -23,6 +23,10 @@ const JobSeekerSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  coverImage: {
+    type: String,
+    default: ''
+  },
   education: {
     type: mongoose.Schema.Types.Mixed
   },

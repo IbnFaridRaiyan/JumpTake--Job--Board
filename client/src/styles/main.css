@@ -68165,20 +68165,23 @@ body[data-theme="light"] #root .home-page .portal-home-feed .tailor-profile-imag
 .portal-profile-detail-message {
   position: relative !important;
   z-index: 1 !important;
-  display: flex !important;
+  display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 100% !important;
-  min-height: 2.45rem !important;
-  margin: 0 0 0.8rem !important;
-  padding: 0.7rem 1rem !important;
+  width: 7.6rem !important;
+  min-width: 7.6rem !important;
+  max-width: 7.6rem !important;
+  min-height: 1.82rem !important;
+  height: 1.82rem !important;
+  margin: 0.22rem auto 0.54rem !important;
+  padding: 0 !important;
   border: 0 !important;
-  border-radius: 0.62rem !important;
+  border-radius: 0.5rem !important;
   background: #7d988a !important;
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
   cursor: pointer !important;
-  font-size: 0.86rem !important;
+  font-size: 0.76rem !important;
   font-weight: 850 !important;
 }
 
@@ -76835,4 +76838,175 @@ html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .p
   stroke: currentColor !important;
   filter: none !important;
   text-shadow: none !important;
+}
+
+/* Final EOF profile-detail message button repair. */
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-detail-message,
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-detail-message:is(:hover, :focus, :focus-visible, :active) {
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 9.75rem !important;
+  max-width: min(14rem, calc(100% - 2rem)) !important;
+  min-height: 2.18rem !important;
+  height: 2.18rem !important;
+  margin: 0.35rem auto 0.72rem !important;
+  padding: 0 1.35rem !important;
+  border: 0 !important;
+  border-radius: 0.58rem !important;
+  background: #88a092 !important;
+  background-color: #88a092 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+  font-size: 0.8rem !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+}
+
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-profile-stats {
+  margin-top: 0.42rem !important;
+  padding-top: 0 !important;
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+}
+
+/* True portal target: profile detail modal is mounted under body, not #root. */
+html body .portal-profile-detail-backdrop .portal-profile-detail-card button.portal-profile-detail-message,
+html body .portal-profile-detail-backdrop .portal-profile-detail-card button.portal-profile-detail-message:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+  width: fit-content !important;
+  min-width: 7.25rem !important;
+  max-width: 9.5rem !important;
+  min-height: 1.95rem !important;
+  height: 1.95rem !important;
+  margin: 0.28rem auto 0.6rem !important;
+  padding: 0 1.05rem !important;
+  border: 0 !important;
+  border-radius: 0.5rem !important;
+  background: #88a092 !important;
+  background-color: #88a092 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  font-size: 0.76rem !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-profile-stats,
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-detail-message + .tailor-profile-stats {
+  margin-top: 0.2rem !important;
+  padding-top: 0 !important;
+  border: 0 !important;
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+  background-image: none !important;
+}
+
+/* Final size lock: prevent mobile/profile layout rules from stretching Message. */
+html body .portal-profile-detail-backdrop .portal-profile-detail-card > button.portal-profile-detail-message,
+html body .portal-profile-detail-backdrop .portal-profile-detail-card > button.portal-profile-detail-message:is(:hover, :focus, :focus-visible, :active) {
+  align-self: center !important;
+  justify-self: center !important;
+  place-self: center !important;
+  flex: 0 0 auto !important;
+  flex-grow: 0 !important;
+  flex-shrink: 0 !important;
+  width: 7.6rem !important;
+  min-width: 7.6rem !important;
+  max-width: 7.6rem !important;
+  inline-size: 7.6rem !important;
+  min-inline-size: 7.6rem !important;
+  max-inline-size: 7.6rem !important;
+  height: 1.82rem !important;
+  min-height: 1.82rem !important;
+  max-height: 1.82rem !important;
+  padding: 0 !important;
+  margin: 0.22rem auto 0.54rem !important;
+}
+
+/* Final portal action-button cleanup: remove mobile/light overrides in profile popup. */
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-wrap: nowrap !important;
+  gap: 0.5rem !important;
+  width: auto !important;
+  max-width: 100% !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action,
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action,
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action:is(:hover, :focus, :focus-visible, :active, :disabled, .is-pending, .is-friend),
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action:is(:hover, :focus, :focus-visible, :active, :disabled, .active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 2rem !important;
+  flex-grow: 0 !important;
+  flex-shrink: 0 !important;
+  width: 2rem !important;
+  min-width: 2rem !important;
+  max-width: 2rem !important;
+  height: 2rem !important;
+  min-height: 2rem !important;
+  max-height: 2rem !important;
+  inline-size: 2rem !important;
+  min-inline-size: 2rem !important;
+  max-inline-size: 2rem !important;
+  block-size: 2rem !important;
+  min-block-size: 2rem !important;
+  max-block-size: 2rem !important;
+  aspect-ratio: 1 / 1 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 50% !important;
+  background: #f0f2f5 !important;
+  background-color: #f0f2f5 !important;
+  background-image: none !important;
+  color: #7d3044 !important;
+  -webkit-text-fill-color: #7d3044 !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+  filter: none !important;
+  opacity: 1 !important;
+  overflow: hidden !important;
+  transform: none !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action :is(svg, path),
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action :is(svg, path) {
+  color: currentColor !important;
+  fill: currentColor !important;
+  stroke: none !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action.is-pending,
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action.is-pending:is(:hover, :focus, :focus-visible, :active) {
+  color: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action.active,
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action.active:is(:hover, :focus, :focus-visible, :active) {
+  color: #f5b82e !important;
+  -webkit-text-fill-color: #f5b82e !important;
 }

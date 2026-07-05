@@ -1320,6 +1320,24 @@ const PortalHomeFeed = ({
     }, [viewerId]);
 
     useEffect(() => {
+        if (!profileData?.coverImage) {
+            return;
+        }
+
+        setTailorProfile((currentDraft) => {
+            if (currentDraft.coverImage === profileData.coverImage) {
+                return currentDraft;
+            }
+
+            const nextDraft = { ...currentDraft, coverImage: profileData.coverImage };
+            if (typeof window !== 'undefined') {
+                localStorage.setItem(getTailorProfileStorageKey(viewerId), JSON.stringify(nextDraft));
+            }
+            return nextDraft;
+        });
+    }, [profileData?.coverImage, viewerId]);
+
+    useEffect(() => {
         setProfileAvatarOverride('');
     }, [profileData?.profileImage, viewerId]);
 
@@ -1495,7 +1513,8 @@ const PortalHomeFeed = ({
                         _id: data._id || '',
                         user: data.user || authorId,
                         name: data.name || openProfileDetail.authorName || '',
-                        profileImage: data.profileImage || openProfileDetail.authorAvatar || ''
+                        profileImage: data.profileImage || openProfileDetail.authorAvatar || '',
+                        coverImage: data.coverImage || ''
                     }
                 }));
             } catch (error) {
@@ -2555,6 +2574,29 @@ const PortalHomeFeed = ({
         const data = await response.json().catch(() => ({}));
         if (!response.ok) {
             throw new Error(data.error || data.message || 'Could not update profile picture.');
+        }
+
+        onRefresh?.();
+        return data;
+    };
+
+    const saveUniversalCoverImage = async (coverImage) => {
+        const jobSeekerId = profileData?._id || profileData?.id || currentUser?.jobSeekerId;
+        if (!jobSeekerId) {
+            return null;
+        }
+
+        const response = await fetch(apiUrl(`/api/job-seekers/${jobSeekerId}`), {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token') || ''}`
+            },
+            body: JSON.stringify({ coverImage: coverImage || '' })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.error || data.message || 'Could not update cover picture.');
         }
 
         onRefresh?.();
@@ -4290,7 +4332,7 @@ const PortalHomeFeed = ({
             : '@JumpTakeID';
         const avatar = isCurrentViewer
             ? getLiveProfileAvatar(authorId, openProfileDetail.authorType, openProfileDetail.authorAvatar)
-            : openProfileDetail.authorAvatar || friendMatch?.profileImage || storedTailorProfile.profileImage || '';
+            : resolvedCandidate?.profileImage || friendMatch?.profileImage || openProfileDetail.authorAvatar || '';
         const gender = asDisplayText(
             openProfileDetail.authorGender
             || friendMatch?.gender
@@ -4312,7 +4354,9 @@ const PortalHomeFeed = ({
             type: openProfileDetail.authorType,
             jumpTakeId,
             bio,
-            coverImage: storedTailorProfile.coverImage || '',
+            coverImage: isCurrentViewer
+                ? (tailorProfile.coverImage || profileData?.coverImage || '')
+                : (resolvedCandidate?.coverImage || storedTailorProfile.coverImage || ''),
             socialLinks: {
                 facebook: storedTailorProfile.facebook || '',
                 instagram: storedTailorProfile.instagram || '',
@@ -5808,10 +5852,22 @@ const PortalHomeFeed = ({
         try {
             const dataUrl = await readFileAsDataUrl(file);
             updateTailorProfile({ coverImage: dataUrl });
+            await saveUniversalCoverImage(dataUrl);
+            setFeedError('');
         } catch (error) {
             setFeedError(error.message || 'Could not upload that cover picture.');
         } finally {
             event.target.value = '';
+        }
+    };
+
+    const handleTailorCoverRemove = async () => {
+        try {
+            updateTailorProfile({ coverImage: '' });
+            await saveUniversalCoverImage('');
+            setFeedError('');
+        } catch (error) {
+            setFeedError(error.message || 'Could not remove that cover picture.');
         }
     };
 
@@ -5893,7 +5949,7 @@ const PortalHomeFeed = ({
                             <input type="file" accept="image/*" onChange={handleTailorCoverChange} />
                         </label>
                         {tailorProfile.coverImage && (
-                            <button type="button" className="tailor-cover-remove" onClick={() => updateTailorProfile({ coverImage: '' })}>
+                            <button type="button" className="tailor-cover-remove" onClick={handleTailorCoverRemove}>
                                 Remove
                             </button>
                         )}

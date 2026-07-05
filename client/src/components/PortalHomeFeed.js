@@ -6,6 +6,7 @@ import { createSquareProfileImage } from '../utils/profileImages';
 import reactionButtonIcon from './media/reaction.png';
 import defaultProfileMaleImage from './media/default-profile-male.png';
 import defaultProfileFemaleImage from './media/default-profile-female.png';
+import defaultTailorCoverImage from './media/default-tailor-cover.png';
 
 const WORK_NEWS_STORAGE_KEY = 'jumptakeWorkNewsPosts';
 const TALENT_STORIES_STORAGE_KEY = 'jumptakeTalentStoriesPosts';
@@ -4512,7 +4513,7 @@ const PortalHomeFeed = ({
                                 )}
                             </div>
                         </div>
-                        <div className="portal-post-comments">
+                        <div className="portal-post-comments portal-rotating-comment-rail">
                             {rotatingComment ? (() => {
                                 const comment = rotatingComment;
                                 const commentAvatar = getLiveProfileAvatar(comment.authorId, 'candidate', comment.authorAvatar);
@@ -5583,9 +5584,9 @@ const PortalHomeFeed = ({
         const ownPosts = talentStories.filter((post) => String(post.authorId) === viewerId);
         const likeCount = ownPosts.reduce((total, post) => total + (Number(post.reactions?.Like || 0) || 0), 0);
         const ratingSummary = readCandidateRatingSummary(viewerId);
-        const coverStyle = tailorProfile.coverImage
-            ? { '--tailor-cover-image': `url("${tailorProfile.coverImage}")` }
-            : undefined;
+        const coverStyle = {
+            '--tailor-cover-image': `url("${tailorProfile.coverImage || defaultTailorCoverImage}")`
+        };
         const socialPlatforms = ['twitter', 'instagram', 'linkedin', 'github'];
         const activeSocialLabel = activeTailorSocialEditor
             ? `${activeTailorSocialEditor.charAt(0).toUpperCase()}${activeTailorSocialEditor.slice(1)} profile link`
@@ -5970,9 +5971,9 @@ const PortalHomeFeed = ({
 
         const socialPlatforms = ['twitter', 'instagram', 'linkedin', 'github'];
         const canMessage = mode === 'candidate' && !profile.isCurrentViewer && profile.type !== 'employer';
-        const coverStyle = profile.coverImage
-            ? { '--tailor-cover-image': `url("${profile.coverImage}")` }
-            : undefined;
+        const coverStyle = {
+            '--tailor-cover-image': `url("${profile.coverImage || defaultTailorCoverImage}")`
+        };
         const modalMarkup = (
             <div
                 className={`portal-profile-detail-backdrop ${closingProfileDetailModal ? 'is-closing' : ''}`}

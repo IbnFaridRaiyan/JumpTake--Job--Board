@@ -3077,7 +3077,7 @@ textarea:focus {
   position: absolute;
   top: 0.8rem;
   left: 50%;
-  width: 794px;
+  width: 900px;
   height: 1123px;
   min-height: 1123px;
   transform-origin: top center;
@@ -3480,7 +3480,7 @@ textarea:focus {
 .resume-playground-editor-workbench {
   position: relative;
   padding: 0 0 0 0;
-  min-width: calc(794px + 34px);
+  min-width: calc(900px + 34px);
 }
 
 .resume-playground-editor-workbench-scale-box {
@@ -3488,7 +3488,7 @@ textarea:focus {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  min-width: calc(794px + 34px);
+  min-width: calc(900px + 34px);
   overflow: visible;
 }
 
@@ -3515,7 +3515,7 @@ textarea:focus {
 .resume-playground-ruler-horizontal {
   top: 0;
   left: 34px;
-  width: 794px;
+  width: 900px;
   height: 34px;
   border-radius: 0.8rem 0.8rem 0.3rem 0.3rem;
   cursor: ew-resize;
@@ -3624,7 +3624,7 @@ textarea:focus {
 .resume-playground-editor-document {
   position: relative;
   z-index: 2;
-  width: min(100%, 794px);
+  width: min(100%, 900px);
   background: transparent;
   color: #111827;
   outline: none;
@@ -4091,8 +4091,8 @@ html[data-theme="light"] .resume-playground-ruler-labels {
 
   .resume-playground-editor-workbench {
     position: relative;
-    min-width: calc(794px + 24px);
-    width: calc(794px + 24px);
+    min-width: calc(900px + 24px);
+    width: calc(900px + 24px);
     padding-top: 24px;
     padding-left: 24px;
     display: flex;
@@ -4167,16 +4167,16 @@ html[data-theme="light"] .resume-playground-ruler-labels {
   }
 
   .resume-playground-editor-pages-stack {
-    width: 794px !important;
-    max-width: 794px !important;
+    width: 900px !important;
+    max-width: 900px !important;
   }
 
   .resume-playground-editor-page-layer {
-    width: 794px;
+    width: 900px;
   }
 
   .resume-playground-editor-document {
-    width: 794px;
+    width: 900px;
     padding: 48px 56px;
   }
 
@@ -27087,8 +27087,8 @@ html[data-theme="light"] .home-page .job-feed-container .job-card-footer {
 
   .resume-playground-editor-mobile-overlay .resume-playground-editor-page-layer,
   .resume-playground-editor-mobile-overlay .resume-playground-editor-document {
-    width: 794px !important;
-    max-width: 794px !important;
+    width: 900px !important;
+    max-width: 900px !important;
   }
 
   .home-page :is(
@@ -74205,4 +74205,1129 @@ html body .portal-post-detail-modal .portal-post-detail-comments button.portal-a
   border: 0 !important;
   box-shadow: none !important;
   background: transparent !important;
+}
+
+/* Absolute final mobile fix: popup comments must match main post-card comment rail. */
+@media (max-width: 768px) {
+  html body .portal-post-detail-backdrop .portal-post-detail-modal .portal-post-detail-comments,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card .portal-post-comments {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 0.46rem !important;
+    width: 100% !important;
+    margin: 0.48rem 0 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
+  }
+
+  html body .portal-post-detail-backdrop .portal-post-detail-modal .portal-post-detail-comments .portal-comment-item,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card .portal-post-comments .portal-comment-item {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 0.46rem !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
+  }
+
+  html body .portal-post-detail-backdrop .portal-post-detail-modal .portal-post-detail-comments .portal-comment-avatar,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card .portal-post-comments .portal-comment-avatar {
+    all: unset !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 1.14rem !important;
+    width: 1.14rem !important;
+    min-width: 1.14rem !important;
+    max-width: 1.14rem !important;
+    height: 0.86rem !important;
+    min-height: 0.86rem !important;
+    max-height: 0.86rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+  }
+
+  html body .portal-post-detail-backdrop .portal-post-detail-modal .portal-post-detail-comments .portal-comment-avatar > img,
+  html body .portal-post-detail-backdrop .portal-post-detail-modal .portal-post-detail-comments .portal-comment-avatar > .portal-default-profile-icon,
+  html body .portal-post-detail-backdrop .portal-post-detail-modal .portal-post-detail-comments .portal-comment-avatar .portal-default-profile-image,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card .portal-post-comments .portal-comment-avatar > img,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card .portal-post-comments .portal-comment-avatar > .portal-default-profile-icon,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card .portal-post-comments .portal-comment-avatar .portal-default-profile-image {
+    display: block !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    object-fit: cover !important;
+  }
+
+  html body .portal-post-detail-backdrop .portal-post-detail-modal .portal-post-detail-comments .portal-comment-line,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card .portal-post-comments .portal-comment-item p {
+    all: unset !important;
+    box-sizing: border-box !important;
+    display: inline !important;
+    flex: 1 1 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #1d2b2f !important;
+    -webkit-text-fill-color: #1d2b2f !important;
+    font-size: 0.78rem !important;
+    font-weight: 760 !important;
+    line-height: 1.25 !important;
+    text-align: left !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  html body .portal-post-detail-backdrop .portal-post-detail-modal .portal-post-detail-comments .portal-comment-author-inline,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card .portal-post-comments .portal-comment-name.portal-author-name-button {
+    all: unset !important;
+    display: inline !important;
+    color: #1d2b2f !important;
+    -webkit-text-fill-color: #1d2b2f !important;
+    cursor: pointer !important;
+    font: inherit !important;
+    font-weight: 950 !important;
+    line-height: inherit !important;
+    text-align: left !important;
+  }
+
+  html body .portal-post-detail-backdrop .portal-post-detail-modal .portal-post-detail-comments .portal-comment-copy {
+    all: unset !important;
+    display: inline !important;
+    color: #1d2b2f !important;
+    -webkit-text-fill-color: #1d2b2f !important;
+    font: inherit !important;
+    line-height: inherit !important;
+    text-align: left !important;
+  }
+}
+
+/* Absolute final: post-card comment avatars are small visible circles. */
+@media (max-width: 768px) {
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments .portal-comment-item,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card .portal-post-comments .portal-comment-item,
+  html body .tailor-profile-section .portal-social-post-card .portal-post-comments .portal-comment-item {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 0.42rem !important;
+    min-height: 1.05rem !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
+  }
+
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar,
+  html body .tailor-profile-section .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar {
+    all: unset !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 1.05rem !important;
+    width: 1.05rem !important;
+    min-width: 1.05rem !important;
+    max-width: 1.05rem !important;
+    height: 1.05rem !important;
+    min-height: 1.05rem !important;
+    max-height: 1.05rem !important;
+    inline-size: 1.05rem !important;
+    block-size: 1.05rem !important;
+    aspect-ratio: 1 / 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+    overflow: hidden !important;
+    visibility: visible !important;
+  }
+
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar > img,
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar > .portal-default-profile-icon,
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar .portal-default-profile-image,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar > img,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar > .portal-default-profile-icon,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar .portal-default-profile-image,
+  html body .tailor-profile-section .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar > img,
+  html body .tailor-profile-section .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar > .portal-default-profile-icon,
+  html body .tailor-profile-section .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar .portal-default-profile-image {
+    box-sizing: border-box !important;
+    display: block !important;
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    inline-size: 100% !important;
+    block-size: 100% !important;
+    aspect-ratio: 1 / 1 !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    object-fit: cover !important;
+    opacity: 1 !important;
+    overflow: hidden !important;
+    visibility: visible !important;
+  }
+
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments .portal-comment-item p,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card .portal-post-comments .portal-comment-item p,
+  html body .tailor-profile-section .portal-social-post-card .portal-post-comments .portal-comment-item p {
+    display: inline !important;
+    flex: 1 1 auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-width: 0 !important;
+    color: #1d2b2f !important;
+    -webkit-text-fill-color: #1d2b2f !important;
+    font-size: 0.78rem !important;
+    font-weight: 760 !important;
+    line-height: 1.25 !important;
+    text-align: left !important;
+  }
+}
+
+/* Final: all comment author names are bold everywhere. */
+html body :is(
+  .portal-comment-name,
+  .portal-comment-author-inline,
+  .portal-comment-line .portal-comment-author-inline,
+  .portal-post-comments .portal-author-name-button,
+  .portal-post-detail-comments .portal-author-name-button,
+  .portal-post-detail-comments .portal-comment-author-inline,
+  .portal-profile-detail-posts .portal-comment-name
+) {
+  font-weight: 950 !important;
+  font-variation-settings: "wght" 950 !important;
+}
+
+/* Final opened-post popup avatar proportions: smaller and close to square. */
+@media (max-width: 768px) {
+  html body .portal-post-detail-backdrop .portal-post-detail-modal .portal-post-detail-header .portal-author-open-button.portal-post-avatar {
+    flex: 0 0 2.18rem !important;
+    width: 2.18rem !important;
+    min-width: 2.18rem !important;
+    max-width: 2.18rem !important;
+    height: 2.18rem !important;
+    min-height: 2.18rem !important;
+    max-height: 2.18rem !important;
+    aspect-ratio: 1 / 1 !important;
+    border-radius: 0.52rem !important;
+    overflow: hidden !important;
+  }
+
+  html body .portal-post-detail-backdrop .portal-post-detail-modal .portal-post-detail-comments .portal-comment-avatar {
+    flex: 0 0 1.02rem !important;
+    width: 1.02rem !important;
+    min-width: 1.02rem !important;
+    max-width: 1.02rem !important;
+    height: 1rem !important;
+    min-height: 1rem !important;
+    max-height: 1rem !important;
+    aspect-ratio: 1 / 1 !important;
+    border-radius: 999px !important;
+    overflow: hidden !important;
+  }
+
+  html body .portal-post-detail-backdrop .portal-post-detail-modal .portal-post-detail-header .portal-author-open-button.portal-post-avatar > img,
+  html body .portal-post-detail-backdrop .portal-post-detail-modal .portal-post-detail-header .portal-author-open-button.portal-post-avatar > .portal-default-profile-icon,
+  html body .portal-post-detail-backdrop .portal-post-detail-modal .portal-post-detail-header .portal-author-open-button.portal-post-avatar .portal-default-profile-image,
+  html body .portal-post-detail-backdrop .portal-post-detail-modal .portal-post-detail-comments .portal-comment-avatar > img,
+  html body .portal-post-detail-backdrop .portal-post-detail-modal .portal-post-detail-comments .portal-comment-avatar > .portal-default-profile-icon,
+  html body .portal-post-detail-backdrop .portal-post-detail-modal .portal-post-detail-comments .portal-comment-avatar .portal-default-profile-image {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    aspect-ratio: 1 / 1 !important;
+    object-fit: cover !important;
+  }
+}
+
+/* Absolute final fix: Work News/Talent Stories rotating comment avatars are round. */
+@media (max-width: 768px) {
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments.portal-rotating-comment-rail .portal-comment-item > button.portal-author-open-button.portal-comment-avatar,
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments.portal-rotating-comment-rail button.portal-author-open-button.portal-comment-avatar.has-default-profile-icon,
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments.portal-rotating-comment-rail button.portal-author-open-button.portal-comment-avatar:not(.has-default-profile-icon) {
+    all: unset !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    align-self: center !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    flex: 0 0 1.12rem !important;
+    inline-size: 1.12rem !important;
+    block-size: 1.12rem !important;
+    width: 1.12rem !important;
+    min-width: 1.12rem !important;
+    max-width: 1.12rem !important;
+    height: 1.12rem !important;
+    min-height: 1.12rem !important;
+    max-height: 1.12rem !important;
+    aspect-ratio: 1 / 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    line-height: 0 !important;
+    overflow: hidden !important;
+    vertical-align: middle !important;
+  }
+
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments.portal-rotating-comment-rail button.portal-author-open-button.portal-comment-avatar > img,
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments.portal-rotating-comment-rail button.portal-author-open-button.portal-comment-avatar > .portal-default-profile-icon,
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments.portal-rotating-comment-rail button.portal-author-open-button.portal-comment-avatar .portal-default-profile-image {
+    box-sizing: border-box !important;
+    display: block !important;
+    inline-size: 1.12rem !important;
+    block-size: 1.12rem !important;
+    width: 1.12rem !important;
+    min-width: 1.12rem !important;
+    max-width: 1.12rem !important;
+    height: 1.12rem !important;
+    min-height: 1.12rem !important;
+    max-height: 1.12rem !important;
+    aspect-ratio: 1 / 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    object-fit: cover !important;
+    overflow: hidden !important;
+  }
+}
+
+/* Absolute final: only comment names are bold, comment text is normal. */
+html body :is(
+  .portal-post-comments .portal-comment-item p,
+  .portal-post-detail-comments .portal-comment-line,
+  .portal-post-detail-comments .portal-comment-copy,
+  .portal-profile-detail-posts .portal-post-comments .portal-comment-item p,
+  .tailor-profile-section .portal-post-comments .portal-comment-item p
+) {
+  font-weight: 500 !important;
+  font-variation-settings: normal !important;
+}
+
+html body :is(
+  .portal-post-comments .portal-comment-name,
+  .portal-post-comments .portal-author-name-button,
+  .portal-post-detail-comments .portal-comment-author-inline,
+  .portal-post-detail-comments .portal-comment-name,
+  .portal-profile-detail-posts .portal-post-comments .portal-comment-name,
+  .tailor-profile-section .portal-post-comments .portal-comment-name
+) {
+  font-weight: 950 !important;
+  font-variation-settings: "wght" 950 !important;
+}
+
+/* Absolute final: comment body text thin, author names bold. */
+html body .portal-social-post-card .portal-post-comments .portal-comment-item p,
+html body .portal-post-detail-modal .portal-post-detail-comments .portal-comment-line,
+html body .portal-post-detail-modal .portal-post-detail-comments .portal-comment-copy,
+html body .portal-profile-detail-posts .portal-post-comments .portal-comment-item p,
+html body .tailor-profile-section .portal-post-comments .portal-comment-item p {
+  font-weight: 400 !important;
+  font-variation-settings: "wght" 400 !important;
+}
+
+html body .portal-social-post-card .portal-post-comments .portal-comment-item p .portal-comment-name,
+html body .portal-social-post-card .portal-post-comments .portal-comment-item p .portal-author-name-button,
+html body .portal-post-detail-modal .portal-post-detail-comments .portal-comment-author-inline,
+html body .portal-profile-detail-posts .portal-post-comments .portal-comment-item p .portal-comment-name,
+html body .tailor-profile-section .portal-post-comments .portal-comment-item p .portal-comment-name {
+  font-weight: 950 !important;
+  font-variation-settings: "wght" 950 !important;
+}
+
+/* Final guard: Work News/Talent Stories rotating comment avatars must stay circular on mobile. */
+@media (max-width: 768px) {
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments.portal-rotating-comment-rail .portal-comment-item {
+    align-items: center !important;
+  }
+
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments.portal-rotating-comment-rail .portal-comment-item button.portal-author-open-button.portal-comment-avatar {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    flex: 0 0 18px !important;
+    inline-size: 18px !important;
+    block-size: 18px !important;
+    width: 18px !important;
+    min-width: 18px !important;
+    max-width: 18px !important;
+    height: 18px !important;
+    min-height: 18px !important;
+    max-height: 18px !important;
+    aspect-ratio: 1 / 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    line-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments.portal-rotating-comment-rail .portal-comment-item button.portal-author-open-button.portal-comment-avatar > img,
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments.portal-rotating-comment-rail .portal-comment-item button.portal-author-open-button.portal-comment-avatar > .portal-default-profile-icon,
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments.portal-rotating-comment-rail .portal-comment-item button.portal-author-open-button.portal-comment-avatar .portal-default-profile-image {
+    box-sizing: border-box !important;
+    display: block !important;
+    inline-size: 18px !important;
+    block-size: 18px !important;
+    width: 18px !important;
+    min-width: 18px !important;
+    max-width: 18px !important;
+    height: 18px !important;
+    min-height: 18px !important;
+    max-height: 18px !important;
+    aspect-ratio: 1 / 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    object-fit: cover !important;
+    overflow: hidden !important;
+  }
+}
+
+/* Screenshot 113-118 final UI pass. Keep after older portal overrides. */
+html body .portal-job-modal .portal-job-modal-header {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 0.42rem !important;
+  padding-right: 2.45rem !important;
+}
+
+html body .portal-job-modal .portal-job-modal-title-block {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  max-width: calc(100% - 3.2rem) !important;
+  padding-right: 0 !important;
+}
+
+html body .portal-job-modal .portal-job-modal-back-button,
+html body .portal-job-modal .portal-job-modal-back-button:is(:hover, :focus, :focus-visible, :active) {
+  position: absolute !important;
+  top: 0.72rem !important;
+  right: 0.56rem !important;
+  z-index: 8 !important;
+  flex: 0 0 1.58rem !important;
+  width: 1.58rem !important;
+  min-width: 1.58rem !important;
+  max-width: 1.58rem !important;
+  height: 1.58rem !important;
+  min-height: 1.58rem !important;
+  max-height: 1.58rem !important;
+}
+
+html body .portal-job-modal .portal-job-modal-back-button svg {
+  width: 1.12rem !important;
+  height: 1.12rem !important;
+}
+
+html body .portal-candidate-job-stats.portal-job-modal-stats {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 0.08rem !important;
+  width: 100% !important;
+  margin: 0.74rem 0 1.05rem !important;
+}
+
+html body .portal-candidate-job-stats.portal-job-modal-stats .portal-candidate-job-stat {
+  min-width: 0 !important;
+  min-height: 2.05rem !important;
+  padding: 0.22rem 0.12rem !important;
+  border-radius: 0 !important;
+  background: #90a19a !important;
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  font-size: 0.58rem !important;
+  font-weight: 850 !important;
+  line-height: 1.02 !important;
+}
+
+html body .portal-candidate-job-stats.portal-job-modal-stats .portal-candidate-job-stat strong {
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  font-size: 0.9rem !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+}
+
+html body .portal-candidate-job-card .portal-job-meta-icons.compact {
+  gap: 0.18rem !important;
+}
+
+html body .portal-candidate-job-card .portal-job-meta-icons.compact .portal-job-meta-chip {
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  font-size: 0.68rem !important;
+  font-weight: 900 !important;
+  line-height: 1.2 !important;
+}
+
+html body .portal-candidate-job-card .portal-job-meta-icons.compact .portal-job-meta-chip :is(svg, .portal-job-salary-symbol) {
+  width: 0.82rem !important;
+  min-width: 0.82rem !important;
+  height: 0.82rem !important;
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  font-weight: 950 !important;
+}
+
+html body .portal-candidate-job-card .portal-candidate-job-stats .portal-candidate-job-stat {
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  font-size: 0.66rem !important;
+  font-weight: 850 !important;
+  line-height: 1.04 !important;
+}
+
+html body .portal-candidate-job-card .portal-candidate-job-stats .portal-candidate-job-stat strong {
+  font-size: 0.95rem !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-media {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  margin: 0.82rem auto 0.95rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-media img,
+html body .portal-post-detail-modal .portal-post-detail-media video {
+  display: block !important;
+  width: auto !important;
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  margin: 0 auto !important;
+  border: 0 !important;
+  border-radius: 0.62rem !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  object-fit: contain !important;
+}
+
+html body .portal-home-feed .tailor-profile-card::before,
+html body .portal-profile-detail-card::before {
+  background-color: #a35a72 !important;
+  background-image: var(--tailor-cover-image) !important;
+  background-position: center !important;
+  background-size: cover !important;
+}
+
+html[data-theme="light"] body .resume-playground-choice-card,
+html[data-theme="light"] body .resume-playground-choice-card strong,
+html[data-theme="light"] body .resume-playground-ai-tailor-panel .resume-playground-tool-button,
+html[data-theme="light"] body .resume-playground-ai-template-actions .settings-button.primary {
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+}
+
+html[data-theme="light"] body .resume-playground-ai-tailor-panel .resume-playground-tool-button,
+html[data-theme="light"] body .resume-playground-ai-tailor-panel .resume-playground-tool-button:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body .resume-playground-ai-template-actions .settings-button.primary,
+html[data-theme="light"] body .resume-playground-ai-template-actions .settings-button.primary:is(:hover, :focus, :focus-visible, :active) {
+  background: #fffaf3 !important;
+  background-color: #fffaf3 !important;
+  background-image: none !important;
+  border-color: rgba(113, 88, 64, 0.18) !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body .resume-playground-template-preview,
+html[data-theme="light"] body .resume-playground-template-preview-scale {
+  background: #f3eee6 !important;
+  background-color: #f3eee6 !important;
+  color: #111827 !important;
+}
+
+/* Final Resume Playground light-mode template card corrections. */
+html[data-theme="light"] body .resume-playground-ai-tailor-panel .resume-playground-template-card .resume-playground-ai-template-actions > button.settings-button.primary,
+html[data-theme="light"] body .resume-playground-ai-tailor-panel .resume-playground-template-card .resume-playground-ai-template-actions > button.settings-button.primary:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body .resume-playground-ai-tailor-panel .resume-playground-template-card .resume-playground-ai-template-actions > button.settings-button.primary *,
+html[data-theme="light"] body .resume-playground-ai-tailor-panel .resume-playground-template-card .resume-playground-ai-template-actions > button.settings-button.primary:is(:hover, :focus, :focus-visible, :active) * {
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] body .resume-playground-ai-tailor-panel .resume-playground-template-card .resume-playground-ai-template-actions > button.settings-button.primary,
+html[data-theme="light"] body .resume-playground-ai-tailor-panel .resume-playground-template-card .resume-playground-ai-template-actions > button.settings-button.primary:is(:hover, :focus, :focus-visible, :active) {
+  background: #fffaf3 !important;
+  background-color: #fffaf3 !important;
+  background-image: none !important;
+  border-color: rgba(113, 88, 64, 0.18) !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body .resume-playground-ai-tailor-panel .resume-playground-template-card .resume-playground-template-preview {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+}
+
+html[data-theme="light"] body .resume-playground-ai-tailor-panel .resume-playground-template-card .resume-playground-template-preview-scale,
+html[data-theme="light"] body .resume-playground-ai-tailor-panel .resume-playground-template-card .resume-playground-template-preview-scale [data-resume-template-root] {
+  background: #f3eee6 !important;
+  background-color: #f3eee6 !important;
+}
+
+/* Final home feed navbar motion: smooth active switch, mobile-friendly transform only. */
+@keyframes jt-home-tab-active-grow {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.92);
+    opacity: 0.86;
+  }
+  58% {
+    transform: translate3d(0, -0.03rem, 0) scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.04);
+    opacity: 1;
+  }
+}
+
+html body .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab {
+  transform: translate3d(0, 0, 0) scale(0.96) !important;
+  transform-origin: center center !important;
+  transition:
+    transform 420ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 360ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 360ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 320ms ease,
+    filter 420ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+  backface-visibility: hidden !important;
+  will-change: transform, opacity, filter !important;
+}
+
+html body .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab > :is(.portal-home-tab-icon, svg),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab > :is(.portal-home-tab-icon, svg) {
+  transform: translate3d(0, 0, 0) scale(0.92) !important;
+  transform-origin: center center !important;
+  transition:
+    transform 460ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 360ms cubic-bezier(0.16, 1, 0.3, 1),
+    fill 360ms cubic-bezier(0.16, 1, 0.3, 1),
+    stroke 360ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 320ms ease !important;
+  backface-visibility: hidden !important;
+  will-change: transform, opacity !important;
+}
+
+html body .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab > span,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab > span {
+  transform: translate3d(0, 0, 0) scale(0.97) !important;
+  transform-origin: center top !important;
+  transition:
+    transform 420ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 360ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 320ms ease !important;
+  will-change: transform, opacity !important;
+}
+
+html body .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab:is(.active, [data-active="true"]),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab:is(.active, [data-active="true"]) {
+  transform: translate3d(0, 0, 0) scale(1.04) !important;
+  animation: jt-home-tab-active-grow 520ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+}
+
+html body .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab:is(.active, [data-active="true"]) > :is(.portal-home-tab-icon, svg),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab:is(.active, [data-active="true"]) > :is(.portal-home-tab-icon, svg) {
+  transform: translate3d(0, -0.02rem, 0) scale(1.14) !important;
+}
+
+html body .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab:is(.active, [data-active="true"]) > span,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab:is(.active, [data-active="true"]) > span {
+  transform: translate3d(0, 0.02rem, 0) scale(1.02) !important;
+}
+
+@media (max-width: 768px) {
+  html body .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab {
+    transition-duration: 500ms, 420ms, 420ms, 360ms, 500ms !important;
+  }
+
+  html body .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab > :is(.portal-home-tab-icon, svg),
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab > :is(.portal-home-tab-icon, svg) {
+    transition-duration: 540ms, 420ms, 420ms, 420ms, 360ms !important;
+  }
+
+  html body .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab:is(.active, [data-active="true"]),
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab:is(.active, [data-active="true"]) {
+    animation-duration: 620ms !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab,
+  html body .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab > :is(.portal-home-tab-icon, svg),
+  html body .home-page .portal-home-feed .portal-home-tabs button.portal-home-tab > span {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Final Resume Playground button colors: override light/mobile cream button rules. */
+html body .resume-playground-panel > .resume-playground-choice-grid > button.resume-playground-choice-card:nth-of-type(1),
+html[data-theme="light"] body .resume-playground-panel > .resume-playground-choice-grid > button.resume-playground-choice-card:nth-of-type(1) {
+  background: #dfeee3 !important;
+  background-color: #dfeee3 !important;
+  background-image: none !important;
+  border-color: rgba(102, 143, 113, 0.38) !important;
+  color: #173526 !important;
+  -webkit-text-fill-color: #173526 !important;
+  box-shadow: none !important;
+}
+
+html body .resume-playground-panel > .resume-playground-choice-grid > button.resume-playground-choice-card:nth-of-type(2),
+html[data-theme="light"] body .resume-playground-panel > .resume-playground-choice-grid > button.resume-playground-choice-card:nth-of-type(2) {
+  background: #fff1bd !important;
+  background-color: #fff1bd !important;
+  background-image: none !important;
+  border-color: rgba(169, 126, 31, 0.34) !important;
+  color: #2f241b !important;
+  -webkit-text-fill-color: #2f241b !important;
+  box-shadow: none !important;
+}
+
+html body .resume-playground-panel > .resume-playground-choice-grid > button.resume-playground-ai-choice-card,
+html[data-theme="light"] body .resume-playground-panel > .resume-playground-choice-grid > button.resume-playground-ai-choice-card {
+  background: #a84e24 !important;
+  background-color: #a84e24 !important;
+  background-image: none !important;
+  border-color: rgba(90, 38, 16, 0.34) !important;
+  color: #fffaf3 !important;
+  -webkit-text-fill-color: #fffaf3 !important;
+  box-shadow: none !important;
+}
+
+html body .resume-playground-panel > .resume-playground-choice-grid > button.resume-playground-choice-card:nth-of-type(1) *,
+html body .resume-playground-panel > .resume-playground-choice-grid > button.resume-playground-choice-card:nth-of-type(2) *,
+html[data-theme="light"] body .resume-playground-panel > .resume-playground-choice-grid > button.resume-playground-choice-card:nth-of-type(1) *,
+html[data-theme="light"] body .resume-playground-panel > .resume-playground-choice-grid > button.resume-playground-choice-card:nth-of-type(2) * {
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+}
+
+html body .resume-playground-panel > .resume-playground-choice-grid > button.resume-playground-ai-choice-card *,
+html[data-theme="light"] body .resume-playground-panel > .resume-playground-choice-grid > button.resume-playground-ai-choice-card * {
+  color: #fffaf3 !important;
+  -webkit-text-fill-color: #fffaf3 !important;
+}
+
+html body .resume-playground-ai-tailor-panel .resume-playground-ai-tailor-header > button.resume-playground-tool-button,
+html body .resume-playground-ai-tailor-panel .resume-playground-ai-tailor-header > button.resume-playground-tool-button:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body .resume-playground-ai-tailor-panel .resume-playground-ai-tailor-header > button.resume-playground-tool-button,
+html[data-theme="light"] body .resume-playground-ai-tailor-panel .resume-playground-ai-tailor-header > button.resume-playground-tool-button:is(:hover, :focus, :focus-visible, :active) {
+  background: #7d3044 !important;
+  background-color: #7d3044 !important;
+  background-image: none !important;
+  border-color: rgba(79, 29, 42, 0.38) !important;
+  color: #fffaf3 !important;
+  -webkit-text-fill-color: #fffaf3 !important;
+  box-shadow: none !important;
+}
+
+html body .resume-playground-ai-tailor-panel .resume-playground-template-card .resume-playground-ai-template-actions > button.settings-button.primary,
+html body .resume-playground-ai-tailor-panel .resume-playground-template-card .resume-playground-ai-template-actions > button.settings-button.primary:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body .resume-playground-ai-tailor-panel .resume-playground-template-card .resume-playground-ai-template-actions > button.settings-button.primary,
+html[data-theme="light"] body .resume-playground-ai-tailor-panel .resume-playground-template-card .resume-playground-ai-template-actions > button.settings-button.primary:is(:hover, :focus, :focus-visible, :active) {
+  background: #b06b7a !important;
+  background-color: #b06b7a !important;
+  background-image: none !important;
+  border-color: rgba(79, 29, 42, 0.16) !important;
+  color: #fffaf3 !important;
+  -webkit-text-fill-color: #fffaf3 !important;
+  box-shadow: none !important;
+}
+
+html body .resume-playground-ai-tailor-panel .resume-playground-template-card .resume-playground-ai-template-actions > button.settings-button.primary *,
+html[data-theme="light"] body .resume-playground-ai-tailor-panel .resume-playground-template-card .resume-playground-ai-template-actions > button.settings-button.primary * {
+  color: #fffaf3 !important;
+  -webkit-text-fill-color: #fffaf3 !important;
+}
+
+/* Absolute final Resume Playground button colors: explicit class targets beat mobile/light overrides. */
+html body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-scratch,
+html body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-scratch:hover,
+html body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-scratch:focus,
+html body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-scratch:focus-visible,
+html body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-scratch:active {
+  background: #dfeee3 !important;
+  background-color: #dfeee3 !important;
+  background-image: none !important;
+  border: 1px solid rgba(102, 143, 113, 0.38) !important;
+  color: #173526 !important;
+  -webkit-text-fill-color: #173526 !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-upload,
+html body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-upload:hover,
+html body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-upload:focus,
+html body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-upload:focus-visible,
+html body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-upload:active {
+  background: #fff1bd !important;
+  background-color: #fff1bd !important;
+  background-image: none !important;
+  border: 1px solid rgba(169, 126, 31, 0.34) !important;
+  color: #2f241b !important;
+  -webkit-text-fill-color: #2f241b !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-ai-tailor,
+html body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-ai-tailor:hover,
+html body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-ai-tailor:focus,
+html body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-ai-tailor:focus-visible,
+html body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-ai-tailor:active {
+  background: #a84e24 !important;
+  background-color: #a84e24 !important;
+  background-image: none !important;
+  border: 1px solid rgba(90, 38, 16, 0.34) !important;
+  color: #fffaf3 !important;
+  -webkit-text-fill-color: #fffaf3 !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-scratch *,
+html body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-upload * {
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+}
+
+html body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-ai-tailor * {
+  color: #fffaf3 !important;
+  -webkit-text-fill-color: #fffaf3 !important;
+}
+
+html body #root .home-page .resume-playground-ai-tailor-panel button.resume-playground-tool-button.resume-playground-ai-close-button,
+html body #root .home-page .resume-playground-ai-tailor-panel button.resume-playground-tool-button.resume-playground-ai-close-button:hover,
+html body #root .home-page .resume-playground-ai-tailor-panel button.resume-playground-tool-button.resume-playground-ai-close-button:focus,
+html body #root .home-page .resume-playground-ai-tailor-panel button.resume-playground-tool-button.resume-playground-ai-close-button:focus-visible,
+html body #root .home-page .resume-playground-ai-tailor-panel button.resume-playground-tool-button.resume-playground-ai-close-button:active {
+  background: #7d3044 !important;
+  background-color: #7d3044 !important;
+  background-image: none !important;
+  border: 1px solid rgba(79, 29, 42, 0.38) !important;
+  color: #fffaf3 !important;
+  -webkit-text-fill-color: #fffaf3 !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .resume-playground-ai-tailor-panel button.settings-button.primary.resume-playground-use-style-button,
+html body #root .home-page .resume-playground-ai-tailor-panel button.settings-button.primary.resume-playground-use-style-button:hover,
+html body #root .home-page .resume-playground-ai-tailor-panel button.settings-button.primary.resume-playground-use-style-button:focus,
+html body #root .home-page .resume-playground-ai-tailor-panel button.settings-button.primary.resume-playground-use-style-button:focus-visible,
+html body #root .home-page .resume-playground-ai-tailor-panel button.settings-button.primary.resume-playground-use-style-button:active {
+  background: #b06b7a !important;
+  background-color: #b06b7a !important;
+  background-image: none !important;
+  border: 1px solid rgba(79, 29, 42, 0.16) !important;
+  color: #fffaf3 !important;
+  -webkit-text-fill-color: #fffaf3 !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .resume-playground-ai-tailor-panel button.resume-playground-tool-button.resume-playground-ai-close-button *,
+html body #root .home-page .resume-playground-ai-tailor-panel button.settings-button.primary.resume-playground-use-style-button * {
+  color: #fffaf3 !important;
+  -webkit-text-fill-color: #fffaf3 !important;
+}
+
+/* Final Resume Playground editor toolbar: maroon undo/redo, darker bolder tools. */
+html body #root .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-icon-button,
+html body #root .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-tool-button,
+html body #root .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-icon-button,
+html body #root .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-tool-button {
+  color: #0b0f14 !important;
+  -webkit-text-fill-color: #0b0f14 !important;
+  font-weight: 950 !important;
+  font-variation-settings: "wght" 950 !important;
+  text-shadow: none !important;
+}
+
+html body #root .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-icon-button > span,
+html body #root .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-icon-button > span {
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+  font-size: 0.9rem !important;
+  font-weight: 950 !important;
+  font-variation-settings: "wght" 950 !important;
+  line-height: 1 !important;
+  text-shadow: none !important;
+}
+
+html body #root .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-icon-undo,
+html body #root .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-icon-redo,
+html body #root .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-icon-undo,
+html body #root .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-icon-redo,
+html body #root .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-icon-undo:is(:hover, :focus, :focus-visible, :active),
+html body #root .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-icon-redo:is(:hover, :focus, :focus-visible, :active),
+html body #root .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-icon-undo:is(:hover, :focus, :focus-visible, :active),
+html body #root .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-icon-redo:is(:hover, :focus, :focus-visible, :active) {
+  background: #b06b7a !important;
+  background-color: #b06b7a !important;
+  background-image: none !important;
+  border-color: rgba(79, 29, 42, 0.16) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+html body #root .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-icon-undo > span,
+html body #root .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-icon-redo > span,
+html body #root .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-icon-undo > span,
+html body #root .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-icon-redo > span {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 1.08rem !important;
+  font-weight: 950 !important;
+  font-variation-settings: "wght" 950 !important;
+  transform: scale(1.14) !important;
+}
+
+html body #root .resume-playground-editor-shell .resume-playground-toolbar :is(.resume-playground-select, .resume-playground-color-picker),
+html body #root .resume-playground-editor-mobile-overlay .resume-playground-toolbar :is(.resume-playground-select, .resume-playground-color-picker) {
+  color: #0b0f14 !important;
+  -webkit-text-fill-color: #0b0f14 !important;
+  font-weight: 900 !important;
+  font-variation-settings: "wght" 900 !important;
+}
+
+/* Final General Resume fixes: photo step buttons and editor page layout. */
+html body #root .home-page .resume-playground-ai-photo-panel button.resume-playground-ai-photo-upload-button,
+html body #root .home-page .resume-playground-ai-photo-panel button.resume-playground-ai-photo-skip-button,
+html body #root .home-page .resume-playground-ai-photo-panel button.resume-playground-ai-photo-upload-button:is(:hover, :focus, :focus-visible, :active),
+html body #root .home-page .resume-playground-ai-photo-panel button.resume-playground-ai-photo-skip-button:is(:hover, :focus, :focus-visible, :active) {
+  background: #b06b7a !important;
+  background-color: #b06b7a !important;
+  background-image: none !important;
+  border: 1px solid rgba(79, 29, 42, 0.16) !important;
+  color: #fffaf3 !important;
+  -webkit-text-fill-color: #fffaf3 !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .resume-playground-ai-photo-panel button.resume-playground-ai-photo-upload-button *,
+html body #root .home-page .resume-playground-ai-photo-panel button.resume-playground-ai-photo-skip-button * {
+  color: #fffaf3 !important;
+  -webkit-text-fill-color: #fffaf3 !important;
+}
+
+html body #root .resume-playground-editor-document.is-ai-tailor-mode > [data-resume-template-root="general"],
+html body #root .resume-playground-editor-mobile-overlay .resume-playground-editor-document.is-ai-tailor-mode > [data-resume-template-root="general"] {
+  display: grid !important;
+  grid-template-columns: 190px minmax(0, 1fr) !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+  color: #111827 !important;
+  -webkit-text-fill-color: initial !important;
+  font-size: 10.5px !important;
+  line-height: 1.22 !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+html body #root .resume-playground-editor-document.is-ai-tailor-mode > [data-resume-template-root="general"] > aside,
+html body #root .resume-playground-editor-mobile-overlay .resume-playground-editor-document.is-ai-tailor-mode > [data-resume-template-root="general"] > aside {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  width: 190px !important;
+  max-width: 190px !important;
+  padding: 18px 14px !important;
+  overflow-wrap: anywhere !important;
+}
+
+html body #root .resume-playground-editor-document.is-ai-tailor-mode > [data-resume-template-root="general"] > main,
+html body #root .resume-playground-editor-mobile-overlay .resume-playground-editor-document.is-ai-tailor-mode > [data-resume-template-root="general"] > main {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  width: auto !important;
+  max-width: 100% !important;
+  padding: 26px 24px !important;
+  overflow-wrap: break-word !important;
+}
+
+html body #root .resume-playground-editor-document.is-ai-tailor-mode > [data-resume-template-root="general"] :is(h1, h2, h3, p, ul, li, div),
+html body #root .resume-playground-editor-mobile-overlay .resume-playground-editor-document.is-ai-tailor-mode > [data-resume-template-root="general"] :is(h1, h2, h3, p, ul, li, div) {
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+/* Absolute final: mobile editor toolbar lives outside #root, so target it directly. */
+html body .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-icon-button,
+html body .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-tool-button,
+html body .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-icon-button,
+html body .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-tool-button {
+  color: #0b0f14 !important;
+  -webkit-text-fill-color: #0b0f14 !important;
+  font-weight: 950 !important;
+  font-variation-settings: "wght" 950 !important;
+  text-shadow: none !important;
+}
+
+html body .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-icon-undo,
+html body .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-icon-redo,
+html body .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-icon-undo,
+html body .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-icon-redo,
+html body .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-icon-undo:is(:hover, :focus, :focus-visible, :active),
+html body .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-icon-redo:is(:hover, :focus, :focus-visible, :active),
+html body .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-icon-undo:is(:hover, :focus, :focus-visible, :active),
+html body .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-icon-redo:is(:hover, :focus, :focus-visible, :active) {
+  background: #b06b7a !important;
+  background-color: #b06b7a !important;
+  background-image: none !important;
+  border-color: rgba(79, 29, 42, 0.16) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+html body .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-icon-undo > span,
+html body .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-icon-redo > span,
+html body .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-icon-undo > span,
+html body .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-icon-redo > span {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 1.12rem !important;
+  font-weight: 950 !important;
+  font-variation-settings: "wght" 950 !important;
+  line-height: 1 !important;
+  transform: scale(1.16) !important;
+}
+
+html body .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-icon-button:not(.resume-playground-icon-undo):not(.resume-playground-icon-redo) > span,
+html body .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-icon-button:not(.resume-playground-icon-undo):not(.resume-playground-icon-redo) > span {
+  color: #0b0f14 !important;
+  -webkit-text-fill-color: #0b0f14 !important;
+  font-weight: 950 !important;
+  font-variation-settings: "wght" 950 !important;
+}
+
+html body .resume-playground-editor-mobile-overlay .resume-playground-toolbar :is(.resume-playground-select, .resume-playground-color-picker),
+html body .resume-playground-editor-shell .resume-playground-toolbar :is(.resume-playground-select, .resume-playground-color-picker) {
+  color: #0b0f14 !important;
+  -webkit-text-fill-color: #0b0f14 !important;
+  font-weight: 900 !important;
+  font-variation-settings: "wght" 900 !important;
+}
+
+/* Absolute final: explicit undo/redo classes and label fallback. */
+html body button.resume-playground-icon-button.resume-playground-undo-button,
+html body button.resume-playground-icon-button.resume-playground-redo-button,
+html body button.resume-playground-icon-button[aria-label="Undo"],
+html body button.resume-playground-icon-button[aria-label="Redo"],
+html body button.resume-playground-icon-button[title="Undo"],
+html body button.resume-playground-icon-button[title="Redo"],
+html body button.resume-playground-icon-button.resume-playground-undo-button:is(:hover, :focus, :focus-visible, :active),
+html body button.resume-playground-icon-button.resume-playground-redo-button:is(:hover, :focus, :focus-visible, :active),
+html body button.resume-playground-icon-button[aria-label="Undo"]:is(:hover, :focus, :focus-visible, :active),
+html body button.resume-playground-icon-button[aria-label="Redo"]:is(:hover, :focus, :focus-visible, :active) {
+  background: #b06b7a !important;
+  background-color: #b06b7a !important;
+  background-image: none !important;
+  border: 1px solid rgba(79, 29, 42, 0.18) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+html body button.resume-playground-icon-button.resume-playground-undo-button > span,
+html body button.resume-playground-icon-button.resume-playground-redo-button > span,
+html body button.resume-playground-icon-button[aria-label="Undo"] > span,
+html body button.resume-playground-icon-button[aria-label="Redo"] > span,
+html body button.resume-playground-icon-button[title="Undo"] > span,
+html body button.resume-playground-icon-button[title="Redo"] > span {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 1.14rem !important;
+  font-weight: 950 !important;
+  font-variation-settings: "wght" 950 !important;
+  line-height: 1 !important;
+}
+
+html body .resume-playground-editor-document.is-ai-tailor-mode > [data-resume-template-root="general"],
+html body .resume-playground-editor-mobile-overlay .resume-playground-editor-document.is-ai-tailor-mode > [data-resume-template-root="general"] {
+  display: block !important;
+  grid-template-columns: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow: visible !important;
+  font-size: 10px !important;
+  line-height: 1.22 !important;
+}
+
+html body .resume-playground-editor-document.is-ai-tailor-mode > [data-resume-template-root="general"] > :is(aside, main),
+html body .resume-playground-editor-mobile-overlay .resume-playground-editor-document.is-ai-tailor-mode > [data-resume-template-root="general"] > :is(aside, main) {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
 }

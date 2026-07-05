@@ -9,7 +9,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLi
 const STORAGE_PREFIX = 'jumptakeResumePlayground:';
 const DOCUMENT_STORAGE_PREFIX = 'jumptakeDocumentPlayground:';
 const WORKSPACE_SNAPSHOT_KEY = 'jumptakeResumePlaygroundSnapshot';
-const A4_PAGE_WIDTH = 794;
+const A4_PAGE_WIDTH = 900;
 const A4_PAGE_HEIGHT = 1123;
 const A4_PAGE_GAP = 56;
 const A4_PAGE_SAFE_HEIGHT = A4_PAGE_HEIGHT - 36;
@@ -589,30 +589,29 @@ const buildGeneralResumeHtml = (profile, variantIndex = 0, photo = '') => {
         : `<div style="width:72px;height:72px;border-radius:${variantIndex % 2 ? '16px' : '50%'};border:3px solid #ffffff;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;background:${light};color:${dark};font-size:26px;font-weight:800;">${escapeHtml(profile.name.charAt(0).toUpperCase() || 'Y')}</div>`;
 
     return `
-        <div data-resume-template-root="general" style="font-family:Arial, Helvetica, sans-serif; display:grid; grid-template-columns:165px minmax(0,1fr); width:100%; max-width:100%; box-sizing:border-box; color:#111827; font-size:10.5px; line-height:1.22; overflow:hidden;">
-            <aside style="background:${dark}; color:#ffffff; padding:18px 14px;">
-                ${imageMarkup}
-                <h3 style="letter-spacing:0.16em;font-size:11px;margin:12px 0 6px;">CONTACT</h3>
-                <p style="font-size:9.5px;line-height:1.35;margin:0 0 12px;">${escapeHtml(profile.phone)}<br />${escapeHtml(profile.email || 'Email')}<br />${escapeHtml(profile.location)}</p>
-                <h3 style="letter-spacing:0.16em;font-size:11px;margin:12px 0 6px;">EDUCATION</h3>
-                <ul style="font-size:9.5px;line-height:1.28;margin:0 0 12px 13px;padding:0;">${renderResumeBullets(profile.education, 'Add education details')}</ul>
-                <h3 style="letter-spacing:0.16em;font-size:11px;margin:12px 0 6px;">KEY SKILLS</h3>
-                <ul style="font-size:9.5px;line-height:1.28;margin:0 0 12px 13px;padding:0;">${renderResumeBullets(profile.skills, 'Add key skills')}</ul>
-            </aside>
-            <main style="background:#ffffff;padding:26px 20px; min-width:0;">
-                <div style="border-bottom:3px solid ${light};padding-bottom:9px;margin-bottom:11px;">
-                    <h1 style="font-size:27px;line-height:1.02;margin:0;color:#111827;">${escapeHtml(profile.name)}</h1>
-                    <p style="margin:5px 0 0;font-weight:700;color:${dark};">Professional Resume</p>
+        <div data-resume-template-root="general" style="font-family:Arial, Helvetica, sans-serif; display:block; width:100%; max-width:100%; box-sizing:border-box; color:#111827; background:#ffffff; font-size:10px; line-height:1.22; overflow-wrap:break-word;">
+            <div style="display:flex;align-items:center;gap:14px;background:${dark};color:#ffffff;padding:18px 20px;box-sizing:border-box;">
+                <div style="flex:0 0 auto;">${imageMarkup}</div>
+                <div style="min-width:0;flex:1 1 auto;">
+                    <h1 style="font-size:25px;line-height:1.02;margin:0;color:#ffffff;">${escapeHtml(profile.name)}</h1>
+                    <p style="margin:5px 0 0;font-weight:700;color:${light};">Professional Resume</p>
+                    <p style="font-size:9.5px;line-height:1.3;margin:6px 0 0;color:#ffffff;">${escapeHtml(profile.phone)} | ${escapeHtml(profile.email || 'Email')} | ${escapeHtml(profile.location)}</p>
                 </div>
-                <h3 style="letter-spacing:0.16em;font-size:12px;margin:10px 0 5px;color:#111827;">ABOUT ME</h3>
-                <p style="font-size:10.5px;line-height:1.32;margin:0 0 10px;">${escapeHtml(profile.summary)}</p>
-                <h3 style="letter-spacing:0.16em;font-size:12px;margin:10px 0 5px;color:#111827;">PROFESSIONAL EXPERIENCE</h3>
-                <ul style="font-size:10.5px;line-height:1.32;margin:0 0 10px 15px;padding:0;">${renderResumeBullets(profile.experience, 'Add professional experience and measurable achievements')}</ul>
-                <h3 style="letter-spacing:0.16em;font-size:12px;margin:10px 0 5px;color:#111827;">ACHIEVEMENTS</h3>
-                <ul style="font-size:10.5px;line-height:1.32;margin:0 0 10px 15px;padding:0;">${renderResumeBullets(profile.achievements, 'Add achievements, projects, certifications, or awards')}</ul>
-                <h3 style="letter-spacing:0.16em;font-size:12px;margin:10px 0 5px;color:#111827;">INTERESTS</h3>
-                <p style="font-size:10.5px;line-height:1.32;margin:0;">${escapeHtml([...profile.interests, ...profile.hobbies].join(', ') || 'Add relevant interests and hobbies')}</p>
-            </main>
+            </div>
+            <div style="padding:18px 20px 20px;box-sizing:border-box;">
+                <h3 style="letter-spacing:0.14em;font-size:11px;margin:0 0 5px;color:${dark};border-bottom:2px solid ${light};padding-bottom:3px;">ABOUT ME</h3>
+                <p style="font-size:10px;line-height:1.28;margin:0 0 9px;">${escapeHtml(profile.summary)}</p>
+                <h3 style="letter-spacing:0.14em;font-size:11px;margin:8px 0 5px;color:${dark};border-bottom:2px solid ${light};padding-bottom:3px;">PROFESSIONAL EXPERIENCE</h3>
+                <ul style="font-size:10px;line-height:1.25;margin:0 0 9px 14px;padding:0;">${renderResumeBullets(profile.experience, 'Add professional experience and measurable achievements')}</ul>
+                <h3 style="letter-spacing:0.14em;font-size:11px;margin:8px 0 5px;color:${dark};border-bottom:2px solid ${light};padding-bottom:3px;">EDUCATION</h3>
+                <ul style="font-size:10px;line-height:1.25;margin:0 0 9px 14px;padding:0;">${renderResumeBullets(profile.education, 'Add education details')}</ul>
+                <h3 style="letter-spacing:0.14em;font-size:11px;margin:8px 0 5px;color:${dark};border-bottom:2px solid ${light};padding-bottom:3px;">KEY SKILLS</h3>
+                <p style="font-size:10px;line-height:1.28;margin:0 0 9px;">${escapeHtml((profile.skills.length ? profile.skills : ['Communication', 'Teamwork', 'Problem Solving']).join(' | '))}</p>
+                <h3 style="letter-spacing:0.14em;font-size:11px;margin:8px 0 5px;color:${dark};border-bottom:2px solid ${light};padding-bottom:3px;">ACHIEVEMENTS</h3>
+                <ul style="font-size:10px;line-height:1.25;margin:0 0 9px 14px;padding:0;">${renderResumeBullets(profile.achievements, 'Add achievements, projects, certifications, or awards')}</ul>
+                <h3 style="letter-spacing:0.14em;font-size:11px;margin:8px 0 5px;color:${dark};border-bottom:2px solid ${light};padding-bottom:3px;">INTERESTS</h3>
+                <p style="font-size:10px;line-height:1.28;margin:0;">${escapeHtml([...profile.interests, ...profile.hobbies].join(', ') || 'Add relevant interests and hobbies')}</p>
+            </div>
         </div>
     `;
 };
@@ -1622,6 +1621,11 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                     return;
                 }
 
+                if (pages === 1 && flowHeightBeforeAppend <= getPageTopMargin(0) + 1) {
+                    measurement.appendChild(node.cloneNode(true));
+                    return;
+                }
+
                 const autoBreak = document.createElement('div');
                 autoBreak.className = 'resume-playground-page-break';
                 autoBreak.setAttribute('data-break-type', 'auto');
@@ -2593,18 +2597,32 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         setShowAtsDetails((current) => !current);
     }, [atsScanResult, handleAtsScan]);
 
-    const renderIconButton = (label, icon, onClick, extraClassName = '') => (
+    const renderIconButton = (label, icon, onClick, extraClassName = '') => {
+        const labelClassName = `resume-playground-icon-${String(label).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+        const isHistoryButton = label === 'Undo' || label === 'Redo';
+
+        return (
         <button
             type="button"
-            className={`resume-playground-tool-button resume-playground-icon-button ${extraClassName}`.trim()}
+            className={`resume-playground-tool-button resume-playground-icon-button ${labelClassName} ${extraClassName}`.trim()}
+            style={isHistoryButton ? {
+                background: '#b06b7a',
+                backgroundColor: '#b06b7a',
+                backgroundImage: 'none',
+                borderColor: 'rgba(79, 29, 42, 0.18)',
+                color: '#ffffff',
+                WebkitTextFillColor: '#ffffff',
+                boxShadow: 'none'
+            } : undefined}
             title={label}
             aria-label={label}
             onMouseDown={(event) => event.preventDefault()}
             onClick={onClick}
         >
-            <span aria-hidden="true">{icon}</span>
+            <span aria-hidden="true" style={isHistoryButton ? { color: '#ffffff', WebkitTextFillColor: '#ffffff', fontWeight: 950 } : undefined}>{icon}</span>
         </button>
-    );
+        );
+    };
 
     const renderSavedResumeCard = (resume, showManagementActions = false) => (
         <article key={resume.id} className="resume-playground-saved-card">
@@ -2818,8 +2836,8 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                             {isMobileViewport ? (
                                 <>
                                     <div className="resume-playground-toolbar-row resume-playground-toolbar-row-fixed">
-                                        {renderIconButton('Undo', '↶', () => runCommand('undo'))}
-                                        {renderIconButton('Redo', '↷', () => runCommand('redo'))}
+                                        {renderIconButton('Undo', '↶', () => runCommand('undo'), 'resume-playground-undo-button')}
+                                        {renderIconButton('Redo', '↷', () => runCommand('redo'), 'resume-playground-redo-button')}
                                         <select className="resume-playground-select" defaultValue="Arial" onChange={(event) => runCommand('fontName', event.target.value)}>
                                             {FONT_OPTIONS.map((font) => (
                                                 <option key={font} value={font}>{font}</option>
@@ -2871,8 +2889,8 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                                 <>
                                     <div className="resume-playground-toolbar-row">
                                         <div className="resume-playground-toolbar-group">
-                                            {renderIconButton('Undo', '↶', () => runCommand('undo'))}
-                                            {renderIconButton('Redo', '↷', () => runCommand('redo'))}
+                                            {renderIconButton('Undo', '↶', () => runCommand('undo'), 'resume-playground-undo-button')}
+                                            {renderIconButton('Redo', '↷', () => runCommand('redo'), 'resume-playground-redo-button')}
                                         </div>
 
                                         <div className="resume-playground-toolbar-group resume-playground-toolbar-group-wide">
@@ -3140,13 +3158,13 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                     {activeTab === 'create' && (
                         <div className="resume-playground-panel">
                             <div className="resume-playground-choice-grid">
-                                <button type="button" className="resume-playground-choice-card" onClick={handleStartScratch}>
+                                <button type="button" className="resume-playground-choice-card resume-playground-choice-scratch" onClick={handleStartScratch}>
                                     <strong>Create from scratch</strong>
                                     <span>{`Open a full ${resourceLabel.toLowerCase()} editor and start with a clean page.`}</span>
                                 </button>
                                 <button
                                     type="button"
-                                    className="resume-playground-choice-card"
+                                    className="resume-playground-choice-card resume-playground-choice-upload"
                                     onClick={() => uploadInputRef.current?.click()}
                                 >
                                     <strong>{`Upload ${resourceLabel.toLowerCase()} to edit`}</strong>
@@ -3155,7 +3173,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                                 {!isDocumentMode && (
                                     <button
                                         type="button"
-                                        className="resume-playground-choice-card resume-playground-ai-choice-card"
+                                        className="resume-playground-choice-card resume-playground-ai-choice-card resume-playground-choice-ai-tailor"
                                         onClick={handleOpenTailor}
                                     >
                                         <strong>Let AI Tailor it?</strong>
@@ -3165,7 +3183,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                                 {isDocumentMode && (
                                     <button
                                         type="button"
-                                        className="resume-playground-choice-card resume-playground-ai-choice-card"
+                                        className="resume-playground-choice-card resume-playground-ai-choice-card resume-playground-choice-ai-tailor"
                                         onClick={handleOpenDocumentTemplates}
                                     >
                                         <strong>Let JumpTake Create</strong>
@@ -3210,7 +3228,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                                         </div>
                                         <button
                                             type="button"
-                                            className="resume-playground-tool-button"
+                                            className="resume-playground-tool-button resume-playground-ai-close-button"
                                             onClick={() => {
                                                 setTailorStep('');
                                                 setTailorTemplates([]);
@@ -3240,13 +3258,13 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                                             <div className="resume-playground-ai-photo-actions">
                                                 <button
                                                     type="button"
-                                                    className="settings-button primary"
+                                                    className="settings-button primary resume-playground-ai-photo-upload-button"
                                                     onClick={() => aiPhotoInputRef.current?.click()}
                                                     disabled={tailorPhotoProcessing}
                                                 >
                                                     {tailorPhotoProcessing ? 'Preparing Photo...' : 'Upload Photo'}
                                                 </button>
-                                                <button type="button" className="settings-button secondary" onClick={handleSkipTailorPhoto}>
+                                                <button type="button" className="settings-button secondary resume-playground-ai-photo-skip-button" onClick={handleSkipTailorPhoto}>
                                                     Skip Photo
                                                 </button>
                                             </div>
@@ -3268,7 +3286,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                                                         <p>{template.description}</p>
                                                     </div>
                                                     <div className="resume-playground-ai-template-actions">
-                                                        <button type="button" className="settings-button primary" onClick={() => handleUseTailorTemplate(template)}>
+                                                        <button type="button" className="settings-button primary resume-playground-use-style-button" onClick={() => handleUseTailorTemplate(template)}>
                                                             Use This Style
                                                         </button>
                                                     </div>

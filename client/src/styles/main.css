@@ -73606,3 +73606,603 @@ html body .portal-profile-detail-backdrop .portal-profile-preview-post-card .por
   align-self: start !important;
   transform: translateY(0.5rem) !important;
 }
+
+/* Final screenshot 88: post-detail mobile avatars stay compact. */
+@media (max-width: 768px) {
+  html body .portal-post-detail-modal .portal-opened-post-detail-header {
+    column-gap: 0.56rem !important;
+    transform: none !important;
+    width: 100% !important;
+    padding: 0 1.6rem 0 0 !important;
+  }
+
+  html body .portal-post-detail-modal .portal-opened-post-detail-header .portal-author-open-button.portal-post-avatar,
+  html body .portal-post-detail-modal .portal-opened-post-detail-header .portal-author-open-button.portal-post-avatar:not(.has-default-profile-icon),
+  html body .portal-post-detail-modal .portal-opened-post-detail-header .portal-author-open-button.portal-post-avatar.has-default-profile-icon {
+    flex: 0 0 2.42rem !important;
+    width: 2.42rem !important;
+    min-width: 2.42rem !important;
+    max-width: 2.42rem !important;
+    height: 2.42rem !important;
+    min-height: 2.42rem !important;
+    max-height: 2.42rem !important;
+    border-width: 1px !important;
+    border-radius: 0.52rem !important;
+    overflow: hidden !important;
+  }
+
+  html body .portal-post-detail-modal .portal-opened-post-detail-header .portal-author-open-button.portal-post-avatar img,
+  html body .portal-post-detail-modal .portal-opened-post-detail-header .portal-author-open-button.portal-post-avatar .portal-default-profile-icon {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  html body .portal-post-detail-modal .portal-post-detail-comments .portal-comment-item {
+    grid-template-columns: auto minmax(0, 1fr) !important;
+    align-items: center !important;
+    column-gap: 0.58rem !important;
+  }
+
+  html body .portal-post-detail-modal .portal-post-detail-comments .portal-comment-item .portal-author-open-button.portal-comment-avatar,
+  html body .portal-post-detail-modal .portal-post-detail-comments .portal-comment-item .portal-author-open-button.portal-comment-avatar:not(.has-default-profile-icon),
+  html body .portal-post-detail-modal .portal-post-detail-comments .portal-comment-item .portal-author-open-button.portal-comment-avatar.has-default-profile-icon {
+    flex: 0 0 1.85rem !important;
+    width: 1.85rem !important;
+    min-width: 1.85rem !important;
+    max-width: 1.85rem !important;
+    height: 1.85rem !important;
+    min-height: 1.85rem !important;
+    max-height: 1.85rem !important;
+    border-width: 1px !important;
+    border-radius: 999px !important;
+    overflow: hidden !important;
+  }
+
+  html body .portal-post-detail-modal .portal-post-detail-comments .portal-comment-item .portal-author-open-button.portal-comment-avatar img,
+  html body .portal-post-detail-modal .portal-post-detail-comments .portal-comment-item .portal-author-open-button.portal-comment-avatar .portal-default-profile-icon {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: cover !important;
+  }
+}
+
+/* Final default user profile images from supplied assets. */
+html body .portal-post-avatar.has-default-profile-icon,
+html body .portal-comment-avatar.has-default-profile-icon,
+html body .tailor-profile-image.has-default-profile-icon {
+  background: transparent !important;
+  background-color: transparent !important;
+  color: transparent !important;
+}
+
+html body .portal-post-avatar.has-default-profile-icon .portal-default-profile-icon,
+html body .portal-comment-avatar.has-default-profile-icon .portal-default-profile-icon,
+html body .tailor-profile-image.has-default-profile-icon .portal-default-profile-icon {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  border-radius: inherit !important;
+  overflow: hidden !important;
+}
+
+html body .portal-default-profile-image {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: cover !important;
+  border-radius: inherit !important;
+}
+
+/* Final screenshot 92/93: compact mobile comments and no default-avatar underlay. */
+html body :is(.portal-post-avatar, .portal-comment-avatar, .tailor-profile-image).has-default-profile-icon {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html body :is(.portal-post-avatar, .portal-comment-avatar, .tailor-profile-image).has-default-profile-icon .portal-default-profile-icon {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+html body :is(.portal-post-avatar, .portal-comment-avatar, .tailor-profile-image).has-default-profile-icon .portal-default-profile-icon svg {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+@media (max-width: 768px) {
+  html body .portal-post-detail-modal .portal-post-detail-comments .portal-comment-item {
+    display: grid !important;
+    grid-template-columns: 1.34rem minmax(0, 1fr) !important;
+    align-items: center !important;
+    column-gap: 0.52rem !important;
+    min-height: 1.6rem !important;
+  }
+
+  html body .portal-post-detail-modal .portal-post-detail-comments .portal-comment-item .portal-author-open-button.portal-comment-avatar,
+  html body .portal-post-detail-modal .portal-post-detail-comments .portal-comment-item .portal-author-open-button.portal-comment-avatar:not(.has-default-profile-icon),
+  html body .portal-post-detail-modal .portal-post-detail-comments .portal-comment-item .portal-author-open-button.portal-comment-avatar.has-default-profile-icon {
+    flex: 0 0 1.34rem !important;
+    width: 1.34rem !important;
+    min-width: 1.34rem !important;
+    max-width: 1.34rem !important;
+    height: 1.34rem !important;
+    min-height: 1.34rem !important;
+    max-height: 1.34rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+  }
+
+  html body .portal-post-detail-modal .portal-post-detail-comments .portal-comment-line {
+    margin: 0 !important;
+    font-size: 0.84rem !important;
+    line-height: 1.32 !important;
+    color: #1d2b2f !important;
+  }
+
+  html body .portal-post-detail-modal .portal-post-detail-comments .portal-comment-line .portal-comment-author-inline,
+  html body .portal-post-detail-modal .portal-post-detail-comments .portal-comment-line .portal-comment-name,
+  html body .portal-post-detail-modal .portal-post-detail-comments .portal-comment-line .portal-author-name-button {
+    font-size: 0.9rem !important;
+    font-weight: 950 !important;
+    line-height: 1.2 !important;
+    color: #1d2b2f !important;
+  }
+
+  html body .portal-post-detail-modal .portal-post-detail-comments .portal-comment-line .portal-comment-copy {
+    font-size: 0.84rem !important;
+    font-weight: 700 !important;
+    line-height: 1.32 !important;
+    color: #1d2b2f !important;
+  }
+
+  html body .portal-post-detail-modal .portal-opened-post-detail-header .portal-author-open-button.portal-post-avatar.has-default-profile-icon {
+    border: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Final screenshot 94: smaller inline mobile comment avatars under feed cards. */
+@media (max-width: 768px) {
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments {
+    gap: 0.34rem !important;
+  }
+
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments .portal-comment-item {
+    display: grid !important;
+    grid-template-columns: 1.18rem minmax(0, 1fr) !important;
+    align-items: center !important;
+    column-gap: 0.48rem !important;
+    margin-top: 0.24rem !important;
+    min-height: 1.32rem !important;
+  }
+
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments .portal-comment-avatar,
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments .portal-author-open-button.portal-comment-avatar,
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments .portal-comment-avatar.has-default-profile-icon {
+    flex: 0 0 1.18rem !important;
+    width: 1.18rem !important;
+    min-width: 1.18rem !important;
+    max-width: 1.18rem !important;
+    height: 1.18rem !important;
+    min-height: 1.18rem !important;
+    max-height: 1.18rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+  }
+
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments .portal-comment-avatar img,
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments .portal-comment-avatar .portal-default-profile-icon,
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments .portal-comment-avatar .portal-default-profile-image {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: cover !important;
+  }
+}
+
+/* Final mobile comment avatar reduction: 50% shorter profile heads. */
+@media (max-width: 768px) {
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments .portal-comment-item {
+    grid-template-columns: 1.02rem minmax(0, 1fr) !important;
+    column-gap: 0.46rem !important;
+    min-height: 1.12rem !important;
+  }
+
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments .portal-comment-avatar,
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments .portal-author-open-button.portal-comment-avatar,
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments .portal-comment-avatar.has-default-profile-icon {
+    flex: 0 0 1.02rem !important;
+    width: 1.02rem !important;
+    min-width: 1.02rem !important;
+    max-width: 1.02rem !important;
+    height: 1.02rem !important;
+    min-height: 1.02rem !important;
+    max-height: 1.02rem !important;
+    aspect-ratio: 1 / 1 !important;
+    display: inline-grid !important;
+    place-items: center !important;
+    border-radius: 999px !important;
+    overflow: hidden !important;
+  }
+
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments .portal-comment-avatar img,
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments .portal-comment-avatar .portal-default-profile-icon,
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments .portal-comment-avatar .portal-default-profile-image {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    aspect-ratio: 1 / 1 !important;
+    object-fit: cover !important;
+    border-radius: 999px !important;
+  }
+}
+
+/* Final screenshot 96: hard reset inline feed comment avatars into true circles. */
+@media (max-width: 768px) {
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments .portal-comment-item {
+    display: grid !important;
+    grid-template-columns: 1.22rem minmax(0, 1fr) !important;
+    align-items: center !important;
+    column-gap: 0.48rem !important;
+    min-height: 1.22rem !important;
+  }
+
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar {
+    all: unset !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 1.22rem !important;
+    inline-size: 1.22rem !important;
+    block-size: 1.22rem !important;
+    width: 1.22rem !important;
+    min-width: 1.22rem !important;
+    max-width: 1.22rem !important;
+    height: 1.22rem !important;
+    min-height: 1.22rem !important;
+    max-height: 1.22rem !important;
+    aspect-ratio: 1 / 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
+    line-height: 0 !important;
+    overflow: hidden !important;
+    vertical-align: middle !important;
+  }
+
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar > img,
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar > .portal-default-profile-icon,
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar .portal-default-profile-image {
+    box-sizing: border-box !important;
+    display: block !important;
+    flex: 0 0 100% !important;
+    inline-size: 100% !important;
+    block-size: 100% !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    aspect-ratio: 1 / 1 !important;
+    border-radius: 999px !important;
+    object-fit: cover !important;
+    overflow: hidden !important;
+  }
+}
+
+/* Final screenshot 97: remove profile-popup post/comment default avatar underlay. */
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts :is(.portal-post-avatar, .portal-comment-avatar).has-default-profile-icon,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-author-open-button:is(.portal-post-avatar, .portal-comment-avatar).has-default-profile-icon {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: transparent !important;
+  overflow: hidden !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts :is(.portal-post-avatar, .portal-comment-avatar).has-default-profile-icon > .portal-default-profile-icon,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts :is(.portal-post-avatar, .portal-comment-avatar).has-default-profile-icon .portal-default-profile-image {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: inherit !important;
+}
+
+/* Final screenshot 98/99: move popup post headers farther left on mobile. */
+@media (max-width: 768px) {
+  html body .portal-post-detail-modal .portal-post-detail-header.portal-opened-post-detail-header {
+    width: calc(100% + 1.55rem) !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    transform: translateX(-1.28rem) !important;
+    column-gap: 0.5rem !important;
+  }
+
+  html body .portal-post-detail-modal .portal-post-detail-header.portal-opened-post-detail-header .portal-author-open-button.portal-post-avatar {
+    margin-left: 0 !important;
+    transform: none !important;
+  }
+
+  html body .portal-post-detail-modal .portal-post-detail-header.portal-opened-post-detail-header .portal-post-title-block {
+    margin-left: 0 !important;
+    transform: none !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card {
+    padding-left: 0.78rem !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card .portal-social-post-header,
+  html body .portal-profile-detail-backdrop .portal-profile-preview-post-card .portal-social-post-header {
+    width: calc(100% + 0.66rem) !important;
+    margin-left: 0 !important;
+    transform: translateX(-0.48rem) !important;
+    column-gap: 0.28rem !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card .portal-author-open-button.portal-post-avatar,
+  html body .portal-profile-detail-backdrop .portal-profile-preview-post-card .portal-author-open-button.portal-post-avatar {
+    margin-left: 0 !important;
+    transform: none !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card .portal-post-title-block,
+  html body .portal-profile-detail-backdrop .portal-profile-preview-post-card .portal-post-title-block {
+    margin-left: 0 !important;
+    transform: translateY(0.42rem) !important;
+  }
+}
+
+/* Final screenshot 101-104: one-line comment rail for all post cards. */
+@media (max-width: 768px) {
+  html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .tailor-profile-section) .portal-social-post-card .portal-post-comments {
+    display: grid !important;
+    gap: 0.46rem !important;
+    margin-top: 0.48rem !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .tailor-profile-section) .portal-social-post-card .portal-post-comments .portal-comment-item {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 0.46rem !important;
+    width: 100% !important;
+    min-height: 1.18rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .tailor-profile-section) .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar {
+    all: unset !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 1.14rem !important;
+    width: 1.14rem !important;
+    min-width: 1.14rem !important;
+    max-width: 1.14rem !important;
+    height: 1.14rem !important;
+    min-height: 1.14rem !important;
+    max-height: 1.14rem !important;
+    inline-size: 1.14rem !important;
+    block-size: 1.14rem !important;
+    aspect-ratio: 1 / 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    color: transparent !important;
+    cursor: pointer !important;
+    line-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .tailor-profile-section) .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar > img,
+  html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .tailor-profile-section) .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar > .portal-default-profile-icon,
+  html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .tailor-profile-section) .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar .portal-default-profile-image {
+    display: block !important;
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    inline-size: 100% !important;
+    block-size: 100% !important;
+    aspect-ratio: 1 / 1 !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    object-fit: cover !important;
+    overflow: hidden !important;
+  }
+
+  html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .tailor-profile-section) .portal-social-post-card .portal-post-comments .portal-comment-item p {
+    display: inline-flex !important;
+    flex: 1 1 auto !important;
+    flex-flow: row wrap !important;
+    align-items: baseline !important;
+    justify-content: flex-start !important;
+    gap: 0.12rem !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #1d2b2f !important;
+    -webkit-text-fill-color: #1d2b2f !important;
+    font-size: 0.78rem !important;
+    font-weight: 760 !important;
+    line-height: 1.25 !important;
+    text-align: left !important;
+    white-space: normal !important;
+    word-break: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .tailor-profile-section) .portal-social-post-card .portal-post-comments .portal-comment-name.portal-author-name-button {
+    all: unset !important;
+    display: inline !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #1d2b2f !important;
+    -webkit-text-fill-color: #1d2b2f !important;
+    cursor: pointer !important;
+    font: inherit !important;
+    font-weight: 950 !important;
+    line-height: inherit !important;
+    text-align: left !important;
+    white-space: normal !important;
+  }
+}
+
+@keyframes jt-comment-rotation-visibility {
+  0% {
+    opacity: 0;
+    transform: translateY(0.08rem);
+  }
+  8%,
+  88% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-0.04rem);
+  }
+}
+
+html body .portal-social-post-card .portal-post-comments .portal-comment-item-rotating {
+  animation: jt-comment-rotation-visibility 5000ms ease-in-out both !important;
+}
+
+/* Final comment avatar crop: shorter height, same width in feed cards. */
+@media (max-width: 768px) {
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar {
+    flex: 0 0 1.14rem !important;
+    width: 1.14rem !important;
+    min-width: 1.14rem !important;
+    max-width: 1.14rem !important;
+    height: 0.86rem !important;
+    min-height: 0.86rem !important;
+    max-height: 0.86rem !important;
+    inline-size: 1.14rem !important;
+    block-size: 0.86rem !important;
+    aspect-ratio: auto !important;
+    border-radius: 999px !important;
+  }
+
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar > img,
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar > .portal-default-profile-icon,
+  html body .portal-home-feed .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar .portal-default-profile-image {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    inline-size: 100% !important;
+    block-size: 100% !important;
+    aspect-ratio: auto !important;
+    object-fit: cover !important;
+    border-radius: 999px !important;
+  }
+}
+
+html body .portal-social-post-card .portal-post-comments .portal-comment-item-static {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* Final screenshot 101: clean borderless rounded comment avatars. */
+html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .tailor-profile-section, .portal-post-detail-modal) .portal-post-comments button.portal-author-open-button.portal-comment-avatar,
+html body .portal-post-detail-modal .portal-post-detail-comments button.portal-author-open-button.portal-comment-avatar {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  overflow: hidden !important;
+}
+
+html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .tailor-profile-section, .portal-post-detail-modal) .portal-post-comments button.portal-author-open-button.portal-comment-avatar > img,
+html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .tailor-profile-section, .portal-post-detail-modal) .portal-post-comments button.portal-author-open-button.portal-comment-avatar > .portal-default-profile-icon,
+html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .tailor-profile-section, .portal-post-detail-modal) .portal-post-comments button.portal-author-open-button.portal-comment-avatar .portal-default-profile-image,
+html body .portal-post-detail-modal .portal-post-detail-comments button.portal-author-open-button.portal-comment-avatar > img,
+html body .portal-post-detail-modal .portal-post-detail-comments button.portal-author-open-button.portal-comment-avatar > .portal-default-profile-icon,
+html body .portal-post-detail-modal .portal-post-detail-comments button.portal-author-open-button.portal-comment-avatar .portal-default-profile-image {
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  border-radius: 999px !important;
+  object-fit: cover !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-comments button.portal-author-open-button.portal-comment-avatar {
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}

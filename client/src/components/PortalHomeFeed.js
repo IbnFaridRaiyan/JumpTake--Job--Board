@@ -4,6 +4,8 @@ import ResumeFilePreview from './ResumeFilePreview';
 import { apiUrl } from '../utils/apiUrl';
 import { createSquareProfileImage } from '../utils/profileImages';
 import reactionButtonIcon from './media/reaction.png';
+import defaultProfileMaleImage from './media/default-profile-male.png';
+import defaultProfileFemaleImage from './media/default-profile-female.png';
 
 const WORK_NEWS_STORAGE_KEY = 'jumptakeWorkNewsPosts';
 const TALENT_STORIES_STORAGE_KEY = 'jumptakeTalentStoriesPosts';
@@ -28,6 +30,7 @@ const MOBILE_FEED_RELEASE_DRIFT_MAX = 54;
 const POST_BODY_PREVIEW_LENGTH = 430;
 const POPUP_CLOSE_ANIMATION_MS = 260;
 const OPTION_POINTER_GUARD_MS = 420;
+const COMMENT_ROTATION_INTERVAL_MS = 5000;
 
 const escapeHtml = (value = '') => (
     String(value)
@@ -541,6 +544,7 @@ const normalizePostForDisplay = (post, index = 0) => {
         authorName: asDisplayText(comment.authorName, 'User'),
         authorType: comment.authorType === 'employer' ? 'employer' : 'candidate',
         authorAvatar: typeof comment.authorAvatar === 'string' ? comment.authorAvatar : '',
+        authorGender: asDisplayText(comment.authorGender || comment.gender || comment.author?.gender || comment.userGender),
         text: asDisplayText(comment.text),
         mentions: Array.isArray(comment.mentions)
             ? comment.mentions.map((mention) => asDisplayText(mention)).filter(Boolean)
@@ -556,6 +560,7 @@ const normalizePostForDisplay = (post, index = 0) => {
         authorName: asDisplayText(post.authorName, 'Unknown author'),
         authorType: post.authorType === 'employer' ? 'employer' : 'candidate',
         authorAvatar: typeof post.authorAvatar === 'string' ? post.authorAvatar : '',
+        authorGender: asDisplayText(post.authorGender || post.gender || post.author?.gender || post.userGender),
         source: asDisplayText(post.source),
         sourceTitle: asDisplayText(post.sourceTitle),
         audience: ['everyone', 'friends', 'only-me'].includes(post.audience) ? post.audience : 'everyone',
@@ -575,7 +580,7 @@ const readFileAsDataUrl = (file) => new Promise((resolve, reject) => {
     reader.readAsDataURL(file);
 });
 
-const createPost = ({ type, body, viewerId, authorName, authorType, authorAvatar, media = null, audience = 'everyone' }) => ({
+const createPost = ({ type, body, viewerId, authorName, authorType, authorAvatar, authorGender = '', media = null, audience = 'everyone' }) => ({
     id: `${type}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     type,
     body,
@@ -583,6 +588,7 @@ const createPost = ({ type, body, viewerId, authorName, authorType, authorAvatar
     authorType,
     authorName,
     authorAvatar: authorAvatar || '',
+    authorGender: authorGender || '',
     audience,
     createdAt: new Date().toISOString(),
     reach: 1,
@@ -800,6 +806,24 @@ const DefaultProfileIcon = () => (
         <path d="M8 8.15a3.55 3.55 0 1 0 0-7.1 3.55 3.55 0 0 0 0 7.1" />
         <path d="M1.65 14.95c.58-3.56 3.08-5.63 6.35-5.63s5.77 2.07 6.35 5.63a.5.5 0 0 1-.49.58H2.14a.5.5 0 0 1-.49-.58" />
     </svg>
+);
+
+const getDefaultUserProfileImage = (gender = '') => {
+    const normalizedGender = String(gender || '').trim().toLowerCase();
+
+    if (['female', 'woman', 'women', 'girl', 'f'].includes(normalizedGender)) {
+        return defaultProfileFemaleImage;
+    }
+
+    return defaultProfileMaleImage;
+};
+
+const DefaultUserProfileImage = ({ gender = '', alt = '' }) => (
+    <img
+        className="portal-default-profile-image"
+        src={getDefaultUserProfileImage(gender)}
+        alt={alt}
+    />
 );
 
 const PortalActionIcon = ({ type }) => {
@@ -1137,6 +1161,7 @@ const PortalHomeFeed = ({
     const [createStoryModalOpen, setCreateStoryModalOpen] = useState(false);
     const [createStoryAudienceOpen, setCreateStoryAudienceOpen] = useState(false);
     const [commentDrafts, setCommentDrafts] = useState({});
+    const [commentRotationTick, setCommentRotationTick] = useState(0);
     const [expandedPostBodies, setExpandedPostBodies] = useState({});
     const [openReactionPostId, setOpenReactionPostId] = useState('');
     const [openCommentPostId, setOpenCommentPostId] = useState('');
@@ -1236,6 +1261,13 @@ const PortalHomeFeed = ({
     const authorAvatar = mode === 'employer'
         ? companyData?.logo
         : profileAvatarOverride || profileData?.profileImage || '';
+    const authorGender = asDisplayText(
+        profileData?.gender
+        || profileData?.sex
+        || currentUser?.gender
+        || currentUser?.sex
+        || currentUser?.profile?.gender
+    );
     const candidateUserId = currentUser?.id || currentUser?._id || currentUser?.userId;
 
     useEffect(() => () => {
@@ -1263,6 +1295,18 @@ const PortalHomeFeed = ({
         setSavedPosts(readStorageArray(getSavedPostsStorageKey(viewerId)));
         setBlockedFeedAuthors(readStorageArray(getBlockedFeedAuthorsStorageKey(viewerId)).map(String));
     }, [viewerId]);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') {
+            return undefined;
+        }
+
+        const rotationTimer = window.setInterval(() => {
+            setCommentRotationTick((currentTick) => currentTick + 1);
+        }, COMMENT_ROTATION_INTERVAL_MS);
+
+        return () => window.clearInterval(rotationTimer);
+    }, []);
 
     useEffect(() => {
         setTailorProfile(readTailorProfileDraft(viewerId));
@@ -2600,6 +2644,7 @@ const PortalHomeFeed = ({
             authorName,
             authorType: mode,
             authorAvatar,
+            authorGender,
             media: composerMedia,
             audience: composerAudience
         });
@@ -3650,6 +3695,7 @@ const PortalHomeFeed = ({
                             authorName,
                             authorType: mode,
                             authorAvatar,
+                            authorGender,
                             text,
                             mentions,
                             createdAt: new Date().toISOString()
@@ -3746,6 +3792,7 @@ const PortalHomeFeed = ({
                                 authorName,
                                 authorType: mode,
                                 authorAvatar,
+                                authorGender,
                                 text: `Shared with @${friend.jumptakeId || friend.name}`,
                                 mentions: [friend.jumptakeId || friend.name],
                                 createdAt: new Date().toISOString()
@@ -4045,6 +4092,7 @@ const PortalHomeFeed = ({
             authorId: asDisplayText(author.authorId || author.id),
             authorName: asDisplayText(author.authorName || author.name, 'Unknown user'),
             authorAvatar: asDisplayText(author.authorAvatar || author.profileImage),
+            authorGender: asDisplayText(author.authorGender || author.gender || author.profile?.gender),
             authorType: author.authorType === 'employer' ? 'employer' : 'candidate',
             jumptakeId: asDisplayText(author.jumptakeId || author.jumpTakeId)
         });
@@ -4107,6 +4155,13 @@ const PortalHomeFeed = ({
         const avatar = isCurrentViewer
             ? getLiveProfileAvatar(authorId, openProfileDetail.authorType, openProfileDetail.authorAvatar)
             : openProfileDetail.authorAvatar || friendMatch?.profileImage || storedTailorProfile.profileImage || '';
+        const gender = asDisplayText(
+            openProfileDetail.authorGender
+            || friendMatch?.gender
+            || friendMatch?.profile?.gender
+            || storedTailorProfile.gender
+            || (isCurrentViewer ? authorGender : '')
+        );
         const bio = asDisplayText(
             storedTailorProfile.bio || (isCurrentViewer ? profileData?.bio : ''),
             'No bio yet.'
@@ -4116,6 +4171,7 @@ const PortalHomeFeed = ({
             id: authorId,
             name: openProfileDetail.authorName || friendMatch?.name || (isCurrentViewer ? authorName : 'Unknown user'),
             avatar,
+            gender,
             type: openProfileDetail.authorType,
             jumpTakeId,
             bio,
@@ -4156,6 +4212,10 @@ const PortalHomeFeed = ({
                 {visiblePosts.map((post, postIndex) => {
                     const postKey = getPostKey(post, postIndex);
                     const postComments = post.comments;
+                    const rotatingComment = postComments.length
+                        ? postComments[commentRotationTick % postComments.length]
+                        : null;
+                    const shouldRotateComments = postComments.length > 1;
                     const selectedReactions = normalizeViewerReactions(getViewerReaction(post, viewerId));
                     const selectedReaction = selectedReactions[selectedReactions.length - 1] || '';
                     const isReactionMenuOpen = openReactionPostId === postKey;
@@ -4205,7 +4265,9 @@ const PortalHomeFeed = ({
                                 {postAvatar ? (
                                     <img src={postAvatar} alt={asDisplayText(post.authorName, 'Post author')} />
                                 ) : (
-                                    <span className="portal-default-profile-icon"><DefaultProfileIcon /></span>
+                                    <span className="portal-default-profile-icon">
+                                        <DefaultUserProfileImage gender={post.authorGender} />
+                                    </span>
                                 )}
                             </button>
                             <div className="portal-post-title-block">
@@ -4433,7 +4495,7 @@ const PortalHomeFeed = ({
                                                         disabled={sharingTargetId === friend.id}
                                                     >
                                                         <span className="portal-share-friend-avatar">
-                                                            {friend.profileImage ? <img src={friend.profileImage} alt="" /> : <DefaultProfileIcon />}
+                                                            {friend.profileImage ? <img src={friend.profileImage} alt="" /> : <DefaultUserProfileImage gender={friend.gender} />}
                                                         </span>
                                                         <span>
                                                             <span className="portal-share-friend-name">{friend.name}</span>
@@ -4451,41 +4513,48 @@ const PortalHomeFeed = ({
                             </div>
                         </div>
                         <div className="portal-post-comments">
-                            {postComments.slice(-3).map((comment, commentIndex) => {
+                            {rotatingComment ? (() => {
+                                const comment = rotatingComment;
                                 const commentAvatar = getLiveProfileAvatar(comment.authorId, 'candidate', comment.authorAvatar);
+                                const commentKey = comment.id || `${postKey}-rotating-comment-${commentRotationTick % postComments.length}`;
 
                                 return (
-                                <div key={comment.id || `comment-${commentIndex}`} className="portal-comment-item">
-                                    <button
-                                        type="button"
-                                        className={`portal-author-open-button portal-comment-avatar ${commentAvatar ? '' : 'has-default-profile-icon'}`}
-                                        onClick={(event) => {
-                                            event.stopPropagation();
-                                            openProfileDetailModal({ ...comment, authorAvatar: commentAvatar });
-                                        }}
-                                        aria-label={`Open ${asDisplayText(comment.authorName, 'User')} profile`}
+                                    <div
+                                        key={commentKey}
+                                        className={`portal-comment-item ${shouldRotateComments ? 'portal-comment-item-rotating' : 'portal-comment-item-static'}`}
                                     >
-                                        {commentAvatar ? (
-                                            <img src={commentAvatar} alt={asDisplayText(comment.authorName, 'Comment author')} />
-                                        ) : (
-                                            <span className="portal-default-profile-icon"><DefaultProfileIcon /></span>
-                                        )}
-                                    </button>
-                                    <p>
                                         <button
                                             type="button"
-                                            className="portal-comment-name portal-author-name-button"
+                                            className={`portal-author-open-button portal-comment-avatar ${commentAvatar ? '' : 'has-default-profile-icon'}`}
                                             onClick={(event) => {
                                                 event.stopPropagation();
                                                 openProfileDetailModal({ ...comment, authorAvatar: commentAvatar });
                                             }}
+                                            aria-label={`Open ${asDisplayText(comment.authorName, 'User')} profile`}
                                         >
-                                            {asDisplayText(comment.authorName, 'User')}
-                                        </button>: {asDisplayText(comment.text)}
-                                    </p>
-                                </div>
+                                            {commentAvatar ? (
+                                                <img src={commentAvatar} alt={asDisplayText(comment.authorName, 'Comment author')} />
+                                            ) : (
+                                                <span className="portal-default-profile-icon">
+                                                    <DefaultUserProfileImage gender={comment.authorGender || comment.gender} />
+                                                </span>
+                                            )}
+                                        </button>
+                                        <p>
+                                            <button
+                                                type="button"
+                                                className="portal-comment-name portal-author-name-button"
+                                                onClick={(event) => {
+                                                    event.stopPropagation();
+                                                    openProfileDetailModal({ ...comment, authorAvatar: commentAvatar });
+                                                }}
+                                            >
+                                                {asDisplayText(comment.authorName, 'User')}
+                                            </button>: {asDisplayText(comment.text)}
+                                        </p>
+                                    </div>
                                 );
-                            })}
+                            })() : null}
                             {(isCommentOpen || closingCommentPostId === postKey) && renderCommentComposerOverlay(key, postKey)}
                         </div>
                     </article>
@@ -5543,7 +5612,7 @@ const PortalHomeFeed = ({
                             <img src={displayAvatar} alt={fullName} />
                         ) : (
                             <span className="portal-default-profile-icon">
-                                <DefaultProfileIcon />
+                                <DefaultUserProfileImage gender={authorGender} />
                             </span>
                         )}
                     </div>
@@ -5761,7 +5830,9 @@ const PortalHomeFeed = ({
                             {postAvatar ? (
                                 <img src={postAvatar} alt={asDisplayText(post.authorName, 'Post author')} />
                             ) : (
-                                <span className="portal-default-profile-icon"><DefaultProfileIcon /></span>
+                                <span className="portal-default-profile-icon">
+                                    <DefaultUserProfileImage gender={post.authorGender} />
+                                </span>
                             )}
                         </button>
                         <div className="portal-post-title-block">
@@ -5853,7 +5924,9 @@ const PortalHomeFeed = ({
                                             {commentAvatar ? (
                                                 <img src={commentAvatar} alt={asDisplayText(comment.authorName, 'Comment author')} />
                                             ) : (
-                                                <span className="portal-default-profile-icon"><DefaultProfileIcon /></span>
+                                                <span className="portal-default-profile-icon">
+                                                    <DefaultUserProfileImage gender={comment.authorGender || comment.gender} />
+                                                </span>
                                             )}
                                         </button>
                                         <p className="portal-comment-line">
@@ -5937,7 +6010,7 @@ const PortalHomeFeed = ({
                                 <img src={profile.avatar} alt={profile.name} />
                             ) : (
                                 <span className="portal-default-profile-icon">
-                                    <DefaultProfileIcon />
+                                    <DefaultUserProfileImage gender={profile.gender} />
                                 </span>
                             )}
                         </div>

@@ -72167,6 +72167,403 @@ html body .portal-home-feed .portal-social-post-card .portal-post-options-button
   pointer-events: auto !important;
 }
 
+html body .portal-home-feed .portal-social-post-card .portal-post-options-wrap {
+  flex: 0 0 1.9rem !important;
+  width: 1.9rem !important;
+  min-width: 1.9rem !important;
+  max-width: 1.9rem !important;
+  height: 1.9rem !important;
+  min-height: 1.9rem !important;
+  max-height: 1.9rem !important;
+  overflow: visible !important;
+}
+
+html body .portal-home-feed .portal-social-post-card .portal-post-options-menu-inline {
+  box-sizing: border-box !important;
+  position: absolute !important;
+  top: calc(100% + 0.34rem) !important;
+  right: 0 !important;
+  left: auto !important;
+  z-index: 90 !important;
+  display: grid !important;
+  gap: 0 !important;
+  width: 8rem !important;
+  min-width: 8rem !important;
+  max-width: 8rem !important;
+  padding: 0.34rem !important;
+  border: 1px solid rgba(23, 32, 51, 0.14) !important;
+  border-radius: 0.58rem !important;
+  background: #f3eee6 !important;
+  background-color: #f3eee6 !important;
+  background-image: none !important;
+  box-shadow: 0 12px 28px rgba(16, 13, 12, 0.2) !important;
+  overflow: hidden !important;
+  animation: jt-inline-popover-enter 160ms cubic-bezier(0.2, 0.9, 0.2, 1) both !important;
+}
+
+html body .portal-home-feed .portal-social-post-card .portal-post-options-menu-inline button,
+html body .portal-home-feed .portal-social-post-card .portal-post-options-menu-inline button:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-height: 2.15rem !important;
+  padding: 0.42rem 0.54rem !important;
+  border: 0 !important;
+  border-radius: 0.42rem !important;
+  background: transparent !important;
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  cursor: pointer !important;
+  font-size: 0.78rem !important;
+  font-weight: 760 !important;
+  line-height: 1.12 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+html body .portal-home-feed .portal-social-post-card .portal-post-options-menu-inline button:first-child {
+  background: rgba(168, 78, 99, 0.16) !important;
+}
+
+html body .portal-home-feed .portal-social-post-card .portal-post-options-menu-inline button:hover,
+html body .portal-home-feed .portal-social-post-card .portal-post-options-menu-inline button:focus-visible {
+  background: rgba(168, 78, 99, 0.24) !important;
+}
+
+html body .portal-home-feed .portal-candidate-job-card .portal-job-card-options {
+  position: absolute !important;
+  top: 0.75rem !important;
+  right: 0.75rem !important;
+  left: auto !important;
+  bottom: auto !important;
+  display: inline-flex !important;
+  width: 1.9rem !important;
+  min-width: 1.9rem !important;
+  max-width: 1.9rem !important;
+  height: 1.9rem !important;
+  min-height: 1.9rem !important;
+  max-height: 1.9rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+/* Feed popup polish: tighter hitboxes, maroon inactive controls, and slower modal motion. */
+:root {
+  --jt-feed-maroon: #7d3044;
+  --jt-feed-maroon-dark: #4f1d2a;
+  --jt-feed-maroon-soft: #b06b7a;
+  --jt-feed-maroon-pale: #fff7f3;
+}
+
+html body :is(
+  .portal-reach-insight-backdrop,
+  .portal-reaction-stats-backdrop,
+  .portal-post-detail-backdrop,
+  .portal-profile-detail-backdrop,
+  .portal-create-story-backdrop,
+  .portal-job-modal-backdrop,
+  .portal-job-review-backdrop,
+  .portal-comment-row-backdrop
+) {
+  animation-duration: 300ms !important;
+}
+
+html body :is(
+  .portal-reach-insight-popover,
+  .portal-reaction-stats-modal,
+  .portal-post-detail-modal,
+  .portal-profile-detail-modal,
+  .portal-create-story-modal,
+  .portal-job-modal,
+  .portal-job-review-modal,
+  .portal-comment-row.is-open
+) {
+  animation-duration: 420ms !important;
+  animation-timing-function: cubic-bezier(0.16, 0.9, 0.2, 1) !important;
+}
+
+html body :is(
+  .portal-post-reactions.portal-reaction-rail.is-popover,
+  .portal-share-picker,
+  .portal-post-options-menu,
+  .portal-post-options-menu-inline,
+  .tailor-social-popover,
+  .emoji-picker-popover
+) {
+  animation-duration: 300ms !important;
+  animation-timing-function: cubic-bezier(0.16, 0.9, 0.2, 1) !important;
+}
+
+html body :is(
+  .portal-reach-insight-backdrop,
+  .portal-reaction-stats-backdrop,
+  .portal-post-detail-backdrop,
+  .portal-profile-detail-backdrop,
+  .portal-create-story-backdrop,
+  .portal-job-modal-backdrop,
+  .portal-job-review-backdrop
+) {
+  pointer-events: auto !important;
+  touch-action: none !important;
+}
+
+html body :is(
+  .portal-reach-insight-close,
+  .portal-reaction-stats-close,
+  .portal-post-detail-close,
+  .portal-profile-detail-close,
+  .portal-job-modal-back-button
+),
+html body :is(
+  .portal-reach-insight-close,
+  .portal-reaction-stats-close,
+  .portal-post-detail-close,
+  .portal-profile-detail-close,
+  .portal-job-modal-back-button
+):is(:hover, :focus, :focus-visible, :active) {
+  box-sizing: border-box !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 1.18rem !important;
+  min-width: 1.18rem !important;
+  max-width: 1.18rem !important;
+  height: 1.18rem !important;
+  min-height: 1.18rem !important;
+  max-height: 1.18rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--jt-feed-maroon-dark) !important;
+  -webkit-text-fill-color: var(--jt-feed-maroon-dark) !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
+
+html body .portal-job-modal .portal-job-modal-back-button,
+html body .portal-job-modal .portal-job-modal-back-button:is(:hover, :focus, :focus-visible, :active) {
+  position: static !important;
+  flex: 0 0 1.65rem !important;
+  width: 1.65rem !important;
+  min-width: 1.65rem !important;
+  max-width: 1.65rem !important;
+  height: 1.65rem !important;
+  min-height: 1.65rem !important;
+  max-height: 1.65rem !important;
+}
+
+html body .portal-job-modal .portal-job-modal-back-button svg {
+  width: 1rem !important;
+  height: 1rem !important;
+}
+
+html body .portal-job-modal .portal-job-modal-title-block {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  padding-right: 0.3rem !important;
+}
+
+html body .portal-job-modal .portal-job-modal-title-block h3,
+html body .portal-job-modal .portal-job-modal-title-block p {
+  max-width: none !important;
+}
+
+html body .portal-reach-button.portal-post-reach,
+html body .portal-feed-reach-wrap .portal-reach-button.portal-post-reach,
+html body .portal-profile-detail-posts .portal-feed-reach-wrap .portal-reach-button.portal-post-reach,
+html[data-theme="light"] body[data-theme="light"] .portal-feed-reach-wrap .portal-reach-button.portal-post-reach {
+  min-height: 1.8rem !important;
+  height: 1.8rem !important;
+  width: auto !important;
+  min-width: 4.2rem !important;
+  max-width: 7.2rem !important;
+  padding: 0 0.72rem !important;
+  border-radius: 999px !important;
+  background: var(--jt-feed-maroon-pale) !important;
+  color: var(--jt-feed-maroon) !important;
+  -webkit-text-fill-color: var(--jt-feed-maroon) !important;
+  box-shadow: 0 0.35rem 1rem rgba(125, 48, 68, 0.08) !important;
+}
+
+html body .portal-profile-detail-posts .portal-feed-reach-wrap .portal-reach-button.portal-post-reach {
+  min-height: 1.7rem !important;
+  height: 1.7rem !important;
+  min-width: 4.15rem !important;
+  max-width: 5.6rem !important;
+  padding: 0 0.64rem !important;
+}
+
+html body .portal-reach-button.portal-post-reach span,
+html body .portal-feed-reach-wrap .portal-reach-button.portal-post-reach *,
+html body .portal-profile-detail-posts .portal-feed-reach-wrap .portal-reach-button.portal-post-reach * {
+  color: var(--jt-feed-maroon) !important;
+  -webkit-text-fill-color: var(--jt-feed-maroon) !important;
+  font-size: 0.68rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+html body .portal-home-feed .portal-post-action-row :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle,
+  .portal-job-like-toggle,
+  .portal-job-bookmark-toggle,
+  .job-post-reaction-button,
+  .job-post-comment-button,
+  .job-post-share-button,
+  .job-post-review-button
+):not(.active):not(.has-reaction),
+html body .portal-home-feed .portal-post-action-row :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle
+):not(.active):not(.has-reaction) :is(svg, path, span, strong),
+html body .portal-candidate-job-action-row :is(button, .job-post-reaction-button):not(.active),
+html body .portal-candidate-job-action-row :is(button, .job-post-reaction-button):not(.active) :is(svg, path, span, strong) {
+  color: var(--jt-feed-maroon-dark) !important;
+  -webkit-text-fill-color: var(--jt-feed-maroon-dark) !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html body .portal-home-feed .portal-post-action-row .portal-reaction-trigger:not(.has-reaction) .portal-light-reaction-smile,
+html body .portal-home-feed .portal-post-action-row .portal-reaction-trigger:not(.has-reaction) .portal-light-reaction-smile path {
+  color: var(--jt-feed-maroon-dark) !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html body .portal-profile-detail-posts .portal-social-post-card {
+  overflow: visible !important;
+}
+
+html body .portal-profile-detail-posts .portal-social-post-card .portal-post-body-wrap.is-expanded .portal-post-see-more-button {
+  display: none !important;
+}
+
+html body .portal-profile-detail-posts .portal-post-action-cluster,
+html body .portal-profile-detail-posts .portal-post-action-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.45rem !important;
+  min-width: 0 !important;
+  overflow: visible !important;
+}
+
+html body .portal-profile-detail-posts .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle),
+html body .portal-profile-detail-posts .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle):is(:hover, :focus, :focus-visible, :active) {
+  width: 1.45rem !important;
+  min-width: 1.45rem !important;
+  max-width: 1.45rem !important;
+  height: 1.45rem !important;
+  min-height: 1.45rem !important;
+  max-height: 1.45rem !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+html body .portal-profile-detail-posts .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle) :is(svg, img) {
+  width: 1.05rem !important;
+  height: 1.05rem !important;
+  max-width: 1.05rem !important;
+  max-height: 1.05rem !important;
+}
+
+html body .portal-profile-detail-posts .portal-reaction-trigger-count,
+html body .portal-profile-detail-posts .portal-comment-trigger-count {
+  min-width: 0 !important;
+  margin-left: -0.2rem !important;
+  color: var(--jt-feed-maroon-dark) !important;
+  -webkit-text-fill-color: var(--jt-feed-maroon-dark) !important;
+  font-size: 0.72rem !important;
+}
+
+html body .portal-home-feed .portal-post-reactions.portal-reaction-rail.is-popover,
+html body .portal-profile-detail-posts .portal-post-reactions.portal-reaction-rail.is-popover {
+  background: #fffaf6 !important;
+  border-color: rgba(125, 48, 68, 0.18) !important;
+  box-shadow: 0 0.8rem 2rem rgba(79, 29, 42, 0.18) !important;
+}
+
+html body .portal-post-reactions.is-popover .portal-reaction-button:not(.active):not(.is-click-animating),
+html body .portal-post-reactions.is-popover .portal-reaction-button:not(.active):not(.is-click-animating) :is(svg, path, span, strong) {
+  color: var(--jt-feed-maroon-dark) !important;
+  -webkit-text-fill-color: var(--jt-feed-maroon-dark) !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+@media (max-width: 768px) {
+  html body .portal-job-modal .portal-job-modal-title-block {
+    max-width: none !important;
+  }
+
+  html body .portal-job-modal .portal-job-modal-title-block h3,
+  html body .portal-job-modal .portal-job-modal-title-block p {
+    max-width: none !important;
+  }
+
+  html body .portal-profile-detail-posts .portal-post-action-row {
+    gap: 0.38rem !important;
+  }
+}
+
+/* Final reach and modal tap guards. These selectors intentionally come last. */
+html body .portal-home-feed button.portal-post-reach,
+html body .portal-home-feed .portal-post-reach.portal-reach-button,
+html body .portal-home-feed .portal-feed-reach-wrap button.portal-post-reach.portal-reach-button,
+html body .portal-home-feed .portal-profile-detail-posts .portal-feed-reach-wrap button.portal-post-reach.portal-reach-button,
+html[data-theme="light"] body[data-theme="light"] .portal-home-feed button.portal-post-reach,
+html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-post-reach.portal-reach-button,
+html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-feed-reach-wrap button.portal-post-reach.portal-reach-button {
+  background: #b06b7a !important;
+  background-color: #b06b7a !important;
+  background-image: none !important;
+  color: #fffaf6 !important;
+  -webkit-text-fill-color: #fffaf6 !important;
+  border-color: rgba(79, 29, 42, 0.12) !important;
+}
+
+html body .portal-home-feed button.portal-post-reach *,
+html body .portal-home-feed .portal-post-reach.portal-reach-button *,
+html[data-theme="light"] body[data-theme="light"] .portal-home-feed button.portal-post-reach *,
+html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-post-reach.portal-reach-button * {
+  color: #fffaf6 !important;
+  -webkit-text-fill-color: #fffaf6 !important;
+}
+
+html body .portal-reaction-stats-bar::before,
+html body .portal-reach-chart-bar {
+  background: linear-gradient(180deg, #b06b7a 0%, #7d3044 100%) !important;
+  background-color: #b06b7a !important;
+}
+
+html body :is(
+  .portal-reach-insight-backdrop,
+  .portal-reaction-stats-backdrop,
+  .portal-post-detail-backdrop,
+  .portal-profile-detail-backdrop,
+  .portal-create-story-backdrop,
+  .portal-job-modal-backdrop,
+  .portal-job-review-backdrop
+) {
+  pointer-events: auto !important;
+  touch-action: none !important;
+  user-select: none !important;
+}
+
 html body .portal-reach-insight-popover,
 html body .portal-reaction-stats-modal {
   position: relative !important;
@@ -72225,4 +72622,716 @@ html body .portal-reaction-stats-header {
   html body .portal-profile-detail-backdrop.is-closing .portal-profile-detail-modal {
     animation-duration: 1ms !important;
   }
+}
+
+/* Absolute final portal overrides for screenshots 63-69. Keep this block last. */
+#root .portal-home-feed .portal-post-options-dismiss-layer {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 80 !important;
+  display: block !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: transparent !important;
+  pointer-events: auto !important;
+  touch-action: none !important;
+}
+
+#root .portal-home-feed .portal-social-post-card .portal-post-options-menu-inline {
+  z-index: 91 !important;
+}
+
+html body #root :is(.portal-reach-insight-backdrop, .portal-reaction-stats-backdrop, .portal-post-detail-backdrop, .portal-profile-detail-backdrop, .portal-job-modal-backdrop, .portal-job-review-backdrop, .portal-create-story-backdrop) {
+  pointer-events: auto !important;
+  touch-action: none !important;
+  background: rgba(16, 13, 12, 0.58) !important;
+  backdrop-filter: blur(10px) saturate(0.86) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(0.86) !important;
+}
+
+html body #root :is(.portal-reach-insight-close, .portal-reaction-stats-close),
+html body #root :is(.portal-reach-insight-close, .portal-reaction-stats-close):is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  position: absolute !important;
+  top: 0.48rem !important;
+  right: 0.56rem !important;
+  z-index: 7 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 1.05rem !important;
+  min-width: 1.05rem !important;
+  max-width: 1.05rem !important;
+  height: 1.05rem !important;
+  min-height: 1.05rem !important;
+  max-height: 1.05rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #4f1d2a !important;
+  -webkit-text-fill-color: #4f1d2a !important;
+  cursor: pointer !important;
+  font-size: 0.95rem !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
+
+html body #root :is(.portal-reach-insight-close, .portal-reaction-stats-close)::before,
+html body #root :is(.portal-reach-insight-close, .portal-reaction-stats-close)::after {
+  display: none !important;
+  content: none !important;
+}
+
+html body #root .portal-home-feed :is(.portal-reach-insight-wrap, .portal-feed-reach-wrap) {
+  display: inline-flex !important;
+  align-items: center !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html body #root .portal-home-feed :is(button.portal-post-reach, .portal-post-reach.portal-reach-button),
+html body #root .portal-home-feed :is(button.portal-post-reach, .portal-post-reach.portal-reach-button):is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body[data-theme="light"] #root .portal-home-feed :is(button.portal-post-reach, .portal-post-reach.portal-reach-button),
+body[data-theme="light"] #root .portal-home-feed :is(button.portal-post-reach, .portal-post-reach.portal-reach-button) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 4.15rem !important;
+  max-width: 6.8rem !important;
+  height: 1.7rem !important;
+  min-height: 1.7rem !important;
+  max-height: 1.7rem !important;
+  padding: 0 0.68rem !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: #b06b7a !important;
+  background-color: #b06b7a !important;
+  background-image: none !important;
+  color: #fffaf6 !important;
+  -webkit-text-fill-color: #fffaf6 !important;
+  box-shadow: 0 0.32rem 0.9rem rgba(79, 29, 42, 0.16) !important;
+  cursor: pointer !important;
+  line-height: 1 !important;
+}
+
+html body #root .portal-home-feed :is(button.portal-post-reach, .portal-post-reach.portal-reach-button) *,
+html[data-theme="light"] body[data-theme="light"] #root .portal-home-feed :is(button.portal-post-reach, .portal-post-reach.portal-reach-button) * {
+  color: #fffaf6 !important;
+  -webkit-text-fill-color: #fffaf6 !important;
+  font-size: 0.66rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+html body #root .portal-profile-detail-posts :is(button.portal-post-reach, .portal-post-reach.portal-reach-button) {
+  min-width: 4.05rem !important;
+  max-width: 5.2rem !important;
+  height: 1.55rem !important;
+  min-height: 1.55rem !important;
+  max-height: 1.55rem !important;
+  padding: 0 0.58rem !important;
+}
+
+html body #root .portal-home-feed .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle, .portal-post-delete-toggle):not(.active):not(.has-reaction),
+html body #root .portal-home-feed .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle, .portal-post-delete-toggle):not(.active):not(.has-reaction) :is(svg, path, span, strong),
+html body #root .portal-candidate-job-action-row :is(button, .job-post-reaction-button, .job-post-comment-button, .job-post-share-button, .job-post-review-button, .portal-job-like-toggle, .portal-job-bookmark-toggle):not(.active),
+html body #root .portal-candidate-job-action-row :is(button, .job-post-reaction-button, .job-post-comment-button, .job-post-share-button, .job-post-review-button, .portal-job-like-toggle, .portal-job-bookmark-toggle):not(.active) :is(svg, path, span, strong) {
+  color: #4f1d2a !important;
+  -webkit-text-fill-color: #4f1d2a !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html body #root .portal-home-feed .portal-post-action-row .portal-reaction-trigger:not(.has-reaction) :is(.portal-light-reaction-smile, .portal-light-reaction-smile path) {
+  color: #4f1d2a !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html body #root .portal-profile-detail-posts .portal-social-post-card .portal-post-body-wrap.is-expanded .portal-post-see-more-button,
+html body #root .portal-profile-detail-posts .portal-social-post-card .portal-post-body-wrap:not(.is-collapsed) .portal-post-see-more-button {
+  display: none !important;
+}
+
+html body #root .portal-profile-detail-posts .portal-post-action-cluster,
+html body #root .portal-profile-detail-posts .portal-post-action-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.48rem !important;
+  overflow: visible !important;
+  min-width: 0 !important;
+}
+
+html body #root .portal-profile-detail-posts .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle),
+html body #root .portal-profile-detail-posts .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle):is(:hover, :focus, :focus-visible, :active) {
+  width: 1.55rem !important;
+  min-width: 1.55rem !important;
+  max-width: 1.55rem !important;
+  height: 1.55rem !important;
+  min-height: 1.55rem !important;
+  max-height: 1.55rem !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+html body #root .portal-profile-detail-posts .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle) :is(svg, img) {
+  width: 1.08rem !important;
+  height: 1.08rem !important;
+  max-width: 1.08rem !important;
+  max-height: 1.08rem !important;
+}
+
+html body #root .portal-post-reactions.portal-reaction-rail.is-popover {
+  background: #fffaf6 !important;
+  background-color: #fffaf6 !important;
+  border-color: rgba(125, 48, 68, 0.18) !important;
+}
+
+html body #root .portal-post-reactions.is-popover .portal-reaction-button:not(.active):not(.is-click-animating),
+html body #root .portal-post-reactions.is-popover .portal-reaction-button:not(.active):not(.is-click-animating) :is(svg, path, span, strong) {
+  color: #4f1d2a !important;
+  -webkit-text-fill-color: #4f1d2a !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html body #root .portal-reach-chart-bar,
+html body #root .portal-reaction-stats-bar::before {
+  background: linear-gradient(180deg, #b06b7a 0%, #7d3044 100%) !important;
+  background-color: #b06b7a !important;
+}
+
+html body #root :is(.portal-reach-insight-popover, .portal-reaction-stats-modal, .portal-post-detail-modal, .portal-profile-detail-modal, .portal-create-story-modal, .portal-job-modal, .portal-job-review-modal, .portal-comment-row.is-open) {
+  animation-duration: 460ms !important;
+  animation-timing-function: cubic-bezier(0.16, 0.9, 0.18, 1) !important;
+}
+
+html body #root :is(.portal-post-reactions.portal-reaction-rail.is-popover, .portal-share-picker, .portal-post-options-menu, .portal-post-options-menu-inline) {
+  animation-duration: 340ms !important;
+  animation-timing-function: cubic-bezier(0.16, 0.9, 0.18, 1) !important;
+}
+
+/* Portaled profile feed parity: profile popup posts must match the main feed cards. */
+html body .portal-reach-insight-wrap,
+html body .portal-feed-reach-wrap,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-reach-insight-wrap,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-feed-reach-wrap {
+  display: inline-flex !important;
+  align-items: center !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+html body button.portal-post-reach.portal-reach-button,
+html body .portal-post-reach.portal-reach-button,
+html body .portal-feed-reach-wrap button.portal-post-reach.portal-reach-button,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-feed-reach-wrap button.portal-post-reach.portal-reach-button,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-reach.portal-reach-button:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 4.15rem !important;
+  max-width: 6.8rem !important;
+  height: 1.7rem !important;
+  min-height: 1.7rem !important;
+  max-height: 1.7rem !important;
+  padding: 0 0.68rem !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: #b06b7a !important;
+  background-color: #b06b7a !important;
+  background-image: none !important;
+  color: #fffaf6 !important;
+  -webkit-text-fill-color: #fffaf6 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  cursor: pointer !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+html body button.portal-post-reach.portal-reach-button *,
+html body .portal-post-reach.portal-reach-button *,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button *,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-reach.portal-reach-button * {
+  color: #fffaf6 !important;
+  -webkit-text-fill-color: #fffaf6 !important;
+  font-size: 0.66rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  white-space: nowrap !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-body-wrap.is-expanded .portal-post-see-more-button,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-body-wrap.is-collapsed .portal-post-see-more-button,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-see-more-button {
+  display: inline-flex !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-reactions.portal-reaction-rail.is-popover {
+  background: #fffaf6 !important;
+  background-color: #fffaf6 !important;
+  border-color: rgba(125, 48, 68, 0.18) !important;
+  box-shadow: 0 0.8rem 2rem rgba(79, 29, 42, 0.18) !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-reactions.is-popover .portal-reaction-button:not(.active):not(.is-click-animating),
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-reactions.is-popover .portal-reaction-button:not(.active):not(.is-click-animating) :is(svg, path, span, strong) {
+  color: #4f1d2a !important;
+  -webkit-text-fill-color: #4f1d2a !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+/* True final portaled popup close hitboxes: only the visible icon is clickable. */
+html body .portal-reach-insight-popover > button.portal-reach-insight-close,
+html body .portal-reaction-stats-modal > button.portal-reaction-stats-close,
+html body .portal-reach-insight-popover > button.portal-reach-insight-close:is(:hover, :focus, :focus-visible, :active),
+html body .portal-reaction-stats-modal > button.portal-reaction-stats-close:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  box-sizing: border-box !important;
+  position: absolute !important;
+  top: 0.48rem !important;
+  right: 0.56rem !important;
+  left: auto !important;
+  bottom: auto !important;
+  z-index: 8 !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 1.05rem !important;
+  width: 1.05rem !important;
+  min-width: 1.05rem !important;
+  max-width: 1.05rem !important;
+  height: 1.05rem !important;
+  min-height: 1.05rem !important;
+  max-height: 1.05rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  color: #4f1d2a !important;
+  -webkit-text-fill-color: #4f1d2a !important;
+  cursor: pointer !important;
+  font-size: 0.95rem !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
+
+html body .portal-reach-insight-popover > button.portal-reach-insight-close::before,
+html body .portal-reach-insight-popover > button.portal-reach-insight-close::after,
+html body .portal-reaction-stats-modal > button.portal-reaction-stats-close::before,
+html body .portal-reaction-stats-modal > button.portal-reaction-stats-close::after {
+  display: none !important;
+  content: none !important;
+  pointer-events: none !important;
+}
+
+/* Stats popups use the same top-right close control as the normal post preview popup. */
+html body .portal-reach-insight-popover > button.portal-reach-insight-close.portal-post-detail-close,
+html body .portal-reaction-stats-modal > button.portal-reaction-stats-close.portal-post-detail-close,
+html body .portal-reach-insight-popover > button.portal-reach-insight-close.portal-post-detail-close:is(:hover, :focus, :focus-visible, :active),
+html body .portal-reaction-stats-modal > button.portal-reaction-stats-close.portal-post-detail-close:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  box-sizing: border-box !important;
+  position: absolute !important;
+  top: 0.62rem !important;
+  right: 0.72rem !important;
+  left: auto !important;
+  bottom: auto !important;
+  z-index: 9 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 1.45rem !important;
+  min-width: 1.45rem !important;
+  max-width: 1.45rem !important;
+  height: 1.45rem !important;
+  min-height: 1.45rem !important;
+  max-height: 1.45rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  cursor: pointer !important;
+  font-size: 0.98rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
+
+html body .portal-reach-insight-popover > button.portal-reach-insight-close.portal-post-detail-close::before,
+html body .portal-reach-insight-popover > button.portal-reach-insight-close.portal-post-detail-close::after,
+html body .portal-reaction-stats-modal > button.portal-reaction-stats-close.portal-post-detail-close::before,
+html body .portal-reaction-stats-modal > button.portal-reaction-stats-close.portal-post-detail-close::after {
+  display: none !important;
+  content: none !important;
+}
+
+html body .portal-reach-insight-header,
+html body .portal-reaction-stats-header {
+  padding-right: 2.25rem !important;
+}
+
+/* Final screenshot 76/77 fixes: profile reach pill matches feed; stats close is cross-only. */
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-reach-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0.16rem 0 0.46rem !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-reach-insight-wrap,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-feed-reach-wrap {
+  display: inline-flex !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 3.75rem !important;
+  max-width: 4.55rem !important;
+  height: 1.55rem !important;
+  min-height: 1.55rem !important;
+  max-height: 1.55rem !important;
+  padding: 0 0.58rem !important;
+  border: 0 !important;
+  border-radius: 0.5rem !important;
+  background: #b06b7a !important;
+  background-color: #b06b7a !important;
+  background-image: none !important;
+  color: #fffaf6 !important;
+  -webkit-text-fill-color: #fffaf6 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+  cursor: pointer !important;
+  line-height: 1 !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button *,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button span {
+  color: #fffaf6 !important;
+  -webkit-text-fill-color: #fffaf6 !important;
+  font-size: 0.66rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+html body .portal-reach-insight-popover > .portal-stats-close-cross,
+html body .portal-reaction-stats-modal > .portal-stats-close-cross,
+html body .portal-reach-insight-popover > .portal-stats-close-cross:is(:hover, :focus, :focus-visible, :active),
+html body .portal-reaction-stats-modal > .portal-stats-close-cross:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  position: absolute !important;
+  top: 0.42rem !important;
+  right: 0.48rem !important;
+  left: auto !important;
+  bottom: auto !important;
+  z-index: 10 !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 0.95rem !important;
+  min-width: 0.95rem !important;
+  max-width: 0.95rem !important;
+  height: 0.95rem !important;
+  min-height: 0.95rem !important;
+  max-height: 0.95rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  cursor: pointer !important;
+  font-size: 0.9rem !important;
+  font-weight: 950 !important;
+  line-height: 0.95rem !important;
+  text-align: center !important;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
+
+html body .portal-reach-insight-popover > .portal-stats-close-cross::before,
+html body .portal-reach-insight-popover > .portal-stats-close-cross::after,
+html body .portal-reaction-stats-modal > .portal-stats-close-cross::before,
+html body .portal-reaction-stats-modal > .portal-stats-close-cross::after {
+  display: none !important;
+  content: none !important;
+  pointer-events: none !important;
+}
+
+html body .portal-reach-insight-header,
+html body .portal-reaction-stats-header {
+  padding-right: 2rem !important;
+}
+
+/* Final screenshot 78/79 spacing polish. */
+html body .portal-post-detail-modal .portal-post-detail-header {
+  gap: 0.82rem !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-header .portal-author-open-button.portal-post-avatar {
+  margin-right: 0.08rem !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-header {
+  align-items: flex-start !important;
+  gap: 0.64rem !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-author-open-button.portal-post-avatar,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-author-open-button.portal-post-avatar:not(.has-default-profile-icon) {
+  flex: 0 0 2.12rem !important;
+  width: 2.12rem !important;
+  min-width: 2.12rem !important;
+  max-width: 2.12rem !important;
+  height: 2.12rem !important;
+  min-height: 2.12rem !important;
+  max-height: 2.12rem !important;
+  border-radius: 0.52rem !important;
+  overflow: hidden !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-author-open-button.portal-post-avatar img,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-author-open-button.portal-post-avatar .portal-default-profile-icon {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: cover !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button:is(:hover, :focus, :focus-visible, :active) {
+  min-width: 3.75rem !important;
+  max-width: 4.55rem !important;
+  height: 1.36rem !important;
+  min-height: 1.36rem !important;
+  max-height: 1.36rem !important;
+  padding: 0 0.58rem !important;
+  border-radius: 0.48rem !important;
+}
+
+/* Final screenshot 80: profile posts use the same in-body See more behavior as feed posts. */
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-body-wrap {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  margin: 0.35rem 0 0 !important;
+  padding: 0 !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-body-wrap .portal-post-body {
+  margin: 0 !important;
+  max-height: 60rem !important;
+  overflow: hidden !important;
+  white-space: pre-line !important;
+  transition: max-height 320ms cubic-bezier(0.16, 1, 0.3, 1), opacity 240ms ease !important;
+  will-change: max-height !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-body-wrap.is-collapsed .portal-post-body {
+  max-height: 8.7rem !important;
+  -webkit-mask-image: linear-gradient(180deg, #000 72%, transparent 100%) !important;
+  mask-image: linear-gradient(180deg, #000 72%, transparent 100%) !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-body-wrap.is-expanded .portal-post-body {
+  max-height: 60rem !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-see-more-button,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-see-more-button:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0.18rem 0 !important;
+  margin: 0.22rem 0 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #d17842 !important;
+  -webkit-text-fill-color: #d17842 !important;
+  cursor: pointer !important;
+  font: inherit !important;
+  font-size: 0.78rem !important;
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
+  text-align: left !important;
+  text-transform: none !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-see-more-button::before,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-see-more-button::after {
+  display: none !important;
+  content: none !important;
+}
+
+@media (max-width: 768px) {
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-body-wrap.is-collapsed .portal-post-body {
+    max-height: 9.2rem !important;
+  }
+}
+
+/* Final screenshot 81 alignment pass. */
+html body .portal-post-detail-modal .portal-post-detail-header {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) !important;
+  align-items: center !important;
+  column-gap: 0.72rem !important;
+  padding-right: 2rem !important;
+  margin-left: 0 !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-header .portal-author-open-button.portal-post-avatar {
+  grid-column: 1 !important;
+  margin: 0 !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-header .portal-post-title-block {
+  grid-column: 2 !important;
+  align-self: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-header {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+  align-items: start !important;
+  column-gap: 0.5rem !important;
+  row-gap: 0 !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-author-open-button.portal-post-avatar,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-author-open-button.portal-post-avatar:not(.has-default-profile-icon) {
+  flex: 0 0 2.35rem !important;
+  width: 2.35rem !important;
+  min-width: 2.35rem !important;
+  max-width: 2.35rem !important;
+  height: 2.35rem !important;
+  min-height: 2.35rem !important;
+  max-height: 2.35rem !important;
+  border-radius: 0.56rem !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-title-block {
+  align-self: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button:is(:hover, :focus, :focus-visible, :active) {
+  min-width: 3.35rem !important;
+  max-width: 3.9rem !important;
+  height: 1.16rem !important;
+  min-height: 1.16rem !important;
+  max-height: 1.16rem !important;
+  padding: 0 0.46rem !important;
+  border-radius: 0.42rem !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button *,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button span {
+  font-size: 0.58rem !important;
+  line-height: 1 !important;
 }

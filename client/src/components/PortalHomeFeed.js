@@ -8,6 +8,7 @@ import reactionButtonIcon from './media/reaction.png';
 const WORK_NEWS_STORAGE_KEY = 'jumptakeWorkNewsPosts';
 const TALENT_STORIES_STORAGE_KEY = 'jumptakeTalentStoriesPosts';
 const JOB_REACH_STORAGE_KEY = 'jumptakeJobReachMap';
+const JOB_REACH_VIEWED_STORAGE_PREFIX = 'jumptakeJobReachViewed:';
 const HOME_JOB_LIKE_STORAGE_KEY = 'jumptakeHomeJobLikeMap';
 const HOME_JOB_REVIEW_STORAGE_KEY = 'jumptakeHomeJobReviewMap';
 const TAILOR_PROFILE_STORAGE_PREFIX = 'jumptakeTailorProfile:';
@@ -157,6 +158,8 @@ const writeStorageArray = (key, value) => {
 
     localStorage.setItem(key, JSON.stringify(Array.isArray(value) ? value : []));
 };
+
+const getJobReachViewedStorageKey = (viewerId = 'guest') => `${JOB_REACH_VIEWED_STORAGE_PREFIX}${viewerId || 'guest'}`;
 
 const getFeedShareUrl = ({ kind = 'post', id = '', tab = 'work-news', portal = 'candidate' }) => {
     if (typeof window === 'undefined') {
@@ -1832,10 +1835,6 @@ const PortalHomeFeed = ({
         event.stopPropagation();
     };
 
-    const shouldUsePointerOpen = (event) => (
-        event?.pointerType && event.pointerType !== 'mouse'
-    );
-
     const closeReachInsight = () => {
         if (!reachInsightPost || closingReachInsight) {
             return;
@@ -1925,6 +1924,24 @@ const PortalHomeFeed = ({
         event.stopPropagation();
     };
 
+    const absorbBackdropPress = (event) => {
+        if (event.target !== event.currentTarget) {
+            return;
+        }
+
+        event.stopPropagation();
+    };
+
+    const closeFromBackdropClick = (event, closeAction) => {
+        if (event.target !== event.currentTarget) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+        closeAction();
+    };
+
     const toggleReachInsight = (event, postKey, post) => {
         event.stopPropagation();
         setOpenReachInsightPostId((openId) => {
@@ -2004,11 +2021,6 @@ const PortalHomeFeed = ({
 
     const openPostOptionsFromPointer = (event, postKey) => {
         event.stopPropagation();
-
-        if (!shouldUsePointerOpen(event)) {
-            return;
-        }
-
         event.preventDefault();
         optionPointerOpenRef.current = {
             id: postKey,
@@ -2045,11 +2057,6 @@ const PortalHomeFeed = ({
 
     const openJobOptionsFromPointer = (event, jobKey) => {
         event.stopPropagation();
-
-        if (!shouldUsePointerOpen(event)) {
-            return;
-        }
-
         event.preventDefault();
         optionPointerOpenRef.current = {
             id: jobKey,
@@ -2086,7 +2093,9 @@ const PortalHomeFeed = ({
             <div
                 className={`portal-reach-insight-backdrop ${closingReachInsight ? 'is-closing' : ''}`}
                 role="presentation"
-                onClick={closeReachInsight}
+                onPointerDownCapture={absorbBackdropPress}
+                onTouchStartCapture={absorbBackdropPress}
+                onClickCapture={(event) => closeFromBackdropClick(event, closeReachInsight)}
                 onTouchMove={stopOverlayTouchMove}
             >
                 <div
@@ -2096,17 +2105,23 @@ const PortalHomeFeed = ({
                     aria-label="Last 7 days reach"
                     onClick={(event) => event.stopPropagation()}
                 >
-                    <button
-                        type="button"
-                        className="portal-reach-insight-close"
+                    <span
+                        role="button"
+                        tabIndex={0}
+                        className="portal-reach-insight-close portal-stats-close-cross"
                         onPointerDown={stopPopupButtonPress}
                         onTouchStart={stopPopupButtonPress}
                         onClick={closeReachInsightFromButton}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                                closeReachInsightFromButton(event);
+                            }
+                        }}
                         aria-label="Close reach graph"
                         title="Close"
                     >
                         &times;
-                    </button>
+                    </span>
                     <div className="portal-reach-insight-header">
                         <strong>{formatCompactCount(totalReach)} reach</strong>
                         <span>Last 7 days</span>
@@ -2163,7 +2178,9 @@ const PortalHomeFeed = ({
             <div
                 className={`portal-reaction-stats-backdrop ${closingReactionStats ? 'is-closing' : ''}`}
                 role="presentation"
-                onClick={closeReactionStats}
+                onPointerDownCapture={absorbBackdropPress}
+                onTouchStartCapture={absorbBackdropPress}
+                onClickCapture={(event) => closeFromBackdropClick(event, closeReactionStats)}
                 onTouchMove={stopOverlayTouchMove}
             >
                 <div
@@ -2173,17 +2190,23 @@ const PortalHomeFeed = ({
                     aria-label="Post reaction stats"
                     onClick={(event) => event.stopPropagation()}
                 >
-                    <button
-                        type="button"
-                        className="portal-reaction-stats-close"
+                    <span
+                        role="button"
+                        tabIndex={0}
+                        className="portal-reaction-stats-close portal-stats-close-cross"
                         onPointerDown={stopPopupButtonPress}
                         onTouchStart={stopPopupButtonPress}
                         onClick={closeReactionStatsFromButton}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                                closeReactionStatsFromButton(event);
+                            }
+                        }}
                         aria-label="Close reaction stats"
                         title="Close"
                     >
                         &times;
-                    </button>
+                    </span>
                     <div className="portal-reaction-stats-header">
                         <strong>{formatCompactCount(total)} reactions</strong>
                         <span>Reaction stats</span>
@@ -2227,26 +2250,36 @@ const PortalHomeFeed = ({
             action();
             closePostOptionsMenu();
         };
-        const menuMarkup = (
-            <div
-                className="portal-post-options-menu portal-post-options-menu-floating"
-                role="menu"
-                style={{
-                    top: `${postOptionsAnchor.top}px`,
-                    left: `${postOptionsAnchor.left}px`
-                }}
-                onClick={(event) => event.stopPropagation()}
-            >
-                <button type="button" onClick={(event) => runPostOption(event, () => handleSavePost(storageKey, post))} role="menuitem">Save post</button>
-                <button type="button" onClick={(event) => runPostOption(event, () => handleReportPost(post))} role="menuitem">Report</button>
-                <button type="button" onClick={(event) => runPostOption(event, () => handleHidePost(storageKey, post))} role="menuitem">Hide post</button>
-                <button type="button" onClick={(event) => runPostOption(event, () => handleBlockPostOwner(post))} role="menuitem">Block user</button>
-            </div>
+        return (
+            <>
+                <span
+                    className="portal-post-options-dismiss-layer"
+                    aria-hidden="true"
+                    onPointerDownCapture={(event) => {
+                        event.stopPropagation();
+                    }}
+                    onTouchStartCapture={(event) => {
+                        event.stopPropagation();
+                    }}
+                    onClickCapture={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        closePostOptionsMenu();
+                    }}
+                />
+                <span
+                    className="portal-post-options-menu portal-post-options-menu-inline"
+                    role="menu"
+                    onPointerDown={(event) => event.stopPropagation()}
+                    onClick={(event) => event.stopPropagation()}
+                >
+                    <button type="button" onClick={(event) => runPostOption(event, () => handleSavePost(storageKey, post))} role="menuitem">Save post</button>
+                    <button type="button" onClick={(event) => runPostOption(event, () => handleReportPost(post))} role="menuitem">Report</button>
+                    <button type="button" onClick={(event) => runPostOption(event, () => handleHidePost(storageKey, post))} role="menuitem">Hide post</button>
+                    <button type="button" onClick={(event) => runPostOption(event, () => handleBlockPostOwner(post))} role="menuitem">Block user</button>
+                </span>
+            </>
         );
-
-        return typeof document !== 'undefined'
-            ? createPortal(menuMarkup, document.body)
-            : menuMarkup;
     };
 
     const renderCommentComposerOverlay = (storageKey, postKey) => {
@@ -2255,13 +2288,9 @@ const PortalHomeFeed = ({
             <div
                 className={`portal-comment-row-backdrop ${isClosing ? 'is-closing' : ''}`}
                 role="presentation"
-                onPointerDown={stopPopupButtonPress}
-                onMouseDown={stopPopupButtonPress}
-                onTouchStart={stopPopupButtonPress}
-                onClick={(event) => {
-                    event.stopPropagation();
-                    closeCommentComposer(postKey);
-                }}
+                onPointerDownCapture={absorbBackdropPress}
+                onTouchStartCapture={absorbBackdropPress}
+                onClickCapture={(event) => closeFromBackdropClick(event, () => closeCommentComposer(postKey))}
             >
                 <div
                     className="portal-comment-row is-open"
@@ -2599,8 +2628,21 @@ const PortalHomeFeed = ({
         }
     };
 
-    const recordJobReach = (job) => {
+    const recordJobReach = useCallback((job) => {
         const key = getJobKey(job);
+        if (!key) {
+            return;
+        }
+
+        const viewedStorageKey = getJobReachViewedStorageKey(viewerId);
+        const viewedJobKeys = new Set(readStorageArray(viewedStorageKey).map(String));
+        if (viewedJobKeys.has(key)) {
+            return;
+        }
+
+        viewedJobKeys.add(key);
+        writeStorageArray(viewedStorageKey, [...viewedJobKeys]);
+
         setJobReachMap((previousMap) => {
             const nextMap = {
                 ...previousMap,
@@ -2613,7 +2655,18 @@ const PortalHomeFeed = ({
 
             return nextMap;
         });
-    };
+    }, [viewerId]);
+
+    useEffect(() => {
+        if (activeTab !== 'job-posts') {
+            return;
+        }
+
+        const pageStart = (Math.max(1, jobPage) - 1) * HOME_JOB_PAGE_SIZE;
+        filteredHomeJobs
+            .slice(pageStart, pageStart + HOME_JOB_PAGE_SIZE)
+            .forEach(recordJobReach);
+    }, [activeTab, filteredHomeJobs, jobPage, recordJobReach]);
 
     const openJobModal = (job, modalMode = mode) => {
         if (jobModalCloseTimerRef.current) {
@@ -3942,6 +3995,7 @@ const PortalHomeFeed = ({
         setPostOptionsAnchor(null);
         closeReachInsight();
         setShareStatus('');
+        setExpandedPostBodies({});
     };
 
     const closePostDetailModal = () => {
@@ -5180,7 +5234,13 @@ const PortalHomeFeed = ({
         const selectedJobRequirements = Array.isArray(selectedJob.requirements) ? selectedJob.requirements : [];
         const modalSkills = selectedJobSkills.length ? selectedJobSkills : selectedJobRequirements;
         const modalMarkup = (
-            <div className={`portal-job-modal-backdrop ${closingJobModal ? 'is-closing' : ''}`} role="presentation" onClick={closeJobModal}>
+            <div
+                className={`portal-job-modal-backdrop ${closingJobModal ? 'is-closing' : ''}`}
+                role="presentation"
+                onPointerDownCapture={absorbBackdropPress}
+                onTouchStartCapture={absorbBackdropPress}
+                onClickCapture={(event) => closeFromBackdropClick(event, closeJobModal)}
+            >
                 <article className="portal-job-modal" role="dialog" aria-modal="true" aria-label={`${selectedJob.title} job details`} onClick={(event) => event.stopPropagation()}>
                     <div className="portal-candidate-job-header portal-job-modal-header">
                         <div className={`portal-job-company-avatar ${selectedJob.companyLogo ? '' : 'has-default-profile-icon'}`}>
@@ -5296,7 +5356,13 @@ const PortalHomeFeed = ({
 
         const key = getJobKey(reviewingJob);
         const modalMarkup = (
-            <div className={`portal-job-review-backdrop ${closingJobReviewModal ? 'is-closing' : ''}`} role="presentation" onClick={closeJobReviewModal}>
+            <div
+                className={`portal-job-review-backdrop ${closingJobReviewModal ? 'is-closing' : ''}`}
+                role="presentation"
+                onPointerDownCapture={absorbBackdropPress}
+                onTouchStartCapture={absorbBackdropPress}
+                onClickCapture={(event) => closeFromBackdropClick(event, closeJobReviewModal)}
+            >
                 <article
                     className="portal-job-review-modal"
                     role="dialog"
@@ -5603,7 +5669,13 @@ const PortalHomeFeed = ({
         }
 
         const modalMarkup = (
-            <div className={`portal-create-story-backdrop ${closingCreateStoryModal ? 'is-closing' : ''}`} role="presentation" onClick={closeCreateStoryModal}>
+            <div
+                className={`portal-create-story-backdrop ${closingCreateStoryModal ? 'is-closing' : ''}`}
+                role="presentation"
+                onPointerDownCapture={absorbBackdropPress}
+                onTouchStartCapture={absorbBackdropPress}
+                onClickCapture={(event) => closeFromBackdropClick(event, closeCreateStoryModal)}
+            >
                 <article
                     className="portal-create-story-modal"
                     role="dialog"
@@ -5649,7 +5721,13 @@ const PortalHomeFeed = ({
         const postTypeLabel = post.authorType === 'employer' ? 'Company update' : 'Talent story';
         const detailPostKey = openPostDetail?.postKey || getPostKey(post);
         const modalMarkup = (
-            <div className={`portal-post-detail-backdrop ${closingPostDetailModal ? 'is-closing' : ''}`} role="presentation" onClick={closePostDetailModal}>
+            <div
+                className={`portal-post-detail-backdrop ${closingPostDetailModal ? 'is-closing' : ''}`}
+                role="presentation"
+                onPointerDownCapture={absorbBackdropPress}
+                onTouchStartCapture={absorbBackdropPress}
+                onClickCapture={(event) => closeFromBackdropClick(event, closePostDetailModal)}
+            >
                 <article
                     className="portal-post-detail-modal"
                     role="dialog"
@@ -5823,7 +5901,13 @@ const PortalHomeFeed = ({
             ? { '--tailor-cover-image': `url("${profile.coverImage}")` }
             : undefined;
         const modalMarkup = (
-            <div className={`portal-profile-detail-backdrop ${closingProfileDetailModal ? 'is-closing' : ''}`} role="presentation" onClick={closeProfileDetailModal}>
+            <div
+                className={`portal-profile-detail-backdrop ${closingProfileDetailModal ? 'is-closing' : ''}`}
+                role="presentation"
+                onPointerDownCapture={absorbBackdropPress}
+                onTouchStartCapture={absorbBackdropPress}
+                onClickCapture={(event) => closeFromBackdropClick(event, closeProfileDetailModal)}
+            >
                 <article
                     className="portal-profile-detail-modal"
                     role="dialog"

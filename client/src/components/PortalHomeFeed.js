@@ -4152,7 +4152,7 @@ const PortalHomeFeed = ({
         }
 
         return (
-            <div className="portal-social-list">
+            <div className={`portal-social-list ${options.profilePreview ? 'portal-profile-preview-post-list' : ''}`.trim()}>
                 {visiblePosts.map((post, postIndex) => {
                     const postKey = getPostKey(post, postIndex);
                     const postComments = post.comments;
@@ -4175,7 +4175,7 @@ const PortalHomeFeed = ({
                     return (
                     <article
                         key={postKey}
-                        className="portal-social-post-card"
+                        className={`portal-social-post-card ${options.profilePreview ? 'portal-profile-preview-post-card' : ''}`.trim()}
                         data-post-id={postKey}
                         tabIndex={0}
                         onClick={(event) => {
@@ -5751,7 +5751,7 @@ const PortalHomeFeed = ({
                     >
                         &times;
                     </span>
-                    <div className="portal-post-detail-header">
+                    <div className="portal-post-detail-header portal-opened-post-detail-header">
                         <button
                             type="button"
                             className={`portal-author-open-button portal-post-avatar ${postAvatar ? '' : 'has-default-profile-icon'}`}
@@ -5997,8 +5997,8 @@ const PortalHomeFeed = ({
                     </div>
                     {(profile.workPosts.length || profile.talentPosts.length) ? (
                         <div className="portal-profile-detail-posts" aria-label={`${profile.name} posts`}>
-                            {profile.workPosts.length ? renderPostList(profile.workPosts, WORK_NEWS_STORAGE_KEY, 'work') : null}
-                            {profile.talentPosts.length ? renderPostList(profile.talentPosts, TALENT_STORIES_STORAGE_KEY, 'talent') : null}
+                            {profile.workPosts.length ? renderPostList(profile.workPosts, WORK_NEWS_STORAGE_KEY, 'work', { profilePreview: true }) : null}
+                            {profile.talentPosts.length ? renderPostList(profile.talentPosts, TALENT_STORIES_STORAGE_KEY, 'talent', { profilePreview: true }) : null}
                         </div>
                     ) : null}
                 </article>

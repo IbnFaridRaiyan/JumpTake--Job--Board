@@ -75331,3 +75331,159 @@ html body .resume-playground-editor-mobile-overlay .resume-playground-editor-doc
   min-width: 0 !important;
   box-sizing: border-box !important;
 }
+
+/* Final user-facing lock: undo/redo are maroon at rest, not only on hover. */
+html body button.resume-playground-tool-button.resume-playground-icon-button.resume-playground-icon-undo,
+html body button.resume-playground-tool-button.resume-playground-icon-button.resume-playground-icon-redo,
+html body button.resume-playground-tool-button.resume-playground-icon-button.resume-playground-undo-button,
+html body button.resume-playground-tool-button.resume-playground-icon-button.resume-playground-redo-button,
+html body .resume-playground-toolbar button.resume-playground-tool-button.resume-playground-icon-button[aria-label="Undo"],
+html body .resume-playground-toolbar button.resume-playground-tool-button.resume-playground-icon-button[aria-label="Redo"],
+html body button.resume-playground-tool-button.resume-playground-icon-button.resume-playground-icon-undo:is(:hover, :focus, :focus-visible, :active),
+html body button.resume-playground-tool-button.resume-playground-icon-button.resume-playground-icon-redo:is(:hover, :focus, :focus-visible, :active),
+html body button.resume-playground-tool-button.resume-playground-icon-button.resume-playground-undo-button:is(:hover, :focus, :focus-visible, :active),
+html body button.resume-playground-tool-button.resume-playground-icon-button.resume-playground-redo-button:is(:hover, :focus, :focus-visible, :active),
+html body .resume-playground-toolbar button.resume-playground-tool-button.resume-playground-icon-button[aria-label="Undo"]:is(:hover, :focus, :focus-visible, :active),
+html body .resume-playground-toolbar button.resume-playground-tool-button.resume-playground-icon-button[aria-label="Redo"]:is(:hover, :focus, :focus-visible, :active) {
+  background: #b06b7a !important;
+  background-color: #b06b7a !important;
+  background-image: none !important;
+  border-color: rgba(79, 29, 42, 0.2) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: inset 0 0 0 999px #b06b7a !important;
+}
+
+html body button.resume-playground-tool-button.resume-playground-icon-button.resume-playground-icon-undo > span,
+html body button.resume-playground-tool-button.resume-playground-icon-button.resume-playground-icon-redo > span,
+html body button.resume-playground-tool-button.resume-playground-icon-button.resume-playground-undo-button > span,
+html body button.resume-playground-tool-button.resume-playground-icon-button.resume-playground-redo-button > span,
+html body .resume-playground-toolbar button.resume-playground-tool-button.resume-playground-icon-button[aria-label="Undo"] > span,
+html body .resume-playground-toolbar button.resume-playground-tool-button.resume-playground-icon-button[aria-label="Redo"] > span {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 950 !important;
+  font-variation-settings: "wght" 950 !important;
+}
+
+/* Opened post preview: compact square avatar with real space before the title. */
+html body .portal-post-detail-modal .portal-post-detail-header.portal-opened-post-detail-header {
+  grid-template-columns: 2.55rem minmax(0, 1fr) !important;
+  column-gap: 1.18rem !important;
+  align-items: center !important;
+  padding-right: 1.55rem !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-header.portal-opened-post-detail-header .portal-author-open-button.portal-post-avatar,
+html body .portal-post-detail-modal .portal-post-detail-header.portal-opened-post-detail-header .portal-author-open-button.portal-post-avatar:not(.has-default-profile-icon),
+html body .portal-post-detail-modal .portal-post-detail-header.portal-opened-post-detail-header .portal-author-open-button.portal-post-avatar.has-default-profile-icon {
+  width: 2.55rem !important;
+  min-width: 2.55rem !important;
+  max-width: 2.55rem !important;
+  height: 2.55rem !important;
+  min-height: 2.55rem !important;
+  max-height: 2.55rem !important;
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 0.45rem !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}
+
+html body .portal-post-detail-modal .portal-post-detail-header.portal-opened-post-detail-header .portal-author-open-button.portal-post-avatar > img,
+html body .portal-post-detail-modal .portal-post-detail-header.portal-opened-post-detail-header .portal-author-open-button.portal-post-avatar > .portal-default-profile-icon,
+html body .portal-post-detail-modal .portal-post-detail-header.portal-opened-post-detail-header .portal-author-open-button.portal-post-avatar .portal-default-profile-image {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  max-height: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+  object-fit: cover !important;
+  border-radius: inherit !important;
+}
+
+@media (max-width: 768px) {
+  html body .portal-post-detail-modal .portal-post-detail-header.portal-opened-post-detail-header {
+    grid-template-columns: 2.35rem minmax(0, 1fr) !important;
+    column-gap: 1.06rem !important;
+    padding-right: 1.45rem !important;
+  }
+
+  html body .portal-post-detail-modal .portal-post-detail-header.portal-opened-post-detail-header .portal-author-open-button.portal-post-avatar,
+  html body .portal-post-detail-modal .portal-post-detail-header.portal-opened-post-detail-header .portal-author-open-button.portal-post-avatar:not(.has-default-profile-icon),
+  html body .portal-post-detail-modal .portal-post-detail-header.portal-opened-post-detail-header .portal-author-open-button.portal-post-avatar.has-default-profile-icon {
+    width: 2.35rem !important;
+    min-width: 2.35rem !important;
+    max-width: 2.35rem !important;
+    height: 2.35rem !important;
+    min-height: 2.35rem !important;
+    max-height: 2.35rem !important;
+  }
+}
+
+/* Job details popup: replace the old back chevrons with the create-story close x. */
+html body .portal-job-modal .portal-job-modal-header {
+  position: relative !important;
+}
+
+html body .portal-job-modal .portal-job-modal-close.portal-create-story-close,
+html body .portal-job-modal .portal-job-modal-close.portal-create-story-close:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  position: absolute !important;
+  top: 0.44rem !important;
+  right: 0.48rem !important;
+  left: auto !important;
+  bottom: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 1rem !important;
+  min-width: 1rem !important;
+  max-width: 1rem !important;
+  height: 1rem !important;
+  min-height: 1rem !important;
+  max-height: 1rem !important;
+  inline-size: 1rem !important;
+  min-inline-size: 1rem !important;
+  max-inline-size: 1rem !important;
+  block-size: 1rem !important;
+  min-block-size: 1rem !important;
+  max-block-size: 1rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  cursor: pointer !important;
+  font-size: 1rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  z-index: 12 !important;
+}
+
+html body .portal-job-modal .portal-job-modal-close.portal-create-story-close::before,
+html body .portal-job-modal .portal-job-modal-close.portal-create-story-close::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Tailor profile socials: icons only are light maroon, not the circular button fill. */
+html body :is(.portal-home-feed, .portal-profile-detail-card) .tailor-social-links .tailor-social-btn :is(svg, path),
+html body :is(.portal-home-feed, .portal-profile-detail-card) .tailor-social-links .tailor-social-btn:is(:hover, :focus, :focus-visible, :active) :is(svg, path),
+html body :is(.portal-home-feed, .portal-profile-detail-card) .tailor-social-links .tailor-social-btn:is(.facebook, .instagram, .linkedin, .github):is(:hover, :focus, :focus-visible, :active) :is(svg, path) {
+  color: #b06b7a !important;
+  fill: #b06b7a !important;
+  stroke: none !important;
+  -webkit-text-fill-color: #b06b7a !important;
+}

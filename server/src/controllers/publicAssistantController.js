@@ -468,9 +468,15 @@ const inferSectionAction = (normalized, context = {}) => {
   const hasNavigationVerb = /\b(open|go to|goto|take me to|show|visit|navigate|switch to|move to|bring me to|launch)\b/.test(normalized);
   const portalMode = context?.portalMode === 'employer' ? 'employer' : 'candidate';
   const sections = SECTION_KEYWORDS[portalMode] || [];
+  const compactCommand = normalized.trim();
+  const isShortSectionCommand = compactCommand.split(/\s+/).filter(Boolean).length <= 4;
 
   for (const [section, pattern] of sections) {
-    if ((hasNavigationVerb && pattern.test(normalized)) || normalized.trim() === section || pattern.test(normalized.trim())) {
+    if (
+      (hasNavigationVerb && pattern.test(normalized))
+      || compactCommand === section
+      || (isShortSectionCommand && pattern.test(compactCommand))
+    ) {
       return `open-section:${section}`;
     }
   }
@@ -484,6 +490,7 @@ const inferAction = (message, context = {}) => {
   const mentionsEmployer = /\b(employer|company|recruiter)\b/.test(normalized);
   const portalMode = context?.portalMode || '';
   const currentSection = String(context?.activeSection || '').toLowerCase();
+  const actionVerbPattern = /\b(open|start|create|make|build|generate|write|draft|compose|prepare|set up|setup)\b/;
   const asksRegister = /\b(register|registration|sign ?up|join)\b/.test(normalized)
     || /\b(create|make|open|start|set ?up|setup|get)\b.{0,24}\b(account|profile)\b/.test(normalized);
   const asksLogin = /\b(log ?in|login|sign ?in)\b/.test(normalized);
@@ -496,9 +503,17 @@ const inferAction = (message, context = {}) => {
   const asksDocumentFormat = /\b(format|style|design|align|fix|polish|make)\b.{0,44}\b(document|letter|memo|policy)\b/.test(normalized)
     || (currentSection === 'create-document' && /\b(format|style|design|align|fix|polish|a4|template)\b/.test(normalized));
   const asksApply = /\b(apply|application)\b/.test(normalized) && /\b(job|role|position|posting)\b/.test(normalized);
-  const asksStory = /\b(make|create|write|draft|generate)\b.{0,36}\b(talent story|story|talent post|feed post|post)\b/.test(normalized);
-  const asksEmployerPost = /\b(make|create|write|draft|generate)\b.{0,36}\b(company post|work news|feed post|post|announcement)\b/.test(normalized);
-  const asksAssessment = /\b(make|create|write|draft|generate)\b.{0,36}\b(assessment|test|quiz|screening)\b/.test(normalized)
+  const asksStory = actionVerbPattern.test(normalized)
+    && (
+      /\b(create|make|write|draft|generate|compose|prepare)\b.{0,44}\b(talent story|story|stories|talent post|feed post|post composer|social post)\b/.test(normalized)
+      || /\b(talent story|story|stories|talent post|feed post|post composer|social post)\b.{0,44}\b(create|make|write|draft|generate|compose|prepare)\b/.test(normalized)
+    );
+  const asksEmployerPost = actionVerbPattern.test(normalized)
+    && (
+      /\b(create|make|write|draft|generate|compose|prepare)\b.{0,44}\b(company post|work news|feed post|post|announcement)\b/.test(normalized)
+      || /\b(company post|work news|feed post|post|announcement)\b.{0,44}\b(create|make|write|draft|generate|compose|prepare)\b/.test(normalized)
+    );
+  const asksAssessment = /\b(make|create|write|draft|generate|compose|prepare)\b.{0,36}\b(assessment|test|quiz|screening)\b/.test(normalized)
     || /\bassessment\b.{0,36}\b(candidate|general|job)\b/.test(normalized);
   const sectionAction = inferSectionAction(normalized, context);
 

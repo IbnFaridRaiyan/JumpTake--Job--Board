@@ -44,6 +44,29 @@ const cleanAssistantDraftText = (value = '') => String(value || '')
     .join('\n')
     .trim();
 
+const detectLocalAssistantAction = (message = '', context = {}) => {
+    const normalized = normalizeSearchText(message);
+    const portalMode = context?.portalMode || '';
+    const activeSection = normalizeSearchText(context?.activeSection || '');
+    const hasActionVerb = /\b(open|go to|show|start|create|make|write|draft|generate|compose|prepare)\b/.test(normalized);
+    const wantsStoryComposer = /\b(talent story|story|stories|talent post|feed post|post composer|create story|write story)\b/.test(normalized)
+        && hasActionVerb
+        && portalMode !== 'employer';
+    const wantsEmployerPost = /\b(company post|work news|announcement|feed post|post composer|create post|write post)\b/.test(normalized)
+        && hasActionVerb
+        && portalMode === 'employer';
+
+    if (wantsStoryComposer || (portalMode !== 'employer' && activeSection === 'job feed' && /\b(write|draft|generate|compose)\b.*\bpost\b/.test(normalized))) {
+        return 'candidate-create-story';
+    }
+
+    if (wantsEmployerPost) {
+        return 'employer-create-post';
+    }
+
+    return '';
+};
+
 const readWorkspaceSnapshot = () => {
     if (typeof window === 'undefined') {
         return null;
@@ -519,11 +542,22 @@ const FloatingMessenger = ({
     const handleAssistantAction = (action, payload = {}) => {
         const answer = String(payload.answer || '').trim();
         const question = String(payload.question || '').trim();
-        const actionName = String(action || '');
+        const localAction = detectLocalAssistantAction(question, payload.context || {});
+        const actionName = String(localAction || action || '');
         const draftText = cleanAssistantDraftText(answer || question) || answer || question;
 
         if (actionName.startsWith('open-section:')) {
             const section = actionName.split(':')[1];
+            if (section === 'create-story' && !isEmployer) {
+                storeAndOpenSection('job-feed', 'jumptakeFeedAiDraft', {
+                    mode: 'candidate',
+                    tab: 'talent-stories',
+                    openComposer: true,
+                    text: draftText
+                }, 'jumptake-feed-ai-draft');
+                minimizeAfterMobileAssistantAction();
+                return;
+            }
             if (section) {
                 storeAndOpenSection(section);
                 minimizeAfterMobileAssistantAction();
@@ -531,7 +565,7 @@ const FloatingMessenger = ({
             return;
         }
 
-        if (action === 'candidate-create-resume' && !isEmployer) {
+        if (actionName === 'candidate-create-resume' && !isEmployer) {
             storeAndOpenSection('resume-playground', 'jumptakeResumePlaygroundAiDraft', {
                 mode: 'resume',
                 name: 'AI Generated Resume',
@@ -543,7 +577,7 @@ const FloatingMessenger = ({
             return;
         }
 
-        if (action === 'candidate-format-resume' && !isEmployer) {
+        if (actionName === 'candidate-format-resume' && !isEmployer) {
             storeAndOpenSection('resume-playground', 'jumptakeResumePlaygroundAiDraft', {
                 mode: 'resume',
                 name: 'AI Formatted Resume',
@@ -555,7 +589,7 @@ const FloatingMessenger = ({
             return;
         }
 
-        if (action === 'employer-create-document' && isEmployer) {
+        if (actionName === 'employer-create-document' && isEmployer) {
             storeAndOpenSection('create-document', 'jumptakeResumePlaygroundAiDraft', {
                 mode: 'document',
                 name: 'AI Generated Document',
@@ -567,7 +601,7 @@ const FloatingMessenger = ({
             return;
         }
 
-        if (action === 'employer-format-document' && isEmployer) {
+        if (actionName === 'employer-format-document' && isEmployer) {
             storeAndOpenSection('create-document', 'jumptakeResumePlaygroundAiDraft', {
                 mode: 'document',
                 name: 'AI Formatted Document',
@@ -579,17 +613,18 @@ const FloatingMessenger = ({
             return;
         }
 
-        if (action === 'candidate-create-story' && !isEmployer) {
+        if (actionName === 'candidate-create-story' && !isEmployer) {
             storeAndOpenSection('job-feed', 'jumptakeFeedAiDraft', {
                 mode: 'candidate',
-                tab: 'create-story',
+                tab: 'talent-stories',
+                openComposer: true,
                 text: draftText
             }, 'jumptake-feed-ai-draft');
             minimizeAfterMobileAssistantAction();
             return;
         }
 
-        if (action === 'employer-create-post' && isEmployer) {
+        if (actionName === 'employer-create-post' && isEmployer) {
             storeAndOpenSection('home-feed', 'jumptakeFeedAiDraft', {
                 mode: 'employer',
                 tab: 'create-post',
@@ -599,7 +634,7 @@ const FloatingMessenger = ({
             return;
         }
 
-        if (action === 'employer-create-assessment' && isEmployer) {
+        if (actionName === 'employer-create-assessment' && isEmployer) {
             storeAndOpenSection('make-assessment', 'jumptakeAssessmentAiDraft', {
                 mode: 'employer',
                 text: draftText
@@ -608,7 +643,7 @@ const FloatingMessenger = ({
             return;
         }
 
-        if (action === 'candidate-apply-job' && !isEmployer) {
+        if (actionName === 'candidate-apply-job' && !isEmployer) {
             const matchedJob = findRequestedJob(question) || findRequestedJob(answer);
             if (!matchedJob) {
                 return;

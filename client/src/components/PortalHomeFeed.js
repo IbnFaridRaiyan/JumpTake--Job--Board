@@ -1186,6 +1186,11 @@ const PortalHomeFeed = ({
     const [, setSavedPosts] = useState([]);
     const [blockedFeedAuthors, setBlockedFeedAuthors] = useState([]);
     const [feedFriends, setFeedFriends] = useState([]);
+    const [profileCandidateLookup, setProfileCandidateLookup] = useState({});
+    const [bookmarkedProfileCandidateIds, setBookmarkedProfileCandidateIds] = useState([]);
+    const [pendingProfileFriendIds, setPendingProfileFriendIds] = useState([]);
+    const [pendingProfileFriendConnectionIds, setPendingProfileFriendConnectionIds] = useState({});
+    const [profileActionMessage, setProfileActionMessage] = useState('');
     const [shareStatus, setShareStatus] = useState('');
     const [sharingTargetId, setSharingTargetId] = useState('');
     const [visibleReactionTooltip, setVisibleReactionTooltip] = useState('');
@@ -1413,6 +1418,102 @@ const PortalHomeFeed = ({
             isMounted = false;
         };
     }, [mode, candidateUserId]);
+
+    useEffect(() => {
+        if (mode !== 'candidate' || !candidateUserId) {
+            setBookmarkedProfileCandidateIds([]);
+            return;
+        }
+
+        let isMounted = true;
+
+        const fetchProfileBookmarks = async () => {
+            try {
+                const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
+                const response = await fetch(apiUrl(`/api/candidate-bookmarks/user/${candidateUserId}`), {
+                    headers: {
+                        ...(token ? { Authorization: `Bearer ${token}` } : {})
+                    }
+                });
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to load bookmarked candidates');
+                }
+
+                if (!isMounted) {
+                    return;
+                }
+
+                setBookmarkedProfileCandidateIds([...new Set((Array.isArray(data) ? data : [])
+                    .map((bookmark) => bookmark?.candidate?._id || bookmark?.candidate || bookmark?.candidateId)
+                    .filter(Boolean)
+                    .map(String))]);
+            } catch (error) {
+                console.error('Error loading profile candidate bookmarks:', error);
+                if (isMounted) {
+                    setBookmarkedProfileCandidateIds([]);
+                }
+            }
+        };
+
+        fetchProfileBookmarks();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [mode, candidateUserId]);
+
+    useEffect(() => {
+        if (!openProfileDetail?.authorId || openProfileDetail.authorType === 'employer') {
+            return;
+        }
+
+        const authorId = String(openProfileDetail.authorId);
+        if (Object.prototype.hasOwnProperty.call(profileCandidateLookup, authorId)) {
+            return;
+        }
+
+        let isMounted = true;
+
+        const resolveProfileCandidate = async () => {
+            try {
+                const response = await fetch(apiUrl(`/api/resume/analysis/${authorId}`));
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Could not resolve candidate profile');
+                }
+
+                if (!isMounted) {
+                    return;
+                }
+
+                setProfileCandidateLookup((currentLookup) => ({
+                    ...currentLookup,
+                    [authorId]: {
+                        _id: data._id || '',
+                        user: data.user || authorId,
+                        name: data.name || openProfileDetail.authorName || '',
+                        profileImage: data.profileImage || openProfileDetail.authorAvatar || ''
+                    }
+                }));
+            } catch (error) {
+                if (isMounted) {
+                    setProfileCandidateLookup((currentLookup) => ({
+                        ...currentLookup,
+                        [authorId]: null
+                    }));
+                }
+            }
+        };
+
+        resolveProfileCandidate();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [openProfileDetail, profileCandidateLookup]);
 
     useEffect(() => {
         const hasBlockingOverlay = Boolean(
@@ -3267,6 +3368,16 @@ const PortalHomeFeed = ({
             typeFeedDraft(draft.text || '');
             setComposerMedia(null);
             setFeedError('');
+
+            if (mode === 'candidate' && draft.openComposer) {
+                setCreateStoryAudienceOpen(false);
+                if (createStoryCloseTimerRef.current) {
+                    window.clearTimeout(createStoryCloseTimerRef.current);
+                    createStoryCloseTimerRef.current = null;
+                }
+                setClosingCreateStoryModal(false);
+                setCreateStoryModalOpen(true);
+            }
         };
 
         const readStoredRequest = () => {
@@ -4095,7 +4206,8 @@ const PortalHomeFeed = ({
             authorAvatar: asDisplayText(author.authorAvatar || author.profileImage),
             authorGender: asDisplayText(author.authorGender || author.gender || author.profile?.gender),
             authorType: author.authorType === 'employer' ? 'employer' : 'candidate',
-            jumptakeId: asDisplayText(author.jumptakeId || author.jumpTakeId || author.username || author.handle)
+            jumptakeId: asDisplayText(author.jumptakeId || author.jumpTakeId || author.username || author.handle),
+            candidateId: asDisplayText(author.candidateId || author.authorCandidateId || author.profileCandidateId)
         });
         setOpenReactionPostId('');
         closeCommentComposer();
@@ -4104,6 +4216,7 @@ const PortalHomeFeed = ({
         setPostOptionsAnchor(null);
         closeReachInsight();
         setShareStatus('');
+        setProfileActionMessage('');
     };
 
     const closeProfileDetailModal = () => {
@@ -4146,6 +4259,7 @@ const PortalHomeFeed = ({
         const friendMatch = feedFriends.find((friend) => (
             [friend.id, friend.userId, friend.candidateId].map(String).includes(authorId)
         ));
+        const resolvedCandidate = profileCandidateLookup[authorId];
         const storedTailorProfile = isCurrentViewer ? tailorProfile : readTailorProfileDraft(authorId);
         const authorWorkPosts = workNewsPosts.filter((post) => String(post?.authorId || '') === authorId);
         const authorTalentPosts = talentStories.filter((post) => String(post?.authorId || '') === authorId);
@@ -4191,7 +4305,7 @@ const PortalHomeFeed = ({
 
         return {
             id: authorId,
-            candidateId: friendMatch?.candidateId || openProfileDetail.candidateId || openProfileDetail.authorCandidateId || '',
+            candidateId: friendMatch?.candidateId || openProfileDetail.candidateId || openProfileDetail.authorCandidateId || resolvedCandidate?._id || '',
             name: openProfileDetail.authorName || friendMatch?.name || (isCurrentViewer ? authorName : 'Unknown user'),
             avatar,
             gender,
@@ -4210,8 +4324,155 @@ const PortalHomeFeed = ({
             workPosts: authorWorkPosts,
             talentPosts: authorTalentPosts,
             ratingSummary,
-            isCurrentViewer
+            isCurrentViewer,
+            isFriend: Boolean(friendMatch),
+            friendRequestPending: pendingProfileFriendIds.includes(authorId)
         };
+    };
+
+    const normalizeProfileJumpTakeId = (value = '') => (
+        String(value || '')
+            .trim()
+            .replace(/^@/, '')
+            .toLowerCase()
+    );
+
+    const handleProfileFriendRequest = async (profile, event) => {
+        event?.stopPropagation();
+
+        if (!profile || profile.isCurrentViewer || profile.type === 'employer') {
+            return;
+        }
+
+        const profileKey = String(profile.id || '');
+
+        if (profile.friendRequestPending) {
+            const connectionId = pendingProfileFriendConnectionIds[profileKey];
+            if (!connectionId) {
+                setPendingProfileFriendIds((currentIds) => currentIds.filter((id) => id !== profileKey));
+                setProfileActionMessage('Friend invitation cancelled.');
+                return;
+            }
+
+            try {
+                setProfileActionMessage('');
+                const response = await fetch(apiUrl(`/api/candidate-connections/${connectionId}/respond`), {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${localStorage.getItem('token') || ''}`
+                    },
+                    body: JSON.stringify({ action: 'cancel' })
+                });
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to cancel friend invitation');
+                }
+
+                setPendingProfileFriendIds((currentIds) => currentIds.filter((id) => id !== profileKey));
+                setPendingProfileFriendConnectionIds((currentMap) => {
+                    const nextMap = { ...currentMap };
+                    delete nextMap[profileKey];
+                    return nextMap;
+                });
+                setProfileActionMessage('Friend invitation cancelled.');
+            } catch (error) {
+                setProfileActionMessage(error.message || 'Could not cancel friend invitation.');
+            }
+            return;
+        }
+
+        const candidateId = profile.candidateId || '';
+        const jumptakeId = normalizeProfileJumpTakeId(profile.jumpTakeId);
+
+        if (!candidateId && (!jumptakeId || jumptakeId === 'jumptakeid')) {
+            setProfileActionMessage('This profile is missing a JumpTake ID for friend requests.');
+            return;
+        }
+
+        try {
+            setProfileActionMessage('');
+            const response = await fetch(apiUrl('/api/candidate-connections/request'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token') || ''}`
+                },
+                body: JSON.stringify(candidateId
+                    ? { recipientCandidateId: candidateId }
+                    : { jumptakeId })
+            });
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to send friend invitation');
+            }
+
+            setPendingProfileFriendIds((currentIds) => [...new Set([...currentIds, profileKey])]);
+            if (data.connection?._id) {
+                setPendingProfileFriendConnectionIds((currentMap) => ({
+                    ...currentMap,
+                    [profileKey]: data.connection._id
+                }));
+            }
+            setProfileActionMessage('Friend invitation sent.');
+        } catch (error) {
+            setProfileActionMessage(error.message || 'Could not send friend invitation.');
+        }
+    };
+
+    const handleProfileBookmarkToggle = async (profile, event) => {
+        event?.stopPropagation();
+
+        if (!profile || profile.isCurrentViewer || profile.type === 'employer' || !candidateUserId) {
+            return;
+        }
+
+        const candidateId = profile.candidateId || profileCandidateLookup[profile.id]?._id || '';
+        if (!candidateId) {
+            setProfileActionMessage('This profile cannot be bookmarked yet.');
+            return;
+        }
+
+        const isBookmarked = bookmarkedProfileCandidateIds.includes(String(candidateId));
+
+        try {
+            setProfileActionMessage('');
+            const token = localStorage.getItem('token') || '';
+            const response = await fetch(
+                isBookmarked
+                    ? apiUrl(`/api/candidate-bookmarks/user/${candidateUserId}/candidate/${candidateId}`)
+                    : apiUrl('/api/candidate-bookmarks'),
+                {
+                    method: isBookmarked ? 'DELETE' : 'POST',
+                    headers: {
+                        ...(isBookmarked ? {} : { 'Content-Type': 'application/json' }),
+                        Authorization: `Bearer ${token}`
+                    },
+                    ...(isBookmarked ? {} : {
+                        body: JSON.stringify({
+                            userId: candidateUserId,
+                            candidateId
+                        })
+                    })
+                }
+            );
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to update bookmark');
+            }
+
+            setBookmarkedProfileCandidateIds((currentIds) => (
+                isBookmarked
+                    ? currentIds.filter((id) => id !== String(candidateId))
+                    : [...new Set([...currentIds, String(candidateId)])]
+            ));
+            setProfileActionMessage(isBookmarked ? 'Candidate removed from bookmarks.' : 'Candidate bookmarked.');
+        } catch (error) {
+            setProfileActionMessage(error.message || 'Could not update bookmark.');
+        }
     };
 
     const renderPostList = (posts, key, kind, options = {}) => {
@@ -6000,6 +6261,15 @@ const PortalHomeFeed = ({
 
         const socialPlatforms = ['facebook', 'instagram', 'linkedin', 'github'];
         const canMessage = mode === 'candidate' && !profile.isCurrentViewer && profile.type !== 'employer';
+        const canUseCandidateActions = canMessage;
+        const profileCandidateId = profile.candidateId || profileCandidateLookup[profile.id]?._id || '';
+        const isProfileBookmarked = profileCandidateId && bookmarkedProfileCandidateIds.includes(String(profileCandidateId));
+        const friendActionDisabled = !canUseCandidateActions || profile.isFriend;
+        const friendActionLabel = profile.isFriend
+            ? 'Already friends'
+            : profile.friendRequestPending
+                ? 'Cancel friend invitation'
+                : 'Add friend';
         const coverStyle = {
             '--tailor-cover-image': `url("${profile.coverImage || defaultTailorCoverImage}")`
         };
@@ -6050,6 +6320,34 @@ const PortalHomeFeed = ({
                             <p className="portal-profile-detail-bio">{profile.bio}</p>
                         </div>
                         <div className="tailor-social-links" aria-label={`${profile.name} social links`}>
+                            {canUseCandidateActions && (
+                                <>
+                                    <button
+                                        type="button"
+                                        className={`tailor-social-btn portal-profile-friend-action ${profile.isFriend ? 'is-friend' : ''} ${profile.friendRequestPending ? 'is-pending' : ''}`}
+                                        onClick={(event) => handleProfileFriendRequest(profile, event)}
+                                        disabled={friendActionDisabled}
+                                        aria-label={friendActionLabel}
+                                        title={friendActionLabel}
+                                    >
+                                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                            <path d="M15 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.42 0-8 2.24-8 5v1h10.1A6.9 6.9 0 0 1 17 19c0-1.85.72-3.54 1.9-4.8A11.7 11.7 0 0 0 15 14Zm6-3V8h-2v3h-3v2h3v3h2v-3h3v-2h-3Z" />
+                                        </svg>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={`tailor-social-btn portal-profile-bookmark-action ${isProfileBookmarked ? 'active' : ''}`}
+                                        onClick={(event) => handleProfileBookmarkToggle(profile, event)}
+                                        disabled={!profileCandidateId}
+                                        aria-label={isProfileBookmarked ? 'Remove candidate bookmark' : 'Bookmark candidate'}
+                                        title={profileCandidateId ? (isProfileBookmarked ? 'Remove bookmark' : 'Bookmark candidate') : 'Bookmark unavailable'}
+                                    >
+                                        <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187z" />
+                                        </svg>
+                                    </button>
+                                </>
+                            )}
                             {socialPlatforms.map((platform) => {
                                 const href = profile.socialLinks[platform];
 
@@ -6071,6 +6369,9 @@ const PortalHomeFeed = ({
                                 );
                             })}
                         </div>
+                        {profileActionMessage && (
+                            <p className="portal-profile-detail-action-message">{profileActionMessage}</p>
+                        )}
                         {canMessage && (
                             <button
                                 type="button"

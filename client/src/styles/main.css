@@ -20011,7 +20011,7 @@ html[data-theme="light"] .home-page .input__search::placeholder {
   color: #7c8f88 !important;
 }
 
-html[data-theme="light"] .home-page button:not(.delete-button):not(.talent-bookmark-button):not(.bookmark-star-button):not(.preview-close-btn):not(.mobile-job-preview-close):not(.analytics-detail-close):not(.like-button):not(.floating-messenger-trigger),
+html[data-theme="light"] .home-page button:not(.delete-button):not(.talent-bookmark-button):not(.bookmark-star-button):not(.preview-close-btn):not(.mobile-job-preview-close):not(.analytics-detail-close):not(.like-button):not(.resume-playground-choice-card):not(.floating-messenger-trigger),
 html[data-theme="light"] .home-page .view-button,
 html[data-theme="light"] .home-page .secondary-button,
 html[data-theme="light"] .home-page .cancel-edit-button,
@@ -20895,7 +20895,7 @@ html[data-theme="light"] .home-page .cancel-button,
 html[data-theme="light"] .home-page .job-management-nav button,
 html[data-theme="light"] .home-page .filter-button,
 html[data-theme="light"] .home-page .tab-button,
-html[data-theme="light"] .home-page button:not(.card-button):not(.primary-button):not(.submit-button):not(.save-button):not(.manage-button):not(.send-button):not(.btn-primary):not(.delete-button):not(.withdraw-button):not(.floating-messenger-trigger) {
+html[data-theme="light"] .home-page button:not(.card-button):not(.primary-button):not(.submit-button):not(.save-button):not(.manage-button):not(.send-button):not(.btn-primary):not(.delete-button):not(.withdraw-button):not(.resume-playground-choice-card):not(.floating-messenger-trigger) {
   background: var(--cream-card) !important;
   border-color: var(--cream-border) !important;
   color: var(--cream-ink) !important;
@@ -21147,7 +21147,7 @@ html[data-theme="light"] .home-page .btn-primary * {
   color: #fffaf1 !important;
 }
 
-html[data-theme="light"] .home-page button:not(.delete-button):not(.withdraw-button):not(.card-button):not(.primary-button):not(.submit-button):not(.save-button):not(.manage-button):not(.send-button):not(.settings-button):not(.btn-primary):not(.floating-messenger-trigger),
+html[data-theme="light"] .home-page button:not(.delete-button):not(.withdraw-button):not(.card-button):not(.primary-button):not(.submit-button):not(.save-button):not(.manage-button):not(.send-button):not(.settings-button):not(.btn-primary):not(.resume-playground-choice-card):not(.floating-messenger-trigger),
 html[data-theme="light"] .home-page .secondary-button,
 html[data-theme="light"] .home-page .view-button,
 html[data-theme="light"] .home-page .cancel-button,
@@ -21158,7 +21158,7 @@ html[data-theme="light"] .home-page .tab-button {
   color: var(--cream-ink) !important;
 }
 
-html[data-theme="light"] .home-page button:not(.delete-button):not(.withdraw-button):not(.card-button):not(.primary-button):not(.submit-button):not(.save-button):not(.manage-button):not(.send-button):not(.settings-button):not(.btn-primary):not(.floating-messenger-trigger) *,
+html[data-theme="light"] .home-page button:not(.delete-button):not(.withdraw-button):not(.card-button):not(.primary-button):not(.submit-button):not(.save-button):not(.manage-button):not(.send-button):not(.settings-button):not(.btn-primary):not(.resume-playground-choice-card):not(.floating-messenger-trigger) *,
 html[data-theme="light"] .home-page .secondary-button *,
 html[data-theme="light"] .home-page .view-button *,
 html[data-theme="light"] .home-page .cancel-button *,
@@ -74476,6 +74476,555 @@ html body :is(
   }
 }
 
+/* Screenshot 151-153 repair: remove reaction glow, keep profile action circles clean, and slim profile reach pills. */
+html body #root .home-page :is(.portal-home-feed, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle):is(.active, .has-reaction, :hover, :focus-visible, :active),
+html body #root .home-page :is(.portal-home-feed, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle):is(.active, .has-reaction, :hover, :focus-visible, :active) :is(svg, path, span, strong),
+html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row :is(.job-post-like-reaction, .job-post-bookmark-reaction, .job-post-review-reaction, .job-post-share-reaction):is(.active, :hover, :focus-visible, :active),
+html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row :is(.job-post-like-reaction, .job-post-bookmark-reaction, .job-post-review-reaction, .job-post-share-reaction):is(.active, :hover, :focus-visible, :active) :is(svg, path, span, strong) {
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+html body #root .portal-profile-detail-card .tailor-social-links {
+  flex-wrap: nowrap !important;
+  gap: 0.5rem !important;
+}
+
+html body #root .portal-profile-detail-card .tailor-social-links :is(.portal-profile-friend-action, .portal-profile-bookmark-action),
+html body #root .portal-profile-detail-card .tailor-social-links :is(.portal-profile-friend-action, .portal-profile-bookmark-action):is(:hover, :focus, :focus-visible, :active, .active, .is-pending, .is-friend, :disabled) {
+  width: 2rem !important;
+  min-width: 2rem !important;
+  max-width: 2rem !important;
+  height: 2rem !important;
+  min-height: 2rem !important;
+  max-height: 2rem !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 50% !important;
+  background: #b06b7a !important;
+  background-color: #b06b7a !important;
+  background-image: none !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  filter: none !important;
+  opacity: 1 !important;
+  overflow: hidden !important;
+}
+
+html body #root .portal-profile-detail-card .tailor-social-links .portal-profile-bookmark-action.active,
+html body #root .portal-profile-detail-card .tailor-social-links .portal-profile-bookmark-action.active:is(:hover, :focus-visible, :active) {
+  background: #7d3044 !important;
+  background-color: #7d3044 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  filter: none !important;
+}
+
+html body #root .portal-profile-detail-card .tailor-social-links :is(.portal-profile-friend-action, .portal-profile-bookmark-action) :is(svg, path) {
+  color: #ffffff !important;
+  fill: currentColor !important;
+  stroke: none !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-reach-row,
+html body .portal-profile-detail-backdrop .portal-profile-preview-post-card .portal-post-reach-row {
+  margin: 0.18rem 0 0.34rem !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button:is(:hover, :focus, :focus-visible, :active),
+html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button,
+html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button:is(:hover, :focus, :focus-visible, :active) {
+  height: 1.08rem !important;
+  min-height: 1.08rem !important;
+  max-height: 1.08rem !important;
+  padding: 0 0.46rem !important;
+  font-size: 0.56rem !important;
+  line-height: 1 !important;
+}
+
+/* Screenshot 154 final winner: per-reaction active palette and visible profile action buttons. */
+html body #root .home-page :is(.portal-home-feed, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-action-row .portal-reaction-trigger.has-reaction,
+html body #root .home-page :is(.portal-home-feed, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-action-row .portal-reaction-trigger.has-reaction :is(svg, path, span, strong) {
+  color: var(--reaction-active-color, #3b82f6) !important;
+  -webkit-text-fill-color: var(--reaction-active-color, #3b82f6) !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-like {
+  --reaction-active-color: #3b82f6;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-appreciate {
+  --reaction-active-color: #f5b82e;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-love {
+  --reaction-active-color: #ef4444;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-empower {
+  --reaction-active-color: #facc15;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-congratulate {
+  --reaction-active-color: #f97316;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-motivate {
+  --reaction-active-color: #8b5cf6;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-angry,
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-bad {
+  --reaction-active-color: #ef4444;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-sad {
+  --reaction-active-color: #38bdf8;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-hide {
+  --reaction-active-color: #22c55e;
+}
+
+html body #root .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action,
+html body #root .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action,
+html body #root .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action:is(:hover, :focus, :focus-visible, :active, :disabled, .is-pending, .is-friend),
+html body #root .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action:is(:hover, :focus, :focus-visible, :active, :disabled, .active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 2rem !important;
+  width: 2rem !important;
+  min-width: 2rem !important;
+  max-width: 2rem !important;
+  height: 2rem !important;
+  min-height: 2rem !important;
+  max-height: 2rem !important;
+  aspect-ratio: 1 / 1 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 50% !important;
+  background: #b06b7a !important;
+  background-color: #b06b7a !important;
+  background-image: none !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  cursor: pointer !important;
+  filter: none !important;
+  opacity: 1 !important;
+  overflow: hidden !important;
+  transform: none !important;
+}
+
+html body #root .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action.active,
+html body #root .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action.active:is(:hover, :focus, :focus-visible, :active) {
+  background: #7d3044 !important;
+  background-color: #7d3044 !important;
+}
+
+/* Final light-mode cleanup: preserve real CTA colors and remove green-tinted cards/forms. */
+html[data-theme="light"] body #root .home-page :is(
+  .settings-card,
+  .settings-section,
+  .tabs-content,
+  .notification-card,
+  .notification-row,
+  .empty-info,
+  .loading-message,
+  .error-message,
+  .no-jobs-message,
+  .no-applications-message,
+  .job-card,
+  .application-card,
+  .assessment-card,
+  .candidate-card,
+  .profile-card,
+  .profile-section,
+  .company-profile-card,
+  .company-profile-hero,
+  .company-profile-summary,
+  .company-profile-section,
+  .company-profile-details,
+  .dashboard-card,
+  .stat-card,
+  .analytics-card,
+  .analytics-detail-panel,
+  .interested-job-card,
+  .assessment-send-panel,
+  .job-management-form,
+  .interview-link-panel,
+  .job-form,
+  .job-form-intro,
+  .about-guide-grid article
+),
+html[data-theme="light"] body #root .home-page .dashboard-container.mobile-section-open :is(.mobile-dashboard-section-panel.is-open, .mobile-job-management-section-panel.is-open) :is(
+  .settings-card,
+  .settings-section,
+  .tabs-content,
+  .notification-card,
+  .notification-row,
+  .empty-info,
+  .loading-message,
+  .error-message,
+  .no-jobs-message,
+  .no-applications-message,
+  .job-card,
+  .application-card,
+  .assessment-card,
+  .candidate-card,
+  .profile-card,
+  .profile-section,
+  .company-profile-card,
+  .company-profile-hero,
+  .company-profile-summary,
+  .company-profile-section,
+  .company-profile-details,
+  .dashboard-card,
+  .stat-card,
+  .analytics-card,
+  .analytics-detail-panel,
+  .interested-job-card,
+  .assessment-send-panel,
+  .job-management-form,
+  .interview-link-panel,
+  .job-form,
+  .job-form-intro,
+  .about-guide-grid article
+) {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+}
+
+html[data-theme="light"] body #root .home-page :is(.settings-card, .settings-section, .tabs-content) input,
+html[data-theme="light"] body #root .home-page :is(.settings-card, .settings-section, .tabs-content) textarea,
+html[data-theme="light"] body #root .home-page :is(.settings-card, .settings-section, .tabs-content) select {
+  background: #fffaf3 !important;
+  background-color: #fffaf3 !important;
+}
+
+html[data-theme="light"] body #root .home-page .resume-playground-open-session button.settings-button.primary,
+html[data-theme="light"] body #root .home-page .resume-playground-open-session button.settings-button.primary:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body #root .home-page .resume-playground-editor-actions button.settings-button.primary,
+html[data-theme="light"] body #root .home-page .resume-playground-editor-actions button.settings-button.primary:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body #root .home-page .about-jumptake-section button.settings-button.primary.about-tour-button,
+html[data-theme="light"] body #root .home-page .about-jumptake-section button.settings-button.primary.about-tour-button:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body #root .home-page .profile-header-actions button.upload-resume-button,
+html[data-theme="light"] body #root .home-page .profile-header-actions button.upload-resume-button:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body #root .home-page .profile-message button.upload-resume-button,
+html[data-theme="light"] body #root .home-page .profile-message button.upload-resume-button:is(:hover, :focus, :focus-visible, :active) {
+  background: #7d1320 !important;
+  background-color: #7d1320 !important;
+  background-image: none !important;
+  border: 1px solid #7d1320 !important;
+  border-radius: 12px !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body #root .home-page .resume-playground-open-session button.settings-button.primary *,
+html[data-theme="light"] body #root .home-page .resume-playground-editor-actions button.settings-button.primary *,
+html[data-theme="light"] body #root .home-page .about-jumptake-section button.settings-button.primary.about-tour-button *,
+html[data-theme="light"] body #root .home-page :is(.profile-header-actions, .profile-message) button.upload-resume-button * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="light"] body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-scratch,
+html[data-theme="light"] body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-scratch:is(:hover, :focus, :focus-visible, :active) {
+  background: #dfeee3 !important;
+  background-color: #dfeee3 !important;
+  background-image: none !important;
+  border: 1px solid rgba(102, 143, 113, 0.38) !important;
+  color: #173526 !important;
+  -webkit-text-fill-color: #173526 !important;
+}
+
+html[data-theme="light"] body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-upload,
+html[data-theme="light"] body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-upload:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body #root .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-upload,
+html[data-theme="light"] body #root .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-upload:is(:hover, :focus, :focus-visible, :active) {
+  background: #fff1bd !important;
+  background-color: #fff1bd !important;
+  background-image: none !important;
+  border: 1px solid rgba(169, 126, 31, 0.34) !important;
+  color: #2f241b !important;
+  -webkit-text-fill-color: #2f241b !important;
+}
+
+html[data-theme="light"] body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-ai-tailor,
+html[data-theme="light"] body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-ai-tailor:is(:hover, :focus, :focus-visible, :active) {
+  background: #a84e24 !important;
+  background-color: #a84e24 !important;
+  background-image: none !important;
+  border: 1px solid rgba(90, 38, 16, 0.34) !important;
+  color: #fffaf3 !important;
+  -webkit-text-fill-color: #fffaf3 !important;
+}
+
+html[data-theme="light"] body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-scratch *,
+html[data-theme="light"] body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-upload *,
+html[data-theme="light"] body #root .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-upload * {
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+}
+
+html[data-theme="light"] body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-ai-tailor * {
+  color: #fffaf3 !important;
+  -webkit-text-fill-color: #fffaf3 !important;
+}
+
+/* Final profile action and job bookmark repair: keep after older mobile/light overrides. */
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links {
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  gap: 0.5rem !important;
+}
+
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action,
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action,
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action:is(:hover, :focus, :focus-visible, :active, :disabled, .is-pending, .is-friend),
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action:is(:hover, :focus, :focus-visible, :active, :disabled, .active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 2rem !important;
+  width: 2rem !important;
+  min-width: 2rem !important;
+  max-width: 2rem !important;
+  height: 2rem !important;
+  min-height: 2rem !important;
+  max-height: 2rem !important;
+  inline-size: 2rem !important;
+  min-inline-size: 2rem !important;
+  max-inline-size: 2rem !important;
+  block-size: 2rem !important;
+  min-block-size: 2rem !important;
+  max-block-size: 2rem !important;
+  aspect-ratio: 1 / 1 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 999px !important;
+  background: #f0f2f5 !important;
+  background-color: #f0f2f5 !important;
+  background-image: none !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+  color: #b78996 !important;
+  -webkit-text-fill-color: #b78996 !important;
+  filter: none !important;
+  opacity: 1 !important;
+  overflow: hidden !important;
+  transform: none !important;
+}
+
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action :is(svg, path),
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action :is(svg, path) {
+  color: currentColor !important;
+  fill: currentColor !important;
+  stroke: none !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action.is-pending,
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action.is-pending:is(:hover, :focus, :focus-visible, :active) {
+  color: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
+}
+
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action.active,
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action.active:is(:hover, :focus, :focus-visible, :active),
+html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row .job-post-bookmark-reaction.active,
+html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row .job-post-bookmark-reaction[aria-pressed="true"],
+html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row .job-post-bookmark-reaction.active :is(svg, path, span, strong),
+html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row .job-post-bookmark-reaction[aria-pressed="true"] :is(svg, path, span, strong) {
+  color: #f5b82e !important;
+  -webkit-text-fill-color: #f5b82e !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] body #root .home-page .resume-playground-panel button.settings-button.primary.resume-playground-edit-upload-button,
+html[data-theme="light"] body #root .home-page .resume-playground-panel button.settings-button.primary.resume-playground-edit-upload-button:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body #root .resume-playground-panel button.settings-button.primary.resume-playground-edit-upload-button,
+html[data-theme="light"] body #root .resume-playground-panel button.settings-button.primary.resume-playground-edit-upload-button:is(:hover, :focus, :focus-visible, :active) {
+  background: #fff1bd !important;
+  background-color: #fff1bd !important;
+  background-image: none !important;
+  border: 1px solid rgba(169, 126, 31, 0.34) !important;
+  color: #2f241b !important;
+  -webkit-text-fill-color: #2f241b !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body #root .home-page .resume-playground-panel button.settings-button.primary.resume-playground-edit-upload-button *,
+html[data-theme="light"] body #root .resume-playground-panel button.settings-button.primary.resume-playground-edit-upload-button * {
+  color: #2f241b !important;
+  -webkit-text-fill-color: #2f241b !important;
+}
+
+/* Final mobile profile popup action buttons: match social icon circles exactly. */
+@media (max-width: 768px) {
+  html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action,
+  html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action,
+  html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action:is(:hover, :focus, :focus-visible, :active, :disabled, .is-pending, .is-friend),
+  html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action:is(:hover, :focus, :focus-visible, :active, :disabled, .active) {
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 2.5rem !important;
+    width: 2.5rem !important;
+    min-width: 2.5rem !important;
+    max-width: 2.5rem !important;
+    height: 2.5rem !important;
+    min-height: 2.5rem !important;
+    max-height: 2.5rem !important;
+    inline-size: 2.5rem !important;
+    min-inline-size: 2.5rem !important;
+    max-inline-size: 2.5rem !important;
+    block-size: 2.5rem !important;
+    min-block-size: 2.5rem !important;
+    max-block-size: 2.5rem !important;
+    aspect-ratio: 1 / 1 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: #f0f2f5 !important;
+    background-color: #f0f2f5 !important;
+    background-image: none !important;
+    color: #7d3044 !important;
+    -webkit-text-fill-color: #7d3044 !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+    filter: none !important;
+    opacity: 1 !important;
+    overflow: hidden !important;
+    transform: none !important;
+  }
+
+  html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action :is(svg, path),
+  html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action :is(svg, path) {
+    width: 1.25rem !important;
+    min-width: 1.25rem !important;
+    max-width: 1.25rem !important;
+    height: 1.25rem !important;
+    min-height: 1.25rem !important;
+    max-height: 1.25rem !important;
+    color: #7d3044 !important;
+    fill: currentColor !important;
+    stroke: none !important;
+    -webkit-text-fill-color: #7d3044 !important;
+  }
+}
+
+/* Screenshot 154 repair: restore per-reaction active colors and force profile action buttons above global resets. */
+html body #root .home-page :is(.portal-home-feed, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-action-row .portal-reaction-trigger.has-reaction,
+html body #root .home-page :is(.portal-home-feed, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-action-row .portal-reaction-trigger.has-reaction :is(svg, path, span, strong) {
+  color: var(--reaction-active-color, #3b82f6) !important;
+  -webkit-text-fill-color: var(--reaction-active-color, #3b82f6) !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-like {
+  --reaction-active-color: #3b82f6;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-appreciate {
+  --reaction-active-color: #f5b82e;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-love {
+  --reaction-active-color: #ef4444;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-empower {
+  --reaction-active-color: #facc15;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-congratulate {
+  --reaction-active-color: #f97316;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-motivate {
+  --reaction-active-color: #8b5cf6;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-angry,
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-bad {
+  --reaction-active-color: #ef4444;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-sad {
+  --reaction-active-color: #38bdf8;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-hide {
+  --reaction-active-color: #22c55e;
+}
+
+html body #root .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action,
+html body #root .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action,
+html body #root .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action:is(:hover, :focus, :focus-visible, :active, :disabled, .is-pending, .is-friend),
+html body #root .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action:is(:hover, :focus, :focus-visible, :active, :disabled, .active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 2rem !important;
+  width: 2rem !important;
+  min-width: 2rem !important;
+  max-width: 2rem !important;
+  height: 2rem !important;
+  min-height: 2rem !important;
+  max-height: 2rem !important;
+  aspect-ratio: 1 / 1 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 50% !important;
+  background: #b06b7a !important;
+  background-color: #b06b7a !important;
+  background-image: none !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  cursor: pointer !important;
+  filter: none !important;
+  opacity: 1 !important;
+  overflow: hidden !important;
+  transform: none !important;
+}
+
+html body #root .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action.active,
+html body #root .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action.active:is(:hover, :focus, :focus-visible, :active) {
+  background: #7d3044 !important;
+  background-color: #7d3044 !important;
+}
+
 /* Absolute final fix: Work News/Talent Stories rotating comment avatars are round. */
 @media (max-width: 768px) {
   html body .portal-home-feed .portal-social-post-card .portal-post-comments.portal-rotating-comment-rail .portal-comment-item > button.portal-author-open-button.portal-comment-avatar,
@@ -74771,8 +75320,6 @@ html body .portal-profile-detail-card::before {
   background-size: cover !important;
 }
 
-html[data-theme="light"] body .resume-playground-choice-card,
-html[data-theme="light"] body .resume-playground-choice-card strong,
 html[data-theme="light"] body .resume-playground-ai-tailor-panel .resume-playground-tool-button,
 html[data-theme="light"] body .resume-playground-ai-template-actions .settings-button.primary {
   color: #111827 !important;
@@ -75594,4 +76141,698 @@ html body .portal-job-modal > .portal-job-modal-x-close::after {
 
 html body .portal-job-modal .portal-job-modal-header {
   padding-right: 2.25rem !important;
+}
+
+/* Profile detail action icons: match social circles, with maroon fill and white glyphs. */
+html body #root .portal-profile-detail-card .tailor-social-links {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  flex-wrap: nowrap !important;
+  gap: 0.5rem !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: visible !important;
+}
+
+html body #root .portal-profile-detail-card .tailor-social-links :is(.tailor-social-btn, button.tailor-social-btn, a.tailor-social-btn, span.tailor-social-btn),
+html body #root .portal-profile-detail-card .tailor-social-links :is(.tailor-social-btn, button.tailor-social-btn, a.tailor-social-btn, span.tailor-social-btn):is(:hover, :focus, :focus-visible, :active) {
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 2rem !important;
+  width: 2rem !important;
+  min-width: 2rem !important;
+  max-width: 2rem !important;
+  height: 2rem !important;
+  min-height: 2rem !important;
+  max-height: 2rem !important;
+  aspect-ratio: 1 / 1 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 50% !important;
+  background: #f0f2f5 !important;
+  background-color: #f0f2f5 !important;
+  background-image: none !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+  color: #7d3044 !important;
+  -webkit-text-fill-color: #7d3044 !important;
+  overflow: hidden !important;
+  transform: none !important;
+  clip-path: none !important;
+}
+
+html body #root .portal-profile-detail-card .tailor-social-links :is(.tailor-social-btn, button.tailor-social-btn, a.tailor-social-btn, span.tailor-social-btn) :is(svg, path) {
+  display: block !important;
+  width: 1rem !important;
+  min-width: 1rem !important;
+  max-width: 1rem !important;
+  height: 1rem !important;
+  min-height: 1rem !important;
+  max-height: 1rem !important;
+  color: currentColor !important;
+  fill: currentColor !important;
+  stroke: none !important;
+}
+
+html body #root .portal-profile-detail-card .tailor-social-links :is(.portal-profile-friend-action, .portal-profile-bookmark-action),
+html body #root .portal-profile-detail-card .tailor-social-links :is(.portal-profile-friend-action, .portal-profile-bookmark-action):is(:hover, :focus, :focus-visible, :active, .active, .is-pending, .is-friend) {
+  border: 0 !important;
+  background: #b06b7a !important;
+  background-color: #b06b7a !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: 0 2px 5px rgba(79, 29, 42, 0.16) !important;
+  filter: none !important;
+}
+
+html body #root .portal-profile-detail-card .tailor-social-links :is(.portal-profile-friend-action, .portal-profile-bookmark-action):disabled {
+  opacity: 0.8 !important;
+}
+
+html body #root .portal-profile-detail-card .tailor-social-links .portal-profile-bookmark-action.active {
+  background: #7d3044 !important;
+  background-color: #7d3044 !important;
+}
+
+@media (max-width: 520px) {
+  html body #root .portal-profile-detail-card .tailor-social-links {
+    gap: 0.42rem !important;
+  }
+
+  html body #root .portal-profile-detail-card .tailor-social-links :is(.tailor-social-btn, button.tailor-social-btn, a.tailor-social-btn, span.tailor-social-btn),
+  html body #root .portal-profile-detail-card .tailor-social-links :is(.tailor-social-btn, button.tailor-social-btn, a.tailor-social-btn, span.tailor-social-btn):is(:hover, :focus, :focus-visible, :active) {
+    flex-basis: 1.9rem !important;
+    width: 1.9rem !important;
+    min-width: 1.9rem !important;
+    max-width: 1.9rem !important;
+    height: 1.9rem !important;
+    min-height: 1.9rem !important;
+    max-height: 1.9rem !important;
+  }
+}
+
+html body #root .portal-profile-detail-card .portal-profile-detail-action-message {
+  width: min(19rem, calc(100% - 2rem)) !important;
+  margin: 0.18rem auto 0.64rem !important;
+  color: #7d3044 !important;
+  -webkit-text-fill-color: #7d3044 !important;
+  font-size: 0.72rem !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+  text-align: center !important;
+}
+
+/* Final portal action/section width fixes. Keep after older final overrides. */
+html body #root .home-page :is(.portal-home-feed, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-action-row .portal-reaction-trigger.has-reaction,
+html body #root .home-page :is(.portal-home-feed, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-action-row .portal-reaction-trigger.has-reaction :is(svg, path, span, strong),
+html body #root .home-page :is(.portal-home-feed, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-action-row .portal-reaction-trigger.active,
+html body #root .home-page :is(.portal-home-feed, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-action-row .portal-reaction-trigger.active :is(svg, path, span, strong) {
+  color: #c64254 !important;
+  -webkit-text-fill-color: #c64254 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  filter: drop-shadow(0 0 0.34rem rgba(198, 66, 84, 0.28)) !important;
+}
+
+html body #root .home-page :is(.portal-home-feed, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-action-row .portal-comment-toggle.active,
+html body #root .home-page :is(.portal-home-feed, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-action-row .portal-comment-toggle.active :is(svg, path, span, strong) {
+  color: #7d3044 !important;
+  -webkit-text-fill-color: #7d3044 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  filter: drop-shadow(0 0 0.3rem rgba(125, 48, 68, 0.3)) !important;
+}
+
+html body #root .home-page :is(.portal-home-feed, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-action-row .portal-share-toggle.active,
+html body #root .home-page :is(.portal-home-feed, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-action-row .portal-share-toggle.active :is(svg, path, span, strong) {
+  color: #d9782f !important;
+  -webkit-text-fill-color: #d9782f !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  filter: drop-shadow(0 0 0.3rem rgba(217, 120, 47, 0.32)) !important;
+}
+
+html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row .job-post-like-reaction.active,
+html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row .job-post-like-reaction.active :is(svg, path, span, strong) {
+  color: #b2364a !important;
+  -webkit-text-fill-color: #b2364a !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  filter: drop-shadow(0 0 0.32rem rgba(178, 54, 74, 0.34)) !important;
+}
+
+html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row .job-post-bookmark-reaction.active,
+html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row .job-post-bookmark-reaction.active :is(svg, path, span, strong) {
+  color: #0f4a43 !important;
+  -webkit-text-fill-color: #0f4a43 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  filter: drop-shadow(0 0 0.32rem rgba(15, 74, 67, 0.34)) !important;
+}
+
+html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row .job-post-review-reaction.active,
+html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row .job-post-review-reaction.active :is(svg, path, span, strong) {
+  color: #7d3044 !important;
+  -webkit-text-fill-color: #7d3044 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  filter: drop-shadow(0 0 0.32rem rgba(125, 48, 68, 0.32)) !important;
+}
+
+html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row .job-post-share-reaction:is(:hover, :focus-visible, :active),
+html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row .job-post-share-reaction:is(:hover, :focus-visible, :active) :is(svg, path, span, strong) {
+  color: #d9782f !important;
+  -webkit-text-fill-color: #d9782f !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .main-content > .portal-section-transition-shell,
+html[data-theme="light"] #root .home-page .main-content > .portal-section-transition-shell,
+body[data-theme="light"] #root .home-page .main-content > .portal-section-transition-shell,
+.home-page .main-content > .portal-section-transition-shell {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .main-content > .portal-section-transition-shell > :is(
+  .notifications-page,
+  .talent-pool-container,
+  .candidate-bookmarked-container,
+  .bookmarked-talents-container,
+  .applications-container,
+  .my-applications-container,
+  .my-assessments-container,
+  .assessments-container,
+  .video-interviews-container,
+  .draft-applications-container,
+  .bookmarked-jobs-container,
+  .saved-posts-container,
+  .interested-job-suggestion-section,
+  .resume-playground-section,
+  .resume-playground-container,
+  .profile-container,
+  .settings-container,
+  .about-jumptake-section,
+  .progress-check-section,
+  .performance-analytics-container,
+  .friend-invitations-container,
+  .inbox-container
+),
+html[data-theme="light"] #root .home-page .main-content > .portal-section-transition-shell > :is(
+  .notifications-page,
+  .talent-pool-container,
+  .candidate-bookmarked-container,
+  .bookmarked-talents-container,
+  .applications-container,
+  .my-applications-container,
+  .my-assessments-container,
+  .assessments-container,
+  .video-interviews-container,
+  .draft-applications-container,
+  .bookmarked-jobs-container,
+  .saved-posts-container,
+  .interested-job-suggestion-section,
+  .resume-playground-section,
+  .resume-playground-container,
+  .profile-container,
+  .settings-container,
+  .about-jumptake-section,
+  .progress-check-section,
+  .performance-analytics-container,
+  .friend-invitations-container,
+  .inbox-container
+),
+body[data-theme="light"] #root .home-page .main-content > .portal-section-transition-shell > :is(
+  .notifications-page,
+  .talent-pool-container,
+  .candidate-bookmarked-container,
+  .bookmarked-talents-container,
+  .applications-container,
+  .my-applications-container,
+  .my-assessments-container,
+  .assessments-container,
+  .video-interviews-container,
+  .draft-applications-container,
+  .bookmarked-jobs-container,
+  .saved-posts-container,
+  .interested-job-suggestion-section,
+  .resume-playground-section,
+  .resume-playground-container,
+  .profile-container,
+  .settings-container,
+  .about-jumptake-section,
+  .progress-check-section,
+  .performance-analytics-container,
+  .friend-invitations-container,
+  .inbox-container
+) {
+  width: calc(100% + 0.7rem) !important;
+  max-width: none !important;
+  margin-inline: -0.35rem !important;
+  box-sizing: border-box !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .main-content > .portal-section-transition-shell > .talent-pool-container :is(.candidate-community-intro, .talent-pool-controls, .candidates-grid, .candidate-profile),
+html[data-theme="light"] #root .home-page .main-content > .portal-section-transition-shell > .talent-pool-container :is(.candidate-community-intro, .talent-pool-controls, .candidates-grid, .candidate-profile),
+body[data-theme="light"] #root .home-page .main-content > .portal-section-transition-shell > .talent-pool-container :is(.candidate-community-intro, .talent-pool-controls, .candidates-grid, .candidate-profile),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .main-content > .portal-section-transition-shell > .notifications-page :is(.notifications-activity-intro, .notifications-list, .notification-empty-state),
+html[data-theme="light"] #root .home-page .main-content > .portal-section-transition-shell > .notifications-page :is(.notifications-activity-intro, .notifications-list, .notification-empty-state),
+body[data-theme="light"] #root .home-page .main-content > .portal-section-transition-shell > .notifications-page :is(.notifications-activity-intro, .notifications-list, .notification-empty-state) {
+  width: 100% !important;
+  max-width: none !important;
+  margin-inline: 0 !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .main-content.mobile-dashboard-section-panel.is-open {
+    padding-inline: 0.45rem !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .main-content > .portal-section-transition-shell > :is(
+    .notifications-page,
+    .talent-pool-container,
+    .candidate-bookmarked-container,
+    .bookmarked-talents-container,
+    .applications-container,
+    .my-applications-container,
+    .my-assessments-container,
+    .assessments-container,
+    .video-interviews-container,
+    .draft-applications-container,
+    .bookmarked-jobs-container,
+    .saved-posts-container,
+    .interested-job-suggestion-section,
+    .resume-playground-section,
+    .resume-playground-container,
+    .profile-container,
+    .settings-container,
+    .about-jumptake-section,
+    .progress-check-section,
+    .performance-analytics-container,
+    .friend-invitations-container,
+    .inbox-container
+  ),
+  html[data-theme="light"] #root .home-page .main-content > .portal-section-transition-shell > :is(
+    .notifications-page,
+    .talent-pool-container,
+    .candidate-bookmarked-container,
+    .bookmarked-talents-container,
+    .applications-container,
+    .my-applications-container,
+    .my-assessments-container,
+    .assessments-container,
+    .video-interviews-container,
+    .draft-applications-container,
+    .bookmarked-jobs-container,
+    .saved-posts-container,
+    .interested-job-suggestion-section,
+    .resume-playground-section,
+    .resume-playground-container,
+    .profile-container,
+    .settings-container,
+    .about-jumptake-section,
+    .progress-check-section,
+    .performance-analytics-container,
+    .friend-invitations-container,
+    .inbox-container
+  ),
+  body[data-theme="light"] #root .home-page .main-content > .portal-section-transition-shell > :is(
+    .notifications-page,
+    .talent-pool-container,
+    .candidate-bookmarked-container,
+    .bookmarked-talents-container,
+    .applications-container,
+    .my-applications-container,
+    .my-assessments-container,
+    .assessments-container,
+    .video-interviews-container,
+    .draft-applications-container,
+    .bookmarked-jobs-container,
+    .saved-posts-container,
+    .interested-job-suggestion-section,
+    .resume-playground-section,
+    .resume-playground-container,
+    .profile-container,
+    .settings-container,
+    .about-jumptake-section,
+    .progress-check-section,
+    .performance-analytics-container,
+    .friend-invitations-container,
+    .inbox-container
+  ) {
+    width: calc(100% + 0.9rem) !important;
+    margin-inline: -0.45rem !important;
+    padding-inline: 0.82rem !important;
+  }
+}
+
+/* Screenshot 151-153 final repair: keep these after all older portal overrides. */
+html body #root .home-page :is(.portal-home-feed, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle):is(.active, .has-reaction, :hover, :focus-visible, :active),
+html body #root .home-page :is(.portal-home-feed, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle):is(.active, .has-reaction, :hover, :focus-visible, :active) :is(svg, path, span, strong),
+html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row :is(.job-post-like-reaction, .job-post-bookmark-reaction, .job-post-review-reaction, .job-post-share-reaction):is(.active, :hover, :focus-visible, :active),
+html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row :is(.job-post-like-reaction, .job-post-bookmark-reaction, .job-post-review-reaction, .job-post-share-reaction):is(.active, :hover, :focus-visible, :active) :is(svg, path, span, strong) {
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+html body #root .home-page :is(.portal-home-feed, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-action-row .portal-reaction-trigger.has-reaction,
+html body #root .home-page :is(.portal-home-feed, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-action-row .portal-reaction-trigger.has-reaction :is(svg, path, span, strong) {
+  color: var(--reaction-active-color, #3b82f6) !important;
+  -webkit-text-fill-color: var(--reaction-active-color, #3b82f6) !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-like {
+  --reaction-active-color: #3b82f6;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-appreciate {
+  --reaction-active-color: #f5b82e;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-love {
+  --reaction-active-color: #ef4444;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-empower {
+  --reaction-active-color: #facc15;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-congratulate {
+  --reaction-active-color: #f97316;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-motivate {
+  --reaction-active-color: #8b5cf6;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-angry,
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-bad {
+  --reaction-active-color: #ef4444;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-sad {
+  --reaction-active-color: #38bdf8;
+}
+
+html body #root .home-page .portal-post-action-row .portal-reaction-trigger.reaction-hide {
+  --reaction-active-color: #22c55e;
+}
+
+html body #root .portal-profile-detail-card .tailor-social-links {
+  flex-wrap: nowrap !important;
+  gap: 0.5rem !important;
+}
+
+html body #root .portal-profile-detail-card .tailor-social-links :is(.portal-profile-friend-action, .portal-profile-bookmark-action),
+html body #root .portal-profile-detail-card .tailor-social-links :is(.portal-profile-friend-action, .portal-profile-bookmark-action):is(:hover, :focus, :focus-visible, :active, .active, .is-pending, .is-friend, :disabled) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 2rem !important;
+  width: 2rem !important;
+  min-width: 2rem !important;
+  max-width: 2rem !important;
+  height: 2rem !important;
+  min-height: 2rem !important;
+  max-height: 2rem !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 50% !important;
+  background: #b06b7a !important;
+  background-color: #b06b7a !important;
+  background-image: none !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  filter: none !important;
+  opacity: 1 !important;
+  overflow: hidden !important;
+}
+
+html body #root .portal-profile-detail-card .tailor-social-links .portal-profile-bookmark-action.active,
+html body #root .portal-profile-detail-card .tailor-social-links .portal-profile-bookmark-action.active:is(:hover, :focus-visible, :active) {
+  background: #7d3044 !important;
+  background-color: #7d3044 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  filter: none !important;
+}
+
+html body #root .portal-profile-detail-card .tailor-social-links :is(.portal-profile-friend-action, .portal-profile-bookmark-action) :is(svg, path) {
+  color: #ffffff !important;
+  fill: currentColor !important;
+  stroke: none !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-reach-row,
+html body .portal-profile-detail-backdrop .portal-profile-preview-post-card .portal-post-reach-row {
+  margin: 0.18rem 0 0.34rem !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button:is(:hover, :focus, :focus-visible, :active),
+html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button,
+html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button:is(:hover, :focus, :focus-visible, :active) {
+  height: 1.08rem !important;
+  min-height: 1.08rem !important;
+  max-height: 1.08rem !important;
+  padding: 0 0.46rem !important;
+  font-size: 0.56rem !important;
+  line-height: 1 !important;
+}
+
+/* Final light-mode cleanup after portal overrides: CTA colors and white form/card panels. */
+html[data-theme="light"] body #root .home-page :is(
+  .settings-card,
+  .settings-section,
+  .tabs-content,
+  .notification-card,
+  .notification-row,
+  .empty-info,
+  .loading-message,
+  .error-message,
+  .no-jobs-message,
+  .no-applications-message,
+  .job-card,
+  .application-card,
+  .assessment-card,
+  .candidate-card,
+  .profile-card,
+  .profile-section,
+  .company-profile-card,
+  .company-profile-hero,
+  .company-profile-summary,
+  .company-profile-section,
+  .company-profile-details,
+  .dashboard-card,
+  .stat-card,
+  .analytics-card,
+  .analytics-detail-panel,
+  .interested-job-card,
+  .assessment-send-panel,
+  .job-management-form,
+  .interview-link-panel,
+  .job-form,
+  .job-form-intro,
+  .about-guide-grid article
+),
+html[data-theme="light"] body #root .home-page .dashboard-container.mobile-section-open :is(.mobile-dashboard-section-panel.is-open, .mobile-job-management-section-panel.is-open) :is(
+  .settings-card,
+  .settings-section,
+  .tabs-content,
+  .notification-card,
+  .notification-row,
+  .empty-info,
+  .loading-message,
+  .error-message,
+  .no-jobs-message,
+  .no-applications-message,
+  .job-card,
+  .application-card,
+  .assessment-card,
+  .candidate-card,
+  .profile-card,
+  .profile-section,
+  .company-profile-card,
+  .company-profile-hero,
+  .company-profile-summary,
+  .company-profile-section,
+  .company-profile-details,
+  .dashboard-card,
+  .stat-card,
+  .analytics-card,
+  .analytics-detail-panel,
+  .interested-job-card,
+  .assessment-send-panel,
+  .job-management-form,
+  .interview-link-panel,
+  .job-form,
+  .job-form-intro,
+  .about-guide-grid article
+) {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+}
+
+html[data-theme="light"] body #root .home-page :is(.settings-card, .settings-section, .tabs-content) input,
+html[data-theme="light"] body #root .home-page :is(.settings-card, .settings-section, .tabs-content) textarea,
+html[data-theme="light"] body #root .home-page :is(.settings-card, .settings-section, .tabs-content) select {
+  background: #fffaf3 !important;
+  background-color: #fffaf3 !important;
+}
+
+html[data-theme="light"] body #root .home-page .resume-playground-open-session button.settings-button.primary,
+html[data-theme="light"] body #root .home-page .resume-playground-open-session button.settings-button.primary:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body #root .home-page .resume-playground-editor-actions button.settings-button.primary,
+html[data-theme="light"] body #root .home-page .resume-playground-editor-actions button.settings-button.primary:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body #root .home-page .about-jumptake-section button.settings-button.primary.about-tour-button,
+html[data-theme="light"] body #root .home-page .about-jumptake-section button.settings-button.primary.about-tour-button:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body #root .home-page :is(.profile-header-actions, .profile-message) button.upload-resume-button,
+html[data-theme="light"] body #root .home-page :is(.profile-header-actions, .profile-message) button.upload-resume-button:is(:hover, :focus, :focus-visible, :active) {
+  background: #7d1320 !important;
+  background-color: #7d1320 !important;
+  background-image: none !important;
+  border: 1px solid #7d1320 !important;
+  border-radius: 12px !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body #root .home-page .resume-playground-open-session button.settings-button.primary *,
+html[data-theme="light"] body #root .home-page .resume-playground-editor-actions button.settings-button.primary *,
+html[data-theme="light"] body #root .home-page .about-jumptake-section button.settings-button.primary.about-tour-button *,
+html[data-theme="light"] body #root .home-page :is(.profile-header-actions, .profile-message) button.upload-resume-button * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="light"] body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-scratch,
+html[data-theme="light"] body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-scratch:is(:hover, :focus, :focus-visible, :active) {
+  background: #dfeee3 !important;
+  background-color: #dfeee3 !important;
+  background-image: none !important;
+  border: 1px solid rgba(102, 143, 113, 0.38) !important;
+  color: #173526 !important;
+  -webkit-text-fill-color: #173526 !important;
+}
+
+html[data-theme="light"] body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-upload,
+html[data-theme="light"] body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-upload:is(:hover, :focus, :focus-visible, :active) {
+  background: #fff1bd !important;
+  background-color: #fff1bd !important;
+  background-image: none !important;
+  border: 1px solid rgba(169, 126, 31, 0.34) !important;
+  color: #2f241b !important;
+  -webkit-text-fill-color: #2f241b !important;
+}
+
+html[data-theme="light"] body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-ai-tailor,
+html[data-theme="light"] body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-ai-tailor:is(:hover, :focus, :focus-visible, :active) {
+  background: #a84e24 !important;
+  background-color: #a84e24 !important;
+  background-image: none !important;
+  border: 1px solid rgba(90, 38, 16, 0.34) !important;
+  color: #fffaf3 !important;
+  -webkit-text-fill-color: #fffaf3 !important;
+}
+
+html[data-theme="light"] body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-scratch *,
+html[data-theme="light"] body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-upload * {
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+}
+
+html[data-theme="light"] body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-ai-tailor * {
+  color: #fffaf3 !important;
+  -webkit-text-fill-color: #fffaf3 !important;
+}
+/* Final EOF repair for profile action circles and yellow job bookmark state. */
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links {
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  gap: 0.5rem !important;
+}
+
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action,
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action,
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action:is(:hover, :focus, :focus-visible, :active, :disabled, .is-pending, .is-friend),
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action:is(:hover, :focus, :focus-visible, :active, :disabled, .active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 2rem !important;
+  width: 2rem !important;
+  min-width: 2rem !important;
+  max-width: 2rem !important;
+  height: 2rem !important;
+  min-height: 2rem !important;
+  max-height: 2rem !important;
+  inline-size: 2rem !important;
+  min-inline-size: 2rem !important;
+  max-inline-size: 2rem !important;
+  block-size: 2rem !important;
+  min-block-size: 2rem !important;
+  max-block-size: 2rem !important;
+  aspect-ratio: 1 / 1 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 50% !important;
+  background: #f0f2f5 !important;
+  background-color: #f0f2f5 !important;
+  background-image: none !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+  color: #b78996 !important;
+  -webkit-text-fill-color: #b78996 !important;
+  filter: none !important;
+  opacity: 1 !important;
+  overflow: hidden !important;
+  transform: none !important;
+}
+
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action :is(svg, path),
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action :is(svg, path) {
+  color: currentColor !important;
+  fill: currentColor !important;
+  stroke: none !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action.is-pending,
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action.is-pending:is(:hover, :focus, :focus-visible, :active) {
+  color: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
+}
+
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action.active,
+html body #root .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action.active:is(:hover, :focus, :focus-visible, :active),
+html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row .job-post-bookmark-reaction.active,
+html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row .job-post-bookmark-reaction[aria-pressed="true"],
+html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row .job-post-bookmark-reaction.active :is(svg, path, span, strong),
+html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row .job-post-bookmark-reaction[aria-pressed="true"] :is(svg, path, span, strong) {
+  color: #f5b82e !important;
+  -webkit-text-fill-color: #f5b82e !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  filter: none !important;
+  text-shadow: none !important;
 }

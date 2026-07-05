@@ -141,6 +141,53 @@ const flattenEditorPageWrappers = (root) => {
     });
 };
 
+const clearEditorFlowOverrides = (root) => {
+    if (!root || typeof document === 'undefined') {
+        return;
+    }
+
+    root.querySelectorAll('*').forEach((element) => {
+        element.style.breakBefore = '';
+        element.style.breakAfter = '';
+        element.style.breakInside = '';
+        element.style.pageBreakBefore = '';
+        element.style.pageBreakAfter = '';
+        element.style.pageBreakInside = '';
+
+        const minHeight = String(element.style.minHeight || '').trim();
+        const height = String(element.style.height || '').trim();
+
+        if (/^(100%|9\d{2}px|1[01]\d{2}px|1123px)$/i.test(minHeight)) {
+            element.style.minHeight = '0';
+        }
+
+        if (/^(100%|9\d{2}px|1[01]\d{2}px|1123px)$/i.test(height)) {
+            element.style.height = 'auto';
+        }
+    });
+};
+
+const flattenTemplateFlowContainers = (root) => {
+    if (!root || typeof document === 'undefined') {
+        return;
+    }
+
+    root.querySelectorAll('[data-resume-template-root="general"]').forEach((templateRoot) => {
+        Array.from(templateRoot.children).forEach((child, index) => {
+            const display = child.style.display || '';
+            const hasSectionChildren = child.querySelector('h1,h2,h3,p,ul,ol,table');
+            const isHeader = index === 0 && /flex/i.test(display);
+            const isGridLayout = /grid/i.test(display);
+
+            if (isHeader || isGridLayout || !hasSectionChildren) {
+                return;
+            }
+
+            unwrapElement(child);
+        });
+    });
+};
+
 const sanitizeEditorHtml = (html = '') => {
     if (typeof document === 'undefined') {
         return String(html || '');
@@ -149,6 +196,8 @@ const sanitizeEditorHtml = (html = '') => {
     const template = document.createElement('template');
     template.innerHTML = String(html || '');
     flattenEditorPageWrappers(template.content);
+    clearEditorFlowOverrides(template.content);
+    flattenTemplateFlowContainers(template.content);
     return template.innerHTML;
 };
 
@@ -1405,6 +1454,8 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
 
     const normalizeEditorContent = useCallback(() => {
         flattenEditorPageWrappers(editorRef.current);
+        clearEditorFlowOverrides(editorRef.current);
+        flattenTemplateFlowContainers(editorRef.current);
 
         const root = getPaginationHost();
 
@@ -1412,6 +1463,8 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
             return;
         }
         flattenEditorPageWrappers(root);
+        clearEditorFlowOverrides(root);
+        flattenTemplateFlowContainers(root);
         const childNodes = Array.from(root.childNodes);
 
         childNodes.forEach((node) => {
@@ -3306,7 +3359,7 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                                     <h3>{`Edit a saved ${resourceLabel.toLowerCase()}`}</h3>
                                     <p>{`Open a saved session or upload a ${resourceLabel.toLowerCase()} file to convert it into editable content.`}</p>
                                 </div>
-                                <button type="button" className="settings-button primary" onClick={() => uploadInputRef.current?.click()}>
+                                <button type="button" className="settings-button primary resume-playground-edit-upload-button" onClick={() => uploadInputRef.current?.click()}>
                                     {`Upload ${resourceLabel.toLowerCase()} to edit`}
                                 </button>
                             </div>

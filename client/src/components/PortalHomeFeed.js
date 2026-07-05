@@ -4095,7 +4095,7 @@ const PortalHomeFeed = ({
             authorAvatar: asDisplayText(author.authorAvatar || author.profileImage),
             authorGender: asDisplayText(author.authorGender || author.gender || author.profile?.gender),
             authorType: author.authorType === 'employer' ? 'employer' : 'candidate',
-            jumptakeId: asDisplayText(author.jumptakeId || author.jumpTakeId)
+            jumptakeId: asDisplayText(author.jumptakeId || author.jumpTakeId || author.username || author.handle)
         });
         setOpenReactionPostId('');
         closeCommentComposer();
@@ -4130,7 +4130,19 @@ const PortalHomeFeed = ({
         }
 
         const authorId = asDisplayText(openProfileDetail.authorId);
-        const isCurrentViewer = authorId && authorId === viewerId;
+        const currentProfileIds = [
+            viewerId,
+            currentUser?.id,
+            currentUser?._id,
+            currentUser?.userId,
+            currentUser?.jobSeekerId,
+            currentUser?.candidateId,
+            profileData?.id,
+            profileData?._id,
+            profileData?.user,
+            profileData?.userId
+        ].map((value) => String(value || '')).filter(Boolean);
+        const isCurrentViewer = authorId && currentProfileIds.includes(String(authorId));
         const friendMatch = feedFriends.find((friend) => (
             [friend.id, friend.userId, friend.candidateId].map(String).includes(authorId)
         ));
@@ -4147,7 +4159,16 @@ const PortalHomeFeed = ({
             || currentUser?.username
             || '';
         const rawJumpTakeId = openProfileDetail.jumptakeId
+            || openProfileDetail.jumpTakeId
+            || openProfileDetail.username
+            || openProfileDetail.handle
             || friendMatch?.jumptakeId
+            || friendMatch?.jumpTakeId
+            || friendMatch?.username
+            || friendMatch?.handle
+            || storedTailorProfile.jumptakeId
+            || storedTailorProfile.jumpTakeId
+            || storedTailorProfile.username
             || (isCurrentViewer ? currentJumpTakeId : '')
             || '';
         const jumpTakeId = rawJumpTakeId
@@ -4170,6 +4191,7 @@ const PortalHomeFeed = ({
 
         return {
             id: authorId,
+            candidateId: friendMatch?.candidateId || openProfileDetail.candidateId || openProfileDetail.authorCandidateId || '',
             name: openProfileDetail.authorName || friendMatch?.name || (isCurrentViewer ? authorName : 'Unknown user'),
             avatar,
             gender,
@@ -5312,6 +5334,22 @@ const PortalHomeFeed = ({
                 onClickCapture={(event) => closeFromBackdropClick(event, closeJobModal)}
             >
                 <article className="portal-job-modal" role="dialog" aria-modal="true" aria-label={`${selectedJob.title} job details`} onClick={(event) => event.stopPropagation()}>
+                    <span
+                        role="button"
+                        tabIndex={0}
+                        className="portal-job-modal-x-close"
+                        onClick={closeJobModal}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault();
+                                closeJobModal();
+                            }
+                        }}
+                        aria-label="Close job post"
+                        title="Close"
+                    >
+                        &times;
+                    </span>
                     <div className="portal-candidate-job-header portal-job-modal-header">
                         <div className={`portal-job-company-avatar ${selectedJob.companyLogo ? '' : 'has-default-profile-icon'}`}>
                             {selectedJob.companyLogo ? (
@@ -5324,15 +5362,6 @@ const PortalHomeFeed = ({
                             <h3>{selectedJob.title}</h3>
                             <p>{selectedJob.companyName}</p>
                         </div>
-                        <button
-                            type="button"
-                            className="portal-job-modal-close portal-create-story-close"
-                            onClick={closeJobModal}
-                            aria-label="Close job post"
-                            title="Close"
-                        >
-                            &times;
-                        </button>
                     </div>
 
                     {renderJobMeta(selectedJob)}
@@ -6047,8 +6076,20 @@ const PortalHomeFeed = ({
                                 type="button"
                                 className="portal-profile-detail-message"
                                 onClick={() => {
+                                    if (typeof window !== 'undefined') {
+                                        window.dispatchEvent(new CustomEvent('jumptake-open-candidate-messenger', {
+                                            detail: {
+                                                contact: {
+                                                    userId: profile.id || '',
+                                                    candidateId: profile.candidateId || '',
+                                                    name: profile.name || 'Candidate',
+                                                    avatar: profile.avatar || '',
+                                                    jumpTakeId: profile.jumpTakeId || ''
+                                                }
+                                            }
+                                        }));
+                                    }
                                     closeProfileDetailModal();
-                                    switchSection?.('inbox');
                                 }}
                             >
                                 Message

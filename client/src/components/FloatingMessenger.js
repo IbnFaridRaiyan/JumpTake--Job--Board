@@ -98,6 +98,7 @@ const FloatingMessenger = ({
     const [open, setOpen] = useState(false);
     const [threads, setThreads] = useState([]);
     const [selectedThreadId, setSelectedThreadId] = useState('');
+    const [pendingContact, setPendingContact] = useState(null);
     const [replyHtml, setReplyHtml] = useState('');
     const [loading, setLoading] = useState(false);
     const [sending, setSending] = useState(false);
@@ -109,6 +110,7 @@ const FloatingMessenger = ({
     const messagesRef = useRef(null);
     const openAssistantOnNextLoadRef = useRef(false);
     const assistantDirectOpenRef = useRef(false);
+    const pendingContactRef = useRef(null);
     const selectedThreadIdRef = useRef(selectedThreadId);
     const isMobileViewRef = useRef(isMobileView);
     const openEventName = isEmployer ? 'jumptake-open-employer-messenger' : 'jumptake-open-candidate-messenger';
@@ -137,6 +139,10 @@ const FloatingMessenger = ({
     useEffect(() => {
         selectedThreadIdRef.current = selectedThreadId;
     }, [selectedThreadId]);
+
+    useEffect(() => {
+        pendingContactRef.current = pendingContact;
+    }, [pendingContact]);
 
     useEffect(() => {
         isMobileViewRef.current = isMobileView;
@@ -223,6 +229,34 @@ const FloatingMessenger = ({
             const nextThreads = Array.isArray(data) ? data : [];
             setThreads(nextThreads);
 
+            const requestedContact = pendingContactRef.current;
+            if (requestedContact?.userId || requestedContact?.candidateId) {
+                const existingThread = nextThreads.find((thread) => {
+                    if (thread?.conversationType !== 'candidate-candidate') {
+                        return false;
+                    }
+
+                    const candidateIds = (thread.candidateProfiles || []).map((profile) => String(profile?._id || profile?.id || ''));
+                    const userIds = [
+                        ...(thread.participantUsers || []).map((participant) => String(participant?._id || participant?.id || participant || '')),
+                        ...(thread.candidateProfiles || []).map((profile) => String(profile?.user?._id || profile?.user?.id || profile?.user || ''))
+                    ];
+
+                    return (
+                        (requestedContact.candidateId && candidateIds.includes(String(requestedContact.candidateId)))
+                        || (requestedContact.userId && userIds.includes(String(requestedContact.userId)))
+                    );
+                });
+
+                if (existingThread) {
+                    setPendingContact(null);
+                    setSelectedThreadId(existingThread._id);
+                } else {
+                    setSelectedThreadId('');
+                }
+                return;
+            }
+
             if (!preserveSelection) {
                 if (openAssistantOnNextLoadRef.current) {
                     openAssistantOnNextLoadRef.current = false;
@@ -286,10 +320,19 @@ const FloatingMessenger = ({
     useEffect(() => {
         const handleOpenEvent = (event) => {
             const shouldOpenAssistant = event?.detail?.assistant === true;
+            const nextContact = event?.detail?.contact && typeof event.detail.contact === 'object'
+                ? event.detail.contact
+                : null;
             openAssistantOnNextLoadRef.current = shouldOpenAssistant;
             assistantDirectOpenRef.current = shouldOpenAssistant;
+            setPendingContact(nextContact);
             setOpen(true);
-            if (shouldOpenAssistant) {
+            if (nextContact) {
+                setSelectedThreadId('');
+                setReplyHtml('');
+                setMessage('');
+                setError('');
+            } else if (shouldOpenAssistant) {
                 setSelectedThreadId(ASSISTANT_THREAD_ID);
             } else if (isMobileView) {
                 setSelectedThreadId('');
@@ -325,6 +368,7 @@ const FloatingMessenger = ({
     const handleClose = () => {
         setOpen(false);
         setSelectedThreadId('');
+        setPendingContact(null);
         setReplyHtml('');
         setMessage('');
         setError('');
@@ -333,6 +377,7 @@ const FloatingMessenger = ({
 
     const handleSelectThread = (threadId) => {
         assistantDirectOpenRef.current = false;
+        setPendingContact(null);
         setSelectedThreadId(threadId);
         onSeen?.();
     };
@@ -344,6 +389,7 @@ const FloatingMessenger = ({
         }
 
         setSelectedThreadId('');
+        setPendingContact(null);
         setReplyHtml('');
         setMessage('');
         setError('');
@@ -351,7 +397,7 @@ const FloatingMessenger = ({
     };
 
     const sendReply = async () => {
-        if (!selectedThread || !hasMessageContent(replyHtml)) {
+        if ((!selectedThread && !pendingContact) || !hasMessageContent(replyHtml)) {
             setMessage('Write a message before sending.');
             return;
         }
@@ -362,18 +408,32 @@ const FloatingMessenger = ({
 
         try {
             const token = localStorage.getItem(isEmployer ? 'employerToken' : 'token');
-            const response = await fetch(apiUrl(`/api/messages/${selectedThread._id}/reply`), {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    senderType: isEmployer ? 'employer' : 'candidate',
-                    senderUserId: !isEmployer ? userId : undefined,
-                    bodyHtml: replyHtml
+            const response = pendingContact
+                ? await fetch(apiUrl('/api/messages/candidate-direct'), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        senderUserId: userId,
+                        recipientCandidateId: pendingContact.candidateId || undefined,
+                        recipientUserId: pendingContact.userId || undefined,
+                        bodyHtml: replyHtml
+                    })
                 })
-            });
+                : await fetch(apiUrl(`/api/messages/${selectedThread._id}/reply`), {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        senderType: isEmployer ? 'employer' : 'candidate',
+                        senderUserId: !isEmployer ? userId : undefined,
+                        bodyHtml: replyHtml
+                    })
+                });
 
             const data = await response.json();
 
@@ -382,10 +442,14 @@ const FloatingMessenger = ({
             }
 
             setReplyHtml('');
+            setPendingContact(null);
             setMessage('Message sent.');
-            setThreads((currentThreads) => currentThreads.map((thread) => (
-                thread._id === data._id ? data : thread
-            )));
+            setThreads((currentThreads) => (
+                currentThreads.some((thread) => thread._id === data._id)
+                    ? currentThreads.map((thread) => (thread._id === data._id ? data : thread))
+                    : [data, ...currentThreads]
+            ));
+            setSelectedThreadId(data._id || '');
             await fetchThreads(true);
         } catch (replyError) {
             console.error('Error sending message:', replyError);
@@ -396,7 +460,7 @@ const FloatingMessenger = ({
     };
 
     const lastMessagePreview = (thread) => thread?.messages?.[thread.messages.length - 1]?.bodyText || 'No messages yet';
-    const mobileChatOpen = isMobileView && (Boolean(selectedThread) || assistantSelected);
+    const mobileChatOpen = isMobileView && (Boolean(selectedThread) || Boolean(pendingContact) || assistantSelected);
 
     const findRequestedJob = (query = '') => {
         const safeJobs = Array.isArray(jobs) ? jobs : [];
@@ -671,18 +735,22 @@ const FloatingMessenger = ({
                                         onAction={handleAssistantAction}
                                     />
                                 </>
-                            ) : selectedThread ? (
+                            ) : (selectedThread || pendingContact) ? (
                                 <>
                                     <div className="floating-messenger-chat-bar">
                                         <div className="floating-messenger-chat-head">
-                                            <ChatAvatar imageSrc={getThreadAvatar(selectedThread)} className="floating-messenger-chat-avatar" label={getThreadTitle(selectedThread)} />
+                                            <ChatAvatar
+                                                imageSrc={selectedThread ? getThreadAvatar(selectedThread) : (pendingContact.avatar || '')}
+                                                className="floating-messenger-chat-avatar"
+                                                label={selectedThread ? getThreadTitle(selectedThread) : (pendingContact.name || 'Candidate')}
+                                            />
                                             <div className="floating-messenger-chat-copy">
-                                                <strong>{getThreadTitle(selectedThread)}</strong>
-                                                <span>{getThreadSubtitle(selectedThread)}</span>
+                                                <strong>{selectedThread ? getThreadTitle(selectedThread) : (pendingContact.name || 'Candidate')}</strong>
+                                                <span>{selectedThread ? getThreadSubtitle(selectedThread) : (pendingContact.jumpTakeId || 'Candidate connection')}</span>
                                             </div>
                                         </div>
                                         <span className="floating-messenger-chat-seen">
-                                            {selectedThread.lastMessageAt ? `Last update ${formatDateTime(selectedThread.lastMessageAt)}` : 'Conversation'}
+                                            {selectedThread?.lastMessageAt ? `Last update ${formatDateTime(selectedThread.lastMessageAt)}` : 'Conversation'}
                                         </span>
                                         {isMobileView ? (
                                             <div className="floating-messenger-chat-actions">
@@ -702,7 +770,12 @@ const FloatingMessenger = ({
                                     {error && <div className="error-message">{error}</div>}
 
                                     <div ref={messagesRef} className="floating-messenger-messages">
-                                        {(selectedThread.messages || []).map((item) => (
+                                        {pendingContact && !selectedThread && (
+                                            <div className="floating-messenger-empty">
+                                                <p>Start a message with {pendingContact.name || 'this user'}.</p>
+                                            </div>
+                                        )}
+                                        {(selectedThread?.messages || []).map((item) => (
                                             <div
                                                 key={item._id}
                                                 className={`floating-messenger-message ${isOwnMessage(selectedThread, item) ? 'is-own' : ''}`}

@@ -6,6 +6,7 @@ import { apiUrl } from '../utils/apiUrl';
 
 const stripHtml = (html = '') => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 const hasMessageContent = (html = '') => stripHtml(html).length > 0 || /<img\b/i.test(html);
+const PENDING_INBOX_CONTACT_KEY = 'jumptakePendingInboxContact';
 
 const formatDateTime = (dateString) => {
     if (!dateString) {
@@ -24,6 +25,7 @@ const formatDateTime = (dateString) => {
 const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
     const [threads, setThreads] = useState([]);
     const [selectedThread, setSelectedThread] = useState(null);
+    const [pendingContact, setPendingContact] = useState(null);
     const [replyHtml, setReplyHtml] = useState('');
     const [loading, setLoading] = useState(true);
     const [sending, setSending] = useState(false);
@@ -32,6 +34,21 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
     const [showAssistant, setShowAssistant] = useState(false);
 
     const isEmployer = mode === 'employer';
+
+    const readPendingInboxContact = () => {
+        if (typeof window === 'undefined' || isEmployer) {
+            return null;
+        }
+
+        try {
+            const parsed = JSON.parse(sessionStorage.getItem(PENDING_INBOX_CONTACT_KEY) || 'null');
+            sessionStorage.removeItem(PENDING_INBOX_CONTACT_KEY);
+            return parsed && typeof parsed === 'object' ? parsed : null;
+        } catch (error) {
+            sessionStorage.removeItem(PENDING_INBOX_CONTACT_KEY);
+            return null;
+        }
+    };
 
     useEffect(() => {
         fetchThreads();
@@ -65,7 +82,32 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
             }
 
             const data = await response.json();
-            setThreads(Array.isArray(data) ? data : []);
+            const nextThreads = Array.isArray(data) ? data : [];
+            setThreads(nextThreads);
+
+            const nextPendingContact = readPendingInboxContact();
+            if (nextPendingContact?.userId || nextPendingContact?.candidateId) {
+                const existingThread = nextThreads.find((thread) => {
+                    if (thread?.conversationType !== 'candidate-candidate') {
+                        return false;
+                    }
+
+                    const candidateIds = (thread.candidateProfiles || []).map((profile) => String(profile?._id || profile?.id || ''));
+                    const userIds = [
+                        ...(thread.participantUsers || []).map((participant) => String(participant?._id || participant?.id || participant || '')),
+                        ...(thread.candidateProfiles || []).map((profile) => String(profile?.user?._id || profile?.user?.id || profile?.user || ''))
+                    ];
+
+                    return (
+                        (nextPendingContact.candidateId && candidateIds.includes(String(nextPendingContact.candidateId)))
+                        || (nextPendingContact.userId && userIds.includes(String(nextPendingContact.userId)))
+                    );
+                });
+
+                setSelectedThread(existingThread || null);
+                setPendingContact(existingThread ? null : nextPendingContact);
+                return;
+            }
 
             if (selectedThread) {
                 const refreshedThread = data.find((thread) => thread._id === selectedThread._id);
@@ -80,7 +122,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
     };
 
     const sendReply = async () => {
-        if (!selectedThread || !hasMessageContent(replyHtml)) {
+        if ((!selectedThread && !pendingContact) || !hasMessageContent(replyHtml)) {
             setMessage('Write a reply before sending.');
             return;
         }
@@ -91,7 +133,21 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
 
         try {
             const token = localStorage.getItem(isEmployer ? 'employerToken' : 'token');
-            const response = await fetch(apiUrl(`/api/messages/${selectedThread._id}/reply`), {
+            const response = pendingContact
+                ? await fetch(apiUrl('/api/messages/candidate-direct'), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        senderUserId: userId,
+                        recipientCandidateId: pendingContact.candidateId || undefined,
+                        recipientUserId: pendingContact.userId || undefined,
+                        bodyHtml: replyHtml
+                    })
+                })
+                : await fetch(apiUrl(`/api/messages/${selectedThread._id}/reply`), {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -111,6 +167,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
             }
 
             setReplyHtml('');
+            setPendingContact(null);
             setSelectedThread(data);
             setMessage('Reply sent.');
             await fetchThreads();
@@ -215,18 +272,26 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
         );
     }
 
-    if (selectedThread) {
+    if (selectedThread || pendingContact) {
+        const chatTitle = selectedThread ? getThreadTitle(selectedThread) : (pendingContact.name || 'Candidate');
+        const chatSubtitle = selectedThread ? getThreadSubtitle(selectedThread) : (pendingContact.jumpTakeId || 'Candidate connection');
+        const chatAvatar = selectedThread ? getThreadAvatar(selectedThread) : (pendingContact.avatar || '');
+        const chatMessages = selectedThread ? (selectedThread.messages || []) : [];
+
         return (
             <div className="inbox-container messenger-inbox">
                 <div className="messenger-chat-header">
-                    <button className="back-button messenger-back" onClick={() => setSelectedThread(null)}>
+                    <button className="back-button messenger-back" onClick={() => {
+                        setSelectedThread(null);
+                        setPendingContact(null);
+                    }}>
                         Back to Chats
                     </button>
                     <div className="messenger-chat-head">
-                        <ChatAvatar imageSrc={getThreadAvatar(selectedThread)} className="messenger-avatar" label={getThreadTitle(selectedThread)} />
+                        <ChatAvatar imageSrc={chatAvatar} className="messenger-avatar" label={chatTitle} />
                         <div>
-                            <h2>{getThreadTitle(selectedThread)}</h2>
-                            <p>{getThreadSubtitle(selectedThread)}</p>
+                            <h2>{chatTitle}</h2>
+                            <p>{chatSubtitle}</p>
                         </div>
                     </div>
                 </div>
@@ -235,7 +300,12 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                 {error && <div className="error-message">{error}</div>}
 
                 <div className="message-thread messenger-thread">
-                    {(selectedThread.messages || []).map((item) => (
+                    {chatMessages.length === 0 && pendingContact && (
+                        <div className="no-jobs-message">
+                            <p>Start a message with {chatTitle}.</p>
+                        </div>
+                    )}
+                    {chatMessages.map((item) => (
                         <div
                             key={item._id}
                             className={`message-bubble ${isOwnMessage(selectedThread, item) ? 'sent' : 'received'}`}
@@ -263,7 +333,10 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                 </div>
 
                 <div className="section-footer-nav mobile-subpage-return">
-                    <button className="back-button responsive-back-button mobile-bottom-back-button" onClick={() => setSelectedThread(null)}>
+                    <button className="back-button responsive-back-button mobile-bottom-back-button" onClick={() => {
+                        setSelectedThread(null);
+                        setPendingContact(null);
+                    }}>
                         Back to Inbox
                     </button>
                 </div>

@@ -261,9 +261,9 @@ const createOrReplyMessage = async (req, res) => {
 const createCandidateDirectMessage = async (req, res) => {
     try {
         const authenticatedUserId = getAuthenticatedUserId(req);
-        const { senderUserId, recipientCandidateId, bodyHtml } = req.body;
+        const { senderUserId, recipientCandidateId, recipientUserId: requestedRecipientUserId, bodyHtml } = req.body;
 
-        if (!senderUserId || !recipientCandidateId || !bodyHtml) {
+        if (!senderUserId || (!recipientCandidateId && !requestedRecipientUserId) || !bodyHtml) {
             return res.status(400).json({ error: 'Sender, recipient, and message are required' });
         }
 
@@ -272,7 +272,9 @@ const createCandidateDirectMessage = async (req, res) => {
         }
 
         const senderCandidate = await JobSeeker.findOne({ user: senderUserId });
-        const recipientCandidate = await JobSeeker.findById(recipientCandidateId);
+        const recipientCandidate = recipientCandidateId
+            ? await JobSeeker.findById(recipientCandidateId)
+            : await JobSeeker.findOne({ user: requestedRecipientUserId });
         const recipientUserId = recipientCandidate?.user;
 
         if (!senderCandidate) {

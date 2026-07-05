@@ -75425,17 +75425,21 @@ html body .portal-post-detail-modal .portal-post-detail-header.portal-opened-pos
 }
 
 /* Job details popup: replace the old back chevrons with the create-story close x. */
+html body .portal-job-modal {
+  position: relative !important;
+}
+
 html body .portal-job-modal .portal-job-modal-header {
   position: relative !important;
 }
 
-html body .portal-job-modal .portal-job-modal-close.portal-create-story-close,
-html body .portal-job-modal .portal-job-modal-close.portal-create-story-close:is(:hover, :focus, :focus-visible, :active) {
+html body .portal-job-modal > .portal-job-modal-x-close,
+html body .portal-job-modal > .portal-job-modal-x-close:is(:hover, :focus, :focus-visible, :active) {
   all: unset !important;
   box-sizing: border-box !important;
   position: absolute !important;
-  top: 0.44rem !important;
-  right: 0.48rem !important;
+  top: 0.34rem !important;
+  right: 0.36rem !important;
   left: auto !important;
   bottom: auto !important;
   display: inline-flex !important;
@@ -75469,21 +75473,125 @@ html body .portal-job-modal .portal-job-modal-close.portal-create-story-close:is
   font-weight: 900 !important;
   line-height: 1 !important;
   text-align: center !important;
+  transform: none !important;
+  translate: none !important;
+  clip-path: none !important;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
   z-index: 12 !important;
 }
 
-html body .portal-job-modal .portal-job-modal-close.portal-create-story-close::before,
-html body .portal-job-modal .portal-job-modal-close.portal-create-story-close::after {
+html body .portal-job-modal > .portal-job-modal-x-close::before,
+html body .portal-job-modal > .portal-job-modal-x-close::after {
   display: none !important;
   content: none !important;
 }
 
-/* Tailor profile socials: icons only are light maroon, not the circular button fill. */
+/* Tailor profile socials: icons only are maroon, not the circular button fill. */
 html body :is(.portal-home-feed, .portal-profile-detail-card) .tailor-social-links .tailor-social-btn :is(svg, path),
 html body :is(.portal-home-feed, .portal-profile-detail-card) .tailor-social-links .tailor-social-btn:is(:hover, :focus, :focus-visible, :active) :is(svg, path),
 html body :is(.portal-home-feed, .portal-profile-detail-card) .tailor-social-links .tailor-social-btn:is(.facebook, .instagram, .linkedin, .github):is(:hover, :focus, :focus-visible, :active) :is(svg, path) {
-  color: #b06b7a !important;
-  fill: #b06b7a !important;
+  color: #7d3044 !important;
+  fill: #7d3044 !important;
   stroke: none !important;
-  -webkit-text-fill-color: #b06b7a !important;
+  -webkit-text-fill-color: #7d3044 !important;
+}
+
+/* Final post typography lock: post copy normal, names bold, comment copy normal. */
+html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) :is(.portal-post-body, .portal-post-detail-body),
+html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-body-wrap .portal-post-body,
+html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-social-post-card > p:not(.portal-post-source-link),
+html body .portal-post-detail-modal .portal-post-detail-body,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card .portal-post-body {
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  font-weight: 400 !important;
+  font-variation-settings: "wght" 400 !important;
+  text-shadow: none !important;
+}
+
+html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-social-post-header :is(h3, .portal-post-author-name, .portal-author-name-button),
+html body .portal-post-detail-modal .portal-post-detail-header :is(.portal-post-author-name, .portal-author-name-button),
+html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .portal-profile-detail-posts, .tailor-profile-section) .portal-social-post-card .portal-post-author-name {
+  font-weight: 900 !important;
+  font-variation-settings: "wght" 900 !important;
+}
+
+html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-comments .portal-comment-item p,
+html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-detail-comments .portal-comment-line,
+html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) :is(.portal-comment-copy) {
+  font-weight: 400 !important;
+  font-variation-settings: "wght" 400 !important;
+}
+
+html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) :is(.portal-comment-name, .portal-comment-author-inline, .portal-author-name-button.portal-comment-name),
+html body :is(.portal-home-feed, .portal-profile-detail-backdrop, .portal-profile-detail-posts, .tailor-profile-section, .portal-post-detail-modal) .portal-post-comments .portal-comment-item p .portal-comment-name,
+html body .portal-post-detail-modal .portal-post-detail-comments .portal-comment-author-inline {
+  font-weight: 900 !important;
+  font-variation-settings: "wght" 900 !important;
+}
+
+html body :is(.portal-home-feed, .portal-profile-detail-card) :is(.tailor-profile-stats, .tailor-social-links) {
+  border-top-color: #4f1d2a !important;
+}
+
+html body :is(.portal-home-feed, .portal-profile-detail-card) .tailor-profile-stats {
+  border-top: 1px solid #4f1d2a !important;
+}
+
+/* Job details close: force the x to the popup's top-right corner only. */
+html body .portal-job-modal > .portal-job-modal-x-close,
+html body .portal-job-modal > .portal-job-modal-x-close:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  position: absolute !important;
+  top: 0.44rem !important;
+  right: 0.44rem !important;
+  left: auto !important;
+  bottom: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 1.05rem !important;
+  min-width: 1.05rem !important;
+  max-width: 1.05rem !important;
+  height: 1.05rem !important;
+  min-height: 1.05rem !important;
+  max-height: 1.05rem !important;
+  inline-size: 1.05rem !important;
+  min-inline-size: 1.05rem !important;
+  max-inline-size: 1.05rem !important;
+  block-size: 1.05rem !important;
+  min-block-size: 1.05rem !important;
+  max-block-size: 1.05rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  color: #4f1d2a !important;
+  -webkit-text-fill-color: #4f1d2a !important;
+  box-shadow: 0 0.12rem 0.26rem rgba(30, 17, 12, 0.14) !important;
+  font-size: 0.86rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  transform: none !important;
+  translate: none !important;
+  clip-path: none !important;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+  z-index: 90 !important;
+}
+
+html body .portal-job-modal > .portal-job-modal-x-close::before,
+html body .portal-job-modal > .portal-job-modal-x-close::after {
+  display: none !important;
+  content: none !important;
+}
+
+html body .portal-job-modal .portal-job-modal-header {
+  padding-right: 2.25rem !important;
 }

@@ -4,6 +4,7 @@ import ResumeFilePreview from './ResumeFilePreview';
 import { apiUrl } from '../utils/apiUrl';
 import { createSquareProfileImage } from '../utils/profileImages';
 import reactionButtonIcon from './media/reaction.png';
+import defaultJobPostAvatar from './media/default-job-post-avatar.png';
 import defaultProfileMaleImage from './media/default-profile-male.png';
 import defaultProfileFemaleImage from './media/default-profile-female.png';
 import defaultTailorCoverImage from './media/default-tailor-cover.png';
@@ -796,19 +797,6 @@ const MoreOptionsIcon = () => (
     </svg>
 );
 
-const DefaultProfileIcon = () => (
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 16 16"
-        fill="currentColor"
-        aria-hidden="true"
-        focusable="false"
-    >
-        <path d="M8 8.15a3.55 3.55 0 1 0 0-7.1 3.55 3.55 0 0 0 0 7.1" />
-        <path d="M1.65 14.95c.58-3.56 3.08-5.63 6.35-5.63s5.77 2.07 6.35 5.63a.5.5 0 0 1-.49.58H2.14a.5.5 0 0 1-.49-.58" />
-    </svg>
-);
-
 const getDefaultUserProfileImage = (gender = '') => {
     const normalizedGender = String(gender || '').trim().toLowerCase();
 
@@ -1190,6 +1178,7 @@ const PortalHomeFeed = ({
     const [bookmarkedProfileCandidateIds, setBookmarkedProfileCandidateIds] = useState([]);
     const [pendingProfileFriendIds, setPendingProfileFriendIds] = useState([]);
     const [pendingProfileFriendConnectionIds, setPendingProfileFriendConnectionIds] = useState({});
+    const [openProfileFriendMenuId, setOpenProfileFriendMenuId] = useState('');
     const [profileActionMessage, setProfileActionMessage] = useState('');
     const [shareStatus, setShareStatus] = useState('');
     const [sharingTargetId, setSharingTargetId] = useState('');
@@ -1412,6 +1401,7 @@ const PortalHomeFeed = ({
                         const peer = connection?.peer || {};
                         return {
                             id: String(peer.candidateId || peer.userId || connection._id || ''),
+                            connectionId: connection._id || '',
                             candidateId: peer.candidateId || '',
                             userId: peer.userId || '',
                             name: peer.name || 'Candidate',
@@ -4259,6 +4249,7 @@ const PortalHomeFeed = ({
         closeReachInsight();
         setShareStatus('');
         setProfileActionMessage('');
+        setOpenProfileFriendMenuId('');
     };
 
     const closeProfileDetailModal = () => {
@@ -4370,6 +4361,7 @@ const PortalHomeFeed = ({
             ratingSummary,
             isCurrentViewer,
             isFriend: Boolean(friendMatch),
+            friendConnectionId: friendMatch?.connectionId || '',
             friendRequestPending: pendingProfileFriendIds.includes(authorId)
         };
     };
@@ -4389,6 +4381,11 @@ const PortalHomeFeed = ({
         }
 
         const profileKey = String(profile.id || '');
+
+        if (profile.isFriend) {
+            setOpenProfileFriendMenuId((currentId) => currentId === profileKey ? '' : profileKey);
+            return;
+        }
 
         if (profile.friendRequestPending) {
             const connectionId = pendingProfileFriendConnectionIds[profileKey];
@@ -4463,6 +4460,43 @@ const PortalHomeFeed = ({
             setProfileActionMessage('Friend invitation sent.');
         } catch (error) {
             setProfileActionMessage(error.message || 'Could not send friend invitation.');
+        }
+    };
+
+    const handleProfileUnfriend = async (profile, event) => {
+        event?.stopPropagation();
+
+        if (!profile?.friendConnectionId) {
+            setProfileActionMessage('Could not find this friend connection.');
+            return;
+        }
+
+        try {
+            setProfileActionMessage('');
+            const response = await fetch(apiUrl(`/api/candidate-connections/${profile.friendConnectionId}/respond`), {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token') || ''}`
+                },
+                body: JSON.stringify({ action: 'unfriend' })
+            });
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to remove friend');
+            }
+
+            const profileKey = String(profile.id || '');
+            setFeedFriends((currentFriends) => currentFriends.filter((friend) => (
+                String(friend.userId || friend.id) !== profileKey
+                && String(friend.candidateId || '') !== String(profile.candidateId || '')
+                && String(friend.connectionId || '') !== String(profile.friendConnectionId || '')
+            )));
+            setOpenProfileFriendMenuId('');
+            setProfileActionMessage('Friend removed.');
+        } catch (error) {
+            setProfileActionMessage(error.message || 'Could not remove friend.');
         }
     };
 
@@ -5256,12 +5290,8 @@ const PortalHomeFeed = ({
                             )}
                         </div>
                         <div className="portal-candidate-job-header">
-                            <div className={`portal-job-company-avatar ${job.companyLogo ? '' : 'has-default-profile-icon'}`}>
-                                {job.companyLogo ? (
-                                    <img src={job.companyLogo} alt={job.companyName} />
-                                ) : (
-                                    <span className="portal-default-profile-icon"><DefaultProfileIcon /></span>
-                                )}
+                            <div className="portal-job-company-avatar">
+                                <img src={job.companyLogo || defaultJobPostAvatar} alt={job.companyName || 'Job post'} />
                             </div>
                             <div>
                                 <h3>{job.title}</h3>
@@ -5656,12 +5686,8 @@ const PortalHomeFeed = ({
                         &times;
                     </span>
                     <div className="portal-candidate-job-header portal-job-modal-header">
-                        <div className={`portal-job-company-avatar ${selectedJob.companyLogo ? '' : 'has-default-profile-icon'}`}>
-                            {selectedJob.companyLogo ? (
-                                <img src={selectedJob.companyLogo} alt={selectedJob.companyName} />
-                            ) : (
-                                <span className="portal-default-profile-icon"><DefaultProfileIcon /></span>
-                            )}
+                        <div className="portal-job-company-avatar">
+                            <img src={selectedJob.companyLogo || defaultJobPostAvatar} alt={selectedJob.companyName || 'Job post'} />
                         </div>
                         <div className="portal-job-modal-title-block">
                             <h3>{selectedJob.title}</h3>
@@ -5774,20 +5800,27 @@ const PortalHomeFeed = ({
                     aria-label={`Review ${reviewingJob.title || 'job'}`}
                     onClick={(event) => event.stopPropagation()}
                 >
+                    <span
+                        role="button"
+                        tabIndex={0}
+                        className="portal-job-modal-x-close"
+                        onClick={closeJobReviewModal}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault();
+                                closeJobReviewModal();
+                            }
+                        }}
+                        aria-label="Close job review"
+                        title="Close"
+                    >
+                        &times;
+                    </span>
                     <div className="portal-job-review-header">
                         <div>
                             <h3>Write job review</h3>
                             <p>{asDisplayText(reviewingJob.title, 'Job post')} · {asDisplayText(reviewingJob.companyName, 'Company')}</p>
                         </div>
-                        <button
-                            type="button"
-                            className="portal-job-review-close"
-                            onClick={closeJobReviewModal}
-                            aria-label="Close job review"
-                            title="Close"
-                        >
-                            x
-                        </button>
                     </div>
 
                     <label className="portal-job-review-field">
@@ -6320,12 +6353,13 @@ const PortalHomeFeed = ({
         const canUseCandidateActions = canMessage;
         const profileCandidateId = profile.candidateId || profileCandidateLookup[profile.id]?._id || '';
         const isProfileBookmarked = profileCandidateId && bookmarkedProfileCandidateIds.includes(String(profileCandidateId));
-        const friendActionDisabled = !canUseCandidateActions || profile.isFriend;
+        const friendActionDisabled = !canUseCandidateActions;
         const friendActionLabel = profile.isFriend
-            ? 'Already friends'
+            ? 'Friends'
             : profile.friendRequestPending
                 ? 'Cancel friend invitation'
                 : 'Add friend';
+        const isFriendMenuOpen = openProfileFriendMenuId === String(profile.id || '');
         const coverStyle = {
             '--tailor-cover-image': `url("${profile.coverImage || defaultTailorCoverImage}")`
         };
@@ -6380,16 +6414,26 @@ const PortalHomeFeed = ({
                                 <>
                                     <button
                                         type="button"
-                                        className={`tailor-social-btn portal-profile-friend-action ${profile.isFriend ? 'is-friend' : ''} ${profile.friendRequestPending ? 'is-pending' : ''}`}
+                                        className={`tailor-social-btn portal-profile-friend-action ${profile.isFriend ? 'is-friend' : ''} ${profile.friendRequestPending ? 'is-pending' : ''} ${isFriendMenuOpen ? 'menu-open' : ''}`}
                                         onClick={(event) => handleProfileFriendRequest(profile, event)}
                                         disabled={friendActionDisabled}
+                                        aria-expanded={profile.isFriend ? isFriendMenuOpen : undefined}
                                         aria-label={friendActionLabel}
                                         title={friendActionLabel}
                                     >
                                         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                                            <path d="M15 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.42 0-8 2.24-8 5v1h10.1A6.9 6.9 0 0 1 17 19c0-1.85.72-3.54 1.9-4.8A11.7 11.7 0 0 0 15 14Zm6-3V8h-2v3h-3v2h3v3h2v-3h3v-2h-3Z" />
+                                            <path d={profile.isFriend
+                                                ? 'M9.2 16.6 4.9 12.3l1.4-1.4 2.9 2.9 7.5-7.5 1.4 1.4zM12 22a9.9 9.9 0 0 1-7.1-2.9A9.9 9.9 0 0 1 2 12a9.9 9.9 0 0 1 2.9-7.1A9.9 9.9 0 0 1 12 2a9.9 9.9 0 0 1 7.1 2.9A9.9 9.9 0 0 1 22 12a9.9 9.9 0 0 1-2.9 7.1A9.9 9.9 0 0 1 12 22z'
+                                                : 'M15 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.42 0-8 2.24-8 5v1h10.1A6.9 6.9 0 0 1 17 19c0-1.85.72-3.54 1.9-4.8A11.7 11.7 0 0 0 15 14Zm6-3V8h-2v3h-3v2h3v3h2v-3h3v-2h-3Z'} />
                                         </svg>
                                     </button>
+                                    {profile.isFriend && isFriendMenuOpen && (
+                                        <span className="portal-profile-friend-menu" role="menu">
+                                            <button type="button" onClick={(event) => handleProfileUnfriend(profile, event)} role="menuitem">
+                                                Unfriend
+                                            </button>
+                                        </span>
+                                    )}
                                     <button
                                         type="button"
                                         className={`tailor-social-btn portal-profile-bookmark-action ${isProfileBookmarked ? 'active' : ''}`}

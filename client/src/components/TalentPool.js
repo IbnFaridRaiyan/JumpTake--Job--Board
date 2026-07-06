@@ -208,6 +208,19 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         setSelectedCandidate(null);
     };
 
+    const getCandidateJumpTakeId = (candidate) => (
+        candidate?.jumptakeId
+        || candidate?.jumpTakeId
+        || candidate?.user?.jumptakeId
+        || '@JumpTakeID'
+    );
+
+    const getCandidateCoverStyle = (candidate) => ({
+        '--candidate-profile-cover': candidate?.coverImage
+            ? `url("${candidate.coverImage}")`
+            : 'linear-gradient(135deg, #4f1224 0%, #7d3044 100%)'
+    });
+
     const changeCandidatePage = (nextPage) => {
         setCurrentCandidatePage(nextPage);
         window.requestAnimationFrame(() => {
@@ -430,6 +443,114 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         );
     };
 
+    const renderFriendButton = (candidate, compact = false) => (
+        mode === 'candidate' && (
+            <button
+                type="button"
+                className={`candidate-card-action candidate-card-friend-action ${compact ? 'candidate-profile-mini-icon' : ''} ${candidate.connectionStatus?.status || 'is-new'}`}
+                onClick={(event) => {
+                    event.stopPropagation();
+                    if (!candidate.connectionStatus) {
+                        sendFriendRequest({ candidateId: candidate._id });
+                    } else if (candidate.connectionStatus.status === 'pending' && candidate.connectionStatus.direction === 'outgoing') {
+                        cancelFriendRequest(candidate);
+                    }
+                }}
+                disabled={sendingFriendRequest || candidate.connectionStatus?.status === 'accepted' || (candidate.connectionStatus?.status === 'pending' && candidate.connectionStatus?.direction !== 'outgoing')}
+                aria-label={candidate.connectionStatus?.status === 'accepted' ? 'Already friends' : candidate.connectionStatus?.status === 'pending' ? 'Friend invitation pending' : 'Add friend'}
+                title={candidate.connectionStatus?.status === 'accepted' ? 'Friends' : candidate.connectionStatus?.status === 'pending' ? 'Invitation pending' : 'Add friend'}
+            >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M15 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.42 0-8 2.24-8 5v1h10.1A6.9 6.9 0 0 1 17 19c0-1.85.72-3.54 1.9-4.8A11.7 11.7 0 0 0 15 14Zm6-3V8h-2v3h-3v2h3v3h2v-3h3v-2h-3Z" />
+                </svg>
+            </button>
+        )
+    );
+
+    const renderMessageButton = (candidate, compact = false) => (
+        <button
+            type="button"
+            className={`candidate-card-action candidate-card-message-action ${compact ? 'candidate-profile-mini-icon' : ''}`}
+            onClick={(event) => {
+                event.stopPropagation();
+                handleViewProfile(candidate);
+            }}
+            aria-label={`Message ${candidate.name || 'candidate'}`}
+            title="Message candidate"
+        >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-5 4v-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm0 2v10h1v1.84L7.3 16H20V6H4Z" />
+            </svg>
+        </button>
+    );
+
+    const renderBookmarkButton = (candidate, compact = false) => (
+        <button
+            type="button"
+            className={`bookmark-star-button talent-bookmark-button candidate-card-action ${compact ? 'candidate-profile-mini-icon' : ''} ${bookmarkedTalentIds.includes(String(candidate._id)) ? 'active' : ''}`}
+            onClick={(event) => toggleTalentBookmark(candidate, event)}
+            aria-label={bookmarkedTalentIds.includes(String(candidate._id)) ? 'Remove bookmark' : 'Bookmark talent'}
+            title={bookmarkedTalentIds.includes(String(candidate._id)) ? 'Remove bookmark' : 'Bookmark'}
+        >
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187z" />
+            </svg>
+        </button>
+    );
+
+    const renderCandidateProfileCard = (candidate, { compact = false } = {}) => {
+        const candidateId = String(candidate?._id || '');
+        const storiesCount = getCandidateTalentStories(candidate).length;
+        const likeCount = candidateLikeCounts[candidateId] || 0;
+
+        return (
+            <div className={`candidate-profile-mini-card ${compact ? 'is-compact' : 'is-modal-card'}`} style={getCandidateCoverStyle(candidate)}>
+                <div className="candidate-profile-mini-cover" />
+                <ProfileAvatar
+                    imageSrc={candidate.profileImage}
+                    name={candidate.name}
+                    className="candidate-profile-mini-avatar"
+                    imageClassName="profile-avatar-image"
+                    useProfileIconFallback
+                />
+                <div className="candidate-profile-mini-info">
+                    <h3>{candidate.name || 'Unnamed Candidate'}</h3>
+                    <p>{getCandidateJumpTakeId(candidate)}</p>
+                </div>
+                <div className="candidate-profile-mini-actions" onClick={(event) => event.stopPropagation()}>
+                    {renderLikeButton(candidate)}
+                    {renderFriendButton(candidate, true)}
+                    {renderBookmarkButton(candidate, true)}
+                    {renderMessageButton(candidate, true)}
+                </div>
+                <button
+                    type="button"
+                    className="candidate-profile-mini-message"
+                    onClick={(event) => {
+                        event.stopPropagation();
+                        handleViewProfile(candidate);
+                    }}
+                >
+                    Message
+                </button>
+                <div className="candidate-profile-mini-stats">
+                    <span>
+                        <strong>{likeCount}</strong>
+                        <small>Like</small>
+                    </span>
+                    <span>
+                        <strong>{storiesCount}</strong>
+                        <small>Posts</small>
+                    </span>
+                    <span>
+                        <strong>{Number(candidate.rating || 0).toFixed(1)}</strong>
+                        <small>Rating</small>
+                    </span>
+                </div>
+            </div>
+        );
+    };
+
     const normalizeSkill = (skill) => String(skill || '').trim().toLowerCase();
 
     const getSkillList = (skills) => {
@@ -637,14 +758,14 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
             {mode === 'candidate' && (
                 <div className="candidate-community-intro">
                     <p className="candidate-community-copy">
-                        Connect, learn, and{' '}
+                        <span className="candidate-community-line">Connect, learn, and{' '}
                         <span className="candidate-grow-together">
                             <span>grow together</span>
                             <svg className="candidate-grow-icon" viewBox="0 0 16 16" aria-hidden="true">
                                 <path fillRule="evenodd" d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5" />
                             </svg>
                         </span>
-                        <br />
+                        </span>
                         <span className="candidate-community-description">
                             Discover candidates with similar skills and experience, exchange career guidance, and learn from one another while keeping personal contact details private.
                         </span>
@@ -707,38 +828,28 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                             <p>Loading candidates...</p>
                 </div>
             ) : selectedCandidate ? (
-                <div className="candidate-profile" ref={candidateProfileRef}>
-                    <div className="candidate-profile-header">
-                        <div className="candidate-profile-back">
-                            <button onClick={handleCloseProfile} className="back-button">
-                                Back to Candidates
-                            </button>
-                        </div>
-                        <div className="candidate-header-info">
-                            <ProfileAvatar
-                                imageSrc={selectedCandidate.profileImage}
-                                name={selectedCandidate.name}
-                                className="candidate-initial"
-                                imageClassName="profile-avatar-image"
-                            />
-                        <div className="candidate-header-text">
-                            <h2>{selectedCandidate.name || 'Unnamed Candidate'}</h2>
-                            <p>{mode === 'candidate' ? 'Public matched profile' : (selectedCandidate.email || 'Email not available')}</p>
-                            </div>
-                        </div>
-                    </div>
+                <div
+                    className="candidate-profile-popup-backdrop"
+                    onMouseDown={(event) => {
+                        if (event.target === event.currentTarget) {
+                            handleCloseProfile();
+                        }
+                    }}
+                >
+                    <div className="candidate-profile candidate-profile-popup" ref={candidateProfileRef} role="dialog" aria-modal="true" aria-label={`${selectedCandidate.name || 'Candidate'} profile`}>
+                        <button type="button" className="candidate-profile-popup-close" onClick={handleCloseProfile} aria-label="Close profile">
+                            &times;
+                        </button>
 
-                    <div className="candidate-profile-body">
-                        <ContactCandidate
-                            companyId={companyId}
-                            candidate={selectedCandidate}
-                            mode={mode}
-                            currentUserId={currentUserId}
-                        />
-                        <div className="candidate-profile-quick-actions">
-                            <button type="button" className="secondary-button">View Profile</button>
-                            <button type="button" className="secondary-button">My Feed</button>
-                        </div>
+                        {renderCandidateProfileCard(selectedCandidate)}
+
+                        <div className="candidate-profile-body">
+                            <ContactCandidate
+                                companyId={companyId}
+                                candidate={selectedCandidate}
+                                mode={mode}
+                                currentUserId={currentUserId}
+                            />
 
                         <div className="profile-section">
                             <h3>Skills</h3>
@@ -816,10 +927,11 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                             )}
                         </div>
 
-                        <div className="section-footer-nav">
-                            <button className="back-button" onClick={handleCloseProfile}>
-                                Back
-                            </button>
+                            <div className="section-footer-nav">
+                                <button className="back-button" onClick={handleCloseProfile}>
+                                    Back
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -852,19 +964,9 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                             {pagedCandidateRows.map(({ candidate, spotlight }) => {
                                 return (
                                 <div key={candidate._id} className="candidate-card uiverse-profile-card" onClick={() => handleViewProfile(candidate)}>
-                                    <ProfileAvatar
-                                        imageSrc={candidate.profileImage}
-                                        name={candidate.name}
-                                        className="candidate-avatar profileimage"
-                                        imageClassName="profile-avatar-image"
-                                        useProfileIconFallback
-                                    />
-                                    <div className="candidate-info">
-                                        <h3 className="candidate-name Name">{candidate.name || 'Unnamed Candidate'}</h3>
-                                        <div className="candidate-match-summary candidate-jumptake-meta">
-                                            <span>{candidate.jumptakeId || candidate.jumpTakeId || candidate.user?.jumptakeId || 'JumpTake ID unavailable'}</span>
-                                        </div>
+                                    {renderCandidateProfileCard(candidate, { compact: true })}
 
+                                    <div className="candidate-info candidate-card-extra-info">
                                         {spotlightActive && (
                                             <div className="spotlight-match">
                                                 <span className="spotlight-score">{spotlight.score}</span>
@@ -879,55 +981,6 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                                                 ))}
                                             </div>
                                         )}
-                                    </div>
-                                    <div className="candidate-card-socialbar socialbar">
-                                        {renderLikeButton(candidate)}
-                                        {mode === 'candidate' && (
-                                            <button
-                                                type="button"
-                                                className={`candidate-card-action candidate-card-friend-action ${candidate.connectionStatus?.status || 'is-new'}`}
-                                                onClick={(event) => {
-                                                    event.stopPropagation();
-                                                    if (!candidate.connectionStatus) {
-                                                        sendFriendRequest({ candidateId: candidate._id });
-                                                    } else if (candidate.connectionStatus.status === 'pending' && candidate.connectionStatus.direction === 'outgoing') {
-                                                        cancelFriendRequest(candidate);
-                                                    }
-                                                }}
-                                                disabled={sendingFriendRequest || candidate.connectionStatus?.status === 'accepted' || (candidate.connectionStatus?.status === 'pending' && candidate.connectionStatus?.direction !== 'outgoing')}
-                                                aria-label={candidate.connectionStatus?.status === 'accepted' ? 'Already friends' : candidate.connectionStatus?.status === 'pending' ? 'Friend invitation pending' : 'Add friend'}
-                                                title={candidate.connectionStatus?.status === 'accepted' ? 'Friends' : candidate.connectionStatus?.status === 'pending' ? 'Invitation pending' : 'Add friend'}
-                                            >
-                                                <svg viewBox="0 0 24 24" aria-hidden="true">
-                                                    <path d="M15 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.42 0-8 2.24-8 5v1h10.1A6.9 6.9 0 0 1 17 19c0-1.85.72-3.54 1.9-4.8A11.7 11.7 0 0 0 15 14Zm6-3V8h-2v3h-3v2h3v3h2v-3h3v-2h-3Z" />
-                                                </svg>
-                                            </button>
-                                        )}
-                                        <button
-                                            type="button"
-                                            className="candidate-card-action candidate-card-message-action"
-                                            onClick={(event) => {
-                                                event.stopPropagation();
-                                                handleViewProfile(candidate);
-                                            }}
-                                            aria-label={`Message ${candidate.name || 'candidate'}`}
-                                            title="Message candidate"
-                                        >
-                                            <svg viewBox="0 0 24 24" aria-hidden="true">
-                                                <path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-5 4v-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm0 2v10h1v1.84L7.3 16H20V6H4Z" />
-                                            </svg>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className={`bookmark-star-button talent-bookmark-button candidate-card-action ${bookmarkedTalentIds.includes(String(candidate._id)) ? 'active' : ''}`}
-                                            onClick={(event) => toggleTalentBookmark(candidate, event)}
-                                            aria-label={bookmarkedTalentIds.includes(String(candidate._id)) ? 'Remove bookmark' : 'Bookmark talent'}
-                                            title={bookmarkedTalentIds.includes(String(candidate._id)) ? 'Remove bookmark' : 'Bookmark'}
-                                        >
-                                            <svg viewBox="0 0 16 16" aria-hidden="true">
-                                                <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187z" />
-                                            </svg>
-                                        </button>
                                     </div>
                                 </div>
                             )})}

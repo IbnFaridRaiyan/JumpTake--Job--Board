@@ -54776,18 +54776,6 @@ select {
   font-size: 0.76rem !important;
 }
 
-.portal-job-review-close {
-  width: 1.9rem !important;
-  min-width: 1.9rem !important;
-  height: 1.9rem !important;
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
-  border-radius: 999px !important;
-  background: rgba(255, 255, 255, 0.06) !important;
-  color: #ffffff !important;
-  cursor: pointer !important;
-  font-weight: 900 !important;
-}
-
 .portal-job-review-field {
   display: grid !important;
   gap: 0.4rem !important;
@@ -55244,22 +55232,6 @@ body[data-theme="light"] #root .home-page .portal-create-story-button * {
 
 .portal-job-review-header {
   padding-right: 2rem !important;
-}
-
-.portal-job-review-close {
-  position: absolute !important;
-  right: 0.78rem !important;
-  top: 0.78rem !important;
-  width: auto !important;
-  min-width: 0 !important;
-  height: auto !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  color: #ffffff !important;
-  padding: 0.1rem !important;
-  line-height: 1 !important;
 }
 
 .portal-job-review-actions {
@@ -75257,7 +75229,7 @@ html body .portal-candidate-job-card .portal-job-meta-icons.compact .portal-job-
   color: #172033 !important;
   -webkit-text-fill-color: #172033 !important;
   font-size: 0.68rem !important;
-  font-weight: 900 !important;
+  font-weight: 400 !important;
   line-height: 1.2 !important;
 }
 
@@ -75267,7 +75239,7 @@ html body .portal-candidate-job-card .portal-job-meta-icons.compact .portal-job-
   height: 0.82rem !important;
   color: #172033 !important;
   -webkit-text-fill-color: #172033 !important;
-  font-weight: 950 !important;
+  font-weight: 400 !important;
 }
 
 html body .portal-candidate-job-card .portal-candidate-job-stats .portal-candidate-job-stat {
@@ -77009,4 +76981,943 @@ html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-so
 html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action.active:is(:hover, :focus, :focus-visible, :active) {
   color: #f5b82e !important;
   -webkit-text-fill-color: #f5b82e !important;
+}
+
+/* Screenshot fix: job popup stats and mobile country picker colors. */
+html body .portal-job-modal .portal-candidate-job-stats.portal-job-modal-stats {
+  gap: 0.18rem !important;
+  margin: 0.82rem 0 1.16rem !important;
+}
+
+html body .portal-job-modal .portal-candidate-job-stats.portal-job-modal-stats .portal-candidate-job-stat,
+html body .portal-job-modal .portal-candidate-job-stats.portal-job-modal-stats .portal-candidate-job-stat:is(:hover, :focus, :focus-visible, :active) {
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.12rem !important;
+  min-height: 2.48rem !important;
+  padding: 0.34rem 0.16rem !important;
+  border-radius: 0.48rem !important;
+  background: #3f7658 !important;
+  background-color: #3f7658 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 0.6rem !important;
+  font-weight: 850 !important;
+  line-height: 1.12 !important;
+  letter-spacing: 0 !important;
+}
+
+html body .portal-job-modal .portal-candidate-job-stats.portal-job-modal-stats .portal-candidate-job-stat strong,
+html body .portal-job-modal .portal-candidate-job-stats.portal-job-modal-stats .portal-candidate-job-stat :is(svg, path) {
+  color: #ffffff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html body .portal-job-modal .portal-candidate-job-stats.portal-job-modal-stats .portal-candidate-job-stat strong {
+  font-size: 0.96rem !important;
+  line-height: 1 !important;
+}
+
+html body #root .home-page .portal-job-country-menu,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-country-menu {
+  background: #b88491 !important;
+  background-color: #b88491 !important;
+  border-color: rgba(112, 47, 64, 0.28) !important;
+  box-shadow: 0 16px 34px rgba(68, 24, 36, 0.28) !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .home-page .portal-job-country-menu,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-country-menu {
+    min-width: 10.6rem !important;
+    padding: 0.36rem !important;
+    gap: 0.12rem !important;
+    border-radius: 0.6rem !important;
+  }
+
+  html body #root .home-page .portal-job-country-menu button,
+  html body #root .home-page .portal-job-country-menu span,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-country-menu button,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-country-menu span {
+    min-height: 2.34rem !important;
+    padding: 0.34rem 0.48rem !important;
+    border-radius: 0.42rem !important;
+    font-size: 0.7rem !important;
+    line-height: 1.05 !important;
+  }
+}
+
+/* Screenshot fix: remove the dark ring around default comment avatars. */
+html body .portal-home-feed .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar,
+html body .portal-home-feed .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar.has-default-profile-icon,
+html body .portal-home-feed .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar:is(:hover, :focus, :focus-visible, :active) {
+  border: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+html body .portal-home-feed .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar > .portal-default-profile-icon,
+html body .portal-home-feed .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar .portal-default-profile-image,
+html body .portal-home-feed .portal-social-post-card .portal-post-comments button.portal-author-open-button.portal-comment-avatar svg {
+  border: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Screenshot fix: compact off-white country/options popups. */
+html body #root .home-page .portal-job-country-menu,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-country-menu,
+html body .portal-home-feed .portal-post-options-menu,
+html body .portal-home-feed .portal-post-options-menu-inline,
+html body .portal-post-options-menu.portal-post-options-menu-floating,
+html body .portal-home-feed .portal-candidate-job-card .portal-job-options-menu {
+  background: #f7f0e7 !important;
+  background-color: #f7f0e7 !important;
+  border: 1px solid rgba(126, 98, 83, 0.22) !important;
+  border-radius: 0.56rem !important;
+  box-shadow: 0 14px 30px rgba(74, 45, 34, 0.18) !important;
+  padding: 0.32rem !important;
+  gap: 0.12rem !important;
+}
+
+html body #root .home-page .portal-job-country-menu button,
+html body #root .home-page .portal-job-country-menu span,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-country-menu button,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-country-menu span,
+html body .portal-home-feed .portal-post-options-menu button,
+html body .portal-home-feed .portal-post-options-menu-inline button,
+html body .portal-post-options-menu.portal-post-options-menu-floating button,
+html body .portal-home-feed .portal-candidate-job-card .portal-job-options-menu button {
+  min-height: 1.92rem !important;
+  padding: 0.24rem 0.46rem !important;
+  border: 0 !important;
+  border-radius: 0.38rem !important;
+  background: #e5dace !important;
+  background-color: #e5dace !important;
+  color: #1f2f2d !important;
+  -webkit-text-fill-color: #1f2f2d !important;
+  box-shadow: none !important;
+  font-size: 0.68rem !important;
+  font-weight: 850 !important;
+  line-height: 1.04 !important;
+}
+
+html body #root .home-page .portal-job-country-menu button:hover,
+html body #root .home-page .portal-job-country-menu button.active,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-country-menu button:hover,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-country-menu button.active,
+html body .portal-home-feed .portal-post-options-menu button:hover,
+html body .portal-home-feed .portal-post-options-menu button:focus-visible,
+html body .portal-home-feed .portal-post-options-menu-inline button:hover,
+html body .portal-home-feed .portal-post-options-menu-inline button:focus-visible,
+html body .portal-post-options-menu.portal-post-options-menu-floating button:hover,
+html body .portal-post-options-menu.portal-post-options-menu-floating button:focus-visible,
+html body .portal-home-feed .portal-candidate-job-card .portal-job-options-menu button:hover,
+html body .portal-home-feed .portal-candidate-job-card .portal-job-options-menu button:focus-visible {
+  background: #d8c9bb !important;
+  background-color: #d8c9bb !important;
+  color: #152321 !important;
+  -webkit-text-fill-color: #152321 !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .home-page .portal-job-country-menu {
+    min-width: 9.7rem !important;
+  }
+
+  html body .portal-home-feed .portal-post-options-menu,
+  html body .portal-home-feed .portal-post-options-menu-inline,
+  html body .portal-post-options-menu.portal-post-options-menu-floating,
+  html body .portal-home-feed .portal-candidate-job-card .portal-job-options-menu {
+    min-width: 8.6rem !important;
+  }
+}
+
+/* Screenshot fix: profile close control is a small visible corner button. */
+html body .portal-profile-detail-modal > .portal-profile-detail-close,
+html body .portal-profile-detail-modal > .portal-profile-detail-close:is(:hover, :focus, :focus-visible, :active) {
+  box-sizing: border-box !important;
+  position: absolute !important;
+  top: 0.58rem !important;
+  right: 0.58rem !important;
+  z-index: 20 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 1.38rem !important;
+  min-width: 1.38rem !important;
+  max-width: 1.38rem !important;
+  height: 1.38rem !important;
+  min-height: 1.38rem !important;
+  max-height: 1.38rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+  box-shadow: 0 2px 8px rgba(20, 16, 14, 0.18) !important;
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  font-size: 1rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  overflow: hidden !important;
+}
+
+/* Screenshot fix: slim profile-popup reach pill and reuse job-view close in review popup. */
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-reach-row,
+html body .portal-profile-detail-backdrop .portal-profile-preview-post-card .portal-post-reach-row {
+  min-height: 1.9rem !important;
+  margin: 0.28rem 0 0.42rem !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-feed-reach-wrap,
+html body .portal-profile-detail-backdrop .portal-profile-preview-post-card .portal-feed-reach-wrap {
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: fit-content !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button:is(:hover, :focus, :focus-visible, :active),
+html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button,
+html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button:is(:hover, :focus, :focus-visible, :active) {
+  width: auto !important;
+  min-width: 3.82rem !important;
+  max-width: 5.1rem !important;
+  min-height: 1.74rem !important;
+  height: 1.74rem !important;
+  padding: 0.16rem 0.56rem !important;
+  border-radius: 999px !important;
+  font-size: 0.68rem !important;
+  line-height: 1 !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button *,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button span,
+html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button *,
+html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button span {
+  font-size: 0.68rem !important;
+  line-height: 1 !important;
+}
+
+html body .portal-job-review-modal > .portal-job-modal-x-close,
+html body .portal-job-review-modal > .portal-job-modal-x-close:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  position: absolute !important;
+  top: 0.44rem !important;
+  right: 0.44rem !important;
+  left: auto !important;
+  bottom: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 1.05rem !important;
+  min-width: 1.05rem !important;
+  max-width: 1.05rem !important;
+  height: 1.05rem !important;
+  min-height: 1.05rem !important;
+  max-height: 1.05rem !important;
+  inline-size: 1.05rem !important;
+  min-inline-size: 1.05rem !important;
+  max-inline-size: 1.05rem !important;
+  block-size: 1.05rem !important;
+  min-block-size: 1.05rem !important;
+  max-block-size: 1.05rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  color: #4f1d2a !important;
+  -webkit-text-fill-color: #4f1d2a !important;
+  box-shadow: 0 0.12rem 0.26rem rgba(30, 17, 12, 0.14) !important;
+  font-size: 0.86rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  transform: none !important;
+  translate: none !important;
+  clip-path: none !important;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+  z-index: 90 !important;
+}
+
+html body .portal-job-review-modal > .portal-job-modal-x-close::before,
+html body .portal-job-review-modal > .portal-job-modal-x-close::after {
+  display: none !important;
+  content: none !important;
+}
+
+html body .portal-job-review-modal .portal-job-review-header {
+  padding-right: 2.25rem !important;
+}
+
+/* Profile popup: friend/bookmark actions match social icon circles with state colors. */
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links {
+  position: relative !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action,
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action,
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action:is(:hover, :focus, :focus-visible, :active, :disabled, .is-pending, .is-friend, .menu-open),
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action:is(:hover, :focus, :focus-visible, :active, :disabled, .active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 2rem !important;
+  width: 2rem !important;
+  min-width: 2rem !important;
+  max-width: 2rem !important;
+  height: 2rem !important;
+  min-height: 2rem !important;
+  max-height: 2rem !important;
+  inline-size: 2rem !important;
+  min-inline-size: 2rem !important;
+  max-inline-size: 2rem !important;
+  block-size: 2rem !important;
+  min-block-size: 2rem !important;
+  max-block-size: 2rem !important;
+  aspect-ratio: 1 / 1 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: #f0f2f5 !important;
+  background-color: #f0f2f5 !important;
+  background-image: none !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+  color: #7d3044 !important;
+  -webkit-text-fill-color: #7d3044 !important;
+  cursor: pointer !important;
+  opacity: 1 !important;
+  overflow: hidden !important;
+  transform: none !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action :is(svg, path),
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action :is(svg, path) {
+  color: currentColor !important;
+  fill: currentColor !important;
+  stroke: none !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action.is-pending,
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action.is-pending:is(:hover, :focus, :focus-visible, :active) {
+  color: #d86f2a !important;
+  -webkit-text-fill-color: #d86f2a !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action.is-friend,
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-friend-action.is-friend:is(:hover, :focus, :focus-visible, :active, .menu-open) {
+  color: #2f8a4b !important;
+  -webkit-text-fill-color: #2f8a4b !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action.active,
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-social-links button.tailor-social-btn.portal-profile-bookmark-action.active:is(:hover, :focus, :focus-visible, :active) {
+  color: #f5b82e !important;
+  -webkit-text-fill-color: #f5b82e !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-friend-menu {
+  position: absolute !important;
+  left: 0 !important;
+  top: calc(100% + 0.32rem) !important;
+  z-index: 25 !important;
+  display: grid !important;
+  min-width: 6.9rem !important;
+  padding: 0.28rem !important;
+  border: 1px solid rgba(126, 98, 83, 0.22) !important;
+  border-radius: 0.48rem !important;
+  background: #f7f0e7 !important;
+  box-shadow: 0 12px 26px rgba(74, 45, 34, 0.18) !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-friend-menu button,
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-friend-menu button:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  min-height: 1.82rem !important;
+  padding: 0.28rem 0.55rem !important;
+  border-radius: 0.36rem !important;
+  background: #e5dace !important;
+  color: #1f2f2d !important;
+  -webkit-text-fill-color: #1f2f2d !important;
+  font-size: 0.7rem !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  cursor: pointer !important;
+}
+
+/* Final sync: make all three-dot option popups match the compact country popup. */
+html body #root .home-page .portal-job-country-menu,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-country-menu,
+html body #root .home-page .portal-home-feed .portal-social-post-card .portal-post-options-menu,
+html body #root .home-page .portal-home-feed .portal-social-post-card .portal-post-options-menu-inline,
+html body #root .home-page .portal-home-feed .portal-candidate-job-card .portal-job-options-menu,
+html body #root .home-page .portal-home-feed .portal-candidate-job-card .portal-post-options-menu,
+html body #root .home-page .portal-home-feed .portal-candidate-job-card .portal-post-options-menu-inline,
+html body #root .home-page .portal-post-options-menu.portal-post-options-menu-floating,
+html body .portal-post-options-menu.portal-post-options-menu-floating,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-options-menu,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-options-menu-inline,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-job-options-menu {
+  box-sizing: border-box !important;
+  display: grid !important;
+  gap: 0.12rem !important;
+  min-width: 8.65rem !important;
+  max-width: 10rem !important;
+  padding: 0.32rem !important;
+  border: 1px solid rgba(126, 98, 83, 0.22) !important;
+  border-radius: 0.56rem !important;
+  background: #f7f0e7 !important;
+  background-color: #f7f0e7 !important;
+  background-image: none !important;
+  box-shadow: 0 14px 30px rgba(74, 45, 34, 0.18) !important;
+  overflow: hidden !important;
+}
+
+html body #root .home-page .portal-job-country-menu button,
+html body #root .home-page .portal-job-country-menu span,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-country-menu button,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-country-menu span,
+html body #root .home-page .portal-home-feed .portal-social-post-card :is(.portal-post-options-menu, .portal-post-options-menu-inline) button,
+html body #root .home-page .portal-home-feed .portal-candidate-job-card :is(.portal-job-options-menu, .portal-post-options-menu, .portal-post-options-menu-inline) button,
+html body #root .home-page .portal-post-options-menu.portal-post-options-menu-floating button,
+html body .portal-post-options-menu.portal-post-options-menu-floating button,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts :is(.portal-post-options-menu, .portal-post-options-menu-inline, .portal-job-options-menu) button {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-height: 1.88rem !important;
+  padding: 0.24rem 0.5rem !important;
+  border: 0 !important;
+  border-radius: 0.38rem !important;
+  background: #e5dace !important;
+  background-color: #e5dace !important;
+  background-image: none !important;
+  color: #1f2f2d !important;
+  -webkit-text-fill-color: #1f2f2d !important;
+  box-shadow: none !important;
+  font-size: 0.68rem !important;
+  font-weight: 850 !important;
+  line-height: 1.05 !important;
+  letter-spacing: 0 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+}
+
+html body #root .home-page .portal-job-country-menu button:hover,
+html body #root .home-page .portal-job-country-menu button.active,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-country-menu button:hover,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-country-menu button.active,
+html body #root .home-page .portal-home-feed .portal-social-post-card :is(.portal-post-options-menu, .portal-post-options-menu-inline) button:is(:hover, :focus, :focus-visible, :active),
+html body #root .home-page .portal-home-feed .portal-candidate-job-card :is(.portal-job-options-menu, .portal-post-options-menu, .portal-post-options-menu-inline) button:is(:hover, :focus, :focus-visible, :active),
+html body #root .home-page .portal-post-options-menu.portal-post-options-menu-floating button:is(:hover, :focus, :focus-visible, :active),
+html body .portal-post-options-menu.portal-post-options-menu-floating button:is(:hover, :focus, :focus-visible, :active),
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts :is(.portal-post-options-menu, .portal-post-options-menu-inline, .portal-job-options-menu) button:is(:hover, :focus, :focus-visible, :active) {
+  background: #d8c9bb !important;
+  background-color: #d8c9bb !important;
+  color: #1f2f2d !important;
+  -webkit-text-fill-color: #1f2f2d !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .home-page .portal-job-country-menu,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-country-menu,
+  html body #root .home-page .portal-home-feed .portal-social-post-card .portal-post-options-menu,
+  html body #root .home-page .portal-home-feed .portal-social-post-card .portal-post-options-menu-inline,
+  html body #root .home-page .portal-home-feed .portal-candidate-job-card .portal-job-options-menu,
+  html body #root .home-page .portal-home-feed .portal-candidate-job-card .portal-post-options-menu,
+  html body #root .home-page .portal-home-feed .portal-candidate-job-card .portal-post-options-menu-inline,
+  html body #root .home-page .portal-post-options-menu.portal-post-options-menu-floating,
+  html body .portal-post-options-menu.portal-post-options-menu-floating,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-options-menu,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-options-menu-inline,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-job-options-menu {
+    min-width: 7.7rem !important;
+    max-width: 8.75rem !important;
+    padding: 0.28rem !important;
+  }
+
+  html body #root .home-page .portal-job-country-menu button,
+  html body #root .home-page .portal-job-country-menu span,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-country-menu button,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-country-menu span,
+  html body #root .home-page .portal-home-feed .portal-social-post-card :is(.portal-post-options-menu, .portal-post-options-menu-inline) button,
+  html body #root .home-page .portal-home-feed .portal-candidate-job-card :is(.portal-job-options-menu, .portal-post-options-menu, .portal-post-options-menu-inline) button,
+  html body #root .home-page .portal-post-options-menu.portal-post-options-menu-floating button,
+  html body .portal-post-options-menu.portal-post-options-menu-floating button,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts :is(.portal-post-options-menu, .portal-post-options-menu-inline, .portal-job-options-menu) button {
+    min-height: 1.74rem !important;
+    padding: 0.2rem 0.42rem !important;
+    border-radius: 0.34rem !important;
+    font-size: 0.64rem !important;
+  }
+}
+
+/* Candidates page: compact profile-popup style cards and modal profile view. */
+html body #root .candidate-view-candidates .candidate-community-copy {
+  display: grid !important;
+  gap: 0.34rem !important;
+  line-height: 1.05 !important;
+}
+
+html body #root .candidate-view-candidates .candidate-community-line,
+html body #root .candidate-view-candidates .candidate-community-copy .candidate-grow-together,
+html body #root .candidate-view-candidates .candidate-community-copy .candidate-grow-together > span {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.22rem !important;
+  white-space: nowrap !important;
+}
+
+html body #root .candidate-view-candidates .candidate-community-copy .candidate-grow-together,
+html body #root .candidate-view-candidates .candidate-community-copy .candidate-grow-together > span,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-community-copy .candidate-grow-together,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-community-copy .candidate-grow-together > span {
+  color: #2e2787 !important;
+  -webkit-text-fill-color: #2e2787 !important;
+}
+
+html body #root .candidate-view-candidates .candidate-community-copy .candidate-grow-icon,
+html body #root .candidate-view-candidates .candidate-community-copy .candidate-grow-icon path {
+  color: #101820 !important;
+  fill: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html body #root .candidate-view-candidates .candidates-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 0.72rem !important;
+  align-items: stretch !important;
+  overflow: visible !important;
+}
+
+html body #root .candidate-view-candidates .candidate-card.uiverse-profile-card,
+html body #root .candidate-view-candidates .candidate-card.uiverse-profile-card:hover {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0.62rem !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  transform: none !important;
+}
+
+html body #root .candidate-view-candidates .candidate-card.uiverse-profile-card::before,
+html body #root .candidate-view-candidates .candidate-card.uiverse-profile-card::after {
+  display: none !important;
+  content: none !important;
+}
+
+html body #root .candidate-profile-mini-card {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  border: 1px solid rgba(98, 78, 66, 0.18) !important;
+  border-radius: 0.62rem !important;
+  background: #fff !important;
+  box-shadow: 0 0.55rem 1.25rem rgba(62, 35, 28, 0.12) !important;
+  overflow: hidden !important;
+}
+
+html body #root .candidate-profile-mini-card.is-compact {
+  min-height: 13.1rem !important;
+  padding: 0 0.42rem 0.58rem !important;
+}
+
+html body #root .candidate-profile-mini-card.is-modal-card {
+  min-height: 27.4rem !important;
+  padding: 0 1.1rem 1.05rem !important;
+  border-radius: 0.52rem !important;
+}
+
+html body #root .candidate-profile-mini-cover {
+  width: calc(100% + 1px) !important;
+  height: 3.55rem !important;
+  margin: 0 !important;
+  background: var(--candidate-profile-cover) !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+html body #root .candidate-profile-mini-card.is-modal-card .candidate-profile-mini-cover {
+  height: 7.25rem !important;
+}
+
+html body #root .candidate-profile-mini-avatar {
+  width: 3.05rem !important;
+  height: 3.05rem !important;
+  min-width: 3.05rem !important;
+  min-height: 3.05rem !important;
+  margin: -1.65rem 0 0.42rem !important;
+  border: 0.12rem solid #fff !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  box-shadow: 0 0.18rem 0.42rem rgba(24, 18, 14, 0.2) !important;
+  overflow: hidden !important;
+}
+
+html body #root .candidate-profile-mini-card.is-modal-card .candidate-profile-mini-avatar {
+  width: 5.55rem !important;
+  height: 5.55rem !important;
+  min-width: 5.55rem !important;
+  min-height: 5.55rem !important;
+  margin-top: -3.05rem !important;
+  margin-bottom: 1rem !important;
+  border-width: 0.16rem !important;
+}
+
+html body #root .candidate-profile-mini-avatar .profile-avatar-image,
+html body #root .candidate-profile-mini-avatar img,
+html body #root .candidate-profile-mini-avatar svg {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+html body #root .candidate-profile-mini-info {
+  width: 100% !important;
+  min-width: 0 !important;
+  text-align: center !important;
+}
+
+html body #root .candidate-profile-mini-info h3 {
+  max-width: 100% !important;
+  margin: 0 !important;
+  color: #171722 !important;
+  -webkit-text-fill-color: #171722 !important;
+  font-size: 0.76rem !important;
+  font-weight: 900 !important;
+  line-height: 1.08 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+html body #root .candidate-profile-mini-card.is-modal-card .candidate-profile-mini-info h3 {
+  font-size: 1.52rem !important;
+}
+
+html body #root .candidate-profile-mini-info p {
+  max-width: 100% !important;
+  margin: 0.1rem 0 0 !important;
+  color: #6c6c70 !important;
+  -webkit-text-fill-color: #6c6c70 !important;
+  font-size: 0.48rem !important;
+  font-weight: 700 !important;
+  line-height: 1.1 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+html body #root .candidate-profile-mini-card.is-modal-card .candidate-profile-mini-info p {
+  font-size: 0.82rem !important;
+}
+
+html body #root .candidate-profile-mini-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.34rem !important;
+  width: 100% !important;
+  margin: 0.82rem 0 0.62rem !important;
+}
+
+html body #root .candidate-profile-mini-card.is-modal-card .candidate-profile-mini-actions {
+  gap: 0.72rem !important;
+  margin: 3.35rem 0 1.25rem !important;
+}
+
+html body #root .candidate-profile-mini-actions :is(.candidate-card-action, .candidate-like-button, .talent-bookmark-button, .bookmark-star-button),
+html body #root .candidate-profile-mini-actions :is(.candidate-card-action, .candidate-like-button, .talent-bookmark-button, .bookmark-star-button):is(:hover, :focus, :focus-visible, :active, :disabled) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 1.36rem !important;
+  min-width: 1.36rem !important;
+  height: 1.36rem !important;
+  min-height: 1.36rem !important;
+  border-radius: 999px !important;
+  background: #f0f2f5 !important;
+  color: #7d3044 !important;
+  -webkit-text-fill-color: #7d3044 !important;
+  box-shadow: 0 0.14rem 0.32rem rgba(0, 0, 0, 0.1) !important;
+  cursor: pointer !important;
+  opacity: 1 !important;
+}
+
+html body #root .candidate-profile-mini-card.is-modal-card .candidate-profile-mini-actions :is(.candidate-card-action, .candidate-like-button, .talent-bookmark-button, .bookmark-star-button),
+html body #root .candidate-profile-mini-card.is-modal-card .candidate-profile-mini-actions :is(.candidate-card-action, .candidate-like-button, .talent-bookmark-button, .bookmark-star-button):is(:hover, :focus, :focus-visible, :active, :disabled) {
+  width: 2rem !important;
+  min-width: 2rem !important;
+  height: 2rem !important;
+  min-height: 2rem !important;
+}
+
+html body #root .candidate-profile-mini-actions :is(svg, path) {
+  width: 0.76rem !important;
+  height: 0.76rem !important;
+  color: currentColor !important;
+  fill: currentColor !important;
+  stroke: none !important;
+}
+
+html body #root .candidate-profile-mini-card.is-modal-card .candidate-profile-mini-actions :is(svg, path) {
+  width: 1.05rem !important;
+  height: 1.05rem !important;
+}
+
+html body #root .candidate-profile-mini-actions .candidate-like-button .candidate-like-count {
+  margin: 0 0.05rem 0 0 !important;
+  color: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+  font-size: 0.52rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+}
+
+html body #root .candidate-profile-mini-card.is-modal-card .candidate-profile-mini-actions .candidate-like-button .candidate-like-count {
+  font-size: 0.66rem !important;
+}
+
+html body #root .candidate-profile-mini-actions :is(.candidate-like-button.active, .talent-bookmark-button.active, .bookmark-star-button.active) {
+  color: #f5b82e !important;
+  -webkit-text-fill-color: #f5b82e !important;
+}
+
+html body #root .candidate-profile-mini-actions .candidate-card-friend-action.pending {
+  color: #d86f2a !important;
+  -webkit-text-fill-color: #d86f2a !important;
+}
+
+html body #root .candidate-profile-mini-actions .candidate-card-friend-action.accepted {
+  color: #2f8a4b !important;
+  -webkit-text-fill-color: #2f8a4b !important;
+}
+
+html body #root .candidate-profile-mini-message,
+html body #root .candidate-profile-mini-message:is(:hover, :focus, :focus-visible, :active) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 88% !important;
+  min-height: 1.68rem !important;
+  padding: 0.3rem 0.65rem !important;
+  border: 0 !important;
+  border-radius: 0.28rem !important;
+  background: #91a696 !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  box-shadow: none !important;
+  font-size: 0.62rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  cursor: pointer !important;
+}
+
+html body #root .candidate-profile-mini-card.is-modal-card .candidate-profile-mini-message,
+html body #root .candidate-profile-mini-card.is-modal-card .candidate-profile-mini-message:is(:hover, :focus, :focus-visible, :active) {
+  min-height: 2.85rem !important;
+  border-radius: 0.42rem !important;
+  font-size: 0.86rem !important;
+}
+
+html body #root .candidate-profile-mini-stats {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  width: 100% !important;
+  gap: 0.18rem !important;
+  margin-top: 0.58rem !important;
+}
+
+html body #root .candidate-profile-mini-stats span {
+  display: grid !important;
+  justify-items: center !important;
+  gap: 0.05rem !important;
+  min-width: 0 !important;
+}
+
+html body #root .candidate-profile-mini-stats strong {
+  color: #202023 !important;
+  -webkit-text-fill-color: #202023 !important;
+  font-size: 0.66rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+}
+
+html body #root .candidate-profile-mini-stats small {
+  color: #626266 !important;
+  -webkit-text-fill-color: #626266 !important;
+  font-size: 0.48rem !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+}
+
+html body #root .candidate-profile-mini-card.is-modal-card .candidate-profile-mini-stats strong {
+  font-size: 0.94rem !important;
+}
+
+html body #root .candidate-profile-mini-card.is-modal-card .candidate-profile-mini-stats small {
+  font-size: 0.72rem !important;
+}
+
+html body #root .candidate-view-candidates .candidate-card-extra-info {
+  display: none !important;
+}
+
+html body #root .candidate-profile-popup-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9500 !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  padding: 2.8rem 1rem !important;
+  background: rgba(10, 10, 10, 0.68) !important;
+  backdrop-filter: blur(5px) !important;
+  overflow-y: auto !important;
+}
+
+html body #root .candidate-profile-popup {
+  position: relative !important;
+  width: min(100%, 22.2rem) !important;
+  max-height: none !important;
+  padding: 0.82rem !important;
+  border: 1px solid rgba(204, 231, 218, 0.8) !important;
+  border-radius: 0.82rem !important;
+  background: #effcf7 !important;
+  box-shadow: 0 1.4rem 3rem rgba(0, 0, 0, 0.32) !important;
+  overflow: visible !important;
+}
+
+html body #root .candidate-profile-popup-close,
+html body #root .candidate-profile-popup-close:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  position: absolute !important;
+  top: 0.45rem !important;
+  right: 0.45rem !important;
+  z-index: 4 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 1.24rem !important;
+  height: 1.24rem !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  color: #171717 !important;
+  -webkit-text-fill-color: #171717 !important;
+  box-shadow: 0 0.12rem 0.3rem rgba(0, 0, 0, 0.16) !important;
+  font-size: 1rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+}
+
+html body #root .candidate-profile-popup .candidate-profile-body {
+  margin-top: 0.72rem !important;
+  padding: 0.2rem 0 0 !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .candidate-view-candidates .candidate-community-copy {
+    gap: 0.28rem !important;
+  }
+
+  html body #root .candidate-view-candidates .candidate-community-line {
+    font-size: clamp(1.05rem, 5.2vw, 1.42rem) !important;
+  }
+
+  html body #root .candidate-view-candidates .candidate-community-description {
+    display: block !important;
+    font-size: 0.68rem !important;
+    line-height: 1.18 !important;
+  }
+
+  html body #root .candidate-view-candidates .candidates-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.68rem !important;
+  }
+
+  html body #root .candidate-profile-mini-card.is-compact {
+    min-height: 12.4rem !important;
+    padding-inline: 0.34rem !important;
+  }
+
+  html body #root .candidate-profile-mini-cover {
+    height: 3.25rem !important;
+  }
+
+  html body #root .candidate-profile-mini-avatar {
+    width: 2.78rem !important;
+    height: 2.78rem !important;
+    min-width: 2.78rem !important;
+    min-height: 2.78rem !important;
+  }
+
+  html body #root .candidate-profile-mini-info h3 {
+    font-size: 0.7rem !important;
+  }
+
+  html body #root .candidate-profile-mini-info p {
+    font-size: 0.43rem !important;
+  }
+
+  html body #root .candidate-profile-mini-actions {
+    gap: 0.24rem !important;
+  }
+
+  html body #root .candidate-profile-mini-actions :is(.candidate-card-action, .candidate-like-button, .talent-bookmark-button, .bookmark-star-button),
+  html body #root .candidate-profile-mini-actions :is(.candidate-card-action, .candidate-like-button, .talent-bookmark-button, .bookmark-star-button):is(:hover, :focus, :focus-visible, :active, :disabled) {
+    width: 1.16rem !important;
+    min-width: 1.16rem !important;
+    height: 1.16rem !important;
+    min-height: 1.16rem !important;
+  }
+
+  html body #root .candidate-profile-mini-message,
+  html body #root .candidate-profile-mini-message:is(:hover, :focus, :focus-visible, :active) {
+    min-height: 1.45rem !important;
+    font-size: 0.56rem !important;
+  }
+
+  html body #root .candidate-profile-popup-backdrop {
+    padding: 2.75rem 0.82rem !important;
+  }
 }

@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import ProfileAvatar from './ProfileAvatar';
 import SocialAuthButtons from './SocialAuthButtons';
+import defaultJobPostAvatar from './media/default-job-post-avatar.png';
 import logoDark from './media/logo4.png';
 import { sendPasswordResetEmail, validateEmailAddress } from '../utils/emailVerification';
 import { persistCandidateSession, persistEmployerSession } from '../utils/authStorage';
@@ -855,7 +856,7 @@ const PublicLandingNav = () => {
                                         <div className="public-job-feed-card-content">
                                             <div className="job-card-header">
                                                 <ProfileAvatar
-                                                    imageSrc={job.company?.logo}
+                                                    imageSrc={job.company?.logo || defaultJobPostAvatar}
                                                     name={companyName || job.title}
                                                     className="job-company-logo"
                                                     imageClassName="profile-avatar-image"

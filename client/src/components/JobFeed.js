@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import ResumeFilePreview from './ResumeFilePreview';
 import ProfileAvatar from './ProfileAvatar';
+import defaultJobPostAvatar from './media/default-job-post-avatar.png';
 
 const FONT_OPTIONS = [
     { label: 'Share Tech', value: 'Share Tech' },
@@ -1498,7 +1499,7 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                                 >
                                     <div className="job-card-header">
                                         <ProfileAvatar
-                                            imageSrc={job.company?.logo}
+                                            imageSrc={job.company?.logo || defaultJobPostAvatar}
                                             name={job.company?.name}
                                             className="job-company-logo"
                                             imageClassName="profile-avatar-image"
@@ -1622,7 +1623,7 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                     <div className="job-preview-modal" ref={previewModalRef} onClick={(e) => e.stopPropagation()}>
                         <div className="job-preview-header">
                             <button className="preview-close-btn" onClick={closePreview}>Ã—</button>
-                            <ProfileAvatar imageSrc={selectedCompany.logo} name={selectedCompany.name} className="preview-company-logo" imageClassName="profile-avatar-image" />
+                            <ProfileAvatar imageSrc={selectedCompany.logo || defaultJobPostAvatar} name={selectedCompany.name} className="preview-company-logo" imageClassName="profile-avatar-image" />
                             <h2>{selectedCompany.name}</h2>
                             <div className="preview-company-info">
                                 <span className="preview-company-name">
@@ -1677,7 +1678,7 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                 <div className="job-preview-overlay candidate-job-preview-overlay">
                     <div className="job-preview-modal candidate-job-preview-modal" ref={previewModalRef} onClick={(e) => e.stopPropagation()}>
                         <div className="mobile-job-preview-topbar">
-                            <ProfileAvatar imageSrc={previewJob.company?.logo} name={previewJob.company?.name} className="preview-company-logo" imageClassName="profile-avatar-image" />
+                            <ProfileAvatar imageSrc={previewJob.company?.logo || defaultJobPostAvatar} name={previewJob.company?.name} className="preview-company-logo" imageClassName="profile-avatar-image" />
                             <h2>{asDisplayText(previewJob.title, 'Untitled job')}</h2>
                             <button
                                 type="button"
@@ -1690,7 +1691,7 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                         </div>
                         <div className="job-preview-header">
                             <button className="preview-close-btn" onClick={closePreview}>×</button>
-                            <ProfileAvatar imageSrc={previewJob.company?.logo} name={previewJob.company?.name} className="preview-company-logo" imageClassName="profile-avatar-image" />
+                            <ProfileAvatar imageSrc={previewJob.company?.logo || defaultJobPostAvatar} name={previewJob.company?.name} className="preview-company-logo" imageClassName="profile-avatar-image" />
                             <h2>{asDisplayText(previewJob.title, 'Untitled job')}</h2>
                             <div className="preview-company-info">
                                 <span className="preview-company-name">{asDisplayText(previewJob.company?.name, 'Company unavailable')}</span>

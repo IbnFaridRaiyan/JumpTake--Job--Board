@@ -325,12 +325,18 @@ const respondToConnection = async (req, res) => {
             }
             await connection.deleteOne();
             return res.status(200).json({ message: 'Invitation cancelled' });
+        } else if (action === 'unfriend') {
+            if (connection.status !== 'accepted') {
+                return res.status(400).json({ error: 'This connection cannot be removed' });
+            }
+            await connection.deleteOne();
+            return res.status(200).json({ message: 'Friend removed' });
         } else if (action === 'block') {
             connection.status = 'blocked';
             connection.blockedBy = userId;
             connection.respondedAt = new Date();
         } else {
-            return res.status(400).json({ error: 'Use accept, decline, cancel, or block' });
+            return res.status(400).json({ error: 'Use accept, decline, cancel, unfriend, or block' });
         }
 
         await connection.save();

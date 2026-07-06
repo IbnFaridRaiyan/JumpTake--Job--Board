@@ -7,6 +7,91 @@ import defaultProfileFemale from './media/default-profile-female.png';
 
 const WORK_NEWS_STORAGE_KEY = 'jumptakeWorkNewsPosts';
 const TALENT_STORIES_STORAGE_KEY = 'jumptakeTalentStoriesPosts';
+const CANDIDATE_REACH_VIEWED_STORAGE_PREFIX = 'jumptakeCandidateProfileReachViewed:';
+
+const formatCompactCount = (value) => {
+    const count = Math.max(0, Number(value) || 0);
+
+    if (count >= 1000000) {
+        return `${(count / 1000000).toFixed(count >= 10000000 ? 0 : 1).replace(/\.0$/, '')}M`;
+    }
+
+    if (count >= 1000) {
+        return `${(count / 1000).toFixed(count >= 10000 ? 0 : 1).replace(/\.0$/, '')}K`;
+    }
+
+    return String(count);
+};
+
+const getCandidatePostKey = (post = {}) => String(post.id || post._id || `${post.storageKey || post.feedType || 'post'}-${post.createdAt || ''}-${post.body || post.text || post.content || ''}`);
+
+const getCandidateReachViewedStorageKey = (viewerId = 'candidate-viewer') => `${CANDIDATE_REACH_VIEWED_STORAGE_PREFIX}${viewerId || 'candidate-viewer'}`;
+
+const readCandidateReachViewed = (viewerId) => {
+    if (typeof window === 'undefined') {
+        return new Set();
+    }
+
+    try {
+        const stored = JSON.parse(window.localStorage.getItem(getCandidateReachViewedStorageKey(viewerId)) || '[]');
+        return new Set(Array.isArray(stored) ? stored.map(String) : []);
+    } catch (error) {
+        return new Set();
+    }
+};
+
+const writeCandidateReachViewed = (viewerId, viewedSet) => {
+    if (typeof window === 'undefined') {
+        return;
+    }
+
+    try {
+        window.localStorage.setItem(getCandidateReachViewedStorageKey(viewerId), JSON.stringify([...viewedSet]));
+    } catch (error) {
+        // localStorage can be unavailable in private browsing; reach still works from post.seenBy.
+    }
+};
+
+const getCandidateReachSeed = (post) => getCandidatePostKey(post)
+    .split('')
+    .reduce((total, character) => total + character.charCodeAt(0), 0);
+
+const getCandidateReachHistory = (post) => {
+    const explicitHistory = Array.isArray(post?.reachHistory)
+        ? post.reachHistory
+            .map((item) => ({
+                label: String(item?.label || item?.date || ''),
+                value: Math.max(0, Number(item?.value ?? item?.reach ?? 0) || 0)
+            }))
+            .filter((item) => item.label)
+            .slice(-7)
+        : [];
+
+    if (explicitHistory.length) {
+        return explicitHistory;
+    }
+
+    const totalReach = Math.max(0, Number(post?.reach || 0) || 0);
+    const today = new Date();
+    const seed = getCandidateReachSeed(post);
+    const weights = Array.from({ length: 7 }, (_, index) => ((seed + (index + 1) * 7) % 9) + 1);
+    const weightTotal = weights.reduce((total, value) => total + value, 0) || 1;
+    let allocated = 0;
+
+    return weights.map((weight, index) => {
+        const date = new Date(today);
+        date.setDate(today.getDate() - (6 - index));
+        const value = index === 6
+            ? Math.max(0, totalReach - allocated)
+            : Math.floor((totalReach * weight) / weightTotal);
+        allocated += value;
+
+        return {
+            label: date.toLocaleDateString(undefined, { weekday: 'short' }),
+            value
+        };
+    });
+};
 
 const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employer', currentUserId }) => {
     const [candidates, setCandidates] = useState([]);
@@ -23,6 +108,16 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
     const [friendJumpTakeId, setFriendJumpTakeId] = useState('');
     const [friendNotice, setFriendNotice] = useState('');
     const [sendingFriendRequest, setSendingFriendRequest] = useState(false);
+    const [candidateWorkPosts, setCandidateWorkPosts] = useState([]);
+    const [candidateTalentPosts, setCandidateTalentPosts] = useState([]);
+    const [expandedCandidateProfilePosts, setExpandedCandidateProfilePosts] = useState({});
+    const [openCandidateReactionPostId, setOpenCandidateReactionPostId] = useState('');
+    const [openCandidateCommentPostId, setOpenCandidateCommentPostId] = useState('');
+    const [openCandidateSharePostId, setOpenCandidateSharePostId] = useState('');
+    const [openCandidateReachInsightPostId, setOpenCandidateReachInsightPostId] = useState('');
+    const [candidateReachInsightPost, setCandidateReachInsightPost] = useState(null);
+    const [candidateCommentDrafts, setCandidateCommentDrafts] = useState({});
+    const [growAnimationKey, setGrowAnimationKey] = useState(0);
     const [isMobileView, setIsMobileView] = useState(() => (
         typeof window !== 'undefined' ? window.innerWidth <= 768 : false
     ));
@@ -41,6 +136,14 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
     }, [companyId, mode, currentUserId]);
 
     useEffect(() => {
+        if (mode !== 'candidate') {
+            return;
+        }
+
+        setGrowAnimationKey(Date.now());
+    }, [mode]);
+
+    useEffect(() => {
         const talentSearchKey = mode === 'candidate' ? 'jumptakeCandidateTalentSearch' : 'jumptakeEmployerTalentSearch';
         const dashboardSearch = sessionStorage.getItem(talentSearchKey);
         if (dashboardSearch) {
@@ -56,6 +159,51 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+
+    useEffect(() => {
+        if (mode !== 'candidate') {
+            return undefined;
+        }
+
+        let isMounted = true;
+
+        const fetchCandidateFeedPosts = async () => {
+            try {
+                const [workResponse, talentResponse] = await Promise.all([
+                    fetch(`${process.env.REACT_APP_API_URL || ''}/api/feed-posts?type=work-news`),
+                    fetch(`${process.env.REACT_APP_API_URL || ''}/api/feed-posts?type=talent-story`)
+                ]);
+
+                if (!workResponse.ok || !talentResponse.ok) {
+                    throw new Error('Failed to fetch candidate profile posts');
+                }
+
+                const [workPosts, talentPosts] = await Promise.all([
+                    workResponse.json(),
+                    talentResponse.json()
+                ]);
+
+                if (!isMounted) {
+                    return;
+                }
+
+                setCandidateWorkPosts(Array.isArray(workPosts) ? workPosts : []);
+                setCandidateTalentPosts(Array.isArray(talentPosts) ? talentPosts : []);
+            } catch (error) {
+                console.error('Unable to load candidate profile posts:', error);
+                if (isMounted) {
+                    setCandidateWorkPosts([]);
+                    setCandidateTalentPosts([]);
+                }
+            }
+        };
+
+        fetchCandidateFeedPosts();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [mode]);
 
     const fetchCandidates = async () => {
         try {
@@ -212,6 +360,8 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
 
     const handleCloseProfile = () => {
         setSelectedCandidate(null);
+        setOpenCandidateReachInsightPostId('');
+        setCandidateReachInsightPost(null);
     };
 
     const getCandidateJumpTakeId = (candidate) => (
@@ -710,52 +860,564 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         }
     };
 
+    const asCandidatePostText = (value, fallback = '') => {
+        if (value === null || value === undefined) {
+            return fallback;
+        }
+
+        if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+            return String(value);
+        }
+
+        return fallback;
+    };
+
+    const normalizeCandidatePostComments = (comments) => (
+        Array.isArray(comments)
+            ? comments
+                .filter((comment) => comment && typeof comment === 'object')
+                .map((comment, index) => ({
+                    ...comment,
+                    id: asCandidatePostText(comment.id, `candidate-comment-${index}`),
+                    authorId: asCandidatePostText(comment.authorId || comment.userId || comment.candidateId),
+                    authorName: asCandidatePostText(comment.authorName || comment.name, 'User'),
+                    authorAvatar: typeof comment.authorAvatar === 'string' ? comment.authorAvatar : '',
+                    text: asCandidatePostText(comment.text || comment.body || comment.content)
+                }))
+            : []
+    );
+
     const getCandidateProfilePosts = (candidate) => {
+        const normalizeKey = (value) => String(value || '').trim().toLowerCase();
+        const stripHandle = (value) => normalizeKey(value).replace(/^@+/, '');
         const candidateIds = [
             candidate?._id,
             candidate?.id,
             candidate?.user,
             candidate?.userId,
-            candidate?.candidateId
-        ].map((value) => String(value || '')).filter(Boolean);
-        const candidateName = String(candidate?.name || '').trim().toLowerCase();
-        const matchesCandidate = (post) => (
-            candidateIds.includes(String(post?.authorId || ''))
-            || candidateIds.includes(String(post?.candidateId || ''))
-            || String(post?.authorName || '').trim().toLowerCase() === candidateName
-        );
+            candidate?.candidateId,
+            candidate?.authorId,
+            candidate?.accountId
+        ].map(normalizeKey).filter(Boolean);
+        const candidateHandles = [
+            candidate?.jumptakeId,
+            candidate?.jumpTakeId,
+            candidate?.username,
+            candidate?.handle
+        ].map(stripHandle).filter(Boolean);
+        const candidateName = normalizeKey(candidate?.name);
+        const isVisiblePost = (post) => ['everyone', '', undefined, null].includes(post?.audience);
+        const matchesCandidate = (post) => {
+            const postIds = [
+                post?.authorId,
+                post?.candidateId,
+                post?.authorCandidateId,
+                post?.userId,
+                post?.user,
+                post?.author?._id,
+                post?.author?.id
+            ].map(normalizeKey).filter(Boolean);
+            const postHandles = [
+                post?.jumptakeId,
+                post?.jumpTakeId,
+                post?.authorJumpTakeId,
+                post?.authorJumptakeId,
+                post?.username,
+                post?.handle
+            ].map(stripHandle).filter(Boolean);
+            const postAuthorName = normalizeKey(post?.authorName);
 
-        return [
-            ...readCandidateStoredPosts(WORK_NEWS_STORAGE_KEY).filter(matchesCandidate).map((post) => ({ ...post, storageKey: WORK_NEWS_STORAGE_KEY, feedType: 'Work News' })),
-            ...readCandidateStoredPosts(TALENT_STORIES_STORAGE_KEY).filter(matchesCandidate).map((post) => ({ ...post, storageKey: TALENT_STORIES_STORAGE_KEY, feedType: 'Talent story' }))
-        ].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+            return isVisiblePost(post) && (
+                postIds.some((id) => candidateIds.includes(id))
+                || postHandles.some((handle) => candidateHandles.includes(handle))
+                || (candidateName && postAuthorName === candidateName)
+            );
+        };
+
+        const posts = [
+            ...candidateWorkPosts.map((post) => ({ ...post, storageKey: WORK_NEWS_STORAGE_KEY, feedType: 'Work News' })),
+            ...candidateTalentPosts.map((post) => ({ ...post, storageKey: TALENT_STORIES_STORAGE_KEY, feedType: 'Talent story' })),
+            ...readCandidateStoredPosts(WORK_NEWS_STORAGE_KEY).map((post) => ({ ...post, storageKey: WORK_NEWS_STORAGE_KEY, feedType: 'Work News' })),
+            ...readCandidateStoredPosts(TALENT_STORIES_STORAGE_KEY).map((post) => ({ ...post, storageKey: TALENT_STORIES_STORAGE_KEY, feedType: 'Talent story' }))
+        ];
+        const seenPostIds = new Set();
+
+        return posts
+            .filter(matchesCandidate)
+            .filter((post) => {
+                const postId = String(post.id || post._id || `${post.storageKey}-${post.createdAt || ''}-${post.body || ''}`);
+                if (seenPostIds.has(postId)) {
+                    return false;
+                }
+                seenPostIds.add(postId);
+                return true;
+            })
+            .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
     };
 
     const getCandidateTalentStories = (candidate) => (
         getCandidateProfilePosts(candidate).filter((post) => post.storageKey === TALENT_STORIES_STORAGE_KEY)
     );
 
-    const renderCandidateProfilePostCard = (post, candidate) => (
-        <article className="portal-social-post-card candidate-profile-home-post-card" key={post.id || post._id || `${post.feedType}-${post.createdAt || post.body}`}>
-            <div className="portal-post-card-header">
-                <ProfileAvatar
-                    imageSrc={post.authorAvatar || candidate.profileImage}
-                    name={post.authorName || candidate.name}
-                    className="portal-post-author-avatar"
-                    imageClassName="profile-avatar-image"
-                    useProfileIconFallback
-                />
-                <div className="portal-post-author-copy">
-                    <strong>{post.authorName || candidate.name || 'Candidate'}</strong>
-                    <span>{post.feedType || 'Talent story'} - {post.createdAt ? new Date(post.createdAt).toLocaleDateString() : 'Recent'}</span>
+    const candidateReactionLabels = ['Like', 'Appreciate', 'Love', 'Empower', 'Congratulate', 'Motivate', 'Angry', 'Sad', 'Bad', 'Hide'];
+
+    const updateCandidatePost = async (post, updater) => {
+        const nextPost = updater(post);
+        const setPosts = post.storageKey === WORK_NEWS_STORAGE_KEY ? setCandidateWorkPosts : setCandidateTalentPosts;
+        const postId = post.id || post._id;
+
+        setPosts((posts) => posts.map((item) => (
+            String(item.id || item._id || '') === String(postId || '') ? { ...item, ...nextPost } : item
+        )));
+
+        if (postId) {
+            try {
+                await fetch(`${process.env.REACT_APP_API_URL || ''}/api/feed-posts/${postId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ...post, ...nextPost })
+                });
+            } catch (error) {
+                console.error('Unable to update candidate profile post:', error);
+            }
+        }
+    };
+
+    useEffect(() => {
+        if (mode !== 'candidate' || !selectedCandidate) {
+            return;
+        }
+
+        const viewerKey = String(currentUserId || 'candidate-viewer');
+        const viewedPosts = readCandidateReachViewed(viewerKey);
+        const profilePosts = getCandidateProfilePosts(selectedCandidate);
+        let viewedPostsChanged = false;
+
+        profilePosts.forEach((post) => {
+            const postKey = getCandidatePostKey(post);
+            const seenBy = Array.isArray(post.seenBy) ? post.seenBy.map(String) : [];
+
+            if (!postKey || seenBy.includes(viewerKey) || viewedPosts.has(postKey)) {
+                return;
+            }
+
+            viewedPosts.add(postKey);
+            viewedPostsChanged = true;
+            updateCandidatePost(post, (currentPost) => {
+                const currentSeenBy = Array.isArray(currentPost.seenBy) ? currentPost.seenBy.map(String) : [];
+
+                if (currentSeenBy.includes(viewerKey)) {
+                    return {};
+                }
+
+                return {
+                    seenBy: [...currentSeenBy, viewerKey],
+                    reach: Number(currentPost.reach || 0) + 1
+                };
+            });
+        });
+
+        if (viewedPostsChanged) {
+            writeCandidateReachViewed(viewerKey, viewedPosts);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [mode, selectedCandidate, currentUserId, candidateWorkPosts, candidateTalentPosts]);
+
+    const handleCandidateReaction = (post, reaction) => {
+        const viewerKey = String(currentUserId || 'candidate-viewer');
+        updateCandidatePost(post, (currentPost) => {
+            const reactions = { ...(currentPost.reactions || {}) };
+            const reactionsByUser = { ...(currentPost.reactionsByUser || {}) };
+            const previousReaction = reactionsByUser[viewerKey];
+
+            if (previousReaction) {
+                reactions[previousReaction] = Math.max(0, (Number(reactions[previousReaction]) || 0) - 1);
+            }
+
+            if (previousReaction === reaction) {
+                delete reactionsByUser[viewerKey];
+            } else {
+                reactions[reaction] = (Number(reactions[reaction]) || 0) + 1;
+                reactionsByUser[viewerKey] = reaction;
+            }
+
+            return { reactions, reactionsByUser };
+        });
+        setOpenCandidateReactionPostId('');
+    };
+
+    const handleCandidateCommentSubmit = (post) => {
+        const postKey = String(post.id || post._id || '');
+        const text = String(candidateCommentDrafts[postKey] || '').trim();
+
+        if (!text) {
+            return;
+        }
+
+        updateCandidatePost(post, (currentPost) => ({
+            comments: [
+                ...(Array.isArray(currentPost.comments) ? currentPost.comments : []),
+                {
+                    id: `candidate-comment-${Date.now()}`,
+                    text,
+                    authorId: String(currentUserId || ''),
+                    authorName: 'You',
+                    createdAt: new Date().toISOString()
+                }
+            ]
+        }));
+        setCandidateCommentDrafts((drafts) => ({ ...drafts, [postKey]: '' }));
+        setOpenCandidateCommentPostId('');
+    };
+
+    const openCandidateFromPostAuthor = (author = {}) => {
+        const authorId = String(author.authorId || author.userId || author.candidateId || '');
+        const authorName = String(author.authorName || author.name || '').trim().toLowerCase();
+        const match = candidates.find((candidate) => (
+            [candidate._id, candidate.id, candidate.user, candidate.userId, candidate.candidateId]
+                .map((value) => String(value || ''))
+                .includes(authorId)
+            || (authorName && String(candidate.name || '').trim().toLowerCase() === authorName)
+        ));
+
+        if (match) {
+            setSelectedCandidate(match);
+        }
+    };
+
+    const closeCandidateReachInsight = () => {
+        setOpenCandidateReachInsightPostId('');
+        setCandidateReachInsightPost(null);
+    };
+
+    const toggleCandidateReachInsight = (event, postKey, post) => {
+        event.stopPropagation();
+        setOpenCandidateReactionPostId('');
+        setOpenCandidateCommentPostId('');
+        setOpenCandidateSharePostId('');
+
+        if (openCandidateReachInsightPostId === postKey) {
+            closeCandidateReachInsight();
+            return;
+        }
+
+        setOpenCandidateReachInsightPostId(postKey);
+        setCandidateReachInsightPost(post);
+    };
+
+    const renderCandidateReachButton = (post, postKey) => {
+        const totalReach = Math.max(0, Number(post?.reach || 0) || 0);
+
+        return (
+            <span className="portal-reach-insight-wrap portal-feed-reach-wrap">
+                <button
+                    type="button"
+                    className="portal-post-reach portal-reach-button"
+                    onClick={(event) => toggleCandidateReachInsight(event, postKey, post)}
+                    aria-expanded={openCandidateReachInsightPostId === postKey}
+                    aria-label={`Show reach graph for ${formatCompactCount(totalReach)} reach`}
+                >
+                    <span>{formatCompactCount(totalReach)} reach</span>
+                </button>
+            </span>
+        );
+    };
+
+    const renderCandidateReachInsightModal = () => {
+        if (!candidateReachInsightPost) {
+            return null;
+        }
+
+        const history = getCandidateReachHistory(candidateReachInsightPost);
+        const maxReach = Math.max(1, ...history.map((item) => item.value));
+        const totalReach = Math.max(0, Number(candidateReachInsightPost.reach || 0) || 0);
+        const modalMarkup = (
+            <div
+                className="portal-reach-insight-backdrop candidate-reach-insight-backdrop"
+                role="presentation"
+                onClick={(event) => {
+                    if (event.target === event.currentTarget) {
+                        closeCandidateReachInsight();
+                    }
+                }}
+            >
+                <div
+                    className="portal-reach-insight-popover"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Last 7 days reach"
+                    onClick={(event) => event.stopPropagation()}
+                >
+                    <button
+                        type="button"
+                        className="portal-reach-insight-close portal-stats-close-cross"
+                        onClick={closeCandidateReachInsight}
+                        aria-label="Close reach graph"
+                        title="Close"
+                    >
+                        &times;
+                    </button>
+                    <div className="portal-reach-insight-header">
+                        <strong>{formatCompactCount(totalReach)} reach</strong>
+                        <span>Last 7 days</span>
+                    </div>
+                    <div className="portal-reach-chart" aria-hidden="true">
+                        {history.map((item) => (
+                            <div className="portal-reach-chart-day" key={`${item.label}-${item.value}`}>
+                                <span
+                                    className="portal-reach-chart-bar"
+                                    style={{ '--reach-bar-height': `${Math.max(10, Math.round((item.value / maxReach) * 100))}%` }}
+                                />
+                                <span className="portal-reach-chart-value">{formatCompactCount(item.value)}</span>
+                                <span className="portal-reach-chart-label">{item.label}</span>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
-            <button type="button" className="portal-post-reach portal-reach-button">
-                {Number(post.reach || 0) || 0} reach
-            </button>
-            <p className="portal-post-body">{post.body || post.text || post.content || 'Talent story post'}</p>
-        </article>
-    );
+        );
+
+        return typeof document !== 'undefined'
+            ? createPortal(modalMarkup, document.body)
+            : modalMarkup;
+    };
+
+    const renderCandidateProfilePostCard = (post, candidate) => {
+        if (!post || typeof post !== 'object') {
+            return null;
+        }
+
+        const postKey = getCandidatePostKey(post);
+        const bodyText = asCandidatePostText(post.body || post.text || post.content, 'Talent story post');
+        const comments = normalizeCandidatePostComments(post.comments);
+        const reactions = post.reactions && typeof post.reactions === 'object' ? post.reactions : {};
+        const reactionTotal = Object.values(reactions).reduce((total, value) => total + (Number(value) || 0), 0);
+        const firstComment = comments[0];
+        const media = post.media && typeof post.media === 'object'
+            ? {
+                dataUrl: typeof post.media.dataUrl === 'string' ? post.media.dataUrl : '',
+                type: typeof post.media.type === 'string' ? post.media.type : '',
+                name: asCandidatePostText(post.media.name, 'Post media')
+            }
+            : null;
+        const isLongPostBody = bodyText.length > 245;
+        const isPostBodyExpanded = Boolean(expandedCandidateProfilePosts[postKey]);
+        const dateLabel = post.createdAt ? new Date(post.createdAt).toLocaleDateString() : 'Recent';
+        const isReactionMenuOpen = openCandidateReactionPostId === postKey;
+        const isCommentOpen = openCandidateCommentPostId === postKey;
+        const isShareOpen = openCandidateSharePostId === postKey;
+        const commentDraft = candidateCommentDrafts[postKey] || '';
+        const reactionsByUser = post.reactionsByUser && typeof post.reactionsByUser === 'object' ? post.reactionsByUser : {};
+        const selectedReaction = reactionsByUser[String(currentUserId || 'candidate-viewer')] || '';
+
+        return (
+            <article className="portal-social-post-card candidate-profile-home-post-card portal-profile-preview-post-card" key={postKey}>
+                <div className="portal-social-post-header">
+                    <button
+                        type="button"
+                        className={`portal-author-open-button portal-post-avatar ${post.authorAvatar || candidate.profileImage ? '' : 'has-default-profile-icon'}`}
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            openCandidateFromPostAuthor({
+                                authorId: post.authorId || candidate.user || candidate.userId || candidate._id,
+                                authorName: post.authorName || candidate.name
+                            });
+                        }}
+                        aria-label={`Open ${asCandidatePostText(post.authorName || candidate.name, 'Candidate')} profile`}
+                    >
+                        {post.authorAvatar || candidate.profileImage ? (
+                            <img
+                                src={post.authorAvatar || candidate.profileImage}
+                                alt={asCandidatePostText(post.authorName || candidate.name, 'Candidate')}
+                            />
+                        ) : (
+                            <ProfileAvatar
+                                name={asCandidatePostText(post.authorName || candidate.name, 'Candidate')}
+                                className="portal-default-profile-icon"
+                                useProfileIconFallback
+                            />
+                        )}
+                    </button>
+                    <div className="portal-post-title-block">
+                        <h3 className="portal-post-author-name">
+                            <button
+                                type="button"
+                                className="portal-author-name-button"
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    openCandidateFromPostAuthor({
+                                        authorId: post.authorId || candidate.user || candidate.userId || candidate._id,
+                                        authorName: post.authorName || candidate.name
+                                    });
+                                }}
+                            >
+                                {asCandidatePostText(post.authorName || candidate.name, 'Candidate')}
+                            </button>
+                        </h3>
+                        <p>{asCandidatePostText(post.feedType, 'Talent story')} - {dateLabel}</p>
+                    </div>
+                    <div className="portal-post-header-actions" aria-hidden="true">
+                        <span className="portal-post-options-wrap">
+                            <span className="portal-post-options-button">...</span>
+                        </span>
+                    </div>
+                </div>
+                <div className="portal-post-reach-row">
+                    {renderCandidateReachButton(post, postKey)}
+                </div>
+                {bodyText && (
+                    <div className={`portal-post-body-wrap ${isLongPostBody && !isPostBodyExpanded ? 'is-collapsed' : 'is-expanded'}`}>
+                        <p className="portal-post-body">{bodyText}</p>
+                        {isLongPostBody && (
+                            <button
+                                type="button"
+                                className="portal-post-see-more-button"
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    setExpandedCandidateProfilePosts((expanded) => ({
+                                        ...expanded,
+                                        [postKey]: !expanded[postKey]
+                                    }));
+                                }}
+                                aria-expanded={isPostBodyExpanded}
+                            >
+                                {isPostBodyExpanded ? 'Show less' : 'See more'}
+                            </button>
+                        )}
+                    </div>
+                )}
+                {media?.dataUrl && (
+                    media.type === 'video' || media.type === 'image' ? (
+                        <div className="portal-post-media">
+                            {media.type === 'video' ? (
+                                <video src={media.dataUrl} controls playsInline />
+                            ) : (
+                                <img src={media.dataUrl} alt={media.name || 'Post media'} />
+                            )}
+                        </div>
+                    ) : (
+                        <a className="portal-post-file-attachment" href={media.dataUrl} download={media.name || 'attachment'}>
+                            <span>{media.name || 'Attached file'}</span>
+                        </a>
+                    )
+                )}
+                <div className="portal-post-action-cluster">
+                    {isReactionMenuOpen && (
+                        <ul className="portal-post-reactions portal-reaction-rail example-1 is-popover" aria-label="Post reactions">
+                            {candidateReactionLabels.map((reaction) => (
+                                <li key={reaction} className="portal-reaction-item icon-content">
+                                    <button
+                                        type="button"
+                                        className={`portal-reaction-button portal-reaction-icon-button link reaction-${reaction.toLowerCase()} ${selectedReaction === reaction ? 'active' : ''}`}
+                                        onClick={() => handleCandidateReaction(post, reaction)}
+                                        aria-label={`${reaction} reaction`}
+                                        title={reaction}
+                                    >
+                                        <span className="candidate-reaction-label">{reaction}</span>
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                    <div className="portal-post-action-row">
+                        <button
+                            type="button"
+                            className={`portal-reaction-trigger ${selectedReaction ? `has-reaction reaction-${selectedReaction.toLowerCase()}` : ''}`}
+                            onClick={() => {
+                                setOpenCandidateReactionPostId((openId) => (openId === postKey ? '' : postKey));
+                                setOpenCandidateCommentPostId('');
+                                setOpenCandidateSharePostId('');
+                            }}
+                            aria-expanded={isReactionMenuOpen}
+                            aria-label="Choose reaction"
+                        >
+                            <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+                                <path d="M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733.25.52.183 1.18-.022 1.584.169.387.107.819-.003 1.148.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.8 4.8 0 0 1-.97-.484c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z" />
+                            </svg>
+                        </button>
+                        {reactionTotal > 0 && <span className="portal-reaction-trigger-count">{reactionTotal}</span>}
+                        <button
+                            type="button"
+                            className={`portal-comment-toggle ${isCommentOpen ? 'active' : ''}`}
+                            onClick={() => {
+                                setOpenCandidateCommentPostId((openId) => (openId === postKey ? '' : postKey));
+                                setOpenCandidateReactionPostId('');
+                                setOpenCandidateSharePostId('');
+                            }}
+                            aria-expanded={isCommentOpen}
+                            aria-label="Comment"
+                        >
+                            <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+                                <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4.414a1 1 0 0 0-.707.293L.854 15.146A.5.5 0 0 1 0 14.793z" />
+                            </svg>
+                        </button>
+                        {comments.length > 0 && <span className="portal-comment-trigger-count">{comments.length}</span>}
+                        <button
+                            type="button"
+                            className={`portal-share-toggle ${isShareOpen ? 'active' : ''}`}
+                            onClick={() => {
+                                setOpenCandidateSharePostId((openId) => (openId === postKey ? '' : postKey));
+                                setOpenCandidateReactionPostId('');
+                                setOpenCandidateCommentPostId('');
+                            }}
+                            aria-expanded={isShareOpen}
+                            aria-label="Share post"
+                        >
+                            <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+                                <path d="M15 2.5A2.5 2.5 0 0 1 10.5 4L5.9 6.3a2.5 2.5 0 0 1 0 3.4l4.6 2.3A2.5 2.5 0 1 1 10 13.5c0-.2.02-.39.07-.57L5.45 10.6a2.5 2.5 0 1 1 0-5.2l4.62-2.33A2.5 2.5 0 1 1 15 2.5z" />
+                            </svg>
+                        </button>
+                        {isShareOpen && (
+                            <div className="portal-share-picker" role="dialog" aria-label="Share post">
+                                <strong>Share post</strong>
+                                <button
+                                    type="button"
+                                    className="portal-share-friend portal-share-copy-button"
+                                    onClick={() => navigator.clipboard?.writeText(window.location.href)}
+                                >
+                                    <span className="portal-share-friend-name">Copy or share post</span>
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+                {isCommentOpen && (
+                    <div className="portal-comment-composer">
+                        <input
+                            type="text"
+                            value={commentDraft}
+                            onChange={(event) => setCandidateCommentDrafts((drafts) => ({ ...drafts, [postKey]: event.target.value }))}
+                            placeholder="Make a comment"
+                            aria-label="Make a comment"
+                        />
+                        <button type="button" onClick={() => handleCandidateCommentSubmit(post)}>
+                            Post
+                        </button>
+                    </div>
+                )}
+                {firstComment && (
+                    <div className="portal-post-comments portal-rotating-comment-rail">
+                        <div className="portal-comment-item portal-comment-item-static">
+                            <button type="button" className="portal-author-open-button portal-comment-avatar" onClick={() => openCandidateFromPostAuthor(firstComment)}>
+                            <ProfileAvatar
+                                imageSrc={firstComment.authorAvatar}
+                                name={firstComment.authorName}
+                                className="portal-comment-avatar-inner"
+                                imageClassName="profile-avatar-image"
+                                    useProfileIconFallback
+                                />
+                            </button>
+                            <p>
+                                <button type="button" className="portal-comment-name portal-author-name-button" onClick={() => openCandidateFromPostAuthor(firstComment)}>
+                                    {firstComment.authorName || 'User'}
+                                </button>: {firstComment.text}
+                            </p>
+                        </div>
+                    </div>
+                )}
+            </article>
+        );
+    };
 
     const renderSelectedCandidateModal = () => {
         if (!selectedCandidate) {
@@ -763,18 +1425,26 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         }
 
         const candidateId = String(selectedCandidate._id || selectedCandidate.id || '');
-        const profilePosts = getCandidateProfilePosts(selectedCandidate);
+        const profilePosts = (() => {
+            try {
+                return getCandidateProfilePosts(selectedCandidate);
+            } catch (error) {
+                console.error('Unable to render candidate profile posts:', error);
+                return [];
+            }
+        })();
+        const candidateName = asCandidatePostText(selectedCandidate.name, 'Candidate');
         const likeCount = candidateLikeCounts[candidateId] || 0;
         const isBookmarked = bookmarkedTalentIds.includes(candidateId);
         const socialPlatforms = ['facebook', 'instagram', 'linkedin', 'github'];
         const socialLinks = {
-            facebook: selectedCandidate.facebook || selectedCandidate.socialLinks?.facebook || '',
-            instagram: selectedCandidate.instagram || selectedCandidate.socialLinks?.instagram || '',
-            linkedin: selectedCandidate.linkedin || selectedCandidate.socialLinks?.linkedin || '',
-            github: selectedCandidate.github || selectedCandidate.socialLinks?.github || ''
+            facebook: asCandidatePostText(selectedCandidate.facebook || selectedCandidate.socialLinks?.facebook),
+            instagram: asCandidatePostText(selectedCandidate.instagram || selectedCandidate.socialLinks?.instagram),
+            linkedin: asCandidatePostText(selectedCandidate.linkedin || selectedCandidate.socialLinks?.linkedin),
+            github: asCandidatePostText(selectedCandidate.github || selectedCandidate.socialLinks?.github)
         };
         const coverStyle = {
-            '--tailor-cover-image': `url("${selectedCandidate.coverImage || defaultTailorCoverImage}")`
+            '--tailor-cover-image': `url("${asCandidatePostText(selectedCandidate.coverImage, defaultTailorCoverImage)}")`
         };
         const jumpTakeId = String(getCandidateJumpTakeId(selectedCandidate) || '@JumpTakeID');
         const formattedJumpTakeId = jumpTakeId.startsWith('@') ? jumpTakeId : `@${jumpTakeId}`;
@@ -794,7 +1464,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                     ref={candidateProfileRef}
                     role="dialog"
                     aria-modal="true"
-                    aria-label={`${selectedCandidate.name || 'Candidate'} tailor profile`}
+                    aria-label={`${candidateName} tailor profile`}
                     onClick={(event) => event.stopPropagation()}
                 >
                     <span
@@ -817,14 +1487,14 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                         <div className={`tailor-profile-image ${selectedCandidate.profileImage ? '' : 'has-default-profile-icon'}`}>
                             <img
                                 src={selectedCandidate.profileImage || getCandidateDefaultProfileImage(selectedCandidate)}
-                                alt={selectedCandidate.name || 'Candidate'}
+                                alt={candidateName}
                             />
                         </div>
                         <div className="tailor-profile-info">
-                            <p className="tailor-profile-name">{selectedCandidate.name || 'Unnamed Candidate'}</p>
+                            <p className="tailor-profile-name">{candidateName}</p>
                             <div className="tailor-profile-title">{formattedJumpTakeId}</div>
                         </div>
-                        <div className="tailor-social-links" aria-label={`${selectedCandidate.name || 'Candidate'} social links`}>
+                        <div className="tailor-social-links" aria-label={`${candidateName} social links`}>
                             {mode === 'candidate' && (
                                 <>
                                     <button
@@ -890,7 +1560,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                                             contact: {
                                                 userId: selectedCandidate.user || selectedCandidate.userId || selectedCandidate._id || '',
                                                 candidateId: selectedCandidate._id || '',
-                                                name: selectedCandidate.name || 'Candidate',
+                                                name: candidateName,
                                                 avatar: selectedCandidate.profileImage || '',
                                                 jumpTakeId: formattedJumpTakeId
                                             }
@@ -917,9 +1587,16 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                             </div>
                         </div>
                     </div>
-                    <div className="portal-profile-detail-posts" aria-label={`${selectedCandidate.name || 'Candidate'} posts`}>
+                    <div className="portal-profile-detail-posts" aria-label={`${candidateName} posts`}>
                         {profilePosts.length > 0 ? (
-                            profilePosts.map((post) => renderCandidateProfilePostCard(post, selectedCandidate))
+                            profilePosts.map((post) => {
+                                try {
+                                    return renderCandidateProfilePostCard(post, selectedCandidate);
+                                } catch (error) {
+                                    console.error('Skipping malformed candidate profile post:', error);
+                                    return null;
+                                }
+                            })
                         ) : (
                             <p className="portal-post-detail-empty">No visible posts yet.</p>
                         )}
@@ -971,8 +1648,8 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                 <div className="candidate-community-intro">
                     <p className="candidate-community-copy">
                         <span className="candidate-community-line">Connect, learn, and{' '}
-                        <span className="candidate-grow-together">
-                            <span>grow together</span>
+                        <span key={`candidate-grow-${growAnimationKey}`} className="candidate-grow-together candidate-grow-replay">
+                            <span className="candidate-grow-text">grow together</span>
                             <svg className="candidate-grow-icon" viewBox="0 0 16 16" aria-hidden="true">
                                 <path fillRule="evenodd" d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5" />
                             </svg>
@@ -1116,6 +1793,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
             )}
 
             {renderSelectedCandidateModal()}
+            {renderCandidateReachInsightModal()}
 
             {!isLoading && !selectedCandidate && (
                 <div className="page-footer-actions">

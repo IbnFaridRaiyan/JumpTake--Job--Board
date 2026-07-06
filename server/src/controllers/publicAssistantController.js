@@ -550,13 +550,279 @@ const PORTAL_ACTIONS = new Set([
 
 const isPortalAction = (action) => PORTAL_ACTIONS.has(action);
 
+const truncateAssistantText = (value, maxLength = 1200) => {
+  const text = String(value || '').replace(/\s+/g, ' ').trim();
+  if (text.length <= maxLength) {
+    return text;
+  }
+
+  return `${text.slice(0, maxLength).trim()}...`;
+};
+
+const pickCompactFields = (source = {}, fields = [], maxLength = 900) => (
+  fields.reduce((compact, field) => {
+    const value = source?.[field];
+    if (value === undefined || value === null || value === '') {
+      return compact;
+    }
+
+    compact[field] = typeof value === 'string' ? truncateAssistantText(value, maxLength) : value;
+    return compact;
+  }, {})
+);
+
 const buildHistoryBlock = (history = []) => (
   history
     .filter((entry) => entry && typeof entry.text === 'string' && entry.text.trim())
-    .slice(-8)
-    .map((entry) => `${entry.role === 'assistant' ? 'Assistant' : 'Visitor'}: ${entry.text.trim()}`)
+    .slice(-5)
+    .map((entry) => `${entry.role === 'assistant' ? 'Assistant' : 'Visitor'}: ${truncateAssistantText(entry.text, 700)}`)
     .join('\n')
 );
+
+const buildCompactPortalContext = (context = {}) => {
+  const workspace = context.workspace && typeof context.workspace === 'object' ? context.workspace : {};
+
+  return {
+    portalMode: context.portalMode || '',
+    activeSection: context.activeSection || '',
+    user: pickCompactFields(context.user, ['id', 'email', 'name', 'jumptakeId', 'jobInterests'], 500),
+    profile: pickCompactFields(context.profile, [
+      'name',
+      'email',
+      'jumptakeId',
+      'skills',
+      'education',
+      'experience',
+      'achievements',
+      'interests',
+      'hobbies',
+      'summary',
+      'bio',
+      'resumeText'
+    ], 1500),
+    company: pickCompactFields(context.company, ['name', 'industry', 'headquarters', 'website', 'description'], 900),
+    workspace: {
+      mode: workspace.mode || '',
+      title: truncateAssistantText(workspace.title, 180),
+      currentText: truncateAssistantText(workspace.currentText || workspace.text || workspace.content, 3500),
+      selectedTemplate: truncateAssistantText(workspace.selectedTemplate || workspace.template, 180),
+      layout: workspace.layout && typeof workspace.layout === 'object'
+        ? pickCompactFields(workspace.layout, ['pageWidth', 'pageHeight', 'margin', 'safePageHeight', 'pageCount', 'viewportWidth'], 120)
+        : null
+    },
+    jobs: Array.isArray(context.jobs) ? context.jobs.slice(0, 6).map((job) => ({
+      id: job?._id || job?.id || job?.jobNumber || '',
+      title: truncateAssistantText(job?.title, 120),
+      company: truncateAssistantText(job?.company?.name || job?.companyName, 120),
+      description: truncateAssistantText(job?.description || job?.summary, 700),
+      requirements: Array.isArray(job?.requirements)
+        ? job.requirements.slice(0, 5).map((item) => truncateAssistantText(item, 160))
+        : truncateAssistantText(job?.requirements, 700),
+      location: truncateAssistantText(job?.location, 120),
+      type: truncateAssistantText(job?.type || job?.jobType, 80)
+    })) : []
+  };
+};
+
+const normalizeDraftList = (value) => {
+  if (Array.isArray(value)) {
+    return value
+      .flatMap(normalizeDraftList)
+      .map((item) => String(item || '').trim())
+      .filter(Boolean);
+  }
+
+  if (typeof value === 'string') {
+    return value
+      .split(/[\n,;|]+/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
+  return [];
+};
+
+const getProfileDisplayName = (context = {}) => {
+  const profile = context.profile || {};
+  const user = context.user || {};
+  return String(
+    profile.name
+    || user.name
+    || profile.fullName
+    || user.email
+    || 'Your Name'
+  ).trim();
+};
+
+const getTargetRole = (message = '', context = {}) => {
+  const interests = normalizeDraftList(context.user?.jobInterests || context.profile?.interests);
+  const messageMatch = String(message || '').match(/\b(?:for|as|as a|as an)\s+([a-z][a-z\s-]{2,60})/i);
+  return String(messageMatch?.[1] || interests[0] || context.profile?.targetRole || 'Target Role').trim();
+};
+
+const buildResumeActionDraft = (message = '', context = {}) => {
+  const profile = context.profile || {};
+  const name = getProfileDisplayName(context);
+  const email = String(profile.email || context.user?.email || '').trim();
+  const role = getTargetRole(message, context);
+  const skills = normalizeDraftList(profile.skills).slice(0, 12);
+  const education = normalizeDraftList(profile.education || profile.degrees).slice(0, 5);
+  const experience = normalizeDraftList(profile.experience).slice(0, 6);
+  const achievements = normalizeDraftList(profile.achievements).slice(0, 5);
+  const summarySkills = skills.length ? skills.slice(0, 4).join(', ') : 'communication, problem solving, teamwork, and adaptability';
+
+  return [
+    name.toUpperCase(),
+    [email, role].filter(Boolean).join(' | '),
+    '',
+    'PROFESSIONAL SUMMARY',
+    `Motivated ${role} candidate with strengths in ${summarySkills}. Brings a practical, growth-focused approach to learning, collaboration, and delivering reliable work. Ready to contribute to teams that value initiative, clear communication, and continuous improvement.`,
+    '',
+    'CORE SKILLS',
+    ...(skills.length
+      ? skills.map((skill) => `- ${skill}`)
+      : [
+        '- Communication',
+        '- Teamwork',
+        '- Problem solving',
+        '- Time management',
+        '- Adaptability'
+      ]),
+    '',
+    'EXPERIENCE',
+    ...(experience.length
+      ? experience.map((item) => `- ${item}`)
+      : [
+        `- Built practical experience relevant to ${role} through projects, coursework, training, or self-directed learning.`,
+        '- Worked on tasks requiring attention to detail, organization, and clear communication.',
+        '- Improved skills by learning from feedback and applying new knowledge quickly.'
+      ]),
+    '',
+    'EDUCATION',
+    ...(education.length
+      ? education.map((item) => `- ${item}`)
+      : ['- Add your school, college, degree, or certification here.']),
+    '',
+    'ACHIEVEMENTS',
+    ...(achievements.length
+      ? achievements.map((item) => `- ${item}`)
+      : [
+        '- Add measurable achievements, awards, projects, or leadership examples here.',
+        '- Highlight results with numbers where possible, such as time saved, people helped, or quality improved.'
+      ])
+  ].join('\n');
+};
+
+const buildStoryActionDraft = (message = '', context = {}) => {
+  const profile = context.profile || {};
+  const name = getProfileDisplayName(context);
+  const role = getTargetRole(message, context);
+  const skills = normalizeDraftList(profile.skills).slice(0, 4);
+  const skillText = skills.length ? skills.join(', ') : 'learning, creativity, and consistent effort';
+
+  return [
+    `Today I’m sharing a little part of my career journey as ${name}.`,
+    '',
+    `I’m continuing to grow toward opportunities in ${role}, and I’ve been building my confidence through ${skillText}. Every project, challenge, and conversation teaches me something useful about how to work better, communicate clearly, and keep improving.`,
+    '',
+    'I’m excited to connect with people who are learning, building, hiring, or exploring new opportunities. If you are on a similar path, let’s grow together and support each other’s next step.'
+  ].join('\n');
+};
+
+const buildEmployerPostDraft = (message = '', context = {}) => {
+  const company = context.company || {};
+  const companyName = String(company.name || 'Our company').trim();
+  return [
+    `${companyName} is growing, and we’re excited to connect with talented people who want to do meaningful work.`,
+    '',
+    'We value curiosity, ownership, communication, and people who are ready to learn quickly. If you are exploring your next opportunity, keep an eye on our latest roles and updates here on JumpTake.',
+    '',
+    'We look forward to meeting candidates who are ready to bring fresh ideas and positive energy to the team.'
+  ].join('\n');
+};
+
+const buildAssessmentDraft = (message = '', context = {}) => ([
+  'Assessment Title: Candidate Skills Screening',
+  '',
+  'Instructions: Answer each question clearly. Use examples from your experience where possible.',
+  '',
+  '1. Tell us about a project or task you completed successfully. What was your role?',
+  '2. Describe a time you solved a problem under pressure.',
+  '3. Which skills make you a strong fit for this role?',
+  '4. How do you organize your work when you have multiple deadlines?',
+  '5. What tools, technologies, or methods have you used recently?',
+  '6. Describe a time you received feedback. How did you respond?',
+  '7. Why are you interested in this opportunity?',
+  '',
+  'Answer Key Guidance: Look for clear examples, relevant skills, ownership, communication, problem-solving, and evidence of learning.'
+]).join('\n');
+
+const buildDocumentDraft = (message = '', context = {}) => {
+  const companyName = String(context.company?.name || 'Company Name').trim();
+  return [
+    `${companyName}`,
+    '',
+    'Document Draft',
+    '',
+    'Purpose',
+    'This document outlines the key details, expectations, and next steps for the topic requested.',
+    '',
+    'Overview',
+    'Add the main background, business context, and important points here. Keep the language clear, professional, and easy to follow.',
+    '',
+    'Key Points',
+    '- Main point one',
+    '- Main point two',
+    '- Main point three',
+    '',
+    'Next Steps',
+    '- Review the details',
+    '- Confirm responsibilities',
+    '- Share with the relevant people'
+  ].join('\n');
+};
+
+const buildPortalActionFallbackDraft = (action, message = '', context = {}) => {
+  switch (action) {
+    case 'candidate-create-resume':
+    case 'candidate-format-resume':
+      return buildResumeActionDraft(message, context);
+    case 'candidate-create-story':
+      return buildStoryActionDraft(message, context);
+    case 'employer-create-post':
+      return buildEmployerPostDraft(message, context);
+    case 'employer-create-assessment':
+      return buildAssessmentDraft(message, context);
+    case 'employer-create-document':
+    case 'employer-format-document':
+      return buildDocumentDraft(message, context);
+    default:
+      return '';
+  }
+};
+
+const isWeakPortalActionDraft = (action, answer = '') => {
+  if (!isPortalAction(action) || action === 'candidate-apply-job') {
+    return false;
+  }
+
+  const text = String(answer || '').trim();
+  const normalized = text.toLowerCase();
+
+  if (text.length < 140) {
+    return true;
+  }
+
+  if (/^(great|i can|let'?s|ready to|please|share|send|tell me|can you|could you|pick a|choose|what kind|which)\b/i.test(text)) {
+    return true;
+  }
+
+  if (/\b(share your|send me|tell me your|tell me a bit more|can you please tell me|pick a genre|choose a genre|paste your|target job title)\b/i.test(normalized)) {
+    return true;
+  }
+
+  return false;
+};
 
 const getLastHistoryEntry = (history = [], role) => (
   [...history]
@@ -948,11 +1214,12 @@ const getOpenAIApiKey = () => (
 
 const getOpenAIModelCandidates = () => {
   const configured = String(process.env.OPENAI_MODEL || '').trim();
+  const configuredLooksUsable = configured && !/^gpt-5\.\d/i.test(configured);
   return [...new Set([
-    configured,
-    'gpt-5',
     'gpt-4.1-mini',
-    'gpt-4o-mini'
+    'gpt-4o-mini',
+    'gpt-5',
+    configuredLooksUsable ? configured : ''
   ].filter(Boolean))];
 };
 
@@ -1024,7 +1291,7 @@ const askOpenAIResponsesApi = async ({ apiKey, model, prompt, useWebSearch = fal
     'https://api.openai.com/v1/responses',
     payload,
     {
-      timeout: 25000,
+      timeout: 12000,
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
@@ -1050,7 +1317,7 @@ const askOpenAIChatCompletionsApi = async ({ apiKey, model, prompt }) => {
       ]
     },
     {
-      timeout: 25000,
+      timeout: 12000,
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
@@ -1182,7 +1449,7 @@ const isQuotaError = (error) => {
 
 const getAiUnavailableReply = ({ openAiFailed = false, geminiFailed = false } = {}) => {
   if (openAiFailed || geminiFailed) {
-    return 'Error connecting';
+    return 'I am having trouble reaching the live AI service right now. I can still help with JumpTake basics, navigation, resumes, jobs, and account steps. Try a shorter request, or try again in a moment.';
   }
 
   return '';
@@ -1221,23 +1488,7 @@ const askPublicAssistant = async (req, res) => {
   }
 
   const conversationHistory = buildHistoryBlock(history);
-  const contextBlock = JSON.stringify({
-    portalMode: context.portalMode || '',
-    activeSection: context.activeSection || '',
-    user: context.user || null,
-    profile: context.profile || null,
-    company: context.company || null,
-    workspace: context.workspace || null,
-    jobs: Array.isArray(context.jobs) ? context.jobs.slice(0, 12).map((job) => ({
-      id: job?._id || job?.id || job?.jobNumber || '',
-      title: job?.title || '',
-      company: job?.company?.name || job?.companyName || '',
-      description: job?.description || job?.summary || '',
-      requirements: job?.requirements || '',
-      location: job?.location || '',
-      type: job?.type || job?.jobType || ''
-    })) : []
-  }, null, 2);
+  const contextBlock = JSON.stringify(buildCompactPortalContext(context), null, 2);
   const actionInstructions = isPortalAction(action) ? `
 The current portal action is ${action}.
 - For candidate-create-resume: write a complete resume draft using the provided user/profile context. Use clear section headings and concise bullet points. Use Portal context workspace.layout when present: fit the draft to the A4 editor size, margins, safe page height, and current viewport. Keep the resume compact, structured, and page-break friendly.
@@ -1272,7 +1523,7 @@ If the visitor asks a general question like coin toss, banana, New York, food, j
 If the visitor asks something unrelated and harmless, do not repeat a stock JumpTake paragraph. Keep the reply conversational and helpful.
 If the visitor asks a logic or riddle question, answer that exact question directly.
 If the visitor asks to create an account, log in, browse jobs, or take a product action, guide them into the correct JumpTake flow.
-If you cannot complete a live response because of a provider problem, reply exactly with: Error connecting
+If a request needs missing personal details, ask for the missing details instead of pretending you have them.
 
 ${SITE_GUIDE}
 
@@ -1296,7 +1547,10 @@ Visitor: ${message}
         : await askOpenAI({ prompt });
 
       if (answer) {
-        return res.json({ answer, action });
+        const actionDraft = isWeakPortalActionDraft(action, answer)
+          ? buildPortalActionFallbackDraft(action, message, context)
+          : '';
+        return res.json({ answer: actionDraft || answer, action });
       }
 
       if (provider === 'gemini') {
@@ -1312,6 +1566,16 @@ Visitor: ${message}
       }
       console.warn(`[PUBLIC ASSISTANT] ${provider} failed:`, error.response?.data?.error?.message || error.message);
     }
+  }
+
+  const actionDraftFallback = buildPortalActionFallbackDraft(action, message, context);
+  if (actionDraftFallback) {
+    return res.json({ answer: actionDraftFallback, action });
+  }
+
+  const actionFallback = fallbackAnswer(message, action, history);
+  if (actionFallback && actionFallback !== 'Error connecting') {
+    return res.json({ answer: actionFallback, action });
   }
 
   const aiUnavailableReply = getAiUnavailableReply({

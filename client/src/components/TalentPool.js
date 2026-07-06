@@ -4,10 +4,47 @@ import ProfileAvatar from './ProfileAvatar';
 import defaultTailorCoverImage from './media/default-tailor-cover.png';
 import defaultProfileMale from './media/default-profile-male.png';
 import defaultProfileFemale from './media/default-profile-female.png';
+import { apiUrl } from '../utils/apiUrl';
 
 const WORK_NEWS_STORAGE_KEY = 'jumptakeWorkNewsPosts';
 const TALENT_STORIES_STORAGE_KEY = 'jumptakeTalentStoriesPosts';
 const CANDIDATE_REACH_VIEWED_STORAGE_PREFIX = 'jumptakeCandidateProfileReachViewed:';
+
+const candidateReactionIconPaths = {
+    Like: 'M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51a10 10 0 0 1 .443-.051c.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733q.086.18.138.363c.077.27.113.567.113.856s-.036.586-.113.856c-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.2 3.2 0 0 1-.488.901c.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.8 4.8 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z',
+    Comment: 'M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4.414a1 1 0 0 0-.707.293L.854 15.146A.5.5 0 0 1 0 14.793zm3.5 1a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1zm0 2.5a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1zm0 2.5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1z',
+    Love: 'M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314',
+    Appreciate: 'M7.657 6.247c.11-.33.576-.33.686 0l.645 1.937a2.89 2.89 0 0 0 1.829 1.828l1.936.645c.33.11.33.576 0 .686l-1.937.645a2.89 2.89 0 0 0-1.828 1.829l-.645 1.936a.361.361 0 0 1-.686 0l-.645-1.937a2.89 2.89 0 0 0-1.828-1.828l-1.937-.645a.361.361 0 0 1 0-.686l1.937-.645a2.89 2.89 0 0 0 1.828-1.828zM3.794 1.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387A1.73 1.73 0 0 0 4.593 5.69l-.387 1.162a.217.217 0 0 1-.412 0L3.407 5.69A1.73 1.73 0 0 0 2.31 4.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387A1.73 1.73 0 0 0 3.407 2.31zM10.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.16 1.16 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.16 1.16 0 0 0-.732-.732L9.1 2.137a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732z',
+    Empower: 'M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641z',
+    Congratulate: 'M9.5 2.672a.5.5 0 1 0 1 0V.843a.5.5 0 0 0-1 0zm4.5.035A.5.5 0 0 0 13.293 2L12 3.293a.5.5 0 1 0 .707.707zM7.293 4A.5.5 0 1 0 8 3.293L6.707 2A.5.5 0 0 0 6 2.707zm-.621 2.5a.5.5 0 1 0 0-1H4.843a.5.5 0 1 0 0 1zm8.485 0a.5.5 0 1 0 0-1h-1.829a.5.5 0 0 0 0 1zM13.293 10A.5.5 0 1 0 14 9.293L12.707 8a.5.5 0 1 0-.707.707zM9.5 11.157a.5.5 0 0 0 1 0V9.328a.5.5 0 0 0-1 0zm1.854-5.097a.5.5 0 0 0 0-.706l-.708-.708a.5.5 0 0 0-.707 0L8.646 5.94a.5.5 0 0 0 0 .707l.708.708a.5.5 0 0 0 .707 0l1.293-1.293Zm-3 3a.5.5 0 0 0 0-.706l-.708-.708a.5.5 0 0 0-.707 0L.646 13.94a.5.5 0 0 0 0 .707l.708.708a.5.5 0 0 0 .707 0z',
+    Motivate: 'M12.17 9.53c2.307-2.592 3.278-4.684 3.641-6.218.21-.887.214-1.58.16-2.065a3.6 3.6 0 0 0-.108-.563 2 2 0 0 0-.078-.23V.453c-.073-.164-.168-.234-.352-.295a2 2 0 0 0-.16-.045 4 4 0 0 0-.57-.093c-.49-.044-1.19-.03-2.08.188-1.536.374-3.618 1.343-6.161 3.604l-2.4.238h-.006a2.55 2.55 0 0 0-1.524.734L.15 7.17a.512.512 0 0 0 .433.868l1.896-.271c.28-.04.592.013.955.132.232.076.437.16.655.248l.203.083c.196.816.66 1.58 1.275 2.195.613.614 1.376 1.08 2.191 1.277l.082.202c.089.218.173.424.249.657.118.363.172.676.132.956l-.271 1.9a.512.512 0 0 0 .867.433l2.382-2.386c.41-.41.668-.949.732-1.526zm.11-3.699c-.797.8-1.93.961-2.528.362-.598-.6-.436-1.733.361-2.532.798-.799 1.93-.96 2.528-.361s.437 1.732-.36 2.531ZM5.205 10.787a7.6 7.6 0 0 0 1.804 1.352c-1.118 1.007-4.929 2.028-5.054 1.903-.126-.127.737-4.189 1.839-5.18.346.69.837 1.35 1.411 1.925',
+    Angry: 'M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353zm-6.106 4.5L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708',
+    Sad: 'M8.867 14.41c13.308-9.322 4.79-16.563.064-13.824L7 3l1.5 4-2 3L8 15a38 38 0 0 0 .867-.59m-.303-1.01-.971-3.237 1.74-2.608a1 1 0 0 0 .103-.906l-1.3-3.468 1.45-1.813c1.861-.948 4.446.002 5.197 2.11.691 1.94-.055 5.521-6.219 9.922m-1.25 1.137a36 36 0 0 1-1.522-1.116C-5.077 4.97 1.842-1.472 6.454.293c.314.12.618.279.904.477L5.5 3 7 7l-1.5 3zm-2.3-3.06-.442-1.106a1 1 0 0 1 .034-.818l1.305-2.61L4.564 3.35a1 1 0 0 1 .168-.991l1.032-1.24c-1.688-.449-3.7.398-4.456 2.128-.711 1.627-.413 4.55 3.706 8.229Z',
+    Bad: 'M15 8a6.97 6.97 0 0 0-1.71-4.584l-9.874 9.875A7 7 0 0 0 15 8M2.71 12.584l9.874-9.875a7 7 0 0 0-9.874 9.874ZM16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0',
+    Hide: 'm10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7 7 0 0 0 2.79-.588M5.21 3.088A7 7 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474zM5.525 7.646a2.5 2.5 0 0 0 2.829 2.829zm4.95.708-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6-12-12 .708-.708 12 12z'
+};
+
+const CandidateReactionIcon = ({ name }) => (
+    <svg className="candidate-reaction-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+        <path fillRule={name === 'Love' ? 'evenodd' : undefined} d={candidateReactionIconPaths[name] || candidateReactionIconPaths.Like} />
+        {name === 'Congratulate' && <path className="magic-stick-accent" d="M1.3 14.7 8.35 7.65" />}
+    </svg>
+);
+
+const CandidateShareIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+        <path fillRule="evenodd" d="M14.854 4.854a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 4H3.5A2.5 2.5 0 0 0 1 6.5v8a.5.5 0 0 0 1 0v-8A1.5 1.5 0 0 1 3.5 5h9.793l-3.147 3.146a.5.5 0 0 0 .708.708z" />
+    </svg>
+);
+
+const escapeCandidateHtml = (value = '') => (
+    String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+);
 
 const formatCompactCount = (value) => {
     const count = Math.max(0, Number(value) || 0);
@@ -114,9 +151,13 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
     const [openCandidateReactionPostId, setOpenCandidateReactionPostId] = useState('');
     const [openCandidateCommentPostId, setOpenCandidateCommentPostId] = useState('');
     const [openCandidateSharePostId, setOpenCandidateSharePostId] = useState('');
+    const [openCandidateOptionsPostId, setOpenCandidateOptionsPostId] = useState('');
     const [openCandidateReachInsightPostId, setOpenCandidateReachInsightPostId] = useState('');
     const [candidateReachInsightPost, setCandidateReachInsightPost] = useState(null);
     const [candidateCommentDrafts, setCandidateCommentDrafts] = useState({});
+    const [candidateShareFriends, setCandidateShareFriends] = useState([]);
+    const [candidateShareStatus, setCandidateShareStatus] = useState('');
+    const [candidateSharingTargetId, setCandidateSharingTargetId] = useState('');
     const [growAnimationKey, setGrowAnimationKey] = useState(0);
     const [isMobileView, setIsMobileView] = useState(() => (
         typeof window !== 'undefined' ? window.innerWidth <= 768 : false
@@ -153,6 +194,64 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
     }, [mode]);
 
     useEffect(() => {
+        if (mode !== 'candidate' || !currentUserId) {
+            setCandidateShareFriends([]);
+            return;
+        }
+
+        let isMounted = true;
+
+        const fetchCandidateShareFriends = async () => {
+            try {
+                const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
+                const response = await fetch(apiUrl(`/api/candidate-connections/user/${currentUserId}`), {
+                    headers: {
+                        ...(token ? { Authorization: `Bearer ${token}` } : {})
+                    }
+                });
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to load friends');
+                }
+
+                if (!isMounted) {
+                    return;
+                }
+
+                const friends = (Array.isArray(data.friends) ? data.friends : [])
+                    .map((connection) => {
+                        const peer = connection?.peer && typeof connection.peer === 'object' ? connection.peer : {};
+
+                        return {
+                            id: String(peer.candidateId || peer.userId || connection?._id || connection?.id || ''),
+                            candidateId: peer.candidateId || '',
+                            userId: peer.userId || '',
+                            name: peer.name || 'Candidate',
+                            jumptakeId: peer.jumptakeId || '',
+                            profileImage: peer.profileImage || '',
+                            gender: peer.gender || ''
+                        };
+                    })
+                    .filter((friend) => friend.id);
+
+                setCandidateShareFriends(friends);
+            } catch (shareFriendError) {
+                console.error('Error loading candidate profile share friends:', shareFriendError);
+                if (isMounted) {
+                    setCandidateShareFriends([]);
+                }
+            }
+        };
+
+        fetchCandidateShareFriends();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [mode, currentUserId]);
+
+    useEffect(() => {
         const handleResize = () => setIsMobileView(window.innerWidth <= 768);
 
         handleResize();
@@ -170,8 +269,8 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         const fetchCandidateFeedPosts = async () => {
             try {
                 const [workResponse, talentResponse] = await Promise.all([
-                    fetch(`${process.env.REACT_APP_API_URL || ''}/api/feed-posts?type=work-news`),
-                    fetch(`${process.env.REACT_APP_API_URL || ''}/api/feed-posts?type=talent-story`)
+                    fetch(apiUrl('/api/feed-posts?type=work-news')),
+                    fetch(apiUrl('/api/feed-posts?type=talent-story'))
                 ]);
 
                 if (!workResponse.ok || !talentResponse.ok) {
@@ -212,7 +311,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
             const endpoint = mode === 'candidate'
                 ? `/api/candidate-network/matches/${currentUserId}`
                 : '/api/job-seekers';
-            const response = await fetch((process.env.REACT_APP_API_URL || '') + endpoint, {
+            const response = await fetch(apiUrl(endpoint), {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -241,7 +340,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
 
         try {
             const token = localStorage.getItem('employerToken');
-            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/talent-bookmarks/company/${companyId}`, {
+            const response = await fetch(apiUrl(`/api/talent-bookmarks/company/${companyId}`), {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -271,7 +370,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
 
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/candidate-bookmarks/user/${currentUserId}`, {
+            const response = await fetch(apiUrl(`/api/candidate-bookmarks/user/${currentUserId}`), {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -309,7 +408,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                 actorType: mode === 'employer' ? 'employer' : 'candidate',
                 actorKey: String(actorKey)
             });
-            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/candidate-likes?${params.toString()}`, {
+            const response = await fetch(apiUrl(`/api/candidate-likes?${params.toString()}`), {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -362,6 +461,12 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         setSelectedCandidate(null);
         setOpenCandidateReachInsightPostId('');
         setCandidateReachInsightPost(null);
+        setOpenCandidateReactionPostId('');
+        setOpenCandidateCommentPostId('');
+        setOpenCandidateSharePostId('');
+        setOpenCandidateOptionsPostId('');
+        setCandidateShareStatus('');
+        setCandidateSharingTargetId('');
     };
 
     const getCandidateJumpTakeId = (candidate) => (
@@ -413,7 +518,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                 const removeUrl = mode === 'employer'
                     ? `/api/talent-bookmarks/company/${companyId}/candidate/${candidate._id}`
                     : `/api/candidate-bookmarks/user/${currentUserId}/candidate/${candidate._id}`;
-                const response = await fetch(`${process.env.REACT_APP_API_URL || ''}${removeUrl}`, {
+                const response = await fetch(apiUrl(removeUrl), {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -427,7 +532,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                 setBookmarkedTalentIds((prevState) => prevState.filter((candidateId) => candidateId !== String(candidate._id)));
             } else {
                 const createUrl = mode === 'employer' ? '/api/talent-bookmarks' : '/api/candidate-bookmarks';
-                const response = await fetch(`${process.env.REACT_APP_API_URL || ''}${createUrl}`, {
+                const response = await fetch(apiUrl(createUrl), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -461,7 +566,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
 
         try {
             const token = localStorage.getItem(mode === 'candidate' ? 'token' : 'employerToken');
-            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/candidate-likes/toggle`, {
+            const response = await fetch(apiUrl('/api/candidate-likes/toggle'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -499,7 +604,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         try {
             setSendingFriendRequest(true);
             setFriendNotice('');
-            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/candidate-connections/request`, {
+            const response = await fetch(apiUrl('/api/candidate-connections/request'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -550,7 +655,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         try {
             setSendingFriendRequest(true);
             setFriendNotice('');
-            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/candidate-connections/${connectionId}/respond`, {
+            const response = await fetch(apiUrl(`/api/candidate-connections/${connectionId}/respond`), {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -629,23 +734,6 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         )
     );
 
-    const renderMessageButton = (candidate, compact = false) => (
-        <button
-            type="button"
-            className={`candidate-card-action candidate-card-message-action ${compact ? 'candidate-profile-mini-icon' : ''}`}
-            onClick={(event) => {
-                event.stopPropagation();
-                handleViewProfile(candidate);
-            }}
-            aria-label={`Message ${candidate.name || 'candidate'}`}
-            title="Message candidate"
-        >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-5 4v-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm0 2v10h1v1.84L7.3 16H20V6H4Z" />
-            </svg>
-        </button>
-    );
-
     const renderBookmarkButton = (candidate, compact = false) => (
         <button
             type="button"
@@ -698,18 +786,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                     {renderLikeButton(candidate)}
                     {renderFriendButton(candidate, true)}
                     {renderBookmarkButton(candidate, true)}
-                    {renderMessageButton(candidate, true)}
                 </div>
-                <button
-                    type="button"
-                    className="candidate-profile-mini-message"
-                    onClick={(event) => {
-                        event.stopPropagation();
-                        handleViewProfile(candidate);
-                    }}
-                >
-                    Message
-                </button>
                 <div className="candidate-profile-mini-stats">
                     <span>
                         <strong>{likeCount}</strong>
@@ -972,7 +1049,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
 
         if (postId) {
             try {
-                await fetch(`${process.env.REACT_APP_API_URL || ''}/api/feed-posts/${postId}`, {
+                await fetch(apiUrl(`/api/feed-posts/${postId}`), {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ ...post, ...nextPost })
@@ -1047,7 +1124,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
     };
 
     const handleCandidateCommentSubmit = (post) => {
-        const postKey = String(post.id || post._id || '');
+        const postKey = getCandidatePostKey(post);
         const text = String(candidateCommentDrafts[postKey] || '').trim();
 
         if (!text) {
@@ -1068,6 +1145,83 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         }));
         setCandidateCommentDrafts((drafts) => ({ ...drafts, [postKey]: '' }));
         setOpenCandidateCommentPostId('');
+    };
+
+    const handleCandidateCopyShare = async (post) => {
+        const postText = asCandidatePostText(post.body || post.text || post.content, 'JumpTake post');
+        const shareText = [postText, typeof window !== 'undefined' ? window.location.href : ''].filter(Boolean).join('\n\n');
+
+        try {
+            if (typeof navigator !== 'undefined' && navigator.share) {
+                await navigator.share({ text: shareText, url: typeof window !== 'undefined' ? window.location.href : undefined });
+            } else if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(shareText);
+            }
+
+            setCandidateShareStatus('Post link copied.');
+        } catch (shareError) {
+            setCandidateShareStatus('Could not open sharing. Try again.');
+        }
+    };
+
+    const handleCandidateShareToFriend = async (post, friend) => {
+        if (!friend?.candidateId || !currentUserId) {
+            setCandidateShareStatus('This friend cannot receive messages yet.');
+            return;
+        }
+
+        setCandidateSharingTargetId(friend.id);
+        setCandidateShareStatus('');
+
+        try {
+            const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
+            const postText = asCandidatePostText(post.body || post.text || post.content, 'a JumpTake post');
+            const postUrl = typeof window !== 'undefined' ? window.location.href : '';
+            const senderName = asCandidatePostText(selectedCandidate?.name, 'A JumpTake candidate');
+            const bodyHtml = [
+                `<p>${escapeCandidateHtml(senderName)} shared a JumpTake post with you.</p>`,
+                `<p>${escapeCandidateHtml(postText)}</p>`,
+                postUrl ? `<p><a href="${escapeCandidateHtml(postUrl)}">${escapeCandidateHtml(postUrl)}</a></p>` : ''
+            ].join('');
+
+            const response = await fetch(apiUrl('/api/messages/candidate-direct'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { Authorization: `Bearer ${token}` } : {})
+                },
+                body: JSON.stringify({
+                    senderUserId: currentUserId,
+                    recipientCandidateId: friend.candidateId,
+                    bodyHtml
+                })
+            });
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Could not share this post.');
+            }
+
+            updateCandidatePost(post, (currentPost) => ({
+                reach: Number(currentPost.reach || 0) + 1,
+                comments: [
+                    ...(Array.isArray(currentPost.comments) ? currentPost.comments : []),
+                    {
+                        id: `share-${Date.now()}`,
+                        text: `Shared with @${friend.jumptakeId || friend.name}`,
+                        authorId: String(currentUserId || ''),
+                        authorName: 'You',
+                        createdAt: new Date().toISOString()
+                    }
+                ]
+            }));
+            setCandidateShareStatus(`Shared with ${friend.name}.`);
+            setOpenCandidateSharePostId('');
+        } catch (shareError) {
+            setCandidateShareStatus(shareError.message || 'Could not share this post.');
+        } finally {
+            setCandidateSharingTargetId('');
+        }
     };
 
     const openCandidateFromPostAuthor = (author = {}) => {
@@ -1206,6 +1360,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         const isReactionMenuOpen = openCandidateReactionPostId === postKey;
         const isCommentOpen = openCandidateCommentPostId === postKey;
         const isShareOpen = openCandidateSharePostId === postKey;
+        const isOptionsOpen = openCandidateOptionsPostId === postKey;
         const commentDraft = candidateCommentDrafts[postKey] || '';
         const reactionsByUser = post.reactionsByUser && typeof post.reactionsByUser === 'object' ? post.reactionsByUser : {};
         const selectedReaction = reactionsByUser[String(currentUserId || 'candidate-viewer')] || '';
@@ -1256,9 +1411,39 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                         </h3>
                         <p>{asCandidatePostText(post.feedType, 'Talent story')} - {dateLabel}</p>
                     </div>
-                    <div className="portal-post-header-actions" aria-hidden="true">
+                    <div className="portal-post-header-actions">
                         <span className="portal-post-options-wrap">
-                            <span className="portal-post-options-button">...</span>
+                            <button
+                                type="button"
+                                className="portal-post-options-button"
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    setOpenCandidateOptionsPostId((openId) => (openId === postKey ? '' : postKey));
+                                    setOpenCandidateReactionPostId('');
+                                    setOpenCandidateCommentPostId('');
+                                    setOpenCandidateSharePostId('');
+                                }}
+                                aria-expanded={isOptionsOpen}
+                                aria-label="Post options"
+                                title="Post options"
+                            >
+                                ...
+                            </button>
+                            {isOptionsOpen && (
+                                <div className="portal-post-options-menu" role="menu">
+                                    <button
+                                        type="button"
+                                        role="menuitem"
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                            navigator.clipboard?.writeText(window.location.href);
+                                            setOpenCandidateOptionsPostId('');
+                                        }}
+                                    >
+                                        Copy link
+                                    </button>
+                                </div>
+                            )}
                         </span>
                     </div>
                 </div>
@@ -1309,10 +1494,14 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                                     <button
                                         type="button"
                                         className={`portal-reaction-button portal-reaction-icon-button link reaction-${reaction.toLowerCase()} ${selectedReaction === reaction ? 'active' : ''}`}
-                                        onClick={() => handleCandidateReaction(post, reaction)}
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                            handleCandidateReaction(post, reaction);
+                                        }}
                                         aria-label={`${reaction} reaction`}
                                         title={reaction}
                                     >
+                                        <CandidateReactionIcon name={reaction} />
                                         <span className="candidate-reaction-label">{reaction}</span>
                                     </button>
                                 </li>
@@ -1323,10 +1512,12 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                         <button
                             type="button"
                             className={`portal-reaction-trigger ${selectedReaction ? `has-reaction reaction-${selectedReaction.toLowerCase()}` : ''}`}
-                            onClick={() => {
+                            onClick={(event) => {
+                                event.stopPropagation();
                                 setOpenCandidateReactionPostId((openId) => (openId === postKey ? '' : postKey));
                                 setOpenCandidateCommentPostId('');
                                 setOpenCandidateSharePostId('');
+                                setOpenCandidateOptionsPostId('');
                             }}
                             aria-expanded={isReactionMenuOpen}
                             aria-label="Choose reaction"
@@ -1339,10 +1530,12 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                         <button
                             type="button"
                             className={`portal-comment-toggle ${isCommentOpen ? 'active' : ''}`}
-                            onClick={() => {
+                            onClick={(event) => {
+                                event.stopPropagation();
                                 setOpenCandidateCommentPostId((openId) => (openId === postKey ? '' : postKey));
                                 setOpenCandidateReactionPostId('');
                                 setOpenCandidateSharePostId('');
+                                setOpenCandidateOptionsPostId('');
                             }}
                             aria-expanded={isCommentOpen}
                             aria-label="Comment"
@@ -1355,10 +1548,13 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                         <button
                             type="button"
                             className={`portal-share-toggle ${isShareOpen ? 'active' : ''}`}
-                            onClick={() => {
+                            onClick={(event) => {
+                                event.stopPropagation();
                                 setOpenCandidateSharePostId((openId) => (openId === postKey ? '' : postKey));
                                 setOpenCandidateReactionPostId('');
                                 setOpenCandidateCommentPostId('');
+                                setOpenCandidateOptionsPostId('');
+                                setCandidateShareStatus('');
                             }}
                             aria-expanded={isShareOpen}
                             aria-label="Share post"
@@ -1368,32 +1564,103 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                             </svg>
                         </button>
                         {isShareOpen && (
-                            <div className="portal-share-picker" role="dialog" aria-label="Share post">
+                            <div className="portal-share-picker" role="dialog" aria-label="Share post with friend">
                                 <strong>Share post</strong>
                                 <button
                                     type="button"
                                     className="portal-share-friend portal-share-copy-button"
-                                    onClick={() => navigator.clipboard?.writeText(window.location.href)}
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+                                        handleCandidateCopyShare(post);
+                                    }}
                                 >
-                                    <span className="portal-share-friend-name">Copy or share post</span>
+                                    <span className="portal-share-friend-avatar">
+                                        <CandidateShareIcon />
+                                    </span>
+                                    <span>
+                                        <span className="portal-share-friend-name">Copy or share post</span>
+                                        <small>Use your device share tools</small>
+                                    </span>
                                 </button>
+                                {mode === 'candidate' && candidateShareFriends.length ? (
+                                    <div className="portal-share-friend-list">
+                                        {candidateShareFriends.map((friend) => (
+                                            <button
+                                                key={friend.id}
+                                                type="button"
+                                                className="portal-share-friend"
+                                                onClick={(event) => {
+                                                    event.stopPropagation();
+                                                    handleCandidateShareToFriend(post, friend);
+                                                }}
+                                                disabled={candidateSharingTargetId === friend.id}
+                                            >
+                                                <span className="portal-share-friend-avatar">
+                                                    {friend.profileImage ? (
+                                                        <img src={friend.profileImage} alt="" />
+                                                    ) : (
+                                                        <ProfileAvatar name={friend.name} className="portal-share-friend-avatar-fallback" />
+                                                    )}
+                                                </span>
+                                                <span>
+                                                    <span className="portal-share-friend-name">{friend.name}</span>
+                                                    {friend.jumptakeId ? <small>{friend.jumptakeId}</small> : null}
+                                                </span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                ) : mode === 'candidate' ? (
+                                    <p>No friends to share with yet.</p>
+                                ) : null}
+                                {candidateShareStatus && <p className="portal-share-status">{candidateShareStatus}</p>}
                             </div>
                         )}
                     </div>
                 </div>
-                {isCommentOpen && (
-                    <div className="portal-comment-composer">
-                        <input
-                            type="text"
-                            value={commentDraft}
-                            onChange={(event) => setCandidateCommentDrafts((drafts) => ({ ...drafts, [postKey]: event.target.value }))}
-                            placeholder="Make a comment"
-                            aria-label="Make a comment"
-                        />
-                        <button type="button" onClick={() => handleCandidateCommentSubmit(post)}>
-                            Post
-                        </button>
-                    </div>
+                {isCommentOpen && typeof document !== 'undefined' && createPortal(
+                    <div
+                        className="portal-comment-modal-backdrop candidate-comment-modal-backdrop"
+                        role="presentation"
+                        onClick={(event) => {
+                            if (event.target === event.currentTarget) {
+                                setOpenCandidateCommentPostId('');
+                            }
+                        }}
+                    >
+                        <div className="portal-comment-modal-card" role="dialog" aria-modal="true" aria-label="Make a comment" onClick={(event) => event.stopPropagation()}>
+                            <button
+                                type="button"
+                                className="portal-comment-modal-close"
+                                onClick={() => setOpenCandidateCommentPostId('')}
+                                aria-label="Close comment composer"
+                            >
+                                &times;
+                            </button>
+                            <strong>Make a comment</strong>
+                            <div className="portal-comment-composer">
+                                <input
+                                    type="text"
+                                    value={commentDraft}
+                                    onChange={(event) => setCandidateCommentDrafts((drafts) => ({ ...drafts, [postKey]: event.target.value }))}
+                                    placeholder="Make a comment"
+                                    aria-label="Make a comment"
+                                    autoFocus
+                                />
+                                <button
+                                    type="button"
+                                    className="portal-comment-submit-button"
+                                    onClick={() => handleCandidateCommentSubmit(post)}
+                                    aria-label="Post comment"
+                                    title="Post comment"
+                                >
+                                    <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                                        <path d={candidateReactionIconPaths.Comment} />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>,
+                    document.body
                 )}
                 {firstComment && (
                     <div className="portal-post-comments portal-rotating-comment-rail">
@@ -1649,7 +1916,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                     <p className="candidate-community-copy">
                         <span className="candidate-community-line">Connect, learn, and{' '}
                         <span key={`candidate-grow-${growAnimationKey}`} className="candidate-grow-together candidate-grow-replay">
-                            <span className="candidate-grow-text">grow together</span>
+                            <span className="candidate-grow-text">Grow Together</span>
                             <svg className="candidate-grow-icon" viewBox="0 0 16 16" aria-hidden="true">
                                 <path fillRule="evenodd" d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5" />
                             </svg>

@@ -55238,6 +55238,328 @@ body[data-theme="light"] #root .home-page .portal-create-story-button * {
   justify-content: center !important;
 }
 
+/* Final friends/action visibility and candidate profile-popup parity fixes. */
+html body #root .friend-invitations-section .friend-invitation-actions :is(button, .settings-button, .secondary-button, .friend-block-button, .friend-cancel-button, .friend-status-pill),
+html body #root .friend-invitations-section .friend-invitation-actions :is(button, .settings-button, .secondary-button, .friend-block-button, .friend-cancel-button, .friend-status-pill):is(:hover, :focus, :active, :disabled),
+html body #root .friend-invitations-section .friend-invitation-actions :is(button, .settings-button, .secondary-button, .friend-block-button, .friend-cancel-button, .friend-status-pill) *,
+html body #root .friend-invitations-section .friend-invitation-actions :is(button, .settings-button, .secondary-button, .friend-block-button, .friend-cancel-button, .friend-status-pill):is(:hover, :focus, :active, :disabled) *,
+html[data-theme="light"] body #root .friend-invitations-section .friend-invitation-actions :is(button, .settings-button, .secondary-button, .friend-block-button, .friend-cancel-button, .friend-status-pill),
+html[data-theme="light"] body #root .friend-invitations-section .friend-invitation-actions :is(button, .settings-button, .secondary-button, .friend-block-button, .friend-cancel-button, .friend-status-pill):is(:hover, :focus, :active, :disabled),
+html[data-theme="light"] body #root .friend-invitations-section .friend-invitation-actions :is(button, .settings-button, .secondary-button, .friend-block-button, .friend-cancel-button, .friend-status-pill) *,
+html[data-theme="light"] body #root .friend-invitations-section .friend-invitation-actions :is(button, .settings-button, .secondary-button, .friend-block-button, .friend-cancel-button, .friend-status-pill):is(:hover, :focus, :active, :disabled) * {
+  color: #111111 !important;
+  fill: #111111 !important;
+  stroke: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  opacity: 1 !important;
+}
+
+html body #root .friend-invitations-section .friend-invitation-actions :is(button, .settings-button, .secondary-button, .friend-block-button, .friend-cancel-button):disabled {
+  filter: none !important;
+  cursor: default !important;
+}
+
+html body #root .candidate-profile-popup .portal-profile-preview-post-card {
+  display: grid !important;
+  gap: 0.45rem !important;
+  padding: 0.8rem 0.72rem !important;
+}
+
+html body #root .candidate-profile-popup .portal-social-post-header {
+  display: grid !important;
+  grid-template-columns: 2.45rem minmax(0, 1fr) 1.7rem !important;
+  align-items: start !important;
+  column-gap: 0.55rem !important;
+  row-gap: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-avatar,
+html body #root .candidate-profile-popup .portal-author-open-button.portal-post-avatar {
+  grid-column: 1 !important;
+  width: 2.35rem !important;
+  min-width: 2.35rem !important;
+  height: 2.35rem !important;
+  min-height: 2.35rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-avatar img,
+html body #root .candidate-profile-popup .portal-post-avatar .profile-avatar-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-avatar .portal-default-profile-icon,
+html body #root .candidate-profile-popup .portal-post-avatar .profile-avatar,
+html body #root .candidate-profile-popup .portal-post-avatar .profile-avatar-fallback {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  min-height: 100% !important;
+  border-radius: 50% !important;
+  background: #f7f3eb !important;
+  color: #5f2535 !important;
+  -webkit-text-fill-color: #5f2535 !important;
+  box-shadow: inset 0 0 0 2px rgba(95, 37, 53, 0.12) !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-title-block {
+  grid-column: 2 !important;
+  display: grid !important;
+  justify-items: start !important;
+  align-content: start !important;
+  gap: 0.08rem !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0.08rem 0 0 !important;
+  text-align: left !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-author-name,
+html body #root .candidate-profile-popup .portal-author-name-button {
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+  font-size: 0.98rem !important;
+  line-height: 1.08 !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-title-block p {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 0.72rem !important;
+  line-height: 1.12 !important;
+  text-align: left !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-header-actions {
+  grid-column: 3 !important;
+  justify-self: end !important;
+  align-self: start !important;
+  margin: 0 !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-reach-row {
+  margin: 0.32rem 0 0.28rem !important;
+  padding: 0 !important;
+  justify-content: flex-start !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-reach,
+html body #root .candidate-profile-popup .portal-reach-button {
+  width: auto !important;
+  min-width: 4.2rem !important;
+  min-height: 2rem !important;
+  padding: 0.38rem 0.62rem !important;
+  border-radius: 999px !important;
+  font-size: 0.78rem !important;
+  line-height: 1 !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-body-wrap,
+html body #root .candidate-profile-popup .portal-post-body {
+  margin: 0 !important;
+  text-align: left !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-action-cluster {
+  position: relative !important;
+  margin-top: 0.18rem !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-reactions.portal-reaction-rail.is-popover {
+  position: absolute !important;
+  left: 0 !important;
+  bottom: calc(100% + 0.35rem) !important;
+  z-index: 35 !important;
+  display: flex !important;
+  width: max-content !important;
+  max-width: min(21rem, calc(100vw - 3rem)) !important;
+  padding: 0.38rem !important;
+  overflow-x: auto !important;
+  border-radius: 999px !important;
+  box-shadow: 0 0.9rem 2rem rgba(25, 18, 16, 0.18) !important;
+}
+
+html body #root .candidate-profile-popup .portal-reaction-button {
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.12rem !important;
+  width: 2.35rem !important;
+  min-width: 2.35rem !important;
+  height: 2.45rem !important;
+  min-height: 2.45rem !important;
+  padding: 0.18rem !important;
+  border-radius: 999px !important;
+  background: rgba(255, 250, 242, 0.92) !important;
+}
+
+html body #root .candidate-profile-popup .candidate-reaction-icon {
+  width: 1rem !important;
+  height: 1rem !important;
+  display: block !important;
+  fill: currentColor !important;
+}
+
+html body #root .candidate-profile-popup .candidate-reaction-label {
+  max-width: 2.05rem !important;
+  overflow: hidden !important;
+  color: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+  font-size: 0.46rem !important;
+  line-height: 1 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body #root .candidate-profile-popup .portal-share-picker {
+  right: auto !important;
+  left: 0 !important;
+  width: min(18rem, calc(100vw - 3rem)) !important;
+  max-height: min(22rem, 68vh) !important;
+  overflow-y: auto !important;
+  padding: 0.65rem !important;
+}
+
+html body #root .candidate-profile-popup .portal-share-friend {
+  display: grid !important;
+  grid-template-columns: 2rem minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 0.55rem !important;
+  width: 100% !important;
+  min-height: 2.6rem !important;
+  color: #111 !important;
+  -webkit-text-fill-color: #111 !important;
+  text-align: left !important;
+}
+
+html body #root .candidate-profile-popup .portal-share-friend-avatar {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 2rem !important;
+  height: 2rem !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  background: #f7f3eb !important;
+  color: #5f2535 !important;
+  -webkit-text-fill-color: #5f2535 !important;
+}
+
+html body #root .candidate-profile-popup .portal-share-friend-avatar img,
+html body #root .candidate-profile-popup .portal-share-friend-avatar .profile-avatar-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
+}
+
+html body #root .candidate-profile-popup .portal-share-friend-name {
+  color: #111 !important;
+  -webkit-text-fill-color: #111 !important;
+}
+
+html body #root .candidate-profile-popup .portal-share-friend small,
+html body #root .candidate-profile-popup .portal-share-status,
+html body #root .candidate-profile-popup .portal-share-picker p {
+  color: #4b5563 !important;
+  -webkit-text-fill-color: #4b5563 !important;
+}
+
+html body .candidate-comment-modal-backdrop .portal-comment-modal-card {
+  width: min(22rem, calc(100vw - 2rem)) !important;
+  gap: 0.78rem !important;
+  padding: 1rem !important;
+}
+
+html body .candidate-comment-modal-backdrop .portal-comment-modal-card strong {
+  color: #1f2933 !important;
+  -webkit-text-fill-color: #1f2933 !important;
+  font-size: 0.92rem !important;
+  line-height: 1.15 !important;
+}
+
+html body .candidate-comment-modal-backdrop .portal-comment-composer {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 2.65rem !important;
+  align-items: center !important;
+  gap: 0.55rem !important;
+}
+
+html body .candidate-comment-modal-backdrop .portal-comment-composer input {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 2.65rem !important;
+  padding: 0.55rem 0.75rem !important;
+  border: 1px solid rgba(95, 37, 53, 0.18) !important;
+  border-radius: 0.65rem !important;
+  background: #fff !important;
+  color: #111 !important;
+  -webkit-text-fill-color: #111 !important;
+}
+
+html body .candidate-comment-modal-backdrop .portal-comment-composer .portal-comment-submit-button,
+html body .candidate-comment-modal-backdrop .portal-comment-composer .portal-comment-submit-button:is(:hover, :focus, :active) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 2.65rem !important;
+  min-width: 2.65rem !important;
+  height: 2.65rem !important;
+  min-height: 2.65rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0.75rem !important;
+  background: #7a1d33 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+html body .candidate-comment-modal-backdrop .portal-comment-submit-button svg {
+  width: 1rem !important;
+  height: 1rem !important;
+  fill: currentColor !important;
+}
+
+@media (max-width: 480px) {
+  html body #root .candidate-profile-popup .portal-profile-preview-post-card {
+    padding: 0.72rem 0.62rem !important;
+    gap: 0.42rem !important;
+  }
+
+  html body #root .candidate-profile-popup .portal-social-post-header {
+    grid-template-columns: 2.25rem minmax(0, 1fr) 1.55rem !important;
+    column-gap: 0.48rem !important;
+  }
+
+  html body #root .candidate-profile-popup .portal-post-avatar,
+  html body #root .candidate-profile-popup .portal-author-open-button.portal-post-avatar {
+    width: 2.18rem !important;
+    min-width: 2.18rem !important;
+    height: 2.18rem !important;
+    min-height: 2.18rem !important;
+  }
+
+  html body #root .candidate-profile-popup .portal-post-author-name,
+  html body #root .candidate-profile-popup .portal-author-name-button {
+    font-size: 0.9rem !important;
+  }
+
+  html body #root .candidate-profile-popup .portal-post-title-block p {
+    font-size: 0.68rem !important;
+  }
+}
+
 .portal-job-review-save-button {
   width: auto !important;
   min-width: 8.5rem !important;
@@ -78834,4 +79156,636 @@ html[data-theme="light"] body[data-theme="light"] #root .candidate-profile-popup
   gap: 0.68rem !important;
   width: auto !important;
   text-align: left !important;
+}
+
+/* Latest candidate/friends mobile fixes. */
+html body #root .talent-pool-container.candidate-view-candidates .candidate-community-copy,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy,
+html[data-theme="light"] body[data-theme="light"] #root .talent-pool-container.candidate-view-candidates .candidate-community-copy,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: baseline !important;
+  gap: 0.2rem 0.3rem !important;
+  margin: 0 !important;
+  overflow: visible !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-community-line,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-line,
+html[data-theme="light"] body[data-theme="light"] #root .talent-pool-container.candidate-view-candidates .candidate-community-line,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-line {
+  display: inline-flex !important;
+  flex: 0 1 auto !important;
+  align-items: baseline !important;
+  gap: 0.34rem !important;
+  width: auto !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  font-size: 0.98rem !important;
+  line-height: 1.22 !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-community-description,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-description,
+html[data-theme="light"] body[data-theme="light"] #root .talent-pool-container.candidate-view-candidates .candidate-community-description,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-description {
+  display: inline !important;
+  flex: 1 1 10rem !important;
+  width: auto !important;
+  min-width: 9rem !important;
+  margin: 0 !important;
+  font-size: 0.82rem !important;
+  line-height: 1.28 !important;
+  color: #263238 !important;
+  -webkit-text-fill-color: #263238 !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-together,
+html body #root .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-together .candidate-grow-text,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-together,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-together .candidate-grow-text,
+html[data-theme="light"] body[data-theme="light"] #root .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-together,
+html[data-theme="light"] body[data-theme="light"] #root .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-together .candidate-grow-text,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-together,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-together .candidate-grow-text {
+  margin-left: 0.1rem !important;
+  color: #b84a12 !important;
+  -webkit-text-fill-color: #b84a12 !important;
+  white-space: nowrap !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-options-wrap {
+  position: relative !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-options-button,
+html body #root .candidate-profile-popup .portal-post-options-button:is(:hover, :focus, :active) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 2rem !important;
+  min-width: 2rem !important;
+  height: 2rem !important;
+  min-height: 2rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #7b8794 !important;
+  -webkit-text-fill-color: #7b8794 !important;
+  font-size: 1.05rem !important;
+  line-height: 1 !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-options-menu {
+  position: absolute !important;
+  top: 100% !important;
+  right: 0 !important;
+  z-index: 20 !important;
+  display: grid !important;
+  min-width: 8rem !important;
+  padding: 0.35rem !important;
+  border: 1px solid rgba(95, 37, 53, 0.14) !important;
+  border-radius: 0.55rem !important;
+  background: #fff !important;
+  box-shadow: 0 0.8rem 1.8rem rgba(31, 21, 18, 0.16) !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-options-menu button,
+html body #root .candidate-profile-popup .portal-post-options-menu button:is(:hover, :focus, :active) {
+  justify-content: flex-start !important;
+  width: 100% !important;
+  min-height: 2rem !important;
+  padding: 0.35rem 0.55rem !important;
+  border: 0 !important;
+  border-radius: 0.4rem !important;
+  background: transparent !important;
+  color: #1f2933 !important;
+  -webkit-text-fill-color: #1f2933 !important;
+  font-size: 0.78rem !important;
+  text-align: left !important;
+}
+
+html body .candidate-comment-modal-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 1rem !important;
+  background: rgba(10, 10, 10, 0.42) !important;
+  backdrop-filter: blur(7px) !important;
+}
+
+html body .portal-comment-modal-card {
+  position: relative !important;
+  display: grid !important;
+  gap: 0.8rem !important;
+  width: min(22rem, calc(100vw - 2rem)) !important;
+  padding: 1rem !important;
+  border: 1px solid rgba(94, 55, 35, 0.16) !important;
+  border-radius: 0.9rem !important;
+  background: #fffaf2 !important;
+  box-shadow: 0 1.2rem 3rem rgba(20, 14, 12, 0.28) !important;
+}
+
+html body .portal-comment-modal-close,
+html body .portal-comment-modal-close:is(:hover, :focus, :active) {
+  position: absolute !important;
+  top: 0.35rem !important;
+  right: 0.45rem !important;
+  width: 1.8rem !important;
+  min-width: 1.8rem !important;
+  height: 1.8rem !important;
+  min-height: 1.8rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: #111 !important;
+  -webkit-text-fill-color: #111 !important;
+  font-size: 1.35rem !important;
+}
+
+html body .portal-comment-modal-card .portal-comment-composer {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+html body .portal-comment-modal-card .portal-comment-composer input {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  min-height: 2.4rem !important;
+  padding: 0.55rem 0.7rem !important;
+  border: 1px solid rgba(94, 55, 35, 0.18) !important;
+  border-radius: 0.6rem !important;
+  background: #fff !important;
+  color: #111 !important;
+}
+
+html body .portal-comment-modal-card .portal-comment-composer button {
+  flex: 0 0 auto !important;
+  min-height: 2.4rem !important;
+  padding: 0.45rem 0.8rem !important;
+  border: 0 !important;
+  border-radius: 0.58rem !important;
+  background: #7a1d33 !important;
+  color: #fff !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-reactions.portal-reaction-rail.is-popover {
+  align-items: center !important;
+  gap: 0.34rem !important;
+  background: #fff !important;
+  border-color: rgba(122, 29, 51, 0.14) !important;
+}
+
+html body #root .candidate-profile-popup .portal-reaction-button.reaction-like { color: #8a1d34 !important; }
+html body #root .candidate-profile-popup .portal-reaction-button.reaction-appreciate { color: #b84a12 !important; }
+html body #root .candidate-profile-popup .portal-reaction-button.reaction-love { color: #c02664 !important; }
+html body #root .candidate-profile-popup .portal-reaction-button.reaction-empower { color: #0f766e !important; }
+html body #root .candidate-profile-popup .portal-reaction-button.reaction-congratulate { color: #7c3aed !important; }
+html body #root .candidate-profile-popup .portal-reaction-button.reaction-motivate { color: #2563eb !important; }
+html body #root .candidate-profile-popup .portal-reaction-button.reaction-angry { color: #dc2626 !important; }
+html body #root .candidate-profile-popup .portal-reaction-button.reaction-sad { color: #64748b !important; }
+html body #root .candidate-profile-popup .portal-reaction-button.reaction-bad { color: #92400e !important; }
+html body #root .candidate-profile-popup .portal-reaction-button.reaction-hide { color: #374151 !important; }
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-icon,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-icon,
+html[data-theme="light"] body[data-theme="light"] #root .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-icon,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-icon {
+  color: #111111 !important;
+  fill: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-profile-mini-message,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-profile-mini-message,
+html body #root .talent-pool-container.candidate-view-candidates .candidate-card-message-action,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-card-message-action {
+  display: none !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-profile-mini-card.is-compact,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-profile-mini-card.is-compact,
+html[data-theme="light"] body[data-theme="light"] #root .talent-pool-container.candidate-view-candidates .candidate-profile-mini-card.is-compact,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-profile-mini-card.is-compact {
+  min-height: 11.6rem !important;
+  padding-bottom: 0.42rem !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-profile-mini-stats,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-profile-mini-stats,
+html[data-theme="light"] body[data-theme="light"] #root .talent-pool-container.candidate-view-candidates .candidate-profile-mini-stats,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-profile-mini-stats {
+  margin-top: 0.18rem !important;
+  padding-bottom: 0 !important;
+}
+
+.friend-invitation-tab.is-incoming,
+html[data-theme="light"] .friend-invitation-tab.is-incoming,
+.friend-invitation-tab.is-incoming.is-active,
+html[data-theme="light"] .friend-invitation-tab.is-incoming.is-active {
+  background: #ffe8cf !important;
+  border-color: rgba(244, 123, 32, 0.28) !important;
+  color: #201712 !important;
+  -webkit-text-fill-color: #201712 !important;
+}
+
+.friend-invitation-tab.is-outgoing,
+html[data-theme="light"] .friend-invitation-tab.is-outgoing,
+.friend-invitation-tab.is-outgoing.is-active,
+html[data-theme="light"] .friend-invitation-tab.is-outgoing.is-active {
+  background: #e1f0ff !important;
+  border-color: rgba(72, 145, 220, 0.3) !important;
+  color: #111c27 !important;
+  -webkit-text-fill-color: #111c27 !important;
+}
+
+.friend-invitation-tab.is-friends,
+html[data-theme="light"] .friend-invitation-tab.is-friends,
+.friend-invitation-tab.is-friends.is-active,
+html[data-theme="light"] .friend-invitation-tab.is-friends.is-active {
+  background: #ddf7df !important;
+  border-color: rgba(62, 166, 83, 0.3) !important;
+  color: #102012 !important;
+  -webkit-text-fill-color: #102012 !important;
+}
+
+.friend-invitation-tab,
+.friend-invitation-tab *,
+html[data-theme="light"] .friend-invitation-tab,
+html[data-theme="light"] .friend-invitation-tab * {
+  opacity: 1 !important;
+}
+
+.friend-invitation-actions .contact-candidate-panel > .settings-button.primary,
+.friend-invitation-actions > .secondary-button,
+.friend-invitation-actions > .settings-button.primary,
+.friend-invitation-actions > .friend-block-button,
+.friend-cancel-button,
+.friend-status-pill,
+.friend-invitation-actions .contact-candidate-panel > .settings-button.primary *,
+.friend-invitation-actions > .secondary-button *,
+.friend-invitation-actions > .settings-button.primary *,
+.friend-invitation-actions > .friend-block-button *,
+.friend-cancel-button *,
+.friend-status-pill *,
+html[data-theme="light"] .friend-invitation-actions .contact-candidate-panel > .settings-button.primary,
+html[data-theme="light"] .friend-invitation-actions > .secondary-button,
+html[data-theme="light"] .friend-invitation-actions > .settings-button.primary,
+html[data-theme="light"] .friend-invitation-actions > .friend-block-button,
+html[data-theme="light"] .friend-cancel-button,
+html[data-theme="light"] .friend-status-pill,
+html[data-theme="light"] .friend-invitation-actions .contact-candidate-panel > .settings-button.primary *,
+html[data-theme="light"] .friend-invitation-actions > .secondary-button *,
+html[data-theme="light"] .friend-invitation-actions > .settings-button.primary *,
+html[data-theme="light"] .friend-invitation-actions > .friend-block-button *,
+html[data-theme="light"] .friend-cancel-button *,
+html[data-theme="light"] .friend-status-pill * {
+  color: #111111 !important;
+  fill: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 480px) {
+  html body #root .talent-pool-container.candidate-view-candidates .candidate-community-copy,
+  html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy,
+  html[data-theme="light"] body[data-theme="light"] #root .talent-pool-container.candidate-view-candidates .candidate-community-copy,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy {
+    align-items: flex-start !important;
+    gap: 0.12rem 0.24rem !important;
+  }
+
+  html body #root .talent-pool-container.candidate-view-candidates .candidate-community-line,
+  html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-line,
+  html[data-theme="light"] body[data-theme="light"] #root .talent-pool-container.candidate-view-candidates .candidate-community-line,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-line {
+    flex-wrap: wrap !important;
+    row-gap: 0.08rem !important;
+  }
+
+  html body #root .talent-pool-container.candidate-view-candidates .candidate-community-description,
+  html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-description,
+  html[data-theme="light"] body[data-theme="light"] #root .talent-pool-container.candidate-view-candidates .candidate-community-description,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-description {
+    flex: 1 1 9.25rem !important;
+    min-width: 8.6rem !important;
+    font-size: 0.78rem !important;
+    line-height: 1.26 !important;
+  }
+}
+
+/* Last-pass overrides: friends buttons and candidate profile popup mobile controls. */
+html body #root .friend-invitations-section .friend-invitation-actions :is(button, .settings-button, .secondary-button, .friend-block-button, .friend-cancel-button, .friend-status-pill),
+html body #root .friend-invitations-section .friend-invitation-actions :is(button, .settings-button, .secondary-button, .friend-block-button, .friend-cancel-button, .friend-status-pill):is(:hover, :focus, :active, :disabled),
+html body #root .friend-invitations-section .friend-invitation-actions :is(button, .settings-button, .secondary-button, .friend-block-button, .friend-cancel-button, .friend-status-pill) *,
+html body #root .friend-invitations-section .friend-invitation-actions :is(button, .settings-button, .secondary-button, .friend-block-button, .friend-cancel-button, .friend-status-pill):is(:hover, :focus, :active, :disabled) *,
+html[data-theme="light"] body #root .friend-invitations-section .friend-invitation-actions :is(button, .settings-button, .secondary-button, .friend-block-button, .friend-cancel-button, .friend-status-pill),
+html[data-theme="light"] body #root .friend-invitations-section .friend-invitation-actions :is(button, .settings-button, .secondary-button, .friend-block-button, .friend-cancel-button, .friend-status-pill):is(:hover, :focus, :active, :disabled),
+html[data-theme="light"] body #root .friend-invitations-section .friend-invitation-actions :is(button, .settings-button, .secondary-button, .friend-block-button, .friend-cancel-button, .friend-status-pill) *,
+html[data-theme="light"] body #root .friend-invitations-section .friend-invitation-actions :is(button, .settings-button, .secondary-button, .friend-block-button, .friend-cancel-button, .friend-status-pill):is(:hover, :focus, :active, :disabled) * {
+  color: #111111 !important;
+  fill: #111111 !important;
+  stroke: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  opacity: 1 !important;
+}
+
+html body #root .candidate-profile-popup .portal-profile-preview-post-card {
+  display: grid !important;
+  gap: 0.45rem !important;
+  padding: 0.8rem 0.72rem !important;
+}
+
+html body #root .candidate-profile-popup .portal-social-post-header {
+  display: grid !important;
+  grid-template-columns: 2.45rem minmax(0, 1fr) 1.7rem !important;
+  align-items: start !important;
+  gap: 0 0.55rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body #root .candidate-profile-popup .portal-author-open-button.portal-post-avatar,
+html body #root .candidate-profile-popup .portal-post-avatar {
+  grid-column: 1 !important;
+  width: 2.35rem !important;
+  min-width: 2.35rem !important;
+  height: 2.35rem !important;
+  min-height: 2.35rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-avatar img,
+html body #root .candidate-profile-popup .portal-post-avatar .profile-avatar-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-avatar .portal-default-profile-icon,
+html body #root .candidate-profile-popup .portal-post-avatar .profile-avatar,
+html body #root .candidate-profile-popup .portal-post-avatar .profile-avatar-fallback {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  min-height: 100% !important;
+  border-radius: 50% !important;
+  background: #f7f3eb !important;
+  color: #5f2535 !important;
+  -webkit-text-fill-color: #5f2535 !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-title-block {
+  grid-column: 2 !important;
+  display: grid !important;
+  justify-items: start !important;
+  align-content: start !important;
+  gap: 0.08rem !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0.08rem 0 0 !important;
+  text-align: left !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-author-name,
+html body #root .candidate-profile-popup .portal-author-name-button {
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+  font-size: 0.98rem !important;
+  line-height: 1.08 !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-title-block p {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 0.72rem !important;
+  line-height: 1.12 !important;
+  text-align: left !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-header-actions {
+  grid-column: 3 !important;
+  justify-self: end !important;
+  align-self: start !important;
+  margin: 0 !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-reach-row {
+  margin: 0.32rem 0 0.28rem !important;
+  padding: 0 !important;
+  justify-content: flex-start !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-reach,
+html body #root .candidate-profile-popup .portal-reach-button {
+  width: auto !important;
+  min-width: 4.2rem !important;
+  min-height: 2rem !important;
+  padding: 0.38rem 0.62rem !important;
+  border-radius: 999px !important;
+  font-size: 0.78rem !important;
+  line-height: 1 !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-action-cluster {
+  position: relative !important;
+  margin-top: 0.18rem !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-reactions.portal-reaction-rail.is-popover {
+  position: absolute !important;
+  left: 0 !important;
+  bottom: calc(100% + 0.35rem) !important;
+  z-index: 35 !important;
+  display: flex !important;
+  width: max-content !important;
+  max-width: min(21rem, calc(100vw - 3rem)) !important;
+  padding: 0.38rem !important;
+  overflow-x: auto !important;
+  border-radius: 999px !important;
+  background: #ffffff !important;
+  box-shadow: 0 0.9rem 2rem rgba(25, 18, 16, 0.18) !important;
+}
+
+html body #root .candidate-profile-popup .portal-reaction-button {
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.12rem !important;
+  width: 2.35rem !important;
+  min-width: 2.35rem !important;
+  height: 2.45rem !important;
+  min-height: 2.45rem !important;
+  padding: 0.18rem !important;
+  border-radius: 999px !important;
+  background: rgba(255, 250, 242, 0.92) !important;
+}
+
+html body #root .candidate-profile-popup .candidate-reaction-icon {
+  display: block !important;
+  width: 1rem !important;
+  height: 1rem !important;
+  fill: currentColor !important;
+}
+
+html body #root .candidate-profile-popup .candidate-reaction-label {
+  max-width: 2.05rem !important;
+  overflow: hidden !important;
+  color: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+  font-size: 0.46rem !important;
+  line-height: 1 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body #root .candidate-profile-popup .portal-share-picker {
+  right: auto !important;
+  left: 0 !important;
+  width: min(18rem, calc(100vw - 3rem)) !important;
+  max-height: min(22rem, 68vh) !important;
+  overflow-y: auto !important;
+  padding: 0.65rem !important;
+}
+
+html body #root .candidate-profile-popup .portal-share-friend {
+  display: grid !important;
+  grid-template-columns: 2rem minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 0.55rem !important;
+  width: 100% !important;
+  min-height: 2.6rem !important;
+  color: #111 !important;
+  -webkit-text-fill-color: #111 !important;
+  text-align: left !important;
+}
+
+html body #root .candidate-profile-popup .portal-share-friend-avatar {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 2rem !important;
+  height: 2rem !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  background: #f7f3eb !important;
+  color: #5f2535 !important;
+  -webkit-text-fill-color: #5f2535 !important;
+}
+
+html body #root .candidate-profile-popup .portal-share-friend-avatar img,
+html body #root .candidate-profile-popup .portal-share-friend-avatar .profile-avatar-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
+}
+
+html body #root .candidate-profile-popup .portal-share-friend-name {
+  color: #111 !important;
+  -webkit-text-fill-color: #111 !important;
+}
+
+html body #root .candidate-profile-popup .portal-share-friend small,
+html body #root .candidate-profile-popup .portal-share-status,
+html body #root .candidate-profile-popup .portal-share-picker p {
+  color: #4b5563 !important;
+  -webkit-text-fill-color: #4b5563 !important;
+}
+
+html body .candidate-comment-modal-backdrop .portal-comment-modal-card {
+  width: min(22rem, calc(100vw - 2rem)) !important;
+  gap: 0.78rem !important;
+  padding: 1rem !important;
+}
+
+html body .candidate-comment-modal-backdrop .portal-comment-modal-card strong {
+  color: #1f2933 !important;
+  -webkit-text-fill-color: #1f2933 !important;
+  font-size: 0.92rem !important;
+  line-height: 1.15 !important;
+}
+
+html body .candidate-comment-modal-backdrop .portal-comment-composer {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 2.65rem !important;
+  align-items: center !important;
+  gap: 0.55rem !important;
+}
+
+html body .candidate-comment-modal-backdrop .portal-comment-composer input {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 2.65rem !important;
+  padding: 0.55rem 0.75rem !important;
+  border: 1px solid rgba(95, 37, 53, 0.18) !important;
+  border-radius: 0.65rem !important;
+  background: #fff !important;
+  color: #111 !important;
+  -webkit-text-fill-color: #111 !important;
+}
+
+html body .candidate-comment-modal-backdrop .portal-comment-composer .portal-comment-submit-button,
+html body .candidate-comment-modal-backdrop .portal-comment-composer .portal-comment-submit-button:is(:hover, :focus, :active) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 2.65rem !important;
+  min-width: 2.65rem !important;
+  height: 2.65rem !important;
+  min-height: 2.65rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0.75rem !important;
+  background: #7a1d33 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+html body .candidate-comment-modal-backdrop .portal-comment-submit-button svg {
+  width: 1rem !important;
+  height: 1rem !important;
+  fill: currentColor !important;
+}
+
+@media (max-width: 480px) {
+  html body #root .candidate-profile-popup .portal-profile-preview-post-card {
+    padding: 0.72rem 0.62rem !important;
+    gap: 0.42rem !important;
+  }
+
+  html body #root .candidate-profile-popup .portal-social-post-header {
+    grid-template-columns: 2.25rem minmax(0, 1fr) 1.55rem !important;
+    column-gap: 0.48rem !important;
+  }
+
+  html body #root .candidate-profile-popup .portal-post-avatar,
+  html body #root .candidate-profile-popup .portal-author-open-button.portal-post-avatar {
+    width: 2.18rem !important;
+    min-width: 2.18rem !important;
+    height: 2.18rem !important;
+    min-height: 2.18rem !important;
+  }
+
+  html body #root .candidate-profile-popup .portal-post-author-name,
+  html body #root .candidate-profile-popup .portal-author-name-button {
+    font-size: 0.9rem !important;
+  }
+
+  html body #root .candidate-profile-popup .portal-post-title-block p {
+    font-size: 0.68rem !important;
+  }
 }

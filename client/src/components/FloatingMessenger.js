@@ -44,6 +44,66 @@ const cleanAssistantDraftText = (value = '') => String(value || '')
     .join('\n')
     .trim();
 
+const isWeakAssistantActionDraft = (value = '') => {
+    const text = String(value || '').trim();
+    const normalized = normalizeSearchText(text);
+
+    return text.length < 140
+        || /\b(share your|send me|tell me your|tell me a bit more|can you please tell me|pick a genre|choose a genre|paste your|target job title)\b/.test(normalized)
+        || /^(great|i can|let s|ready to|please|share|send|tell me|can you|could you|pick a|choose|what kind|which)\b/.test(normalized);
+};
+
+const buildLocalResumeDraft = (context = {}, question = '') => {
+    const profile = context.profile || {};
+    const user = context.user || {};
+    const name = String(profile.name || user.name || user.email || 'Your Name').trim();
+    const skills = Array.isArray(profile.skills) ? profile.skills : String(profile.skills || '').split(/[\n,;|]+/).filter(Boolean);
+    const education = Array.isArray(profile.education) ? profile.education : String(profile.education || '').split(/\n+/).filter(Boolean);
+    const experience = Array.isArray(profile.experience) ? profile.experience : String(profile.experience || '').split(/\n+/).filter(Boolean);
+    const role = String(user.jobInterests?.[0] || profile.targetRole || 'Target Role').trim();
+
+    return [
+        name.toUpperCase(),
+        [user.email || profile.email, role].filter(Boolean).join(' | '),
+        '',
+        'PROFESSIONAL SUMMARY',
+        `Motivated ${role} candidate with strengths in communication, problem solving, teamwork, and continuous learning. Ready to contribute with reliable work, clear organization, and a growth-focused mindset.`,
+        '',
+        'CORE SKILLS',
+        ...(skills.length ? skills.slice(0, 10).map((skill) => `- ${String(skill).trim()}`) : ['- Communication', '- Teamwork', '- Problem solving', '- Time management']),
+        '',
+        'EXPERIENCE',
+        ...(experience.length ? experience.slice(0, 6).map((item) => `- ${String(item).trim()}`) : ['- Add your recent role, project, internship, or volunteering experience here.', '- Highlight measurable achievements and responsibilities.']),
+        '',
+        'EDUCATION',
+        ...(education.length ? education.slice(0, 5).map((item) => `- ${String(item).trim()}`) : ['- Add your school, college, degree, or certification here.'])
+    ].join('\n');
+};
+
+const buildLocalStoryDraft = (context = {}) => {
+    const profile = context.profile || {};
+    const name = String(profile.name || context.user?.name || 'I').trim();
+    return [
+        `Today I’m sharing a small part of my career journey as ${name}.`,
+        '',
+        'I’m continuing to learn, build, and grow through every project, challenge, and opportunity. Each step is helping me understand my strengths better and become more confident in the work I want to do next.',
+        '',
+        'I’m excited to connect with people who are also learning, hiring, building, and exploring new opportunities. Let’s grow together and support each other’s next step.'
+    ].join('\n');
+};
+
+const buildLocalActionDraft = (actionName = '', context = {}, question = '') => {
+    if (actionName === 'candidate-create-resume' || actionName === 'candidate-format-resume') {
+        return buildLocalResumeDraft(context, question);
+    }
+
+    if (actionName === 'candidate-create-story') {
+        return buildLocalStoryDraft(context);
+    }
+
+    return '';
+};
+
 const detectLocalAssistantAction = (message = '', context = {}) => {
     const normalized = normalizeSearchText(message);
     const portalMode = context?.portalMode || '';
@@ -544,7 +604,11 @@ const FloatingMessenger = ({
         const question = String(payload.question || '').trim();
         const localAction = detectLocalAssistantAction(question, payload.context || {});
         const actionName = String(localAction || action || '');
-        const draftText = cleanAssistantDraftText(answer || question) || answer || question;
+        const cleanedDraft = cleanAssistantDraftText(answer || question) || answer || question;
+        const localDraft = isWeakAssistantActionDraft(cleanedDraft)
+            ? buildLocalActionDraft(actionName, payload.context || {}, question)
+            : '';
+        const draftText = localDraft || cleanedDraft;
 
         if (actionName.startsWith('open-section:')) {
             const section = actionName.split(':')[1];

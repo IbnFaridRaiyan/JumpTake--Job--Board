@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import RichMessageEditor from './RichMessageEditor';
+import { apiUrl } from '../utils/apiUrl';
 
 const stripHtml = (html = '') => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 
@@ -36,7 +37,7 @@ const ContactCandidate = ({ companyId, candidate, onSent, mode = 'employer', cur
             const isCandidateMode = mode === 'candidate';
             const token = localStorage.getItem(isCandidateMode ? 'token' : 'employerToken');
             const endpoint = isCandidateMode ? '/api/messages/candidate-direct' : '/api/messages';
-            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}${endpoint}`, {
+            const response = await fetch(apiUrl(endpoint), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

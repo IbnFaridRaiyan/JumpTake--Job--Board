@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import ContactCandidate from './ContactCandidate';
 import ProfileAvatar from './ProfileAvatar';
+import { apiUrl } from '../utils/apiUrl';
 
 const FriendActionIcon = ({ type }) => {
     const paths = {
@@ -39,7 +40,7 @@ const FriendInvitations = ({ userId }) => {
         try {
             setLoading(true);
             const response = await fetch(
-                `${process.env.REACT_APP_API_URL || ''}/api/candidate-connections/user/${userId}`,
+                apiUrl(`/api/candidate-connections/user/${userId}`),
                 { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
             );
             const data = await response.json();
@@ -125,7 +126,7 @@ const FriendInvitations = ({ userId }) => {
             setError('');
             setMessage('');
             const response = await fetch(
-                `${process.env.REACT_APP_API_URL || ''}/api/candidate-connections/${connectionId}/respond`,
+                apiUrl(`/api/candidate-connections/${connectionId}/respond`),
                 {
                     method: 'PUT',
                     headers: {
@@ -362,7 +363,7 @@ const FriendInvitations = ({ userId }) => {
                                 key={tab.id}
                                 type="button"
                                 role="tab"
-                                className={`friend-invitation-tab ${activeTab === tab.id ? 'is-active' : ''}`}
+                                className={`friend-invitation-tab is-${tab.id} ${activeTab === tab.id ? 'is-active' : ''}`}
                                 aria-selected={activeTab === tab.id}
                                 onClick={() => setActiveTab(tab.id)}
                             >

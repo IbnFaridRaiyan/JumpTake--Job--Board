@@ -1398,10 +1398,16 @@ const PortalHomeFeed = ({
 
                 const friends = (Array.isArray(data.friends) ? data.friends : [])
                     .map((connection) => {
-                        const peer = connection?.peer || {};
+                        if (!connection || typeof connection !== 'object') {
+                            return null;
+                        }
+
+                        const peer = connection.peer && typeof connection.peer === 'object'
+                            ? connection.peer
+                            : {};
                         return {
-                            id: String(peer.candidateId || peer.userId || connection._id || ''),
-                            connectionId: connection._id || '',
+                            id: String(peer.candidateId || peer.userId || connection._id || connection.id || ''),
+                            connectionId: connection._id || connection.id || '',
                             candidateId: peer.candidateId || '',
                             userId: peer.userId || '',
                             name: peer.name || 'Candidate',
@@ -1409,7 +1415,7 @@ const PortalHomeFeed = ({
                             profileImage: peer.profileImage || ''
                         };
                     })
-                    .filter((friend) => friend.id);
+                    .filter((friend) => friend?.id);
 
                 setFeedFriends(friends);
             } catch (error) {
@@ -4290,10 +4296,11 @@ const PortalHomeFeed = ({
         ].map((value) => String(value || '')).filter(Boolean);
         const isCurrentViewer = authorId && currentProfileIds.includes(String(authorId));
         const friendMatch = feedFriends.find((friend) => (
-            [friend.id, friend.userId, friend.candidateId].map(String).includes(authorId)
+            friend && typeof friend === 'object'
+            && [friend.id, friend.userId, friend.candidateId].map((value) => String(value || '')).includes(authorId)
         ));
         const resolvedCandidate = profileCandidateLookup[authorId];
-        const storedTailorProfile = isCurrentViewer ? tailorProfile : readTailorProfileDraft(authorId);
+        const storedTailorProfile = (isCurrentViewer ? tailorProfile : readTailorProfileDraft(authorId)) || {};
         const authorWorkPosts = workNewsPosts.filter((post) => String(post?.authorId || '') === authorId);
         const authorTalentPosts = talentStories.filter((post) => String(post?.authorId || '') === authorId);
         const authorPosts = [...authorWorkPosts, ...authorTalentPosts];

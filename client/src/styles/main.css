@@ -77856,12 +77856,25 @@ html body #root .candidate-profile-popup .candidate-profile-body {
 }
 
 @media (max-width: 768px) {
+  html body #root .candidate-view-candidates {
+    overflow: visible !important;
+  }
+
   html body #root .candidate-view-candidates .candidate-community-copy {
     gap: 0.28rem !important;
   }
 
   html body #root .candidate-view-candidates .candidate-community-line {
-    font-size: clamp(1.05rem, 5.2vw, 1.42rem) !important;
+    max-width: 100% !important;
+    font-size: clamp(0.84rem, 3.6vw, 1rem) !important;
+    line-height: 1.02 !important;
+    overflow: hidden !important;
+  }
+
+  html body #root .candidate-view-candidates .candidate-community-copy .candidate-grow-together,
+  html body #root .candidate-view-candidates .candidate-community-copy .candidate-grow-together > span {
+    font-size: 1em !important;
+    line-height: 1 !important;
   }
 
   html body #root .candidate-view-candidates .candidate-community-description {
@@ -77872,16 +77885,28 @@ html body #root .candidate-profile-popup .candidate-profile-body {
 
   html body #root .candidate-view-candidates .candidates-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 0.68rem !important;
+    gap: 0.78rem 0.46rem !important;
+    width: calc(100% + 0.34rem) !important;
+    margin-left: -0.17rem !important;
+    margin-right: -0.17rem !important;
+    padding-bottom: 4.5rem !important;
+    overflow: visible !important;
   }
 
   html body #root .candidate-profile-mini-card.is-compact {
-    min-height: 12.4rem !important;
-    padding-inline: 0.34rem !important;
+    min-height: 11.8rem !important;
+    padding-inline: 0.2rem !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible !important;
   }
 
   html body #root .candidate-profile-mini-cover {
     height: 3.25rem !important;
+    width: 86% !important;
+    border-radius: 0 !important;
   }
 
   html body #root .candidate-profile-mini-avatar {
@@ -77920,4 +77945,322 @@ html body #root .candidate-profile-popup .candidate-profile-body {
   html body #root .candidate-profile-popup-backdrop {
     padding: 2.75rem 0.82rem !important;
   }
+}
+
+/* Final candidates fix: panel-width mobile layout, floating cards, and full-screen popup. */
+html body #root .home-page .candidate-view-candidates .candidate-community-copy {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+html body #root .home-page .candidate-view-candidates .candidate-community-line,
+html body #root .home-page .candidate-view-candidates .candidate-community-copy .candidate-grow-together,
+html body #root .home-page .candidate-view-candidates .candidate-community-copy .candidate-grow-together > span,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .candidate-view-candidates .candidate-community-line,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .candidate-view-candidates .candidate-community-copy .candidate-grow-together,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .candidate-view-candidates .candidate-community-copy .candidate-grow-together > span {
+  max-width: 100% !important;
+  font-size: clamp(0.78rem, 3.25vw, 0.96rem) !important;
+  line-height: 1 !important;
+  letter-spacing: 0 !important;
+  white-space: nowrap !important;
+}
+
+html body #root .home-page .candidate-view-candidates .candidate-community-copy .candidate-grow-together,
+html body #root .home-page .candidate-view-candidates .candidate-community-copy .candidate-grow-together > span,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .candidate-view-candidates .candidate-community-copy .candidate-grow-together,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .candidate-view-candidates .candidate-community-copy .candidate-grow-together > span {
+  color: #2e2787 !important;
+  -webkit-text-fill-color: #2e2787 !important;
+}
+
+html body #root .home-page .candidate-view-candidates .candidates-grid,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .candidate-view-candidates .candidates-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  column-gap: 0.38rem !important;
+  row-gap: 0.98rem !important;
+  width: calc(100% + 0.54rem) !important;
+  max-width: none !important;
+  margin: 1rem -0.27rem 0 !important;
+  padding: 0 0 5.5rem !important;
+  overflow: visible !important;
+}
+
+html body #root .home-page .candidate-view-candidates .candidate-card.uiverse-profile-card,
+html body #root .home-page .candidate-view-candidates .candidate-card.uiverse-profile-card:hover,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .candidate-view-candidates .candidate-card.uiverse-profile-card,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .candidate-view-candidates .candidate-card.uiverse-profile-card:hover {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  overflow: visible !important;
+  transform: none !important;
+}
+
+html body #root .home-page .candidate-view-candidates .candidate-card.uiverse-profile-card::before,
+html body #root .home-page .candidate-view-candidates .candidate-card.uiverse-profile-card::after,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .candidate-view-candidates .candidate-card.uiverse-profile-card::before,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .candidate-view-candidates .candidate-card.uiverse-profile-card::after {
+  display: none !important;
+  content: none !important;
+}
+
+html body #root .home-page .candidate-view-candidates .candidate-profile-mini-card.is-compact,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .candidate-view-candidates .candidate-profile-mini-card.is-compact {
+  width: 100% !important;
+  min-height: 11.2rem !important;
+  padding: 0 0.12rem 0.15rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  overflow: visible !important;
+}
+
+html body #root .home-page .candidate-view-candidates .candidate-profile-mini-card.is-compact .candidate-profile-mini-cover {
+  width: 88% !important;
+  height: 3.18rem !important;
+  border-radius: 0 !important;
+}
+
+html body #root .home-page .candidate-view-candidates .candidate-profile-mini-card.is-compact .candidate-profile-mini-actions {
+  gap: 0.2rem !important;
+  margin-top: 0.66rem !important;
+}
+
+html body #root .home-page .candidate-view-candidates .candidate-profile-mini-card.is-compact .candidate-profile-mini-message,
+html body #root .home-page .candidate-view-candidates .candidate-profile-mini-card.is-compact .candidate-profile-mini-message:is(:hover, :focus, :focus-visible, :active) {
+  width: 72% !important;
+  min-height: 1.36rem !important;
+  font-size: 0.54rem !important;
+}
+
+html body #root .candidate-profile-popup-backdrop,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-profile-popup-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 12000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100vw !important;
+  min-height: 100vh !important;
+  min-height: 100dvh !important;
+  padding: 1.25rem !important;
+  background: rgba(12, 11, 10, 0.68) !important;
+  backdrop-filter: blur(7px) !important;
+  -webkit-backdrop-filter: blur(7px) !important;
+  overflow-y: auto !important;
+}
+
+html body #root .candidate-profile-popup,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-profile-popup {
+  width: min(22.5rem, calc(100vw - 2rem)) !important;
+  max-height: calc(100dvh - 2.5rem) !important;
+  overflow-y: auto !important;
+  border-radius: 0.95rem !important;
+  background: #effcf7 !important;
+  box-shadow: 0 1.4rem 3rem rgba(0, 0, 0, 0.36) !important;
+}
+
+/* Absolute last candidates override: no compact-card shell and fitted headline. */
+html body #root .candidate-view-candidates .candidate-community-copy,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-community-copy {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+html body #root .candidate-view-candidates .candidate-community-line,
+html body #root .candidate-view-candidates .candidate-grow-together,
+html body #root .candidate-view-candidates .candidate-grow-together > span,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-community-line,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-grow-together,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-grow-together > span {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.14rem !important;
+  max-width: 100% !important;
+  font-size: clamp(0.72rem, 3vw, 0.86rem) !important;
+  line-height: 1 !important;
+  letter-spacing: 0 !important;
+  white-space: nowrap !important;
+  color: inherit !important;
+}
+
+html body #root .candidate-view-candidates .candidate-grow-together,
+html body #root .candidate-view-candidates .candidate-grow-together > span,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-grow-together,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-grow-together > span {
+  color: #2e2787 !important;
+  -webkit-text-fill-color: #2e2787 !important;
+}
+
+html body #root .candidate-view-candidates .candidate-grow-icon {
+  width: 0.78rem !important;
+  min-width: 0.78rem !important;
+  height: 0.78rem !important;
+}
+
+html body #root .candidate-view-candidates .candidates-grid,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidates-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 0.92rem 0.36rem !important;
+  width: calc(100% + 0.74rem) !important;
+  max-width: none !important;
+  margin: 0.9rem -0.37rem 0 !important;
+  padding-bottom: 6rem !important;
+  overflow: visible !important;
+}
+
+html body #root .candidate-view-candidates .candidate-card.uiverse-profile-card,
+html body #root .candidate-view-candidates .candidate-card.uiverse-profile-card:hover,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-card.uiverse-profile-card,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-card.uiverse-profile-card:hover {
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+html body #root .candidate-view-candidates .candidate-card.uiverse-profile-card::before,
+html body #root .candidate-view-candidates .candidate-card.uiverse-profile-card::after,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-card.uiverse-profile-card::before,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-card.uiverse-profile-card::after {
+  display: none !important;
+  content: none !important;
+}
+
+html body #root .candidate-view-candidates .candidate-profile-mini-card.is-compact,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-profile-mini-card.is-compact {
+  min-height: auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+html body #root .candidate-view-candidates .candidate-profile-mini-card.is-compact .candidate-profile-mini-cover {
+  width: 88% !important;
+  height: 3.05rem !important;
+}
+
+html body #root .candidate-view-candidates .candidate-profile-mini-card.is-compact .candidate-profile-mini-message,
+html body #root .candidate-view-candidates .candidate-profile-mini-card.is-compact .candidate-profile-mini-message:is(:hover, :focus, :focus-visible, :active) {
+  width: 72% !important;
+  min-height: 1.34rem !important;
+}
+
+/* Latest candidates request: larger grow text, rounded cards, home-profile popup surface. */
+html body #root .candidate-view-candidates .candidate-community-copy,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-community-copy {
+  overflow: visible !important;
+}
+
+html body #root .candidate-view-candidates .candidate-community-line,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-community-line {
+  overflow: visible !important;
+  font-size: clamp(0.88rem, 3.9vw, 1.05rem) !important;
+  line-height: 1.05 !important;
+}
+
+html body #root .candidate-view-candidates .candidate-grow-together,
+html body #root .candidate-view-candidates .candidate-grow-together > span,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-grow-together,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-grow-together > span {
+  font-size: clamp(1.85rem, 7.4vw, 2.35rem) !important;
+  line-height: 0.9 !important;
+  color: #2e2787 !important;
+  -webkit-text-fill-color: #2e2787 !important;
+}
+
+html body #root .candidate-view-candidates .candidate-grow-icon {
+  width: 1.1rem !important;
+  min-width: 1.1rem !important;
+  height: 1.1rem !important;
+}
+
+html body #root .candidate-view-candidates .candidate-profile-mini-card.is-compact,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-profile-mini-card.is-compact {
+  min-height: 11.85rem !important;
+  padding: 0 0.16rem 0.42rem !important;
+  border: 1px solid rgba(98, 78, 66, 0.18) !important;
+  border-radius: 0.62rem !important;
+  background: #fff !important;
+  background-color: #fff !important;
+  box-shadow: 0 0.45rem 1rem rgba(62, 35, 28, 0.1) !important;
+  overflow: hidden !important;
+}
+
+html body #root .candidate-view-candidates .candidate-card.uiverse-profile-card,
+html body #root .candidate-view-candidates .candidate-card.uiverse-profile-card:hover,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-card.uiverse-profile-card,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-card.uiverse-profile-card:hover {
+  border-radius: 0.62rem !important;
+}
+
+html body #root .candidate-view-candidates .candidate-profile-mini-card.is-compact .candidate-profile-mini-cover {
+  width: calc(100% + 1px) !important;
+  height: 3.18rem !important;
+}
+
+html body #root .candidate-profile-popup.portal-profile-detail-modal,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-profile-popup.portal-profile-detail-modal {
+  width: min(22.8rem, calc(100vw - 1.5rem)) !important;
+  max-height: calc(100dvh - 2rem) !important;
+  padding: 0.72rem !important;
+  background: #effcf7 !important;
+  overflow-y: auto !important;
+}
+
+html body #root .candidate-profile-popup .portal-profile-detail-card {
+  margin: 0 !important;
+}
+
+/* Absolute latest: make animated grow text prominent and show home-style posts in candidate popup. */
+html body #root .candidate-view-candidates .candidate-grow-together,
+html body #root .candidate-view-candidates .candidate-grow-together > span,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-grow-together,
+html[data-theme="light"] body[data-theme="light"] #root .candidate-view-candidates .candidate-grow-together > span {
+  font-size: clamp(2.25rem, 9vw, 2.95rem) !important;
+  line-height: 0.86 !important;
+}
+
+html body #root .candidate-profile-popup .candidate-profile-home-post-card {
+  width: 100% !important;
+  margin: 0 0 0.72rem !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-card-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.58rem !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-author-copy {
+  display: grid !important;
+  gap: 0.08rem !important;
+  min-width: 0 !important;
 }

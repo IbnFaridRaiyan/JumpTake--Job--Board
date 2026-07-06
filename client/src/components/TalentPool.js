@@ -1,6 +1,12 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
-import ContactCandidate from './ContactCandidate';
+import { createPortal } from 'react-dom';
 import ProfileAvatar from './ProfileAvatar';
+import defaultTailorCoverImage from './media/default-tailor-cover.png';
+import defaultProfileMale from './media/default-profile-male.png';
+import defaultProfileFemale from './media/default-profile-female.png';
+
+const WORK_NEWS_STORAGE_KEY = 'jumptakeWorkNewsPosts';
+const TALENT_STORIES_STORAGE_KEY = 'jumptakeTalentStoriesPosts';
 
 const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employer', currentUserId }) => {
     const [candidates, setCandidates] = useState([]);
@@ -220,6 +226,12 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
             ? `url("${candidate.coverImage}")`
             : 'linear-gradient(135deg, #4f1224 0%, #7d3044 100%)'
     });
+
+    const getCandidateDefaultProfileImage = (candidate) => (
+        String(candidate?.gender || candidate?.profile?.gender || '').toLowerCase().startsWith('f')
+            ? defaultProfileFemale
+            : defaultProfileMale
+    );
 
     const changeCandidatePage = (nextPage) => {
         setCurrentCandidatePage(nextPage);
@@ -498,6 +510,21 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         </button>
     );
 
+    const renderTailorSocialIcon = (platform) => {
+        const paths = {
+            facebook: 'M22.675 0H1.325C.593 0 0 .593 0 1.326v21.348C0 23.407.593 24 1.325 24h11.494v-9.294H9.691v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.464.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.312h3.587l-.467 3.622h-3.12V24h6.116C23.407 24 24 23.407 24 22.674V1.326C24 .593 23.407 0 22.675 0z',
+            instagram: 'M16.98 0a6.9 6.9 0 0 1 5.08 1.98A6.94 6.94 0 0 1 24 7.02v9.96c0 2.08-.68 3.87-1.98 5.13A7.14 7.14 0 0 1 16.94 24H7.06a7.06 7.06 0 0 1-5.03-1.89A6.96 6.96 0 0 1 0 16.94V7.02C0 2.8 2.8 0 7.02 0h9.96zm.05 2.23H7.06c-1.45 0-2.7.43-3.53 1.25a4.82 4.82 0 0 0-1.3 3.54v9.92c0 1.5.43 2.7 1.3 3.58a5 5 0 0 0 3.53 1.25h9.88a5 5 0 0 0 3.53-1.25 4.73 4.73 0 0 0 1.4-3.54V7.02a5 5 0 0 0-1.3-3.49 4.82 4.82 0 0 0-3.54-1.3zM12 5.76c3.39 0 6.2 2.8 6.2 6.2a6.2 6.2 0 0 1-12.4 0 6.2 6.2 0 0 1 6.2-6.2zm0 2.22a3.99 3.99 0 0 0-3.97 3.97A3.99 3.99 0 0 0 12 15.92a3.99 3.99 0 0 0 3.97-3.97A3.99 3.99 0 0 0 12 7.98z',
+            linkedin: 'M22.23 0H1.77C.8 0 0 .8 0 1.77v20.46C0 23.2.8 24 1.77 24h20.46c.98 0 1.77-.8 1.77-1.77V1.77C24 .8 23.2 0 22.23 0zM7.27 20.1H3.65V9.24h3.62V20.1zM5.47 7.76h-.03c-1.22 0-2-.83-2-1.87 0-1.06.8-1.87 2.05-1.87 1.24 0 2 .8 2.02 1.87 0 1.04-.78 1.87-2.05 1.87zM20.34 20.1h-3.63v-5.8c0-1.45-.52-2.45-1.83-2.45-1 0-1.6.67-1.87 1.32-.1.23-.11.55-.11.88v6.05H9.28s.05-9.82 0-10.84h3.63v1.54a3.6 3.6 0 0 1 3.26-1.8c2.39 0 4.18 1.56 4.18 4.89v6.21z',
+            github: 'M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z'
+        };
+
+        return (
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d={paths[platform]} />
+            </svg>
+        );
+    };
+
     const renderCandidateProfileCard = (candidate, { compact = false } = {}) => {
         const candidateId = String(candidate?._id || '');
         const storiesCount = getCandidateTalentStories(candidate).length;
@@ -674,51 +701,236 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         }
     }, [currentCandidatePage, totalCandidatePages]);
 
-    const formatDataForDisplay = (data) => {
-        if (Array.isArray(data)) {
-            return data.join(', ');
-        } else if (typeof data === 'string') {
-            return data;
-        } else if (data === null || data === undefined) {
-            return 'Not specified';
-        }
-        return JSON.stringify(data);
-    };
-
-    const renderList = (items, defaultMessage) => {
-        if (!items || (Array.isArray(items) && items.length === 0)) {
-            return <p className="empty-info">{defaultMessage}</p>;
-        }
-
-        if (Array.isArray(items)) {
-            return (
-                <ul className="profile-list">
-                    {items.map((item, index) => (
-                        <li key={index}>
-                            {typeof item === 'object' 
-                                ? `${item.company || item.institution || ''} - ${item.role || item.degree || ''} (${item.dates || ''})`
-                                : item}
-                        </li>
-                    ))}
-                </ul>
-            );
-        }
-
-        return <p>{items}</p>;
-    };
-
-    const getCandidateTalentStories = (candidate) => {
+    const readCandidateStoredPosts = (storageKey) => {
         try {
-            const storedPosts = JSON.parse(localStorage.getItem('jumptakeTalentStoriesPosts') || '[]');
-            return Array.isArray(storedPosts)
-                ? storedPosts.filter((post) => (
-                    String(post.authorId || '') === String(candidate?._id || candidate?.id || '')
-                    || String(post.authorName || '').toLowerCase() === String(candidate?.name || '').toLowerCase()
-                ))
-                : [];
+            const storedPosts = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            return Array.isArray(storedPosts) ? storedPosts : [];
         } catch (error) {
             return [];
         }
+    };
+
+    const getCandidateProfilePosts = (candidate) => {
+        const candidateIds = [
+            candidate?._id,
+            candidate?.id,
+            candidate?.user,
+            candidate?.userId,
+            candidate?.candidateId
+        ].map((value) => String(value || '')).filter(Boolean);
+        const candidateName = String(candidate?.name || '').trim().toLowerCase();
+        const matchesCandidate = (post) => (
+            candidateIds.includes(String(post?.authorId || ''))
+            || candidateIds.includes(String(post?.candidateId || ''))
+            || String(post?.authorName || '').trim().toLowerCase() === candidateName
+        );
+
+        return [
+            ...readCandidateStoredPosts(WORK_NEWS_STORAGE_KEY).filter(matchesCandidate).map((post) => ({ ...post, storageKey: WORK_NEWS_STORAGE_KEY, feedType: 'Work News' })),
+            ...readCandidateStoredPosts(TALENT_STORIES_STORAGE_KEY).filter(matchesCandidate).map((post) => ({ ...post, storageKey: TALENT_STORIES_STORAGE_KEY, feedType: 'Talent story' }))
+        ].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    };
+
+    const getCandidateTalentStories = (candidate) => (
+        getCandidateProfilePosts(candidate).filter((post) => post.storageKey === TALENT_STORIES_STORAGE_KEY)
+    );
+
+    const renderCandidateProfilePostCard = (post, candidate) => (
+        <article className="portal-social-post-card candidate-profile-home-post-card" key={post.id || post._id || `${post.feedType}-${post.createdAt || post.body}`}>
+            <div className="portal-post-card-header">
+                <ProfileAvatar
+                    imageSrc={post.authorAvatar || candidate.profileImage}
+                    name={post.authorName || candidate.name}
+                    className="portal-post-author-avatar"
+                    imageClassName="profile-avatar-image"
+                    useProfileIconFallback
+                />
+                <div className="portal-post-author-copy">
+                    <strong>{post.authorName || candidate.name || 'Candidate'}</strong>
+                    <span>{post.feedType || 'Talent story'} - {post.createdAt ? new Date(post.createdAt).toLocaleDateString() : 'Recent'}</span>
+                </div>
+            </div>
+            <button type="button" className="portal-post-reach portal-reach-button">
+                {Number(post.reach || 0) || 0} reach
+            </button>
+            <p className="portal-post-body">{post.body || post.text || post.content || 'Talent story post'}</p>
+        </article>
+    );
+
+    const renderSelectedCandidateModal = () => {
+        if (!selectedCandidate) {
+            return null;
+        }
+
+        const candidateId = String(selectedCandidate._id || selectedCandidate.id || '');
+        const profilePosts = getCandidateProfilePosts(selectedCandidate);
+        const likeCount = candidateLikeCounts[candidateId] || 0;
+        const isBookmarked = bookmarkedTalentIds.includes(candidateId);
+        const socialPlatforms = ['facebook', 'instagram', 'linkedin', 'github'];
+        const socialLinks = {
+            facebook: selectedCandidate.facebook || selectedCandidate.socialLinks?.facebook || '',
+            instagram: selectedCandidate.instagram || selectedCandidate.socialLinks?.instagram || '',
+            linkedin: selectedCandidate.linkedin || selectedCandidate.socialLinks?.linkedin || '',
+            github: selectedCandidate.github || selectedCandidate.socialLinks?.github || ''
+        };
+        const coverStyle = {
+            '--tailor-cover-image': `url("${selectedCandidate.coverImage || defaultTailorCoverImage}")`
+        };
+        const jumpTakeId = String(getCandidateJumpTakeId(selectedCandidate) || '@JumpTakeID');
+        const formattedJumpTakeId = jumpTakeId.startsWith('@') ? jumpTakeId : `@${jumpTakeId}`;
+
+        const modalMarkup = (
+            <div
+                className="portal-profile-detail-backdrop candidate-profile-popup-backdrop"
+                role="presentation"
+                onClick={(event) => {
+                    if (event.target === event.currentTarget) {
+                        handleCloseProfile();
+                    }
+                }}
+            >
+                <article
+                    className="portal-profile-detail-modal candidate-profile-popup"
+                    ref={candidateProfileRef}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label={`${selectedCandidate.name || 'Candidate'} tailor profile`}
+                    onClick={(event) => event.stopPropagation()}
+                >
+                    <span
+                        role="button"
+                        tabIndex={0}
+                        className="portal-profile-detail-close"
+                        onClick={handleCloseProfile}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault();
+                                handleCloseProfile();
+                            }
+                        }}
+                        aria-label="Close profile"
+                        title="Close"
+                    >
+                        &times;
+                    </span>
+                    <div className="portal-profile-detail-card" style={coverStyle}>
+                        <div className={`tailor-profile-image ${selectedCandidate.profileImage ? '' : 'has-default-profile-icon'}`}>
+                            <img
+                                src={selectedCandidate.profileImage || getCandidateDefaultProfileImage(selectedCandidate)}
+                                alt={selectedCandidate.name || 'Candidate'}
+                            />
+                        </div>
+                        <div className="tailor-profile-info">
+                            <p className="tailor-profile-name">{selectedCandidate.name || 'Unnamed Candidate'}</p>
+                            <div className="tailor-profile-title">{formattedJumpTakeId}</div>
+                        </div>
+                        <div className="tailor-social-links" aria-label={`${selectedCandidate.name || 'Candidate'} social links`}>
+                            {mode === 'candidate' && (
+                                <>
+                                    <button
+                                        type="button"
+                                        className={`tailor-social-btn portal-profile-friend-action ${selectedCandidate.connectionStatus?.status === 'accepted' ? 'is-friend' : ''} ${selectedCandidate.connectionStatus?.status === 'pending' ? 'is-pending' : ''}`}
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                            if (!selectedCandidate.connectionStatus) {
+                                                sendFriendRequest({ candidateId: selectedCandidate._id });
+                                            } else if (selectedCandidate.connectionStatus.status === 'pending' && selectedCandidate.connectionStatus.direction === 'outgoing') {
+                                                cancelFriendRequest(selectedCandidate);
+                                            }
+                                        }}
+                                        disabled={sendingFriendRequest || selectedCandidate.connectionStatus?.status === 'accepted' || (selectedCandidate.connectionStatus?.status === 'pending' && selectedCandidate.connectionStatus?.direction !== 'outgoing')}
+                                        aria-label={selectedCandidate.connectionStatus?.status === 'accepted' ? 'Already friends' : selectedCandidate.connectionStatus?.status === 'pending' ? 'Friend invitation pending' : 'Add friend'}
+                                        title={selectedCandidate.connectionStatus?.status === 'accepted' ? 'Friends' : selectedCandidate.connectionStatus?.status === 'pending' ? 'Invitation pending' : 'Add friend'}
+                                    >
+                                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                            <path d="M15 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.42 0-8 2.24-8 5v1h10.1A6.9 6.9 0 0 1 17 19c0-1.85.72-3.54 1.9-4.8A11.7 11.7 0 0 0 15 14Zm6-3V8h-2v3h-3v2h3v3h2v-3h3v-2h-3Z" />
+                                        </svg>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={`tailor-social-btn portal-profile-bookmark-action ${isBookmarked ? 'active' : ''}`}
+                                        onClick={(event) => toggleTalentBookmark(selectedCandidate, event)}
+                                        aria-label={isBookmarked ? 'Remove candidate bookmark' : 'Bookmark candidate'}
+                                        title={isBookmarked ? 'Remove bookmark' : 'Bookmark candidate'}
+                                    >
+                                        <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187z" />
+                                        </svg>
+                                    </button>
+                                </>
+                            )}
+                            {socialPlatforms.map((platform) => {
+                                const href = socialLinks[platform];
+
+                                return href ? (
+                                    <a
+                                        key={platform}
+                                        className={`tailor-social-btn ${platform}`}
+                                        href={href}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        aria-label={`Open ${platform} profile`}
+                                    >
+                                        {renderTailorSocialIcon(platform)}
+                                    </a>
+                                ) : (
+                                    <span key={platform} className={`tailor-social-btn ${platform} is-empty`} aria-hidden="true">
+                                        {renderTailorSocialIcon(platform)}
+                                    </span>
+                                );
+                            })}
+                        </div>
+                        <button
+                            type="button"
+                            className="portal-profile-detail-message"
+                            onClick={() => {
+                                if (typeof window !== 'undefined') {
+                                    window.dispatchEvent(new CustomEvent('jumptake-open-candidate-messenger', {
+                                        detail: {
+                                            contact: {
+                                                userId: selectedCandidate.user || selectedCandidate.userId || selectedCandidate._id || '',
+                                                candidateId: selectedCandidate._id || '',
+                                                name: selectedCandidate.name || 'Candidate',
+                                                avatar: selectedCandidate.profileImage || '',
+                                                jumpTakeId: formattedJumpTakeId
+                                            }
+                                        }
+                                    }));
+                                }
+                                handleCloseProfile();
+                            }}
+                        >
+                            Message
+                        </button>
+                        <div className="tailor-profile-stats">
+                            <div className="tailor-stat-item">
+                                <div className="tailor-stat-value">{likeCount}</div>
+                                <div className="tailor-stat-label">{likeCount === 1 ? 'Like' : 'Likes'}</div>
+                            </div>
+                            <div className="tailor-stat-item">
+                                <div className="tailor-stat-value">{profilePosts.length}</div>
+                                <div className="tailor-stat-label">Posts</div>
+                            </div>
+                            <div className="tailor-stat-item">
+                                <div className="tailor-stat-value">{Number(selectedCandidate.rating || 0).toFixed(1)}</div>
+                                <div className="tailor-stat-label">Rating</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="portal-profile-detail-posts" aria-label={`${selectedCandidate.name || 'Candidate'} posts`}>
+                        {profilePosts.length > 0 ? (
+                            profilePosts.map((post) => renderCandidateProfilePostCard(post, selectedCandidate))
+                        ) : (
+                            <p className="portal-post-detail-empty">No visible posts yet.</p>
+                        )}
+                    </div>
+                </article>
+            </div>
+        );
+
+        return typeof document !== 'undefined'
+            ? createPortal(modalMarkup, document.body)
+            : modalMarkup;
     };
 
     return (
@@ -827,114 +1039,6 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                     <div className="loading-spinner"></div>
                             <p>Loading candidates...</p>
                 </div>
-            ) : selectedCandidate ? (
-                <div
-                    className="candidate-profile-popup-backdrop"
-                    onMouseDown={(event) => {
-                        if (event.target === event.currentTarget) {
-                            handleCloseProfile();
-                        }
-                    }}
-                >
-                    <div className="candidate-profile candidate-profile-popup" ref={candidateProfileRef} role="dialog" aria-modal="true" aria-label={`${selectedCandidate.name || 'Candidate'} profile`}>
-                        <button type="button" className="candidate-profile-popup-close" onClick={handleCloseProfile} aria-label="Close profile">
-                            &times;
-                        </button>
-
-                        {renderCandidateProfileCard(selectedCandidate)}
-
-                        <div className="candidate-profile-body">
-                            <ContactCandidate
-                                companyId={companyId}
-                                candidate={selectedCandidate}
-                                mode={mode}
-                                currentUserId={currentUserId}
-                            />
-
-                        <div className="profile-section">
-                            <h3>Skills</h3>
-                            <div className="skills-container">
-                                {getSkillList(selectedCandidate.skills).length > 0 ? (
-                                    getSkillList(selectedCandidate.skills).map((skill, index) => (
-                                        <span key={index} className="skill-tag">{skill}</span>
-                                    ))
-                                ) : (
-                                    <p>No skills listed</p>
-                                )}
-                            </div>
-                        </div>
-
-                        {spotlightActive && getSpotlightMatch(selectedCandidate).score > 0 && (
-                            <div className="profile-section">
-                                <h3>Spotlight Matches</h3>
-                                <div className="skills-container">
-                                    {getSpotlightMatch(selectedCandidate).matchedSkills.map((skill, index) => (
-                                        <span key={index} className="skill-tag skill-match">{skill}</span>
-                                    ))}
-                                </div>
-                                <p className="spotlight-jobs">
-                                    Matching job{getSpotlightMatch(selectedCandidate).matchedJobs.length !== 1 ? 's' : ''}: {getSpotlightMatch(selectedCandidate).matchedJobs.join(', ')}
-                                </p>
-                            </div>
-                        )}
-
-                        <div className="profile-section">
-                            <h3>Education</h3>
-                            {renderList(selectedCandidate.education, "No education information available")}
-                        </div>
-
-                        <div className="profile-section">
-                            <h3>Experience</h3>
-                            {renderList(selectedCandidate.experience, "No experience information available")}
-                        </div>
-
-                        {selectedCandidate.achievements && (
-                            <div className="profile-section">
-                                <h3>Achievements</h3>
-                                {renderList(selectedCandidate.achievements, "No achievements listed")}
-                            </div>
-                        )}
-
-                        {(selectedCandidate.interests || selectedCandidate.hobbies) && (
-                        <div className="profile-section">
-                            <h3>Interests & Hobbies</h3>
-                                {selectedCandidate.interests && (
-                                    <div className="profile-subsection">
-                                        <h4>Interests</h4>
-                                        <p>{formatDataForDisplay(selectedCandidate.interests)}</p>
-                                    </div>
-                                )}
-                                {selectedCandidate.hobbies && (
-                                    <div className="profile-subsection">
-                                        <h4>Hobbies</h4>
-                                        <p>{formatDataForDisplay(selectedCandidate.hobbies)}</p>
-                                    </div>
-                                )}
-                            </div>
-                        )}
-
-                        <div className="profile-section candidate-profile-feed-preview">
-                            <h3>My feed / Talent stories</h3>
-                            {getCandidateTalentStories(selectedCandidate).length > 0 ? (
-                                getCandidateTalentStories(selectedCandidate).slice(0, 3).map((post) => (
-                                    <article className="candidate-profile-feed-card" key={post.id}>
-                                        <p>{post.body || 'Talent story post'}</p>
-                                        <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-                                    </article>
-                                ))
-                            ) : (
-                                <p className="empty-info">No visible talent stories yet.</p>
-                            )}
-                        </div>
-
-                            <div className="section-footer-nav">
-                                <button className="back-button" onClick={handleCloseProfile}>
-                                    Back
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             ) : (
                 <>
                     {filteredCandidateRows.length === 0 ? (
@@ -1010,6 +1114,8 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                     )}
                 </>
             )}
+
+            {renderSelectedCandidateModal()}
 
             {!isLoading && !selectedCandidate && (
                 <div className="page-footer-actions">

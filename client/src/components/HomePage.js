@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MyApplications from './MyApplications';
 import MyAssessments from './MyAssessments';
@@ -80,6 +80,20 @@ const isMobileViewport = () => (
     typeof window !== 'undefined'
     && window.matchMedia('(max-width: 768px)').matches
 );
+
+const normalizeJobsResponse = (value) => {
+    const jobs = Array.isArray(value)
+        ? value
+        : Array.isArray(value?.jobs)
+            ? value.jobs
+            : Array.isArray(value?.data)
+                ? value.data
+                : Array.isArray(value?.results)
+                    ? value.results
+                    : [];
+
+    return jobs.filter((job) => job && typeof job === 'object');
+};
 
 class CandidatePortalErrorBoundary extends React.Component {
     constructor(props) {
@@ -187,6 +201,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const displayEmail = typeof user?.email === 'string' ? user.email : '';
     const displayName = displayEmail.includes('@') ? displayEmail.split('@')[0] : (displayEmail || 'User');
     const displayInitial = displayName ? displayName.charAt(0).toUpperCase() : 'U';
+    const safeJobs = useMemo(() => normalizeJobsResponse(jobs), [jobs]);
 
     useEffect(() => {
         const handleProfileImageUpdated = (event) => {
@@ -456,10 +471,11 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             }
 
             const data = await response.json();
-            setJobs(data);
+            setJobs(normalizeJobsResponse(data));
             setLoading(false);
         } catch (err) {
             console.error('Error fetching jobs:', err);
+            setJobs([]);
             setError('Failed to load job listings. Please try again later.');
             setLoading(false);
         }
@@ -884,7 +900,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                 return <PortalDefaultLanding
                     mode="candidate"
                     displayName={displayName}
-                    jobs={jobs}
+                    jobs={safeJobs}
                     notificationCount={pendingNotificationCount}
                     inboxCount={pendingInboxCount}
                     assessmentCount={pendingAssessmentCount}
@@ -903,7 +919,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     mode="candidate"
                     currentUser={user}
                     profileData={jobSeekerData}
-                    jobs={jobs}
+                    jobs={safeJobs}
                     switchSection={switchSection}
                     onRefresh={refreshData}
                 />;
@@ -957,7 +973,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             case 'view-candidates':
                 return <TalentPool
                     mode="candidate"
-                    jobs={jobs}
+                    jobs={safeJobs}
                     currentUserId={user?.id}
                     onBack={goToPreviousSection}
                     onFooterBack={goToPreviousSection}
@@ -999,7 +1015,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             case 'progress-check':
                 return <PerformanceAnalytics
                     mode="candidate"
-                    jobs={jobs}
+                    jobs={safeJobs}
                     jobSeekerData={jobSeekerData}
                     userId={user?.id}
                 />;
@@ -1018,7 +1034,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     mode="candidate"
                     currentUser={user}
                     profileData={jobSeekerData}
-                    jobs={jobs}
+                    jobs={safeJobs}
                     switchSection={switchSection}
                     onRefresh={refreshData}
                 />;
@@ -1152,7 +1168,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                 userId={user?.id}
                 currentUser={user}
                 profileData={jobSeekerData}
-                jobs={jobs}
+                jobs={safeJobs}
                 activeSection={activeSection}
                 unreadCount={pendingInboxCount}
                 onSeen={() => {

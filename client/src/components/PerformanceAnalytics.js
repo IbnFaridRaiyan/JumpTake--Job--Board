@@ -32,6 +32,7 @@ const BarChart = ({ metrics }) => (
 const PerformanceAnalytics = ({ mode = 'candidate', jobs = [], jobSeekerData, userId, employer, applicationCount = 0 }) => {
     const [applications, setApplications] = useState([]);
     const [detailsOpen, setDetailsOpen] = useState(false);
+    const safeJobs = useMemo(() => (Array.isArray(jobs) ? jobs : []), [jobs]);
 
     useEffect(() => {
         const fetchApplications = async () => {
@@ -72,8 +73,8 @@ const PerformanceAnalytics = ({ mode = 'candidate', jobs = [], jobSeekerData, us
 
     const metrics = useMemo(() => {
         if (mode === 'employer') {
-            const activeJobs = jobs.filter((job) => job.active !== false).length;
-            const jobsLast7 = jobs.filter((job) => inLastDays(job.createdAt)).length;
+            const activeJobs = safeJobs.filter((job) => job.active !== false).length;
+            const jobsLast7 = safeJobs.filter((job) => inLastDays(job.createdAt)).length;
             const applicationsLast7 = applications.filter((application) => inLastDays(application.createdAt || application.appliedAt)).length;
             const hiredCount = applications.filter((application) => {
                 const status = String(application.status || '').toLowerCase();
@@ -121,7 +122,7 @@ const PerformanceAnalytics = ({ mode = 'candidate', jobs = [], jobSeekerData, us
 
         const candidateSkills = Array.isArray(jobSeekerData?.skills) ? jobSeekerData.skills.map((skill) => String(skill).toLowerCase()) : [];
         const applicationsLast7 = applications.filter((application) => inLastDays(application.createdAt || application.appliedAt)).length;
-        const skillMatches = jobs.filter((job) => (
+        const skillMatches = safeJobs.filter((job) => (
             Array.isArray(job.skills)
             && job.skills.some((skill) => candidateSkills.includes(String(skill).toLowerCase()))
         )).length;
@@ -140,15 +141,15 @@ const PerformanceAnalytics = ({ mode = 'candidate', jobs = [], jobSeekerData, us
             },
             {
                 label: 'Job Searching Rate',
-                value: jobs.length,
-                display: `${jobs.length} jobs`,
-                score: Math.min(100, jobs.length * 5)
+                value: safeJobs.length,
+                display: `${safeJobs.length} jobs`,
+                score: Math.min(100, safeJobs.length * 5)
             },
             {
                 label: 'Skill Matching Rate',
                 value: skillMatches,
-                display: jobs.length ? `${Math.round((skillMatches / jobs.length) * 100)}%` : '0%',
-                score: jobs.length ? (skillMatches / jobs.length) * 100 : 0
+                display: safeJobs.length ? `${Math.round((skillMatches / safeJobs.length) * 100)}%` : '0%',
+                score: safeJobs.length ? (skillMatches / safeJobs.length) * 100 : 0
             },
             {
                 label: 'Employer Views',
@@ -163,7 +164,7 @@ const PerformanceAnalytics = ({ mode = 'candidate', jobs = [], jobSeekerData, us
                 score: applications.length ? (responses / applications.length) * 100 : 0
             }
         ];
-    }, [mode, jobs, applications, applicationCount, jobSeekerData]);
+    }, [mode, safeJobs, applications, applicationCount, jobSeekerData]);
 
     const primary = metrics[0] || { label: 'Performance', display: '0', score: 0 };
     const secondary = metrics[1] || { label: 'Activity', display: '0', score: 0 };

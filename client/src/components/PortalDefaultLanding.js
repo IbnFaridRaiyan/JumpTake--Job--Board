@@ -30,16 +30,17 @@ const PortalDefaultLanding = ({
 }) => {
     const isEmployer = mode === 'employer';
     const name = displayName || (isEmployer ? 'Employer' : 'Candidate');
+    const safeJobs = Array.isArray(jobs) ? jobs : [];
 
     const stats = isEmployer
         ? [
-            { label: 'Active jobs', value: jobs.length, section: 'manage-jobs' },
+            { label: 'Active jobs', value: safeJobs.length, section: 'manage-jobs' },
             { label: 'Applications', value: applicationCount, section: 'application-tracking' },
             { label: 'Notifications', value: notificationCount, section: 'notifications' },
             { label: 'Inbox', value: inboxCount, action: 'messages' }
         ]
         : [
-            { label: 'Available jobs', value: jobs.length, section: 'job-feed', tab: 'job-posts' },
+            { label: 'Available jobs', value: safeJobs.length, section: 'job-feed', tab: 'job-posts' },
             { label: 'Assessments', value: assessmentCount, section: 'assessments' },
             { label: 'Video interviews', value: videoInterviewCount, section: 'video-interviews' },
             { label: 'Notifications', value: notificationCount, section: 'notifications' }

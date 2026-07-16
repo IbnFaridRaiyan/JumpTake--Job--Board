@@ -55559,7 +55559,6 @@ html body .candidate-comment-modal-backdrop .portal-comment-submit-button svg {
     font-size: 0.68rem !important;
   }
 }
-
 .portal-job-review-save-button {
   width: auto !important;
   min-width: 8.5rem !important;
@@ -79788,4 +79787,2310 @@ html body .candidate-comment-modal-backdrop .portal-comment-submit-button svg {
   html body #root .candidate-profile-popup .portal-post-title-block p {
     font-size: 0.68rem !important;
   }
+}
+
+/* TRUE EOF Candidates modal fix: final override for mobile popup layout. */
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .tailor-social-links .portal-profile-friend-action,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .tailor-social-links .portal-profile-bookmark-action {
+  display: none !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .candidate-popup-name-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.24rem !important;
+  flex-wrap: nowrap !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .candidate-popup-name-row .tailor-profile-name {
+  width: auto !important;
+  max-width: calc(100% - 2.6rem) !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .candidate-popup-name-actions {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.12rem !important;
+  width: auto !important;
+  flex: 0 0 auto !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates button.candidate-popup-name-action,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates button.candidate-popup-name-action:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 1rem !important;
+  min-width: 1rem !important;
+  max-width: 1rem !important;
+  height: 1rem !important;
+  min-height: 1rem !important;
+  max-height: 1rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: #f7f4f8 !important;
+  color: #9b5d70 !important;
+  -webkit-text-fill-color: #9b5d70 !important;
+  overflow: hidden !important;
+  transform: none !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates button.candidate-popup-name-action svg,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates button.candidate-popup-name-action svg *,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates button.candidate-popup-name-action path {
+  display: block !important;
+  width: 0.52rem !important;
+  max-width: 0.52rem !important;
+  height: 0.52rem !important;
+  max-height: 0.52rem !important;
+  fill: currentColor !important;
+  stroke: none !important;
+  transform: none !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-social-post-header {
+  display: grid !important;
+  grid-template-columns: 1.95rem minmax(0, 1fr) 1.05rem !important;
+  align-items: start !important;
+  column-gap: 0.4rem !important;
+  row-gap: 0 !important;
+  min-height: 1.95rem !important;
+  margin: 0 0 0.08rem !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-author-open-button.portal-post-avatar,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-author-open-button.portal-post-avatar:not(.has-default-profile-icon) {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  width: 1.9rem !important;
+  min-width: 1.9rem !important;
+  max-width: 1.9rem !important;
+  height: 1.9rem !important;
+  min-height: 1.9rem !important;
+  max-height: 1.9rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-author-open-button.portal-post-avatar img,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-author-open-button.portal-post-avatar svg,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-author-open-button.portal-post-avatar .profile-avatar-image,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-author-open-button.portal-post-avatar .portal-default-profile-icon {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-post-title-block {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 0.02rem !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0.02rem 0 0 !important;
+  text-align: left !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-post-author-name,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-author-name-button {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 0.84rem !important;
+  line-height: 1.04 !important;
+  text-align: left !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-post-title-block p {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 0.62rem !important;
+  line-height: 1.04 !important;
+  text-align: left !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-post-header-actions {
+  grid-column: 3 !important;
+  grid-row: 1 !important;
+  align-self: start !important;
+  justify-self: end !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-post-reach-row {
+  display: flex !important;
+  justify-content: flex-start !important;
+  margin: 0.06rem 0 0.12rem !important;
+  padding: 0 !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button:is(:hover, :focus, :focus-visible, :active) {
+  display: inline-flex !important;
+  width: auto !important;
+  min-width: 3.25rem !important;
+  max-width: max-content !important;
+  height: 1.44rem !important;
+  min-height: 1.44rem !important;
+  padding: 0.18rem 0.4rem !important;
+  border-radius: 999px !important;
+  font-size: 0.64rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+/* Final media preview and candidate popup polish. */
+html body #root .portal-post-image-preview-button,
+html body #root .portal-post-image-preview-button:is(:hover, :focus, :focus-visible, :active) {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: inherit !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  cursor: zoom-in !important;
+  overflow: hidden !important;
+  transform: none !important;
+}
+
+html body #root .portal-post-image-preview-button img {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+}
+
+html body #root .portal-post-detail-modal .portal-post-detail-media,
+html body #root .portal-post-detail-modal .portal-post-media {
+  margin: 1rem 0 1.15rem !important;
+}
+
+html body #root .portal-post-detail-modal .portal-post-detail-stats {
+  margin-top: 0.85rem !important;
+}
+
+html body .portal-image-preview-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 12000 !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 0 !important;
+  background: rgba(5, 7, 12, 0.92) !important;
+}
+
+html body .portal-image-preview-modal {
+  position: relative !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: #05070c !important;
+  color: #ffffff !important;
+  overflow: hidden !important;
+}
+
+html body .portal-image-preview-toolbar {
+  position: relative !important;
+  z-index: 2 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  padding: max(0.75rem, env(safe-area-inset-top)) 0.75rem 0.75rem !important;
+  background: rgba(5, 7, 12, 0.82) !important;
+  color: #ffffff !important;
+}
+
+html body .portal-image-preview-toolbar button,
+html body .portal-image-preview-toolbar button:is(:hover, :focus, :focus-visible, :active) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 2.35rem !important;
+  min-height: 2.1rem !important;
+  padding: 0.35rem 0.7rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+  font-size: 0.82rem !important;
+  line-height: 1 !important;
+  transform: none !important;
+}
+
+html body .portal-image-preview-toolbar span {
+  min-width: 3.4rem !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 0.8rem !important;
+  text-align: center !important;
+}
+
+html body .portal-image-preview-stage {
+  display: grid !important;
+  place-items: center !important;
+  min-height: 0 !important;
+  overflow: auto !important;
+  overscroll-behavior: contain !important;
+  padding: 1rem !important;
+}
+
+html body .portal-image-preview-stage img {
+  display: block !important;
+  max-width: min(100%, 1200px) !important;
+  max-height: calc(100vh - 6.5rem) !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  transform-origin: center center !important;
+  transition: transform 0.16s ease !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .candidate-popup-name-row {
+  justify-content: center !important;
+  max-width: 100% !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .candidate-popup-name-actions {
+  transform: translateY(-0.02rem) !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates button.candidate-popup-name-action,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates button.candidate-popup-name-action:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  width: 0.92rem !important;
+  min-width: 0.92rem !important;
+  max-width: 0.92rem !important;
+  height: 0.92rem !important;
+  min-height: 0.92rem !important;
+  max-height: 0.92rem !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates button.candidate-popup-name-action svg,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates button.candidate-popup-name-action path {
+  width: 0.48rem !important;
+  height: 0.48rem !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-social-post-header,
+html body #root .candidate-profile-popup .portal-profile-preview-post-card .portal-social-post-header {
+  grid-template-columns: 2.05rem minmax(0, 1fr) 1.2rem !important;
+  align-items: start !important;
+  column-gap: 0.48rem !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-post-title-block,
+html body #root .candidate-profile-popup .portal-profile-preview-post-card .portal-post-title-block {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 0.06rem !important;
+  padding-top: 0 !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-action-row .portal-reaction-trigger.has-reaction,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-post-action-row .portal-reaction-trigger.has-reaction {
+  color: var(--reaction-active-color, #8a1d34) !important;
+  -webkit-text-fill-color: var(--reaction-active-color, #8a1d34) !important;
+}
+
+html body #root .candidate-profile-popup .portal-post-action-row .portal-reaction-trigger.has-reaction svg,
+html body #root .candidate-profile-popup .portal-post-action-row .portal-reaction-trigger.has-reaction path,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-post-action-row .portal-reaction-trigger.has-reaction svg,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-post-action-row .portal-reaction-trigger.has-reaction path {
+  fill: currentColor !important;
+}
+
+html body #root .candidate-profile-popup .portal-reaction-button.reaction-like,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-reaction-button.reaction-like { --candidate-reaction-color: #8a1d34; }
+html body #root .candidate-profile-popup .portal-reaction-button.reaction-appreciate,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-reaction-button.reaction-appreciate { --candidate-reaction-color: #b84a12; }
+html body #root .candidate-profile-popup .portal-reaction-button.reaction-love,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-reaction-button.reaction-love { --candidate-reaction-color: #c02664; }
+html body #root .candidate-profile-popup .portal-reaction-button.reaction-empower,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-reaction-button.reaction-empower { --candidate-reaction-color: #0f766e; }
+html body #root .candidate-profile-popup .portal-reaction-button.reaction-congratulate,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-reaction-button.reaction-congratulate { --candidate-reaction-color: #7c3aed; }
+html body #root .candidate-profile-popup .portal-reaction-button.reaction-motivate,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-reaction-button.reaction-motivate { --candidate-reaction-color: #2563eb; }
+html body #root .candidate-profile-popup .portal-reaction-button.reaction-angry,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-reaction-button.reaction-angry { --candidate-reaction-color: #dc2626; }
+html body #root .candidate-profile-popup .portal-reaction-button.reaction-sad,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-reaction-button.reaction-sad { --candidate-reaction-color: #64748b; }
+html body #root .candidate-profile-popup .portal-reaction-button.reaction-bad,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-reaction-button.reaction-bad { --candidate-reaction-color: #92400e; }
+html body #root .candidate-profile-popup .portal-reaction-button.reaction-hide,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-reaction-button.reaction-hide { --candidate-reaction-color: #374151; }
+
+html body #root .candidate-profile-popup .portal-reaction-button.active,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-reaction-button.active {
+  background: var(--candidate-reaction-color, #8a1d34) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html body #root .candidate-profile-popup .portal-reaction-button.active .candidate-reaction-icon,
+html body #root .candidate-profile-popup .portal-reaction-button.active .candidate-reaction-label,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-reaction-button.active .candidate-reaction-icon,
+html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-reaction-button.active .candidate-reaction-label {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+@media (max-width: 640px) {
+  html body #root .portal-post-detail-modal .portal-post-detail-media,
+  html body #root .portal-post-detail-modal .portal-post-media,
+  html body #root .candidate-profile-popup .portal-post-media,
+  html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-post-media {
+    margin: 0.85rem 0 1.15rem !important;
+  }
+
+  html body #root .portal-post-detail-modal .portal-post-detail-stats,
+  html body #root .candidate-profile-popup .portal-post-action-cluster,
+  html body #root .portal-profile-detail-modal.candidate-profile-from-candidates .portal-post-action-cluster {
+    margin-top: 0.75rem !important;
+  }
+
+  html body .portal-image-preview-toolbar {
+    justify-content: flex-start !important;
+    overflow-x: auto !important;
+  }
+
+  html body .portal-image-preview-stage {
+    padding: 0.6rem !important;
+  }
+}
+
+/* Absolute final guard for candidate profile popup screenshots 43/44. */
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates {
+  width: min(23rem, calc(100vw - 2rem)) !important;
+  max-width: min(23rem, calc(100vw - 2rem)) !important;
+  overflow-x: hidden !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .tailor-profile-info {
+  display: grid !important;
+  justify-items: start !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  text-align: left !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-name-row {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.28rem !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 1.35rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  text-align: left !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-name-row .tailor-profile-name {
+  flex: 0 1 auto !important;
+  width: auto !important;
+  max-width: calc(100% - 2.45rem) !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  color: #1f2933 !important;
+  -webkit-text-fill-color: #1f2933 !important;
+  font-size: 0.95rem !important;
+  line-height: 1.12 !important;
+  text-align: left !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-name-actions {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.16rem !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: 1rem !important;
+  min-height: 1rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  transform: none !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-name-actions .candidate-popup-name-action,
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-name-actions .candidate-popup-name-action:is(:hover, :focus, :focus-visible, :active, :disabled, .active, .is-pending, .is-friend) {
+  position: static !important;
+  inset: auto !important;
+  display: inline-flex !important;
+  flex: 0 0 0.9rem !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 0.9rem !important;
+  min-width: 0.9rem !important;
+  max-width: 0.9rem !important;
+  height: 0.9rem !important;
+  min-height: 0.9rem !important;
+  max-height: 0.9rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: #f2edf0 !important;
+  color: #7a1d33 !important;
+  -webkit-text-fill-color: #7a1d33 !important;
+  box-shadow: none !important;
+  font-family: Arial, sans-serif !important;
+  font-size: 0.72rem !important;
+  font-weight: 800 !important;
+  line-height: 0.9rem !important;
+  overflow: hidden !important;
+  text-align: center !important;
+  transform: none !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-name-actions .candidate-popup-name-action.active {
+  background: #f8d6df !important;
+  color: #a41437 !important;
+  -webkit-text-fill-color: #a41437 !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-name-actions .candidate-popup-name-action span {
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  max-width: 0.9rem !important;
+  max-height: 0.9rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+  font: inherit !important;
+  line-height: 0.9rem !important;
+  transform: none !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-name-actions svg,
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-name-actions img {
+  display: none !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .portal-profile-preview-post-card {
+  display: grid !important;
+  grid-template-columns: 100% !important;
+  gap: 0.44rem !important;
+  padding: 0.82rem 0.78rem !important;
+  overflow: visible !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-social-post-header {
+  display: grid !important;
+  grid-template-columns: 2.15rem minmax(0, 1fr) 1.35rem !important;
+  align-items: start !important;
+  column-gap: 0.58rem !important;
+  width: 100% !important;
+  min-height: 2.15rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-author-open-button.portal-post-avatar {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  justify-self: start !important;
+  align-self: start !important;
+  width: 2.12rem !important;
+  min-width: 2.12rem !important;
+  max-width: 2.12rem !important;
+  height: 2.12rem !important;
+  min-height: 2.12rem !important;
+  max-height: 2.12rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-post-title-block {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  align-self: start !important;
+  justify-self: stretch !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 0.08rem !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0.06rem 0 0 !important;
+  text-align: left !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-post-author-name,
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-author-name-button,
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-post-title-block p {
+  align-self: flex-start !important;
+  width: auto !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-post-author-name,
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-author-name-button {
+  font-size: 0.92rem !important;
+  line-height: 1.1 !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-post-title-block p {
+  font-size: 0.66rem !important;
+  line-height: 1.12 !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-post-header-actions {
+  grid-column: 3 !important;
+  grid-row: 1 !important;
+  justify-self: end !important;
+  align-self: start !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-post-reach-row {
+  margin: 0.26rem 0 0.16rem !important;
+  padding: 0 !important;
+  clear: both !important;
+}
+
+/* Screenshot 45 guard: actions are spans so old button rules cannot stretch them. */
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-name-actions span.candidate-popup-name-action,
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-name-actions span.candidate-popup-name-action:is(:hover, :focus, :focus-visible, :active, .active, .is-pending, .is-friend),
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-name-actions span.candidate-popup-name-action[aria-disabled="true"] {
+  position: static !important;
+  inset: auto !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 0.88rem !important;
+  width: 0.88rem !important;
+  min-width: 0.88rem !important;
+  max-width: 0.88rem !important;
+  height: 0.88rem !important;
+  min-height: 0.88rem !important;
+  max-height: 0.88rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  outline-offset: 2px !important;
+  background: #f2edf0 !important;
+  color: #7a1d33 !important;
+  -webkit-text-fill-color: #7a1d33 !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+  font-family: Arial, sans-serif !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  line-height: 0.88rem !important;
+  overflow: hidden !important;
+  text-align: center !important;
+  transform: none !important;
+  vertical-align: middle !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-name-actions span.candidate-popup-name-action[aria-disabled="true"] {
+  cursor: default !important;
+  opacity: 0.68 !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-name-actions span.candidate-popup-name-action.active {
+  background: #f8d6df !important;
+  color: #a41437 !important;
+  -webkit-text-fill-color: #a41437 !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-name-actions span.candidate-popup-name-action > span {
+  display: block !important;
+  width: 0.88rem !important;
+  max-width: 0.88rem !important;
+  height: 0.88rem !important;
+  max-height: 0.88rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+  font: inherit !important;
+  line-height: 0.88rem !important;
+  text-align: center !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-social-post-header {
+  grid-template-columns: 2.22rem minmax(0, 1fr) 1.1rem !important;
+  column-gap: 0.42rem !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-post-title-block {
+  padding-top: 0 !important;
+}
+
+/* Screenshot 46 guard: profile actions live inside the name line. */
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-name-row,
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-name-row .tailor-profile-name {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  text-align: left !important;
+  white-space: normal !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-name-text {
+  display: inline !important;
+  width: auto !important;
+  max-width: calc(100% - 2rem) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #1f2933 !important;
+  -webkit-text-fill-color: #1f2933 !important;
+  font: inherit !important;
+  line-height: inherit !important;
+  vertical-align: baseline !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .tailor-profile-name > .candidate-popup-name-actions {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.12rem !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: 0.85rem !important;
+  min-height: 0.85rem !important;
+  margin: 0 0 0 0.26rem !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  transform: translateY(-0.06rem) !important;
+  vertical-align: middle !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .tailor-profile-name > .candidate-popup-name-actions > span.candidate-popup-name-action,
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .tailor-profile-name > .candidate-popup-name-actions > span.candidate-popup-name-action:is(:hover, :focus, :focus-visible, :active, .active, .is-pending, .is-friend),
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .tailor-profile-name > .candidate-popup-name-actions > span.candidate-popup-name-action[aria-disabled="true"] {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 0.78rem !important;
+  min-width: 0.78rem !important;
+  max-width: 0.78rem !important;
+  height: 0.78rem !important;
+  min-height: 0.78rem !important;
+  max-height: 0.78rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: #f2edf0 !important;
+  color: #7a1d33 !important;
+  -webkit-text-fill-color: #7a1d33 !important;
+  box-shadow: none !important;
+  font-family: Arial, sans-serif !important;
+  font-size: 0.58rem !important;
+  font-weight: 800 !important;
+  line-height: 0.78rem !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .tailor-profile-name > .candidate-popup-name-actions > span.candidate-popup-name-action > span {
+  display: block !important;
+  width: 0.78rem !important;
+  height: 0.78rem !important;
+  color: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+  font: inherit !important;
+  line-height: 0.78rem !important;
+  text-align: center !important;
+}
+
+/* Final requested cleanup: post media, image viewer toolbar, profile header, and real icons. */
+html body #root .portal-post-detail-modal .portal-post-detail-body {
+  margin-bottom: 1rem !important;
+}
+
+html body #root .portal-post-detail-modal .portal-post-detail-media,
+html body #root .portal-post-detail-modal .portal-post-media.portal-post-detail-media {
+  display: block !important;
+  width: 100% !important;
+  margin: 1rem 0 1.1rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html body #root .portal-post-detail-modal .portal-post-detail-media .portal-post-image-preview-button,
+html body #root .portal-post-detail-modal .portal-post-detail-media .portal-post-image-preview-button:is(:hover, :focus, :focus-visible, :active) {
+  width: auto !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html body #root .portal-post-detail-modal .portal-post-detail-media img,
+html body #root .portal-post-detail-modal .portal-post-detail-media .portal-post-image-preview-button img {
+  display: block !important;
+  width: auto !important;
+  max-width: min(100%, 20rem) !important;
+  max-height: 28rem !important;
+  margin: 0 auto !important;
+  border: 0 !important;
+  border-radius: 0.42rem !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  object-fit: contain !important;
+}
+
+html body .portal-image-preview-toolbar {
+  justify-content: flex-start !important;
+  gap: 0.7rem !important;
+  padding: max(0.6rem, env(safe-area-inset-top)) 0.72rem 0.55rem !important;
+  background: #05070c !important;
+}
+
+html body .portal-image-preview-toolbar button,
+html body .portal-image-preview-toolbar button:is(:hover, :focus, :focus-visible, :active) {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0.18rem 0.28rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+  font-size: 0.86rem !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+}
+
+html body .portal-image-preview-toolbar span {
+  min-width: 2.6rem !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .tailor-profile-name > .candidate-popup-name-actions {
+  gap: 0.18rem !important;
+  height: 1rem !important;
+  min-height: 1rem !important;
+  margin-left: 0.28rem !important;
+  transform: translateY(-0.06rem) !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .tailor-profile-name > .candidate-popup-name-actions > span.candidate-popup-name-action,
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .tailor-profile-name > .candidate-popup-name-actions > span.candidate-popup-name-action:is(:hover, :focus, :focus-visible, :active, .active, .is-pending, .is-friend),
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .tailor-profile-name > .candidate-popup-name-actions > span.candidate-popup-name-action[aria-disabled="true"] {
+  width: 1rem !important;
+  min-width: 1rem !important;
+  max-width: 1rem !important;
+  height: 1rem !important;
+  min-height: 1rem !important;
+  max-height: 1rem !important;
+  background: transparent !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  opacity: 1 !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .tailor-profile-name > .candidate-popup-name-actions > span.candidate-popup-name-action.is-pending,
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .tailor-profile-name > .candidate-popup-name-actions > span.candidate-popup-name-action.is-pending:is(:hover, :focus, :focus-visible, :active) {
+  color: #16a34a !important;
+  -webkit-text-fill-color: #16a34a !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .tailor-profile-name > .candidate-popup-name-actions > span.candidate-popup-name-action.portal-profile-bookmark-action.active,
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .tailor-profile-name > .candidate-popup-name-actions > span.candidate-popup-name-action.portal-profile-bookmark-action.active:is(:hover, :focus, :focus-visible, :active) {
+  color: #f5b301 !important;
+  -webkit-text-fill-color: #f5b301 !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-inline-icon {
+  display: block !important;
+  width: 1rem !important;
+  min-width: 1rem !important;
+  max-width: 1rem !important;
+  height: 1rem !important;
+  min-height: 1rem !important;
+  max-height: 1rem !important;
+  fill: currentColor !important;
+  color: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-inline-icon path {
+  fill: currentColor !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-social-post-header {
+  display: flex !important;
+  grid-template-columns: none !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 0.48rem !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-author-open-button.portal-post-avatar {
+  position: static !important;
+  flex: 0 0 2.15rem !important;
+  order: 1 !important;
+  align-self: flex-start !important;
+  width: 2.15rem !important;
+  min-width: 2.15rem !important;
+  max-width: 2.15rem !important;
+  height: 2.15rem !important;
+  min-height: 2.15rem !important;
+  max-height: 2.15rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-post-title-block {
+  position: static !important;
+  flex: 1 1 auto !important;
+  order: 2 !important;
+  align-self: flex-start !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 0.08rem !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0.05rem 0 0 !important;
+  text-align: left !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-post-header-actions {
+  position: static !important;
+  flex: 0 0 auto !important;
+  order: 3 !important;
+  align-self: flex-start !important;
+  margin-left: auto !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-post-author-name,
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-author-name-button,
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .portal-profile-preview-post-card .portal-post-title-block p {
+  display: block !important;
+  align-self: flex-start !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+/* Friends card composer: keep the opened message form from collapsing into one action column. */
+html body #root .friend-invitations-section .friend-invitation-actions > .contact-candidate-panel.is-open {
+  grid-column: 1 / -1 !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 0.5rem !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  justify-self: stretch !important;
+}
+
+html body #root .friend-invitations-section .friend-invitation-actions > .contact-candidate-panel.is-open > .settings-button.primary {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+html body #root .friend-invitations-section .friend-invitation-actions > .contact-candidate-panel.is-open > .notification-message,
+html body #root .friend-invitations-section .friend-invitation-actions > .contact-candidate-panel.is-open > .message-compose-card {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+}
+
+html body #root .friend-invitations-section .friend-invitation-actions > .contact-candidate-panel.is-open .message-compose-card {
+  display: grid !important;
+  gap: 0.58rem !important;
+  padding: 0.72rem !important;
+}
+
+html body #root .friend-invitations-section .friend-invitation-actions > .contact-candidate-panel.is-open .message-compose-note,
+html body #root .friend-invitations-section .friend-invitation-actions > .contact-candidate-panel.is-open .rich-message-editor,
+html body #root .friend-invitations-section .friend-invitation-actions > .contact-candidate-panel.is-open .rich-message-input {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+}
+
+html body #root .friend-invitations-section .friend-invitation-actions > .contact-candidate-panel.is-open .message-compose-note {
+  margin: 0 !important;
+  line-height: 1.42 !important;
+  text-align: left !important;
+}
+
+html body #root .friend-invitations-section .friend-invitation-actions > .contact-candidate-panel.is-open .message-compose-actions {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 0.5rem !important;
+  width: 100% !important;
+}
+
+html body #root .friend-invitations-section .friend-invitation-actions > .contact-candidate-panel.is-open .message-compose-actions > button {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+}
+
+/* Candidate popup mobile tuning: readable quick icons, tight post header, smaller reach pill. */
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .tailor-profile-name > .candidate-popup-name-actions {
+  gap: 0.28rem !important;
+  height: 1.18rem !important;
+  min-height: 1.18rem !important;
+  margin-left: 0.34rem !important;
+  transform: translateY(-0.04rem) !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .tailor-profile-name > .candidate-popup-name-actions > span.candidate-popup-name-action,
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .tailor-profile-name > .candidate-popup-name-actions > span.candidate-popup-name-action:is(:hover, :focus, :focus-visible, :active, .active, .is-pending, .is-friend),
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .tailor-profile-name > .candidate-popup-name-actions > span.candidate-popup-name-action[aria-disabled="true"] {
+  width: 1.18rem !important;
+  min-width: 1.18rem !important;
+  max-width: 1.18rem !important;
+  height: 1.18rem !important;
+  min-height: 1.18rem !important;
+  max-height: 1.18rem !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-inline-icon {
+  width: 1.18rem !important;
+  min-width: 1.18rem !important;
+  max-width: 1.18rem !important;
+  height: 1.18rem !important;
+  min-height: 1.18rem !important;
+  max-height: 1.18rem !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-post-card {
+  padding: 0.76rem 0.78rem !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-post-header {
+  display: grid !important;
+  grid-template-columns: 1.88rem minmax(0, 1fr) 1.2rem !important;
+  align-items: start !important;
+  column-gap: 0.34rem !important;
+  width: 100% !important;
+  min-height: 1.88rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-post-avatar,
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-post-avatar img,
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-post-avatar-fallback {
+  width: 1.88rem !important;
+  min-width: 1.88rem !important;
+  max-width: 1.88rem !important;
+  height: 1.88rem !important;
+  min-height: 1.88rem !important;
+  max-height: 1.88rem !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-post-title {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 0.04rem !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  text-align: left !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-post-author,
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-post-author-button {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 0.9rem !important;
+  line-height: 1.08 !important;
+  text-align: left !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-post-meta {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 0.64rem !important;
+  line-height: 1.08 !important;
+  text-align: left !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-post-options {
+  align-self: start !important;
+  justify-self: end !important;
+  margin-left: 0 !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-post-card .portal-post-reach-row {
+  justify-content: flex-start !important;
+  margin: 0.2rem 0 0.12rem !important;
+  padding: 0 !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-post-card button.portal-post-reach.portal-reach-button,
+html body #root .portal-profile-detail-modal.candidate-profile-popup.candidate-profile-from-candidates .candidate-popup-post-card button.portal-post-reach.portal-reach-button:is(:hover, :focus, :focus-visible, :active) {
+  width: auto !important;
+  min-width: 2.85rem !important;
+  max-width: max-content !important;
+  height: 1.36rem !important;
+  min-height: 1.36rem !important;
+  max-height: 1.36rem !important;
+  padding: 0.14rem 0.36rem !important;
+  border-radius: 999px !important;
+  font-size: 0.58rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+/* Hard lock for the actual rendered candidate popup classes. */
+.candidate-profile-popup .candidate-popup-name-actions {
+  gap: 0.32rem !important;
+  margin-left: 0.36rem !important;
+}
+
+.candidate-profile-popup .candidate-popup-name-action,
+.candidate-profile-popup .candidate-popup-name-action:is(:hover, :focus, :focus-visible, :active, .active, .is-pending, .is-friend) {
+  width: 16px !important;
+  min-width: 16px !important;
+  max-width: 16px !important;
+  height: 16px !important;
+  min-height: 16px !important;
+  max-height: 16px !important;
+  padding: 0 !important;
+}
+
+.candidate-profile-popup .candidate-popup-inline-icon {
+  width: 16px !important;
+  min-width: 16px !important;
+  max-width: 16px !important;
+  height: 16px !important;
+  min-height: 16px !important;
+  max-height: 16px !important;
+}
+
+.candidate-profile-popup .candidate-popup-post-header {
+  display: grid !important;
+  grid-template-columns: 2.05rem minmax(0, 1fr) 1.25rem !important;
+  align-items: start !important;
+  column-gap: 0.55rem !important;
+  width: 100% !important;
+  min-height: 2.05rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.candidate-profile-popup button.candidate-popup-post-avatar,
+.candidate-profile-popup .candidate-popup-post-avatar img,
+.candidate-profile-popup .candidate-popup-post-avatar-fallback {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  width: 2.05rem !important;
+  min-width: 2.05rem !important;
+  max-width: 2.05rem !important;
+  height: 2.05rem !important;
+  min-height: 2.05rem !important;
+  max-height: 2.05rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  object-fit: cover !important;
+}
+
+.candidate-profile-popup .candidate-popup-post-title {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 0.08rem !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0.02rem 0 0 !important;
+  line-height: 1 !important;
+  text-align: left !important;
+}
+
+.candidate-profile-popup .candidate-popup-post-author,
+.candidate-profile-popup .candidate-popup-post-author-button {
+  display: block !important;
+  width: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: #1f2937 !important;
+  -webkit-text-fill-color: #1f2937 !important;
+  font-size: 0.96rem !important;
+  line-height: 1.05 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  text-align: left !important;
+}
+
+.candidate-profile-popup .candidate-popup-post-meta {
+  display: block !important;
+  align-self: flex-start !important;
+  width: auto !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #5d6774 !important;
+  -webkit-text-fill-color: #5d6774 !important;
+  font-size: 0.68rem !important;
+  line-height: 1.12 !important;
+  text-align: left !important;
+  transform: none !important;
+}
+
+.candidate-profile-popup .candidate-popup-reach-row {
+  display: flex !important;
+  justify-content: flex-start !important;
+  margin: 0.88rem 0 0.9rem !important;
+  padding: 0 !important;
+}
+
+.candidate-profile-popup .candidate-popup-post-options {
+  grid-column: 3 !important;
+  grid-row: 1 !important;
+  align-self: start !important;
+  justify-self: end !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.candidate-profile-popup .candidate-popup-options-button,
+.candidate-profile-popup .candidate-popup-options-button:is(:hover, :focus, :focus-visible, :active, [aria-expanded="true"]),
+html body #root .candidate-profile-popup .candidate-popup-options-button,
+html body #root .candidate-profile-popup .candidate-popup-options-button:is(:hover, :focus, :focus-visible, :active, [aria-expanded="true"]) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 16px !important;
+  min-width: 16px !important;
+  max-width: 16px !important;
+  height: 16px !important;
+  min-height: 16px !important;
+  max-height: 16px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+.candidate-profile-popup .candidate-popup-options-icon,
+.candidate-profile-popup .candidate-popup-options-icon * {
+  display: block !important;
+  width: 13px !important;
+  height: 13px !important;
+  fill: #5b6470 !important;
+}
+
+.candidate-profile-popup .candidate-popup-reach-wrap {
+  display: inline-flex !important;
+  width: auto !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+.candidate-profile-popup button.candidate-popup-reach-button,
+.candidate-profile-popup button.candidate-popup-reach-button:is(:hover, :focus, :focus-visible, :active),
+html body #root .candidate-profile-popup button.candidate-popup-reach-button {
+  width: auto !important;
+  min-width: 38px !important;
+  max-width: max-content !important;
+  height: 20px !important;
+  min-height: 20px !important;
+  max-height: 20px !important;
+  padding: 2px 7px !important;
+  border-radius: 999px !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 9px !important;
+  line-height: 1 !important;
+}
+
+.candidate-profile-popup button.candidate-popup-reach-button *,
+html body #root .candidate-profile-popup button.candidate-popup-reach-button * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Candidate section list rows: replace profile preview cards with compact profile/stat rows. */
+html body #root .talent-pool-container.candidate-view-candidates .candidate-list,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-list {
+  display: grid !important;
+  gap: 0.62rem !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-list-row,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-row {
+  display: grid !important;
+  grid-template-columns: 2.35rem minmax(0, 1fr) !important;
+  grid-template-areas:
+    "avatar main"
+    "stats stats" !important;
+  align-items: center !important;
+  column-gap: 0.62rem !important;
+  row-gap: 0.48rem !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 0.72rem 0.78rem !important;
+  border: 1px solid rgba(112, 83, 52, 0.18) !important;
+  border-radius: 0.75rem !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  box-shadow: none !important;
+  color: #1f2937 !important;
+  text-align: left !important;
+  cursor: pointer !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-list-row:is(:hover, :focus-visible),
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-row:is(:hover, :focus-visible) {
+  border-color: rgba(112, 83, 52, 0.28) !important;
+  background: #ffffff !important;
+  outline: none !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-list-avatar,
+html body #root .talent-pool-container.candidate-view-candidates .candidate-list-avatar img,
+html body #root .talent-pool-container.candidate-view-candidates .candidate-list-avatar .profile-avatar-image,
+html body #root .talent-pool-container.candidate-view-candidates .candidate-list-avatar .default-profile-image,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-avatar,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-avatar img,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-avatar .profile-avatar-image,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-avatar .default-profile-image {
+  grid-area: avatar !important;
+  width: 2.35rem !important;
+  min-width: 2.35rem !important;
+  max-width: 2.35rem !important;
+  height: 2.35rem !important;
+  min-height: 2.35rem !important;
+  max-height: 2.35rem !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  overflow: hidden !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-list-main,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-main {
+  grid-area: main !important;
+  display: grid !important;
+  align-content: center !important;
+  gap: 0.1rem !important;
+  min-width: 0 !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-list-name,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-name {
+  display: block !important;
+  overflow: hidden !important;
+  color: #1f2937 !important;
+  -webkit-text-fill-color: #1f2937 !important;
+  font-size: 0.96rem !important;
+  font-weight: 800 !important;
+  line-height: 1.08 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-list-id,
+html body #root .talent-pool-container.candidate-view-candidates .candidate-list-skills,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-id,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-skills {
+  display: block !important;
+  overflow: hidden !important;
+  color: #5f6874 !important;
+  -webkit-text-fill-color: #5f6874 !important;
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  line-height: 1.12 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-list-skills,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-skills {
+  color: #8f6f7b !important;
+  -webkit-text-fill-color: #8f6f7b !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-list-stats,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-stats {
+  grid-area: stats !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 0.3rem !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0.5rem 0 0 !important;
+  border-top: 1px solid rgba(112, 83, 52, 0.14) !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-list-stats > span,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-stats > span {
+  display: grid !important;
+  justify-items: center !important;
+  gap: 0.04rem !important;
+  min-width: 0 !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-list-stats strong,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-stats strong {
+  color: #1f2937 !important;
+  -webkit-text-fill-color: #1f2937 !important;
+  font-size: 0.82rem !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-list-stats small,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-stats small {
+  color: #5f6874 !important;
+  -webkit-text-fill-color: #5f6874 !important;
+  font-size: 0.63rem !important;
+  font-weight: 700 !important;
+  line-height: 1.05 !important;
+}
+
+/* Opened post image preview: remove the frame that was climbing over the post text. */
+html body #root .portal-post-detail-modal .portal-post-detail-body {
+  margin-bottom: 1rem !important;
+}
+
+html body #root .portal-post-detail-modal .portal-post-media.portal-post-detail-media,
+html body #root .portal-post-detail-modal .portal-post-detail-media {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 1rem 0 1.1rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+html body #root .portal-post-detail-modal .portal-post-detail-media .portal-post-image-preview-button,
+html body #root .portal-post-detail-modal .portal-post-detail-media .portal-post-image-preview-button:is(:hover, :focus, :focus-visible, :active) {
+  display: block !important;
+  width: auto !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+html body #root .portal-post-detail-modal .portal-post-detail-media img,
+html body #root .portal-post-detail-modal .portal-post-detail-media .portal-post-image-preview-button img {
+  display: block !important;
+  width: auto !important;
+  max-width: min(100%, 20rem) !important;
+  max-height: 28rem !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0.42rem !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  object-fit: contain !important;
+}
+
+/* Candidate profile popup posts: final mobile lock for title/meta alignment and small white reach pill. */
+html body #root .portal-profile-detail-modal.candidate-profile-popup .candidate-popup-post-card {
+  padding: 0.78rem 0.84rem !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup .candidate-popup-post-header {
+  display: grid !important;
+  grid-template-columns: 30px minmax(0, 1fr) 18px !important;
+  align-items: start !important;
+  column-gap: 8px !important;
+  row-gap: 0 !important;
+  width: 100% !important;
+  min-height: 30px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup button.candidate-popup-post-avatar,
+html body #root .portal-profile-detail-modal.candidate-profile-popup .candidate-popup-post-avatar,
+html body #root .portal-profile-detail-modal.candidate-profile-popup .candidate-popup-post-avatar img {
+  width: 30px !important;
+  min-width: 30px !important;
+  max-width: 30px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  max-height: 30px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup .candidate-popup-post-title {
+  display: grid !important;
+  grid-template-rows: max-content max-content !important;
+  align-content: start !important;
+  align-items: start !important;
+  justify-content: start !important;
+  justify-items: start !important;
+  gap: 2px !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  transform: none !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup .candidate-popup-post-author {
+  display: block !important;
+  width: auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 0.9rem !important;
+  line-height: 1 !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup .candidate-popup-post-author-button {
+  display: inline-block !important;
+  width: auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: #1f2937 !important;
+  -webkit-text-fill-color: #1f2937 !important;
+  font-size: inherit !important;
+  line-height: 1 !important;
+  text-align: left !important;
+  transform: none !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup .candidate-popup-post-meta {
+  display: block !important;
+  width: auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #5f6874 !important;
+  -webkit-text-fill-color: #5f6874 !important;
+  font-size: 0.62rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  text-align: left !important;
+  transform: none !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup .candidate-popup-reach-row,
+html body #root .portal-profile-detail-modal.candidate-profile-popup .candidate-popup-post-card .portal-post-reach-row {
+  display: flex !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  width: 100% !important;
+  margin: 0.44rem 0 0.55rem !important;
+  padding: 0 !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup .candidate-popup-reach-wrap {
+  display: inline-flex !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup button.candidate-popup-reach-button,
+html body #root .portal-profile-detail-modal.candidate-profile-popup button.portal-post-reach.candidate-popup-reach-button,
+html body #root .portal-profile-detail-modal.candidate-profile-popup button.candidate-popup-reach-button:is(:hover, :focus, :focus-visible, :active) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 42px !important;
+  max-width: max-content !important;
+  height: 22px !important;
+  min-height: 22px !important;
+  max-height: 22px !important;
+  padding: 2px 8px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: #b77486 !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+html body #root .portal-profile-detail-modal.candidate-profile-popup button.candidate-popup-reach-button span,
+html body #root .portal-profile-detail-modal.candidate-profile-popup button.portal-post-reach.candidate-popup-reach-button span,
+html body #root .portal-profile-detail-modal.candidate-profile-popup button.candidate-popup-reach-button * {
+  display: inline !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+/* My Applications hub: top navigation for applications, assessments, interviews, and drafts. */
+html body #root .applications-hub-container {
+  display: grid !important;
+  gap: 0.85rem !important;
+}
+
+html body #root .applications-hub-header {
+  align-items: center !important;
+  margin-bottom: 0 !important;
+}
+
+html body #root .applications-hub-header h2 {
+  margin: 0 !important;
+}
+
+html body #root .applications-hub-nav {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 0.62rem !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0.68rem !important;
+  border: 1px solid rgba(112, 83, 52, 0.16) !important;
+  border-radius: 0.85rem !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  box-shadow: 0 0.65rem 1.8rem rgba(31, 41, 55, 0.06) !important;
+}
+
+html body #root .applications-hub-tab {
+  display: grid !important;
+  grid-template-rows: 1.55rem auto !important;
+  justify-items: center !important;
+  align-items: center !important;
+  gap: 0.28rem !important;
+  min-width: 0 !important;
+  min-height: 4.3rem !important;
+  padding: 0.58rem 0.38rem !important;
+  border: 1px solid rgba(112, 83, 52, 0.14) !important;
+  border-radius: 0.72rem !important;
+  background: #ffffff !important;
+  color: #1f2937 !important;
+  -webkit-text-fill-color: #1f2937 !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+}
+
+html body #root .applications-hub-tab:is(:hover, :focus-visible),
+html body #root .applications-hub-tab.active {
+  border-color: rgba(125, 48, 68, 0.3) !important;
+  background: rgba(247, 239, 231, 0.9) !important;
+  color: #6b1428 !important;
+  -webkit-text-fill-color: #6b1428 !important;
+  outline: none !important;
+}
+
+html body #root .applications-hub-tab-icon {
+  display: block !important;
+  width: 1.36rem !important;
+  height: 1.36rem !important;
+  color: currentColor !important;
+  fill: currentColor !important;
+}
+
+html body #root .applications-hub-tab span {
+  display: block !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  color: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+  font-size: 0.72rem !important;
+  font-weight: 800 !important;
+  line-height: 1.08 !important;
+  text-align: center !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body #root .applications-hub-panel {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+html body #root .applications-hub-panel > .applications-container {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .applications-hub-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.5rem !important;
+    padding: 0.56rem !important;
+  }
+
+  html body #root .applications-hub-tab {
+    grid-template-columns: 1.25rem minmax(0, 1fr) !important;
+    grid-template-rows: auto !important;
+    justify-items: start !important;
+    min-height: 2.85rem !important;
+    padding: 0.52rem 0.62rem !important;
+  }
+
+  html body #root .applications-hub-tab-icon {
+    width: 1.14rem !important;
+    height: 1.14rem !important;
+  }
+
+  html body #root .applications-hub-tab span {
+    text-align: left !important;
+    white-space: normal !important;
+  }
+}
+
+/* Bookmarks hub: one navbar entry for bookmarked candidates, jobs, and saved posts. */
+html body #root .bookmarks-hub-container {
+  display: grid !important;
+  gap: 0.85rem !important;
+}
+
+html body #root .bookmarks-hub-header {
+  align-items: center !important;
+  margin-bottom: 0 !important;
+}
+
+html body #root .bookmarks-hub-header h2 {
+  margin: 0 !important;
+}
+
+html body #root .bookmarks-hub-nav {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 0.62rem !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0.68rem !important;
+  border: 1px solid rgba(112, 83, 52, 0.16) !important;
+  border-radius: 0.85rem !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  box-shadow: 0 0.65rem 1.8rem rgba(31, 41, 55, 0.06) !important;
+}
+
+html body #root .bookmarks-hub-tab {
+  display: grid !important;
+  grid-template-rows: 1.55rem auto !important;
+  justify-items: center !important;
+  align-items: center !important;
+  gap: 0.28rem !important;
+  min-width: 0 !important;
+  min-height: 4.3rem !important;
+  padding: 0.58rem 0.38rem !important;
+  border: 1px solid rgba(112, 83, 52, 0.14) !important;
+  border-radius: 0.72rem !important;
+  background: #ffffff !important;
+  color: #1f2937 !important;
+  -webkit-text-fill-color: #1f2937 !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+}
+
+html body #root .bookmarks-hub-tab:is(:hover, :focus-visible),
+html body #root .bookmarks-hub-tab.active {
+  border-color: rgba(125, 48, 68, 0.3) !important;
+  background: rgba(247, 239, 231, 0.9) !important;
+  color: #6b1428 !important;
+  -webkit-text-fill-color: #6b1428 !important;
+  outline: none !important;
+}
+
+html body #root .bookmarks-hub-tab-icon {
+  display: block !important;
+  width: 1.36rem !important;
+  height: 1.36rem !important;
+  color: currentColor !important;
+  fill: currentColor !important;
+}
+
+html body #root .bookmarks-hub-tab span {
+  display: block !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  color: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+  font-size: 0.72rem !important;
+  font-weight: 800 !important;
+  line-height: 1.08 !important;
+  text-align: center !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body #root .bookmarks-hub-panel {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+html body #root .bookmarks-hub-panel > :is(.applications-container, .talent-pool-container, .saved-posts-section) {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .bookmarks-hub-nav {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.42rem !important;
+    padding: 0.56rem !important;
+  }
+
+  html body #root .bookmarks-hub-tab {
+    min-height: 3.35rem !important;
+    padding: 0.48rem 0.3rem !important;
+  }
+
+  html body #root .bookmarks-hub-tab-icon {
+    width: 1.12rem !important;
+    height: 1.12rem !important;
+  }
+
+  html body #root .bookmarks-hub-tab span {
+    font-size: 0.66rem !important;
+    white-space: normal !important;
+  }
+}
+
+/* My Applications details: light detail view, wider cards, card-click previews, footer withdraw. */
+html body #root .applications-hub-panel .fresh-application-card-clickable {
+  cursor: pointer !important;
+}
+
+html body #root .applications-hub-panel .fresh-application-card-clickable:is(:hover, :focus-visible) {
+  outline: none !important;
+  border-color: rgba(125, 48, 68, 0.32) !important;
+  transform: translateY(-1px) !important;
+}
+
+html body #root .applications-hub-panel .fresh-application-actions {
+  display: none !important;
+}
+
+html body #root .applications-container > .application-detail-view,
+html body #root .applications-hub-container .application-detail-view,
+html body #root .applications-hub-panel .application-detail-view {
+  display: grid !important;
+  gap: 1rem !important;
+  width: 100% !important;
+  max-width: min(100%, 62rem) !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #1f2937 !important;
+  -webkit-text-fill-color: #1f2937 !important;
+}
+
+html body #root .applications-container > .application-detail-view::before,
+html body #root .applications-container > .application-detail-view::after,
+html body #root .applications-hub-container .application-detail-view::before,
+html body #root .applications-hub-container .application-detail-view::after,
+html body #root .applications-hub-panel .application-detail-view::before,
+html body #root .applications-hub-panel .application-detail-view::after {
+  display: none !important;
+  content: none !important;
+}
+
+html body #root .applications-container > .application-detail-view > .profile-section,
+html body #root .applications-hub-container .application-detail-view > .profile-section,
+html body #root .applications-hub-panel .application-detail-view > .profile-section {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 1.05rem 1.15rem !important;
+  border: 1px solid rgba(112, 83, 52, 0.18) !important;
+  border-radius: 0.82rem !important;
+  background: #ffffff !important;
+  box-shadow: 0 0.75rem 1.65rem rgba(31, 41, 55, 0.06) !important;
+  color: #1f2937 !important;
+  -webkit-text-fill-color: #1f2937 !important;
+}
+
+html body #root .applications-container > .application-detail-view > .profile-section::before,
+html body #root .applications-container > .application-detail-view > .profile-section::after,
+html body #root .applications-hub-container .application-detail-view > .profile-section::before,
+html body #root .applications-hub-container .application-detail-view > .profile-section::after,
+html body #root .applications-hub-panel .application-detail-view > .profile-section::before,
+html body #root .applications-hub-panel .application-detail-view > .profile-section::after {
+  display: none !important;
+  content: none !important;
+}
+
+html body #root .applications-container > .application-detail-view > .profile-section :is(h3, h4, p, strong, span, li),
+html body #root .applications-hub-container .application-detail-view > .profile-section :is(h3, h4, p, strong, span, li),
+html body #root .applications-hub-panel .application-detail-view > .profile-section :is(h3, h4, p, strong, span, li) {
+  color: #1f2937 !important;
+  -webkit-text-fill-color: #1f2937 !important;
+}
+
+html body #root .applications-container > .application-detail-view .status-detail-row,
+html body #root .applications-hub-container .application-detail-view .status-detail-row,
+html body #root .applications-hub-panel .application-detail-view .status-detail-row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+}
+
+html body #root .applications-container > .application-detail-view .status-detail-row .view-button,
+html body #root .applications-hub-container .application-detail-view .status-detail-row .view-button,
+html body #root .applications-hub-panel .application-detail-view .status-detail-row .view-button {
+  flex: 1 1 14rem !important;
+  min-width: min(100%, 14rem) !important;
+  border: 1px solid rgba(112, 83, 52, 0.16) !important;
+  border-radius: 999px !important;
+  background: #fffaf4 !important;
+  box-shadow: none !important;
+  color: #1f2937 !important;
+  -webkit-text-fill-color: #1f2937 !important;
+}
+
+html body #root .applications-container > .application-detail-view .status-detail-row .view-button::before,
+html body #root .applications-container > .application-detail-view .status-detail-row .view-button::after,
+html body #root .applications-hub-container .application-detail-view .status-detail-row .view-button::before,
+html body #root .applications-hub-container .application-detail-view .status-detail-row .view-button::after,
+html body #root .applications-hub-panel .application-detail-view .status-detail-row .view-button::before,
+html body #root .applications-hub-panel .application-detail-view .status-detail-row .view-button::after {
+  display: none !important;
+  content: none !important;
+}
+
+html body #root .applications-container > .application-detail-view .section-footer-nav,
+html body #root .applications-hub-container .application-detail-view .section-footer-nav,
+html body #root .applications-hub-panel .application-detail-view .section-footer-nav {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 0.65rem !important;
+  width: 100% !important;
+  padding: 0.15rem 0 0 !important;
+}
+
+html body #root .applications-container > .application-detail-view .section-footer-nav .withdraw-uiverse-button,
+html body #root .applications-hub-container .application-detail-view .section-footer-nav .withdraw-uiverse-button,
+html body #root .applications-hub-panel .application-detail-view .section-footer-nav .withdraw-uiverse-button {
+  position: relative !important;
+  display: inline-grid !important;
+  grid-template-columns: 2.25rem minmax(4.9rem, 1fr) !important;
+  align-items: center !important;
+  justify-content: stretch !important;
+  flex: 0 0 7.45rem !important;
+  width: 7.45rem !important;
+  min-width: 7.45rem !important;
+  max-width: 7.45rem !important;
+  height: 2.25rem !important;
+  min-height: 2.25rem !important;
+  max-height: 2.25rem !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+html body #root .applications-container > .application-detail-view .section-footer-nav .withdraw-uiverse-button .withdraw-uiverse-button__text,
+html body #root .applications-hub-container .application-detail-view .section-footer-nav .withdraw-uiverse-button .withdraw-uiverse-button__text,
+html body #root .applications-hub-panel .application-detail-view .section-footer-nav .withdraw-uiverse-button .withdraw-uiverse-button__text {
+  grid-column: 2 !important;
+  position: static !important;
+  transform: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  padding: 0 0.55rem 0 0.35rem !important;
+  overflow: hidden !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  text-overflow: clip !important;
+  white-space: nowrap !important;
+}
+
+html body #root .applications-container > .application-detail-view .section-footer-nav .withdraw-uiverse-button .withdraw-uiverse-button__icon,
+html body #root .applications-hub-container .application-detail-view .section-footer-nav .withdraw-uiverse-button .withdraw-uiverse-button__icon,
+html body #root .applications-hub-panel .application-detail-view .section-footer-nav .withdraw-uiverse-button .withdraw-uiverse-button__icon {
+  grid-column: 1 !important;
+  position: static !important;
+  display: flex !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 100% !important;
+  transform: none !important;
+}
+
+html body #root .applications-container > .application-detail-view .section-footer-nav .withdraw-uiverse-button:is(:hover, :focus, :focus-visible, :active) .withdraw-uiverse-button__text,
+html body #root .applications-hub-container .application-detail-view .section-footer-nav .withdraw-uiverse-button:is(:hover, :focus, :focus-visible, :active) .withdraw-uiverse-button__text,
+html body #root .applications-hub-panel .application-detail-view .section-footer-nav .withdraw-uiverse-button:is(:hover, :focus, :focus-visible, :active) .withdraw-uiverse-button__text {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html body #root .applications-container > .application-detail-view .section-footer-nav .withdraw-uiverse-button:is(:hover, :focus, :focus-visible, :active) .withdraw-uiverse-button__icon,
+html body #root .applications-hub-container .application-detail-view .section-footer-nav .withdraw-uiverse-button:is(:hover, :focus, :focus-visible, :active) .withdraw-uiverse-button__icon,
+html body #root .applications-hub-panel .application-detail-view .section-footer-nav .withdraw-uiverse-button:is(:hover, :focus, :focus-visible, :active) .withdraw-uiverse-button__icon {
+  width: 100% !important;
+  transform: none !important;
+}
+
+html body #root .applications-container > .application-detail-view .section-footer-nav .application-detail-back-icon,
+html body #root .applications-hub-container .application-detail-view .section-footer-nav .application-detail-back-icon,
+html body #root .applications-hub-panel .application-detail-view .section-footer-nav .application-detail-back-icon,
+html body #root .applications-container > .application-detail-view .section-footer-nav .application-detail-back-icon:is(:hover, :focus, :focus-visible, :active),
+html body #root .applications-hub-container .application-detail-view .section-footer-nav .application-detail-back-icon:is(:hover, :focus, :focus-visible, :active),
+html body #root .applications-hub-panel .application-detail-view .section-footer-nav .application-detail-back-icon:is(:hover, :focus, :focus-visible, :active) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 2.35rem !important;
+  min-width: 2.35rem !important;
+  max-width: 2.35rem !important;
+  height: 2.35rem !important;
+  min-height: 2.35rem !important;
+  max-height: 2.35rem !important;
+  padding: 0 !important;
+  border: 1px solid rgba(112, 83, 52, 0.18) !important;
+  border-radius: 50% !important;
+  background: #fffaf4 !important;
+  box-shadow: none !important;
+  color: #1f2937 !important;
+  -webkit-text-fill-color: #1f2937 !important;
+  font-size: 1.2rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+}
+
+html body #root .applications-container > .application-detail-view .section-footer-nav .application-detail-back-icon::before,
+html body #root .applications-container > .application-detail-view .section-footer-nav .application-detail-back-icon::after,
+html body #root .applications-hub-container .application-detail-view .section-footer-nav .application-detail-back-icon::before,
+html body #root .applications-hub-container .application-detail-view .section-footer-nav .application-detail-back-icon::after,
+html body #root .applications-hub-panel .application-detail-view .section-footer-nav .application-detail-back-icon::before,
+html body #root .applications-hub-panel .application-detail-view .section-footer-nav .application-detail-back-icon::after {
+  display: none !important;
+  content: none !important;
+}
+
+html body #root .applications-container > .application-detail-view .section-footer-nav .application-detail-back-icon span,
+html body #root .applications-hub-container .application-detail-view .section-footer-nav .application-detail-back-icon span,
+html body #root .applications-hub-panel .application-detail-view .section-footer-nav .application-detail-back-icon span {
+  display: block !important;
+  color: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+  line-height: 1 !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .applications-container > .application-detail-view,
+  html body #root .applications-hub-container .application-detail-view,
+  html body #root .applications-hub-panel .application-detail-view {
+    max-width: 100% !important;
+    gap: 0.78rem !important;
+  }
+
+  html body #root .applications-container > .application-detail-view > .profile-section,
+  html body #root .applications-hub-container .application-detail-view > .profile-section,
+  html body #root .applications-hub-panel .application-detail-view > .profile-section {
+    padding: 0.9rem 0.95rem !important;
+    border-radius: 0.72rem !important;
+  }
+
+html body #root .applications-container > .application-detail-view .section-footer-nav,
+html body #root .applications-hub-container .application-detail-view .section-footer-nav,
+html body #root .applications-hub-panel .application-detail-view .section-footer-nav {
+    display: grid !important;
+    grid-template-columns: minmax(0, 7.45rem) 2.35rem minmax(0, 1fr) !important;
+    justify-content: start !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+  }
+
+  html body #root .applications-container > .application-detail-view .section-footer-nav .withdraw-uiverse-button,
+  html body #root .applications-hub-container .application-detail-view .section-footer-nav .withdraw-uiverse-button,
+  html body #root .applications-hub-panel .application-detail-view .section-footer-nav .withdraw-uiverse-button {
+    grid-column: 1 !important;
+    grid-template-columns: 2rem minmax(4.65rem, 1fr) !important;
+    width: 7.15rem !important;
+    min-width: 7.15rem !important;
+    max-width: 7.15rem !important;
+    height: 2.15rem !important;
+    min-height: 2.15rem !important;
+    max-height: 2.15rem !important;
+    font-size: 0.72rem !important;
+  }
+
+  html body #root .applications-container > .application-detail-view .section-footer-nav .withdraw-uiverse-button .withdraw-uiverse-button__text,
+  html body #root .applications-hub-container .application-detail-view .section-footer-nav .withdraw-uiverse-button .withdraw-uiverse-button__text,
+  html body #root .applications-hub-panel .application-detail-view .section-footer-nav .withdraw-uiverse-button .withdraw-uiverse-button__text {
+    width: 100% !important;
+    font-size: 0.72rem !important;
+  }
+
+  html body #root .applications-container > .application-detail-view .section-footer-nav .withdraw-uiverse-button .withdraw-uiverse-button__icon,
+  html body #root .applications-hub-container .application-detail-view .section-footer-nav .withdraw-uiverse-button .withdraw-uiverse-button__icon,
+  html body #root .applications-hub-panel .application-detail-view .section-footer-nav .withdraw-uiverse-button .withdraw-uiverse-button__icon {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+
+  html body #root .applications-container > .application-detail-view .section-footer-nav .application-detail-back-icon,
+  html body #root .applications-hub-container .application-detail-view .section-footer-nav .application-detail-back-icon,
+  html body #root .applications-hub-panel .application-detail-view .section-footer-nav .application-detail-back-icon {
+    grid-column: 2 !important;
+  }
+}
+
+/* Icon-only withdraw action: red Bootstrap trash icon, no text/background/border. */
+html body #root .withdraw-icon-button,
+html body #root .withdraw-icon-button:is(:hover, :focus, :focus-visible, :active),
+html body #root .applications-container > .application-detail-view .section-footer-nav .withdraw-icon-button,
+html body #root .applications-hub-container .application-detail-view .section-footer-nav .withdraw-icon-button,
+html body #root .applications-hub-panel .application-detail-view .section-footer-nav .withdraw-icon-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 2.35rem !important;
+  min-width: 2.35rem !important;
+  max-width: 2.35rem !important;
+  height: 2.35rem !important;
+  min-height: 2.35rem !important;
+  max-height: 2.35rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #dc2626 !important;
+  -webkit-text-fill-color: #dc2626 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+}
+
+html body #root .withdraw-icon-button svg,
+html body #root .withdraw-icon-button svg path {
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+  color: #dc2626 !important;
+  fill: #dc2626 !important;
+  -webkit-text-fill-color: #dc2626 !important;
+}
+
+html body #root .withdraw-icon-button:disabled {
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .applications-container > .application-detail-view .section-footer-nav,
+  html body #root .applications-hub-container .application-detail-view .section-footer-nav,
+  html body #root .applications-hub-panel .application-detail-view .section-footer-nav {
+    grid-template-columns: 2.35rem 2.35rem minmax(0, 1fr) !important;
+  }
+
+  html body #root .applications-container > .application-detail-view .section-footer-nav .withdraw-icon-button,
+  html body #root .applications-hub-container .application-detail-view .section-footer-nav .withdraw-icon-button,
+  html body #root .applications-hub-panel .application-detail-view .section-footer-nav .withdraw-icon-button {
+    grid-column: 1 !important;
+  }
+}
+
+/* My Applications detail typography: keep snapshot lists and message preview compact. */
+html body #root .applications-container > .application-detail-view .profile-subsection,
+html body #root .applications-hub-container .application-detail-view .profile-subsection,
+html body #root .applications-hub-panel .application-detail-view .profile-subsection {
+  margin-top: 0.58rem !important;
+}
+
+html body #root .applications-container > .application-detail-view .profile-subsection h4,
+html body #root .applications-hub-container .application-detail-view .profile-subsection h4,
+html body #root .applications-hub-panel .application-detail-view .profile-subsection h4 {
+  margin: 0 0 0.22rem !important;
+  font-size: 0.82rem !important;
+  line-height: 1.12 !important;
+}
+
+html body #root .applications-container > .application-detail-view .profile-list,
+html body #root .applications-hub-container .application-detail-view .profile-list,
+html body #root .applications-hub-panel .application-detail-view .profile-list {
+  display: grid !important;
+  gap: 0.2rem !important;
+  margin: 0.18rem 0 0 !important;
+  padding-left: 1rem !important;
+}
+
+html body #root .applications-container > .application-detail-view .profile-list li,
+html body #root .applications-hub-container .application-detail-view .profile-list li,
+html body #root .applications-hub-panel .application-detail-view .profile-list li {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 0.72rem !important;
+  font-weight: 500 !important;
+  line-height: 1.32 !important;
+}
+
+html body #root .applications-container > .application-detail-view .application-message-preview,
+html body #root .applications-hub-container .application-detail-view .application-message-preview,
+html body #root .applications-hub-panel .application-detail-view .application-message-preview {
+  width: fit-content !important;
+  max-width: 100% !important;
+  min-width: min(100%, 12rem) !important;
+  margin: 0.34rem 0 0 !important;
+  padding: 0.5rem 0.68rem !important;
+  border-radius: 0.44rem !important;
+}
+
+html body #root .applications-container > .application-detail-view .application-message-preview p,
+html body #root .applications-hub-container .application-detail-view .application-message-preview p,
+html body #root .applications-hub-panel .application-detail-view .application-message-preview p {
+  margin: 0 !important;
+  font-size: 0.74rem !important;
+  line-height: 1.3 !important;
+}
+
+/* Candidates now shares Home's profile-post markup; keep both reach pills compact. */
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-feed-reach-wrap,
+html body .portal-profile-detail-backdrop .portal-profile-preview-post-card .portal-feed-reach-wrap {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  inline-size: fit-content !important;
+  width: fit-content !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button:is(:hover, :focus, :focus-visible, :active),
+html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button,
+html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button:is(:hover, :focus, :focus-visible, :active) {
+  flex: 0 0 auto !important;
+  inline-size: fit-content !important;
+  width: fit-content !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  height: 1.45rem !important;
+  min-height: 1.45rem !important;
+  max-height: 1.45rem !important;
+  padding: 0.14rem 0.42rem !important;
+  border-radius: 999px !important;
+  font-size: 0.62rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button *,
+html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button * {
+  font-size: 0.62rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
 }

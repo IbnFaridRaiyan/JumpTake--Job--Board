@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import AnimatedDeleteButton from './AnimatedDeleteButton';
 
-const VideoInterviews = forwardRef(({ userId, switchSection, onFooterBack }, ref) => {
+const VideoInterviews = forwardRef(({ userId, switchSection, onFooterBack, embedded = false }, ref) => {
     const [interviews, setInterviews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -128,9 +128,11 @@ const VideoInterviews = forwardRef(({ userId, switchSection, onFooterBack }, ref
     if (loading) {
         return (
             <div className="applications-container video-interviews-container">
-                <div className="section-header">
-                    <h2>Video Interviews</h2>
-                </div>
+                {!embedded && (
+                    <div className="section-header">
+                        <h2>Video Interviews</h2>
+                    </div>
+                )}
                 <div className="loading-container">
                     <div className="loading-spinner"></div>
                     <p>Loading video interviews...</p>
@@ -241,14 +243,16 @@ const VideoInterviews = forwardRef(({ userId, switchSection, onFooterBack }, ref
 
     return (
         <div className="applications-container video-interviews-container">
-            <div className="section-header">
-                <h2>Video Interviews</h2>
-                <div className="section-actions">
-                    <button className="refresh-button" onClick={fetchInterviews}>
-                        Refresh
-                    </button>
+            {!embedded && (
+                <div className="section-header">
+                    <h2>Video Interviews</h2>
+                    <div className="section-actions">
+                        <button className="refresh-button" onClick={fetchInterviews}>
+                            Refresh
+                        </button>
+                    </div>
                 </div>
-            </div>
+            )}
 
             {message && <div className="notification-message success">{message}</div>}
             {error && <div className="error-message">{error}</div>}

@@ -1,11 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MyApplications from './MyApplications';
-import MyAssessments from './MyAssessments';
-import VideoInterviews from './VideoInterviews';
-import DraftApplications from './DraftApplications';
-import BookmarkedJobs from './BookmarkedJobs';
-import BookmarkedCandidates from './BookmarkedCandidates';
+import BookmarksHub from './BookmarksHub';
 import UserProfile from './UserProfile';
 import UserSettings from './UserSettings';
 import TalentPool from './TalentPool';
@@ -21,7 +17,6 @@ import ResumePlayground from './ResumePlayground';
 import PortalHomeFeed from './PortalHomeFeed';
 import PortalDefaultLanding from './PortalDefaultLanding';
 import PortalAiButton from './PortalAiButton';
-import SavedPosts from './SavedPosts';
 import { clearBrowserAccountState } from '../utils/authStorage';
 import logoDark from './media/logo4.png';
 import logoLight from './media/jumptake-logo-main-light.png';
@@ -56,6 +51,7 @@ const CANDIDATE_SECTION_IDS = new Set([
     'notifications',
     'view-candidates',
     'friend-invitations',
+    'bookmarks',
     'bookmarked-candidates',
     'applications',
     'assessments',
@@ -194,7 +190,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const [savingInterests, setSavingInterests] = useState(false);
     const [mobileSectionVisible, setMobileSectionVisible] = useState(false);
     const myApplicationsRef = useRef(null);
-    const videoInterviewsRef = useRef(null);
+    const bookmarksHubRef = useRef(null);
     const mobilePanelRef = useRef(null);
     const navigate = useNavigate();
     const dashboardLogo = appMode === 'dark' ? logoDark : logoLight;
@@ -274,6 +270,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         assessments: 'My Assessments',
         'video-interviews': 'Video Interviews',
         'draft-applications': 'Draft Applications',
+        bookmarks: 'Bookmarks',
         'bookmarked-jobs': 'Bookmarked Jobs',
         'saved-posts': 'Saved Posts',
         notifications: 'Notifications',
@@ -764,18 +761,19 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 },
         { id: 'view-candidates', label: 'Candidates', icon: 'users' },
         { id: 'friend-invitations', label: 'Friends', icon: 'user-plus', notification: pendingFriendInvitationCount > 0 },
-        { id: 'bookmarked-candidates', label: 'Bookmarked Candidates', icon: 'heart' },
         { id: 'applications', label: 'My Applications', icon: 'profile' },
-        { id: 'assessments', label: 'My Assessments', icon: 'assessment', notification: pendingAssessmentCount > 0 },
-        { id: 'video-interviews', label: 'Video Interviews', icon: 'send', notification: pendingVideoInterviewCount > 0 },
-        { id: 'draft-applications', label: 'Draft Applications', icon: 'draft' },
-        { id: 'bookmarked-jobs', label: 'Bookmarked Jobs', icon: 'star' },
-        { id: 'saved-posts', label: 'Saved Posts', icon: 'star' },
+        { id: 'bookmarks', label: 'Bookmarks', icon: 'star' },
         { id: 'interested-jobs', label: 'Job Preferences', icon: 'briefcase' },
         { id: 'resume-playground', label: 'Resume Playground', icon: 'draft' }
     ].map((item) => ({
         ...item,
-        active: item.id === 'home' ? ['home', 'job-feed'].includes(activeSection) : activeSection === item.id,
+        active: item.id === 'home'
+            ? ['home', 'job-feed'].includes(activeSection)
+            : item.id === 'applications'
+                ? ['applications', 'assessments', 'video-interviews', 'draft-applications'].includes(activeSection)
+                : item.id === 'bookmarks'
+                    ? ['bookmarks', 'bookmarked-candidates', 'bookmarked-jobs', 'saved-posts'].includes(activeSection)
+                : activeSection === item.id,
         onClick: () => openSection(item.id)
     }));
 
@@ -850,7 +848,14 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     };
 
     const closeMobileSectionPanel = () => {
-        if (activeSection === 'applications' && myApplicationsRef.current?.goBackOneStep?.()) {
+        if (['applications', 'assessments', 'video-interviews', 'draft-applications'].includes(activeSection)
+            && myApplicationsRef.current?.goBackOneStep?.()) {
+            resetMobilePanelScroll();
+            return;
+        }
+
+        if (['bookmarks', 'bookmarked-candidates', 'bookmarked-jobs', 'saved-posts'].includes(activeSection)
+            && bookmarksHubRef.current?.goBackOneStep?.()) {
             resetMobilePanelScroll();
             return;
         }
@@ -859,12 +864,14 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     };
 
     const goToPreviousSection = () => {
-        if (activeSection === 'applications' && myApplicationsRef.current?.goBackOneStep?.()) {
+        if (['applications', 'assessments', 'video-interviews', 'draft-applications'].includes(activeSection)
+            && myApplicationsRef.current?.goBackOneStep?.()) {
             resetMobilePanelScroll();
             return;
         }
 
-        if (activeSection === 'video-interviews' && videoInterviewsRef.current?.goBackOneStep?.()) {
+        if (['bookmarks', 'bookmarked-candidates', 'bookmarked-jobs', 'saved-posts'].includes(activeSection)
+            && bookmarksHubRef.current?.goBackOneStep?.()) {
             resetMobilePanelScroll();
             return;
         }
@@ -924,44 +931,39 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     onRefresh={refreshData}
                 />;
             case 'applications':
+            case 'assessments':
+            case 'video-interviews':
+            case 'draft-applications':
                 return <MyApplications
                     ref={myApplicationsRef}
                     userId={user?.id}
                     onRefresh={refreshData}
                     switchSection={switchSection}
                     onFooterBack={goToPreviousSection}
+                    initialTab={activeSection === 'assessments'
+                        ? 'assessments'
+                        : activeSection === 'video-interviews'
+                            ? 'video-interviews'
+                            : activeSection === 'draft-applications'
+                                ? 'draft-applications'
+                                : 'applications'}
+                    onPendingAssessmentCountChange={setPendingAssessmentCount}
                 />;
-            case 'assessments':
-                return <MyAssessments
-                    userId={user?.id}
-                    onRefresh={refreshData}
-                    onPendingCountChange={setPendingAssessmentCount}
-                    switchSection={switchSection}
-                    onFooterBack={goToPreviousSection}
-                />;
-            case 'video-interviews':
-                return <VideoInterviews
-                    ref={videoInterviewsRef}
-                    userId={user?.id}
-                    switchSection={switchSection}
-                    onFooterBack={goToPreviousSection}
-                />;
-            case 'draft-applications':
-                return <DraftApplications
-                    userId={user?.id}
-                    switchSection={switchSection}
-                    onFooterBack={goToPreviousSection}
-                />;
+            case 'bookmarks':
+            case 'bookmarked-candidates':
             case 'bookmarked-jobs':
-                return <BookmarkedJobs
+            case 'saved-posts':
+                return <BookmarksHub
+                    ref={bookmarksHubRef}
                     userId={user?.id}
+                    viewerId={user?.id || user?._id || user?.userId || 'candidate-guest'}
                     switchSection={switchSection}
                     onFooterBack={goToPreviousSection}
-                />;
-            case 'saved-posts':
-                return <SavedPosts
-                    viewerId={user?.id || user?._id || user?.userId || 'candidate-guest'}
-                    onFooterBack={goToPreviousSection}
+                    initialTab={activeSection === 'bookmarked-jobs'
+                        ? 'bookmarked-jobs'
+                        : activeSection === 'saved-posts'
+                            ? 'saved-posts'
+                            : 'bookmarked-candidates'}
                 />;
             case 'notifications':
                 return <Notifications
@@ -980,12 +982,6 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                 />;
             case 'friend-invitations':
                 return <FriendInvitations userId={user?.id} />;
-            case 'bookmarked-candidates':
-                return <BookmarkedCandidates
-                    userId={user?.id}
-                    onBack={goToPreviousSection}
-                    onFooterBack={goToPreviousSection}
-                />;
             case 'interested-jobs':
                 return <InterestedJobSuggestion
                     user={user}

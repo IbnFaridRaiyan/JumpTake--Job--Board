@@ -9,6 +9,7 @@ import { apiUrl } from '../utils/apiUrl';
 const WORK_NEWS_STORAGE_KEY = 'jumptakeWorkNewsPosts';
 const TALENT_STORIES_STORAGE_KEY = 'jumptakeTalentStoriesPosts';
 const CANDIDATE_REACH_VIEWED_STORAGE_PREFIX = 'jumptakeCandidateProfileReachViewed:';
+const POPUP_CLOSE_ANIMATION_MS = 260;
 
 const candidateReactionIconPaths = {
     Like: 'M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51a10 10 0 0 1 .443-.051c.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733q.086.18.138.363c.077.27.113.567.113.856s-.036.586-.113.856c-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.2 3.2 0 0 1-.488.901c.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.8 4.8 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z',
@@ -34,6 +35,55 @@ const CandidateReactionIcon = ({ name }) => (
 const CandidateShareIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
         <path fillRule="evenodd" d="M14.854 4.854a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 4H3.5A2.5 2.5 0 0 0 1 6.5v8a.5.5 0 0 0 1 0v-8A1.5 1.5 0 0 1 3.5 5h9.793l-3.147 3.146a.5.5 0 0 0 .708.708z" />
+    </svg>
+);
+
+const CandidateProfileFriendIcon = ({ status = '' }) => {
+    const paths = status === 'accepted'
+        ? [
+            'M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4',
+            'M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z'
+        ]
+        : status === 'pending'
+            ? [
+                'M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.354-5.854 1.5 1.5a.5.5 0 0 1-.708.708L13 11.707V14.5a.5.5 0 0 1-1 0v-2.793l-.646.647a.5.5 0 0 1-.708-.708l1.5-1.5a.5.5 0 0 1 .708 0M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4',
+                'M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z'
+            ]
+            : [
+                'M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4',
+                'M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z'
+            ];
+
+    return (
+        <svg
+            className="candidate-popup-inline-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            aria-hidden="true"
+            focusable="false"
+            style={{ width: '16px', height: '16px', minWidth: '16px', maxWidth: '16px', minHeight: '16px', maxHeight: '16px' }}
+        >
+            {paths.map((path) => <path key={path} d={path} />)}
+        </svg>
+    );
+};
+
+const CandidateProfileBookmarkIcon = ({ active = false }) => (
+    <svg
+        className="candidate-popup-inline-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        aria-hidden="true"
+        focusable="false"
+        style={{ width: '16px', height: '16px', minWidth: '16px', maxWidth: '16px', minHeight: '16px', maxHeight: '16px' }}
+    >
+        <path d={active
+            ? 'M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187z'
+            : 'M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z'} />
     </svg>
 );
 
@@ -133,7 +183,7 @@ const getCandidateReachHistory = (post) => {
 const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employer', currentUserId }) => {
     const [candidates, setCandidates] = useState([]);
     const [bookmarkedTalentIds, setBookmarkedTalentIds] = useState([]);
-    const [likedCandidateIds, setLikedCandidateIds] = useState([]);
+    const [, setLikedCandidateIds] = useState([]);
     const [candidateLikeCounts, setCandidateLikeCounts] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -154,15 +204,19 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
     const [openCandidateOptionsPostId, setOpenCandidateOptionsPostId] = useState('');
     const [openCandidateReachInsightPostId, setOpenCandidateReachInsightPostId] = useState('');
     const [candidateReachInsightPost, setCandidateReachInsightPost] = useState(null);
+    const [candidateImagePreview, setCandidateImagePreview] = useState(null);
+    const [candidateImagePreviewZoom, setCandidateImagePreviewZoom] = useState(1);
     const [candidateCommentDrafts, setCandidateCommentDrafts] = useState({});
     const [candidateShareFriends, setCandidateShareFriends] = useState([]);
     const [candidateShareStatus, setCandidateShareStatus] = useState('');
     const [candidateSharingTargetId, setCandidateSharingTargetId] = useState('');
+    const [closingProfileDetailModal, setClosingProfileDetailModal] = useState(false);
     const [growAnimationKey, setGrowAnimationKey] = useState(0);
     const [isMobileView, setIsMobileView] = useState(() => (
         typeof window !== 'undefined' ? window.innerWidth <= 768 : false
     ));
     const candidateProfileRef = useRef(null);
+    const profileDetailCloseTimerRef = useRef(null);
     const talentPoolRef = useRef(null);
 
     useEffect(() => {
@@ -432,6 +486,16 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
     };
 
     const handleViewProfile = (candidate) => {
+        if (!candidate) {
+            return;
+        }
+
+        if (profileDetailCloseTimerRef.current) {
+            window.clearTimeout(profileDetailCloseTimerRef.current);
+            profileDetailCloseTimerRef.current = null;
+        }
+
+        setClosingProfileDetailModal(false);
         setSelectedCandidate(candidate);
     };
 
@@ -458,7 +522,15 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
     }, [selectedCandidate]);
 
     const handleCloseProfile = () => {
-        setSelectedCandidate(null);
+        if (!selectedCandidate || closingProfileDetailModal) {
+            return;
+        }
+
+        if (profileDetailCloseTimerRef.current) {
+            window.clearTimeout(profileDetailCloseTimerRef.current);
+        }
+
+        setClosingProfileDetailModal(true);
         setOpenCandidateReachInsightPostId('');
         setCandidateReachInsightPost(null);
         setOpenCandidateReactionPostId('');
@@ -467,7 +539,18 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         setOpenCandidateOptionsPostId('');
         setCandidateShareStatus('');
         setCandidateSharingTargetId('');
+        profileDetailCloseTimerRef.current = window.setTimeout(() => {
+            setSelectedCandidate(null);
+            setClosingProfileDetailModal(false);
+            profileDetailCloseTimerRef.current = null;
+        }, POPUP_CLOSE_ANIMATION_MS);
     };
+
+    useEffect(() => () => {
+        if (profileDetailCloseTimerRef.current) {
+            window.clearTimeout(profileDetailCloseTimerRef.current);
+        }
+    }, []);
 
     const getCandidateJumpTakeId = (candidate) => (
         candidate?.jumptakeId
@@ -475,12 +558,6 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         || candidate?.user?.jumptakeId
         || '@JumpTakeID'
     );
-
-    const getCandidateCoverStyle = (candidate) => ({
-        '--candidate-profile-cover': candidate?.coverImage
-            ? `url("${candidate.coverImage}")`
-            : 'linear-gradient(135deg, #4f1224 0%, #7d3044 100%)'
-    });
 
     const getCandidateDefaultProfileImage = (candidate) => (
         String(candidate?.gender || candidate?.profile?.gender || '').toLowerCase().startsWith('f')
@@ -551,52 +628,6 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
             }
         } catch (bookmarkError) {
             console.error('Error toggling talent bookmark:', bookmarkError);
-        }
-    };
-
-    const toggleCandidateLike = async (candidate, event) => {
-        if (event) {
-            event.stopPropagation();
-        }
-
-        const actorKey = getActorKey();
-        if (!candidate?._id || !actorKey) {
-            return;
-        }
-
-        try {
-            const token = localStorage.getItem(mode === 'candidate' ? 'token' : 'employerToken');
-            const response = await fetch(apiUrl('/api/candidate-likes/toggle'), {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    candidateId: candidate._id,
-                    actorType: mode === 'employer' ? 'employer' : 'candidate',
-                    actorKey: String(actorKey)
-                })
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Failed to update like');
-            }
-
-            setCandidateLikeCounts((prevCounts) => ({
-                ...prevCounts,
-                [String(candidate._id)]: data.count
-            }));
-
-            setLikedCandidateIds((prevIds) => (
-                data.liked
-                    ? [...new Set([...prevIds, String(candidate._id)])]
-                    : prevIds.filter((candidateId) => candidateId !== String(candidate._id))
-            ));
-        } catch (likeError) {
-            console.error('Error toggling candidate like:', likeError);
         }
     };
 
@@ -681,72 +712,31 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         }
     };
 
-    const renderLikeButton = (candidate) => {
-        const candidateId = String(candidate._id);
-        const isLiked = likedCandidateIds.includes(candidateId);
+    const openCandidateImagePreview = (media, event) => {
+        event?.stopPropagation();
 
-        return (
-            <button
-                type="button"
-                className={`candidate-like-button ${isLiked ? 'active' : ''}`}
-                onClick={(event) => toggleCandidateLike(candidate, event)}
-                aria-label={isLiked ? 'Unlike candidate' : 'Like candidate'}
-            >
-                <span className="candidate-like-count">{candidateLikeCounts[candidateId] || 0}</span>
-                <span className="like-animation-wrap">
-                    <input type="checkbox" checked={isLiked} readOnly tabIndex="-1" />
-                    <svg className="celebrate" width="34" height="34" viewBox="0 0 100 100" aria-hidden="true">
-                        <polygon points="10,10 20,20"></polygon>
-                        <polygon points="80,10 70,20"></polygon>
-                        <polygon points="50,5 50,18"></polygon>
-                        <polygon points="10,80 22,72"></polygon>
-                        <polygon points="90,80 78,72"></polygon>
-                    </svg>
-                    <svg className="like" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3v11Zm2 0V11l4.7-8.5c.5-.9 1.8-.6 1.9.4l.3 3.1c.1 1-.2 2-.8 2.8h4.1c1.8 0 3.1 1.7 2.7 3.4l-1.4 6.6A4 4 0 0 1 16.6 22H9Z" />
-                    </svg>
-                </span>
-            </button>
-        );
+        if (!media?.dataUrl) {
+            return;
+        }
+
+        setCandidateImagePreview({
+            dataUrl: media.dataUrl,
+            name: media.name || 'Post image'
+        });
+        setCandidateImagePreviewZoom(1);
     };
 
-    const renderFriendButton = (candidate, compact = false) => (
-        mode === 'candidate' && (
-            <button
-                type="button"
-                className={`candidate-card-action candidate-card-friend-action ${compact ? 'candidate-profile-mini-icon' : ''} ${candidate.connectionStatus?.status || 'is-new'}`}
-                onClick={(event) => {
-                    event.stopPropagation();
-                    if (!candidate.connectionStatus) {
-                        sendFriendRequest({ candidateId: candidate._id });
-                    } else if (candidate.connectionStatus.status === 'pending' && candidate.connectionStatus.direction === 'outgoing') {
-                        cancelFriendRequest(candidate);
-                    }
-                }}
-                disabled={sendingFriendRequest || candidate.connectionStatus?.status === 'accepted' || (candidate.connectionStatus?.status === 'pending' && candidate.connectionStatus?.direction !== 'outgoing')}
-                aria-label={candidate.connectionStatus?.status === 'accepted' ? 'Already friends' : candidate.connectionStatus?.status === 'pending' ? 'Friend invitation pending' : 'Add friend'}
-                title={candidate.connectionStatus?.status === 'accepted' ? 'Friends' : candidate.connectionStatus?.status === 'pending' ? 'Invitation pending' : 'Add friend'}
-            >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M15 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.42 0-8 2.24-8 5v1h10.1A6.9 6.9 0 0 1 17 19c0-1.85.72-3.54 1.9-4.8A11.7 11.7 0 0 0 15 14Zm6-3V8h-2v3h-3v2h3v3h2v-3h3v-2h-3Z" />
-                </svg>
-            </button>
-        )
-    );
+    const closeCandidateImagePreview = () => {
+        setCandidateImagePreview(null);
+        setCandidateImagePreviewZoom(1);
+    };
 
-    const renderBookmarkButton = (candidate, compact = false) => (
-        <button
-            type="button"
-            className={`bookmark-star-button talent-bookmark-button candidate-card-action ${compact ? 'candidate-profile-mini-icon' : ''} ${bookmarkedTalentIds.includes(String(candidate._id)) ? 'active' : ''}`}
-            onClick={(event) => toggleTalentBookmark(candidate, event)}
-            aria-label={bookmarkedTalentIds.includes(String(candidate._id)) ? 'Remove bookmark' : 'Bookmark talent'}
-            title={bookmarkedTalentIds.includes(String(candidate._id)) ? 'Remove bookmark' : 'Bookmark'}
-        >
-            <svg viewBox="0 0 16 16" aria-hidden="true">
-                <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187z" />
-            </svg>
-        </button>
-    );
+    const adjustCandidateImagePreviewZoom = (amount) => {
+        setCandidateImagePreviewZoom((currentZoom) => {
+            const nextZoom = Math.round((currentZoom + amount) * 10) / 10;
+            return Math.min(3, Math.max(0.5, nextZoom));
+        });
+    };
 
     const renderTailorSocialIcon = (platform) => {
         const paths = {
@@ -763,34 +753,39 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         );
     };
 
-    const renderCandidateProfileCard = (candidate, { compact = false } = {}) => {
+    const renderCandidateListRow = (candidate, spotlight) => {
         const candidateId = String(candidate?._id || '');
         const storiesCount = getCandidateTalentStories(candidate).length;
         const likeCount = candidateLikeCounts[candidateId] || 0;
 
         return (
-            <div className={`candidate-profile-mini-card ${compact ? 'is-compact' : 'is-modal-card'}`} style={getCandidateCoverStyle(candidate)}>
-                <div className="candidate-profile-mini-cover" />
+            <button
+                type="button"
+                key={candidate._id}
+                className="candidate-list-row"
+                onClick={() => handleViewProfile(candidate)}
+                aria-label={`Open ${candidate.name || 'candidate'} profile`}
+            >
                 <ProfileAvatar
-                    imageSrc={candidate.profileImage}
+                    imageSrc={candidate.profileImage || getCandidateDefaultProfileImage(candidate)}
                     name={candidate.name}
-                    className="candidate-profile-mini-avatar"
+                    className="candidate-list-avatar"
                     imageClassName="profile-avatar-image"
                     useProfileIconFallback
                 />
-                <div className="candidate-profile-mini-info">
-                    <h3>{candidate.name || 'Unnamed Candidate'}</h3>
-                    <p>{getCandidateJumpTakeId(candidate)}</p>
-                </div>
-                <div className="candidate-profile-mini-actions" onClick={(event) => event.stopPropagation()}>
-                    {renderLikeButton(candidate)}
-                    {renderFriendButton(candidate, true)}
-                    {renderBookmarkButton(candidate, true)}
-                </div>
-                <div className="candidate-profile-mini-stats">
+                <span className="candidate-list-main">
+                    <span className="candidate-list-name">{candidate.name || 'Unnamed Candidate'}</span>
+                    <span className="candidate-list-id">{getCandidateJumpTakeId(candidate) || '@JumpTakeID'}</span>
+                    {spotlightActive && spotlight?.matchedSkills?.length > 0 && (
+                        <span className="candidate-list-skills">
+                            {spotlight.matchedSkills.slice(0, 3).join(', ')}
+                        </span>
+                    )}
+                </span>
+                <span className="candidate-list-stats" aria-label="Candidate stats">
                     <span>
                         <strong>{likeCount}</strong>
-                        <small>Like</small>
+                        <small>Likes</small>
                     </span>
                     <span>
                         <strong>{storiesCount}</strong>
@@ -800,8 +795,8 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                         <strong>{Number(candidate.rating || 0).toFixed(1)}</strong>
                         <small>Rating</small>
                     </span>
-                </div>
-            </div>
+                </span>
+            </button>
         );
     };
 
@@ -1336,6 +1331,53 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
             : modalMarkup;
     };
 
+    const renderCandidateImagePreviewModal = () => {
+        if (!candidateImagePreview) {
+            return null;
+        }
+
+        const modalMarkup = (
+            <div
+                className="portal-image-preview-backdrop"
+                role="presentation"
+                onClick={(event) => {
+                    if (event.target === event.currentTarget) {
+                        closeCandidateImagePreview();
+                    }
+                }}
+            >
+                <div className="portal-image-preview-modal" role="dialog" aria-modal="true" aria-label="Image preview">
+                    <div className="portal-image-preview-toolbar">
+                        <button type="button" onClick={closeCandidateImagePreview} aria-label="Go back from image preview" title="Back">
+                            Back
+                        </button>
+                        <span>{Math.round(candidateImagePreviewZoom * 100)}%</span>
+                        <button type="button" onClick={() => adjustCandidateImagePreviewZoom(-0.25)} aria-label="Zoom out" title="Zoom out">
+                            -
+                        </button>
+                        <button type="button" onClick={() => setCandidateImagePreviewZoom(1)} aria-label="Reset zoom" title="Reset zoom">
+                            1:1
+                        </button>
+                        <button type="button" onClick={() => adjustCandidateImagePreviewZoom(0.25)} aria-label="Zoom in" title="Zoom in">
+                            +
+                        </button>
+                    </div>
+                    <div className="portal-image-preview-stage">
+                        <img
+                            src={candidateImagePreview.dataUrl}
+                            alt={candidateImagePreview.name || 'Post image'}
+                            style={{ transform: `scale(${candidateImagePreviewZoom})` }}
+                        />
+                    </div>
+                </div>
+            </div>
+        );
+
+        return typeof document !== 'undefined'
+            ? createPortal(modalMarkup, document.body)
+            : modalMarkup;
+    };
+
     const renderCandidateProfilePostCard = (post, candidate) => {
         if (!post || typeof post !== 'object') {
             return null;
@@ -1366,11 +1408,14 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         const selectedReaction = reactionsByUser[String(currentUserId || 'candidate-viewer')] || '';
 
         return (
-            <article className="portal-social-post-card candidate-profile-home-post-card portal-profile-preview-post-card" key={postKey}>
+            <article
+                className="portal-social-post-card portal-profile-preview-post-card"
+                key={postKey}
+            >
                 <div className="portal-social-post-header">
                     <button
                         type="button"
-                        className={`portal-author-open-button portal-post-avatar ${post.authorAvatar || candidate.profileImage ? '' : 'has-default-profile-icon'}`}
+                        className="portal-author-open-button portal-post-avatar"
                         onClick={(event) => {
                             event.stopPropagation();
                             openCandidateFromPostAuthor({
@@ -1380,18 +1425,10 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                         }}
                         aria-label={`Open ${asCandidatePostText(post.authorName || candidate.name, 'Candidate')} profile`}
                     >
-                        {post.authorAvatar || candidate.profileImage ? (
-                            <img
-                                src={post.authorAvatar || candidate.profileImage}
-                                alt={asCandidatePostText(post.authorName || candidate.name, 'Candidate')}
-                            />
-                        ) : (
-                            <ProfileAvatar
-                                name={asCandidatePostText(post.authorName || candidate.name, 'Candidate')}
-                                className="portal-default-profile-icon"
-                                useProfileIconFallback
-                            />
-                        )}
+                        <img
+                            src={post.authorAvatar || candidate.profileImage || getCandidateDefaultProfileImage(candidate)}
+                            alt={asCandidatePostText(post.authorName || candidate.name, 'Candidate')}
+                        />
                     </button>
                     <div className="portal-post-title-block">
                         <h3 className="portal-post-author-name">
@@ -1427,7 +1464,11 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                                 aria-label="Post options"
                                 title="Post options"
                             >
-                                ...
+                                <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                                    <circle cx="3.2" cy="8" r="1.2" />
+                                    <circle cx="8" cy="8" r="1.2" />
+                                    <circle cx="12.8" cy="8" r="1.2" />
+                                </svg>
                             </button>
                             {isOptionsOpen && (
                                 <div className="portal-post-options-menu" role="menu">
@@ -1477,7 +1518,14 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                             {media.type === 'video' ? (
                                 <video src={media.dataUrl} controls playsInline />
                             ) : (
-                                <img src={media.dataUrl} alt={media.name || 'Post media'} />
+                                <button
+                                    type="button"
+                                    className="portal-post-image-preview-button"
+                                    onClick={(event) => openCandidateImagePreview(media, event)}
+                                    aria-label="Open attached image full screen"
+                                >
+                                    <img src={media.dataUrl} alt={media.name || 'Post media'} />
+                                </button>
                             )}
                         </div>
                     ) : (
@@ -1522,9 +1570,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                             aria-expanded={isReactionMenuOpen}
                             aria-label="Choose reaction"
                         >
-                            <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
-                                <path d="M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733.25.52.183 1.18-.022 1.584.169.387.107.819-.003 1.148.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.8 4.8 0 0 1-.97-.484c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z" />
-                            </svg>
+                            <CandidateReactionIcon name={selectedReaction || 'Like'} />
                         </button>
                         {reactionTotal > 0 && <span className="portal-reaction-trigger-count">{reactionTotal}</span>}
                         <button
@@ -1718,7 +1764,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
 
         const modalMarkup = (
             <div
-                className="portal-profile-detail-backdrop candidate-profile-popup-backdrop"
+                className={`portal-profile-detail-backdrop ${closingProfileDetailModal ? 'is-closing' : ''}`}
                 role="presentation"
                 onClick={(event) => {
                     if (event.target === event.currentTarget) {
@@ -1727,7 +1773,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                 }}
             >
                 <article
-                    className="portal-profile-detail-modal candidate-profile-popup"
+                    className="portal-profile-detail-modal candidate-profile-popup candidate-profile-from-candidates"
                     ref={candidateProfileRef}
                     role="dialog"
                     aria-modal="true"
@@ -1758,44 +1804,70 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                             />
                         </div>
                         <div className="tailor-profile-info">
-                            <p className="tailor-profile-name">{candidateName}</p>
+                            <div className="candidate-popup-name-row">
+                                <p className="tailor-profile-name">
+                                    <span className="candidate-popup-name-text">{candidateName}</span>
+                                    {mode === 'candidate' && (
+                                        <span className="candidate-popup-name-actions" aria-label={`${candidateName} quick actions`}>
+                                        <span
+                                            role="button"
+                                            tabIndex={0}
+                                            className={`candidate-popup-name-action portal-profile-friend-action ${selectedCandidate.connectionStatus?.status === 'accepted' ? 'is-friend' : ''} ${selectedCandidate.connectionStatus?.status === 'pending' ? 'is-pending' : ''}`}
+                                            onClick={(event) => {
+                                                event.stopPropagation();
+                                                if (!selectedCandidate.connectionStatus) {
+                                                    sendFriendRequest({ candidateId: selectedCandidate._id });
+                                                } else if (selectedCandidate.connectionStatus.status === 'pending' && selectedCandidate.connectionStatus.direction === 'outgoing') {
+                                                    cancelFriendRequest(selectedCandidate);
+                                                }
+                                            }}
+                                            onKeyDown={(event) => {
+                                                if (event.key !== 'Enter' && event.key !== ' ') {
+                                                    return;
+                                                }
+                                                event.preventDefault();
+                                                event.stopPropagation();
+                                                if (sendingFriendRequest || selectedCandidate.connectionStatus?.status === 'accepted' || (selectedCandidate.connectionStatus?.status === 'pending' && selectedCandidate.connectionStatus?.direction !== 'outgoing')) {
+                                                    return;
+                                                }
+                                                if (!selectedCandidate.connectionStatus) {
+                                                    sendFriendRequest({ candidateId: selectedCandidate._id });
+                                                } else if (selectedCandidate.connectionStatus.status === 'pending' && selectedCandidate.connectionStatus.direction === 'outgoing') {
+                                                    cancelFriendRequest(selectedCandidate);
+                                                }
+                                            }}
+                                            aria-disabled={sendingFriendRequest || selectedCandidate.connectionStatus?.status === 'accepted' || (selectedCandidate.connectionStatus?.status === 'pending' && selectedCandidate.connectionStatus?.direction !== 'outgoing')}
+                                            aria-label={selectedCandidate.connectionStatus?.status === 'accepted' ? 'Already friends' : selectedCandidate.connectionStatus?.status === 'pending' ? 'Friend invitation pending' : 'Add friend'}
+                                            title={selectedCandidate.connectionStatus?.status === 'accepted' ? 'Friends' : selectedCandidate.connectionStatus?.status === 'pending' ? 'Invitation pending' : 'Add friend'}
+                                            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '16px', height: '16px', minWidth: '16px', maxWidth: '16px', minHeight: '16px', maxHeight: '16px', marginLeft: '5px', verticalAlign: 'middle' }}
+                                        >
+                                            <CandidateProfileFriendIcon status={selectedCandidate.connectionStatus?.status || ''} />
+                                        </span>
+                                        <span
+                                            role="button"
+                                            tabIndex={0}
+                                            className={`candidate-popup-name-action portal-profile-bookmark-action ${isBookmarked ? 'active' : ''}`}
+                                            onClick={(event) => toggleTalentBookmark(selectedCandidate, event)}
+                                            onKeyDown={(event) => {
+                                                if (event.key === 'Enter' || event.key === ' ') {
+                                                    event.preventDefault();
+                                                    toggleTalentBookmark(selectedCandidate, event);
+                                                }
+                                            }}
+                                            aria-label={isBookmarked ? 'Remove candidate bookmark' : 'Bookmark candidate'}
+                                            title={isBookmarked ? 'Remove bookmark' : 'Bookmark candidate'}
+                                            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '16px', height: '16px', minWidth: '16px', maxWidth: '16px', minHeight: '16px', maxHeight: '16px', marginLeft: '4px', verticalAlign: 'middle' }}
+                                        >
+                                            <CandidateProfileBookmarkIcon active={isBookmarked} />
+                                        </span>
+                                        </span>
+                                    )}
+                                </p>
+                            </div>
                             <div className="tailor-profile-title">{formattedJumpTakeId}</div>
+                            <p className="portal-profile-detail-bio">{asCandidatePostText(selectedCandidate.bio || selectedCandidate.profile?.bio, 'No bio yet.')}</p>
                         </div>
                         <div className="tailor-social-links" aria-label={`${candidateName} social links`}>
-                            {mode === 'candidate' && (
-                                <>
-                                    <button
-                                        type="button"
-                                        className={`tailor-social-btn portal-profile-friend-action ${selectedCandidate.connectionStatus?.status === 'accepted' ? 'is-friend' : ''} ${selectedCandidate.connectionStatus?.status === 'pending' ? 'is-pending' : ''}`}
-                                        onClick={(event) => {
-                                            event.stopPropagation();
-                                            if (!selectedCandidate.connectionStatus) {
-                                                sendFriendRequest({ candidateId: selectedCandidate._id });
-                                            } else if (selectedCandidate.connectionStatus.status === 'pending' && selectedCandidate.connectionStatus.direction === 'outgoing') {
-                                                cancelFriendRequest(selectedCandidate);
-                                            }
-                                        }}
-                                        disabled={sendingFriendRequest || selectedCandidate.connectionStatus?.status === 'accepted' || (selectedCandidate.connectionStatus?.status === 'pending' && selectedCandidate.connectionStatus?.direction !== 'outgoing')}
-                                        aria-label={selectedCandidate.connectionStatus?.status === 'accepted' ? 'Already friends' : selectedCandidate.connectionStatus?.status === 'pending' ? 'Friend invitation pending' : 'Add friend'}
-                                        title={selectedCandidate.connectionStatus?.status === 'accepted' ? 'Friends' : selectedCandidate.connectionStatus?.status === 'pending' ? 'Invitation pending' : 'Add friend'}
-                                    >
-                                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                                            <path d="M15 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.42 0-8 2.24-8 5v1h10.1A6.9 6.9 0 0 1 17 19c0-1.85.72-3.54 1.9-4.8A11.7 11.7 0 0 0 15 14Zm6-3V8h-2v3h-3v2h3v3h2v-3h3v-2h-3Z" />
-                                        </svg>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className={`tailor-social-btn portal-profile-bookmark-action ${isBookmarked ? 'active' : ''}`}
-                                        onClick={(event) => toggleTalentBookmark(selectedCandidate, event)}
-                                        aria-label={isBookmarked ? 'Remove candidate bookmark' : 'Bookmark candidate'}
-                                        title={isBookmarked ? 'Remove bookmark' : 'Bookmark candidate'}
-                                    >
-                                        <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-                                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187z" />
-                                        </svg>
-                                    </button>
-                                </>
-                            )}
                             {socialPlatforms.map((platform) => {
                                 const href = socialLinks[platform];
 
@@ -1854,20 +1926,20 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                             </div>
                         </div>
                     </div>
-                    <div className="portal-profile-detail-posts" aria-label={`${candidateName} posts`}>
-                        {profilePosts.length > 0 ? (
-                            profilePosts.map((post) => {
-                                try {
-                                    return renderCandidateProfilePostCard(post, selectedCandidate);
-                                } catch (error) {
-                                    console.error('Skipping malformed candidate profile post:', error);
-                                    return null;
-                                }
-                            })
-                        ) : (
-                            <p className="portal-post-detail-empty">No visible posts yet.</p>
-                        )}
-                    </div>
+                    {profilePosts.length > 0 ? (
+                        <div className="portal-profile-detail-posts" aria-label={`${candidateName} posts`}>
+                            <div className="portal-social-list portal-profile-preview-post-list">
+                                {profilePosts.map((post) => {
+                                    try {
+                                        return renderCandidateProfilePostCard(post, selectedCandidate);
+                                    } catch (error) {
+                                        console.error('Skipping malformed candidate profile post:', error);
+                                        return null;
+                                    }
+                                })}
+                            </div>
+                        </div>
+                    ) : null}
                 </article>
             </div>
         );
@@ -1921,9 +1993,6 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                                 <path fillRule="evenodd" d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5" />
                             </svg>
                         </span>
-                        </span>
-                        <span className="candidate-community-description">
-                            Discover candidates with similar skills and experience, exchange career guidance, and learn from one another while keeping personal contact details private.
                         </span>
                     </p>
                 </div>
@@ -2008,30 +2077,8 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                         </div>
                     ) : (
                         <>
-                        <div className="candidates-grid">
-                            {pagedCandidateRows.map(({ candidate, spotlight }) => {
-                                return (
-                                <div key={candidate._id} className="candidate-card uiverse-profile-card" onClick={() => handleViewProfile(candidate)}>
-                                    {renderCandidateProfileCard(candidate, { compact: true })}
-
-                                    <div className="candidate-info candidate-card-extra-info">
-                                        {spotlightActive && (
-                                            <div className="spotlight-match">
-                                                <span className="spotlight-score">{spotlight.score}</span>
-                                                <span>{spotlight.score === 1 ? 'skill match' : 'skill matches'}</span>
-                                            </div>
-                                        )}
-
-                                        {spotlightActive && spotlight.matchedSkills.length > 0 && (
-                                            <div className="spotlight-skills">
-                                                {spotlight.matchedSkills.slice(0, 4).map((skill, index) => (
-                                                    <span key={index} className="candidate-skill-tag spotlight">{skill}</span>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            )})}
+                        <div className="candidate-list" aria-label="Candidates">
+                            {pagedCandidateRows.map(({ candidate, spotlight }) => renderCandidateListRow(candidate, spotlight))}
                         </div>
                         {totalCandidatePages > 1 && (
                             <div className="mobile-list-pagination candidate-list-pagination" aria-label="Candidate pages">
@@ -2061,6 +2108,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
 
             {renderSelectedCandidateModal()}
             {renderCandidateReachInsightModal()}
+            {renderCandidateImagePreviewModal()}
 
             {!isLoading && !selectedCandidate && (
                 <div className="page-footer-actions">

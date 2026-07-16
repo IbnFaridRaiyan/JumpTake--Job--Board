@@ -18,7 +18,7 @@ const readBookmarkedJobLikeMap = () => {
 
 const getBookmarkedJobKey = (job) => String(job?._id || job?.jobNumber || job?.title || 'job');
 
-const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
+const BookmarkedJobs = ({ userId, switchSection, onFooterBack, embedded = false }) => {
     const [bookmarks, setBookmarks] = useState([]);
     const [appliedJobIds, setAppliedJobIds] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -209,12 +209,14 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
 
     return (
         <div className="applications-container">
-            <div className="section-header">
-                <h2>Bookmarked Jobs</h2>
-                <div className="section-actions">
-                    <button className="refresh-button" onClick={fetchBookmarks}>Refresh</button>
+            {!embedded && (
+                <div className="section-header">
+                    <h2>Bookmarked Jobs</h2>
+                    <div className="section-actions">
+                        <button className="refresh-button" onClick={fetchBookmarks}>Refresh</button>
+                    </div>
                 </div>
-            </div>
+            )}
 
             {message && (
                 <div className={`notification-message ${message.includes('Error') ? 'error' : 'success'}`}>
@@ -314,11 +316,13 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack }) => {
                 </div>
             )}
 
-            <div className="page-footer-actions">
-                <button className="back-button" onClick={onFooterBack || (() => switchSection && switchSection('job-feed'))}>
-                    Back
-                </button>
-            </div>
+            {!embedded && (
+                <div className="page-footer-actions">
+                    <button className="back-button" onClick={onFooterBack || (() => switchSection && switchSection('job-feed'))}>
+                        Back
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

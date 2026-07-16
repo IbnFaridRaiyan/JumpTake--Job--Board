@@ -2,10 +2,26 @@ import React, { forwardRef, useState, useEffect, useImperativeHandle } from 'rea
 import WithdrawButton from './WithdrawButton';
 import ResumeFilePreview from './ResumeFilePreview';
 import ProfileAvatar from './ProfileAvatar';
+import MyAssessments from './MyAssessments';
+import VideoInterviews from './VideoInterviews';
+import DraftApplications from './DraftApplications';
 
 const APPLICATIONS_PER_PAGE = 4;
+const APPLICATION_HUB_TABS = [
+    { id: 'applications', label: 'Applications', title: 'My Applications', icon: 'applications' },
+    { id: 'assessments', label: 'Assessments', title: 'My Assessments', icon: 'assessments' },
+    { id: 'video-interviews', label: 'Video Interviews', title: 'Video Interviews', icon: 'video' },
+    { id: 'draft-applications', label: 'Drafts', title: 'Draft Applications', icon: 'drafts' }
+];
 
-const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterBack }, ref) => {
+const MyApplications = forwardRef(({
+    userId,
+    onRefresh,
+    switchSection,
+    onFooterBack,
+    initialTab = 'applications',
+    onPendingAssessmentCountChange
+}, ref) => {
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -19,6 +35,7 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
     const [isMobileView, setIsMobileView] = useState(() => (
         typeof window !== 'undefined' ? window.innerWidth <= 768 : false
     ));
+    const [activeHubTab, setActiveHubTab] = useState(initialTab);
     
     useEffect(() => {
         fetchApplications();
@@ -38,6 +55,10 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
     useEffect(() => {
         setCurrentPage(1);
     }, [applications.length, isMobileView]);
+
+    useEffect(() => {
+        setActiveHubTab(initialTab);
+    }, [initialTab]);
     
     const fetchApplications = async () => {
         try {
@@ -136,6 +157,11 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
 
     useImperativeHandle(ref, () => ({
         goBackOneStep: () => {
+            if (activeHubTab !== 'applications') {
+                setActiveHubTab('applications');
+                return true;
+            }
+
             if (selectedCompany) {
                 setSelectedCompany(null);
                 return true;
@@ -148,7 +174,61 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
 
             return false;
         }
-    }), [selectedApplication, selectedCompany]);
+    }), [activeHubTab, selectedApplication, selectedCompany]);
+
+    const getTabTitle = () => (
+        APPLICATION_HUB_TABS.find((tab) => tab.id === activeHubTab)?.title || 'My Applications'
+    );
+
+    const renderHubIcon = (icon) => {
+        const paths = {
+            applications: 'M4 3.5h8.5L17 8v12.5H4v-17Zm8 1.8V8.5h3.2L12 5.3ZM6 6v12.5h9V10h-5V6H6Zm1.5 6h6v1.4h-6V12Zm0 3h5v1.4h-5V15Z',
+            assessments: 'M4 3h12l4 4v14H4V3Zm11 2v3h3l-3-3ZM6 5v14h12V10h-5V5H6Zm2.2 7.4 1.5 1.5 3.8-4 1 1-4.8 5.1-2.5-2.5 1-1.1Z',
+            video: 'M4 6h9.5A2.5 2.5 0 0 1 16 8.5v.75l4-2.25v10l-4-2.25v.75a2.5 2.5 0 0 1-2.5 2.5H4A2.5 2.5 0 0 1 1.5 15.5v-7A2.5 2.5 0 0 1 4 6Zm0 2a.5.5 0 0 0-.5.5v7A.5.5 0 0 0 4 16h9.5a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.5-.5H4Z',
+            drafts: 'M5 3h10l4 4v14H5V3Zm9 2v4h4l-4-4ZM7 5v14h10v-8h-5V5H7Zm2 8h6v1.4H9V13Zm0 3h4.5v1.4H9V16Z'
+        };
+
+        return (
+            <svg className="applications-hub-tab-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d={paths[icon] || paths.applications} />
+            </svg>
+        );
+    };
+
+    const renderHubShell = (children) => (
+        <div className="applications-container applications-hub-container">
+            <div className="section-header applications-hub-header">
+                <h2>{getTabTitle()}</h2>
+                {activeHubTab === 'applications' && (
+                    <div className="section-actions">
+                        <button className="refresh-button" onClick={fetchApplications}>
+                            Refresh
+                        </button>
+                    </div>
+                )}
+            </div>
+
+            <nav className="applications-hub-nav" aria-label="My applications sections">
+                {APPLICATION_HUB_TABS.map((tab) => (
+                    <button
+                        type="button"
+                        key={tab.id}
+                        className={`applications-hub-tab ${activeHubTab === tab.id ? 'active' : ''}`}
+                        onClick={() => setActiveHubTab(tab.id)}
+                        aria-pressed={activeHubTab === tab.id}
+                        title={tab.title}
+                    >
+                        {renderHubIcon(tab.icon)}
+                        <span>{tab.label}</span>
+                    </button>
+                ))}
+            </nav>
+
+            <div className="applications-hub-panel">
+                {children}
+            </div>
+        </div>
+    );
 
     const getJobTitle = (application) => {
         return application?.job?.title || 'Job no longer available';
@@ -260,17 +340,47 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
         }
     };
     
+    if (activeHubTab === 'assessments') {
+        return renderHubShell(
+            <MyAssessments
+                userId={userId}
+                onRefresh={onRefresh}
+                onPendingCountChange={onPendingAssessmentCountChange}
+                switchSection={switchSection}
+                onFooterBack={() => setActiveHubTab('applications')}
+                embedded
+            />
+        );
+    }
+
+    if (activeHubTab === 'video-interviews') {
+        return renderHubShell(
+            <VideoInterviews
+                userId={userId}
+                switchSection={switchSection}
+                onFooterBack={() => setActiveHubTab('applications')}
+                embedded
+            />
+        );
+    }
+
+    if (activeHubTab === 'draft-applications') {
+        return renderHubShell(
+            <DraftApplications
+                userId={userId}
+                switchSection={switchSection}
+                onFooterBack={() => setActiveHubTab('applications')}
+                embedded
+            />
+        );
+    }
+
     if (loading) {
-        return (
-            <div className="applications-container">
-                <div className="section-header">
-                    <h2>My Applications</h2>
-                </div>
+        return renderHubShell(
                 <div className="loading-container">
                     <div className="loading-spinner"></div>
                     <p>Loading your applications...</p>
                 </div>
-            </div>
         );
     }
 
@@ -318,6 +428,9 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
     if (selectedApplication) {
         const submittedProfile = getSubmittedProfile(selectedApplication);
         const uploadedResume = selectedApplication.uploadedResume;
+        const canWithdrawSelectedApplication = selectedApplication.status !== 'Withdrawn'
+            && selectedApplication.status !== 'Rejected'
+            && selectedApplication.status !== 'Unsuccessful';
 
         return (
             <div className="applications-container">
@@ -398,8 +511,20 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
                     )}
 
                     <div className="section-footer-nav">
-                        <button className="back-button" onClick={() => setSelectedApplication(null)}>
-                            Back to My Applications
+                        {canWithdrawSelectedApplication && (
+                            <WithdrawButton
+                                onClick={() => handleWithdraw(selectedApplication._id)}
+                                disabled={withdrawingId === selectedApplication._id}
+                                title={withdrawingId === selectedApplication._id ? 'Withdrawing...' : 'Withdraw'}
+                            />
+                        )}
+                        <button
+                            className="back-button application-detail-back-icon"
+                            onClick={() => setSelectedApplication(null)}
+                            aria-label="Back to My Applications"
+                            title="Back"
+                        >
+                            <span aria-hidden="true">&lt;</span>
                         </button>
                     </div>
                 </div>
@@ -407,17 +532,8 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
         );
     }
     
-    return (
-        <div className="applications-container">
-            <div className="section-header">
-                <h2>My Applications</h2>
-                <div className="section-actions">
-                    <button className="refresh-button" onClick={fetchApplications}>
-                        Refresh
-                    </button>
-                </div>
-            </div>
-            
+    return renderHubShell(
+        <>
             {message && (
                 <div className={`notification-message ${message.includes('Error') ? 'error' : 'success'}`}>
                     {message}
@@ -443,12 +559,21 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
             ) : (
                 <div className="fresh-applications-list">
                     {visibleApplications.map(app => {
-                        const canWithdraw = app.status !== 'Withdrawn'
-                            && app.status !== 'Rejected'
-                            && app.status !== 'Unsuccessful';
-
                         return (
-                            <article className="fresh-application-card" key={app._id}>
+                            <article
+                                className="fresh-application-card fresh-application-card-clickable"
+                                key={app._id}
+                                role="button"
+                                tabIndex={0}
+                                onClick={() => setSelectedApplication(app)}
+                                onKeyDown={(event) => {
+                                    if (event.key === 'Enter' || event.key === ' ') {
+                                        event.preventDefault();
+                                        setSelectedApplication(app);
+                                    }
+                                }}
+                                aria-label={`View details for ${getJobTitle(app)}`}
+                            >
                                 <div className="fresh-application-card-header">
                                     <div className="fresh-application-title-block">
                                         <span>Job Title</span>
@@ -472,19 +597,6 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
                                         <span>Applied On</span>
                                         <strong>{new Date(app.createdAt).toLocaleDateString()}</strong>
                                     </div>
-                                </div>
-
-                                <div className="fresh-application-actions">
-                                    {canWithdraw && (
-                                        <WithdrawButton
-                                            onClick={() => handleWithdraw(app._id)}
-                                            disabled={withdrawingId === app._id}
-                                            title={withdrawingId === app._id ? 'Withdrawing...' : 'Withdraw'}
-                                        />
-                                    )}
-                                    <button className="view-button application-view-details-button" onClick={() => setSelectedApplication(app)}>
-                                        View Details
-                                    </button>
                                 </div>
                             </article>
                         );
@@ -522,7 +634,7 @@ const MyApplications = forwardRef(({ userId, onRefresh, switchSection, onFooterB
                     Back
                 </button>
             </div>
-        </div>
+        </>
     );
 });
 

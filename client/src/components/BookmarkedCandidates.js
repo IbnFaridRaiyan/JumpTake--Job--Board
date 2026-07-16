@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import ContactCandidate from './ContactCandidate';
 import ProfileAvatar from './ProfileAvatar';
 
-const BookmarkedCandidates = ({ userId, onBack, onFooterBack }) => {
+const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }) => {
     const [bookmarks, setBookmarks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedCandidate, setSelectedCandidate] = useState(null);
@@ -352,9 +352,11 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack }) => {
 
     return (
         <div ref={containerRef} className="talent-pool-container candidate-bookmarked-container">
-            <div className="talent-pool-header">
-                <h2>Bookmarked Candidates</h2>
-            </div>
+            {!embedded && (
+                <div className="talent-pool-header">
+                    <h2>Bookmarked Candidates</h2>
+                </div>
+            )}
 
             {message.includes('Error') && <div className="notification-message error">{message}</div>}
             {error && <div className="error-message">{error}</div>}
@@ -429,9 +431,11 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack }) => {
                 </div>
             )}
 
-            <div className="page-footer-actions">
-                <button className="back-button" onClick={onFooterBack || onBack}>Back</button>
-            </div>
+            {!embedded && (
+                <div className="page-footer-actions">
+                    <button className="back-button" onClick={onFooterBack || onBack}>Back</button>
+                </div>
+            )}
         </div>
     );
 };

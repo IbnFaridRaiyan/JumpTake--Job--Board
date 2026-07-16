@@ -10,7 +10,7 @@ const formatDuration = (milliseconds = 0) => {
     return `${minutes}:${String(seconds).padStart(2, '0')}`;
 };
 
-const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection, onFooterBack }) => {
+const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection, onFooterBack, embedded = false }) => {
     const [assessments, setAssessments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -326,9 +326,11 @@ const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection,
     if (loading) {
         return (
             <div className="applications-container">
-                <div className="section-header">
-                    <h2>My Assessments</h2>
-                </div>
+                {!embedded && (
+                    <div className="section-header">
+                        <h2>My Assessments</h2>
+                    </div>
+                )}
                 <div className="loading-container">
                     <div className="loading-spinner"></div>
                     <p>Loading your assessments...</p>
@@ -343,14 +345,16 @@ const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection,
 
     return (
         <div className="applications-container">
-            <div className="section-header">
-                <h2>My Assessments</h2>
-                <div className="section-actions">
-                    <button className="refresh-button" onClick={fetchAssessments}>
-                        Refresh
-                    </button>
+            {!embedded && (
+                <div className="section-header">
+                    <h2>My Assessments</h2>
+                    <div className="section-actions">
+                        <button className="refresh-button" onClick={fetchAssessments}>
+                            Refresh
+                        </button>
+                    </div>
                 </div>
-            </div>
+            )}
 
             {message && <div className="notification-message success">{message}</div>}
             {error && <div className="error-message">{error}</div>}

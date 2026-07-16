@@ -31,7 +31,7 @@ const SavedPostIcon = () => (
     </svg>
 );
 
-const SavedPosts = ({ viewerId = 'guest', onFooterBack }) => {
+const SavedPosts = ({ viewerId = 'guest', onFooterBack, embedded = false }) => {
     const [savedPosts, setSavedPosts] = useState([]);
 
     useEffect(() => {
@@ -74,7 +74,7 @@ const SavedPosts = ({ viewerId = 'guest', onFooterBack }) => {
                     ))}
                 </div>
             )}
-            {onFooterBack && (
+            {onFooterBack && !embedded && (
                 <button type="button" className="mobile-section-footer-back" onClick={onFooterBack}>
                     Back
                 </button>

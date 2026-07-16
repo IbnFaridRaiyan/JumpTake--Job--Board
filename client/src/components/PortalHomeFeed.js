@@ -1170,6 +1170,8 @@ const PortalHomeFeed = ({
     const [closingPostDetailModal, setClosingPostDetailModal] = useState(false);
     const [closingProfileDetailModal, setClosingProfileDetailModal] = useState(false);
     const [openPostDetail, setOpenPostDetail] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const [imagePreviewZoom, setImagePreviewZoom] = useState(1);
     const [openProfileDetail, setOpenProfileDetail] = useState(null);
     const [, setSavedPosts] = useState([]);
     const [blockedFeedAuthors, setBlockedFeedAuthors] = useState([]);
@@ -1534,6 +1536,7 @@ const PortalHomeFeed = ({
         const hasBlockingOverlay = Boolean(
             reachInsightPost
             || reactionStatsPost
+            || imagePreview
             || openPostDetail
             || openProfileDetail
             || createStoryModalOpen
@@ -1551,7 +1554,7 @@ const PortalHomeFeed = ({
         return () => {
             document.body.style.overflow = previousOverflow;
         };
-    }, [reachInsightPost, reactionStatsPost, openPostDetail, openProfileDetail, createStoryModalOpen, selectedJob, reviewingJob]);
+    }, [reachInsightPost, reactionStatsPost, imagePreview, openPostDetail, openProfileDetail, createStoryModalOpen, selectedJob, reviewingJob]);
 
     useEffect(() => {
         setJobPage(1);
@@ -4213,6 +4216,32 @@ const PortalHomeFeed = ({
         }, POPUP_CLOSE_ANIMATION_MS);
     };
 
+    const openImagePreview = (media, event) => {
+        event?.stopPropagation();
+
+        if (!media?.dataUrl) {
+            return;
+        }
+
+        setImagePreview({
+            dataUrl: media.dataUrl,
+            name: media.name || 'Post image'
+        });
+        setImagePreviewZoom(1);
+    };
+
+    const closeImagePreview = () => {
+        setImagePreview(null);
+        setImagePreviewZoom(1);
+    };
+
+    const adjustImagePreviewZoom = (amount) => {
+        setImagePreviewZoom((currentZoom) => {
+            const nextZoom = Math.round((currentZoom + amount) * 10) / 10;
+            return Math.min(3, Math.max(0.5, nextZoom));
+        });
+    };
+
     const getPostDetailRecord = () => {
         if (!openPostDetail?.postKey) {
             return null;
@@ -4714,7 +4743,14 @@ const PortalHomeFeed = ({
                                     {post.media.type === 'video' ? (
                                         <video src={post.media.dataUrl} controls playsInline />
                                     ) : (
-                                        <img src={post.media.dataUrl} alt={post.media.name} />
+                                        <button
+                                            type="button"
+                                            className="portal-post-image-preview-button"
+                                            onClick={(event) => openImagePreview(post.media, event)}
+                                            aria-label="Open attached image full screen"
+                                        >
+                                            <img src={post.media.dataUrl} alt={post.media.name} />
+                                        </button>
                                     )}
                                 </div>
                             ) : (
@@ -6252,7 +6288,14 @@ const PortalHomeFeed = ({
                                 {post.media.type === 'video' ? (
                                     <video src={post.media.dataUrl} controls playsInline />
                                 ) : (
-                                    <img src={post.media.dataUrl} alt={post.media.name || 'Post media'} />
+                                    <button
+                                        type="button"
+                                        className="portal-post-image-preview-button"
+                                        onClick={(event) => openImagePreview(post.media, event)}
+                                        aria-label="Open attached image full screen"
+                                    >
+                                        <img src={post.media.dataUrl} alt={post.media.name || 'Post media'} />
+                                    </button>
                                 )}
                             </div>
                         ) : (
@@ -6533,6 +6576,53 @@ const PortalHomeFeed = ({
             : modalMarkup;
     };
 
+    const renderImagePreviewModal = () => {
+        if (!imagePreview) {
+            return null;
+        }
+
+        const modalMarkup = (
+            <div
+                className="portal-image-preview-backdrop"
+                role="presentation"
+                onClick={(event) => {
+                    if (event.target === event.currentTarget) {
+                        closeImagePreview();
+                    }
+                }}
+            >
+                <div className="portal-image-preview-modal" role="dialog" aria-modal="true" aria-label="Image preview">
+                    <div className="portal-image-preview-toolbar">
+                        <button type="button" onClick={closeImagePreview} aria-label="Go back from image preview" title="Back">
+                            Back
+                        </button>
+                        <span>{Math.round(imagePreviewZoom * 100)}%</span>
+                        <button type="button" onClick={() => adjustImagePreviewZoom(-0.25)} aria-label="Zoom out" title="Zoom out">
+                            -
+                        </button>
+                        <button type="button" onClick={() => setImagePreviewZoom(1)} aria-label="Reset zoom" title="Reset zoom">
+                            1:1
+                        </button>
+                        <button type="button" onClick={() => adjustImagePreviewZoom(0.25)} aria-label="Zoom in" title="Zoom in">
+                            +
+                        </button>
+                    </div>
+                    <div className="portal-image-preview-stage">
+                        <img
+                            src={imagePreview.dataUrl}
+                            alt={imagePreview.name || 'Post image'}
+                            style={{ transform: `scale(${imagePreviewZoom})` }}
+                        />
+                    </div>
+                </div>
+            </div>
+        );
+
+        return typeof document !== 'undefined'
+            ? createPortal(modalMarkup, document.body)
+            : modalMarkup;
+    };
+
     const ownTalentStories = talentStories.filter((post) => String(post.authorId) === viewerId);
     const ownCompanyPosts = workNewsPosts.filter((post) => String(post.authorId) === viewerId);
     return (
@@ -6606,6 +6696,7 @@ const PortalHomeFeed = ({
             {renderCreateStoryModal()}
             {renderPostDetailModal()}
             {renderProfileDetailModal()}
+            {renderImagePreviewModal()}
             {renderReachInsightModal()}
             {renderReactionStatsModal()}
         </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AnimatedDeleteButton from './AnimatedDeleteButton';
 
-const DraftApplications = ({ userId, switchSection, onFooterBack }) => {
+const DraftApplications = ({ userId, switchSection, onFooterBack, embedded = false }) => {
     const [drafts, setDrafts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState('');
@@ -74,12 +74,14 @@ const DraftApplications = ({ userId, switchSection, onFooterBack }) => {
 
     return (
         <div className="applications-container">
-            <div className="section-header">
-                <h2>Draft Applications</h2>
-                <div className="section-actions">
-                    <button className="refresh-button" onClick={fetchDrafts}>Refresh</button>
+            {!embedded && (
+                <div className="section-header">
+                    <h2>Draft Applications</h2>
+                    <div className="section-actions">
+                        <button className="refresh-button" onClick={fetchDrafts}>Refresh</button>
+                    </div>
                 </div>
-            </div>
+            )}
 
             {message && (
                 <div className={`notification-message ${message.includes('Error') ? 'error' : 'success'}`}>

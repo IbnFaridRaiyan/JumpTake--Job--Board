@@ -81,7 +81,7 @@ const AboutJumpTake = ({ mode = 'candidate' }) => {
             ['Draft Applications', 'Resume unfinished applications.'],
             ['Bookmarked Jobs', 'Return to jobs saved from the feed.'],
             ['Job Preferences', 'Update job interests so recommendations match your preferred roles.'],
-            ['My Profile', 'Review and edit resume-derived profile details.'],
+            ['Tailor Profile', 'Edit your complete education, experience, skills, achievements, and interests from the Home feed.'],
             ['Progress Check', 'View application, search, skill-match, employer-view, and response analytics.'],
             ['Settings', 'Update account, security, notifications, and contact preferences.']
         ];

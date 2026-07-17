@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from 'mammoth';
 import { createSquareProfileImage } from '../utils/profileImages';
+import confirmAction from '../utils/confirmAction';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -1073,7 +1074,7 @@ const buildExportDocument = (title, html) => `
 </html>
 `;
 
-const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
+const ResumePlayground = ({ user, mode = 'resume' }) => {
     const isDocumentMode = mode === 'document';
     const userId = user?.id || 'guest';
     const displayEmail = typeof user?.email === 'string' ? user.email : '';
@@ -2504,7 +2505,15 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
         setStatusMessage(`${resourceLabel} renamed.`);
     };
 
-    const handleDeleteResume = (resumeId) => {
+    const handleDeleteResume = async (resumeId) => {
+        const confirmed = await confirmAction({
+            title: `Delete ${resourceLabel.toLowerCase()}?`,
+            message: `Delete this saved ${resourceLabel.toLowerCase()} permanently?`
+        });
+        if (!confirmed) {
+            return;
+        }
+
         const nextResumes = savedResumes.filter((resume) => resume.id !== resumeId);
         persistResumes(nextResumes);
         if (editorResume?.id === resumeId) {
@@ -3404,11 +3413,6 @@ const ResumePlayground = ({ user, onFooterBack, mode = 'resume' }) => {
                 </>
             )}
 
-            <div className="page-footer-actions">
-                <button className="back-button responsive-back-button" onClick={onFooterBack}>
-                    Back
-                </button>
-            </div>
         </div>
     );
 };

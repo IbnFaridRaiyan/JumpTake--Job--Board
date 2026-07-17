@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import AnimatedDeleteButton from './AnimatedDeleteButton';
 import AppModeCard from './AppModeCard';
+import confirmAction from '../utils/confirmAction';
 
-const UserSettings = ({ user, onLogout, switchSection, onFooterBack, appMode, onAppModeChange }) => {
+const UserSettings = ({ user, onLogout, appMode, onAppModeChange }) => {
     const [activeTab, setActiveTab] = useState('account');
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -160,6 +161,14 @@ const UserSettings = ({ user, onLogout, switchSection, onFooterBack, appMode, on
             setMessage('Please enter your password to confirm deletion');
             return;
         }
+
+        const confirmed = await confirmAction({
+            title: 'Delete account?',
+            message: 'Delete your account and associated data permanently?'
+        });
+        if (!confirmed) {
+            return;
+        }
         
         setIsDeleting(true);
         setMessage('');
@@ -273,6 +282,8 @@ const UserSettings = ({ user, onLogout, switchSection, onFooterBack, appMode, on
     
     const renderAccountTab = () => (
         <div className="settings-tab account-tab">
+            <AppModeCard appMode={appMode} onAppModeChange={onAppModeChange} />
+
             <div className="settings-card">
                 <h3>Change Email</h3>
                 <form onSubmit={handleChangeEmail}>
@@ -553,25 +564,13 @@ const UserSettings = ({ user, onLogout, switchSection, onFooterBack, appMode, on
         </div>
     );
 
-    const handleBackToJobFeed = () => {
-        if (switchSection) {
-            switchSection('job-feed');
-        }
-    };
-    
     return (
         <div className="settings-container">
-            <div className="section-header">
-                <h2>Settings</h2>
-            </div>
-            
             {message && (
                 <div className={`notification-message ${message.includes('Error') ? 'error' : 'success'}`}>
                     {message}
                 </div>
             )}
-
-            <AppModeCard appMode={appMode} onAppModeChange={onAppModeChange} />
             
             <div className="settings-tabs">
                 <div className="tabs-header">
@@ -580,21 +579,21 @@ const UserSettings = ({ user, onLogout, switchSection, onFooterBack, appMode, on
                         onClick={() => setActiveTab('account')}
                     >
                         <i className="tab-icon account-icon"></i>
-                        Account
+                        <span>Account</span>
                     </button>
                     <button 
                         className={`tab-button ${activeTab === 'security' ? 'active' : ''}`}
                         onClick={() => setActiveTab('security')}
                     >
                         <i className="tab-icon security-icon"></i>
-                        Security
+                        <span>Security</span>
                     </button>
                     <button 
                         className={`tab-button ${activeTab === 'notifications' ? 'active' : ''}`}
                         onClick={() => setActiveTab('notifications')}
                     >
                         <i className="tab-icon notifications-icon"></i>
-                        Notifications
+                        <span>Notifications</span>
                     </button>
                 </div>
                 
@@ -603,12 +602,6 @@ const UserSettings = ({ user, onLogout, switchSection, onFooterBack, appMode, on
                     {activeTab === 'security' && renderSecurityTab()}
                     {activeTab === 'notifications' && renderNotificationsTab()}
                 </div>
-            </div>
-
-            <div className="page-footer-actions">
-                <button className="back-button" onClick={onFooterBack || handleBackToJobFeed}>
-                    Back
-                </button>
             </div>
 
         </div>

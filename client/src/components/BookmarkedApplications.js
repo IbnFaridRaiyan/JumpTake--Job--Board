@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AnimatedDeleteButton from './AnimatedDeleteButton';
 import ProfileAvatar from './ProfileAvatar';
+import confirmAction from '../utils/confirmAction';
 
 const BookmarkedApplications = ({ companyId, onBack, onFooterBack }) => {
     const [bookmarks, setBookmarks] = useState([]);
@@ -47,6 +48,14 @@ const BookmarkedApplications = ({ companyId, onBack, onFooterBack }) => {
     });
 
     const removeBookmark = async (applicationId) => {
+        const confirmed = await confirmAction({
+            title: 'Remove bookmark?',
+            message: 'Remove this application from your bookmarks?'
+        });
+        if (!confirmed) {
+            return;
+        }
+
         try {
             const token = localStorage.getItem('employerToken');
             const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/application-bookmarks/company/${companyId}/application/${applicationId}`, {

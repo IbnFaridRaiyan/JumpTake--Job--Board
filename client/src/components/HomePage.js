@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MyApplications from './MyApplications';
 import BookmarksHub from './BookmarksHub';
-import UserProfile from './UserProfile';
 import UserSettings from './UserSettings';
 import TalentPool from './TalentPool';
 import InterestedJobSuggestion from './InterestedJobSuggestion';
@@ -61,7 +60,6 @@ const CANDIDATE_SECTION_IDS = new Set([
     'saved-posts',
     'interested-jobs',
     'resume-playground',
-    'profile',
     'about-jumptake',
     'progress-check',
     'settings'
@@ -69,8 +67,9 @@ const CANDIDATE_SECTION_IDS = new Set([
 
 const CANDIDATE_SECTION_STORAGE_KEY = 'jumptakeCandidateSection';
 const PROFILE_IMAGE_UPDATED_EVENT = 'jumptake-profile-image-updated';
+const CANDIDATE_SECTIONS_WITHOUT_BACK = new Set(['settings', 'view-candidates', 'interested-jobs', 'resume-playground']);
 
-const normalizeCandidateSection = (section) => section;
+const normalizeCandidateSection = (section) => section === 'profile' ? 'job-feed' : section;
 
 const isMobileViewport = () => (
     typeof window !== 'undefined'
@@ -279,7 +278,6 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         'bookmarked-candidates': 'Bookmarked Candidates',
         'interested-jobs': 'Job Preferences',
         'resume-playground': 'Resume Playground',
-        profile: 'My Profile',
         'about-jumptake': 'About JumpTake',
         'progress-check': 'Progress Check',
         settings: 'Settings'
@@ -778,7 +776,6 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     }));
 
     const candidateSecondaryNavItems = [
-        { id: 'profile', label: 'My Profile', icon: 'user' },
         { id: 'about-jumptake', label: 'About JumpTake', icon: 'info' },
         { id: 'progress-check', label: 'Progress Check', icon: 'chart' },
         { id: 'settings', label: 'Settings', icon: 'settings' }
@@ -997,15 +994,6 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     user={user}
                     onFooterBack={goToPreviousSection}
                 />;
-            case 'profile':
-                console.log('Rendering profile with userId:', user?.id);
-                return <UserProfile
-                    userId={user?.id}
-                    jumptakeId={user?.jumptakeId}
-                    onUpdate={refreshData}
-                    switchSection={switchSection}
-                    onFooterBack={goToPreviousSection}
-                />;
             case 'about-jumptake':
                 return <AboutJumpTake mode="candidate" />;
             case 'progress-check':
@@ -1128,9 +1116,11 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     )}
                     {showSectionTitle && mobileSectionVisible && (
                         <div className="mobile-section-panel-header">
-                            <button type="button" className="back-button" onClick={closeMobileSectionPanel}>
-                                Back
-                            </button>
+                            {!CANDIDATE_SECTIONS_WITHOUT_BACK.has(activeSection) && (
+                                <button type="button" className="back-button" onClick={closeMobileSectionPanel}>
+                                    Back
+                                </button>
+                            )}
                             <h2><span key={`mobile-${activeSection}-${titleAnimationReplayKey}`} className="portal-title-jello-text">{sectionTitles[activeSection] || 'Dashboard Section'}</span></h2>
                         </div>
                     )}

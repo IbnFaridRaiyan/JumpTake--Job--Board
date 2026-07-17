@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ResumeFilePreview from './ResumeFilePreview';
 import ProfileAvatar from './ProfileAvatar';
+import confirmAction from '../utils/confirmAction';
 
 const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
     const [applications, setApplications] = useState([]);
@@ -368,6 +369,16 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
 
         const isBookmarked = bookmarkedApplicationIds.includes(String(application._id));
         const token = localStorage.getItem('employerToken');
+
+        if (isBookmarked) {
+            const confirmed = await confirmAction({
+                title: 'Remove bookmark?',
+                message: 'Remove this application from your bookmarks?'
+            });
+            if (!confirmed) {
+                return;
+            }
+        }
 
         try {
             if (isBookmarked) {

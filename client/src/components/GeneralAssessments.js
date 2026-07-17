@@ -1,5 +1,6 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import AnimatedDeleteButton from './AnimatedDeleteButton';
+import confirmAction from '../utils/confirmAction';
 
 const GeneralAssessments = forwardRef(({ companyId, jobs = [], onBack, onFooterBack }, ref) => {
     const [assessments, setAssessments] = useState([]);
@@ -61,7 +62,11 @@ const GeneralAssessments = forwardRef(({ companyId, jobs = [], onBack, onFooterB
     };
 
     const deleteAssessment = async (assessmentId) => {
-        if (!window.confirm('Delete this general assessment?')) {
+        const confirmed = await confirmAction({
+            title: 'Delete assessment?',
+            message: 'Delete this general assessment permanently?'
+        });
+        if (!confirmed) {
             return;
         }
 

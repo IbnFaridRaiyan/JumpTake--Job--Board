@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ContactCandidate from './ContactCandidate';
 import ProfileAvatar from './ProfileAvatar';
+import confirmAction from '../utils/confirmAction';
+import ProfileDetailsCard from './ProfileDetailsCard';
 
 const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }) => {
     const [bookmarks, setBookmarks] = useState([]);
@@ -13,7 +15,6 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
     const [sendingFriendTo, setSendingFriendTo] = useState('');
     const [likedCandidateIds, setLikedCandidateIds] = useState([]);
     const [candidateLikeCounts, setCandidateLikeCounts] = useState({});
-    const [skillsExpanded, setSkillsExpanded] = useState(false);
     const [isMobileView, setIsMobileView] = useState(() => (
         typeof window !== 'undefined' ? window.innerWidth <= 768 : false
     ));
@@ -33,10 +34,6 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
-
-    useEffect(() => {
-        setSkillsExpanded(false);
-    }, [selectedCandidate?._id]);
 
     const bookmarksPerMobilePage = 6;
     const totalPages = Math.max(1, Math.ceil(bookmarks.length / bookmarksPerMobilePage));
@@ -86,6 +83,14 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
     };
 
     const removeBookmark = async (candidateId) => {
+        const confirmed = await confirmAction({
+            title: 'Remove bookmark?',
+            message: 'Remove this candidate from your bookmarks?'
+        });
+        if (!confirmed) {
+            return;
+        }
+
         try {
             const token = localStorage.getItem('token');
             const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/candidate-bookmarks/user/${userId}/candidate/${candidateId}`, {
@@ -208,6 +213,16 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
             return;
         }
 
+        if (existingConnection?.status === 'pending' && existingConnection.direction === 'outgoing') {
+            const confirmed = await confirmAction({
+                title: 'Unsend invitation?',
+                message: 'Cancel this sent friend invitation?'
+            });
+            if (!confirmed) {
+                return;
+            }
+        }
+
         try {
             setSendingFriendTo(String(candidate._id));
             if (existingConnection?.status === 'pending' && existingConnection.direction === 'outgoing') {
@@ -273,36 +288,7 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
         });
     };
 
-    const getSkillList = (skills) => {
-        if (Array.isArray(skills)) {
-            return skills.map((skill) => String(skill).trim()).filter(Boolean);
-        }
-
-        if (typeof skills === 'string') {
-            return skills.split(',').map((skill) => skill.trim()).filter(Boolean);
-        }
-
-        return [];
-    };
-
-    const renderList = (items, emptyMessage) => {
-        if (!items || (Array.isArray(items) && items.length === 0)) {
-            return <p className="empty-info">{emptyMessage}</p>;
-        }
-
-        return (
-            <ul className="profile-list">
-                {(Array.isArray(items) ? items : [items]).map((item, index) => (
-                    <li key={index}>{typeof item === 'object' ? Object.values(item).filter(Boolean).join(' - ') : item}</li>
-                ))}
-            </ul>
-        );
-    };
-
     if (selectedCandidate) {
-        const selectedSkills = getSkillList(selectedCandidate.skills);
-        const visibleSkills = skillsExpanded ? selectedSkills : selectedSkills.slice(0, 5);
-
         return (
             <div className="candidate-profile bookmarked-candidate-profile">
                 <div className="candidate-profile-header">
@@ -319,31 +305,7 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
                 </div>
                 <div className="candidate-profile-body">
                     <ContactCandidate candidate={selectedCandidate} mode="candidate" currentUserId={userId} />
-
-                    <div className="profile-section">
-                        <h3>Skills</h3>
-                        <div className={`skills-container compact-skills-container ${skillsExpanded ? 'is-expanded' : ''}`}>
-                            {selectedSkills.length > 0
-                                ? (
-                                    <>
-                                        {visibleSkills.map((skill, index) => <span key={index} className="skill-tag">{skill}</span>)}
-                                        {selectedSkills.length > 5 && (
-                                            <button
-                                                type="button"
-                                                className="skill-tag skill-expand-button"
-                                                onClick={() => setSkillsExpanded((expanded) => !expanded)}
-                                                aria-expanded={skillsExpanded}
-                                            >
-                                                {skillsExpanded ? '-' : `+${selectedSkills.length - 5}`}
-                                            </button>
-                                        )}
-                                    </>
-                                )
-                                : <p>No skills listed</p>}
-                        </div>
-                    </div>
-                    <div className="profile-section"><h3>Education</h3>{renderList(selectedCandidate.education, 'No education information available')}</div>
-                    <div className="profile-section"><h3>Experience</h3>{renderList(selectedCandidate.experience, 'No experience information available')}</div>
+                    <ProfileDetailsCard profile={selectedCandidate} showHeader={false} />
                     <div className="section-footer-nav"><button className="back-button" onClick={() => setSelectedCandidate(null)}>Back</button></div>
                 </div>
             </div>

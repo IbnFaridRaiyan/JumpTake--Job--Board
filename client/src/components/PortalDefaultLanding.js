@@ -4,7 +4,6 @@ const ACTION_ICON_PATHS = {
     home: 'M12 3.1 3 10.3V21h6v-6h6v6h6V10.3l-9-7.2Zm0 2.56 7 5.6V19h-2v-6H7v6H5v-7.74l7-5.6Z',
     applications: 'M4 4h16v16H4V4Zm2 2v12h12V6H6Zm2 2h8v2H8V8Zm0 3h8v2H8v-2Zm0 3h5v2H8v-2Z',
     resume: 'M4 3h12l4 4v14H4V3Zm11 1.7V8h3.3L15 4.7ZM6 5v14h12V10h-5V5H6Zm2 8h8v2H8v-2Zm0 3h6v2H8v-2Z',
-    profile: 'M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z',
     postJob: 'M10 6V5a3 3 0 0 1 3-3h2a3 3 0 0 1 3 3v1h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5Zm2 0h4V5a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v1Zm1 5h-2v3H8v2h3v3h2v-3h3v-2h-3v-3Z',
     manageJobs: 'M4 4h16v16H4V4Zm2 2v12h12V6H6Zm2 3h8v2H8V9Zm0 4h5v2H8v-2Z',
     document: 'M5 3h10l4 4v14H5V3Zm9 2v4h4l-4-4ZM7 5v14h10v-8h-5V5H7Zm2 8h6v2H9v-2Zm0 3h6v2H9v-2Z',
@@ -57,8 +56,7 @@ const PortalDefaultLanding = ({
         : [
             { label: 'Home', section: 'job-feed', icon: 'home' },
             { label: 'My Applications', section: 'applications', icon: 'applications' },
-            { label: 'Resume Playground', section: 'resume-playground', icon: 'resume' },
-            { label: 'My Profile', section: 'profile', icon: 'profile' }
+            { label: 'Resume Playground', section: 'resume-playground', icon: 'resume' }
         ];
 
     const handleStatClick = (stat) => {

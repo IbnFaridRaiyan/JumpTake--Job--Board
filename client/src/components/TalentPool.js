@@ -5,11 +5,63 @@ import defaultTailorCoverImage from './media/default-tailor-cover.png';
 import defaultProfileMale from './media/default-profile-male.png';
 import defaultProfileFemale from './media/default-profile-female.png';
 import { apiUrl } from '../utils/apiUrl';
+import confirmAction from '../utils/confirmAction';
+import ProfileDetailsCard from './ProfileDetailsCard';
 
 const WORK_NEWS_STORAGE_KEY = 'jumptakeWorkNewsPosts';
 const TALENT_STORIES_STORAGE_KEY = 'jumptakeTalentStoriesPosts';
 const CANDIDATE_REACH_VIEWED_STORAGE_PREFIX = 'jumptakeCandidateProfileReachViewed:';
 const POPUP_CLOSE_ANIMATION_MS = 260;
+
+const lockCompactProfileReachPill = (node) => {
+    if (!node) {
+        return;
+    }
+
+    const styles = {
+        appearance: 'none',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 'max-content',
+        minWidth: '0',
+        maxWidth: 'max-content',
+        inlineSize: 'max-content',
+        minInlineSize: '0',
+        maxInlineSize: 'max-content',
+        height: '21px',
+        minHeight: '21px',
+        maxHeight: '21px',
+        blockSize: '21px',
+        minBlockSize: '21px',
+        maxBlockSize: '21px',
+        aspectRatio: 'auto',
+        margin: '0',
+        padding: '3px 8px',
+        border: '0',
+        borderRadius: '999px',
+        background: '#b77486',
+        backgroundColor: '#b77486',
+        backgroundImage: 'none',
+        boxShadow: 'none',
+        color: '#ffffff',
+        '-webkit-text-fill-color': '#ffffff',
+        fontSize: '10px',
+        fontWeight: '850',
+        lineHeight: '1',
+        textAlign: 'center',
+        whiteSpace: 'nowrap',
+        transform: 'none',
+        opacity: '1'
+    };
+
+    Object.entries(styles).forEach(([property, value]) => {
+        const cssProperty = property.startsWith('-')
+            ? property
+            : property.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+        node.style.setProperty(cssProperty, value, 'important');
+    });
+};
 
 const candidateReactionIconPaths = {
     Like: 'M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51a10 10 0 0 1 .443-.051c.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733q.086.18.138.363c.077.27.113.567.113.856s-.036.586-.113.856c-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.2 3.2 0 0 1-.488.901c.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.8 4.8 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z',
@@ -39,51 +91,32 @@ const CandidateShareIcon = () => (
 );
 
 const CandidateProfileFriendIcon = ({ status = '' }) => {
-    const paths = status === 'accepted'
-        ? [
-            'M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4',
-            'M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z'
-        ]
-        : status === 'pending'
-            ? [
-                'M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.354-5.854 1.5 1.5a.5.5 0 0 1-.708.708L13 11.707V14.5a.5.5 0 0 1-1 0v-2.793l-.646.647a.5.5 0 0 1-.708-.708l1.5-1.5a.5.5 0 0 1 .708 0M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4',
-                'M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z'
-            ]
-            : [
-                'M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4',
-                'M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z'
-            ];
+    const path = status === 'accepted'
+        ? 'M9.2 16.6 4.9 12.3l1.4-1.4 2.9 2.9 7.5-7.5 1.4 1.4zM12 22a9.9 9.9 0 0 1-7.1-2.9A9.9 9.9 0 0 1 2 12a9.9 9.9 0 0 1 2.9-7.1A9.9 9.9 0 0 1 12 2a9.9 9.9 0 0 1 7.1 2.9A9.9 9.9 0 0 1 22 12a9.9 9.9 0 0 1-2.9 7.1A9.9 9.9 0 0 1 12 22z'
+        : 'M15 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.42 0-8 2.24-8 5v1h10.1A6.9 6.9 0 0 1 17 19c0-1.85.72-3.54 1.9-4.8A11.7 11.7 0 0 0 15 14Zm6-3V8h-2v3h-3v2h3v3h2v-3h3v-2h-3Z';
 
     return (
         <svg
             className="candidate-popup-inline-icon"
             xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
+            viewBox="0 0 24 24"
             aria-hidden="true"
             focusable="false"
-            style={{ width: '16px', height: '16px', minWidth: '16px', maxWidth: '16px', minHeight: '16px', maxHeight: '16px' }}
         >
-            {paths.map((path) => <path key={path} d={path} />)}
+            <path d={path} />
         </svg>
     );
 };
 
-const CandidateProfileBookmarkIcon = ({ active = false }) => (
+const CandidateProfileBookmarkIcon = () => (
     <svg
         className="candidate-popup-inline-icon"
         xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
         viewBox="0 0 16 16"
         aria-hidden="true"
         focusable="false"
-        style={{ width: '16px', height: '16px', minWidth: '16px', maxWidth: '16px', minHeight: '16px', maxHeight: '16px' }}
     >
-        <path d={active
-            ? 'M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187z'
-            : 'M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z'} />
+        <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187z" />
     </svg>
 );
 
@@ -180,7 +213,7 @@ const getCandidateReachHistory = (post) => {
     });
 };
 
-const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employer', currentUserId }) => {
+const TalentPool = ({ jobs = [], companyId, mode = 'employer', currentUserId }) => {
     const [candidates, setCandidates] = useState([]);
     const [bookmarkedTalentIds, setBookmarkedTalentIds] = useState([]);
     const [, setLikedCandidateIds] = useState([]);
@@ -590,6 +623,16 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         const isBookmarked = bookmarkedTalentIds.includes(String(candidate._id));
         const token = localStorage.getItem(mode === 'candidate' ? 'token' : 'employerToken');
 
+        if (isBookmarked) {
+            const confirmed = await confirmAction({
+                title: 'Remove bookmark?',
+                message: 'Remove this candidate from your bookmarks?'
+            });
+            if (!confirmed) {
+                return;
+            }
+        }
+
         try {
             if (isBookmarked) {
                 const removeUrl = mode === 'employer'
@@ -680,6 +723,14 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
     const cancelFriendRequest = async (candidate) => {
         const connectionId = candidate.connectionStatus?.id;
         if (!connectionId || candidate.connectionStatus?.direction !== 'outgoing') {
+            return;
+        }
+
+        const confirmed = await confirmAction({
+            title: 'Unsend invitation?',
+            message: 'Cancel this sent friend invitation?'
+        });
+        if (!confirmed) {
             return;
         }
 
@@ -1258,15 +1309,16 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
         const totalReach = Math.max(0, Number(post?.reach || 0) || 0);
 
         return (
-            <span className="portal-reach-insight-wrap portal-feed-reach-wrap">
+            <span className="profile-post-reach-pill-wrap">
                 <button
                     type="button"
-                    className="portal-post-reach portal-reach-button"
+                    className="profile-post-reach-pill"
+                    ref={lockCompactProfileReachPill}
                     onClick={(event) => toggleCandidateReachInsight(event, postKey, post)}
                     aria-expanded={openCandidateReachInsightPostId === postKey}
                     aria-label={`Show reach graph for ${formatCompactCount(totalReach)} reach`}
                 >
-                    <span>{formatCompactCount(totalReach)} reach</span>
+                    {formatCompactCount(totalReach)} reach
                 </button>
             </span>
         );
@@ -1409,7 +1461,7 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
 
         return (
             <article
-                className="portal-social-post-card portal-profile-preview-post-card"
+                className="portal-social-post-card portal-profile-preview-post-card candidate-section-profile-post-card"
                 key={postKey}
             >
                 <div className="portal-social-post-header">
@@ -1807,12 +1859,16 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                             <div className="candidate-popup-name-row">
                                 <p className="tailor-profile-name">
                                     <span className="candidate-popup-name-text">{candidateName}</span>
-                                    {mode === 'candidate' && (
-                                        <span className="candidate-popup-name-actions" aria-label={`${candidateName} quick actions`}>
-                                        <span
-                                            role="button"
-                                            tabIndex={0}
-                                            className={`candidate-popup-name-action portal-profile-friend-action ${selectedCandidate.connectionStatus?.status === 'accepted' ? 'is-friend' : ''} ${selectedCandidate.connectionStatus?.status === 'pending' ? 'is-pending' : ''}`}
+                                </p>
+                            </div>
+                            <div className="tailor-profile-title">{formattedJumpTakeId}</div>
+                            <p className="portal-profile-detail-bio">{asCandidatePostText(selectedCandidate.bio || selectedCandidate.profile?.bio, 'No bio yet.')}</p>
+                        </div>
+                        {mode === 'candidate' && (
+                            <div className="portal-profile-card-actions" aria-label={`${candidateName} quick actions`}>
+                                        <button
+                                            type="button"
+                                            className={`portal-profile-card-action portal-profile-friend-action ${selectedCandidate.connectionStatus?.status === 'accepted' ? 'is-friend' : ''} ${selectedCandidate.connectionStatus?.status === 'pending' ? 'is-pending' : ''}`}
                                             onClick={(event) => {
                                                 event.stopPropagation();
                                                 if (!selectedCandidate.connectionStatus) {
@@ -1821,52 +1877,23 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                                                     cancelFriendRequest(selectedCandidate);
                                                 }
                                             }}
-                                            onKeyDown={(event) => {
-                                                if (event.key !== 'Enter' && event.key !== ' ') {
-                                                    return;
-                                                }
-                                                event.preventDefault();
-                                                event.stopPropagation();
-                                                if (sendingFriendRequest || selectedCandidate.connectionStatus?.status === 'accepted' || (selectedCandidate.connectionStatus?.status === 'pending' && selectedCandidate.connectionStatus?.direction !== 'outgoing')) {
-                                                    return;
-                                                }
-                                                if (!selectedCandidate.connectionStatus) {
-                                                    sendFriendRequest({ candidateId: selectedCandidate._id });
-                                                } else if (selectedCandidate.connectionStatus.status === 'pending' && selectedCandidate.connectionStatus.direction === 'outgoing') {
-                                                    cancelFriendRequest(selectedCandidate);
-                                                }
-                                            }}
-                                            aria-disabled={sendingFriendRequest || selectedCandidate.connectionStatus?.status === 'accepted' || (selectedCandidate.connectionStatus?.status === 'pending' && selectedCandidate.connectionStatus?.direction !== 'outgoing')}
+                                            disabled={sendingFriendRequest || selectedCandidate.connectionStatus?.status === 'accepted' || (selectedCandidate.connectionStatus?.status === 'pending' && selectedCandidate.connectionStatus?.direction !== 'outgoing')}
                                             aria-label={selectedCandidate.connectionStatus?.status === 'accepted' ? 'Already friends' : selectedCandidate.connectionStatus?.status === 'pending' ? 'Friend invitation pending' : 'Add friend'}
                                             title={selectedCandidate.connectionStatus?.status === 'accepted' ? 'Friends' : selectedCandidate.connectionStatus?.status === 'pending' ? 'Invitation pending' : 'Add friend'}
-                                            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '16px', height: '16px', minWidth: '16px', maxWidth: '16px', minHeight: '16px', maxHeight: '16px', marginLeft: '5px', verticalAlign: 'middle' }}
                                         >
                                             <CandidateProfileFriendIcon status={selectedCandidate.connectionStatus?.status || ''} />
-                                        </span>
-                                        <span
-                                            role="button"
-                                            tabIndex={0}
-                                            className={`candidate-popup-name-action portal-profile-bookmark-action ${isBookmarked ? 'active' : ''}`}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className={`portal-profile-card-action portal-profile-bookmark-action ${isBookmarked ? 'active' : ''}`}
                                             onClick={(event) => toggleTalentBookmark(selectedCandidate, event)}
-                                            onKeyDown={(event) => {
-                                                if (event.key === 'Enter' || event.key === ' ') {
-                                                    event.preventDefault();
-                                                    toggleTalentBookmark(selectedCandidate, event);
-                                                }
-                                            }}
                                             aria-label={isBookmarked ? 'Remove candidate bookmark' : 'Bookmark candidate'}
                                             title={isBookmarked ? 'Remove bookmark' : 'Bookmark candidate'}
-                                            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '16px', height: '16px', minWidth: '16px', maxWidth: '16px', minHeight: '16px', maxHeight: '16px', marginLeft: '4px', verticalAlign: 'middle' }}
                                         >
-                                            <CandidateProfileBookmarkIcon active={isBookmarked} />
-                                        </span>
-                                        </span>
-                                    )}
-                                </p>
+                                            <CandidateProfileBookmarkIcon />
+                                        </button>
                             </div>
-                            <div className="tailor-profile-title">{formattedJumpTakeId}</div>
-                            <p className="portal-profile-detail-bio">{asCandidatePostText(selectedCandidate.bio || selectedCandidate.profile?.bio, 'No bio yet.')}</p>
-                        </div>
+                        )}
                         <div className="tailor-social-links" aria-label={`${candidateName} social links`}>
                             {socialPlatforms.map((platform) => {
                                 const href = socialLinks[platform];
@@ -1926,6 +1953,11 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
                             </div>
                         </div>
                     </div>
+                    <ProfileDetailsCard
+                        profile={selectedCandidate}
+                        showHeader={false}
+                        className="candidate-profile-preview-details-card"
+                    />
                     {profilePosts.length > 0 ? (
                         <div className="portal-profile-detail-posts" aria-label={`${candidateName} posts`}>
                             <div className="portal-social-list portal-profile-preview-post-list">
@@ -2110,16 +2142,6 @@ const TalentPool = ({ jobs = [], companyId, onBack, onFooterBack, mode = 'employ
             {renderCandidateReachInsightModal()}
             {renderCandidateImagePreviewModal()}
 
-            {!isLoading && !selectedCandidate && (
-                <div className="page-footer-actions">
-                    <button 
-                        className="back-button"
-                        onClick={onFooterBack || onBack}
-                    >
-                        Back
-                    </button>
-                </div>
-            )}
         </div>
     );
 };

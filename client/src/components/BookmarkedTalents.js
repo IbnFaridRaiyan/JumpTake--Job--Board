@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ContactCandidate from './ContactCandidate';
 import ProfileAvatar from './ProfileAvatar';
+import confirmAction from '../utils/confirmAction';
 
 const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
     const [bookmarks, setBookmarks] = useState([]);
@@ -72,6 +73,14 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
     };
 
     const removeBookmark = async (candidateId) => {
+        const confirmed = await confirmAction({
+            title: 'Remove bookmark?',
+            message: 'Remove this talent from your bookmarks?'
+        });
+        if (!confirmed) {
+            return;
+        }
+
         try {
             const token = localStorage.getItem('employerToken');
             const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/talent-bookmarks/company/${companyId}/candidate/${candidateId}`, {

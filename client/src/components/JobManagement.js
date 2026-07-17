@@ -4,6 +4,7 @@ import EditJob from './EditJob';
 import ResumeFilePreview from './ResumeFilePreview';
 import ProfileAvatar from './ProfileAvatar';
 import { sendApplicationStatusEmail } from '../utils/emailVerification';
+import confirmAction from '../utils/confirmAction';
 
 const createQuestion = (type = 'multiple-choice') => ({
     clientId: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -453,6 +454,17 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
         const applicationId = String(application._id);
         const isBookmarked = bookmarkedApplicationIds.includes(applicationId);
 
+        if (isBookmarked) {
+            const confirmed = await confirmAction({
+                title: 'Remove bookmark?',
+                message: 'Remove this application from your bookmarks?'
+            });
+            if (!confirmed) {
+                setSaving(false);
+                return;
+            }
+        }
+
         try {
             const token = localStorage.getItem('employerToken');
             const response = await fetch(
@@ -709,7 +721,11 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
     };
 
     const deleteAssessment = async (assessmentId) => {
-        if (!window.confirm('Delete this assessment?')) {
+        const confirmed = await confirmAction({
+            title: 'Delete assessment?',
+            message: 'Delete this assessment permanently?'
+        });
+        if (!confirmed) {
             return;
         }
 

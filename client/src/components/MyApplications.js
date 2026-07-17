@@ -5,6 +5,7 @@ import ProfileAvatar from './ProfileAvatar';
 import MyAssessments from './MyAssessments';
 import VideoInterviews from './VideoInterviews';
 import DraftApplications from './DraftApplications';
+import confirmAction from '../utils/confirmAction';
 
 const APPLICATIONS_PER_PAGE = 4;
 const APPLICATION_HUB_TABS = [
@@ -85,7 +86,11 @@ const MyApplications = forwardRef(({
     };
     
     const handleWithdraw = async (applicationId) => {
-        if (!window.confirm('Are you sure you want to withdraw this application?')) {
+        const confirmed = await confirmAction({
+            title: 'Withdraw application?',
+            message: 'Withdraw this application?'
+        });
+        if (!confirmed) {
             return;
         }
         

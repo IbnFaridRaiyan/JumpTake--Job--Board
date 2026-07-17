@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AnimatedDeleteButton from './AnimatedDeleteButton';
+import confirmAction from '../utils/confirmAction';
 
 const DraftApplications = ({ userId, switchSection, onFooterBack, embedded = false }) => {
     const [drafts, setDrafts] = useState([]);
@@ -46,7 +47,11 @@ const DraftApplications = ({ userId, switchSection, onFooterBack, embedded = fal
     };
 
     const handleDeleteDraft = async (draftId) => {
-        if (!window.confirm('Delete this saved draft?')) {
+        const confirmed = await confirmAction({
+            title: 'Delete draft?',
+            message: 'Delete this saved application draft permanently?'
+        });
+        if (!confirmed) {
             return;
         }
 

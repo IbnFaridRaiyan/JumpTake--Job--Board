@@ -82094,3 +82094,2268 @@ html body .portal-profile-detail-backdrop .portal-profile-preview-post-card butt
   line-height: 1 !important;
   white-space: nowrap !important;
 }
+
+/* Final portal sizing pass: keep Candidate and Employer desktop shells aligned and readable. */
+@media (min-width: 769px) {
+  html body #root .home-page > .dashboard-header.candidate-dashboard-header,
+  html body #root .home-page > .dashboard-header.employer-dashboard-header,
+  html body #root .loading-container > .dashboard-header.candidate-dashboard-header,
+  html body #root .loading-container > .dashboard-header.employer-dashboard-header {
+    box-sizing: border-box !important;
+    width: min(calc(100% - 3rem), 1280px) !important;
+    max-width: 1280px !important;
+    margin: 0.55rem auto 0.75rem !important;
+  }
+
+  html body #root .home-page > .dashboard-container,
+  html body #root .home-page .dashboard-container,
+  html body #root .home-page .dashboard-container.mobile-section-open {
+    box-sizing: border-box !important;
+    width: min(calc(100% - 3rem), 1280px) !important;
+    max-width: 1280px !important;
+    margin: 1rem auto 2rem !important;
+    padding-left: 5.25rem !important;
+    padding-right: 1.25rem !important;
+  }
+
+  html body #root .home-page .dashboard-container:has(> .portal-uiverse-sidebar.is-expanded) {
+    padding-left: 15.5rem !important;
+  }
+
+  html body #root .home-page .main-content.mobile-dashboard-section-panel {
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+    padding: 1.4rem !important;
+  }
+
+  html body #root .home-page .main-content > .portal-section-transition-shell {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 1080px !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+  }
+}
+
+/* Light mode must not inherit the near-black tab trays used by the dark portal. */
+html[data-theme="light"] body #root .home-page .friend-invitation-tabs,
+body[data-theme="light"] #root .home-page .friend-invitation-tabs,
+html[data-theme="light"] body #root .home-page .resume-playground-tabs,
+body[data-theme="light"] #root .home-page .resume-playground-tabs {
+  border-color: rgba(122, 96, 67, 0.2) !important;
+  background: #efe5d5 !important;
+  box-shadow: 0 0.45rem 1.1rem rgba(78, 55, 34, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+html[data-theme="light"] body #root .home-page .resume-playground-tabs button,
+body[data-theme="light"] #root .home-page .resume-playground-tabs button {
+  border: 1px solid rgba(122, 96, 67, 0.15) !important;
+  background: #fffaf2 !important;
+  color: #3f352c !important;
+  -webkit-text-fill-color: #3f352c !important;
+}
+
+html[data-theme="light"] body #root .home-page .friend-invitation-tab-icon,
+body[data-theme="light"] #root .home-page .friend-invitation-tab-icon {
+  color: currentColor !important;
+}
+
+/* Profile dialogs are portalled to body, so mobile fixes must not depend on #root. */
+@media (max-width: 768px) {
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card.portal-profile-preview-post-card {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0.78rem !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-header {
+    display: grid !important;
+    grid-template-columns: 2rem minmax(0, 1fr) 1.4rem !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-author-open-button.portal-post-avatar {
+    width: 2rem !important;
+    min-width: 2rem !important;
+    max-width: 2rem !important;
+    height: 2rem !important;
+    min-height: 2rem !important;
+    max-height: 2rem !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-title-block {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-reach-row {
+    display: flex !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    margin: 0.38rem 0 0.5rem !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-feed-reach-wrap,
+  html body .portal-profile-detail-backdrop .portal-profile-preview-post-card .portal-feed-reach-wrap {
+    flex: 0 0 auto !important;
+    inline-size: max-content !important;
+    width: max-content !important;
+    min-width: 0 !important;
+    max-width: max-content !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button:is(:hover, :focus, :focus-visible, :active),
+  html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button,
+  html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button:is(:hover, :focus, :focus-visible, :active) {
+    flex: 0 0 auto !important;
+    inline-size: max-content !important;
+    width: max-content !important;
+    min-width: 0 !important;
+    max-width: max-content !important;
+    height: 1.3rem !important;
+    min-height: 1.3rem !important;
+    max-height: 1.3rem !important;
+    padding: 0.1rem 0.35rem !important;
+    border-radius: 999px !important;
+    font-size: 0.56rem !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button *,
+  html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button * {
+    font-size: 0.56rem !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* Mobile-only profile post alignment for Home author popups and Candidates profiles. */
+@media (max-width: 768px) {
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-list,
+  html body .portal-profile-detail-backdrop .portal-profile-preview-post-list {
+    box-sizing: border-box !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0.62rem !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card.portal-profile-preview-post-card {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.44rem !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0.72rem 0.68rem !important;
+    overflow: visible !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card.portal-profile-preview-post-card .portal-social-post-header {
+    box-sizing: border-box !important;
+    display: grid !important;
+    grid-template-columns: 2.15rem minmax(0, 1fr) 1.35rem !important;
+    grid-template-rows: auto !important;
+    align-items: start !important;
+    justify-items: stretch !important;
+    column-gap: 0.5rem !important;
+    row-gap: 0 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 2.15rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card.portal-profile-preview-post-card .portal-author-open-button.portal-post-avatar,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card.portal-profile-preview-post-card .portal-author-open-button.portal-post-avatar:not(.has-default-profile-icon) {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    align-self: start !important;
+    justify-self: start !important;
+    flex: 0 0 2.15rem !important;
+    width: 2.15rem !important;
+    min-width: 2.15rem !important;
+    max-width: 2.15rem !important;
+    height: 2.15rem !important;
+    min-height: 2.15rem !important;
+    max-height: 2.15rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    transform: none !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card.portal-profile-preview-post-card .portal-author-open-button.portal-post-avatar :is(img, svg, .portal-default-profile-icon, .portal-default-profile-image) {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    margin: 0 !important;
+    object-fit: cover !important;
+    border-radius: 50% !important;
+    transform: none !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card.portal-profile-preview-post-card .portal-post-title-block {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    align-self: start !important;
+    justify-self: stretch !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.1rem !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0.08rem 0 0 !important;
+    text-align: left !important;
+    transform: none !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card.portal-profile-preview-post-card :is(.portal-post-author-name, .portal-author-name-button) {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    color: #172033 !important;
+    -webkit-text-fill-color: #172033 !important;
+    font-size: 0.82rem !important;
+    font-weight: 850 !important;
+    line-height: 1.08 !important;
+    text-align: left !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    transform: none !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card.portal-profile-preview-post-card .portal-post-title-block p {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    font-size: 0.62rem !important;
+    line-height: 1.15 !important;
+    text-align: left !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    transform: none !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card.portal-profile-preview-post-card .portal-post-header-actions {
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+    align-self: start !important;
+    justify-self: end !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: flex-end !important;
+    width: 1.35rem !important;
+    min-width: 1.35rem !important;
+    max-width: 1.35rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card.portal-profile-preview-post-card .portal-post-options-button {
+    width: 1.3rem !important;
+    min-width: 1.3rem !important;
+    max-width: 1.3rem !important;
+    height: 1.3rem !important;
+    min-height: 1.3rem !important;
+    max-height: 1.3rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card.portal-profile-preview-post-card .portal-post-reach-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 1.3rem !important;
+    height: auto !important;
+    margin: 0.1rem 0 0.16rem !important;
+    padding: 0 !important;
+    transform: none !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card.portal-profile-preview-post-card :is(.portal-post-body-wrap, .portal-post-media, .portal-post-file-attachment, .portal-post-action-cluster, .portal-post-comments) {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    transform: none !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card.portal-profile-preview-post-card .portal-post-body-wrap {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card.portal-profile-preview-post-card .portal-post-body {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 0.76rem !important;
+    line-height: 1.42 !important;
+    text-align: left !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card.portal-profile-preview-post-card .portal-post-action-cluster,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card.portal-profile-preview-post-card .portal-post-action-row {
+    align-items: center !important;
+    justify-content: flex-start !important;
+    min-width: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+  }
+}
+
+/* Mobile profile-popup final lock: compact reach and Candidates-specific left alignment. */
+@media (max-width: 768px) {
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-feed-reach-wrap,
+  html body .portal-profile-detail-backdrop .portal-profile-preview-post-card .portal-feed-reach-wrap {
+    all: unset !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    inline-size: max-content !important;
+    width: max-content !important;
+    min-width: 0 !important;
+    max-width: max-content !important;
+    height: 14px !important;
+    min-height: 14px !important;
+    max-height: 14px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button:is(:hover, :focus, :focus-visible, :active),
+  html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button,
+  html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button:is(:hover, :focus, :focus-visible, :active) {
+    all: unset !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    align-items: center !important;
+    justify-content: center !important;
+    inline-size: max-content !important;
+    width: max-content !important;
+    min-width: 0 !important;
+    max-width: max-content !important;
+    block-size: 14px !important;
+    min-block-size: 14px !important;
+    max-block-size: 14px !important;
+    height: 14px !important;
+    min-height: 14px !important;
+    max-height: 14px !important;
+    margin: 0 !important;
+    padding: 1px 5px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: #b77486 !important;
+    background-color: #b77486 !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    cursor: pointer !important;
+    font-family: inherit !important;
+    font-size: 7.5px !important;
+    font-weight: 850 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    transform: none !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button span,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button *,
+  html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button span,
+  html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button * {
+    all: unset !important;
+    display: inline !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    font-family: inherit !important;
+    font-size: 7.5px !important;
+    font-weight: 850 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  html body .portal-profile-detail-modal.candidate-profile-from-candidates .candidate-section-profile-post-card {
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.42rem !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0.72rem 0.68rem !important;
+  }
+
+  html body .portal-profile-detail-modal.candidate-profile-from-candidates .candidate-section-profile-post-card > .portal-social-post-header {
+    all: unset !important;
+    box-sizing: border-box !important;
+    display: grid !important;
+    grid-template-columns: 2.1rem minmax(0, 1fr) 1.3rem !important;
+    grid-template-rows: auto !important;
+    align-items: start !important;
+    column-gap: 0.5rem !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 2.1rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  html body .portal-profile-detail-modal.candidate-profile-from-candidates .candidate-section-profile-post-card > .portal-social-post-header > .portal-author-open-button.portal-post-avatar {
+    all: unset !important;
+    box-sizing: border-box !important;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    display: block !important;
+    width: 2.1rem !important;
+    min-width: 2.1rem !important;
+    max-width: 2.1rem !important;
+    height: 2.1rem !important;
+    min-height: 2.1rem !important;
+    max-height: 2.1rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+  }
+
+  html body .portal-profile-detail-modal.candidate-profile-from-candidates .candidate-section-profile-post-card > .portal-social-post-header > .portal-author-open-button.portal-post-avatar > img {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    margin: 0 !important;
+    object-fit: cover !important;
+    border-radius: 50% !important;
+  }
+
+  html body .portal-profile-detail-modal.candidate-profile-from-candidates .candidate-section-profile-post-card > .portal-social-post-header > .portal-post-title-block {
+    all: unset !important;
+    box-sizing: border-box !important;
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    align-self: start !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    gap: 0.1rem !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0.08rem 0 0 !important;
+    color: #172033 !important;
+    text-align: left !important;
+  }
+
+  html body .portal-profile-detail-modal.candidate-profile-from-candidates .candidate-section-profile-post-card > .portal-social-post-header > .portal-post-title-block > .portal-post-author-name,
+  html body .portal-profile-detail-modal.candidate-profile-from-candidates .candidate-section-profile-post-card > .portal-social-post-header > .portal-post-title-block > .portal-post-author-name > .portal-author-name-button {
+    all: unset !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    color: #172033 !important;
+    -webkit-text-fill-color: #172033 !important;
+    cursor: pointer !important;
+    font-family: inherit !important;
+    font-size: 0.82rem !important;
+    font-weight: 850 !important;
+    line-height: 1.08 !important;
+    text-align: left !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  html body .portal-profile-detail-modal.candidate-profile-from-candidates .candidate-section-profile-post-card > .portal-social-post-header > .portal-post-title-block > p {
+    all: unset !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    color: #5f6874 !important;
+    -webkit-text-fill-color: #5f6874 !important;
+    font-family: inherit !important;
+    font-size: 0.62rem !important;
+    font-weight: 650 !important;
+    line-height: 1.15 !important;
+    text-align: left !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  html body .portal-profile-detail-modal.candidate-profile-from-candidates .candidate-section-profile-post-card > .portal-social-post-header > .portal-post-header-actions {
+    all: unset !important;
+    box-sizing: border-box !important;
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+    align-self: start !important;
+    justify-self: end !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: flex-end !important;
+    width: 1.3rem !important;
+    min-width: 1.3rem !important;
+    max-width: 1.3rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  html body .portal-profile-detail-modal.candidate-profile-from-candidates .candidate-section-profile-post-card > .portal-post-reach-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 14px !important;
+    height: 14px !important;
+    max-height: 14px !important;
+    margin: 0.08rem 0 0.12rem !important;
+    padding: 0 !important;
+  }
+
+  html body .portal-profile-detail-modal.candidate-profile-from-candidates .candidate-section-profile-post-card > :is(.portal-post-body-wrap, .portal-post-media, .portal-post-file-attachment, .portal-post-action-cluster, .portal-post-comments) {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    transform: none !important;
+  }
+
+  html body .portal-profile-detail-modal.candidate-profile-from-candidates .candidate-section-profile-post-card > .portal-post-body-wrap,
+  html body .portal-profile-detail-modal.candidate-profile-from-candidates .candidate-section-profile-post-card > .portal-post-body-wrap > .portal-post-body {
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button::before,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button::after,
+  html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button::before,
+  html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button::after,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-feed-reach-wrap::before,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-feed-reach-wrap::after {
+    display: none !important;
+    content: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button:is(:hover, :focus, :focus-visible, :active),
+  html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button,
+  html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button:is(:hover, :focus, :focus-visible, :active) {
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.portal-post-reach.portal-reach-button > span,
+  html body .portal-profile-detail-backdrop .portal-profile-preview-post-card button.portal-post-reach.portal-reach-button > span {
+    all: unset !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: max-content !important;
+    min-width: 0 !important;
+    max-width: max-content !important;
+    height: 14px !important;
+    min-height: 14px !important;
+    max-height: 14px !important;
+    padding: 1px 5px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: #b77486 !important;
+    background-color: #b77486 !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    font-family: inherit !important;
+    font-size: 7.5px !important;
+    font-weight: 850 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* Isolated profile-preview reach pill; deliberately shares no legacy feed-button classes. */
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .profile-post-reach-pill-wrap {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: max-content !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  height: 1.25rem !important;
+  min-height: 1.25rem !important;
+  max-height: 1.25rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.profile-post-reach-pill,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.profile-post-reach-pill:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: max-content !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  height: 1.25rem !important;
+  min-height: 1.25rem !important;
+  max-height: 1.25rem !important;
+  margin: 0 !important;
+  padding: 0.08rem 0.35rem !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: #b77486 !important;
+  background-color: #b77486 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  font-size: 0.56rem !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  transform: none !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .profile-post-reach-pill-wrap::before,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .profile-post-reach-pill-wrap::after,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.profile-post-reach-pill::before,
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.profile-post-reach-pill::after {
+  display: none !important;
+  content: none !important;
+}
+
+@media (max-width: 768px) {
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .profile-post-reach-pill-wrap,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.profile-post-reach-pill,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.profile-post-reach-pill:is(:hover, :focus, :focus-visible, :active) {
+    width: max-content !important;
+    min-width: 0 !important;
+    max-width: max-content !important;
+    height: 21px !important;
+    min-height: 21px !important;
+    max-height: 21px !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.profile-post-reach-pill,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts button.profile-post-reach-pill:is(:hover, :focus, :focus-visible, :active) {
+    padding: 3px 8px !important;
+    font-size: 10px !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-reach-row:has(.profile-post-reach-pill-wrap) {
+    min-height: 21px !important;
+    height: 21px !important;
+    max-height: 21px !important;
+    margin: -0.48rem 0 0.08rem !important;
+    padding: 0 !important;
+  }
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card {
+  position: relative !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions {
+    position: absolute !important;
+    top: 6.55rem !important;
+    right: 0.85rem !important;
+    z-index: 4 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 0.45rem !important;
+    width: max-content !important;
+    min-width: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > .portal-profile-friend-action,
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > .portal-profile-bookmark-action,
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > .portal-profile-friend-action:is(:hover, :focus, :focus-visible, :active, :disabled, .is-friend, .is-pending),
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > .portal-profile-bookmark-action:is(:hover, :focus, :focus-visible, :active, :disabled, .active) {
+    box-sizing: border-box !important;
+    display: inline-grid !important;
+    flex: 0 0 1.9rem !important;
+    place-items: center !important;
+    width: 1.9rem !important;
+    min-width: 1.9rem !important;
+    max-width: 1.9rem !important;
+    height: 1.9rem !important;
+    min-height: 1.9rem !important;
+    max-height: 1.9rem !important;
+    margin: 0 !important;
+    padding: 0.38rem !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    color: #8b3f55 !important;
+    -webkit-text-fill-color: #8b3f55 !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
+    line-height: 1 !important;
+    transform: none !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > button.portal-profile-card-action {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 0 !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > .portal-profile-friend-action.is-pending {
+    color: #2e8b57 !important;
+    -webkit-text-fill-color: #2e8b57 !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > .portal-profile-bookmark-action.active {
+    color: #d99a00 !important;
+    -webkit-text-fill-color: #d99a00 !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > [aria-disabled="true"],
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > :disabled {
+    cursor: default !important;
+    opacity: 0.65 !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions svg,
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions img,
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions .candidate-popup-inline-icon {
+    display: block !important;
+    width: 1.05rem !important;
+    min-width: 1.05rem !important;
+    max-width: 1.05rem !important;
+    height: 1.05rem !important;
+    min-height: 1.05rem !important;
+    max-height: 1.05rem !important;
+    margin: 0 !important;
+    color: currentColor !important;
+    fill: currentColor !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions .portal-profile-friend-menu {
+    position: absolute !important;
+    top: calc(100% + 0.35rem) !important;
+    right: 2.2rem !important;
+    z-index: 5 !important;
+}
+
+@media (max-width: 768px) {
+  html body .portal-profile-detail-backdrop .portal-profile-detail-card .tailor-profile-name {
+    font-size: 1rem !important;
+    line-height: 1.15 !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-author-name,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-author-name-button {
+    font-size: 0.9rem !important;
+    line-height: 1.12 !important;
+  }
+
+  html body .portal-profile-detail-modal.candidate-profile-from-candidates .candidate-section-profile-post-card > .portal-social-post-header > .portal-post-title-block > .portal-post-author-name,
+  html body .portal-profile-detail-modal.candidate-profile-from-candidates .candidate-section-profile-post-card > .portal-social-post-header > .portal-post-title-block > .portal-post-author-name > .portal-author-name-button,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card.portal-profile-preview-post-card .portal-post-title-block > .portal-post-author-name,
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-card.portal-profile-preview-post-card .portal-post-title-block > .portal-post-author-name .portal-author-name-button {
+    font-size: 0.9rem !important;
+    line-height: 1.12 !important;
+  }
+}
+
+/* Bare profile action icons: no legacy circular tile beneath either portal's controls. */
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > button.portal-profile-card-action,
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > button.portal-profile-card-action:is(:hover, :focus, :focus-visible, :active, :disabled, .active, .is-friend, .is-pending, .menu-open) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  outline-offset: 0.12rem !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > button.portal-profile-card-action::before,
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > button.portal-profile-card-action::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Rounded portal surfaces for the top logo bar and vertical navigation rail. */
+html body #root .home-page > .dashboard-header.candidate-dashboard-header,
+html body #root .home-page > .dashboard-header.employer-dashboard-header,
+html body #root .loading-container > .dashboard-header.candidate-dashboard-header,
+html body #root .loading-container > .dashboard-header.employer-dashboard-header,
+html[data-theme="light"] body[data-theme="light"] #root .home-page > .dashboard-header,
+body[data-theme="light"] #root .home-page > .dashboard-header {
+  background: #f3e7d6 !important;
+  background-color: #f3e7d6 !important;
+  background-image: none !important;
+  border: 1px solid #d7bea0 !important;
+  border-radius: 1.1rem !important;
+  box-shadow: 0 0.45rem 1.25rem rgba(70, 49, 36, 0.08) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html body #root .home-page > :is(.dashboard-header.candidate-dashboard-header, .dashboard-header.employer-dashboard-header)::before,
+html body #root .home-page > :is(.dashboard-header.candidate-dashboard-header, .dashboard-header.employer-dashboard-header)::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page :is(.portal-uiverse-sidebar, .portal-sidebar-nav),
+html body #root .home-page :is(.portal-uiverse-sidebar, .portal-sidebar-nav)::before,
+html body #root .home-page :is(.portal-uiverse-sidebar, .portal-sidebar-nav)::after {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  filter: none !important;
+}
+
+/* Shared confirmation dialog for every destructive action. */
+body.jumptake-confirm-open {
+  overflow: hidden !important;
+}
+
+.jumptake-confirm-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 20000 !important;
+  display: grid !important;
+  place-items: center !important;
+  box-sizing: border-box !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  padding: 1rem !important;
+  background: rgba(26, 22, 20, 0.58) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+.jumptake-confirm-dialog {
+  box-sizing: border-box !important;
+  width: min(22rem, calc(100vw - 2rem)) !important;
+  max-width: 100% !important;
+  padding: 1.35rem 1.15rem 1.1rem !important;
+  border: 1px solid rgba(91, 17, 24, 0.28) !important;
+  border-radius: 1.15rem !important;
+  background: #fffaf1 !important;
+  color: #1a1513 !important;
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.34) !important;
+  text-align: center !important;
+}
+
+.jumptake-confirm-dialog h2 {
+  margin: 0 !important;
+  color: #5b1118 !important;
+  -webkit-text-fill-color: #5b1118 !important;
+  font-size: 1.08rem !important;
+  line-height: 1.2 !important;
+}
+
+.jumptake-confirm-dialog p {
+  margin: 0.62rem 0 1.05rem !important;
+  color: #28211e !important;
+  -webkit-text-fill-color: #28211e !important;
+  font-size: 0.84rem !important;
+  line-height: 1.42 !important;
+}
+
+.jumptake-confirm-actions {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 0.68rem !important;
+}
+
+.jumptake-confirm-button,
+.jumptake-confirm-button:is(:hover, :focus, :focus-visible, :active) {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 2.4rem !important;
+  margin: 0 !important;
+  padding: 0.55rem 0.9rem !important;
+  border-radius: 999px !important;
+  box-shadow: none !important;
+  font-size: 0.82rem !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  transform: none !important;
+}
+
+.jumptake-confirm-button.jumptake-confirm-yes,
+.jumptake-confirm-button.jumptake-confirm-yes:is(:hover, :focus, :focus-visible, :active) {
+  border: 2px solid #5b1118 !important;
+  background: #fffaf1 !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+}
+
+.jumptake-confirm-button.jumptake-confirm-no,
+.jumptake-confirm-button.jumptake-confirm-no:is(:hover, :focus, :focus-visible, :active) {
+  border: 2px solid #5b1118 !important;
+  background: #5b1118 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Final mobile Bookmarks and Applications alignment repair. */
+@media (max-width: 768px) {
+  html body #root .home-page .applications-hub-nav > button.applications-hub-tab,
+  html body #root .home-page .applications-hub-nav > button.applications-hub-tab.active,
+  html body #root .home-page .bookmarks-hub-nav > button.bookmarks-hub-tab,
+  html body #root .home-page .bookmarks-hub-nav > button.bookmarks-hub-tab.active,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .applications-hub-nav > button.applications-hub-tab,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .applications-hub-nav > button.applications-hub-tab.active,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .bookmarks-hub-nav > button.bookmarks-hub-tab,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .bookmarks-hub-nav > button.bookmarks-hub-tab.active {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.24rem !important;
+  }
+
+  html body #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab) > :is(.applications-hub-tab-icon, .bookmarks-hub-tab-icon),
+  html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab) > :is(.applications-hub-tab-icon, .bookmarks-hub-tab-icon) {
+    position: static !important;
+    inset: auto !important;
+    order: 0 !important;
+    flex: 0 0 1.12rem !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+
+  html body #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab) > span,
+  html body #root .home-page :is(.applications-hub-tab.active, .bookmarks-hub-tab.active) > span,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab) > span,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.applications-hub-tab.active, .bookmarks-hub-tab.active) > span {
+    position: static !important;
+    inset: auto !important;
+    order: 1 !important;
+    display: block !important;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    margin: 0 !important;
+    transform: none !important;
+    text-align: center !important;
+  }
+
+  html body #root .home-page .bookmarks-hub-panel {
+    margin-top: 0.8rem !important;
+  }
+
+  html body #root .home-page .bookmarks-hub-panel .no-candidates,
+  html body #root .home-page .bookmarks-hub-panel .no-applications-message,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .bookmarks-hub-panel .no-candidates,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .bookmarks-hub-panel .no-applications-message {
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.55rem !important;
+    width: 100% !important;
+    min-height: 8.5rem !important;
+    margin: 0.45rem 0 0 !important;
+    padding: 1.1rem 0.8rem !important;
+    text-align: center !important;
+  }
+
+  html body #root .home-page .bookmarks-hub-panel :is(.no-candidates, .no-applications-message) :is(h3, p),
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .bookmarks-hub-panel :is(.no-candidates, .no-applications-message) :is(h3, p) {
+    margin: 0 !important;
+  }
+
+  html body #root .home-page .bookmarked-job-card .bookmarked-job-reactions,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .bookmarked-job-card .bookmarked-job-reactions {
+    position: static !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 0.65rem !important;
+    width: max-content !important;
+    max-width: 100% !important;
+    min-height: 2rem !important;
+    margin: 0.7rem 0 0.45rem !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    overscroll-behavior: none !important;
+    touch-action: manipulation !important;
+    scrollbar-width: none !important;
+  }
+
+  html body #root .home-page .bookmarked-job-card .bookmarked-job-reactions::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  html body #root .home-page .bookmarked-job-card .bookmarked-job-reactions > button,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .bookmarked-job-card .bookmarked-job-reactions > button {
+    position: relative !important;
+    inset: auto !important;
+    flex: 0 0 1.8rem !important;
+    width: 1.8rem !important;
+    min-width: 1.8rem !important;
+    height: 1.8rem !important;
+    min-height: 1.8rem !important;
+    margin: 0 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: color 0.18s ease !important;
+    overflow: visible !important;
+  }
+
+  html body #root .home-page .bookmarked-job-card .bookmarked-job-star-glyph,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .bookmarked-job-card .bookmarked-job-star-glyph {
+    position: static !important;
+    display: block !important;
+    color: #5b1118 !important;
+    fill: #5b1118 !important;
+    -webkit-text-fill-color: #5b1118 !important;
+    font-size: 1.35rem !important;
+    line-height: 1 !important;
+    transform: none !important;
+  }
+
+  html body #root .home-page .bookmarked-job-card .application-card-actions .view-profile-btn.secondary-action,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .bookmarked-job-card .application-card-actions .view-profile-btn.secondary-action {
+    border: 2px solid #111111 !important;
+    color: #111111 !important;
+    -webkit-text-fill-color: #111111 !important;
+    box-shadow: none !important;
+  }
+}
+
+html body #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+  background: #f3e7d6 !important;
+  background-color: #f3e7d6 !important;
+  background-image: none !important;
+  border: 1px solid #d7bea0 !important;
+  border-radius: 0.95rem !important;
+  box-shadow: 0 0.45rem 1.25rem rgba(70, 49, 36, 0.08) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+}
+
+html body #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail::before,
+html body #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail::after {
+  display: none !important;
+  content: none !important;
+}
+
+html body #root .home-page .portal-uiverse-sidebar :is(.sidebar__list, .sidebar__item, .sidebar__link, .icon),
+html body #root .home-page .portal-uiverse-sidebar :is(.sidebar__list, .sidebar__item, .sidebar__link, .icon):is(:hover, :focus, :focus-visible, :active, .is-active, .is-danger) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .home-page > .dashboard-header.candidate-dashboard-header,
+  html body #root .home-page > .dashboard-header.employer-dashboard-header {
+    box-sizing: border-box !important;
+    width: calc(100% - 1rem) !important;
+    max-width: calc(100% - 1rem) !important;
+    margin: 0.5rem auto 0.3rem !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar,
+  html body #root .home-page .portal-uiverse-sidebar.sidebar,
+  html body #root .home-page .portal-uiverse-sidebar.is-collapsed,
+  html body #root .home-page .portal-uiverse-sidebar.is-collapsed.sidebar {
+    left: 0.25rem !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+    box-sizing: border-box !important;
+    height: calc(100% - 0.2rem) !important;
+    max-height: calc(100% - 0.2rem) !important;
+    margin-top: 0.2rem !important;
+  }
+
+  html body #root .home-page .main-content.mobile-dashboard-section-panel:not(.is-open) {
+    box-sizing: border-box !important;
+    margin-top: 0.2rem !important;
+  }
+
+  html body #root .home-page > .dashboard-container,
+  html body #root .home-page .dashboard-container,
+  html body #root .home-page .dashboard-container.mobile-section-open {
+    padding-top: 0.35rem !important;
+  }
+
+  html body #root .home-page .main-content.mobile-dashboard-section-panel.is-open,
+  html body #root .home-page .mobile-job-management-section-panel.is-open {
+    position: absolute !important;
+    inset: 0.2rem 0.25rem 0 3.55rem !important;
+    top: 0.2rem !important;
+    right: 0.25rem !important;
+    bottom: 0 !important;
+    left: 3.55rem !important;
+    width: auto !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+  }
+
+  html body #root .home-page .dashboard-container.mobile-section-open .main-content.mobile-dashboard-section-panel.is-open > .dashboard-section-title {
+    display: none !important;
+  }
+
+  html body #root .home-page .main-content.mobile-dashboard-section-panel.is-open > .portal-section-transition-shell {
+    position: relative !important;
+    top: auto !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  html body #root .home-page .main-content.mobile-dashboard-section-panel:is(.mobile-section-home, .mobile-section-job-feed).is-open .portal-home-feed {
+    margin-top: 0 !important;
+  }
+
+  html body #root .home-page .dashboard-container.mobile-section-open .mobile-dashboard-section-panel.is-open > .mobile-section-panel-header,
+  html body #root .home-page .dashboard-container.mobile-section-open .mobile-job-management-section-panel.is-open > .mobile-section-panel-header {
+    margin-top: 0 !important;
+  }
+
+  html body #root .home-page .portal-home-feed-scroll > .portal-home-tab-panel {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    padding-left: 0.38rem !important;
+    padding-right: 0.08rem !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar label.portal-sidebar-menu-icon {
+    position: relative !important;
+    top: 0.45rem !important;
+  }
+}
+
+/* Mobile hub tabs share the Friends pastel navigation treatment. */
+@media (max-width: 768px) {
+  html body #root .home-page :is(.applications-hub-nav, .bookmarks-hub-nav),
+  html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.applications-hub-nav, .bookmarks-hub-nav) {
+    box-sizing: border-box !important;
+    align-items: stretch !important;
+    gap: 0.25rem !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0.38rem !important;
+    border: 1px solid rgba(122, 96, 67, 0.2) !important;
+    border-radius: 1rem !important;
+    background: #efe5d5 !important;
+    background-color: #efe5d5 !important;
+    background-image: none !important;
+    box-shadow: 0 0.45rem 1.1rem rgba(78, 55, 34, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+  }
+
+  html body #root .home-page .applications-hub-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  html body #root .home-page .bookmarks-hub-nav {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  html body #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab),
+  html body #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab):is(:hover, :focus, :focus-visible, :active, .active),
+  html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab),
+  html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab):is(:hover, :focus, :focus-visible, :active, .active) {
+    position: relative !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.32rem !important;
+    min-width: 0 !important;
+    min-height: 2.2rem !important;
+    padding: 0.32rem 0.34rem !important;
+    border-width: 1px !important;
+    border-style: solid !important;
+    border-radius: 0.9rem !important;
+    box-shadow: none !important;
+    outline: 0 !important;
+    font-family: 'Lexend', 'Share Tech', system-ui, sans-serif !important;
+    font-size: 0.68rem !important;
+    font-weight: 900 !important;
+    line-height: 1.05 !important;
+    text-align: center !important;
+  }
+
+  html body #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab):nth-child(1),
+  html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab):nth-child(1) {
+    background: #ffe8cf !important;
+    border-color: rgba(244, 123, 32, 0.28) !important;
+    color: #201712 !important;
+    -webkit-text-fill-color: #201712 !important;
+  }
+
+  html body #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab):nth-child(2),
+  html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab):nth-child(2) {
+    background: #e1f0ff !important;
+    border-color: rgba(72, 145, 220, 0.3) !important;
+    color: #111c27 !important;
+    -webkit-text-fill-color: #111c27 !important;
+  }
+
+  html body #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab):nth-child(3),
+  html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab):nth-child(3) {
+    background: #ddf7df !important;
+    border-color: rgba(62, 166, 83, 0.3) !important;
+    color: #102012 !important;
+    -webkit-text-fill-color: #102012 !important;
+  }
+
+  html body #root .home-page .applications-hub-tab:nth-child(4),
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .applications-hub-tab:nth-child(4) {
+    background: #f0e6ff !important;
+    border-color: rgba(130, 88, 184, 0.28) !important;
+    color: #2b1b38 !important;
+    -webkit-text-fill-color: #2b1b38 !important;
+  }
+
+  html body #root .home-page :is(.applications-hub-tab-icon, .bookmarks-hub-tab-icon) {
+    flex: 0 0 auto !important;
+    width: 1.05rem !important;
+    height: 1.05rem !important;
+    color: currentColor !important;
+    fill: currentColor !important;
+  }
+
+  html body #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab) > span {
+    display: block !important;
+    min-width: 0 !important;
+    overflow: visible !important;
+    color: currentColor !important;
+    -webkit-text-fill-color: currentColor !important;
+    font-size: 0.68rem !important;
+    line-height: 1.05 !important;
+    text-align: center !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+  }
+
+  html body #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab)::after {
+    content: '' !important;
+    position: absolute !important;
+    right: 14% !important;
+    bottom: 0.18rem !important;
+    left: 14% !important;
+    display: block !important;
+    height: 2px !important;
+    border-radius: 999px !important;
+    background: currentColor !important;
+    transform: scaleX(0) !important;
+    transform-origin: center !important;
+    transition: transform 0.22s ease !important;
+  }
+
+  html body #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab):is(.active, :hover, :focus-visible)::after {
+    transform: scaleX(1) !important;
+  }
+
+  html body #root .home-page .bookmarks-hub-panel {
+    margin-top: 0.65rem !important;
+  }
+
+  html body #root .home-page .bookmarks-hub-panel .no-candidates {
+    box-sizing: border-box !important;
+    margin-top: 0.45rem !important;
+    padding-top: 0.45rem !important;
+  }
+
+  html body #root .home-page .bookmarks-hub-panel .no-candidates :is(h3, p) {
+    margin-top: 0.28rem !important;
+    margin-bottom: 0.28rem !important;
+  }
+}
+
+/* Portalled messenger controls and sent-message contrast. */
+html body > .floating-messenger.is-open :is(
+  button.floating-messenger-list-bottom-back,
+  button.floating-messenger-mobile-back
+),
+html body > .floating-messenger.is-open :is(
+  button.floating-messenger-list-bottom-back,
+  button.floating-messenger-mobile-back
+):is(:hover, :focus, :focus-visible, :active) {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  box-sizing: border-box !important;
+  width: 2.2rem !important;
+  min-width: 2.2rem !important;
+  max-width: 2.2rem !important;
+  height: 2.2rem !important;
+  min-height: 2.2rem !important;
+  max-height: 2.2rem !important;
+  padding: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  filter: none !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-message.is-own {
+  background: #0b3b2e !important;
+  background-color: #0b3b2e !important;
+  border-color: rgba(45, 212, 191, 0.18) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-message.is-own *,
+html body > .floating-messenger.is-open .floating-messenger-message.is-own :is(
+  .floating-messenger-message-meta,
+  .floating-messenger-message-body,
+  p,
+  span,
+  strong,
+  em,
+  time,
+  a
+) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Messenger opens as a centered modal over a blurred portal backdrop at every viewport. */
+html body .floating-messenger.is-open {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 14000 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 100vw !important;
+  min-width: 100vw !important;
+  max-width: 100vw !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  max-height: 100dvh !important;
+  margin: 0 !important;
+  padding: clamp(0.7rem, 3vw, 2rem) !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  pointer-events: none !important;
+}
+
+html body .floating-messenger.is-open > .floating-messenger-backdrop {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  display: block !important;
+  background: rgba(20, 18, 17, 0.58) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  pointer-events: auto !important;
+}
+
+html body .floating-messenger.is-open > .floating-messenger-panel,
+html body .floating-messenger.is-open > .floating-messenger-panel.is-mobile,
+html body .floating-messenger.is-open > .floating-messenger-panel.is-mobile-thread-list,
+html body .floating-messenger.is-open > .floating-messenger-panel.is-mobile-chat-open {
+  position: relative !important;
+  inset: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: 1 !important;
+  width: min(60rem, calc(100vw - clamp(1.4rem, 6vw, 4rem))) !important;
+  max-width: 60rem !important;
+  height: min(42rem, calc(100dvh - clamp(1.4rem, 6vw, 4rem))) !important;
+  max-height: 42rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  border-radius: 1.35rem !important;
+  box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.48) !important;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+}
+
+@media (max-width: 768px) {
+  html body .floating-messenger.is-open {
+    padding: 0.7rem !important;
+  }
+
+  html body .floating-messenger.is-open > .floating-messenger-panel,
+  html body .floating-messenger.is-open > .floating-messenger-panel.is-mobile,
+  html body .floating-messenger.is-open > .floating-messenger-panel.is-mobile-thread-list,
+  html body .floating-messenger.is-open > .floating-messenger-panel.is-mobile-chat-open {
+    width: calc(100vw - 1.4rem) !important;
+    max-width: 32rem !important;
+    height: min(86dvh, 42rem) !important;
+    max-height: calc(100dvh - 1.4rem) !important;
+    border-radius: 1.1rem !important;
+  }
+
+}
+
+/* Mobile Candidates containment and a subtle left shift for animated page titles. */
+@media (max-width: 768px) {
+  html body #root .home-page .dashboard-container.mobile-section-open > .main-content.mobile-dashboard-section-panel.mobile-section-view-candidates.is-open,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .dashboard-container.mobile-section-open > .main-content.mobile-dashboard-section-panel.mobile-section-view-candidates.is-open {
+    box-sizing: border-box !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    right: 0.25rem !important;
+    overflow-x: hidden !important;
+  }
+
+  html body #root .home-page .main-content.mobile-section-view-candidates.is-open > .portal-section-transition-shell,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .main-content.mobile-section-view-candidates.is-open > .portal-section-transition-shell,
+  html body #root .home-page .main-content.mobile-section-view-candidates.is-open .talent-pool-container.candidate-view-candidates,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .main-content.mobile-section-view-candidates.is-open .talent-pool-container.candidate-view-candidates {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  html body #root .home-page .talent-pool-container.candidate-view-candidates :is(
+    .talent-pool-header,
+    .candidate-community-intro,
+    .candidate-community-copy,
+    .talent-pool-controls,
+    .search-container,
+    .candidate-search,
+    .candidate-list,
+    .candidate-list-row,
+    .candidate-list-pagination
+  ),
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates :is(
+    .talent-pool-header,
+    .candidate-community-intro,
+    .candidate-community-copy,
+    .talent-pool-controls,
+    .search-container,
+    .candidate-search,
+    .candidate-list,
+    .candidate-list-row,
+    .candidate-list-pagination
+  ) {
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  html body #root .home-page .dashboard-container.mobile-section-open :is(.mobile-dashboard-section-panel.is-open, .mobile-job-management-section-panel.is-open) > .mobile-section-panel-header h2,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .dashboard-container.mobile-section-open :is(.mobile-dashboard-section-panel.is-open, .mobile-job-management-section-panel.is-open) > .mobile-section-panel-header h2 {
+    margin-left: auto !important;
+    margin-right: -0.72rem !important;
+  }
+}
+
+/* Final mobile shell height and shared Applications/Bookmarks/Friends navigation. */
+@media (max-width: 768px) {
+  html body #root .home-page .dashboard-container.mobile-section-open > :is(.mobile-dashboard-section-panel.is-open, .mobile-job-management-section-panel.is-open),
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .dashboard-container.mobile-section-open > :is(.mobile-dashboard-section-panel.is-open, .mobile-job-management-section-panel.is-open) {
+    top: 0.12rem !important;
+    bottom: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding-bottom: 0.55rem !important;
+  }
+
+  html body #root .home-page :is(.applications-hub-nav, .bookmarks-hub-nav, .friend-invitation-tabs),
+  html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.applications-hub-nav, .bookmarks-hub-nav, .friend-invitation-tabs) {
+    box-sizing: border-box !important;
+    display: grid !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0.56rem !important;
+    border: 1px solid rgba(112, 83, 52, 0.16) !important;
+    border-radius: 0.85rem !important;
+    background: rgba(255, 255, 255, 0.72) !important;
+    background-color: rgba(255, 255, 255, 0.72) !important;
+    background-image: none !important;
+    box-shadow: 0 0.65rem 1.8rem rgba(31, 41, 55, 0.06) !important;
+  }
+
+  html body #root .home-page .applications-hub-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.5rem !important;
+  }
+
+  html body #root .home-page :is(.bookmarks-hub-nav, .friend-invitation-tabs) {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.42rem !important;
+  }
+
+  html body #root .home-page .applications-hub-tab,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .applications-hub-tab {
+    box-sizing: border-box !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    grid-template-rows: 1.25rem auto !important;
+    align-items: center !important;
+    justify-items: center !important;
+    gap: 0.28rem !important;
+    min-width: 0 !important;
+    min-height: 3.35rem !important;
+    padding: 0.48rem 0.3rem !important;
+    border: 1px solid rgba(112, 83, 52, 0.14) !important;
+    border-radius: 0.72rem !important;
+    background: #ffffff !important;
+    color: #1f2937 !important;
+    -webkit-text-fill-color: #1f2937 !important;
+    box-shadow: none !important;
+  }
+
+  html body #root .home-page :is(.bookmarks-hub-tab, .friend-invitation-tab),
+  html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.bookmarks-hub-tab, .friend-invitation-tab) {
+    box-sizing: border-box !important;
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    grid-template-rows: 1.25rem auto !important;
+    align-items: center !important;
+    justify-items: center !important;
+    gap: 0.24rem !important;
+    min-width: 0 !important;
+    min-height: 3.35rem !important;
+    padding: 0.48rem 0.3rem !important;
+    border: 1px solid rgba(112, 83, 52, 0.14) !important;
+    border-radius: 0.72rem !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: #1f2937 !important;
+    -webkit-text-fill-color: #1f2937 !important;
+    box-shadow: none !important;
+    outline: 0 !important;
+  }
+
+  html body #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab):nth-child(n),
+  html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab):nth-child(n) {
+    border-color: rgba(112, 83, 52, 0.14) !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: #1f2937 !important;
+    -webkit-text-fill-color: #1f2937 !important;
+  }
+
+  html body #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab):is(.active, :hover, :focus-visible),
+  html body #root .home-page .friend-invitation-tab:is(.is-active, :hover, :focus-visible),
+  html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab):is(.active, :hover, :focus-visible),
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .friend-invitation-tab:is(.is-active, :hover, :focus-visible) {
+    border-color: rgba(125, 48, 68, 0.3) !important;
+    background: rgba(247, 239, 231, 0.96) !important;
+    background-color: rgba(247, 239, 231, 0.96) !important;
+    color: #6b1428 !important;
+    -webkit-text-fill-color: #6b1428 !important;
+    box-shadow: inset 0 0 0 1px rgba(125, 48, 68, 0.08) !important;
+  }
+
+  html body #root .home-page :is(.applications-hub-tab, .bookmarks-hub-tab, .friend-invitation-tab)::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  html body #root .home-page :is(.applications-hub-tab-icon, .bookmarks-hub-tab-icon, .friend-invitation-tab-icon) {
+    display: grid !important;
+    place-items: center !important;
+    width: 1.12rem !important;
+    min-width: 1.12rem !important;
+    height: 1.12rem !important;
+    color: currentColor !important;
+    fill: currentColor !important;
+  }
+
+  html body #root .home-page .applications-hub-tab > span {
+    color: currentColor !important;
+    -webkit-text-fill-color: currentColor !important;
+    font-size: 0.72rem !important;
+    line-height: 1.08 !important;
+    text-align: center !important;
+    white-space: normal !important;
+  }
+
+  html body #root .home-page :is(.bookmarks-hub-tab > span, .friend-invitation-tab-label) {
+    display: block !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+    color: currentColor !important;
+    -webkit-text-fill-color: currentColor !important;
+    font-size: 0.66rem !important;
+    font-weight: 800 !important;
+    line-height: 1.08 !important;
+    text-align: center !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+  }
+}
+
+/* Mobile bookmarked-candidate controls and profile-post media flow. */
+@media (max-width: 768px) {
+  html body #root .home-page .candidate-bookmarked-container .candidate-card.uiverse-profile-card > button.candidate-card-corner-bookmark,
+  html body #root .home-page .candidate-bookmarked-container .candidate-card.uiverse-profile-card > button.candidate-card-corner-bookmark:is(:hover, :focus, :focus-visible, :active),
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .candidate-bookmarked-container .candidate-card.uiverse-profile-card > button.candidate-card-corner-bookmark,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .candidate-bookmarked-container .candidate-card.uiverse-profile-card > button.candidate-card-corner-bookmark:is(:hover, :focus, :focus-visible, :active) {
+    position: absolute !important;
+    inset: 0.52rem 0.52rem auto auto !important;
+    z-index: 5 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 1.2rem !important;
+    min-width: 1.2rem !important;
+    max-width: 1.2rem !important;
+    height: 1.2rem !important;
+    min-height: 1.2rem !important;
+    max-height: 1.2rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #173a33 !important;
+    -webkit-text-fill-color: #173a33 !important;
+    transform: none !important;
+  }
+
+  html body #root .home-page .candidate-bookmarked-container .candidate-card.uiverse-profile-card > button.candidate-card-corner-bookmark svg,
+  html body #root .home-page .candidate-bookmarked-container .candidate-card.uiverse-profile-card > button.candidate-card-corner-bookmark svg path,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .candidate-bookmarked-container .candidate-card.uiverse-profile-card > button.candidate-card-corner-bookmark svg,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .candidate-bookmarked-container .candidate-card.uiverse-profile-card > button.candidate-card-corner-bookmark svg path {
+    display: block !important;
+    width: 0.72rem !important;
+    height: 0.72rem !important;
+    fill: currentColor !important;
+    stroke: none !important;
+  }
+
+  html body #root .home-page .candidate-bookmarked-container .candidate-card.uiverse-profile-card > .candidate-avatar.profileimage,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .candidate-bookmarked-container .candidate-card.uiverse-profile-card > .candidate-avatar.profileimage {
+    margin-top: 0.58rem !important;
+  }
+
+  html body #root .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-profile-preview-post-card,
+  html[data-theme="light"] body[data-theme="light"] #root .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-profile-preview-post-card {
+    align-content: start !important;
+  }
+
+  html body #root .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-profile-preview-post-card > .portal-post-body-wrap,
+  html[data-theme="light"] body[data-theme="light"] #root .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-profile-preview-post-card > .portal-post-body-wrap {
+    position: static !important;
+    z-index: auto !important;
+    order: 2 !important;
+    margin-bottom: 0 !important;
+    transform: none !important;
+  }
+
+  html body #root .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-profile-preview-post-card > .portal-post-media,
+  html[data-theme="light"] body[data-theme="light"] #root .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-profile-preview-post-card > .portal-post-media {
+    position: static !important;
+    inset: auto !important;
+    z-index: auto !important;
+    order: 3 !important;
+    display: block !important;
+    clear: both !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0.82rem 0 0.62rem !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    outline: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    transform: none !important;
+  }
+
+  html body #root .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-profile-preview-post-card > .portal-post-media::before,
+  html body #root .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-profile-preview-post-card > .portal-post-media::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  html body #root .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-profile-preview-post-card > .portal-post-media > .portal-post-image-preview-button,
+  html body #root .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-profile-preview-post-card > .portal-post-media > .portal-post-image-preview-button:is(:hover, :focus, :focus-visible, :active),
+  html[data-theme="light"] body[data-theme="light"] #root .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-profile-preview-post-card > .portal-post-media > .portal-post-image-preview-button {
+    position: static !important;
+    display: block !important;
+    width: max-content !important;
+    max-width: 100% !important;
+    height: auto !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0.7rem !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+    transform: none !important;
+  }
+
+  html body #root .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-profile-preview-post-card > .portal-post-media :is(img, video),
+  html[data-theme="light"] body[data-theme="light"] #root .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-profile-preview-post-card > .portal-post-media :is(img, video) {
+    position: static !important;
+    display: block !important;
+    width: auto !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 26rem !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0.7rem !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    object-fit: contain !important;
+    transform: none !important;
+  }
+}
+
+/* Final notification action and bookmarked-job star colors. */
+html body #root .home-page .notifications-page .notifications-activity-intro > button.notification-mark-all-button,
+html body #root .home-page .notifications-page .notifications-activity-intro > button.notification-mark-all-button:is(:hover, :focus, :focus-visible, :active, :disabled),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .notifications-page .notifications-activity-intro > button.notification-mark-all-button,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .notifications-page .notifications-activity-intro > button.notification-mark-all-button:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  align-self: flex-start !important;
+  width: max-content !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+html body #root .home-page .notifications-page .notifications-activity-intro > button.notification-mark-all-button::before,
+html body #root .home-page .notifications-page .notifications-activity-intro > button.notification-mark-all-button::after,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .notifications-page .notifications-activity-intro > button.notification-mark-all-button::before,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .notifications-page .notifications-activity-intro > button.notification-mark-all-button::after {
+  display: none !important;
+  content: none !important;
+}
+
+html body #root .home-page .bookmarked-job-card .bookmarked-job-star-glyph,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .bookmarked-job-card .bookmarked-job-star-glyph {
+  display: block !important;
+  width: 1.22rem !important;
+  min-width: 1.22rem !important;
+  max-width: 1.22rem !important;
+  height: 1.22rem !important;
+  min-height: 1.22rem !important;
+  max-height: 1.22rem !important;
+  object-fit: contain !important;
+  color: #5b1118 !important;
+  fill: #5b1118 !important;
+  -webkit-text-fill-color: #5b1118 !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+html body #root .home-page .bookmarked-jobs-container .bookmarked-job-card button.bookmarked-job-remove-button,
+html body #root .home-page .bookmarked-jobs-container .bookmarked-job-card button.bookmarked-job-remove-button:is(:hover, :focus, :focus-visible, :active, :disabled),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .bookmarked-jobs-container .bookmarked-job-card button.bookmarked-job-remove-button,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .bookmarked-jobs-container .bookmarked-job-card button.bookmarked-job-remove-button:is(:hover, :focus, :focus-visible, :active, :disabled),
+html body #root .home-page .bookmarked-jobs-container .bookmarked-job-card button.bookmarked-job-remove-button > .bookmarked-job-star-glyph,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .bookmarked-jobs-container .bookmarked-job-card button.bookmarked-job-remove-button > .bookmarked-job-star-glyph {
+  color: #5b1118 !important;
+  fill: #5b1118 !important;
+  stroke: #5b1118 !important;
+  -webkit-text-fill-color: #5b1118 !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* Shared complete-profile card used in Tailor Profile and every candidate profile preview. */
+.profile-details-card {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  margin: 0.78rem 0;
+  padding: 0.9rem;
+  border: 1px solid rgba(112, 83, 52, 0.22);
+  border-radius: 1rem;
+  background: rgba(255, 250, 243, 0.96);
+  color: #25372f;
+  box-shadow: 0 0.65rem 1.8rem rgba(49, 31, 19, 0.07);
+}
+
+.profile-details-card-header,
+.profile-details-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+
+.profile-details-card-header span {
+  display: block;
+  margin-bottom: 0.12rem;
+  color: #9b4a2a;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.profile-details-card-header h3 {
+  margin: 0;
+  color: #32180f;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.profile-details-edit,
+.profile-details-view-more,
+.profile-details-save,
+.profile-details-cancel {
+  appearance: none;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.profile-details-edit,
+.profile-details-view-more,
+.profile-details-save {
+  border: 1px solid #681421;
+  background: #681421;
+  color: #fff;
+}
+
+.profile-details-edit {
+  flex: 0 0 auto;
+  padding: 0.42rem 0.78rem;
+}
+
+.profile-details-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin-top: 0.78rem;
+}
+
+.profile-details-summary > div,
+.profile-details-section {
+  min-width: 0;
+  padding: 0.68rem;
+  border-radius: 0.78rem;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.profile-details-summary strong,
+.profile-details-summary span {
+  display: block;
+}
+
+.profile-details-summary strong {
+  margin-bottom: 0.25rem;
+  color: #681421;
+  font-size: 0.73rem;
+}
+
+.profile-details-summary span {
+  overflow-wrap: anywhere;
+  color: #34443d;
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+
+.profile-details-view-more {
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: max-content !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  min-height: 0 !important;
+  margin: 0.58rem 0 0 auto !important;
+  padding: 0.32rem 0.68rem !important;
+  border: 1px solid #681421 !important;
+  border-radius: 999px !important;
+  background: #681421 !important;
+  background-color: #681421 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  line-height: 1.15 !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+}
+
+.profile-details-card.is-headerless .profile-details-summary {
+  margin-top: 0;
+}
+
+html body .profile-details-card > span.profile-details-view-more[role="button"],
+html body .profile-details-card > span.profile-details-view-more[role="button"]:is(:hover, :focus, :focus-visible, :active),
+html body #root .profile-details-card > span.profile-details-view-more[role="button"],
+html body #root .profile-details-card > span.profile-details-view-more[role="button"]:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body[data-theme="light"] .profile-details-card > span.profile-details-view-more[role="button"],
+html[data-theme="light"] body[data-theme="light"] .profile-details-card > span.profile-details-view-more[role="button"]:is(:hover, :focus, :focus-visible, :active) {
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: max-content !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  min-height: 0 !important;
+  margin: 0.58rem 0 0 auto !important;
+  padding: 0.32rem 0.68rem !important;
+  border: 1px solid #681421 !important;
+  border-radius: 999px !important;
+  background: #681421 !important;
+  background-color: #681421 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  line-height: 1.15 !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+}
+
+.profile-details-full {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin-top: 0.62rem;
+}
+
+.profile-details-section h4 {
+  margin: 0 0 0.35rem;
+  color: #681421;
+  font-size: 0.78rem;
+}
+
+.profile-details-section :is(p, ul) {
+  margin: 0;
+  color: #34443d;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.profile-details-section ul {
+  padding-left: 1rem;
+}
+
+.profile-details-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 0.8rem;
+}
+
+.profile-details-form label {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.3rem;
+  color: #32180f;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.profile-details-form textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  resize: vertical;
+  padding: 0.62rem 0.68rem;
+  border: 1px solid rgba(112, 83, 52, 0.3);
+  border-radius: 0.72rem;
+  background: #fff;
+  color: #26362f;
+  font: inherit;
+  font-weight: 500;
+}
+
+.profile-details-form-actions {
+  grid-column: 1 / -1;
+  justify-content: flex-end;
+}
+
+.profile-details-save,
+.profile-details-cancel {
+  padding: 0.5rem 1rem;
+}
+
+.profile-details-cancel {
+  border: 1px solid #681421;
+  background: #fffaf3;
+  color: #222;
+}
+
+.profile-details-message {
+  margin: 0.65rem 0 0;
+  color: #426357;
+  font-size: 0.74rem;
+  text-align: center;
+}
+
+.profile-details-message.is-error {
+  color: #9c1d2d;
+}
+
+.portal-profile-detail-card + .profile-details-card,
+.tailor-profile-card + .profile-details-card {
+  margin-top: 0.7rem;
+}
+
+/* Settings tabs now match the shared Friends/Bookmarks/Application navigation language. */
+html body #root .home-page .settings-container .settings-tabs {
+  margin-top: 0.7rem !important;
+}
+
+html body #root .home-page .settings-container .tabs-header,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .settings-container .tabs-header {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 0.5rem !important;
+  width: 100% !important;
+  margin: 0 0 0.72rem !important;
+  padding: 0.56rem !important;
+  border: 1px solid rgba(112, 83, 52, 0.16) !important;
+  border-radius: 0.85rem !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  box-shadow: 0 0.65rem 1.8rem rgba(31, 41, 55, 0.06) !important;
+}
+
+html body #root .home-page .settings-container .tab-button,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .settings-container .tab-button {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  grid-template-rows: 1.25rem auto !important;
+  place-items: center !important;
+  gap: 0.25rem !important;
+  min-width: 0 !important;
+  min-height: 3.35rem !important;
+  padding: 0.48rem 0.3rem !important;
+  border: 1px solid rgba(112, 83, 52, 0.14) !important;
+  border-radius: 0.72rem !important;
+  background: #fff !important;
+  color: #1f2937 !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .settings-container .tab-button:is(.active, :hover, :focus-visible),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .settings-container .tab-button:is(.active, :hover, :focus-visible) {
+  border-color: rgba(125, 48, 68, 0.3) !important;
+  background: rgba(247, 239, 231, 0.96) !important;
+  color: #6b1428 !important;
+  box-shadow: inset 0 0 0 1px rgba(125, 48, 68, 0.08) !important;
+}
+
+html body #root .home-page .settings-container .tab-button .tab-icon {
+  width: 1.15rem !important;
+  height: 1.15rem !important;
+  margin: 0 !important;
+  opacity: 1 !important;
+}
+
+html body #root .home-page .settings-container .tab-button > span {
+  display: block !important;
+  color: currentColor !important;
+  font-size: 0.7rem !important;
+  font-weight: 800 !important;
+  line-height: 1.08 !important;
+  text-align: center !important;
+}
+
+html body #root .home-page .settings-container :is(.settings-tabs, .tabs-content, .settings-tab),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .settings-container :is(.settings-tabs, .tabs-content, .settings-tab) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .settings-container :is(.settings-card, .notification-card) {
+  border-radius: 1rem !important;
+  overflow: hidden !important;
+}
+
+/* Remove decorative sharp-edged layers while preserving the rounded functional cards. */
+html body #root .home-page :is(.portal-default-landing, .portal-default-hero, .portal-default-actions, .portal-default-stats, .analytics-page),
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.portal-default-landing, .portal-default-hero, .portal-default-actions, .portal-default-stats, .analytics-page) {
+  border: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .analytics-card :is(.analytics-card-glow, .analytics-card-inner) {
+  display: none !important;
+}
+
+html body #root .home-page :is(.analytics-card, .analytics-card-content, .portal-default-action, .portal-default-stat) {
+  border-radius: 1rem !important;
+}
+
+@media (max-width: 768px) {
+  .profile-details-card {
+    margin: 0.62rem 0;
+    padding: 0.75rem;
+    border-radius: 0.9rem;
+  }
+
+  .profile-details-card-header h3 {
+    font-size: 0.88rem;
+  }
+
+  .profile-details-summary,
+  .profile-details-full,
+  .profile-details-form {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-details-summary {
+    gap: 0.42rem;
+  }
+
+  .profile-details-summary > div,
+  .profile-details-section {
+    padding: 0.58rem 0.64rem;
+  }
+
+  html body #root .portal-profile-detail-backdrop .profile-details-card {
+    width: calc(100% - 1rem) !important;
+    margin: 0.62rem auto !important;
+  }
+
+  html body #root .home-page .settings-container .settings-tabs {
+    margin-top: 0.48rem !important;
+  }
+}

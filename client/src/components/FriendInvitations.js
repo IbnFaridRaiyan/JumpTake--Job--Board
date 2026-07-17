@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import ContactCandidate from './ContactCandidate';
 import ProfileAvatar from './ProfileAvatar';
 import { apiUrl } from '../utils/apiUrl';
+import confirmAction from '../utils/confirmAction';
 
 const FriendActionIcon = ({ type }) => {
     const paths = {
@@ -121,6 +122,31 @@ const FriendInvitations = ({ userId }) => {
     };
 
     const respond = async (connectionId, action) => {
+        const confirmationByAction = {
+            cancel: {
+                title: 'Unsend invitation?',
+                message: 'Cancel this sent friend invitation?'
+            },
+            decline: {
+                title: 'Decline invitation?',
+                message: 'Decline this friend invitation?'
+            },
+            block: {
+                title: 'Block this user?',
+                message: 'Block this user and remove this invitation?'
+            },
+            unfriend: {
+                title: 'Remove friend?',
+                message: 'Remove this user from your friends?'
+            }
+        };
+        if (confirmationByAction[action]) {
+            const confirmed = await confirmAction(confirmationByAction[action]);
+            if (!confirmed) {
+                return;
+            }
+        }
+
         try {
             setBusyId(connectionId);
             setError('');

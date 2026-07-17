@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import RichMessageEditor from './RichMessageEditor';
 import AssistantChat from './AssistantChat';
 import ChatAvatar from './ChatAvatar';
@@ -448,7 +449,7 @@ const FloatingMessenger = ({
         onSeen?.();
     };
 
-    const handleClose = () => {
+    const handleClose = useCallback(() => {
         setOpen(false);
         setSelectedThreadId('');
         setPendingContact(null);
@@ -456,7 +457,28 @@ const FloatingMessenger = ({
         setMessage('');
         setError('');
         assistantDirectOpenRef.current = false;
-    };
+    }, []);
+
+    useEffect(() => {
+        if (!open || typeof document === 'undefined') {
+            return undefined;
+        }
+
+        const previousOverflow = document.body.style.overflow;
+        const handleKeyDown = (event) => {
+            if (event.key === 'Escape') {
+                handleClose();
+            }
+        };
+
+        document.body.style.overflow = 'hidden';
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.body.style.overflow = previousOverflow;
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [handleClose, open]);
 
     const handleSelectThread = (threadId) => {
         assistantDirectOpenRef.current = false;
@@ -725,15 +747,17 @@ const FloatingMessenger = ({
         }
     };
 
-    return (
+    const messengerMarkup = (
         <div className={`floating-messenger ${open ? 'is-open' : ''}`}>
             {open && (
-                <div
-                    className={`floating-messenger-panel ${isMobileView ? 'is-mobile' : ''} ${mobileChatOpen ? 'is-mobile-chat-open' : 'is-mobile-thread-list'}`}
-                    role="dialog"
-                    aria-modal="true"
-                    aria-label="Messages"
-                >
+                <>
+                    <div className="floating-messenger-backdrop" onClick={handleClose} aria-hidden="true" />
+                    <div
+                        className={`floating-messenger-panel ${isMobileView ? 'is-mobile' : ''} ${mobileChatOpen ? 'is-mobile-chat-open' : 'is-mobile-thread-list'}`}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label="Messages"
+                    >
                     <div className={`floating-messenger-shell ${mobileChatOpen ? 'is-mobile-chat-open' : ''}`}>
                         <aside className="floating-messenger-contacts">
                             <div className="floating-messenger-header">
@@ -908,7 +932,8 @@ const FloatingMessenger = ({
                             )}
                         </section>
                     </div>
-                </div>
+                    </div>
+                </>
             )}
 
             {!open && (
@@ -937,6 +962,10 @@ const FloatingMessenger = ({
             )}
         </div>
     );
+
+    return open && typeof document !== 'undefined'
+        ? createPortal(messengerMarkup, document.body)
+        : messengerMarkup;
 };
 
 export default FloatingMessenger;

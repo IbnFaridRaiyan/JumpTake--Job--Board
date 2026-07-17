@@ -1,6 +1,7 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import AnimatedDeleteButton from './AnimatedDeleteButton';
 import JobManagement from './JobManagement';
+import confirmAction from '../utils/confirmAction';
 
 const ManageJobs = forwardRef(({ jobs, companyId, onJobUpdated, onBack, onFooterBack, onManagingChange }, ref) => {
     const [managingJob, setManagingJob] = useState(null);
@@ -47,7 +48,11 @@ const ManageJobs = forwardRef(({ jobs, companyId, onJobUpdated, onBack, onFooter
     };
     
     const handleDelete = async (jobId) => {
-        if (!window.confirm('Are you sure you want to delete this job listing?')) {
+        const confirmed = await confirmAction({
+            title: 'Delete job listing?',
+            message: 'Delete this job listing permanently?'
+        });
+        if (!confirmed) {
             return;
         }
         

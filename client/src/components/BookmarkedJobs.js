@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import confirmAction from '../utils/confirmAction';
 
 const BOOKMARKED_JOBS_PER_PAGE = 4;
 const BOOKMARKED_JOB_LIKE_STORAGE_KEY = 'jumptakeBookmarkedJobLikeMap';
@@ -108,6 +109,14 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack, embedded = false 
     };
 
     const removeBookmark = async (jobId) => {
+        const confirmed = await confirmAction({
+            title: 'Remove bookmark?',
+            message: 'Remove this job from your bookmarked jobs?'
+        });
+        if (!confirmed) {
+            return;
+        }
+
         try {
             const token = localStorage.getItem('token');
             const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/job-bookmarks/user/${userId}/job/${jobId}`, {
@@ -270,13 +279,19 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack, embedded = false 
                                     </button>
                                     <button
                                         type="button"
-                                        className="bookmark-star-button job-card-bookmark-action portal-reaction-icon-button reaction-bookmark active"
+                                        className="bookmark-star-button job-card-bookmark-action portal-reaction-icon-button bookmarked-job-remove-button"
                                         onClick={() => removeBookmark(job?._id)}
                                         aria-pressed="true"
                                         aria-label="Remove bookmark"
                                         title="Remove bookmark"
                                         disabled={!job?._id}
                                     >
+                                        <img
+                                            className="bookmarked-job-star-glyph"
+                                            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%235b1118' d='m12 1.9 3.1 6.28 6.93 1.01-5.02 4.89 1.19 6.9L12 17.72l-6.2 3.26 1.19-6.9-5.02-4.89L8.9 8.18 12 1.9Z'/%3E%3C/svg%3E"
+                                            alt=""
+                                            aria-hidden="true"
+                                        />
                                         <span className="portal-reaction-tooltip" role="tooltip">Remove bookmark</span>
                                     </button>
                                 </div>

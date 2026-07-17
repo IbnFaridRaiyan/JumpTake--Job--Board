@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import ResumeFilePreview from './ResumeFilePreview';
 import ProfileAvatar from './ProfileAvatar';
 import defaultJobPostAvatar from './media/default-job-post-avatar.png';
+import confirmAction from '../utils/confirmAction';
 
 const FONT_OPTIONS = [
     { label: 'Share Tech', value: 'Share Tech' },
@@ -1192,6 +1193,16 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
 
         const isBookmarked = bookmarkedJobIds.includes(String(job._id));
         const token = localStorage.getItem('token');
+
+        if (isBookmarked) {
+            const confirmed = await confirmAction({
+                title: 'Remove bookmark?',
+                message: 'Remove this job from your bookmarks?'
+            });
+            if (!confirmed) {
+                return;
+            }
+        }
 
         try {
             if (isBookmarked) {

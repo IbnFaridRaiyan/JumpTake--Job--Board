@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import confirmAction from '../utils/confirmAction';
 
 const SAVED_POSTS_STORAGE_PREFIX = 'jumptakeSavedPosts:';
 
@@ -38,7 +39,15 @@ const SavedPosts = ({ viewerId = 'guest', onFooterBack, embedded = false }) => {
         setSavedPosts(readSavedPosts(viewerId));
     }, [viewerId]);
 
-    const removeSavedPost = (postId) => {
+    const removeSavedPost = async (postId) => {
+        const confirmed = await confirmAction({
+            title: 'Remove saved post?',
+            message: 'Remove this post from your saved posts?'
+        });
+        if (!confirmed) {
+            return;
+        }
+
         setSavedPosts((currentPosts) => {
             const nextPosts = currentPosts.filter((post) => post.id !== postId);
             writeSavedPosts(viewerId, nextPosts);

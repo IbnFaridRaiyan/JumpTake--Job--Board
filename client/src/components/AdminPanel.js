@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import ProfileAvatar from './ProfileAvatar';
 import { createSquareProfileImage } from '../utils/profileImages';
+import confirmAction from '../utils/confirmAction';
 
 const API_BASE = process.env.REACT_APP_API_URL || '';
 const ADMIN_KEY_STORAGE = 'jumptakeAdminKey';
@@ -272,7 +273,10 @@ const AdminPanel = () => {
   };
 
   const handleDelete = async (id) => {
-    const confirmed = window.confirm('Delete this record and related data where supported? This cannot be undone.');
+    const confirmed = await confirmAction({
+      title: 'Delete record?',
+      message: 'Delete this record and its related data permanently?'
+    });
 
     if (!confirmed) {
       return;
@@ -500,7 +504,16 @@ const AdminPanel = () => {
     )));
   };
 
-  const removeAdminJobDraft = (draftId) => {
+  const removeAdminJobDraft = async (draftId, skipConfirmation = false) => {
+    if (!skipConfirmation) {
+      const confirmed = await confirmAction({
+        title: 'Delete job draft?',
+        message: 'Delete this unpublished job draft?'
+      });
+      if (!confirmed) {
+        return;
+      }
+    }
     setAdminJobDrafts((current) => current.filter((draft) => draft.id !== draftId));
   };
 
@@ -514,7 +527,16 @@ const AdminPanel = () => {
     )));
   };
 
-  const removeAdminWorkNewsDraft = (draftId) => {
+  const removeAdminWorkNewsDraft = async (draftId, skipConfirmation = false) => {
+    if (!skipConfirmation) {
+      const confirmed = await confirmAction({
+        title: 'Delete Work News draft?',
+        message: 'Delete this unpublished Work News draft?'
+      });
+      if (!confirmed) {
+        return;
+      }
+    }
     setAdminWorkNewsDrafts((current) => current.filter((draft) => draft.id !== draftId));
   };
 
@@ -563,7 +585,7 @@ const AdminPanel = () => {
           applicationLink: draft.applicationLink || draft.source || ''
         })
       });
-      removeAdminJobDraft(draft.id);
+      removeAdminJobDraft(draft.id, true);
       setSelectedCollection('jobs');
       setPage(1);
       await Promise.all([loadSummary(), loadCollection()]);
@@ -590,7 +612,7 @@ const AdminPanel = () => {
           sourceTitle: draft.sourceTitle
         })
       });
-      removeAdminWorkNewsDraft(draft.id);
+      removeAdminWorkNewsDraft(draft.id, true);
       setSelectedCollection('feedPosts');
       setPage(1);
       await Promise.all([loadSummary(), loadCollection()]);
@@ -601,7 +623,10 @@ const AdminPanel = () => {
   };
 
   const handleDeletePostComment = async (postId, commentId) => {
-    const confirmed = window.confirm('Delete this comment from the post? This cannot be undone.');
+    const confirmed = await confirmAction({
+      title: 'Delete comment?',
+      message: 'Delete this comment from the post permanently?'
+    });
 
     if (!confirmed) {
       return;

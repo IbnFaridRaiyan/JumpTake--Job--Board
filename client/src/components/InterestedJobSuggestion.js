@@ -23,7 +23,7 @@ const JOB_INTEREST_OPTIONS = [
     'Quality Assurance'
 ];
 
-const InterestedJobSuggestion = ({ user, onInterestsSaved, onFooterBack }) => {
+const InterestedJobSuggestion = ({ user, onInterestsSaved }) => {
     const [selectedInterests, setSelectedInterests] = useState([]);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState('');
@@ -120,11 +120,6 @@ const InterestedJobSuggestion = ({ user, onInterestsSaved, onFooterBack }) => {
                 </div>
             </div>
 
-            <div className="page-footer-actions">
-                <button className="back-button responsive-back-button" onClick={onFooterBack}>
-                    Back
-                </button>
-            </div>
         </div>
     );
 };

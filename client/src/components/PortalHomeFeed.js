@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import ResumeFilePreview from './ResumeFilePreview';
 import { apiUrl } from '../utils/apiUrl';
 import { createSquareProfileImage } from '../utils/profileImages';
+import confirmAction from '../utils/confirmAction';
+import ProfileDetailsCard from './ProfileDetailsCard';
 import reactionButtonIcon from './media/reaction.png';
 import defaultJobPostAvatar from './media/default-job-post-avatar.png';
 import defaultProfileMaleImage from './media/default-profile-male.png';
@@ -33,6 +35,56 @@ const POST_BODY_PREVIEW_LENGTH = 430;
 const POPUP_CLOSE_ANIMATION_MS = 260;
 const OPTION_POINTER_GUARD_MS = 420;
 const COMMENT_ROTATION_INTERVAL_MS = 5000;
+
+const lockCompactProfileReachPill = (node) => {
+    if (!node) {
+        return;
+    }
+
+    const styles = {
+        appearance: 'none',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 'max-content',
+        minWidth: '0',
+        maxWidth: 'max-content',
+        inlineSize: 'max-content',
+        minInlineSize: '0',
+        maxInlineSize: 'max-content',
+        height: '21px',
+        minHeight: '21px',
+        maxHeight: '21px',
+        blockSize: '21px',
+        minBlockSize: '21px',
+        maxBlockSize: '21px',
+        aspectRatio: 'auto',
+        margin: '0',
+        padding: '3px 8px',
+        border: '0',
+        borderRadius: '999px',
+        background: '#b77486',
+        backgroundColor: '#b77486',
+        backgroundImage: 'none',
+        boxShadow: 'none',
+        color: '#ffffff',
+        '-webkit-text-fill-color': '#ffffff',
+        fontSize: '10px',
+        fontWeight: '850',
+        lineHeight: '1',
+        textAlign: 'center',
+        whiteSpace: 'nowrap',
+        transform: 'none',
+        opacity: '1'
+    };
+
+    Object.entries(styles).forEach(([property, value]) => {
+        const cssProperty = property.startsWith('-')
+            ? property
+            : property.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+        node.style.setProperty(cssProperty, value, 'important');
+    });
+};
 
 const escapeHtml = (value = '') => (
     String(value)
@@ -2311,9 +2363,26 @@ const PortalHomeFeed = ({
             : modalMarkup;
     };
 
-    const renderReachButton = (post, postKey, className = '') => {
+    const renderReachButton = (post, postKey, className = '', compactProfilePreview = false) => {
         const isOpen = openReachInsightPostId === postKey;
         const totalReach = Math.max(0, Number(post?.reach || 0) || 0);
+
+        if (compactProfilePreview) {
+            return (
+                <span className="profile-post-reach-pill-wrap">
+                    <button
+                        type="button"
+                        className="profile-post-reach-pill"
+                        ref={lockCompactProfileReachPill}
+                        onClick={(event) => toggleReachInsight(event, postKey, post)}
+                        aria-expanded={isOpen}
+                        aria-label={`Show reach graph for ${formatCompactCount(totalReach)} reach`}
+                    >
+                        {formatCompactCount(totalReach)} reach
+                    </button>
+                </span>
+            );
+        }
 
         return (
             <span className={`portal-reach-insight-wrap ${className}`.trim()}>
@@ -2602,8 +2671,12 @@ const PortalHomeFeed = ({
         return data;
     };
 
-    const handleDeletePost = (key, post) => {
-        if (!window.confirm('Delete this post?')) {
+    const handleDeletePost = async (key, post) => {
+        const confirmed = await confirmAction({
+            title: 'Delete post?',
+            message: 'Delete this post permanently?'
+        });
+        if (!confirmed) {
             return;
         }
 
@@ -2723,7 +2796,14 @@ const PortalHomeFeed = ({
     const handleDeleteHomeJob = async (job, event) => {
         event?.stopPropagation();
         const jobId = job?._id || job?.id;
-        if (!jobId || !window.confirm('Delete this job post?')) {
+        if (!jobId) {
+            return;
+        }
+        const confirmed = await confirmAction({
+            title: 'Delete job post?',
+            message: 'Delete this job post permanently?'
+        });
+        if (!confirmed) {
             return;
         }
 
@@ -3129,6 +3209,16 @@ const PortalHomeFeed = ({
 
         const normalizedJobId = String(jobId);
         const alreadyBookmarked = isHomeJobBookmarked(job);
+
+        if (alreadyBookmarked) {
+            const confirmed = await confirmAction({
+                title: 'Remove bookmark?',
+                message: 'Remove this job from your bookmarks?'
+            });
+            if (!confirmed) {
+                return;
+            }
+        }
 
         setBookmarkedHomeJobIds((previousIds) => (
             alreadyBookmarked
@@ -3751,7 +3841,7 @@ const PortalHomeFeed = ({
         }
     };
 
-    const handleReact = (key, postId, reaction) => {
+    const handleReact = async (key, postId, reaction) => {
         const tooltipKey = `${postId}:${reaction}`;
         const reactionAnimationKey = `${postId}:${reaction}`;
 
@@ -3780,7 +3870,10 @@ const PortalHomeFeed = ({
                     : post
             )));
 
-            const undo = window.confirm('Post hidden from your feed. Undo hide?');
+            const undo = await confirmAction({
+                title: 'Post hidden',
+                message: 'Undo hiding this post from your feed?'
+            });
             if (undo) {
                 updatePosts(key, (posts) => posts.map((post) => (
                     getPostKey(post) === postId
@@ -4371,6 +4464,9 @@ const PortalHomeFeed = ({
             storedTailorProfile.bio || (isCurrentViewer ? profileData?.bio : ''),
             'No bio yet.'
         ).slice(0, 150);
+        const detailsSource = isCurrentViewer
+            ? (profileData || {})
+            : (resolvedCandidate || friendMatch || storedTailorProfile || {});
 
         return {
             id: authorId,
@@ -4381,6 +4477,12 @@ const PortalHomeFeed = ({
             type: openProfileDetail.authorType,
             jumpTakeId,
             bio,
+            education: detailsSource.education || [],
+            experience: detailsSource.experience || [],
+            skills: detailsSource.skills || [],
+            achievements: detailsSource.achievements || [],
+            interests: detailsSource.interests || [],
+            hobbies: detailsSource.hobbies || [],
             coverImage: isCurrentViewer
                 ? (tailorProfile.coverImage || profileData?.coverImage || '')
                 : (resolvedCandidate?.coverImage || storedTailorProfile.coverImage || ''),
@@ -4424,6 +4526,14 @@ const PortalHomeFeed = ({
         }
 
         if (profile.friendRequestPending) {
+            const confirmed = await confirmAction({
+                title: 'Unsend invitation?',
+                message: 'Cancel this sent friend invitation?'
+            });
+            if (!confirmed) {
+                return;
+            }
+
             const connectionId = pendingProfileFriendConnectionIds[profileKey];
             if (!connectionId) {
                 setPendingProfileFriendIds((currentIds) => currentIds.filter((id) => id !== profileKey));
@@ -4507,6 +4617,14 @@ const PortalHomeFeed = ({
             return;
         }
 
+        const confirmed = await confirmAction({
+            title: 'Remove friend?',
+            message: 'Remove this user from your friends?'
+        });
+        if (!confirmed) {
+            return;
+        }
+
         try {
             setProfileActionMessage('');
             const response = await fetch(apiUrl(`/api/candidate-connections/${profile.friendConnectionId}/respond`), {
@@ -4550,6 +4668,16 @@ const PortalHomeFeed = ({
         }
 
         const isBookmarked = bookmarkedProfileCandidateIds.includes(String(candidateId));
+
+        if (isBookmarked) {
+            const confirmed = await confirmAction({
+                title: 'Remove bookmark?',
+                message: 'Remove this candidate from your bookmarks?'
+            });
+            if (!confirmed) {
+                return;
+            }
+        }
 
         try {
             setProfileActionMessage('');
@@ -4714,7 +4842,7 @@ const PortalHomeFeed = ({
                             </div>
                         </div>
                         <div className="portal-post-reach-row">
-                            {renderReachButton(post, postKey, 'portal-feed-reach-wrap')}
+                            {renderReachButton(post, postKey, 'portal-feed-reach-wrap', Boolean(options.profilePreview))}
                         </div>
                         {postBodyText && (
                             <div className={`portal-post-body-wrap ${isLongPostBody && !isPostBodyExpanded ? 'is-collapsed' : 'is-expanded'}`}>
@@ -5938,6 +6066,14 @@ const PortalHomeFeed = ({
     };
 
     const handleTailorCoverRemove = async () => {
+        const confirmed = await confirmAction({
+            title: 'Remove cover picture?',
+            message: 'Remove your current cover picture?'
+        });
+        if (!confirmed) {
+            return;
+        }
+
         try {
             updateTailorProfile({ coverImage: '' });
             await saveUniversalCoverImage('');
@@ -5966,6 +6102,14 @@ const PortalHomeFeed = ({
     };
 
     const handleTailorProfileImageDelete = async () => {
+        const confirmed = await confirmAction({
+            title: 'Delete profile picture?',
+            message: 'Delete your current profile picture?'
+        });
+        if (!confirmed) {
+            return;
+        }
+
         try {
             applyUniversalProfileImage('');
             await saveUniversalProfileImage('');
@@ -5988,6 +6132,29 @@ const PortalHomeFeed = ({
                 <path d={paths[platform]} />
             </svg>
         );
+    };
+
+    const saveTailorProfileDetails = async (nextDetails) => {
+        const jobSeekerId = profileData?._id || profileData?.id || currentUser?.jobSeekerId;
+        if (!jobSeekerId) {
+            throw new Error('Your candidate profile is not available yet.');
+        }
+
+        const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/job-seekers/${jobSeekerId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token') || ''}`
+            },
+            body: JSON.stringify(nextDetails)
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.error || 'Could not save profile details.');
+        }
+
+        onRefresh?.();
+        return data;
     };
 
     const renderTailorProfileSection = () => {
@@ -6134,6 +6301,12 @@ const PortalHomeFeed = ({
                         </div>
                     </div>
                 </div>
+                <ProfileDetailsCard
+                    profile={profileData || {}}
+                    editable
+                    onSave={saveTailorProfileDetails}
+                    className="tailor-profile-details-card"
+                />
                 <div className="tailor-profile-posts" aria-label="Tailor profile posts">
                     <div className="tailor-profile-posts-header">
                         <button
@@ -6459,12 +6632,11 @@ const PortalHomeFeed = ({
                             <div className="tailor-profile-title">{profile.jumpTakeId}</div>
                             <p className="portal-profile-detail-bio">{profile.bio}</p>
                         </div>
-                        <div className="tailor-social-links" aria-label={`${profile.name} social links`}>
-                            {canUseCandidateActions && (
-                                <>
+                        {canUseCandidateActions && (
+                            <div className="portal-profile-card-actions" aria-label={`${profile.name} quick actions`}>
                                     <button
                                         type="button"
-                                        className={`tailor-social-btn portal-profile-friend-action ${profile.isFriend ? 'is-friend' : ''} ${profile.friendRequestPending ? 'is-pending' : ''} ${isFriendMenuOpen ? 'menu-open' : ''}`}
+                                        className={`portal-profile-card-action portal-profile-friend-action ${profile.isFriend ? 'is-friend' : ''} ${profile.friendRequestPending ? 'is-pending' : ''} ${isFriendMenuOpen ? 'menu-open' : ''}`}
                                         onClick={(event) => handleProfileFriendRequest(profile, event)}
                                         disabled={friendActionDisabled}
                                         aria-expanded={profile.isFriend ? isFriendMenuOpen : undefined}
@@ -6486,7 +6658,7 @@ const PortalHomeFeed = ({
                                     )}
                                     <button
                                         type="button"
-                                        className={`tailor-social-btn portal-profile-bookmark-action ${isProfileBookmarked ? 'active' : ''}`}
+                                        className={`portal-profile-card-action portal-profile-bookmark-action ${isProfileBookmarked ? 'active' : ''}`}
                                         onClick={(event) => handleProfileBookmarkToggle(profile, event)}
                                         disabled={!profileCandidateId}
                                         aria-label={isProfileBookmarked ? 'Remove candidate bookmark' : 'Bookmark candidate'}
@@ -6496,8 +6668,9 @@ const PortalHomeFeed = ({
                                             <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187z" />
                                         </svg>
                                     </button>
-                                </>
-                            )}
+                            </div>
+                        )}
+                        <div className="tailor-social-links" aria-label={`${profile.name} social links`}>
                             {socialPlatforms.map((platform) => {
                                 const href = profile.socialLinks[platform];
 
@@ -6561,6 +6734,9 @@ const PortalHomeFeed = ({
                             </div>
                         </div>
                     </div>
+                    {profile.type !== 'employer' && (
+                        <ProfileDetailsCard profile={profile} showHeader={false} className="portal-profile-preview-details-card" />
+                    )}
                     {(profile.workPosts.length || profile.talentPosts.length) ? (
                         <div className="portal-profile-detail-posts" aria-label={`${profile.name} posts`}>
                             {profile.workPosts.length ? renderPostList(profile.workPosts, WORK_NEWS_STORAGE_KEY, 'work', { profilePreview: true }) : null}

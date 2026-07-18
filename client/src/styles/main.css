@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Chewy&family=Lexend:wght@400;500;600;700&family=Roboto:wght@400;500;600;700;900&family=Roboto+Flex:wght@500;600;700&family=Share+Tech&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Boogaloo&family=Chewy&family=Lexend:wght@400;500;600;700&family=Roboto:wght@400;500;600;700;900&family=Roboto+Flex:wght@500;600;700&family=Share+Tech&display=swap');
 
 :root {
   
@@ -37650,7 +37650,7 @@ html[data-theme="light"] .employer-dashboard-header .dashboard-title p {
   display: inline-block !important;
   color: #facc15 !important;
   font-family: "Chewy", "Lexend", system-ui, sans-serif !important;
-  font-size: 1.55em !important;
+  font-size: 1.25em !important;
   font-weight: 400 !important;
   letter-spacing: 0 !important;
   line-height: 0.9 !important;
@@ -37686,7 +37686,7 @@ html[data-theme="light"] .employer-dashboard-header .dashboard-title p {
   }
 
   .notifications-activity-intro .notifications-activities-word {
-    font-size: 1.62em !important;
+    font-size: 1.32em !important;
   }
 }
 
@@ -78671,7 +78671,7 @@ html[data-theme="light"] body[data-theme="light"] #root .talent-pool-container.c
 html[data-theme="light"] body[data-theme="light"] #root .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-together .candidate-grow-text,
 html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-together,
 html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-together .candidate-grow-text {
-  font-size: clamp(1.55rem, 6.8vw, 2.05rem) !important;
+  font-size: clamp(1.3rem, 5.75vw, 1.72rem) !important;
   line-height: 0.9 !important;
   color: #2e2787 !important;
   -webkit-text-fill-color: #2e2787 !important;
@@ -78682,9 +78682,9 @@ html body #root .talent-pool-container.candidate-view-candidates .candidate-comm
 html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-icon,
 html[data-theme="light"] body[data-theme="light"] #root .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-icon,
 html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-icon {
-  width: 1.45rem !important;
-  min-width: 1.45rem !important;
-  height: 1.45rem !important;
+  width: 1.15rem !important;
+  min-width: 1.15rem !important;
+  height: 1.15rem !important;
 }
 
 @media (max-width: 480px) {
@@ -78696,7 +78696,7 @@ html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-
   html[data-theme="light"] body[data-theme="light"] #root .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-together .candidate-grow-text,
   html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-together,
   html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-together .candidate-grow-text {
-    font-size: clamp(1.12rem, 6.1vw, 1.48rem) !important;
+    font-size: clamp(0.94rem, 5.15vw, 1.24rem) !important;
   }
 }
 
@@ -81157,7 +81157,7 @@ html body #root .home-page .talent-pool-container.candidate-view-candidates .can
   overflow: hidden !important;
   color: #1f2937 !important;
   -webkit-text-fill-color: #1f2937 !important;
-  font-size: 0.96rem !important;
+  font-size: 0.82rem !important;
   font-weight: 800 !important;
   line-height: 1.08 !important;
   text-overflow: ellipsis !important;
@@ -81172,7 +81172,7 @@ html body #root .home-page .talent-pool-container.candidate-view-candidates .can
   overflow: hidden !important;
   color: #5f6874 !important;
   -webkit-text-fill-color: #5f6874 !important;
-  font-size: 0.68rem !important;
+  font-size: 0.58rem !important;
   font-weight: 700 !important;
   line-height: 1.12 !important;
   text-overflow: ellipsis !important;
@@ -81210,7 +81210,7 @@ html body #root .talent-pool-container.candidate-view-candidates .candidate-list
 html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-stats strong {
   color: #1f2937 !important;
   -webkit-text-fill-color: #1f2937 !important;
-  font-size: 0.82rem !important;
+  font-size: 0.7rem !important;
   font-weight: 800 !important;
   line-height: 1 !important;
 }
@@ -81219,7 +81219,7 @@ html body #root .talent-pool-container.candidate-view-candidates .candidate-list
 html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-stats small {
   color: #5f6874 !important;
   -webkit-text-fill-color: #5f6874 !important;
-  font-size: 0.63rem !important;
+  font-size: 0.54rem !important;
   font-weight: 700 !important;
   line-height: 1.05 !important;
 }
@@ -82859,8 +82859,10 @@ html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-pr
 }
 
 html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > .portal-profile-friend-action,
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > .portal-profile-like-action,
 html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > .portal-profile-bookmark-action,
 html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > .portal-profile-friend-action:is(:hover, :focus, :focus-visible, :active, :disabled, .is-friend, .is-pending),
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > .portal-profile-like-action:is(:hover, :focus, :focus-visible, :active, :disabled, .active),
 html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > .portal-profile-bookmark-action:is(:hover, :focus, :focus-visible, :active, :disabled, .active) {
     box-sizing: border-box !important;
     display: inline-grid !important;
@@ -82902,6 +82904,11 @@ html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-pr
 html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > .portal-profile-bookmark-action.active {
     color: #d99a00 !important;
     -webkit-text-fill-color: #d99a00 !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > .portal-profile-like-action.active {
+    color: #2563eb !important;
+    -webkit-text-fill-color: #2563eb !important;
 }
 
 html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-profile-card-actions > [aria-disabled="true"],
@@ -84358,4 +84365,210 @@ html body #root .home-page :is(.analytics-card, .analytics-card-content, .portal
   html body #root .home-page .settings-container .settings-tabs {
     margin-top: 0.48rem !important;
   }
+}
+
+/* Final Tailor Profile controls and candidate/employer portal title typography. */
+@keyframes jumptake-portal-title-gentle {
+  0%,
+  100% {
+    transform: translateZ(0) rotate(0deg) scale(1);
+  }
+
+  40% {
+    transform: translateZ(0) rotate(-0.85deg) scale(1.02);
+  }
+
+  70% {
+    transform: translateZ(0) rotate(0.5deg) scale(1.01);
+  }
+}
+
+.tailor-profile-details-card .profile-details-card-header.is-actions-only {
+  justify-content: flex-end !important;
+}
+
+html body #root .home-page .tailor-profile-details-card .profile-details-edit,
+html body #root .home-page .tailor-profile-details-card .profile-details-edit:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+  width: max-content !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  min-height: 0 !important;
+  margin-left: auto !important;
+  padding: 0.32rem 0.68rem !important;
+  border: 1px solid #5b1118 !important;
+  border-radius: 999px !important;
+  background: #5b1118 !important;
+  background-color: #5b1118 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  line-height: 1.15 !important;
+  white-space: nowrap !important;
+}
+
+html body #root .home-page .tailor-profile-details-card .profile-details-save,
+html body #root .home-page .tailor-profile-details-card .profile-details-save:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  min-height: 2.25rem !important;
+  padding: 0.42rem 1rem !important;
+  border: 2px solid #5b1118 !important;
+  border-color: #5b1118 !important;
+  border-radius: 999px !important;
+  outline: 0 !important;
+  background: #fffaf3 !important;
+  background-color: #fffaf3 !important;
+  background-image: none !important;
+  box-shadow: inset 0 0 0 1px #5b1118 !important;
+  color: #5b1118 !important;
+  -webkit-text-fill-color: #5b1118 !important;
+}
+
+html body #root .home-page .tailor-profile-details-card .profile-details-cancel,
+html body #root .home-page .tailor-profile-details-card .profile-details-cancel:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  min-height: 2.25rem !important;
+  padding: 0.42rem 1rem !important;
+  border: 2px solid #5b1118 !important;
+  border-radius: 999px !important;
+  background: #5b1118 !important;
+  background-color: #5b1118 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html body #root .home-page .dashboard-title h1,
+html body #root .home-page .dashboard-section-title h2,
+html body #root .home-page .mobile-section-panel-header h2,
+html body #root .home-page .portal-title-jello-text {
+  font-family: 'Boogaloo', 'Arial Narrow', Arial, sans-serif !important;
+  font-weight: 400 !important;
+}
+
+/* Keep a single title capsule: the glass effect belongs to the cream text pill. */
+html body #root .home-page :is(.dashboard-section-title, .mobile-section-panel-header),
+html body #root .home-page :is(.dashboard-section-title, .mobile-section-panel-header) h2,
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.dashboard-section-title, .mobile-section-panel-header),
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.dashboard-section-title, .mobile-section-panel-header) h2 {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html body #root .home-page :is(.dashboard-section-title, .mobile-section-panel-header) h2::before,
+html body #root .home-page :is(.dashboard-section-title, .mobile-section-panel-header) h2::after,
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.dashboard-section-title, .mobile-section-panel-header) h2::before,
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.dashboard-section-title, .mobile-section-panel-header) h2::after {
+  display: none !important;
+  content: none !important;
+}
+
+html body #root .home-page .portal-title-jello-text,
+html body #root .home-page .dashboard-section-title h2:hover .portal-title-jello-text,
+html body #root .home-page .dashboard-section-title h2:focus-within .portal-title-jello-text,
+html body #root .home-page .mobile-section-panel-header h2:hover .portal-title-jello-text,
+html body #root .home-page .mobile-section-panel-header h2:focus-within .portal-title-jello-text,
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.dashboard-section-title, .mobile-section-panel-header) h2 .portal-title-jello-text {
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.38rem 1.05rem !important;
+  border: 1px solid #c8baa4 !important;
+  border-radius: 999px !important;
+  background: linear-gradient(145deg, rgba(255, 248, 234, 0.3) 0%, rgba(243, 228, 204, 0.16) 52%, rgba(232, 214, 186, 0.24) 100%) !important;
+  background-color: rgba(243, 228, 204, 0.2) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(156, 130, 96, 0.12),
+    0 0.28rem 0.75rem rgba(77, 50, 31, 0.08) !important;
+  color: #3a2116 !important;
+  -webkit-text-fill-color: #3a2116 !important;
+  font-size: clamp(1.16rem, 2.05vw, 1.48rem) !important;
+  letter-spacing: 0.01em !important;
+  transform-origin: center !important;
+  animation: jumptake-activities-loop 7.5s infinite both !important;
+  backdrop-filter: blur(13px) saturate(1.18) !important;
+  -webkit-backdrop-filter: blur(13px) saturate(1.18) !important;
+  will-change: transform !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .home-page .portal-title-jello-text,
+  html body #root .home-page .dashboard-section-title h2:hover .portal-title-jello-text,
+  html body #root .home-page .dashboard-section-title h2:focus-within .portal-title-jello-text,
+  html body #root .home-page .mobile-section-panel-header h2:hover .portal-title-jello-text,
+  html body #root .home-page .mobile-section-panel-header h2:focus-within .portal-title-jello-text,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.dashboard-section-title, .mobile-section-panel-header) h2 .portal-title-jello-text {
+    padding: 0.34rem 0.9rem !important;
+    font-size: 1.22rem !important;
+  }
+}
+
+/* Pending outgoing friend requests use the same immediate blue state everywhere. */
+html body #root .home-page .portal-profile-friend-action.is-pending,
+html body #root .home-page .portal-profile-friend-action.is-pending:is(:hover, :focus, :focus-visible, :active, :disabled),
+html body #root .home-page .candidate-popup-name-action.is-pending,
+html body #root .home-page .candidate-card-friend-action.pending,
+html body #root .home-page .candidate-card-friend-action.pending:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  color: #2563eb !important;
+  fill: #2563eb !important;
+  stroke: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
+  opacity: 1 !important;
+}
+
+html body #root .home-page :is(.portal-profile-friend-action.is-pending, .candidate-popup-name-action.is-pending, .candidate-card-friend-action.pending) :is(svg, path) {
+  color: #2563eb !important;
+  fill: #2563eb !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: #2563eb !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-friend-action.is-pending,
+html body .portal-profile-detail-backdrop .portal-profile-friend-action.is-pending:is(:hover, :focus, :focus-visible, :active, :disabled),
+html body .portal-profile-detail-backdrop .candidate-popup-name-action.is-pending,
+html body .portal-profile-detail-backdrop .candidate-popup-name-action.is-pending:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  color: #2563eb !important;
+  fill: #2563eb !important;
+  stroke: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
+  opacity: 1 !important;
+}
+
+html body .portal-profile-detail-backdrop :is(.portal-profile-friend-action.is-pending, .candidate-popup-name-action.is-pending) :is(svg, path) {
+  color: #2563eb !important;
+  fill: #2563eb !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: #2563eb !important;
+}
+
+@keyframes jumptake-transient-notice {
+  0%,
+  82% {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.notification-message,
+.profile-details-message,
+.portal-profile-detail-action-message {
+  animation: jumptake-transient-notice 2s ease forwards;
 }

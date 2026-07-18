@@ -213,15 +213,24 @@ const getCandidateReachHistory = (post) => {
     });
 };
 
-const TalentPool = ({ jobs = [], companyId, mode = 'employer', currentUserId }) => {
+const TalentPool = ({
+    jobs = [],
+    companyId,
+    mode = 'employer',
+    currentUserId,
+    initialSelectedCandidate = null,
+    profileOnly = false,
+    onProfileClose,
+    onFriendStatusChange
+}) => {
     const [candidates, setCandidates] = useState([]);
     const [bookmarkedTalentIds, setBookmarkedTalentIds] = useState([]);
-    const [, setLikedCandidateIds] = useState([]);
+    const [likedCandidateIds, setLikedCandidateIds] = useState([]);
     const [candidateLikeCounts, setCandidateLikeCounts] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedCandidate, setSelectedCandidate] = useState(null);
+    const [selectedCandidate, setSelectedCandidate] = useState(initialSelectedCandidate);
     const [spotlightActive, setSpotlightActive] = useState(false);
     const [currentCandidatePage, setCurrentCandidatePage] = useState(1);
     const [showAddFriend, setShowAddFriend] = useState(false);
@@ -270,6 +279,15 @@ const TalentPool = ({ jobs = [], companyId, mode = 'employer', currentUserId }) 
 
         setGrowAnimationKey(Date.now());
     }, [mode]);
+
+    useEffect(() => {
+        if (!friendNotice) {
+            return undefined;
+        }
+
+        const timer = window.setTimeout(() => setFriendNotice(''), 2000);
+        return () => window.clearTimeout(timer);
+    }, [friendNotice]);
 
     useEffect(() => {
         const talentSearchKey = mode === 'candidate' ? 'jumptakeCandidateTalentSearch' : 'jumptakeEmployerTalentSearch';
@@ -518,6 +536,49 @@ const TalentPool = ({ jobs = [], companyId, mode = 'employer', currentUserId }) 
         }
     };
 
+    const toggleCandidateLike = async (candidate, event) => {
+        event?.stopPropagation();
+
+        const actorKey = getActorKey();
+        if (!candidate?._id || !actorKey) {
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem(mode === 'candidate' ? 'token' : 'employerToken');
+            const response = await fetch(apiUrl('/api/candidate-likes/toggle'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token || ''}`
+                },
+                body: JSON.stringify({
+                    candidateId: candidate._id,
+                    actorType: mode === 'employer' ? 'employer' : 'candidate',
+                    actorKey: String(actorKey)
+                })
+            });
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to update candidate like');
+            }
+
+            const candidateId = String(candidate._id);
+            setCandidateLikeCounts((currentCounts) => ({
+                ...currentCounts,
+                [candidateId]: Number(data.count || 0)
+            }));
+            setLikedCandidateIds((currentIds) => (
+                data.liked
+                    ? [...new Set([...currentIds, candidateId])]
+                    : currentIds.filter((id) => id !== candidateId)
+            ));
+        } catch (likeError) {
+            setFriendNotice(`Error: ${likeError.message}`);
+        }
+    };
+
     const handleViewProfile = (candidate) => {
         if (!candidate) {
             return;
@@ -576,6 +637,7 @@ const TalentPool = ({ jobs = [], companyId, mode = 'employer', currentUserId }) 
             setSelectedCandidate(null);
             setClosingProfileDetailModal(false);
             profileDetailCloseTimerRef.current = null;
+            onProfileClose?.();
         }, POPUP_CLOSE_ANIMATION_MS);
     };
 
@@ -675,9 +737,26 @@ const TalentPool = ({ jobs = [], companyId, mode = 'employer', currentUserId }) 
     };
 
     const sendFriendRequest = async ({ candidateId, jumptakeId } = {}) => {
+        const optimisticConnection = candidateId
+            ? { id: '', status: 'pending', direction: 'outgoing' }
+            : null;
+
         try {
             setSendingFriendRequest(true);
             setFriendNotice('');
+            if (candidateId) {
+                setCandidates((currentCandidates) => currentCandidates.map((candidate) => (
+                    String(candidate._id) === String(candidateId)
+                        ? { ...candidate, connectionStatus: optimisticConnection }
+                        : candidate
+                )));
+                setSelectedCandidate((currentCandidate) => (
+                    currentCandidate && String(currentCandidate._id) === String(candidateId)
+                        ? { ...currentCandidate, connectionStatus: optimisticConnection }
+                        : currentCandidate
+                ));
+                onFriendStatusChange?.(candidateId, optimisticConnection);
+            }
             const response = await fetch(apiUrl('/api/candidate-connections/request'), {
                 method: 'POST',
                 headers: {
@@ -698,22 +777,42 @@ const TalentPool = ({ jobs = [], companyId, mode = 'employer', currentUserId }) 
             setFriendNotice('Friend invitation sent.');
             setFriendJumpTakeId('');
             if (candidateId) {
+                const nextConnection = {
+                    id: data.connection?._id,
+                    status: 'pending',
+                    direction: 'outgoing'
+                };
                 setCandidates((currentCandidates) => currentCandidates.map((candidate) => (
                     String(candidate._id) === String(candidateId)
                         ? {
                             ...candidate,
-                            connectionStatus: {
-                                id: data.connection?._id,
-                                status: 'pending',
-                                direction: 'outgoing'
-                            }
+                            connectionStatus: nextConnection
                         }
                         : candidate
                 )));
+                setSelectedCandidate((currentCandidate) => (
+                    currentCandidate && String(currentCandidate._id) === String(candidateId)
+                        ? { ...currentCandidate, connectionStatus: nextConnection }
+                        : currentCandidate
+                ));
+                onFriendStatusChange?.(candidateId, nextConnection);
             } else {
                 setShowAddFriend(false);
             }
         } catch (friendError) {
+            if (candidateId) {
+                setCandidates((currentCandidates) => currentCandidates.map((candidate) => (
+                    String(candidate._id) === String(candidateId)
+                        ? { ...candidate, connectionStatus: null }
+                        : candidate
+                )));
+                setSelectedCandidate((currentCandidate) => (
+                    currentCandidate && String(currentCandidate._id) === String(candidateId)
+                        ? { ...currentCandidate, connectionStatus: null }
+                        : currentCandidate
+                ));
+                onFriendStatusChange?.(candidateId, null);
+            }
             setFriendNotice(`Error: ${friendError.message}`);
         } finally {
             setSendingFriendRequest(false);
@@ -737,6 +836,17 @@ const TalentPool = ({ jobs = [], companyId, mode = 'employer', currentUserId }) 
         try {
             setSendingFriendRequest(true);
             setFriendNotice('');
+            setCandidates((currentCandidates) => currentCandidates.map((currentCandidate) => (
+                String(currentCandidate._id) === String(candidate._id)
+                    ? { ...currentCandidate, connectionStatus: null }
+                    : currentCandidate
+            )));
+            setSelectedCandidate((currentCandidate) => (
+                currentCandidate && String(currentCandidate._id) === String(candidate._id)
+                    ? { ...currentCandidate, connectionStatus: null }
+                    : currentCandidate
+            ));
+            onFriendStatusChange?.(candidate._id, null);
             const response = await fetch(apiUrl(`/api/candidate-connections/${connectionId}/respond`), {
                 method: 'PUT',
                 headers: {
@@ -750,13 +860,19 @@ const TalentPool = ({ jobs = [], companyId, mode = 'employer', currentUserId }) 
                 throw new Error(data.error || 'Failed to cancel friend invitation');
             }
 
-            setCandidates((currentCandidates) => currentCandidates.map((currentCandidate) => (
-                String(currentCandidate._id) === String(candidate._id)
-                    ? { ...currentCandidate, connectionStatus: null }
-                    : currentCandidate
-            )));
             setFriendNotice('Friend invitation cancelled.');
         } catch (friendError) {
+            setCandidates((currentCandidates) => currentCandidates.map((currentCandidate) => (
+                String(currentCandidate._id) === String(candidate._id)
+                    ? { ...currentCandidate, connectionStatus: candidate.connectionStatus }
+                    : currentCandidate
+            )));
+            setSelectedCandidate((currentCandidate) => (
+                currentCandidate && String(currentCandidate._id) === String(candidate._id)
+                    ? { ...currentCandidate, connectionStatus: candidate.connectionStatus }
+                    : currentCandidate
+            ));
+            onFriendStatusChange?.(candidate._id, candidate.connectionStatus);
             setFriendNotice(`Error: ${friendError.message}`);
         } finally {
             setSendingFriendRequest(false);
@@ -1878,10 +1994,22 @@ const TalentPool = ({ jobs = [], companyId, mode = 'employer', currentUserId }) 
                                                 }
                                             }}
                                             disabled={sendingFriendRequest || selectedCandidate.connectionStatus?.status === 'accepted' || (selectedCandidate.connectionStatus?.status === 'pending' && selectedCandidate.connectionStatus?.direction !== 'outgoing')}
-                                            aria-label={selectedCandidate.connectionStatus?.status === 'accepted' ? 'Already friends' : selectedCandidate.connectionStatus?.status === 'pending' ? 'Friend invitation pending' : 'Add friend'}
-                                            title={selectedCandidate.connectionStatus?.status === 'accepted' ? 'Friends' : selectedCandidate.connectionStatus?.status === 'pending' ? 'Invitation pending' : 'Add friend'}
+                                            aria-label={selectedCandidate.connectionStatus?.status === 'accepted' ? 'Already friends' : selectedCandidate.connectionStatus?.status === 'pending' ? 'Unsend friend request' : 'Add friend'}
+                                            title={selectedCandidate.connectionStatus?.status === 'accepted' ? 'Friends' : selectedCandidate.connectionStatus?.status === 'pending' ? 'Unsend friend request' : 'Add friend'}
                                         >
                                             <CandidateProfileFriendIcon status={selectedCandidate.connectionStatus?.status || ''} />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className={`portal-profile-card-action portal-profile-like-action ${likedCandidateIds.includes(candidateId) ? 'active' : ''}`}
+                                            onClick={(event) => toggleCandidateLike(selectedCandidate, event)}
+                                            aria-pressed={likedCandidateIds.includes(candidateId)}
+                                            aria-label={likedCandidateIds.includes(candidateId) ? 'Unlike candidate' : 'Like candidate'}
+                                            title={likedCandidateIds.includes(candidateId) ? 'Unlike candidate' : 'Like candidate'}
+                                        >
+                                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                                <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3v11Zm2 0V11l4.7-8.5c.5-.9 1.8-.6 1.9.4l.3 3.1c.1 1-.2 2-.8 2.8h4.1c1.8 0 3.1 1.7 2.7 3.4l-1.4 6.6A4 4 0 0 1 16.6 22H9Z" />
+                                            </svg>
                                         </button>
                                         <button
                                             type="button"
@@ -1916,6 +2044,11 @@ const TalentPool = ({ jobs = [], companyId, mode = 'employer', currentUserId }) 
                                 );
                             })}
                         </div>
+                        {friendNotice && (
+                            <p className={`portal-profile-detail-action-message ${friendNotice.startsWith('Error:') ? 'is-error' : ''}`}>
+                                {friendNotice}
+                            </p>
+                        )}
                         <button
                             type="button"
                             className="portal-profile-detail-message"
@@ -1981,6 +2114,10 @@ const TalentPool = ({ jobs = [], companyId, mode = 'employer', currentUserId }) 
             : modalMarkup;
     };
 
+    if (profileOnly) {
+        return renderSelectedCandidateModal();
+    }
+
     return (
         <div ref={talentPoolRef} className={`talent-pool-container ${mode === 'candidate' ? 'candidate-view-candidates' : ''}`}>
             <div className="talent-pool-header">
@@ -2030,8 +2167,8 @@ const TalentPool = ({ jobs = [], companyId, mode = 'employer', currentUserId }) 
                 </div>
             )}
 
-            {friendNotice.startsWith('Error:') && (
-                <div className="notification-message error">
+            {friendNotice && (
+                <div className={`notification-message ${friendNotice.startsWith('Error:') ? 'error' : 'success'}`}>
                     {friendNotice}
                 </div>
             )}

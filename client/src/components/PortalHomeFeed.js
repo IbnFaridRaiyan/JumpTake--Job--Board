@@ -1230,8 +1230,11 @@ const PortalHomeFeed = ({
     const [feedFriends, setFeedFriends] = useState([]);
     const [profileCandidateLookup, setProfileCandidateLookup] = useState({});
     const [bookmarkedProfileCandidateIds, setBookmarkedProfileCandidateIds] = useState([]);
+    const [likedProfileCandidateIds, setLikedProfileCandidateIds] = useState([]);
+    const [profileCandidateLikeCounts, setProfileCandidateLikeCounts] = useState({});
     const [pendingProfileFriendIds, setPendingProfileFriendIds] = useState([]);
     const [pendingProfileFriendConnectionIds, setPendingProfileFriendConnectionIds] = useState({});
+    const [profileFriendBusyIds, setProfileFriendBusyIds] = useState([]);
     const [openProfileFriendMenuId, setOpenProfileFriendMenuId] = useState('');
     const [profileActionMessage, setProfileActionMessage] = useState('');
     const [shareStatus, setShareStatus] = useState('');
@@ -1385,6 +1388,15 @@ const PortalHomeFeed = ({
     }, [profileData?.profileImage, viewerId]);
 
     useEffect(() => {
+        if (!profileActionMessage) {
+            return undefined;
+        }
+
+        const timer = window.setTimeout(() => setProfileActionMessage(''), 2000);
+        return () => window.clearTimeout(timer);
+    }, [profileActionMessage]);
+
+    useEffect(() => {
         if (!openReactionPostId && !openCommentPostId && !openSharePostId && !openOptionsPostId && !openJobOptionsId && !openReachInsightPostId) {
             return undefined;
         }
@@ -1427,6 +1439,8 @@ const PortalHomeFeed = ({
     useEffect(() => {
         if (mode !== 'candidate' || !candidateUserId) {
             setFeedFriends([]);
+            setPendingProfileFriendIds([]);
+            setPendingProfileFriendConnectionIds({});
             return;
         }
 
@@ -1471,11 +1485,26 @@ const PortalHomeFeed = ({
                     })
                     .filter((friend) => friend?.id);
 
+                const pendingIds = [];
+                const pendingConnectionIds = {};
+                (Array.isArray(data.outgoing) ? data.outgoing : []).forEach((connection) => {
+                    const peerUserId = String(connection?.peer?.userId || '');
+                    if (!peerUserId) {
+                        return;
+                    }
+                    pendingIds.push(peerUserId);
+                    pendingConnectionIds[peerUserId] = connection._id || connection.id || '';
+                });
+
                 setFeedFriends(friends);
+                setPendingProfileFriendIds([...new Set(pendingIds)]);
+                setPendingProfileFriendConnectionIds(pendingConnectionIds);
             } catch (error) {
                 console.error('Error loading feed friends:', error);
                 if (isMounted) {
                     setFeedFriends([]);
+                    setPendingProfileFriendIds([]);
+                    setPendingProfileFriendConnectionIds({});
                 }
             }
         };
@@ -1526,6 +1555,58 @@ const PortalHomeFeed = ({
         };
 
         fetchProfileBookmarks();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [mode, candidateUserId]);
+
+    useEffect(() => {
+        if (mode !== 'candidate' || !candidateUserId) {
+            setLikedProfileCandidateIds([]);
+            setProfileCandidateLikeCounts({});
+            return undefined;
+        }
+
+        let isMounted = true;
+
+        const fetchProfileCandidateLikes = async () => {
+            try {
+                const params = new URLSearchParams({
+                    actorType: 'candidate',
+                    actorKey: String(candidateUserId)
+                });
+                const response = await fetch(apiUrl(`/api/candidate-likes?${params.toString()}`), {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token') || ''}`
+                    }
+                });
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to load candidate likes');
+                }
+
+                if (!isMounted) {
+                    return;
+                }
+
+                const counts = {};
+                (data.counts || []).forEach((item) => {
+                    counts[String(item.candidateId)] = Number(item.count || 0);
+                });
+                setProfileCandidateLikeCounts(counts);
+                setLikedProfileCandidateIds((data.likedCandidateIds || []).map(String));
+            } catch (error) {
+                console.error('Error loading profile candidate likes:', error);
+                if (isMounted) {
+                    setLikedProfileCandidateIds([]);
+                    setProfileCandidateLikeCounts({});
+                }
+            }
+        };
+
+        fetchProfileCandidateLikes();
 
         return () => {
             isMounted = false;
@@ -4520,6 +4601,10 @@ const PortalHomeFeed = ({
 
         const profileKey = String(profile.id || '');
 
+        if (profileFriendBusyIds.includes(profileKey)) {
+            return;
+        }
+
         if (profile.isFriend) {
             setOpenProfileFriendMenuId((currentId) => currentId === profileKey ? '' : profileKey);
             return;
@@ -4537,12 +4622,25 @@ const PortalHomeFeed = ({
             const connectionId = pendingProfileFriendConnectionIds[profileKey];
             if (!connectionId) {
                 setPendingProfileFriendIds((currentIds) => currentIds.filter((id) => id !== profileKey));
+                setPendingProfileFriendConnectionIds((currentMap) => {
+                    const nextMap = { ...currentMap };
+                    delete nextMap[profileKey];
+                    return nextMap;
+                });
                 setProfileActionMessage('Friend invitation cancelled.');
                 return;
             }
 
+            const previousConnectionId = connectionId;
             try {
+                setProfileFriendBusyIds((currentIds) => [...new Set([...currentIds, profileKey])]);
                 setProfileActionMessage('');
+                setPendingProfileFriendIds((currentIds) => currentIds.filter((id) => id !== profileKey));
+                setPendingProfileFriendConnectionIds((currentMap) => {
+                    const nextMap = { ...currentMap };
+                    delete nextMap[profileKey];
+                    return nextMap;
+                });
                 const response = await fetch(apiUrl(`/api/candidate-connections/${connectionId}/respond`), {
                     method: 'PUT',
                     headers: {
@@ -4557,15 +4655,16 @@ const PortalHomeFeed = ({
                     throw new Error(data.error || 'Failed to cancel friend invitation');
                 }
 
-                setPendingProfileFriendIds((currentIds) => currentIds.filter((id) => id !== profileKey));
-                setPendingProfileFriendConnectionIds((currentMap) => {
-                    const nextMap = { ...currentMap };
-                    delete nextMap[profileKey];
-                    return nextMap;
-                });
                 setProfileActionMessage('Friend invitation cancelled.');
             } catch (error) {
+                setPendingProfileFriendIds((currentIds) => [...new Set([...currentIds, profileKey])]);
+                setPendingProfileFriendConnectionIds((currentMap) => ({
+                    ...currentMap,
+                    [profileKey]: previousConnectionId
+                }));
                 setProfileActionMessage(error.message || 'Could not cancel friend invitation.');
+            } finally {
+                setProfileFriendBusyIds((currentIds) => currentIds.filter((id) => id !== profileKey));
             }
             return;
         }
@@ -4579,7 +4678,9 @@ const PortalHomeFeed = ({
         }
 
         try {
+            setProfileFriendBusyIds((currentIds) => [...new Set([...currentIds, profileKey])]);
             setProfileActionMessage('');
+            setPendingProfileFriendIds((currentIds) => [...new Set([...currentIds, profileKey])]);
             const response = await fetch(apiUrl('/api/candidate-connections/request'), {
                 method: 'POST',
                 headers: {
@@ -4596,7 +4697,6 @@ const PortalHomeFeed = ({
                 throw new Error(data.error || 'Failed to send friend invitation');
             }
 
-            setPendingProfileFriendIds((currentIds) => [...new Set([...currentIds, profileKey])]);
             if (data.connection?._id) {
                 setPendingProfileFriendConnectionIds((currentMap) => ({
                     ...currentMap,
@@ -4605,7 +4705,15 @@ const PortalHomeFeed = ({
             }
             setProfileActionMessage('Friend invitation sent.');
         } catch (error) {
+            setPendingProfileFriendIds((currentIds) => currentIds.filter((id) => id !== profileKey));
+            setPendingProfileFriendConnectionIds((currentMap) => {
+                const nextMap = { ...currentMap };
+                delete nextMap[profileKey];
+                return nextMap;
+            });
             setProfileActionMessage(error.message || 'Could not send friend invitation.');
+        } finally {
+            setProfileFriendBusyIds((currentIds) => currentIds.filter((id) => id !== profileKey));
         }
     };
 
@@ -4714,6 +4822,55 @@ const PortalHomeFeed = ({
             setProfileActionMessage(isBookmarked ? 'Candidate removed from bookmarks.' : 'Candidate bookmarked.');
         } catch (error) {
             setProfileActionMessage(error.message || 'Could not update bookmark.');
+        }
+    };
+
+    const handleProfileLikeToggle = async (profile, event) => {
+        event?.stopPropagation();
+
+        if (!profile || profile.isCurrentViewer || profile.type === 'employer' || !candidateUserId) {
+            return;
+        }
+
+        const candidateId = profile.candidateId || profileCandidateLookup[profile.id]?._id || '';
+        if (!candidateId) {
+            setProfileActionMessage('This profile cannot be liked yet.');
+            return;
+        }
+
+        try {
+            setProfileActionMessage('');
+            const response = await fetch(apiUrl('/api/candidate-likes/toggle'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token') || ''}`
+                },
+                body: JSON.stringify({
+                    candidateId,
+                    actorType: 'candidate',
+                    actorKey: String(candidateUserId)
+                })
+            });
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to update candidate like');
+            }
+
+            const candidateKey = String(candidateId);
+            setProfileCandidateLikeCounts((currentCounts) => ({
+                ...currentCounts,
+                [candidateKey]: Number(data.count || 0)
+            }));
+            setLikedProfileCandidateIds((currentIds) => (
+                data.liked
+                    ? [...new Set([...currentIds, candidateKey])]
+                    : currentIds.filter((id) => id !== candidateKey)
+            ));
+            setProfileActionMessage(data.liked ? 'Candidate liked.' : 'Candidate like removed.');
+        } catch (error) {
+            setProfileActionMessage(error.message || 'Could not update candidate like.');
         }
     };
 
@@ -6304,6 +6461,7 @@ const PortalHomeFeed = ({
                 <ProfileDetailsCard
                     profile={profileData || {}}
                     editable
+                    hideHeaderText
                     onSave={saveTailorProfileDetails}
                     className="tailor-profile-details-card"
                 />
@@ -6576,7 +6734,12 @@ const PortalHomeFeed = ({
         const canUseCandidateActions = canMessage;
         const profileCandidateId = profile.candidateId || profileCandidateLookup[profile.id]?._id || '';
         const isProfileBookmarked = profileCandidateId && bookmarkedProfileCandidateIds.includes(String(profileCandidateId));
-        const friendActionDisabled = !canUseCandidateActions;
+        const isProfileLiked = profileCandidateId && likedProfileCandidateIds.includes(String(profileCandidateId));
+        const profileLikeCount = profileCandidateId
+            && Object.prototype.hasOwnProperty.call(profileCandidateLikeCounts, String(profileCandidateId))
+            ? profileCandidateLikeCounts[String(profileCandidateId)]
+            : profile.likeCount;
+        const friendActionDisabled = !canUseCandidateActions || profileFriendBusyIds.includes(String(profile.id || ''));
         const friendActionLabel = profile.isFriend
             ? 'Friends'
             : profile.friendRequestPending
@@ -6658,6 +6821,19 @@ const PortalHomeFeed = ({
                                     )}
                                     <button
                                         type="button"
+                                        className={`portal-profile-card-action portal-profile-like-action ${isProfileLiked ? 'active' : ''}`}
+                                        onClick={(event) => handleProfileLikeToggle(profile, event)}
+                                        disabled={!profileCandidateId}
+                                        aria-pressed={Boolean(isProfileLiked)}
+                                        aria-label={isProfileLiked ? 'Unlike candidate' : 'Like candidate'}
+                                        title={profileCandidateId ? (isProfileLiked ? 'Unlike candidate' : 'Like candidate') : 'Like unavailable'}
+                                    >
+                                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                            <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3v11Zm2 0V11l4.7-8.5c.5-.9 1.8-.6 1.9.4l.3 3.1c.1 1-.2 2-.8 2.8h4.1c1.8 0 3.1 1.7 2.7 3.4l-1.4 6.6A4 4 0 0 1 16.6 22H9Z" />
+                                        </svg>
+                                    </button>
+                                    <button
+                                        type="button"
                                         className={`portal-profile-card-action portal-profile-bookmark-action ${isProfileBookmarked ? 'active' : ''}`}
                                         onClick={(event) => handleProfileBookmarkToggle(profile, event)}
                                         disabled={!profileCandidateId}
@@ -6721,8 +6897,8 @@ const PortalHomeFeed = ({
                         )}
                         <div className="tailor-profile-stats">
                             <div className="tailor-stat-item">
-                                <div className="tailor-stat-value">{formatCompactCount(profile.likeCount)}</div>
-                                <div className="tailor-stat-label">{profile.likeCount === 1 ? 'Like' : 'Likes'}</div>
+                                <div className="tailor-stat-value">{formatCompactCount(profileLikeCount)}</div>
+                                <div className="tailor-stat-label">{profileLikeCount === 1 ? 'Like' : 'Likes'}</div>
                             </div>
                             <div className="tailor-stat-item">
                                 <div className="tailor-stat-value">{formatCompactCount(profile.postCount)}</div>

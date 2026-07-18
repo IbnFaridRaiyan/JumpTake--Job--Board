@@ -73,7 +73,14 @@ const DetailList = ({ title, items }) => (
     </div>
 );
 
-const ProfileDetailsCard = ({ profile = {}, editable = false, onSave, showHeader = true, className = '' }) => {
+const ProfileDetailsCard = ({
+    profile = {},
+    editable = false,
+    onSave,
+    showHeader = true,
+    hideHeaderText = false,
+    className = ''
+}) => {
     const normalizedProfile = useMemo(() => normalizeDetails(profile), [profile]);
     const [details, setDetails] = useState(normalizedProfile);
     const [draft, setDraft] = useState(() => createDraft(normalizedProfile));
@@ -86,6 +93,15 @@ const ProfileDetailsCard = ({ profile = {}, editable = false, onSave, showHeader
         setDetails(normalizedProfile);
         setDraft(createDraft(normalizedProfile));
     }, [normalizedProfile]);
+
+    useEffect(() => {
+        if (!message) {
+            return undefined;
+        }
+
+        const timer = window.setTimeout(() => setMessage(''), 2000);
+        return () => window.clearTimeout(timer);
+    }, [message]);
 
     const saveDetails = async (event) => {
         event.preventDefault();
@@ -118,11 +134,13 @@ const ProfileDetailsCard = ({ profile = {}, editable = false, onSave, showHeader
     return (
         <section className={`profile-details-card ${expanded ? 'is-expanded' : ''} ${editing ? 'is-editing' : ''} ${showHeader ? '' : 'is-headerless'} ${className}`.trim()}>
             {showHeader && (
-                <div className="profile-details-card-header">
-                    <div>
-                        <span>Complete profile</span>
-                        <h3>Education, experience and skills</h3>
-                    </div>
+                <div className={`profile-details-card-header ${hideHeaderText ? 'is-actions-only' : ''}`}>
+                    {!hideHeaderText && (
+                        <div>
+                            <span>Complete profile</span>
+                            <h3>Education, experience and skills</h3>
+                        </div>
+                    )}
                     {editable && !editing && (
                         <button type="button" className="profile-details-edit" onClick={startEditing}>Edit</button>
                     )}

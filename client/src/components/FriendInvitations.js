@@ -77,6 +77,24 @@ const FriendInvitations = ({ userId }) => {
         fetchConnections();
     }, [fetchConnections]);
 
+    useEffect(() => {
+        if (!message) {
+            return undefined;
+        }
+
+        const timer = window.setTimeout(() => setMessage(''), 2000);
+        return () => window.clearTimeout(timer);
+    }, [message]);
+
+    useEffect(() => {
+        if (!error) {
+            return undefined;
+        }
+
+        const timer = window.setTimeout(() => setError(''), 2000);
+        return () => window.clearTimeout(timer);
+    }, [error]);
+
     const getSkillList = (skills) => {
         if (Array.isArray(skills)) {
             return skills.map((skill) => String(skill).trim()).filter(Boolean);

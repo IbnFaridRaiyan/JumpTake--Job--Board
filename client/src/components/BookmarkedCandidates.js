@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import ContactCandidate from './ContactCandidate';
 import ProfileAvatar from './ProfileAvatar';
 import confirmAction from '../utils/confirmAction';
-import ProfileDetailsCard from './ProfileDetailsCard';
+import TalentPool from './TalentPool';
 
 const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }) => {
     const [bookmarks, setBookmarks] = useState([]);
@@ -13,8 +12,6 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
     const [currentPage, setCurrentPage] = useState(1);
     const [connectionByUserId, setConnectionByUserId] = useState({});
     const [sendingFriendTo, setSendingFriendTo] = useState('');
-    const [likedCandidateIds, setLikedCandidateIds] = useState([]);
-    const [candidateLikeCounts, setCandidateLikeCounts] = useState({});
     const [isMobileView, setIsMobileView] = useState(() => (
         typeof window !== 'undefined' ? window.innerWidth <= 768 : false
     ));
@@ -23,7 +20,6 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
     useEffect(() => {
         fetchBookmarks();
         fetchConnections();
-        fetchCandidateLikes();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userId]);
 
@@ -34,6 +30,15 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+
+    useEffect(() => {
+        if (!message) {
+            return undefined;
+        }
+
+        const timer = window.setTimeout(() => setMessage(''), 2000);
+        return () => window.clearTimeout(timer);
+    }, [message]);
 
     const bookmarksPerMobilePage = 6;
     const totalPages = Math.max(1, Math.ceil(bookmarks.length / bookmarksPerMobilePage));
@@ -106,7 +111,6 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
 
             setBookmarks((prevState) => prevState.filter((bookmark) => String(bookmark.candidate?._id) !== String(candidateId)));
             setMessage('Bookmarked candidate removed successfully.');
-            setTimeout(() => setMessage(''), 2500);
         } catch (removeError) {
             console.error('Error removing bookmarked candidate:', removeError);
             setMessage(`Error: ${removeError.message}`);
@@ -137,71 +141,6 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
             setConnectionByUserId(nextConnections);
         } catch (connectionError) {
             console.error('Error fetching friend status:', connectionError);
-        }
-    };
-
-    const fetchCandidateLikes = async () => {
-        if (!userId) {
-            return;
-        }
-
-        try {
-            const params = new URLSearchParams({
-                actorType: 'candidate',
-                actorKey: String(userId)
-            });
-            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/candidate-likes?${params.toString()}`, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-            });
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.error || 'Failed to load candidate likes');
-            }
-
-            const counts = {};
-            (data.counts || []).forEach((item) => {
-                counts[String(item.candidateId)] = item.count;
-            });
-            setCandidateLikeCounts(counts);
-            setLikedCandidateIds((data.likedCandidateIds || []).map(String));
-        } catch (likeError) {
-            console.error('Error fetching bookmarked candidate likes:', likeError);
-        }
-    };
-
-    const toggleCandidateLike = async (candidate, event) => {
-        event.stopPropagation();
-        if (!candidate?._id || !userId) {
-            return;
-        }
-
-        try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/candidate-likes/toggle`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify({
-                    candidateId: candidate._id,
-                    actorType: 'candidate',
-                    actorKey: String(userId)
-                })
-            });
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.error || 'Failed to update candidate like');
-            }
-
-            const candidateId = String(candidate._id);
-            setCandidateLikeCounts((current) => ({ ...current, [candidateId]: data.count }));
-            setLikedCandidateIds((current) => (
-                data.liked
-                    ? [...new Set([...current, candidateId])]
-                    : current.filter((id) => id !== candidateId)
-            ));
-        } catch (likeError) {
-            setMessage(`Error: ${likeError.message}`);
         }
     };
 
@@ -244,7 +183,6 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
                     return next;
                 });
                 setMessage('Friend invitation cancelled.');
-                setTimeout(() => setMessage(''), 2500);
                 return;
             }
 
@@ -269,7 +207,6 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
                 [candidateUserId]: { ...data.connection, status: 'pending', direction: 'outgoing' }
             }));
             setMessage('Friend invitation sent.');
-            setTimeout(() => setMessage(''), 2500);
         } catch (friendError) {
             setMessage(`Error: ${friendError.message}`);
         } finally {
@@ -289,26 +226,46 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
     };
 
     if (selectedCandidate) {
+        const selectedUserId = String(selectedCandidate.user || selectedCandidate.userId || '');
+        const selectedConnection = connectionByUserId[selectedUserId];
+        const candidateWithConnection = {
+            ...selectedCandidate,
+            connectionStatus: selectedConnection
+                ? {
+                    id: selectedConnection._id || selectedConnection.id || '',
+                    status: selectedConnection.status,
+                    direction: selectedConnection.direction
+                }
+                : null
+        };
+
         return (
-            <div className="candidate-profile bookmarked-candidate-profile">
-                <div className="candidate-profile-header">
-                    <div className="candidate-profile-back">
-                        <button onClick={() => setSelectedCandidate(null)} className="back-button">Back to Bookmarked Candidates</button>
-                    </div>
-                    <div className="candidate-header-info">
-                        <ProfileAvatar imageSrc={selectedCandidate.profileImage} name={selectedCandidate.name} className="candidate-initial" imageClassName="profile-avatar-image" />
-                        <div className="candidate-header-text">
-                            <h2>{selectedCandidate.name || 'Unnamed Candidate'}</h2>
-                            <p>Public candidate profile</p>
-                        </div>
-                    </div>
-                </div>
-                <div className="candidate-profile-body">
-                    <ContactCandidate candidate={selectedCandidate} mode="candidate" currentUserId={userId} />
-                    <ProfileDetailsCard profile={selectedCandidate} showHeader={false} />
-                    <div className="section-footer-nav"><button className="back-button" onClick={() => setSelectedCandidate(null)}>Back</button></div>
-                </div>
-            </div>
+            <TalentPool
+                mode="candidate"
+                currentUserId={userId}
+                initialSelectedCandidate={candidateWithConnection}
+                profileOnly
+                onProfileClose={() => {
+                    setSelectedCandidate(null);
+                    fetchConnections();
+                }}
+                onFriendStatusChange={(_, nextConnection) => {
+                    setConnectionByUserId((current) => {
+                        const next = { ...current };
+                        if (nextConnection) {
+                            next[selectedUserId] = {
+                                ...(next[selectedUserId] || {}),
+                                _id: nextConnection.id,
+                                status: nextConnection.status,
+                                direction: nextConnection.direction
+                            };
+                        } else {
+                            delete next[selectedUserId];
+                        }
+                        return next;
+                    });
+                }}
+            />
         );
     }
 
@@ -320,7 +277,7 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
                 </div>
             )}
 
-            {message.includes('Error') && <div className="notification-message error">{message}</div>}
+            {message && <div className={`notification-message ${message.includes('Error') ? 'error' : 'success'}`}>{message}</div>}
             {error && <div className="error-message">{error}</div>}
 
             {loading ? (
@@ -353,21 +310,11 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
                                 <div className="candidate-card-socialbar socialbar">
                                     <button
                                         type="button"
-                                        className={`candidate-card-action candidate-card-like-action ${likedCandidateIds.includes(String(candidate._id)) ? 'active' : ''}`}
-                                        onClick={(event) => toggleCandidateLike(candidate, event)}
-                                        aria-label="Like candidate"
-                                        title="Like candidate"
-                                    >
-                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3v11Zm2 0V11l4.7-8.5c.5-.9 1.8-.6 1.9.4l.3 3.1c.1 1-.2 2-.8 2.8h4.1c1.8 0 3.1 1.7 2.7 3.4l-1.4 6.6A4 4 0 0 1 16.6 22H9Z" /></svg>
-                                        <span>{candidateLikeCounts[String(candidate._id)] || 0}</span>
-                                    </button>
-                                    <button
-                                        type="button"
                                         className={`candidate-card-action candidate-card-friend-action ${connection?.status || 'is-new'}`}
                                         onClick={(event) => sendFriendRequest(candidate, event)}
                                         disabled={sendingFriendTo === String(candidate._id) || connection?.status === 'accepted' || (connection?.status === 'pending' && connection.direction !== 'outgoing')}
                                         aria-label="Add friend"
-                                        title={connection?.status === 'accepted' ? 'Friends' : connection?.status === 'pending' ? 'Invitation pending' : 'Add friend'}
+                                        title={connection?.status === 'accepted' ? 'Friends' : connection?.status === 'pending' ? 'Unsend friend request' : 'Add friend'}
                                     >
                                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.42 0-8 2.24-8 5v1h10.1A6.9 6.9 0 0 1 17 19c0-1.85.72-3.54 1.9-4.8A11.7 11.7 0 0 0 15 14Zm6-3V8h-2v3h-3v2h3v3h2v-3h3v-2h-3Z" /></svg>
                                     </button>

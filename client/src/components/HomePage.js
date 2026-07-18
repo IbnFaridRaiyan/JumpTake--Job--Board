@@ -16,6 +16,7 @@ import ResumePlayground from './ResumePlayground';
 import PortalHomeFeed from './PortalHomeFeed';
 import PortalDefaultLanding from './PortalDefaultLanding';
 import PortalAiButton from './PortalAiButton';
+import BlocksManager from './BlocksManager';
 import { clearBrowserAccountState } from '../utils/authStorage';
 import logoDark from './media/logo4.png';
 import logoLight from './media/jumptake-logo-main-light.png';
@@ -62,6 +63,7 @@ const CANDIDATE_SECTION_IDS = new Set([
     'resume-playground',
     'about-jumptake',
     'progress-check',
+    'blocks',
     'settings'
 ]);
 
@@ -280,6 +282,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         'resume-playground': 'Resume Playground',
         'about-jumptake': 'About JumpTake',
         'progress-check': 'Progress Check',
+        blocks: 'Blocks',
         settings: 'Settings'
     };
 
@@ -762,7 +765,8 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         { id: 'applications', label: 'My Applications', icon: 'profile' },
         { id: 'bookmarks', label: 'Bookmarks', icon: 'star' },
         { id: 'interested-jobs', label: 'Job Preferences', icon: 'briefcase' },
-        { id: 'resume-playground', label: 'Resume Playground', icon: 'draft' }
+        { id: 'resume-playground', label: 'Resume Playground', icon: 'draft' },
+        { id: 'blocks', label: 'Blocks', icon: 'block' }
     ].map((item) => ({
         ...item,
         active: item.id === 'home'
@@ -1003,6 +1007,8 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     jobSeekerData={jobSeekerData}
                     userId={user?.id}
                 />;
+            case 'blocks':
+                return <BlocksManager userId={user?.id} />;
             case 'settings':
                 return <UserSettings
                     userId={user?.id}

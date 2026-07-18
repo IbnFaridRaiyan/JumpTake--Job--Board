@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import ContactCandidate from './ContactCandidate';
 import ProfileAvatar from './ProfileAvatar';
+import TalentPool from './TalentPool';
 import { apiUrl } from '../utils/apiUrl';
 import confirmAction from '../utils/confirmAction';
 
@@ -105,20 +106,6 @@ const FriendInvitations = ({ userId }) => {
         }
 
         return [];
-    };
-
-    const renderList = (items, emptyMessage) => {
-        if (!items || (Array.isArray(items) && items.length === 0)) {
-            return <p className="empty-info">{emptyMessage}</p>;
-        }
-
-        return (
-            <ul className="profile-list">
-                {(Array.isArray(items) ? items : [items]).map((item, index) => (
-                    <li key={index}>{typeof item === 'object' ? Object.values(item).filter(Boolean).join(' - ') : item}</li>
-                ))}
-            </ul>
-        );
     };
 
     const getCandidateFromConnection = (connection) => {
@@ -355,40 +342,16 @@ const FriendInvitations = ({ userId }) => {
 
     if (selectedCandidate) {
         return (
-            <div className="candidate-profile bookmarked-candidate-profile">
-                <div className="candidate-profile-header">
-                    <div className="candidate-profile-back">
-                        <button onClick={() => setSelectedCandidate(null)} className="back-button">Back to Friends</button>
-                    </div>
-                    <div className="candidate-header-info">
-                        <ProfileAvatar imageSrc={selectedCandidate.profileImage} name={selectedCandidate.name} className="candidate-initial" imageClassName="profile-avatar-image" />
-                        <div className="candidate-header-text">
-                            <h2>{selectedCandidate.name || 'Unnamed Candidate'}</h2>
-                            <p>{selectedCandidate.jumptakeId || 'Connected candidate profile'}</p>
-                        </div>
-                    </div>
-                </div>
-                <div className="candidate-profile-body">
-                    {selectedCandidate._id ? (
-                        <ContactCandidate candidate={selectedCandidate} mode="candidate" currentUserId={userId} />
-                    ) : null}
-
-                    <div className="profile-section">
-                        <h3>Skills</h3>
-                        <div className="skills-container">
-                            {getSkillList(selectedCandidate.skills).length > 0
-                                ? getSkillList(selectedCandidate.skills).map((skill, index) => <span key={index} className="skill-tag">{skill}</span>)
-                                : <p>No skills listed</p>}
-                        </div>
-                    </div>
-                    <div className="profile-section"><h3>Education</h3>{renderList(selectedCandidate.education, 'No education information available')}</div>
-                    <div className="profile-section"><h3>Experience</h3>{renderList(selectedCandidate.experience, 'No experience information available')}</div>
-                    <div className="profile-section"><h3>Achievements</h3>{renderList(selectedCandidate.achievements, 'No achievements listed')}</div>
-                    <div className="profile-section"><h3>Interests</h3>{renderList(selectedCandidate.interests, 'No interests listed')}</div>
-                    <div className="profile-section"><h3>Hobbies</h3>{renderList(selectedCandidate.hobbies, 'No hobbies listed')}</div>
-                    <div className="section-footer-nav"><button className="back-button" onClick={() => setSelectedCandidate(null)}>Back</button></div>
-                </div>
-            </div>
+            <TalentPool
+                mode="candidate"
+                currentUserId={userId}
+                initialSelectedCandidate={selectedCandidate}
+                profileOnly
+                onProfileClose={() => {
+                    setSelectedCandidate(null);
+                    fetchConnections();
+                }}
+            />
         );
     }
 

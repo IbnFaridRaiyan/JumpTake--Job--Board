@@ -81,7 +81,7 @@ const ContactCandidate = ({ companyId, candidate, onSent, mode = 'employer', cur
         <div className={`contact-candidate-panel ${mode === 'candidate' ? 'candidate-contact-panel' : ''} ${open ? 'is-open' : ''}`}>
             <button className="settings-button primary" type="button" onClick={() => setOpen((prev) => !prev)}>
                 <ContactActionIcon type="message" />
-                {mode === 'candidate' ? 'Message Candidate' : 'Contact Candidate'}
+                {mode === 'candidate' ? 'Message' : 'Contact Candidate'}
             </button>
 
             {notice && (

@@ -17,7 +17,8 @@ const ICON_PATHS = {
     logout: 'M10 17v-3H3v-4h7V7l5 5-5 5Zm2-15h8v20h-8v-2h6V4h-6V2Z',
     assessment: 'M5 3h14v18H5V3Zm2 2v14h10V5H7Zm2 2h6v2H9V7Zm0 4h6v2H9v-2Zm0 4h4v2H9v-2Z',
     profile: 'M4 4h16v16H4V4Zm2 2v12h12V6H6Zm2 2h8v2H8V8Zm0 3h8v2H8v-2Zm0 3h5v2H8v-2Z',
-    heart: 'M12 21s-8-4.6-8-11a4.8 4.8 0 0 1 8-3.58A4.8 4.8 0 0 1 20 10c0 6.4-8 11-8 11Z'
+    heart: 'M12 21s-8-4.6-8-11a4.8 4.8 0 0 1 8-3.58A4.8 4.8 0 0 1 20 10c0 6.4-8 11-8 11Z',
+    block: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20ZM4 12a8 8 0 0 1 12.9-6.3L5.7 16.9A7.96 7.96 0 0 1 4 12Zm8 8a7.96 7.96 0 0 1-4.9-1.7L18.3 7.1A8 8 0 0 1 12 20Z'
 };
 
 const PortalIcon = ({ name = 'dashboard' }) => (

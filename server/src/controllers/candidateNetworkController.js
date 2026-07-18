@@ -226,6 +226,48 @@ const sendFriendRequest = async (req, res) => {
     }
 };
 
+const blockCandidate = async (req, res) => {
+    try {
+        const blockerId = getAuthenticatedUserId(req);
+        const { blockedCandidateId, blockedUserId } = req.body || {};
+        let blockedUser = blockedUserId ? await User.findById(blockedUserId) : null;
+
+        if (!blockedUser && blockedCandidateId) {
+            const candidate = await JobSeeker.findById(blockedCandidateId).select('user');
+            blockedUser = candidate?.user ? await User.findById(candidate.user) : null;
+        }
+
+        if (!blockedUser) {
+            return res.status(404).json({ error: 'Candidate not found' });
+        }
+
+        if (String(blockedUser._id) === blockerId) {
+            return res.status(400).json({ error: 'You cannot block your own account' });
+        }
+
+        const pairKey = pairKeyFor(blockerId, blockedUser._id);
+        const connection = await CandidateConnection.findOne({ pairKey })
+            || new CandidateConnection({
+                pairKey,
+                requester: blockerId,
+                recipient: blockedUser._id
+            });
+
+        if (connection.status === 'blocked' && String(connection.blockedBy || '') !== blockerId) {
+            return res.status(403).json({ error: 'This connection is unavailable' });
+        }
+
+        connection.status = 'blocked';
+        connection.blockedBy = blockerId;
+        connection.respondedAt = new Date();
+        await connection.save();
+
+        return res.status(200).json({ message: 'Candidate blocked', connection });
+    } catch (error) {
+        return res.status(error.status || 500).json({ error: error.message || 'Failed to block candidate' });
+    }
+};
+
 const getConnections = async (req, res) => {
     try {
         const userId = requireSameUser(req, req.params.userId);
@@ -284,7 +326,11 @@ const getConnections = async (req, res) => {
         return res.status(200).json({
             incoming: serialized.filter((item) => item.status === 'pending' && item.direction === 'incoming'),
             outgoing: serialized.filter((item) => item.status === 'pending' && item.direction === 'outgoing'),
-            friends: serialized.filter((item) => item.status === 'accepted')
+            friends: serialized.filter((item) => item.status === 'accepted'),
+            blocked: serialized.filter((item, index) => (
+                item.status === 'blocked'
+                && String(connections[index]?.blockedBy || '') === userId
+            ))
         });
     } catch (error) {
         return res.status(error.status || 500).json({ error: error.message || 'Failed to load friend invitations' });
@@ -335,8 +381,14 @@ const respondToConnection = async (req, res) => {
             connection.status = 'blocked';
             connection.blockedBy = userId;
             connection.respondedAt = new Date();
+        } else if (action === 'unblock') {
+            if (connection.status !== 'blocked' || String(connection.blockedBy || '') !== userId) {
+                return res.status(403).json({ error: 'You cannot unblock this connection' });
+            }
+            await connection.deleteOne();
+            return res.status(200).json({ message: 'Candidate unblocked' });
         } else {
-            return res.status(400).json({ error: 'Use accept, decline, cancel, unfriend, or block' });
+            return res.status(400).json({ error: 'Use accept, decline, cancel, unfriend, block, or unblock' });
         }
 
         await connection.save();
@@ -367,6 +419,7 @@ module.exports = {
     getMatchedCandidates,
     getMyNetworkProfile,
     sendFriendRequest,
+    blockCandidate,
     getConnections,
     respondToConnection,
     pairKeyFor

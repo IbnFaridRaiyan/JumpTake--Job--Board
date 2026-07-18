@@ -1237,6 +1237,7 @@ const PortalHomeFeed = ({
     const [profileFriendBusyIds, setProfileFriendBusyIds] = useState([]);
     const [openProfileFriendMenuId, setOpenProfileFriendMenuId] = useState('');
     const [profileActionMessage, setProfileActionMessage] = useState('');
+    const [profileActionsOpen, setProfileActionsOpen] = useState(false);
     const [shareStatus, setShareStatus] = useState('');
     const [sharingTargetId, setSharingTargetId] = useState('');
     const [visibleReactionTooltip, setVisibleReactionTooltip] = useState('');
@@ -2786,17 +2787,24 @@ const PortalHomeFeed = ({
     const handleSavePost = (key, post) => {
         const postId = getPostKey(post);
         const tab = getPostTabFromStorageKey(key, activeTab);
+        const savedAuthorAvatar = getLiveProfileAvatar(post.authorId, post.authorType, post.authorAvatar);
+        const exactPostSnapshot = {
+            ...post,
+            authorAvatar: savedAuthorAvatar || post.authorAvatar || ''
+        };
 
         savePostSnapshot({
             id: `post:${postId}`,
+            postId,
             kind: 'post',
             sourceTab: tab,
             title: asDisplayText(post.authorName, 'JumpTake post'),
             subtitle: post.authorType === 'employer' ? 'Company update' : 'Talent story',
             body: asDisplayText(post.body, 'Shared a JumpTake post'),
             authorName: asDisplayText(post.authorName, 'JumpTake user'),
-            authorAvatar: post.authorAvatar || '',
+            authorAvatar: savedAuthorAvatar || post.authorAvatar || '',
             createdAt: post.createdAt || new Date().toISOString(),
+            postSnapshot: exactPostSnapshot,
             link: getFeedShareUrl({ kind: 'post', id: postId, tab, portal: mode })
         });
         setOpenOptionsPostId('');
@@ -2839,8 +2847,17 @@ const PortalHomeFeed = ({
     const handleSaveJobPost = (job, event) => {
         event?.stopPropagation();
         const jobId = getJobKey(job);
+        const exactJobSnapshot = {
+            ...job,
+            type: 'job-post',
+            authorType: 'employer',
+            authorName: asDisplayText(job.companyName, 'Company'),
+            authorAvatar: job.companyLogo || '',
+            body: asDisplayText(job.description, 'JumpTake job post')
+        };
         savePostSnapshot({
             id: `job:${jobId}`,
+            postId: jobId,
             kind: 'job',
             sourceTab: 'job-posts',
             title: asDisplayText(job.title, 'Job post'),
@@ -2849,6 +2866,7 @@ const PortalHomeFeed = ({
             authorName: asDisplayText(job.companyName, 'Company'),
             authorAvatar: job.companyLogo || '',
             createdAt: job.createdAt || new Date().toISOString(),
+            postSnapshot: exactJobSnapshot,
             link: getFeedShareUrl({ kind: 'job', id: jobId, portal: mode })
         });
         setOpenJobOptionsId('');
@@ -4458,6 +4476,7 @@ const PortalHomeFeed = ({
         closeReachInsight();
         setShareStatus('');
         setProfileActionMessage('');
+        setProfileActionsOpen(false);
         setOpenProfileFriendMenuId('');
     };
 
@@ -4471,6 +4490,7 @@ const PortalHomeFeed = ({
         }
 
         setClosingProfileDetailModal(true);
+        setProfileActionsOpen(false);
         closeReachInsight();
         profileDetailCloseTimerRef.current = window.setTimeout(() => {
             setOpenProfileDetail(null);
@@ -4871,6 +4891,50 @@ const PortalHomeFeed = ({
             setProfileActionMessage(data.liked ? 'Candidate liked.' : 'Candidate like removed.');
         } catch (error) {
             setProfileActionMessage(error.message || 'Could not update candidate like.');
+        }
+    };
+
+    const handleProfileBlock = async (profile, event) => {
+        event?.stopPropagation();
+        if (!profile || profile.isCurrentViewer || profile.type === 'employer') {
+            return;
+        }
+
+        const candidateId = profile.candidateId || profileCandidateLookup[profile.id]?._id || '';
+        const confirmed = await confirmAction({
+            title: 'Block this user?',
+            message: 'You will no longer be able to view profiles or message each other.'
+        });
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            const response = await fetch(apiUrl('/api/candidate-connections/block'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token') || ''}`
+                },
+                body: JSON.stringify(candidateId
+                    ? { blockedCandidateId: candidateId }
+                    : { blockedUserId: profile.id })
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to block candidate');
+            }
+
+            const blockedId = String(profile.id || '');
+            setBlockedFeedAuthors((currentBlocked) => {
+                const nextBlocked = [...new Set([...currentBlocked, blockedId])];
+                writeStorageArray(getBlockedFeedAuthorsStorageKey(viewerId), nextBlocked);
+                return nextBlocked;
+            });
+            setProfileActionMessage('Candidate blocked. Manage blocked users in Blocks.');
+            closeProfileDetailModal();
+        } catch (error) {
+            setProfileActionMessage(error.message || 'Could not block candidate.');
         }
     };
 
@@ -6796,7 +6860,21 @@ const PortalHomeFeed = ({
                             <p className="portal-profile-detail-bio">{profile.bio}</p>
                         </div>
                         {canUseCandidateActions && (
-                            <div className="portal-profile-card-actions" aria-label={`${profile.name} quick actions`}>
+                            <div className={`portal-profile-card-actions ${profileActionsOpen ? 'is-open' : ''}`} aria-label={`${profile.name} quick actions`}>
+                                    <button
+                                        type="button"
+                                        className="portal-profile-card-action portal-profile-more-action"
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                            setProfileActionsOpen((open) => !open);
+                                        }}
+                                        aria-expanded={profileActionsOpen}
+                                        aria-label="Profile actions"
+                                        title="Profile actions"
+                                    >
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2" /><circle cx="12" cy="12" r="2" /><circle cx="19" cy="12" r="2" /></svg>
+                                    </button>
+                                    <div className="portal-profile-actions-dropdown" aria-hidden={!profileActionsOpen}>
                                     <button
                                         type="button"
                                         className={`portal-profile-card-action portal-profile-friend-action ${profile.isFriend ? 'is-friend' : ''} ${profile.friendRequestPending ? 'is-pending' : ''} ${isFriendMenuOpen ? 'menu-open' : ''}`}
@@ -6844,6 +6922,16 @@ const PortalHomeFeed = ({
                                             <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187z" />
                                         </svg>
                                     </button>
+                                    <button
+                                        type="button"
+                                        className="portal-profile-card-action portal-profile-block-action"
+                                        onClick={(event) => handleProfileBlock(profile, event)}
+                                        aria-label="Block candidate"
+                                        title="Block candidate"
+                                    >
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20ZM4 12a8 8 0 0 1 12.9-6.3L5.7 16.9A7.96 7.96 0 0 1 4 12Zm8 8a7.96 7.96 0 0 1-4.9-1.7L18.3 7.1A8 8 0 0 1 12 20Z" /></svg>
+                                    </button>
+                                    </div>
                             </div>
                         )}
                         <div className="tailor-social-links" aria-label={`${profile.name} social links`}>

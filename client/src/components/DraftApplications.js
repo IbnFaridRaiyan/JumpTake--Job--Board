@@ -78,7 +78,7 @@ const DraftApplications = ({ userId, switchSection, onFooterBack, embedded = fal
     };
 
     return (
-        <div className="applications-container">
+        <div className="applications-container draft-applications-container">
             {!embedded && (
                 <div className="section-header">
                     <h2>Draft Applications</h2>
@@ -115,7 +115,6 @@ const DraftApplications = ({ userId, switchSection, onFooterBack, embedded = fal
                                     <h3>{draft.job?.title || 'Draft Job'}</h3>
                                     <p>{draft.job?.company?.name || 'Company unavailable'}</p>
                                 </div>
-                                <span className="status-badge submitted">Draft</span>
                             </div>
                             <div className="application-job-summary">
                                 <strong>{draft.job?.location || 'Location not specified'}</strong>
@@ -123,13 +122,13 @@ const DraftApplications = ({ userId, switchSection, onFooterBack, embedded = fal
                                 <span>Saved {new Date(draft.updatedAt).toLocaleDateString()}</span>
                             </div>
                             <div className="application-card-actions">
+                                <button className="view-profile-btn sky-apply-button" onClick={() => handleContinueDraft(draft)}>
+                                    Continue Draft
+                                </button>
                                 <AnimatedDeleteButton
                                     onClick={() => handleDeleteDraft(draft._id)}
                                     title="Delete draft"
                                 />
-                                <button className="view-profile-btn sky-apply-button" onClick={() => handleContinueDraft(draft)}>
-                                    Continue Draft
-                                </button>
                             </div>
                         </div>
                     ))}

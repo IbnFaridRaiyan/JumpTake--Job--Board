@@ -253,6 +253,7 @@ const TalentPool = ({
     const [candidateShareStatus, setCandidateShareStatus] = useState('');
     const [candidateSharingTargetId, setCandidateSharingTargetId] = useState('');
     const [closingProfileDetailModal, setClosingProfileDetailModal] = useState(false);
+    const [profileActionsOpen, setProfileActionsOpen] = useState(false);
     const [growAnimationKey, setGrowAnimationKey] = useState(0);
     const [isMobileView, setIsMobileView] = useState(() => (
         typeof window !== 'undefined' ? window.innerWidth <= 768 : false
@@ -579,6 +580,42 @@ const TalentPool = ({
         }
     };
 
+    const blockCandidateProfile = async (candidate, event) => {
+        event?.stopPropagation();
+        if (!candidate?._id || mode !== 'candidate') {
+            return;
+        }
+
+        const confirmed = await confirmAction({
+            title: 'Block this user?',
+            message: 'You will no longer be able to view profiles or message each other.'
+        });
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            const response = await fetch(apiUrl('/api/candidate-connections/block'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token') || ''}`
+                },
+                body: JSON.stringify({ blockedCandidateId: candidate._id })
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to block candidate');
+            }
+
+            setCandidates((current) => current.filter((item) => String(item._id) !== String(candidate._id)));
+            setFriendNotice('Candidate blocked. Manage blocked users in Blocks.');
+            handleCloseProfile();
+        } catch (blockError) {
+            setFriendNotice(`Error: ${blockError.message}`);
+        }
+    };
+
     const handleViewProfile = (candidate) => {
         if (!candidate) {
             return;
@@ -590,6 +627,7 @@ const TalentPool = ({
         }
 
         setClosingProfileDetailModal(false);
+        setProfileActionsOpen(false);
         setSelectedCandidate(candidate);
     };
 
@@ -625,6 +663,7 @@ const TalentPool = ({
         }
 
         setClosingProfileDetailModal(true);
+        setProfileActionsOpen(false);
         setOpenCandidateReachInsightPostId('');
         setCandidateReachInsightPost(null);
         setOpenCandidateReactionPostId('');
@@ -1981,7 +2020,21 @@ const TalentPool = ({
                             <p className="portal-profile-detail-bio">{asCandidatePostText(selectedCandidate.bio || selectedCandidate.profile?.bio, 'No bio yet.')}</p>
                         </div>
                         {mode === 'candidate' && (
-                            <div className="portal-profile-card-actions" aria-label={`${candidateName} quick actions`}>
+                            <div className={`portal-profile-card-actions ${profileActionsOpen ? 'is-open' : ''}`} aria-label={`${candidateName} quick actions`}>
+                                        <button
+                                            type="button"
+                                            className="portal-profile-card-action portal-profile-more-action"
+                                            onClick={(event) => {
+                                                event.stopPropagation();
+                                                setProfileActionsOpen((open) => !open);
+                                            }}
+                                            aria-expanded={profileActionsOpen}
+                                            aria-label="Profile actions"
+                                            title="Profile actions"
+                                        >
+                                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2" /><circle cx="12" cy="12" r="2" /><circle cx="19" cy="12" r="2" /></svg>
+                                        </button>
+                                        <div className="portal-profile-actions-dropdown" aria-hidden={!profileActionsOpen}>
                                         <button
                                             type="button"
                                             className={`portal-profile-card-action portal-profile-friend-action ${selectedCandidate.connectionStatus?.status === 'accepted' ? 'is-friend' : ''} ${selectedCandidate.connectionStatus?.status === 'pending' ? 'is-pending' : ''}`}
@@ -2020,6 +2073,16 @@ const TalentPool = ({
                                         >
                                             <CandidateProfileBookmarkIcon />
                                         </button>
+                                        <button
+                                            type="button"
+                                            className="portal-profile-card-action portal-profile-block-action"
+                                            onClick={(event) => blockCandidateProfile(selectedCandidate, event)}
+                                            aria-label="Block candidate"
+                                            title="Block candidate"
+                                        >
+                                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20ZM4 12a8 8 0 0 1 12.9-6.3L5.7 16.9A7.96 7.96 0 0 1 4 12Zm8 8a7.96 7.96 0 0 1-4.9-1.7L18.3 7.1A8 8 0 0 1 12 20Z" /></svg>
+                                        </button>
+                                        </div>
                             </div>
                         )}
                         <div className="tailor-social-links" aria-label={`${candidateName} social links`}>

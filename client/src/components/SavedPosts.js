@@ -1,32 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import confirmAction from '../utils/confirmAction';
-import { apiUrl } from '../utils/apiUrl';
-
-const SAVED_POSTS_STORAGE_PREFIX = 'jumptakeSavedPosts:';
-
-const getSavedPostsStorageKey = (viewerId = 'guest') => `${SAVED_POSTS_STORAGE_PREFIX}${viewerId || 'guest'}`;
-
-const readSavedPosts = (viewerId) => {
-    if (typeof window === 'undefined') {
-        return [];
-    }
-
-    try {
-        const parsed = JSON.parse(localStorage.getItem(getSavedPostsStorageKey(viewerId)) || '[]');
-        return Array.isArray(parsed) ? parsed : [];
-    } catch (error) {
-        return [];
-    }
-};
-
-const writeSavedPosts = (viewerId, posts) => {
-    if (typeof window === 'undefined') {
-        return;
-    }
-
-    localStorage.setItem(getSavedPostsStorageKey(viewerId), JSON.stringify(Array.isArray(posts) ? posts : []));
-};
+import { loadSavedPosts, readLegacySavedPosts, removePostFromAccount } from '../utils/savedPostsApi';
 
 const getSavedRecordId = (savedPost) => String(
     savedPost?.postId
@@ -55,65 +30,40 @@ const getReactionTotal = (reactions) => Object.values(reactions || {}).reduce((t
     return total + (Number(reaction) || 0);
 }, 0);
 
-const SavedPosts = ({ viewerId = 'guest', onFooterBack, embedded = false }) => {
+const SavedPosts = ({ viewerId = 'guest', mode = 'candidate', onFooterBack, embedded = false }) => {
     const [savedPosts, setSavedPosts] = useState([]);
     const [selectedSavedPost, setSelectedSavedPost] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         let active = true;
-        const storedPosts = readSavedPosts(viewerId);
-        setSavedPosts(storedPosts);
+        const legacyPosts = readLegacySavedPosts(viewerId);
+        setSavedPosts(legacyPosts);
+        setLoading(true);
+        setErrorMessage('');
 
-        const hydrateSavedPosts = async () => {
-            try {
-                const [workResponse, talentResponse] = await Promise.all([
-                    fetch(apiUrl('/api/feed-posts?type=work-news')),
-                    fetch(apiUrl('/api/feed-posts?type=talent-story'))
-                ]);
-                if (!workResponse.ok || !talentResponse.ok) {
-                    return;
-                }
-                const [workPosts, talentPosts] = await Promise.all([workResponse.json(), talentResponse.json()]);
-                const livePosts = [
-                    ...(Array.isArray(workPosts) ? workPosts : []),
-                    ...(Array.isArray(talentPosts) ? talentPosts : [])
-                ];
-                const livePostMap = new Map(livePosts.map((post) => [String(post._id || post.id), post]));
-                const hydratedPosts = storedPosts.map((savedPost) => {
-                    if (savedPost.kind && savedPost.kind !== 'post') {
-                        return savedPost;
-                    }
-                    const livePost = livePostMap.get(getSavedRecordId(savedPost));
-                    if (!livePost) {
-                        return savedPost;
-                    }
-                    return {
-                        ...savedPost,
-                        postId: String(livePost._id || livePost.id),
-                        title: livePost.authorName || savedPost.title,
-                        subtitle: livePost.authorType === 'employer' ? 'Company update' : 'Talent story',
-                        body: livePost.body || savedPost.body,
-                        authorName: livePost.authorName || savedPost.authorName,
-                        authorAvatar: livePost.authorAvatar || savedPost.authorAvatar || '',
-                        createdAt: livePost.createdAt || savedPost.createdAt,
-                        postSnapshot: livePost
-                    };
-                });
-
+        loadSavedPosts({ viewerId, mode })
+            .then((posts) => {
                 if (active) {
-                    setSavedPosts(hydratedPosts);
-                    writeSavedPosts(viewerId, hydratedPosts);
+                    setSavedPosts(Array.isArray(posts) ? posts : []);
                 }
-            } catch (error) {
-                // Saved summaries remain available if the live feed is temporarily unavailable.
-            }
-        };
+            })
+            .catch((error) => {
+                if (active) {
+                    setErrorMessage(error.message || 'Could not load saved posts.');
+                }
+            })
+            .finally(() => {
+                if (active) {
+                    setLoading(false);
+                }
+            });
 
-        hydrateSavedPosts();
         return () => {
             active = false;
         };
-    }, [viewerId]);
+    }, [viewerId, mode]);
 
     useEffect(() => {
         if (!selectedSavedPost) {
@@ -137,13 +87,15 @@ const SavedPosts = ({ viewerId = 'guest', onFooterBack, embedded = false }) => {
             return;
         }
 
-        setSavedPosts((currentPosts) => {
-            const nextPosts = currentPosts.filter((post) => post.id !== postId);
-            writeSavedPosts(viewerId, nextPosts);
-            return nextPosts;
-        });
-        if (selectedSavedPost?.id === postId) {
-            setSelectedSavedPost(null);
+        try {
+            await removePostFromAccount(postId, mode);
+            setSavedPosts((currentPosts) => currentPosts.filter((post) => post.id !== postId));
+            if (selectedSavedPost?.id === postId) {
+                setSelectedSavedPost(null);
+            }
+            setErrorMessage('');
+        } catch (error) {
+            setErrorMessage(error.message || 'Could not remove this saved post.');
         }
     };
 
@@ -265,7 +217,10 @@ const SavedPosts = ({ viewerId = 'guest', onFooterBack, embedded = false }) => {
 
     return (
         <section className="saved-posts-section">
-            {savedPosts.length === 0 ? (
+            {errorMessage ? <div className="portal-feed-error">{errorMessage}</div> : null}
+            {loading && savedPosts.length === 0 ? (
+                <div className="portal-feed-empty">Loading saved posts...</div>
+            ) : savedPosts.length === 0 ? (
                 <div className="portal-feed-empty">No saved posts yet.</div>
             ) : (
                 <div className="saved-posts-list">

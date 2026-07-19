@@ -15,6 +15,7 @@ const passwordResetController = require('../controllers/passwordResetController'
 const messageController = require('../controllers/messageController');
 const notificationController = require('../controllers/notificationController');
 const feedPostController = require('../controllers/feedPostController');
+const savedPostController = require('../controllers/savedPostController');
 const jobInvitationController = require('../controllers/jobInvitationController');
 const candidateNetworkController = require('../controllers/candidateNetworkController');
 const publicAssistantController = require('../controllers/publicAssistantController');
@@ -316,6 +317,10 @@ router.get('/feed-posts', feedPostController.getFeedPosts);
 router.post('/feed-posts', feedPostController.createFeedPost);
 router.put('/feed-posts/:id', feedPostController.updateFeedPost);
 router.delete('/feed-posts/:id', feedPostController.deleteFeedPost);
+router.get('/saved-posts', savedPostController.getSavedPosts);
+router.post('/saved-posts', savedPostController.savePost);
+router.post('/saved-posts/migrate', savedPostController.migrateSavedPosts);
+router.delete('/saved-posts/:savedKey', savedPostController.deleteSavedPost);
 router.get('/job-invitations/user/:userId', jobInvitationController.getCandidateJobInvitations);
 router.get('/job-invitations/company/:companyId/job/:jobId/matches', jobInvitationController.getMatchingCandidates);
 router.post('/job-invitations/send', jobInvitationController.sendJobInvitations);

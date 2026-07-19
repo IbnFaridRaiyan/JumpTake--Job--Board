@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom';
 import ResumeFilePreview from './ResumeFilePreview';
 import { apiUrl } from '../utils/apiUrl';
+import { loadSavedPosts, savePostToAccount } from '../utils/savedPostsApi';
 import { createSquareProfileImage } from '../utils/profileImages';
 import confirmAction from '../utils/confirmAction';
 import ProfileDetailsCard from './ProfileDetailsCard';
@@ -21,7 +22,6 @@ const TAILOR_PROFILE_STORAGE_PREFIX = 'jumptakeTailorProfile:';
 const CANDIDATE_PROFILE_RATING_PREFIX = 'jumptakeCandidateProfileRatings:';
 const PROFILE_IMAGE_UPDATED_EVENT = 'jumptake-profile-image-updated';
 const RESUME_PLAYGROUND_STORAGE_KEY = 'jumptakeResumePlayground:';
-const SAVED_POSTS_STORAGE_PREFIX = 'jumptakeSavedPosts:';
 const BLOCKED_FEED_AUTHORS_STORAGE_PREFIX = 'jumptakeBlockedFeedAuthors:';
 const HOME_JOB_PAGE_SIZE = 7;
 const MOBILE_FEED_TOUCH_SCROLL_RATIO = 1.13;
@@ -192,7 +192,6 @@ const formatCompactCount = (value) => {
     return String(numericValue);
 };
 
-const getSavedPostsStorageKey = (viewerId = 'guest') => `${SAVED_POSTS_STORAGE_PREFIX}${viewerId || 'guest'}`;
 const getBlockedFeedAuthorsStorageKey = (viewerId = 'guest') => `${BLOCKED_FEED_AUTHORS_STORAGE_PREFIX}${viewerId || 'guest'}`;
 
 const readStorageArray = (key) => {
@@ -1356,9 +1355,26 @@ const PortalHomeFeed = ({
     }, [defaultTab]);
 
     useEffect(() => {
-        setSavedPosts(readStorageArray(getSavedPostsStorageKey(viewerId)));
+        let active = true;
+
+        loadSavedPosts({ viewerId, mode })
+            .then((posts) => {
+                if (active) {
+                    setSavedPosts(Array.isArray(posts) ? posts : []);
+                }
+            })
+            .catch((error) => {
+                console.error('Error loading saved posts:', error);
+                if (active) {
+                    setSavedPosts([]);
+                }
+            });
+
         setBlockedFeedAuthors(readStorageArray(getBlockedFeedAuthorsStorageKey(viewerId)).map(String));
-    }, [viewerId]);
+        return () => {
+            active = false;
+        };
+    }, [viewerId, mode]);
 
     useEffect(() => {
         if (typeof window === 'undefined') {
@@ -2782,20 +2798,22 @@ const PortalHomeFeed = ({
         deleteFeedPostRecord(post);
     };
 
-    const savePostSnapshot = (snapshot) => {
-        setSavedPosts((currentSavedPosts) => {
-            const nextSavedPosts = [
-                snapshot,
-                ...currentSavedPosts.filter((item) => item.id !== snapshot.id)
-            ].slice(0, 80);
-
-            writeStorageArray(getSavedPostsStorageKey(viewerId), nextSavedPosts);
-            return nextSavedPosts;
-        });
-        setShareStatus('Saved.');
+    const savePostSnapshot = async (snapshot) => {
+        try {
+            const savedPost = await savePostToAccount(snapshot, mode);
+            setSavedPosts((currentSavedPosts) => [
+                savedPost,
+                ...currentSavedPosts.filter((item) => item.id !== savedPost.id)
+            ].slice(0, 80));
+            setShareStatus('Saved.');
+            return savedPost;
+        } catch (error) {
+            setShareStatus(error.message || 'Could not save this post.');
+            return null;
+        }
     };
 
-    const handleSavePost = (key, post) => {
+    const handleSavePost = async (key, post) => {
         const postId = getPostKey(post);
         const tab = getPostTabFromStorageKey(key, activeTab);
         const savedAuthorAvatar = getLiveProfileAvatar(post.authorId, post.authorType, post.authorAvatar);
@@ -2804,7 +2822,7 @@ const PortalHomeFeed = ({
             authorAvatar: savedAuthorAvatar || post.authorAvatar || ''
         };
 
-        savePostSnapshot({
+        await savePostSnapshot({
             id: `post:${postId}`,
             postId,
             kind: 'post',
@@ -2864,7 +2882,7 @@ const PortalHomeFeed = ({
         setShareStatus(`${asDisplayText(post?.authorName, 'Post')} reported.`);
     };
 
-    const handleSaveJobPost = (job, event) => {
+    const handleSaveJobPost = async (job, event) => {
         event?.stopPropagation();
         const jobId = getJobKey(job);
         const exactJobSnapshot = {
@@ -2875,7 +2893,7 @@ const PortalHomeFeed = ({
             authorAvatar: job.companyLogo || '',
             body: asDisplayText(job.description, 'JumpTake job post')
         };
-        savePostSnapshot({
+        await savePostSnapshot({
             id: `job:${jobId}`,
             postId: jobId,
             kind: 'job',

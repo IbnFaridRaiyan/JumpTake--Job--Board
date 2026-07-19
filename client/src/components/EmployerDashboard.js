@@ -620,6 +620,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
             case 'saved-posts':
                 return <SavedPosts
                     viewerId={employer?.companyId || employer?._id || employer?.id || 'employer-guest'}
+                    mode="employer"
                     onFooterBack={goToPreviousSection}
                 />;
             case 'notifications':

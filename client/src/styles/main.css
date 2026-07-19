@@ -83229,6 +83229,13 @@ body.jumptake-confirm-open {
   }
 }
 
+/* Message profile views are body portals and must sit above the modal messenger. */
+html body > .portal-profile-detail-backdrop,
+html body > .job-preview-overlay.message-company-profile-overlay {
+  z-index: 15050 !important;
+  pointer-events: auto !important;
+}
+
 html body #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
   background: #f3e7d6 !important;
   background-color: #f3e7d6 !important;
@@ -86866,4 +86873,144 @@ html body :is(.messenger-inbox, .floating-messenger) .message-list-avatar-button
 html body :is(.messenger-inbox, .floating-messenger) .message-list-avatar-button:disabled {
   opacity: 1 !important;
   cursor: default !important;
+}
+
+/* Mobile Add Friends search: a long, slim field with a compact dark-blue action. */
+html body #root .home-page .friend-invitations-section .friend-add-search > div {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 0.45rem !important;
+  width: 100% !important;
+}
+
+html body #root .home-page .friend-invitations-section .friend-add-search input#friend-search {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 2.15rem !important;
+  min-height: 2.15rem !important;
+  max-height: 2.15rem !important;
+  padding: 0.28rem 0.72rem !important;
+  line-height: 1.1 !important;
+}
+
+html body #root .home-page .friend-invitations-section .friend-add-search button[type="submit"],
+html body #root .home-page .friend-invitations-section .friend-add-search button[type="submit"]:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 4.15rem !important;
+  min-width: 4.15rem !important;
+  max-width: 4.15rem !important;
+  height: 1.9rem !important;
+  min-height: 1.9rem !important;
+  max-height: 1.9rem !important;
+  margin: 0 !important;
+  padding: 0.2rem 0.65rem !important;
+  border: 1px solid #173f68 !important;
+  border-radius: 999px !important;
+  background: #173f68 !important;
+  background-color: #173f68 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+  font-size: 0.68rem !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+/* Unread message counts remain white inside compact dark-maroon balls. */
+html body :is(#root, .floating-messenger) .message-workspace-tab > small,
+html[data-theme="light"] body :is(#root, .floating-messenger) .message-workspace-tab > small {
+  position: absolute !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  min-width: 1.08rem !important;
+  width: max-content !important;
+  height: 1.08rem !important;
+  min-height: 1.08rem !important;
+  max-height: 1.08rem !important;
+  padding: 0 0.25rem !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: #681421 !important;
+  background-color: #681421 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+  font-size: 0.58rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+}
+
+/* Final active-state source of truth for every icon in the main portal rail. */
+html body #root .home-page .portal-uiverse-sidebar button.sidebar__link:is(.is-active, [aria-current="page"]),
+html body #root .home-page .portal-uiverse-sidebar button.sidebar__link:is(.is-active, [aria-current="page"]) :is(.text, .icon, svg, path),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-uiverse-sidebar button.sidebar__link:is(.is-active, [aria-current="page"]),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-uiverse-sidebar button.sidebar__link:is(.is-active, [aria-current="page"]) :is(.text, .icon, svg, path) {
+  --tab-accent: #681421 !important;
+  color: #681421 !important;
+  fill: #681421 !important;
+  -webkit-text-fill-color: #681421 !important;
+}
+
+@media (max-width: 768px) {
+  /* Keep the document fixed; only the cream portal panel scrolls when it truly overflows. */
+  html[data-theme="light"],
+  html[data-theme="light"] body {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+    background: #f3eadb !important;
+    background-color: #f3eadb !important;
+  }
+
+  html[data-theme="light"] body {
+    position: fixed !important;
+    inset: 0 !important;
+  }
+
+  html[data-theme="light"] body #root,
+  html[data-theme="light"] body #root > .app-container,
+  html[data-theme="light"] body #root .home-page {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+    background: #f3eadb !important;
+    background-color: #f3eadb !important;
+  }
+
+  html[data-theme="light"] body #root .home-page > .dashboard-container,
+  html[data-theme="light"] body #root .home-page .dashboard-container {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+  }
+
+  html[data-theme="light"] body #root .home-page :is(.main-content, .mobile-dashboard-section-panel, .mobile-job-management-section-panel) {
+    min-height: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-x: none !important;
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
 }

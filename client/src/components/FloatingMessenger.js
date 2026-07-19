@@ -675,14 +675,21 @@ const FloatingMessenger = ({
 
     const openTaggedPostComposer = (thread) => {
         const candidate = getThreadProfile(thread);
-        if (!candidate || isEmployer || typeof window === 'undefined') return;
+        const participant = (thread?.participantUsers || []).find((item) => (
+            String(item?._id || item) !== String(userId || '')
+        ));
+        if (isEmployer || typeof window === 'undefined') return;
         const tag = {
-            userId: String(candidate.user?._id || candidate.user || ''),
-            candidateId: String(candidate._id || ''),
-            name: candidate.name || 'Candidate',
-            jumptakeId: candidate.jumptakeId || '',
-            profileImage: candidate.profileImage || ''
+            userId: String(candidate?.user?._id || candidate?.user || participant?._id || participant || ''),
+            candidateId: String(candidate?._id || ''),
+            name: candidate?.name || getThreadTitle(thread) || 'Candidate',
+            jumptakeId: candidate?.jumptakeId || participant?.jumptakeId || '',
+            profileImage: candidate?.profileImage || getThreadAvatar(thread) || ''
         };
+        if (!tag.userId && !tag.candidateId) {
+            setError('This conversation does not contain a candidate profile to tag.');
+            return;
+        }
         storeAndOpenSection('job-feed', 'jumptakeFeedAiDraft', {
             mode: 'candidate', tab: 'create-story', openComposer: true, text: '', taggedUsers: [tag]
         }, 'jumptake-feed-ai-draft');
@@ -853,6 +860,9 @@ const FloatingMessenger = ({
 
         if (eventName) {
             window.dispatchEvent(new CustomEvent(eventName, { detail: payload }));
+            window.setTimeout(() => {
+                window.dispatchEvent(new CustomEvent(eventName, { detail: payload }));
+            }, 180);
         }
     };
 

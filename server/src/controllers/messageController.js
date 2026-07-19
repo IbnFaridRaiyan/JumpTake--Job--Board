@@ -645,6 +645,18 @@ const updateThreadState = async (req, res) => {
     try {
         const authenticatedId = getAuthenticatedUserId(req);
         const { action, companyId } = req.body || {};
+        const actionMap = {
+            archive: { field: 'archivedFor', operation: '$addToSet' },
+            unarchive: { field: 'archivedFor', operation: '$pull' },
+            delete: { field: 'deletedFor', operation: '$addToSet' },
+            'block-chat': { field: 'chatBlockedFor', operation: '$addToSet' },
+            'unblock-chat': { field: 'chatBlockedFor', operation: '$pull' }
+        };
+        const stateAction = actionMap[action];
+        if (!stateAction) {
+            return res.status(400).json({ error: 'Unknown message action' });
+        }
+
         const thread = await MessageThread.findById(req.params.threadId);
         if (!thread) {
             return res.status(404).json({ error: 'Message thread not found' });
@@ -671,23 +683,11 @@ const updateThreadState = async (req, res) => {
             relationship = peerUserId ? await getCandidateRelationship(authenticatedId, peerUserId) : null;
         }
 
-        const addState = (field) => {
-            const values = new Set((thread[field] || []).map(String));
-            values.add(actorKey);
-            thread[field] = [...values];
-        };
-        const removeState = (field) => {
-            thread[field] = (thread[field] || []).map(String).filter((key) => key !== actorKey);
-        };
-
-        if (action === 'archive') addState('archivedFor');
-        else if (action === 'unarchive') removeState('archivedFor');
-        else if (action === 'delete') addState('deletedFor');
-        else if (action === 'block-chat') addState('chatBlockedFor');
-        else if (action === 'unblock-chat') removeState('chatBlockedFor');
-        else return res.status(400).json({ error: 'Unknown message action' });
-
-        await thread.save();
+        await MessageThread.updateOne(
+            { _id: thread._id },
+            { [stateAction.operation]: { [stateAction.field]: actorKey } },
+            { runValidators: true }
+        );
         const populated = await populateThread(MessageThread.findById(thread._id));
         return res.status(200).json(serializeThreadForViewer(populated, actorKey, viewerUserId, relationship));
     } catch (error) {

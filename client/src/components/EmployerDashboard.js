@@ -45,7 +45,7 @@ const EMPLOYER_SECTION_IDS = new Set([
 
 const EMPLOYER_SECTION_STORAGE_KEY = 'jumptakeEmployerSection';
 
-const normalizeEmployerSection = (section) => section;
+const normalizeEmployerSection = (section) => section === 'home' ? 'home-feed' : section;
 
 const isMobileViewport = () => (
     typeof window !== 'undefined'
@@ -55,7 +55,7 @@ const isMobileViewport = () => (
 const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     const [employer, setEmployer] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [activeSection, setActiveSection] = useState('home');
+    const [activeSection, setActiveSection] = useState('home-feed');
     const [titleAnimationReplayKey, setTitleAnimationReplayKey] = useState(0);
     const sectionHistoryRef = useRef([]);
     const manageJobsRef = useRef(null);
@@ -65,7 +65,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     const [applicationCount, setApplicationCount] = useState(0);
     const [pendingInboxCount, setPendingInboxCount] = useState(0);
     const [pendingNotificationCount, setPendingNotificationCount] = useState(0);
-    const [mobileSectionVisible, setMobileSectionVisible] = useState(false);
+    const [mobileSectionVisible, setMobileSectionVisible] = useState(() => isMobileViewport());
     const [isManagingEmployerJob, setIsManagingEmployerJob] = useState(false);
     const mobilePanelRef = useRef(null);
     const navigate = useNavigate();
@@ -183,17 +183,13 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
             }
         };
 
-        const hasFeedDeepLink = Boolean(
-            new URLSearchParams(window.location.search).get('jtPost')
-            || new URLSearchParams(window.location.search).get('jtJob')
-        );
-        const initialSection = hasFeedDeepLink ? 'home-feed' : 'home';
+        const initialSection = 'home-feed';
         sessionStorage.setItem(EMPLOYER_SECTION_STORAGE_KEY, initialSection);
         sessionStorage.removeItem('jumptakeHomeFeedRequest');
         sessionStorage.removeItem('jumptakeEmployerJobSearch');
         sessionStorage.removeItem('jumptakeEmployerTalentSearch');
         window.history.replaceState(null, '', `#employer:${initialSection}`);
-        setMobileSectionVisible(hasFeedDeepLink && isMobileViewport());
+        setMobileSectionVisible(isMobileViewport());
         window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
 
         window.addEventListener('hashchange', applyHashSection);
@@ -368,7 +364,8 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         }
     };
 
-    const switchSection = (nextSection) => {
+    const switchSection = (requestedSection) => {
+        const nextSection = normalizeEmployerSection(requestedSection);
         if (!nextSection || nextSection === activeSection) {
             setTitleAnimationReplayKey((key) => key + 1);
             setMobileSectionVisible(!isMobileViewport() || nextSection !== 'home');
@@ -388,7 +385,8 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         resetMobilePanelScroll();
     };
 
-    const openSection = (nextSection) => {
+    const openSection = (requestedSection) => {
+        const nextSection = normalizeEmployerSection(requestedSection);
         if (!nextSection) {
             return;
         }
@@ -435,7 +433,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     }, [activeSection, mobileSectionVisible, employer?.companyId]);
 
     const employerPrimaryNavItems = [
-        { id: 'home', label: 'Home', icon: 'home' },
+        { id: 'home-feed', label: 'Home', icon: 'home' },
         { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
         { id: 'post-job', label: 'Post a Job', icon: 'briefcase' },
         { id: 'manage-jobs', label: 'Manage Jobs', icon: 'briefcase' },
@@ -448,7 +446,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         { id: 'create-document', label: 'Create Document', icon: 'profile' }
     ].map((item) => ({
         ...item,
-        active: item.id === 'home' ? ['home', 'home-feed'].includes(activeSection) : activeSection === item.id,
+        active: item.id === 'home-feed' ? ['home', 'home-feed'].includes(activeSection) : activeSection === item.id,
         onClick: () => openSection(item.id)
     }));
 
@@ -521,12 +519,13 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         }
 
         if (isMobileViewport()) {
-            setMobileSectionVisible(false);
+            updateActiveSection('home-feed');
+            setMobileSectionVisible(true);
             resetMobilePanelScroll();
             return;
         }
 
-        updateActiveSection('home');
+        updateActiveSection('home-feed');
         setIsManagingEmployerJob(false);
         resetMobilePanelScroll();
     };

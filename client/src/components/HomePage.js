@@ -72,7 +72,9 @@ const CANDIDATE_SECTION_STORAGE_KEY = 'jumptakeCandidateSection';
 const PROFILE_IMAGE_UPDATED_EVENT = 'jumptake-profile-image-updated';
 const CANDIDATE_SECTIONS_WITHOUT_BACK = new Set(['settings', 'view-candidates', 'interested-jobs', 'resume-playground']);
 
-const normalizeCandidateSection = (section) => section === 'profile' ? 'job-feed' : section;
+const normalizeCandidateSection = (section) => (
+    ['home', 'profile'].includes(section) ? 'job-feed' : section
+);
 
 const isMobileViewport = () => (
     typeof window !== 'undefined'
@@ -172,7 +174,7 @@ const normalizeCandidateProfile = (profile) => {
 };
 
 const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
-    const [activeSection, setActiveSection] = useState('home');
+    const [activeSection, setActiveSection] = useState('job-feed');
     const [titleAnimationReplayKey, setTitleAnimationReplayKey] = useState(0);
     const [sectionErrorResetKey, setSectionErrorResetKey] = useState(0);
     const sectionHistoryRef = useRef([]);
@@ -190,7 +192,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const [selectedJobInterests, setSelectedJobInterests] = useState([]);
     const [interestError, setInterestError] = useState('');
     const [savingInterests, setSavingInterests] = useState(false);
-    const [mobileSectionVisible, setMobileSectionVisible] = useState(false);
+    const [mobileSectionVisible, setMobileSectionVisible] = useState(() => isMobileViewport());
     const myApplicationsRef = useRef(null);
     const bookmarksHubRef = useRef(null);
     const mobilePanelRef = useRef(null);
@@ -384,16 +386,12 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             }
         };
 
-        const hasFeedDeepLink = Boolean(
-            new URLSearchParams(window.location.search).get('jtPost')
-            || new URLSearchParams(window.location.search).get('jtJob')
-        );
-        const initialSection = hasFeedDeepLink ? 'job-feed' : 'home';
+        const initialSection = 'job-feed';
         sessionStorage.setItem(CANDIDATE_SECTION_STORAGE_KEY, initialSection);
         sessionStorage.removeItem('jumptakeHomeFeedRequest');
         sessionStorage.removeItem('jumptakeCandidateJobSearch');
         window.history.replaceState(null, '', `#candidate:${initialSection}`);
-        setMobileSectionVisible(hasFeedDeepLink && isMobileViewport());
+        setMobileSectionVisible(isMobileViewport());
         window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
 
         window.addEventListener('hashchange', applyHashSection);
@@ -696,7 +694,8 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         }
     };
 
-    const switchSection = (nextSection) => {
+    const switchSection = (requestedSection) => {
+        const nextSection = normalizeCandidateSection(requestedSection);
         if (!nextSection || nextSection === activeSection) {
             setTitleAnimationReplayKey((key) => key + 1);
             setMobileSectionVisible(!isMobileViewport() || nextSection !== 'home');
@@ -713,7 +712,8 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         resetMobilePanelScroll();
     };
 
-    const openSection = (nextSection) => {
+    const openSection = (requestedSection) => {
+        const nextSection = normalizeCandidateSection(requestedSection);
         if (!nextSection) {
             return;
         }
@@ -760,7 +760,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     }, [activeSection, mobileSectionVisible, user?.id]);
 
     const candidatePrimaryNavItems = [
-        { id: 'home', label: 'Home', icon: 'home' },
+        { id: 'job-feed', label: 'Home', icon: 'home' },
         { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
         { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 },
         { id: 'view-candidates', label: 'Candidates', icon: 'users' },
@@ -772,7 +772,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         { id: 'blocks', label: 'Blocks', icon: 'block' }
     ].map((item) => ({
         ...item,
-        active: item.id === 'home'
+        active: item.id === 'job-feed'
             ? ['home', 'job-feed'].includes(activeSection)
             : item.id === 'applications'
                 ? ['applications', 'assessments', 'video-interviews', 'draft-applications'].includes(activeSection)
@@ -890,12 +890,13 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         }
 
         if (isMobileViewport()) {
-            setMobileSectionVisible(false);
+            updateActiveSection('job-feed');
+            setMobileSectionVisible(true);
             resetMobilePanelScroll();
             return;
         }
 
-        updateActiveSection('home');
+        updateActiveSection('job-feed');
         resetMobilePanelScroll();
     };
 
@@ -1138,8 +1139,8 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                         resetKey={`${activeSection}:${sectionErrorResetKey}`}
                         onHome={() => {
                             setSectionErrorResetKey((key) => key + 1);
-                            updateActiveSection('home', { push: false });
-                            setMobileSectionVisible(false);
+                            updateActiveSection('job-feed', { push: false });
+                            setMobileSectionVisible(isMobileViewport());
                         }}
                     >
                         <div

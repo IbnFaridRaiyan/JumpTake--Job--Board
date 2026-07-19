@@ -87064,13 +87064,53 @@ html body #root .home-page .friend-invitations-section .friend-add-search input#
   }
 
   html body #root .home-page .friend-invitations-section .friend-invitation-tab-label {
-    width: max-content !important;
-    max-width: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
     overflow: visible !important;
-    font-size: clamp(0.43rem, 1.82vw, 0.52rem) !important;
+    font-size: clamp(0.49rem, 2vw, 0.57rem) !important;
     letter-spacing: -0.025em !important;
     line-height: 1 !important;
-    text-wrap: nowrap !important;
+    text-wrap: wrap !important;
+    white-space: normal !important;
+  }
+
+  html body #root .home-page .friend-invitations-section .friend-invitation-tab-label.is-stacked {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    justify-items: center !important;
+    gap: 0.08rem !important;
+  }
+
+  html body #root .home-page .friend-invitations-section .friend-invitation-tab-label.is-stacked > span {
+    display: block !important;
+    width: max-content !important;
+    max-width: 100% !important;
     white-space: nowrap !important;
   }
+}
+
+/* Feed action popups are body portals, so short cards and feed scrollers cannot clip them. */
+html body > .portal-post-options-menu.portal-post-options-menu-floating {
+  position: fixed !important;
+  top: var(--jt-options-top) !important;
+  left: var(--jt-options-left) !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: 15100 !important;
+  margin: 0 !important;
+}
+
+html body > .portal-share-picker.portal-share-picker-floating {
+  position: fixed !important;
+  top: var(--jt-share-top) !important;
+  left: var(--jt-share-left) !important;
+  width: var(--jt-share-width) !important;
+  max-height: var(--jt-share-max-height) !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: 15100 !important;
+  margin: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
 }

@@ -1217,6 +1217,7 @@ const PortalHomeFeed = ({
     const [openReactionPostId, setOpenReactionPostId] = useState('');
     const [openCommentPostId, setOpenCommentPostId] = useState('');
     const [openSharePostId, setOpenSharePostId] = useState('');
+    const [sharePickerAnchor, setSharePickerAnchor] = useState(null);
     const [openOptionsPostId, setOpenOptionsPostId] = useState('');
     const [postOptionsAnchor, setPostOptionsAnchor] = useState(null);
     const [openJobOptionsId, setOpenJobOptionsId] = useState('');
@@ -1433,6 +1434,7 @@ const PortalHomeFeed = ({
             if (
                 event.target.closest?.('.portal-post-action-cluster') ||
                 event.target.closest?.('.portal-comment-row') ||
+                event.target.closest?.('.portal-share-picker') ||
                 event.target.closest?.('.portal-post-options-wrap') ||
                 event.target.closest?.('.portal-post-options-menu') ||
                 event.target.closest?.('.portal-reach-insight-wrap')
@@ -1448,6 +1450,7 @@ const PortalHomeFeed = ({
             setOpenReactionPostId('');
             closeCommentComposer();
             setOpenSharePostId('');
+            setSharePickerAnchor(null);
             setOpenOptionsPostId('');
             setPostOptionsAnchor(null);
             setOpenJobOptionsId('');
@@ -2592,36 +2595,120 @@ const PortalHomeFeed = ({
             action();
             closePostOptionsMenu();
         };
-        return (
-            <>
-                <span
-                    className="portal-post-options-dismiss-layer"
-                    aria-hidden="true"
-                    onPointerDownCapture={(event) => {
-                        event.stopPropagation();
-                    }}
-                    onTouchStartCapture={(event) => {
-                        event.stopPropagation();
-                    }}
-                    onClickCapture={(event) => {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        closePostOptionsMenu();
-                    }}
-                />
-                <span
-                    className="portal-post-options-menu portal-post-options-menu-inline"
-                    role="menu"
-                    onPointerDown={(event) => event.stopPropagation()}
-                    onClick={(event) => event.stopPropagation()}
-                >
-                    <button type="button" onClick={(event) => runPostOption(event, () => handleSavePost(storageKey, post))} role="menuitem">Save post</button>
-                    <button type="button" onClick={(event) => runPostOption(event, () => handleReportPost(post))} role="menuitem">Report</button>
-                    <button type="button" onClick={(event) => runPostOption(event, () => handleHidePost(storageKey, post))} role="menuitem">Hide post</button>
-                    <button type="button" onClick={(event) => runPostOption(event, () => handleBlockPostOwner(post))} role="menuitem">Block user</button>
-                </span>
-            </>
+        const menuMarkup = (
+            <span
+                className="portal-post-options-menu portal-post-options-menu-floating"
+                style={{
+                    '--jt-options-top': `${postOptionsAnchor.top}px`,
+                    '--jt-options-left': `${postOptionsAnchor.left}px`
+                }}
+                role="menu"
+                onPointerDown={(event) => event.stopPropagation()}
+                onClick={(event) => event.stopPropagation()}
+            >
+                <button type="button" onClick={(event) => runPostOption(event, () => handleSavePost(storageKey, post))} role="menuitem">Save post</button>
+                <button type="button" onClick={(event) => runPostOption(event, () => handleReportPost(post))} role="menuitem">Report</button>
+                <button type="button" onClick={(event) => runPostOption(event, () => handleHidePost(storageKey, post))} role="menuitem">Hide post</button>
+                <button type="button" onClick={(event) => runPostOption(event, () => handleBlockPostOwner(post))} role="menuitem">Block user</button>
+            </span>
         );
+
+        return typeof document !== 'undefined' ? createPortal(menuMarkup, document.body) : menuMarkup;
+    };
+
+    const toggleSharePicker = (event, postKey) => {
+        event.stopPropagation();
+
+        if (openSharePostId === postKey) {
+            setOpenSharePostId('');
+            setSharePickerAnchor(null);
+            return;
+        }
+
+        if (typeof window !== 'undefined') {
+            const rect = event.currentTarget.getBoundingClientRect();
+            const viewportPadding = 12;
+            const width = Math.min(288, window.innerWidth - (viewportPadding * 2));
+            const maxHeight = Math.min(288, Math.round(window.innerHeight * 0.46));
+            const left = Math.min(
+                Math.max(viewportPadding, rect.left),
+                Math.max(viewportPadding, window.innerWidth - width - viewportPadding)
+            );
+            const roomAbove = rect.top - viewportPadding;
+            const preferredTop = roomAbove >= maxHeight + 8
+                ? rect.top - maxHeight - 8
+                : rect.bottom + 8;
+            const top = Math.min(
+                Math.max(viewportPadding, preferredTop),
+                Math.max(viewportPadding, window.innerHeight - maxHeight - viewportPadding)
+            );
+            setSharePickerAnchor({ top, left, width, maxHeight });
+        }
+
+        setOpenSharePostId(postKey);
+        setOpenReactionPostId('');
+        closeCommentComposer();
+        setOpenOptionsPostId('');
+        setPostOptionsAnchor(null);
+        closeReachInsight();
+        setShareStatus('');
+    };
+
+    const renderSharePicker = (storageKey, post) => {
+        if (!sharePickerAnchor) return null;
+
+        const pickerMarkup = (
+            <div
+                className="portal-share-picker portal-share-picker-floating"
+                style={{
+                    '--jt-share-top': `${sharePickerAnchor.top}px`,
+                    '--jt-share-left': `${sharePickerAnchor.left}px`,
+                    '--jt-share-width': `${sharePickerAnchor.width}px`,
+                    '--jt-share-max-height': `${sharePickerAnchor.maxHeight}px`
+                }}
+                role="dialog"
+                aria-label="Share post with friend"
+                onPointerDown={(event) => event.stopPropagation()}
+                onClick={(event) => event.stopPropagation()}
+            >
+                <strong>Share post</strong>
+                <button
+                    type="button"
+                    className="portal-share-friend portal-share-copy-button"
+                    onClick={() => handleCopyPostShare(storageKey, post)}
+                >
+                    <span className="portal-share-friend-avatar"><SharePostIcon /></span>
+                    <span>
+                        <span className="portal-share-friend-name">Copy or share post</span>
+                        <small>Use your device share tools</small>
+                    </span>
+                </button>
+                {mode === 'candidate' && feedFriends.length ? (
+                    <div className="portal-share-friend-list">
+                        {feedFriends.map((friend) => (
+                            <button
+                                key={friend.id}
+                                type="button"
+                                className="portal-share-friend"
+                                onClick={() => handleShareToFriend(storageKey, post, friend)}
+                                disabled={sharingTargetId === friend.id}
+                            >
+                                <span className="portal-share-friend-avatar">
+                                    {friend.profileImage ? <img src={friend.profileImage} alt="" /> : <DefaultUserProfileImage gender={friend.gender} />}
+                                </span>
+                                <span>
+                                    <span className="portal-share-friend-name">{friend.name}</span>
+                                    {friend.jumptakeId ? <small>{friend.jumptakeId}</small> : null}
+                                </span>
+                            </button>
+                        ))}
+                    </div>
+                ) : mode === 'candidate' ? <p>No friends to share with yet.</p> : null}
+                {shareStatus && <p className="portal-share-status">{shareStatus}</p>}
+            </div>
+        );
+
+        return typeof document !== 'undefined' ? createPortal(pickerMarkup, document.body) : pickerMarkup;
     };
 
     const renderCommentComposerOverlay = (storageKey, postKey) => {
@@ -5243,14 +5330,7 @@ const PortalHomeFeed = ({
                                 <button
                                     type="button"
                                     className={`portal-share-toggle ${isShareOpen ? 'active' : ''}`}
-                                    onClick={() => {
-                                        setOpenSharePostId((openId) => (openId === postKey ? '' : postKey));
-                                        setOpenReactionPostId('');
-                                        closeCommentComposer();
-                                        setOpenOptionsPostId('');
-                                        closeReachInsight();
-                                        setShareStatus('');
-                                    }}
+                                    onClick={(event) => toggleSharePicker(event, postKey)}
                                     aria-expanded={isShareOpen}
                                     aria-label="Share post"
                                     title="Share"
@@ -5268,48 +5348,7 @@ const PortalHomeFeed = ({
                                         <DeletePostIcon />
                                     </button>
                                 )}
-                                {isShareOpen && (
-                                    <div className="portal-share-picker" role="dialog" aria-label="Share post with friend">
-                                        <strong>Share post</strong>
-                                        <button
-                                            type="button"
-                                            className="portal-share-friend portal-share-copy-button"
-                                            onClick={() => handleCopyPostShare(key, post)}
-                                        >
-                                            <span className="portal-share-friend-avatar">
-                                                <SharePostIcon />
-                                            </span>
-                                            <span>
-                                                <span className="portal-share-friend-name">Copy or share post</span>
-                                                <small>Use your device share tools</small>
-                                            </span>
-                                        </button>
-                                        {mode === 'candidate' && feedFriends.length ? (
-                                            <div className="portal-share-friend-list">
-                                                {feedFriends.map((friend) => (
-                                                    <button
-                                                        key={friend.id}
-                                                        type="button"
-                                                        className="portal-share-friend"
-                                                        onClick={() => handleShareToFriend(key, post, friend)}
-                                                        disabled={sharingTargetId === friend.id}
-                                                    >
-                                                        <span className="portal-share-friend-avatar">
-                                                            {friend.profileImage ? <img src={friend.profileImage} alt="" /> : <DefaultUserProfileImage gender={friend.gender} />}
-                                                        </span>
-                                                        <span>
-                                                            <span className="portal-share-friend-name">{friend.name}</span>
-                                                            {friend.jumptakeId ? <small>{friend.jumptakeId}</small> : null}
-                                                        </span>
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        ) : mode === 'candidate' ? (
-                                            <p>No friends to share with yet.</p>
-                                        ) : null}
-                                        {shareStatus && <p className="portal-share-status">{shareStatus}</p>}
-                                    </div>
-                                )}
+                                {isShareOpen && renderSharePicker(key, post)}
                             </div>
                         </div>
                         {post.taggedUsers.length > 0 && (

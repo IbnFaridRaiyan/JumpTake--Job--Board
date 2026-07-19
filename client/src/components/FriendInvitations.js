@@ -411,6 +411,7 @@ const FriendInvitations = ({ userId }) => {
         {
             id: 'incoming',
             label: 'Received Invitations',
+            labelLines: ['Received', 'Invitations'],
             iconClass: 'friend-tab-icon-incoming',
             icon: (
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
@@ -422,6 +423,7 @@ const FriendInvitations = ({ userId }) => {
         {
             id: 'outgoing',
             label: 'Sent Invitations',
+            labelLines: ['Sent', 'Invitations'],
             iconClass: 'friend-tab-icon-outgoing',
             icon: (
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
@@ -596,7 +598,11 @@ const FriendInvitations = ({ userId }) => {
                                 onClick={() => setActiveTab(tab.id)}
                             >
                                 <span className={`friend-invitation-tab-icon ${tab.iconClass}`}>{tab.icon}</span>
-                                <span className="friend-invitation-tab-label">{tab.label}</span>
+                                <span className={`friend-invitation-tab-label ${tab.labelLines ? 'is-stacked' : ''}`}>
+                                    {tab.labelLines
+                                        ? tab.labelLines.map((line) => <span key={line}>{line}</span>)
+                                        : tab.label}
+                                </span>
                             </button>
                         ))}
                     </div>

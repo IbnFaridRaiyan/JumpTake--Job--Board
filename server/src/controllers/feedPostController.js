@@ -55,7 +55,14 @@ const sanitizePostPayload = (body = {}) => {
         reactions: body.reactions && typeof body.reactions === 'object' ? body.reactions : {},
         reactionsByUser: body.reactionsByUser && typeof body.reactionsByUser === 'object' ? body.reactionsByUser : {},
         media: sanitizeMedia(body.media),
-        comments: Array.isArray(body.comments) ? body.comments.slice(-200) : []
+        comments: Array.isArray(body.comments) ? body.comments.slice(-200) : [],
+        taggedUsers: Array.isArray(body.taggedUsers) ? body.taggedUsers.slice(0, 40).map((tag) => ({
+            userId: String(tag?.userId || '').slice(0, 80),
+            candidateId: String(tag?.candidateId || '').slice(0, 80),
+            name: String(tag?.name || 'JumpTake user').trim().slice(0, 160),
+            jumptakeId: String(tag?.jumptakeId || '').trim().slice(0, 120),
+            profileImage: String(tag?.profileImage || '')
+        })) : []
     };
 };
 

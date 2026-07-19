@@ -3,11 +3,17 @@ import { createPortal } from 'react-dom';
 import RichMessageEditor from './RichMessageEditor';
 import AssistantChat from './AssistantChat';
 import ChatAvatar from './ChatAvatar';
+import MessageWorkspaceNav from './MessageWorkspaceNav';
+import NewMessageFinder from './NewMessageFinder';
+import MessageSettings from './MessageSettings';
+import TalentPool from './TalentPool';
 import { apiUrl } from '../utils/apiUrl';
+import confirmAction from '../utils/confirmAction';
 
 const stripHtml = (html = '') => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 const hasMessageContent = (html = '') => stripHtml(html).length > 0 || /<img\b/i.test(html);
 const ASSISTANT_THREAD_ID = '__jumptake_ai__';
+const MESSAGE_MENU_ANIMATION_MS = 180;
 const normalizeSearchText = (value = '') => String(value || '')
     .toLowerCase()
     .replace(/[^a-z0-9\s]/g, ' ')
@@ -188,6 +194,10 @@ const FloatingMessenger = ({
     const [sending, setSending] = useState(false);
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
+    const [activeTab, setActiveTab] = useState('new');
+    const [openThreadMenuId, setOpenThreadMenuId] = useState('');
+    const [closingThreadMenuId, setClosingThreadMenuId] = useState('');
+    const [selectedProfile, setSelectedProfile] = useState(null);
     const [isMobileView, setIsMobileView] = useState(() => (
         typeof window !== 'undefined' ? window.matchMedia('(max-width: 768px)').matches : false
     ));
@@ -197,6 +207,7 @@ const FloatingMessenger = ({
     const pendingContactRef = useRef(null);
     const selectedThreadIdRef = useRef(selectedThreadId);
     const isMobileViewRef = useRef(isMobileView);
+    const menuCloseTimerRef = useRef(null);
     const openEventName = isEmployer ? 'jumptake-open-employer-messenger' : 'jumptake-open-candidate-messenger';
 
     const endpoint = useMemo(() => (
@@ -252,18 +263,6 @@ const FloatingMessenger = ({
         return thread?.company?.name || 'Company';
     };
 
-    const getThreadSubtitle = (thread) => {
-        if (isEmployer) {
-            return thread?.candidateUser?.email || thread?.candidate?.email || 'Email not available';
-        }
-
-        if (isDirectCandidateThread(thread)) {
-            return 'Candidate connection';
-        }
-
-        return thread?.company?.industry || 'Employer message';
-    };
-
     const getThreadAvatar = (thread) => {
         if (isEmployer) {
             return thread?.candidate?.profileImage || '';
@@ -274,6 +273,29 @@ const FloatingMessenger = ({
         }
 
         return thread?.company?.logo || '';
+    };
+
+    const getThreadProfile = (thread) => {
+        if (!thread || !isDirectCandidateThread(thread)) return null;
+        const candidate = getPeerCandidate(thread);
+        const participant = (thread.participantUsers || []).find((item) => (
+            String(item?._id || item) !== String(userId || '')
+        ));
+        return candidate ? {
+            ...candidate,
+            user: candidate.user || participant?._id || participant || '',
+            jumptakeId: candidate.jumptakeId || participant?.jumptakeId || ''
+        } : null;
+    };
+
+    const getThreadPresence = (thread) => {
+        if (!thread) return 'New conversation';
+        if (thread.viewerState?.peerPresenceHidden) return 'Last online hidden';
+        const lastOnlineAt = thread.viewerState?.peerLastOnlineAt;
+        if (!lastOnlineAt) return thread.lastMessageAt ? `Last online ${formatDateTime(thread.lastMessageAt)}` : 'Last online unavailable';
+        const onlineTime = new Date(lastOnlineAt).getTime();
+        if (Number.isFinite(onlineTime) && Date.now() - onlineTime < 90000) return 'Online now';
+        return `Last online ${formatDateTime(lastOnlineAt)}`;
     };
 
     const isOwnMessage = (thread, item) => {
@@ -487,6 +509,108 @@ const FloatingMessenger = ({
         onSeen?.();
     };
 
+    const closeThreadMenu = () => {
+        if (!openThreadMenuId) return;
+        const closingId = openThreadMenuId;
+        setClosingThreadMenuId(closingId);
+        if (menuCloseTimerRef.current) window.clearTimeout(menuCloseTimerRef.current);
+        menuCloseTimerRef.current = window.setTimeout(() => {
+            setOpenThreadMenuId('');
+            setClosingThreadMenuId('');
+            menuCloseTimerRef.current = null;
+        }, MESSAGE_MENU_ANIMATION_MS);
+    };
+
+    const toggleThreadMenu = (threadId) => {
+        if (openThreadMenuId === threadId) {
+            closeThreadMenu();
+            return;
+        }
+        if (menuCloseTimerRef.current) window.clearTimeout(menuCloseTimerRef.current);
+        setClosingThreadMenuId('');
+        setOpenThreadMenuId(threadId);
+    };
+
+    useEffect(() => () => {
+        if (menuCloseTimerRef.current) window.clearTimeout(menuCloseTimerRef.current);
+    }, []);
+
+    const updateThreadState = async (thread, action) => {
+        if (!thread?._id) return;
+        const confirmations = {
+            archive: { title: 'Archive this chat?', message: 'It can be viewed from Archived later.' },
+            delete: { title: 'Delete this chat?', message: 'You cannot get this deleted chat back. Do you want to continue?' },
+            'block-chat': { title: 'Block this contact in Messages?', message: 'This blocks only the chat, not the user profile.' }
+        };
+        if (confirmations[action] && !(await confirmAction(confirmations[action]))) return;
+        try {
+            const response = await fetch(apiUrl(`/api/messages/${thread._id}/state`), {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem(isEmployer ? 'employerToken' : 'token') || ''}`
+                },
+                body: JSON.stringify({ action, ...(isEmployer ? { companyId } : {}) })
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(data.error || 'Could not update this chat');
+            setOpenThreadMenuId('');
+            setMessage(action === 'archive' ? 'Chat archived.' : action === 'delete' ? 'Chat deleted.' : action === 'block-chat' ? 'Contact blocked in Messages.' : 'Chat updated.');
+            if (['archive', 'delete', 'block-chat'].includes(action)) {
+                setSelectedThreadId('');
+                setActiveTab(action === 'archive' ? 'archived' : action === 'block-chat' ? 'blocked' : 'new');
+            }
+            await fetchThreads(true);
+            if (['archive', 'delete', 'block-chat'].includes(action)) {
+                setSelectedThreadId('');
+                setPendingContact(null);
+            }
+        } catch (stateError) {
+            setError(stateError.message || 'Could not update this chat.');
+        }
+    };
+
+    const openTaggedPostComposer = (thread) => {
+        const candidate = getThreadProfile(thread);
+        if (!candidate || isEmployer || typeof window === 'undefined') return;
+        const tag = {
+            userId: String(candidate.user?._id || candidate.user || ''),
+            candidateId: String(candidate._id || ''),
+            name: candidate.name || 'Candidate',
+            jumptakeId: candidate.jumptakeId || '',
+            profileImage: candidate.profileImage || ''
+        };
+        storeAndOpenSection('job-feed', 'jumptakeFeedAiDraft', {
+            mode: 'candidate', tab: 'create-story', openComposer: true, text: '', taggedUsers: [tag]
+        }, 'jumptake-feed-ai-draft');
+        setOpenThreadMenuId('');
+        handleClose();
+    };
+
+    const renderThreadMenu = (thread) => {
+        if (!thread) return null;
+        const isOpen = openThreadMenuId === thread._id;
+        const isClosing = closingThreadMenuId === thread._id;
+        const candidateActions = !isEmployer && isDirectCandidateThread(thread);
+        return (
+            <div className={`message-thread-options ${isOpen ? 'is-open' : ''} ${isClosing ? 'is-closing' : ''}`}>
+                <button type="button" className="message-thread-options-trigger" onClick={(event) => {
+                    event.stopPropagation();
+                    toggleThreadMenu(thread._id);
+                }} aria-expanded={isOpen} aria-label="Conversation options"><span aria-hidden="true">...</span></button>
+                {(isOpen || isClosing) && (
+                    <div className={`message-thread-options-menu ${isClosing ? 'is-closing' : 'is-opening'}`} role="menu" onClick={(event) => event.stopPropagation()}>
+                        {candidateActions && <button type="button" onClick={() => openTaggedPostComposer(thread)}>Tag to post</button>}
+                        {candidateActions && <button type="button" onClick={() => { setSelectedProfile(getThreadProfile(thread)); setOpenThreadMenuId(''); }}>View profile</button>}
+                        <button type="button" onClick={() => updateThreadState(thread, thread.viewerState?.archived ? 'unarchive' : 'archive')}>{thread.viewerState?.archived ? 'Move to New Messages' : 'Archive chat'}</button>
+                        <button type="button" onClick={() => updateThreadState(thread, 'delete')}>Delete chat</button>
+                        <button type="button" onClick={() => updateThreadState(thread, thread.viewerState?.chatBlocked ? 'unblock-chat' : 'block-chat')}>{thread.viewerState?.chatBlocked ? 'Unblock to chat' : 'Block contact'}</button>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
     const handleBackToThreadList = () => {
         if (assistantSelected && assistantDirectOpenRef.current) {
             handleClose();
@@ -565,6 +689,23 @@ const FloatingMessenger = ({
     };
 
     const lastMessagePreview = (thread) => thread?.messages?.[thread.messages.length - 1]?.bodyText || 'No messages yet';
+    const visibleThreads = threads.filter((thread) => {
+        const state = thread.viewerState || {};
+        if (state.deleted) return false;
+        if (activeTab === 'archived') return state.archived && !state.chatBlocked;
+        if (activeTab === 'requests') return state.isRequest && !state.archived && !state.chatBlocked;
+        if (activeTab === 'blocked') return state.chatBlocked;
+        return !state.archived && !state.isRequest && !state.chatBlocked;
+    });
+    const tabCounts = threads.reduce((counts, thread) => {
+        const state = thread.viewerState || {};
+        if (state.deleted) return counts;
+        if (state.chatBlocked) counts.blocked += 1;
+        else if (state.archived) counts.archived += 1;
+        else if (state.isRequest) counts.requests += 1;
+        else counts.new += 1;
+        return counts;
+    }, { new: 0, archived: 0, requests: 0, blocked: 0 });
     const mobileChatOpen = isMobileView && (Boolean(selectedThread) || Boolean(pendingContact) || assistantSelected);
 
     const findRequestedJob = (query = '') => {
@@ -774,8 +915,21 @@ const FloatingMessenger = ({
                                 <h2>Messages</h2>
                             </div>
 
+                            <MessageWorkspaceNav
+                                activeTab={activeTab}
+                                onChange={(tab) => {
+                                    setActiveTab(tab);
+                                    setSelectedThreadId('');
+                                    setPendingContact(null);
+                                    setOpenThreadMenuId('');
+                                    setClosingThreadMenuId('');
+                                }}
+                                counts={tabCounts}
+                                compact
+                            />
+
                             <div className="floating-messenger-contact-list">
-                                <button
+                                {activeTab === 'new' && <button
                                     type="button"
                                     className={`floating-messenger-contact portal-ai-floating-contact ${assistantSelected ? 'is-active' : ''}`}
                                     onClick={() => handleSelectThread(ASSISTANT_THREAD_ID)}
@@ -785,23 +939,35 @@ const FloatingMessenger = ({
                                         <strong>JumpTake AI</strong>
                                         <span>Ask for help with jobs, resumes, hiring, and portal actions.</span>
                                     </div>
-                                </button>
-                                {loading ? (
+                                </button>}
+                                {activeTab === 'compose' && !isEmployer ? (
+                                    <NewMessageFinder userId={userId} onSelectContact={(contact) => {
+                                        setPendingContact(contact);
+                                        setSelectedThreadId('');
+                                        setReplyHtml('');
+                                    }} />
+                                ) : activeTab === 'compose' ? (
+                                    <div className="floating-messenger-empty"><p>Choose an existing candidate conversation to send a message.</p></div>
+                                ) : activeTab === 'settings' ? (
+                                    <MessageSettings mode={mode} companyId={companyId} />
+                                ) : loading ? (
                                     <div className="floating-messenger-empty">
                                         <p>Loading messages...</p>
                                     </div>
-                                ) : threads.length === 0 ? (
+                                ) : visibleThreads.length === 0 ? (
                                     <div className="floating-messenger-empty">
-                                        <p>No messages yet</p>
+                                        <p>No {activeTab === 'new' ? 'messages' : activeTab} here</p>
                                     </div>
                                 ) : (
                                     <>
-                                    {threads.map((thread) => (
-                                        <button
+                                    {visibleThreads.map((thread) => (
+                                        <div
                                             key={thread._id}
-                                            type="button"
+                                            role="button"
+                                            tabIndex={0}
                                             className={`floating-messenger-contact ${thread._id === selectedThreadId ? 'is-active' : ''}`}
                                             onClick={() => handleSelectThread(thread._id)}
+                                            onKeyDown={(event) => { if (event.key === 'Enter') handleSelectThread(thread._id); }}
                                         >
                                             <ChatAvatar imageSrc={getThreadAvatar(thread)} className="floating-messenger-contact-avatar" label={getThreadTitle(thread)} />
                                             <div className="floating-messenger-contact-copy">
@@ -809,7 +975,8 @@ const FloatingMessenger = ({
                                                 <span>{lastMessagePreview(thread)}</span>
                                             </div>
                                             <time>{formatDateTime(thread.lastMessageAt)}</time>
-                                        </button>
+                                            {renderThreadMenu(thread)}
+                                        </div>
                                     ))}
                                     </>
                                 )}
@@ -862,21 +1029,27 @@ const FloatingMessenger = ({
                                 <>
                                     <div className="floating-messenger-chat-bar">
                                         <div className="floating-messenger-chat-head">
-                                            <ChatAvatar
-                                                imageSrc={selectedThread ? getThreadAvatar(selectedThread) : (pendingContact.avatar || '')}
-                                                className="floating-messenger-chat-avatar"
-                                                label={selectedThread ? getThreadTitle(selectedThread) : (pendingContact.name || 'Candidate')}
-                                            />
+                                            <button
+                                                type="button"
+                                                className="message-profile-avatar-button"
+                                                onClick={() => selectedThread && setSelectedProfile(getThreadProfile(selectedThread))}
+                                                disabled={!selectedThread || !isDirectCandidateThread(selectedThread)}
+                                                aria-label="View contact profile"
+                                            >
+                                                <ChatAvatar
+                                                    imageSrc={selectedThread ? getThreadAvatar(selectedThread) : (pendingContact.avatar || '')}
+                                                    className="floating-messenger-chat-avatar"
+                                                    label={selectedThread ? getThreadTitle(selectedThread) : (pendingContact.name || 'Candidate')}
+                                                />
+                                            </button>
                                             <div className="floating-messenger-chat-copy">
                                                 <strong>{selectedThread ? getThreadTitle(selectedThread) : (pendingContact.name || 'Candidate')}</strong>
-                                                <span>{selectedThread ? getThreadSubtitle(selectedThread) : (pendingContact.jumpTakeId || 'Candidate connection')}</span>
+                                                <span>{getThreadPresence(selectedThread)}</span>
                                             </div>
                                         </div>
-                                        <span className="floating-messenger-chat-seen">
-                                            {selectedThread?.lastMessageAt ? `Last update ${formatDateTime(selectedThread.lastMessageAt)}` : 'Conversation'}
-                                        </span>
-                                        {isMobileView ? (
-                                            <div className="floating-messenger-chat-actions">
+                                        <div className="floating-messenger-chat-actions">
+                                            {renderThreadMenu(selectedThread)}
+                                            {isMobileView ? (
                                                 <button
                                                     type="button"
                                                     className="floating-messenger-mobile-back"
@@ -885,8 +1058,8 @@ const FloatingMessenger = ({
                                                 >
                                                     {'<'}
                                                 </button>
-                                            </div>
-                                        ) : null}
+                                            ) : null}
+                                        </div>
                                     </div>
 
                                     {message && <div className={`notification-message ${message.includes('Error') ? 'error' : 'success'}`}>{message}</div>}
@@ -906,13 +1079,16 @@ const FloatingMessenger = ({
                                                 <div className="floating-messenger-message-meta">
                                                     <strong>{getMessageSenderLabel(selectedThread, item)}</strong>
                                                     <span>{formatDateTime(item.createdAt)}</span>
+                                                    {isOwnMessage(selectedThread, item) && item.readReceipt ? <span className="message-read-receipt">Read</span> : null}
                                                 </div>
                                                 <div className="floating-messenger-message-body" dangerouslySetInnerHTML={{ __html: item.bodyHtml }} />
                                             </div>
                                         ))}
                                     </div>
 
-                                    <div className="floating-messenger-input">
+                                    {selectedThread?.viewerState?.chatBlocked ? (
+                                        <button type="button" className="message-unblock-chat-button" onClick={() => updateThreadState(selectedThread, 'unblock-chat')}>Unblock to chat</button>
+                                    ) : <div className="floating-messenger-input">
                                         <RichMessageEditor
                                             value={replyHtml}
                                             onChange={setReplyHtml}
@@ -923,7 +1099,7 @@ const FloatingMessenger = ({
                                             submitting={sending}
                                             submitLabel={sending ? 'Sending...' : 'Send'}
                                         />
-                                    </div>
+                                    </div>}
                                 </>
                             ) : (
                                 <div className="floating-messenger-empty floating-messenger-chat-empty">
@@ -932,6 +1108,15 @@ const FloatingMessenger = ({
                             )}
                         </section>
                     </div>
+                    {selectedProfile && (
+                        <TalentPool
+                            mode="candidate"
+                            currentUserId={userId}
+                            initialSelectedCandidate={selectedProfile}
+                            profileOnly
+                            onProfileClose={() => setSelectedProfile(null)}
+                        />
+                    )}
                     </div>
                 </>
             )}

@@ -18,6 +18,10 @@ const MessageSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  readBy: {
+    type: [String],
+    default: []
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -55,6 +59,18 @@ const MessageThreadSchema = new mongoose.Schema({
   }],
   directKey: {
     type: String
+  },
+  archivedFor: {
+    type: [String],
+    default: []
+  },
+  deletedFor: {
+    type: [String],
+    default: []
+  },
+  chatBlockedFor: {
+    type: [String],
+    default: []
   },
   messages: {
     type: [MessageSchema],

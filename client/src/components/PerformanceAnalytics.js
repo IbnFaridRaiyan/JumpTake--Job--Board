@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 const toDate = (value) => {
     const date = value ? new Date(value) : null;
@@ -70,6 +71,20 @@ const PerformanceAnalytics = ({ mode = 'candidate', jobs = [], jobSeekerData, us
 
         fetchApplications();
     }, [mode, userId, employer?.companyId]);
+
+    useEffect(() => {
+        if (!detailsOpen) {
+            return undefined;
+        }
+
+        const handleKeyDown = (event) => {
+            if (event.key === 'Escape') {
+                setDetailsOpen(false);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [detailsOpen]);
 
     const metrics = useMemo(() => {
         if (mode === 'employer') {
@@ -225,16 +240,31 @@ const PerformanceAnalytics = ({ mode = 'candidate', jobs = [], jobSeekerData, us
                 </div>
             </div>
 
-            {detailsOpen && (
+            {detailsOpen && typeof document !== 'undefined' && createPortal((
                 <div className="analytics-detail-overlay" onClick={() => setDetailsOpen(false)}>
                     <div className="analytics-detail-modal" onClick={(event) => event.stopPropagation()}>
-                        <button type="button" className="analytics-detail-close" onClick={() => setDetailsOpen(false)}>×</button>
+                        <span
+                            role="button"
+                            tabIndex={0}
+                            className="analytics-detail-close"
+                            onClick={() => setDetailsOpen(false)}
+                            onKeyDown={(event) => {
+                                if (event.key === 'Enter' || event.key === ' ') {
+                                    event.preventDefault();
+                                    setDetailsOpen(false);
+                                }
+                            }}
+                            aria-label="Close details"
+                            title="Close"
+                        >
+                            &times;
+                        </span>
                         <h2>{title} Details</h2>
                         <p>Performance signals based on the current dashboard data.</p>
                         <BarChart metrics={metrics} />
                     </div>
                 </div>
-            )}
+            ), document.body)}
         </div>
     );
 };

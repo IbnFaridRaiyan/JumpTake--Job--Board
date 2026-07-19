@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import AnimatedDeleteButton from './AnimatedDeleteButton';
 import confirmAction from '../utils/confirmAction';
 
-const DraftApplications = ({ userId, switchSection, onFooterBack, embedded = false }) => {
+const DraftApplications = ({ userId, switchSection, embedded = false }) => {
     const [drafts, setDrafts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState('');
@@ -134,12 +134,6 @@ const DraftApplications = ({ userId, switchSection, onFooterBack, embedded = fal
                     ))}
                 </div>
             )}
-
-            <div className="page-footer-actions">
-                <button className="back-button" onClick={onFooterBack || (() => switchSection && switchSection('job-feed'))}>
-                    Back
-                </button>
-            </div>
         </div>
     );
 };

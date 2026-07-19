@@ -304,7 +304,7 @@ const FriendInvitations = ({ userId }) => {
                             <div className="friend-outgoing-row" key={connection._id}>
                                 {renderConnectionInfo(connection, 'Invitation pending')}
                                 <div className="friend-invitation-actions">
-                                    <span className="friend-status-pill"><FriendActionIcon type="pending" />Invitation pending</span>
+                                    <span className="friend-status-pill"><FriendActionIcon type="pending" />Pending</span>
                                     {renderActionTools(connection)}
                                     <button
                                         type="button"

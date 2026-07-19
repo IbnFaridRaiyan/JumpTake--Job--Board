@@ -74,6 +74,20 @@ const UserSchema = new mongoose.Schema({
       type: Boolean,
       default: false
     }
+  },
+  lastOnlineAt: {
+    type: Date,
+    default: Date.now
+  },
+  messagePreferences: {
+    workInSilence: {
+      type: Boolean,
+      default: false
+    },
+    messageNotifications: {
+      type: Boolean,
+      default: true
+    }
   }
 }, { timestamps: true });
 

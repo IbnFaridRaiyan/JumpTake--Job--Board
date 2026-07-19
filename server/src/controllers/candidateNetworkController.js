@@ -226,14 +226,62 @@ const sendFriendRequest = async (req, res) => {
     }
 };
 
+const findCandidateByJumpTakeId = async (req, res) => {
+    try {
+        const viewerId = getAuthenticatedUserId(req);
+        const jumpTakeId = String(req.params.jumpTakeId || '').trim().replace(/^@/, '');
+        if (!jumpTakeId) {
+            return res.status(400).json({ error: 'Enter a JumpTake ID' });
+        }
+
+        const account = await User.findOne({
+            jumptakeId: { $regex: `^${jumpTakeId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, $options: 'i' }
+        }).select('_id jumptakeId');
+        if (!account || String(account._id) === viewerId) {
+            return res.status(404).json({ error: 'No candidate found with that JumpTake ID' });
+        }
+
+        const candidate = await JobSeeker.findOne({ user: account._id });
+        if (!candidate) {
+            return res.status(404).json({ error: 'This account does not have a candidate profile yet' });
+        }
+
+        const relationship = await CandidateConnection.findOne({ pairKey: pairKeyFor(viewerId, account._id) });
+        if (relationship?.status === 'blocked') {
+            return res.status(403).json({ error: 'This contact is unavailable' });
+        }
+
+        return res.status(200).json({
+            ...publicCandidate(candidate, { skills: [], education: [], experience: [], score: 0 }, relationship ? {
+                id: relationship._id,
+                status: relationship.status,
+                direction: String(relationship.requester) === viewerId ? 'outgoing' : 'incoming'
+            } : null),
+            jumptakeId: account.jumptakeId || jumpTakeId
+        });
+    } catch (error) {
+        return res.status(error.status || 500).json({ error: error.message || 'Failed to find candidate' });
+    }
+};
+
 const blockCandidate = async (req, res) => {
     try {
         const blockerId = getAuthenticatedUserId(req);
         const { blockedCandidateId, blockedUserId } = req.body || {};
-        let blockedUser = blockedUserId ? await User.findById(blockedUserId) : null;
+        const suppliedId = blockedUserId || blockedCandidateId;
+        let blockedUser = null;
+
+        if (suppliedId) {
+            blockedUser = await User.findById(suppliedId).catch(() => null);
+        }
 
         if (!blockedUser && blockedCandidateId) {
-            const candidate = await JobSeeker.findById(blockedCandidateId).select('user');
+            const candidate = await JobSeeker.findById(blockedCandidateId).select('user').catch(() => null);
+            blockedUser = candidate?.user ? await User.findById(candidate.user) : null;
+        }
+
+        if (!blockedUser && suppliedId) {
+            const candidate = await JobSeeker.findOne({ user: suppliedId }).select('user').catch(() => null);
             blockedUser = candidate?.user ? await User.findById(candidate.user) : null;
         }
 
@@ -418,6 +466,7 @@ const respondToConnection = async (req, res) => {
 module.exports = {
     getMatchedCandidates,
     getMyNetworkProfile,
+    findCandidateByJumpTakeId,
     sendFriendRequest,
     blockCandidate,
     getConnections,

@@ -623,7 +623,14 @@ const normalizePostForDisplay = (post, index = 0) => {
         reactions: post.reactions && typeof post.reactions === 'object' ? post.reactions : {},
         reactionsByUser: post.reactionsByUser && typeof post.reactionsByUser === 'object' ? post.reactionsByUser : {},
         media: normalizePostMedia(post.media),
-        comments: normalizedComments
+        comments: normalizedComments,
+        taggedUsers: Array.isArray(post.taggedUsers) ? post.taggedUsers.map((tag) => ({
+            userId: asDisplayText(tag?.userId),
+            candidateId: asDisplayText(tag?.candidateId),
+            name: asDisplayText(tag?.name, 'JumpTake user'),
+            jumptakeId: asDisplayText(tag?.jumptakeId),
+            profileImage: typeof tag?.profileImage === 'string' ? tag.profileImage : ''
+        })) : []
     };
 };
 
@@ -634,7 +641,7 @@ const readFileAsDataUrl = (file) => new Promise((resolve, reject) => {
     reader.readAsDataURL(file);
 });
 
-const createPost = ({ type, body, viewerId, authorName, authorType, authorAvatar, authorGender = '', media = null, audience = 'everyone' }) => ({
+const createPost = ({ type, body, viewerId, authorName, authorType, authorAvatar, authorGender = '', media = null, audience = 'everyone', taggedUsers = [] }) => ({
     id: `${type}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     type,
     body,
@@ -650,7 +657,8 @@ const createPost = ({ type, body, viewerId, authorName, authorType, authorAvatar
     reactions: {},
     reactionsByUser: {},
     media,
-    comments: []
+    comments: [],
+    taggedUsers
 });
 
 const reactionLabels = {
@@ -1199,11 +1207,14 @@ const PortalHomeFeed = ({
     const [composerText, setComposerText] = useState('');
     const [composerMedia, setComposerMedia] = useState(null);
     const [composerAudience, setComposerAudience] = useState('everyone');
+    const [composerTaggedUsers, setComposerTaggedUsers] = useState([]);
+    const [composerTagPickerOpen, setComposerTagPickerOpen] = useState(false);
     const [createStoryModalOpen, setCreateStoryModalOpen] = useState(false);
     const [createStoryAudienceOpen, setCreateStoryAudienceOpen] = useState(false);
     const [commentDrafts, setCommentDrafts] = useState({});
     const [commentRotationTick, setCommentRotationTick] = useState(0);
     const [expandedPostBodies, setExpandedPostBodies] = useState({});
+    const [expandedPostTags, setExpandedPostTags] = useState({});
     const [openReactionPostId, setOpenReactionPostId] = useState('');
     const [openCommentPostId, setOpenCommentPostId] = useState('');
     const [openSharePostId, setOpenSharePostId] = useState('');
@@ -2823,9 +2834,18 @@ const PortalHomeFeed = ({
         setOpenOptionsPostId('');
     };
 
-    const handleBlockPostOwner = (post) => {
+    const handleBlockPostOwner = async (post) => {
         const authorId = String(post?.authorId || '');
         if (!authorId || authorId === viewerId) {
+            setOpenOptionsPostId('');
+            return;
+        }
+
+        const confirmed = await confirmAction({
+            title: 'Block this user from your feed?',
+            message: 'Their Talent Stories and Work News posts will be hidden. You can restore them later from Blocks.'
+        });
+        if (!confirmed) {
             setOpenOptionsPostId('');
             return;
         }
@@ -2968,7 +2988,8 @@ const PortalHomeFeed = ({
             authorAvatar,
             authorGender,
             media: composerMedia,
-            audience: composerAudience
+            audience: composerAudience,
+            taggedUsers: composerTaggedUsers
         });
 
         try {
@@ -2986,6 +3007,8 @@ const PortalHomeFeed = ({
             setComposerText('');
             setComposerMedia(null);
             setComposerAudience('everyone');
+            setComposerTaggedUsers([]);
+            setComposerTagPickerOpen(false);
             closeCreateStoryModal();
             setFeedError('');
             setActiveTab(isCompanyPost ? 'my-company-posts' : 'my-feed');
@@ -3597,6 +3620,8 @@ const PortalHomeFeed = ({
             setActiveTab(requestedTab);
             typeFeedDraft(draft.text || '');
             setComposerMedia(null);
+            setComposerTaggedUsers(Array.isArray(draft.taggedUsers) ? draft.taggedUsers : []);
+            setComposerTagPickerOpen(false);
             setFeedError('');
 
             if (mode === 'candidate' && draft.openComposer) {
@@ -5266,6 +5291,43 @@ const PortalHomeFeed = ({
                                 )}
                             </div>
                         </div>
+                        {post.taggedUsers.length > 0 && (
+                            <div className={`portal-post-tagged-users ${expandedPostTags[postKey] ? 'is-expanded' : ''}`}>
+                                <span>With</span>
+                                {(expandedPostTags[postKey] ? post.taggedUsers : post.taggedUsers.slice(0, 4)).map((tag) => (
+                                    <button
+                                        type="button"
+                                        key={tag.userId || tag.candidateId || tag.name}
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                            openProfileDetailModal({
+                                                authorId: tag.userId || tag.candidateId,
+                                                candidateId: tag.candidateId,
+                                                authorName: tag.name,
+                                                authorAvatar: tag.profileImage,
+                                                authorType: 'candidate',
+                                                jumptakeId: tag.jumptakeId
+                                            });
+                                        }}
+                                    >
+                                        @{tag.jumptakeId || tag.name}
+                                    </button>
+                                ))}
+                                {post.taggedUsers.length > 4 && (
+                                    <button
+                                        type="button"
+                                        className="portal-post-tagged-more"
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                            setExpandedPostTags((current) => ({ ...current, [postKey]: !current[postKey] }));
+                                        }}
+                                        aria-label={expandedPostTags[postKey] ? 'Show fewer tagged people' : 'View all tagged people'}
+                                    >
+                                        {expandedPostTags[postKey] ? '−' : `+${post.taggedUsers.length - 4}`}
+                                    </button>
+                                )}
+                            </div>
+                        )}
                         <div className="portal-post-comments portal-rotating-comment-rail">
                             {rotatingComment ? (() => {
                                 const comment = rotatingComment;
@@ -5400,6 +5462,53 @@ const PortalHomeFeed = ({
                     <h3>{composerTitle}</h3>
                 )}
                 <p>{composerDescription}</p>
+                {mode === 'candidate' && (
+                    <div className="portal-composer-tagging">
+                        <div className="portal-composer-tagged-users" aria-label="People tagged in this post">
+                            {composerTaggedUsers.length > 0 && <span>With</span>}
+                            {composerTaggedUsers.map((tag) => (
+                                <button
+                                    type="button"
+                                    key={tag.userId || tag.candidateId || tag.name}
+                                    onClick={() => setComposerTaggedUsers((current) => current.filter((item) => item !== tag))}
+                                    title="Remove tag"
+                                >
+                                    @{tag.jumptakeId || tag.name} <b aria-hidden="true">&times;</b>
+                                </button>
+                            ))}
+                            <button type="button" className="portal-composer-add-tag" onClick={() => setComposerTagPickerOpen((open) => !open)}>
+                                + Tag people
+                            </button>
+                        </div>
+                        {composerTagPickerOpen && (
+                            <div className="portal-composer-tag-picker" role="dialog" aria-label="Choose people to tag">
+                                {feedFriends.length ? feedFriends.map((friend) => {
+                                    const selected = composerTaggedUsers.some((tag) => (
+                                        String(tag.userId || tag.candidateId) === String(friend.userId || friend.candidateId)
+                                    ));
+                                    return (
+                                        <button
+                                            type="button"
+                                            className={selected ? 'is-selected' : ''}
+                                            key={friend.id}
+                                            onClick={() => setComposerTaggedUsers((current) => selected
+                                                ? current.filter((tag) => String(tag.userId || tag.candidateId) !== String(friend.userId || friend.candidateId))
+                                                : [...current, {
+                                                    userId: friend.userId || '',
+                                                    candidateId: friend.candidateId || '',
+                                                    name: friend.name,
+                                                    jumptakeId: friend.jumptakeId || '',
+                                                    profileImage: friend.profileImage || ''
+                                                }])}
+                                        >
+                                            <span>{friend.name}</span><small>{friend.jumptakeId || 'Friend'}</small><b>{selected ? 'Added' : '+'}</b>
+                                        </button>
+                                    );
+                                }) : <p>Add friends to tag them in a post.</p>}
+                            </div>
+                        )}
+                    </div>
+                )}
                 <textarea
                     value={composerText}
                     onChange={(event) => setComposerText(event.target.value)}
@@ -5491,6 +5600,7 @@ const PortalHomeFeed = ({
         createStoryCloseTimerRef.current = window.setTimeout(() => {
             setCreateStoryModalOpen(false);
             setCreateStoryAudienceOpen(false);
+            setComposerTagPickerOpen(false);
             setClosingCreateStoryModal(false);
             createStoryCloseTimerRef.current = null;
         }, POPUP_CLOSE_ANIMATION_MS);

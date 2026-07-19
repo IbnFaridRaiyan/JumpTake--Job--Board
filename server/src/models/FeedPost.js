@@ -71,6 +71,10 @@ const FeedPostSchema = new mongoose.Schema({
   comments: {
     type: [mongoose.Schema.Types.Mixed],
     default: []
+  },
+  taggedUsers: {
+    type: [mongoose.Schema.Types.Mixed],
+    default: []
   }
 }, { timestamps: true });
 

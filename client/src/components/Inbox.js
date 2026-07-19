@@ -1,12 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import RichMessageEditor from './RichMessageEditor';
 import AssistantChat from './AssistantChat';
 import ChatAvatar from './ChatAvatar';
+import MessageWorkspaceNav from './MessageWorkspaceNav';
+import NewMessageFinder from './NewMessageFinder';
+import MessageSettings from './MessageSettings';
+import TalentPool from './TalentPool';
 import { apiUrl } from '../utils/apiUrl';
+import confirmAction from '../utils/confirmAction';
 
 const stripHtml = (html = '') => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 const hasMessageContent = (html = '') => stripHtml(html).length > 0 || /<img\b/i.test(html);
 const PENDING_INBOX_CONTACT_KEY = 'jumptakePendingInboxContact';
+const MESSAGE_MENU_ANIMATION_MS = 180;
 
 const formatDateTime = (dateString) => {
     if (!dateString) {
@@ -32,6 +38,11 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
     const [showAssistant, setShowAssistant] = useState(false);
+    const [activeTab, setActiveTab] = useState('new');
+    const [openThreadMenuId, setOpenThreadMenuId] = useState('');
+    const [closingThreadMenuId, setClosingThreadMenuId] = useState('');
+    const [selectedProfile, setSelectedProfile] = useState(null);
+    const menuCloseTimerRef = useRef(null);
 
     const isEmployer = mode === 'employer';
 
@@ -54,6 +65,15 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
         fetchThreads();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [mode, companyId, userId]);
+
+    useEffect(() => {
+        if (!message && !error) return undefined;
+        const timer = window.setTimeout(() => {
+            setMessage('');
+            setError('');
+        }, 2000);
+        return () => window.clearTimeout(timer);
+    }, [error, message]);
 
     const fetchThreads = async () => {
         const endpoint = isEmployer
@@ -252,6 +272,179 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
         return item.senderType === 'employer' ? 'Employer' : 'Candidate';
     };
 
+    const getThreadProfile = (thread) => {
+        if (!thread || !isDirectCandidateThread(thread)) return null;
+        const candidate = getPeerCandidate(thread);
+        const participant = (thread.participantUsers || []).find((item) => (
+            String(item?._id || item) !== String(userId || '')
+        ));
+        return candidate ? {
+            ...candidate,
+            user: candidate.user || participant?._id || participant || '',
+            jumptakeId: candidate.jumptakeId || participant?.jumptakeId || ''
+        } : null;
+    };
+
+    const getThreadPresence = (thread) => {
+        if (!thread) return 'New conversation';
+        if (thread.viewerState?.peerPresenceHidden) return 'Last online hidden';
+        const lastOnlineAt = thread.viewerState?.peerLastOnlineAt;
+        if (!lastOnlineAt) return thread.lastMessageAt ? `Last online ${formatDateTime(thread.lastMessageAt)}` : 'Last online unavailable';
+        const onlineTime = new Date(lastOnlineAt).getTime();
+        if (Number.isFinite(onlineTime) && Date.now() - onlineTime < 90000) return 'Online now';
+        return `Last online ${formatDateTime(lastOnlineAt)}`;
+    };
+
+    const closeThreadMenu = () => {
+        if (!openThreadMenuId) return;
+        const closingId = openThreadMenuId;
+        setClosingThreadMenuId(closingId);
+        if (menuCloseTimerRef.current) window.clearTimeout(menuCloseTimerRef.current);
+        menuCloseTimerRef.current = window.setTimeout(() => {
+            setOpenThreadMenuId('');
+            setClosingThreadMenuId('');
+            menuCloseTimerRef.current = null;
+        }, MESSAGE_MENU_ANIMATION_MS);
+    };
+
+    const toggleThreadMenu = (threadId) => {
+        if (openThreadMenuId === threadId) {
+            closeThreadMenu();
+            return;
+        }
+        if (menuCloseTimerRef.current) window.clearTimeout(menuCloseTimerRef.current);
+        setClosingThreadMenuId('');
+        setOpenThreadMenuId(threadId);
+    };
+
+    useEffect(() => () => {
+        if (menuCloseTimerRef.current) window.clearTimeout(menuCloseTimerRef.current);
+    }, []);
+
+    const updateThreadState = async (thread, action) => {
+        if (!thread?._id) return;
+        const confirmations = {
+            archive: {
+                title: 'Archive this chat?',
+                message: 'The chat will move to Archived and can be viewed there later.'
+            },
+            delete: {
+                title: 'Delete this chat?',
+                message: 'You cannot get this deleted chat back. Do you want to continue?'
+            },
+            'block-chat': {
+                title: 'Block this contact in Messages?',
+                message: 'This only blocks the chat. It does not block the user profile elsewhere in JumpTake.'
+            }
+        };
+        if (confirmations[action] && !(await confirmAction(confirmations[action]))) return;
+
+        try {
+            const response = await fetch(apiUrl(`/api/messages/${thread._id}/state`), {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem(isEmployer ? 'employerToken' : 'token') || ''}`
+                },
+                body: JSON.stringify({ action, ...(isEmployer ? { companyId } : {}) })
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(data.error || 'Could not update this chat');
+            setOpenThreadMenuId('');
+            setMessage(
+                action === 'archive' ? 'Chat archived.'
+                    : action === 'delete' ? 'Chat deleted.'
+                        : action === 'block-chat' ? 'Contact blocked in Messages.'
+                            : action === 'unblock-chat' ? 'Contact unblocked in Messages.'
+                                : 'Chat restored.'
+            );
+            if (action === 'delete' || action === 'archive' || action === 'block-chat') {
+                setSelectedThread(null);
+                setPendingContact(null);
+                setActiveTab(action === 'archive' ? 'archived' : action === 'block-chat' ? 'blocked' : 'new');
+            }
+            await fetchThreads();
+            if (action === 'delete' || action === 'archive' || action === 'block-chat') {
+                setSelectedThread(null);
+                setPendingContact(null);
+            }
+        } catch (stateError) {
+            setError(stateError.message || 'Could not update this chat.');
+        }
+    };
+
+    const openTaggedPostComposer = (thread) => {
+        const candidate = getThreadProfile(thread);
+        if (!candidate || typeof window === 'undefined') return;
+        const tag = {
+            userId: String(candidate.user?._id || candidate.user || ''),
+            candidateId: String(candidate._id || ''),
+            name: candidate.name || 'Candidate',
+            jumptakeId: candidate.jumptakeId || '',
+            profileImage: candidate.profileImage || ''
+        };
+        const payload = { mode: 'candidate', tab: 'create-story', openComposer: true, text: '', taggedUsers: [tag] };
+        sessionStorage.setItem('jumptakeFeedAiDraft', JSON.stringify(payload));
+        window.dispatchEvent(new CustomEvent('jumptake-ai-open-section', { detail: { mode: 'candidate', section: 'job-feed' } }));
+        window.setTimeout(() => window.dispatchEvent(new CustomEvent('jumptake-feed-ai-draft', { detail: payload })), 50);
+        setOpenThreadMenuId('');
+    };
+
+    const renderThreadMenu = (thread) => {
+        if (!thread) return null;
+        const menuOpen = openThreadMenuId === thread._id;
+        const menuClosing = closingThreadMenuId === thread._id;
+        const canUseCandidateActions = !isEmployer && isDirectCandidateThread(thread);
+        return (
+            <div className={`message-thread-options ${menuOpen ? 'is-open' : ''} ${menuClosing ? 'is-closing' : ''}`}>
+                <button type="button" className="message-thread-options-trigger" onClick={(event) => {
+                    event.stopPropagation();
+                    toggleThreadMenu(thread._id);
+                }} aria-expanded={menuOpen} aria-label="Conversation options"><span aria-hidden="true">...</span></button>
+                {(menuOpen || menuClosing) && (
+                    <div className={`message-thread-options-menu ${menuClosing ? 'is-closing' : 'is-opening'}`} role="menu" onClick={(event) => event.stopPropagation()}>
+                        {canUseCandidateActions && <button type="button" onClick={() => openTaggedPostComposer(thread)}>Tag to post</button>}
+                        {canUseCandidateActions && <button type="button" onClick={() => { setSelectedProfile(getThreadProfile(thread)); setOpenThreadMenuId(''); }}>View profile</button>}
+                        <button type="button" onClick={() => updateThreadState(thread, thread.viewerState?.archived ? 'unarchive' : 'archive')}>{thread.viewerState?.archived ? 'Move to New Messages' : 'Archive chat'}</button>
+                        <button type="button" onClick={() => updateThreadState(thread, 'delete')}>Delete chat</button>
+                        <button type="button" onClick={() => updateThreadState(thread, thread.viewerState?.chatBlocked ? 'unblock-chat' : 'block-chat')}>{thread.viewerState?.chatBlocked ? 'Unblock to chat' : 'Block contact'}</button>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
+    const visibleThreads = useMemo(() => threads.filter((thread) => {
+        const state = thread.viewerState || {};
+        if (state.deleted) return false;
+        if (activeTab === 'archived') return state.archived && !state.chatBlocked;
+        if (activeTab === 'requests') return state.isRequest && !state.archived && !state.chatBlocked;
+        if (activeTab === 'blocked') return state.chatBlocked;
+        return !state.archived && !state.isRequest && !state.chatBlocked;
+    }), [activeTab, threads]);
+
+    const tabCounts = useMemo(() => threads.reduce((counts, thread) => {
+        const state = thread.viewerState || {};
+        if (state.deleted) return counts;
+        if (state.chatBlocked) counts.blocked += 1;
+        else if (state.archived) counts.archived += 1;
+        else if (state.isRequest) counts.requests += 1;
+        else counts.new += 1;
+        return counts;
+    }, { new: 0, archived: 0, requests: 0, blocked: 0 }), [threads]);
+
+    if (selectedProfile) {
+        return (
+            <TalentPool
+                mode="candidate"
+                currentUserId={userId}
+                initialSelectedCandidate={selectedProfile}
+                profileOnly
+                onProfileClose={() => setSelectedProfile(null)}
+            />
+        );
+    }
+
     if (showAssistant) {
         return (
             <div className="inbox-container messenger-inbox portal-inbox-ai">
@@ -274,7 +467,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
 
     if (selectedThread || pendingContact) {
         const chatTitle = selectedThread ? getThreadTitle(selectedThread) : (pendingContact.name || 'Candidate');
-        const chatSubtitle = selectedThread ? getThreadSubtitle(selectedThread) : (pendingContact.jumpTakeId || 'Candidate connection');
+        const chatSubtitle = getThreadPresence(selectedThread);
         const chatAvatar = selectedThread ? getThreadAvatar(selectedThread) : (pendingContact.avatar || '');
         const chatMessages = selectedThread ? (selectedThread.messages || []) : [];
 
@@ -288,12 +481,15 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                         Back to Chats
                     </button>
                     <div className="messenger-chat-head">
-                        <ChatAvatar imageSrc={chatAvatar} className="messenger-avatar" label={chatTitle} />
+                        <button type="button" className="message-profile-avatar-button" onClick={() => selectedThread && setSelectedProfile(getThreadProfile(selectedThread))} disabled={!selectedThread || !isDirectCandidateThread(selectedThread)} aria-label={`View ${chatTitle} profile`}>
+                            <ChatAvatar imageSrc={chatAvatar} className="messenger-avatar" label={chatTitle} />
+                        </button>
                         <div>
                             <h2>{chatTitle}</h2>
                             <p>{chatSubtitle}</p>
                         </div>
                     </div>
+                    {renderThreadMenu(selectedThread)}
                 </div>
 
                 {message && <div className={`notification-message ${message.includes('Error') ? 'error' : 'success'}`}>{message}</div>}
@@ -313,13 +509,16 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                             <div className="message-meta">
                                 <strong>{getMessageSenderLabel(selectedThread, item)}</strong>
                                 <span>{formatDateTime(item.createdAt)}</span>
+                                {isOwnMessage(selectedThread, item) && item.readReceipt ? <span className="message-read-receipt">Read</span> : null}
                             </div>
                             <div className="message-body" dangerouslySetInnerHTML={{ __html: item.bodyHtml }} />
                         </div>
                     ))}
                 </div>
 
-                <div className="message-compose-card messenger-compose-card">
+                {selectedThread?.viewerState?.chatBlocked ? (
+                    <button type="button" className="message-unblock-chat-button" onClick={() => updateThreadState(selectedThread, 'unblock-chat')}>Unblock to chat</button>
+                ) : <div className="message-compose-card messenger-compose-card">
                     <RichMessageEditor
                         value={replyHtml}
                         onChange={setReplyHtml}
@@ -330,7 +529,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                         submitting={sending}
                         submitLabel={sending ? 'Sending...' : 'Send'}
                     />
-                </div>
+                </div>}
 
                 <div className="section-footer-nav mobile-subpage-return">
                     <button className="back-button responsive-back-button mobile-bottom-back-button" onClick={() => {
@@ -350,9 +549,16 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                 <h2>Inbox</h2>
             </div>
 
-            {error && <div className="error-message">{error}</div>}
+            <MessageWorkspaceNav activeTab={activeTab} onChange={(tab) => {
+                setActiveTab(tab);
+                setOpenThreadMenuId('');
+                setClosingThreadMenuId('');
+            }} counts={tabCounts} />
 
-            <button
+            {error && <div className="error-message">{error}</div>}
+            {message && <div className="notification-message success">{message}</div>}
+
+            {activeTab === 'new' && <button
                 type="button"
                 className="inbox-thread-card button-message portal-ai-thread-card"
                 id="btn-message-ai"
@@ -372,26 +578,38 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                     <div className="user-id">Ask about jobs, resumes, hiring, and portal actions</div>
                     <span className="thread-preview">Start chatting with the JumpTake assistant.</span>
                 </div>
-            </button>
+            </button>}
 
-            {loading ? (
+            {activeTab === 'compose' ? (
+                <NewMessageFinder userId={userId} onSelectContact={(contact) => {
+                    setPendingContact(contact);
+                    setSelectedThread(null);
+                }} />
+            ) : null}
+
+            {activeTab === 'settings' ? <MessageSettings mode={mode} companyId={companyId} /> : null}
+
+            {!['compose', 'settings'].includes(activeTab) && (loading ? (
                 <div className="loading-spinner">Loading inbox...</div>
-            ) : threads.length === 0 ? (
+            ) : visibleThreads.length === 0 ? (
                 <div className="no-jobs-message">
-                    <h3>No messages yet</h3>
-                    <p>{isEmployer ? 'Candidate conversations will appear here.' : 'Employer messages will appear here.'}</p>
+                    <h3>No {activeTab === 'new' ? 'messages' : activeTab} here</h3>
+                    <p>{activeTab === 'requests' ? 'Introductory messages from people outside your friends list will appear here.' : activeTab === 'blocked' ? 'Contacts blocked only in Messages will appear here.' : 'Conversations for this section will appear here.'}</p>
                 </div>
             ) : (
                 <div className="inbox-thread-list messenger-thread-list">
-                    {threads.map((thread) => {
+                    {visibleThreads.map((thread) => {
                         const lastMessage = thread.messages?.[thread.messages.length - 1];
 
                         return (
-                            <button
+                            <div
                                 className={`inbox-thread-card button-message ${isThreadActive(thread) ? 'is-active' : 'is-offline'}`}
                                 id="btn-message"
                                 key={thread._id}
+                                role="button"
+                                tabIndex={0}
                                 onClick={() => setSelectedThread(thread)}
+                                onKeyDown={(event) => { if (event.key === 'Enter') setSelectedThread(thread); }}
                             >
                                 <div className="content-avatar">
                                     <div className="avatar">
@@ -409,11 +627,12 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                                     <span className="thread-preview">{lastMessage?.bodyText || 'No message preview'}</span>
                                 </div>
                                 <time className="thread-time">{formatDateTime(thread.lastMessageAt)}</time>
-                            </button>
+                                {renderThreadMenu(thread)}
+                            </div>
                         );
                     })}
                 </div>
-            )}
+            ))}
 
             <div className="page-footer-actions">
                 <button className="back-button" onClick={onFooterBack || onBack}>Back</button>

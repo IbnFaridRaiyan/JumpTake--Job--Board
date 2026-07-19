@@ -303,6 +303,7 @@ router.get('/candidate-likes', engagementController.getCandidateLikeSummary);
 router.post('/candidate-likes/toggle', engagementController.toggleCandidateLike);
 router.get('/candidate-network/matches/:userId', candidateNetworkController.getMatchedCandidates);
 router.get('/candidate-network/profile/:userId', candidateNetworkController.getMyNetworkProfile);
+router.get('/candidate-network/find/:jumpTakeId', candidateNetworkController.findCandidateByJumpTakeId);
 router.post('/candidate-connections/request', candidateNetworkController.sendFriendRequest);
 router.post('/candidate-connections/block', candidateNetworkController.blockCandidate);
 router.get('/candidate-connections/user/:userId', candidateNetworkController.getConnections);
@@ -346,6 +347,9 @@ router.put('/users/:userId/job-interests', userController.updateJobInterests);
 router.post('/messages', messageController.createOrReplyMessage);
 router.post('/messages/candidate-direct', messageController.createCandidateDirectMessage);
 router.put('/messages/:threadId/reply', messageController.replyToThread);
+router.put('/messages/:threadId/state', messageController.updateThreadState);
+router.get('/messages/preferences/account', messageController.getMessagePreferences);
+router.put('/messages/preferences/account', messageController.updateMessagePreferences);
 router.get('/messages/company/:companyId', messageController.getCompanyThreads);
 router.get('/messages/user/:userId', messageController.getCandidateThreads);
 

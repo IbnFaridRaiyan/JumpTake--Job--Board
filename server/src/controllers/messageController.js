@@ -1,6 +1,8 @@
 const MessageThread = require('../models/MessageThread');
 const JobSeeker = require('../models/JobSeeker');
 const CandidateConnection = require('../models/CandidateConnection');
+const Employer = require('../models/Employer');
+const User = require('../models/User');
 const { createNotification } = require('./notificationController');
 const { getAuthenticatedUserId } = require('../utils/candidateAuth');
 
@@ -96,8 +98,8 @@ const stripHtml = (html = '') => (
 const populateThread = (query) => query
     .populate('company', 'name industry logo')
     .populate('candidate', 'name email profileImage skills education experience')
-    .populate('candidateUser', 'email')
-    .populate('participantUsers', 'jumptakeId')
+    .populate('candidateUser', 'email lastOnlineAt messagePreferences')
+    .populate('participantUsers', 'jumptakeId lastOnlineAt messagePreferences')
     .populate('candidateProfiles', 'name profileImage skills education experience achievements interests hobbies user');
 
 const getDirectKey = (firstUserId, secondUserId) => (
@@ -108,11 +110,77 @@ const getCandidateRelationship = (firstUserId, secondUserId) => (
     CandidateConnection.findOne({ pairKey: getDirectKey(firstUserId, secondUserId) })
 );
 
-const sanitizeDirectThread = (thread) => {
+const getUserStateKey = (userId) => `user:${String(userId || '')}`;
+const getCompanyStateKey = (companyId) => `company:${String(companyId || '')}`;
+
+const candidateAllowsMessageNotifications = async (userId) => {
+    const user = await User.findById(userId).select('messagePreferences');
+    return user?.messagePreferences?.messageNotifications !== false;
+};
+
+const companyAllowsMessageNotifications = async (companyId) => {
+    const employer = await Employer.findOne({ companyId }).select('messagePreferences');
+    return employer?.messagePreferences?.messageNotifications !== false;
+};
+
+const serializeThreadForViewer = (thread, actorKey = '', viewerUserId = '', relationship = null) => {
     const serialized = thread?.toObject ? thread.toObject() : { ...thread };
+    const archivedFor = (serialized.archivedFor || []).map(String);
+    const deletedFor = (serialized.deletedFor || []).map(String);
+    const chatBlockedFor = (serialized.chatBlockedFor || []).map(String);
+
+    serialized.viewerState = {
+        archived: Boolean(actorKey && archivedFor.includes(actorKey)),
+        deleted: Boolean(actorKey && deletedFor.includes(actorKey)),
+        chatBlocked: Boolean(actorKey && chatBlockedFor.includes(actorKey)),
+        blockedByPeer: serialized.conversationType === 'candidate-candidate'
+            && chatBlockedFor.some((key) => key !== actorKey),
+        isRequest: false,
+        relationshipStatus: relationship?.status || ''
+    };
+
+    const directPeer = serialized.conversationType === 'candidate-candidate'
+        ? (serialized.participantUsers || []).find((participant) => (
+            String(participant?._id || participant) !== String(viewerUserId || '')
+        ))
+        : actorKey.startsWith('company:') ? serialized.candidateUser : null;
+    const peerWorksInSilence = Boolean(directPeer?.messagePreferences?.workInSilence);
+    serialized.viewerState.peerPresenceHidden = peerWorksInSilence;
+    serialized.viewerState.peerLastOnlineAt = peerWorksInSilence ? null : (directPeer?.lastOnlineAt || null);
+    serialized.viewerState.readReceiptsVisible = !peerWorksInSilence;
+
+    const peerActorKey = serialized.conversationType === 'candidate-candidate'
+        ? getUserStateKey(directPeer?._id || directPeer)
+        : actorKey.startsWith('company:')
+            ? getUserStateKey(serialized.candidateUser?._id || serialized.candidateUser)
+            : getCompanyStateKey(serialized.company?._id || serialized.company);
+    (serialized.messages || []).forEach((message) => {
+        const ownMessage = serialized.conversationType === 'candidate-candidate'
+            ? String(message.senderUser?._id || message.senderUser || '') === String(viewerUserId || '')
+            : actorKey.startsWith('company:') ? message.senderType === 'employer' : message.senderType === 'candidate';
+        message.readReceipt = Boolean(
+            ownMessage
+            && serialized.viewerState.readReceiptsVisible
+            && (message.readBy || []).map(String).includes(peerActorKey)
+        );
+        delete message.readBy;
+    });
+
     if (serialized.conversationType !== 'candidate-candidate') {
         return serialized;
     }
+
+    const firstSenderId = String(serialized.messages?.[0]?.senderUser?._id || serialized.messages?.[0]?.senderUser || '');
+    const senderIds = new Set((serialized.messages || [])
+        .map((item) => String(item?.senderUser?._id || item?.senderUser || ''))
+        .filter(Boolean));
+    serialized.viewerState.isRequest = Boolean(
+        viewerUserId
+        && relationship?.status !== 'accepted'
+        && firstSenderId
+        && firstSenderId !== String(viewerUserId)
+        && senderIds.size < 2
+    );
 
     if (serialized.candidate) {
         delete serialized.candidate.email;
@@ -128,7 +196,11 @@ const sanitizeDirectThread = (thread) => {
     });
     (serialized.participantUsers || []).forEach((participant) => {
         delete participant.email;
+        delete participant.messagePreferences;
     });
+    if (serialized.candidateUser) {
+        delete serialized.candidateUser.messagePreferences;
+    }
 
     return serialized;
 };
@@ -139,7 +211,26 @@ const canSendDirectMessage = (thread, senderUserId, relationship) => {
     }
 
     if (relationship?.status === 'accepted') {
+        const blockedKeys = (thread?.chatBlockedFor || []).map(String);
+        if (blockedKeys.length) {
+            return {
+                allowed: false,
+                error: blockedKeys.includes(getUserStateKey(senderUserId))
+                    ? 'Unblock this chat before sending a message.'
+                    : 'This contact is not accepting messages in this chat.'
+            };
+        }
         return { allowed: true };
+    }
+
+    const blockedKeys = (thread?.chatBlockedFor || []).map(String);
+    if (blockedKeys.length) {
+        return {
+            allowed: false,
+            error: blockedKeys.includes(getUserStateKey(senderUserId))
+                ? 'Unblock this chat before sending a message.'
+                : 'This contact is not accepting messages in this chat.'
+        };
     }
 
     const messages = thread?.messages || [];
@@ -225,7 +316,7 @@ const createOrReplyMessage = async (req, res) => {
 
         await appendMessage(thread, senderType, bodyHtml);
 
-        if (senderType === 'employer') {
+        if (senderType === 'employer' && await candidateAllowsMessageNotifications(resolvedCandidateUserId)) {
             await createNotification({
                 recipientType: 'candidate',
                 recipientId: resolvedCandidateUserId,
@@ -316,18 +407,26 @@ const createCandidateDirectMessage = async (req, res) => {
 
         await appendMessage(thread, 'candidate', bodyHtml, senderUserId);
 
-        await createNotification({
-            recipientType: 'candidate',
-            recipientId: recipientUserId,
-            title: 'New candidate message',
-            message: `${senderCandidate.name || senderCandidate.email || 'A candidate'} sent you a message. Open inbox?`,
-            section: 'inbox',
-            actionLabel: 'Open inbox',
-            payload: { threadId: String(thread._id) }
-        });
+        if (await candidateAllowsMessageNotifications(recipientUserId)) {
+            await createNotification({
+                recipientType: 'candidate',
+                recipientId: recipientUserId,
+                title: 'New candidate message',
+                message: `${senderCandidate.name || senderCandidate.email || 'A candidate'} sent you a message. Open inbox?`,
+                section: 'inbox',
+                actionLabel: 'Open inbox',
+                payload: { threadId: String(thread._id) }
+            });
+        }
 
         const populatedThread = await populateThread(MessageThread.findById(thread._id));
-        return res.status(201).json(sanitizeDirectThread(populatedThread));
+        const relationshipAfterSend = await getCandidateRelationship(senderUserId, recipientUserId);
+        return res.status(201).json(serializeThreadForViewer(
+            populatedThread,
+            getUserStateKey(senderUserId),
+            senderUserId,
+            relationshipAfterSend
+        ));
     } catch (error) {
         console.error('Error sending candidate direct message:', error.message);
         return res.status(500).json({
@@ -376,7 +475,7 @@ const replyToThread = async (req, res) => {
                 .map((participant) => String(participant))
                 .find((participant) => participant !== String(senderUserId || ''));
 
-            if (recipientUserId) {
+            if (recipientUserId && await candidateAllowsMessageNotifications(recipientUserId)) {
                 await createNotification({
                     recipientType: 'candidate',
                     recipientId: recipientUserId,
@@ -387,7 +486,7 @@ const replyToThread = async (req, res) => {
                     payload: { threadId: String(thread._id) }
                 });
             }
-        } else if (senderType === 'employer' && thread.candidateUser) {
+        } else if (senderType === 'employer' && thread.candidateUser && await candidateAllowsMessageNotifications(thread.candidateUser)) {
             await createNotification({
                 recipientType: 'candidate',
                 recipientId: thread.candidateUser,
@@ -397,7 +496,7 @@ const replyToThread = async (req, res) => {
                 actionLabel: 'Open inbox',
                 payload: { threadId: String(thread._id) }
             });
-        } else if (senderType === 'candidate' && thread.company) {
+        } else if (senderType === 'candidate' && thread.company && await companyAllowsMessageNotifications(thread.company)) {
             await createNotification({
                 recipientType: 'employer',
                 recipientId: thread.company,
@@ -412,7 +511,15 @@ const replyToThread = async (req, res) => {
         const populatedThread = await populateThread(MessageThread.findById(thread._id));
         return res.status(200).json(
             thread.conversationType === 'candidate-candidate'
-                ? sanitizeDirectThread(populatedThread)
+                ? serializeThreadForViewer(
+                    populatedThread,
+                    getUserStateKey(senderUserId),
+                    senderUserId,
+                    await getCandidateRelationship(
+                        senderUserId,
+                        (thread.participantUsers || []).map(String).find((id) => id !== String(senderUserId || ''))
+                    )
+                )
                 : populatedThread
         );
     } catch (error) {
@@ -426,11 +533,32 @@ const replyToThread = async (req, res) => {
 
 const getCompanyThreads = async (req, res) => {
     try {
+        const authenticatedEmployerId = getAuthenticatedUserId(req);
+        const employer = await Employer.findOne({ _id: authenticatedEmployerId, companyId: req.params.companyId });
+        if (!employer) {
+            return res.status(403).json({ error: 'You cannot access another company inbox' });
+        }
+        employer.lastOnlineAt = new Date();
+        await employer.save();
         const threads = await populateThread(
             MessageThread.find({ company: req.params.companyId }).sort({ lastMessageAt: -1 })
         );
 
-        return res.status(200).json(threads);
+        const actorKey = getCompanyStateKey(req.params.companyId);
+        await Promise.all(threads.map(async (thread) => {
+            let changed = false;
+            (thread.messages || []).forEach((message) => {
+                if (message.senderType !== 'candidate') return;
+                const readBy = new Set((message.readBy || []).map(String));
+                if (!readBy.has(actorKey)) {
+                    readBy.add(actorKey);
+                    message.readBy = [...readBy];
+                    changed = true;
+                }
+            });
+            if (changed) await thread.save();
+        }));
+        return res.status(200).json(threads.map((thread) => serializeThreadForViewer(thread, actorKey)));
     } catch (error) {
         console.error('Error fetching company inbox:', error.message);
         return res.status(500).json({
@@ -447,6 +575,8 @@ const getCandidateThreads = async (req, res) => {
             return res.status(403).json({ error: 'You cannot access another candidate inbox' });
         }
 
+        await User.findByIdAndUpdate(authenticatedUserId, { lastOnlineAt: new Date() });
+
         const threads = await populateThread(
             MessageThread.find({
                 $or: [
@@ -456,7 +586,52 @@ const getCandidateThreads = async (req, res) => {
             }).sort({ lastMessageAt: -1 })
         );
 
-        return res.status(200).json(threads.map(sanitizeDirectThread));
+        const actorKey = getUserStateKey(authenticatedUserId);
+        await Promise.all(threads.map(async (thread) => {
+            let changed = false;
+            (thread.messages || []).forEach((message) => {
+                const isIncoming = thread.conversationType === 'candidate-candidate'
+                    ? String(message.senderUser?._id || message.senderUser || '') !== authenticatedUserId
+                    : message.senderType === 'employer';
+                if (!isIncoming) return;
+                const readBy = new Set((message.readBy || []).map(String));
+                if (!readBy.has(actorKey)) {
+                    readBy.add(actorKey);
+                    message.readBy = [...readBy];
+                    changed = true;
+                }
+            });
+            if (changed) await thread.save();
+        }));
+
+        const serialized = await Promise.all(threads.map(async (thread) => {
+            if (thread.conversationType !== 'candidate-candidate') {
+                const result = serializeThreadForViewer(thread, getUserStateKey(authenticatedUserId), authenticatedUserId);
+                const threadCompanyId = thread.company?._id || thread.company;
+                const employer = threadCompanyId
+                    ? await Employer.findOne({ companyId: threadCompanyId }).select('lastOnlineAt messagePreferences')
+                    : null;
+                const hidden = Boolean(employer?.messagePreferences?.workInSilence);
+                result.viewerState.peerPresenceHidden = hidden;
+                result.viewerState.peerLastOnlineAt = hidden ? null : (employer?.lastOnlineAt || null);
+                result.viewerState.readReceiptsVisible = !hidden;
+                return result;
+            }
+
+            const participantIds = (thread.participantUsers || []).map((participant) => String(participant?._id || participant));
+            const peerUserId = participantIds.find((id) => id !== authenticatedUserId);
+            const relationship = peerUserId
+                ? await getCandidateRelationship(authenticatedUserId, peerUserId)
+                : null;
+            return serializeThreadForViewer(
+                thread,
+                getUserStateKey(authenticatedUserId),
+                authenticatedUserId,
+                relationship
+            );
+        }));
+
+        return res.status(200).json(serialized);
     } catch (error) {
         console.error('Error fetching candidate inbox:', error.message);
         return res.status(500).json({
@@ -466,10 +641,110 @@ const getCandidateThreads = async (req, res) => {
     }
 };
 
+const updateThreadState = async (req, res) => {
+    try {
+        const authenticatedId = getAuthenticatedUserId(req);
+        const { action, companyId } = req.body || {};
+        const thread = await MessageThread.findById(req.params.threadId);
+        if (!thread) {
+            return res.status(404).json({ error: 'Message thread not found' });
+        }
+
+        let actorKey = '';
+        let viewerUserId = '';
+        let relationship = null;
+        if (companyId) {
+            const employer = await Employer.findOne({ _id: authenticatedId, companyId });
+            if (!employer || String(thread.company || '') !== String(companyId)) {
+                return res.status(403).json({ error: 'You cannot update this company conversation' });
+            }
+            actorKey = getCompanyStateKey(companyId);
+        } else if (senderType === 'candidate' && await companyAllowsMessageNotifications(companyId)) {
+            const participantIds = (thread.participantUsers || []).map(String);
+            const ownsEmployerCandidateThread = String(thread.candidateUser || '') === authenticatedId;
+            if (!participantIds.includes(authenticatedId) && !ownsEmployerCandidateThread) {
+                return res.status(403).json({ error: 'You cannot update this conversation' });
+            }
+            actorKey = getUserStateKey(authenticatedId);
+            viewerUserId = authenticatedId;
+            const peerUserId = participantIds.find((id) => id !== authenticatedId);
+            relationship = peerUserId ? await getCandidateRelationship(authenticatedId, peerUserId) : null;
+        }
+
+        const addState = (field) => {
+            const values = new Set((thread[field] || []).map(String));
+            values.add(actorKey);
+            thread[field] = [...values];
+        };
+        const removeState = (field) => {
+            thread[field] = (thread[field] || []).map(String).filter((key) => key !== actorKey);
+        };
+
+        if (action === 'archive') addState('archivedFor');
+        else if (action === 'unarchive') removeState('archivedFor');
+        else if (action === 'delete') addState('deletedFor');
+        else if (action === 'block-chat') addState('chatBlockedFor');
+        else if (action === 'unblock-chat') removeState('chatBlockedFor');
+        else return res.status(400).json({ error: 'Unknown message action' });
+
+        await thread.save();
+        const populated = await populateThread(MessageThread.findById(thread._id));
+        return res.status(200).json(serializeThreadForViewer(populated, actorKey, viewerUserId, relationship));
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            error: error.message || 'Failed to update conversation'
+        });
+    }
+};
+
+const getMessagePreferences = async (req, res) => {
+    try {
+        const authenticatedId = getAuthenticatedUserId(req);
+        const companyId = String(req.query.companyId || '');
+        const account = companyId
+            ? await Employer.findOne({ _id: authenticatedId, companyId }).select('messagePreferences')
+            : await User.findById(authenticatedId).select('messagePreferences');
+        if (!account) {
+            return res.status(404).json({ error: 'Message settings account not found' });
+        }
+        return res.status(200).json({
+            workInSilence: Boolean(account.messagePreferences?.workInSilence),
+            messageNotifications: account.messagePreferences?.messageNotifications !== false
+        });
+    } catch (error) {
+        return res.status(error.status || 500).json({ error: error.message || 'Failed to load message settings' });
+    }
+};
+
+const updateMessagePreferences = async (req, res) => {
+    try {
+        const authenticatedId = getAuthenticatedUserId(req);
+        const { companyId, workInSilence, messageNotifications } = req.body || {};
+        const account = companyId
+            ? await Employer.findOne({ _id: authenticatedId, companyId })
+            : await User.findById(authenticatedId);
+        if (!account) {
+            return res.status(404).json({ error: 'Message settings account not found' });
+        }
+        account.messagePreferences = {
+            workInSilence: Boolean(workInSilence),
+            messageNotifications: messageNotifications !== false
+        };
+        account.markModified('messagePreferences');
+        await account.save();
+        return res.status(200).json(account.messagePreferences);
+    } catch (error) {
+        return res.status(error.status || 500).json({ error: error.message || 'Failed to save message settings' });
+    }
+};
+
 module.exports = {
     createOrReplyMessage,
     createCandidateDirectMessage,
     replyToThread,
+    updateThreadState,
+    getMessagePreferences,
+    updateMessagePreferences,
     getCompanyThreads,
     getCandidateThreads
 };

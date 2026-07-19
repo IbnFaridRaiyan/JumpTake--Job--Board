@@ -19,7 +19,6 @@ const MyApplications = forwardRef(({
     userId,
     onRefresh,
     switchSection,
-    onFooterBack,
     initialTab = 'applications',
     onPendingAssessmentCountChange
 }, ref) => {
@@ -630,15 +629,6 @@ const MyApplications = forwardRef(({
                     </button>
                 </div>
             )}
-
-            <div className="page-footer-actions">
-                <button 
-                    className="back-button"
-                    onClick={onFooterBack || handleBrowseJobs}
-                >
-                    Back
-                </button>
-            </div>
         </>
     );
 });

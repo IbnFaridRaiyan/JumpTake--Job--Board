@@ -61,6 +61,20 @@ const EmployerSchema = new mongoose.Schema({
       default: true
     }
   },
+  lastOnlineAt: {
+    type: Date,
+    default: Date.now
+  },
+  messagePreferences: {
+    workInSilence: {
+      type: Boolean,
+      default: false
+    },
+    messageNotifications: {
+      type: Boolean,
+      default: true
+    }
+  },
   createdAt: {
     type: Date,
     default: Date.now

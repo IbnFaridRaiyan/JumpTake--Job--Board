@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { apiUrl } from '../utils/apiUrl';
+import ProfileAvatar from './ProfileAvatar';
 
 const blockedFeedKey = (userId) => `jumptakeBlockedFeedAuthors:${userId || 'guest'}`;
 
@@ -13,7 +14,7 @@ const readBlockedFeedIds = (userId) => {
     }
 };
 
-const BlocksManager = ({ userId }) => {
+const BlocksManager = ({ userId, profileData }) => {
     const [blockedConnections, setBlockedConnections] = useState([]);
     const [blockedFeedIds, setBlockedFeedIds] = useState(() => readBlockedFeedIds(userId));
     const [posts, setPosts] = useState([]);
@@ -89,6 +90,14 @@ const BlocksManager = ({ userId }) => {
     const hiddenPosts = useMemo(() => posts.filter((post) => (
         Array.isArray(post.hiddenBy) && post.hiddenBy.map(String).includes(String(userId))
     )), [posts, userId]);
+
+    const getPostAvatar = useCallback((post) => {
+        const isViewerPost = String(post?.authorId || '') === String(userId || '');
+        if (isViewerPost && profileData?.profileImage) {
+            return profileData.profileImage;
+        }
+        return post?.authorAvatar || '';
+    }, [profileData?.profileImage, userId]);
 
     const blockedFeedSources = useMemo(() => blockedFeedIds.map((id) => {
         const matchingPost = posts.find((post) => String(post.authorId || '') === id);
@@ -203,15 +212,13 @@ const BlocksManager = ({ userId }) => {
                         &times;
                     </span>
                     <div className="portal-post-detail-header portal-opened-post-detail-header">
-                        <span className={`portal-author-open-button portal-post-avatar ${selectedPost.authorAvatar ? '' : 'has-default-profile-icon'}`}>
-                            {selectedPost.authorAvatar ? (
-                                <img src={selectedPost.authorAvatar} alt={selectedPost.authorName || 'Post author'} />
-                            ) : (
-                                <span className="portal-default-profile-icon" aria-hidden="true">
-                                    {String(selectedPost.authorName || 'J').charAt(0).toUpperCase()}
-                                </span>
-                            )}
-                        </span>
+                        <ProfileAvatar
+                            imageSrc={getPostAvatar(selectedPost)}
+                            name={selectedPost.authorName || 'JumpTake user'}
+                            className="portal-author-open-button portal-post-avatar blocks-post-avatar"
+                            imageClassName="profile-avatar-image"
+                            useProfileIconFallback
+                        />
                         <div className="portal-post-title-block">
                             <h3 className="portal-post-author-name">
                                 <span className="portal-author-name-button">{selectedPost.authorName || 'JumpTake user'}</span>

@@ -55247,10 +55247,6 @@ html[data-theme="light"] body #root .friend-invitations-section .friend-invitati
 html[data-theme="light"] body #root .friend-invitations-section .friend-invitation-actions :is(button, .settings-button, .secondary-button, .friend-block-button, .friend-cancel-button, .friend-status-pill):is(:hover, :focus, :active, :disabled),
 html[data-theme="light"] body #root .friend-invitations-section .friend-invitation-actions :is(button, .settings-button, .secondary-button, .friend-block-button, .friend-cancel-button, .friend-status-pill) *,
 html[data-theme="light"] body #root .friend-invitations-section .friend-invitation-actions :is(button, .settings-button, .secondary-button, .friend-block-button, .friend-cancel-button, .friend-status-pill):is(:hover, :focus, :active, :disabled) * {
-  color: #111111 !important;
-  fill: #111111 !important;
-  stroke: #111111 !important;
-  -webkit-text-fill-color: #111111 !important;
   opacity: 1 !important;
 }
 
@@ -85212,4 +85208,1288 @@ html body .portal-profile-detail-backdrop .portal-profile-detail-card .portal-pr
   color: #d99a00 !important;
   fill: #d99a00 !important;
   stroke: #d99a00 !important;
+}
+
+/* Screenshot 104: equal mobile gutters around every Home feed card. */
+@media (max-width: 768px) {
+  html body #root .home-page .portal-home-feed-scroll > .portal-home-tab-panel {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    padding-left: 0.42rem !important;
+    padding-right: 0.42rem !important;
+  }
+
+  html body #root .home-page .portal-home-tab-panel .portal-social-list,
+  html body #root .home-page .portal-home-tab-panel .portal-social-post-card {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+}
+
+/* Screenshots 105, 106 and 112: compact Friends shell and true white invitation cards. */
+html body #root .home-page .friend-invitations-section :is(.friend-invitation-card, .friend-outgoing-row),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .friend-invitations-section :is(.friend-invitation-card, .friend-outgoing-row) {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+}
+
+html body #root .home-page .friend-invitations-section .friend-cancel-button,
+html body #root .home-page .friend-invitations-section .friend-cancel-button:is(:hover, :focus, :focus-visible, :active, :disabled),
+html body #root .home-page .friend-invitations-section .friend-cancel-button :is(span, svg, path) {
+  border-color: #681421 !important;
+  background: #681421 !important;
+  background-color: #681421 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .home-page .mobile-section-friend-invitations .friend-invitations-shell,
+  html body #root .home-page .mobile-section-friends .friend-invitations-shell {
+    margin-top: -0.58rem !important;
+  }
+
+  html body #root .home-page .friend-invitations-section .friend-invitation-tabs {
+    margin-top: 0 !important;
+  }
+}
+
+/* Screenshot 107: notification records use the same narrow display face as portal activity copy. */
+html body #root .home-page .notifications-page .notification-row :is(h3, p, time, .notification-action, .notification-action span) {
+  font-family: "Share Tech", "Segoe UI", sans-serif !important;
+}
+
+html body #root .home-page .notifications-page .notification-row h3 {
+  font-weight: 800 !important;
+}
+
+/* Screenshots 108 and 111: compact drafts, white records, and cream Applications hub surface. */
+html body #root .home-page .applications-hub-container,
+html body #root .home-page .applications-hub-container > .applications-hub-panel,
+html body #root .home-page .applications-hub-panel > .applications-container,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .applications-hub-container,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .applications-hub-container > .applications-hub-panel {
+  background: #f7eddf !important;
+  background-color: #f7eddf !important;
+  background-image: none !important;
+}
+
+html body #root .home-page .applications-hub-panel :is(.fresh-application-card, .application-card),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .applications-hub-panel :is(.fresh-application-card, .application-card) {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+}
+
+html body #root .home-page .draft-applications-container .application-card-actions {
+  display: inline-flex !important;
+  flex-flow: row nowrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.36rem !important;
+  width: max-content !important;
+  max-width: 100% !important;
+}
+
+html body #root .home-page .draft-applications-container .application-card-actions > .delete-button,
+html body #root .home-page .draft-applications-container .application-card-actions > .delete-button:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  position: static !important;
+  display: inline-grid !important;
+  flex: 0 0 2rem !important;
+  place-items: center !important;
+  width: 2rem !important;
+  min-width: 2rem !important;
+  max-width: 2rem !important;
+  height: 2rem !important;
+  min-height: 2rem !important;
+  max-height: 2rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+html body #root .home-page .draft-applications-container .application-card-actions > .delete-button .trash-svg {
+  width: 1.35rem !important;
+  height: 1.35rem !important;
+  margin: 0 !important;
+}
+
+html body #root .home-page .applications-hub-container :is(.page-footer-actions, .application-detail-back-icon, button.back-button) {
+  display: none !important;
+}
+
+/* Screenshots 109 and 110: clean Blocks surface and bounded post-detail media/header. */
+html body #root .home-page .portal-section-transition-shell[data-section="blocks"],
+html body #root .home-page .portal-section-transition-shell[data-section="blocks"] > .blocks-manager-section,
+html body #root .home-page .blocks-manager-grid {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .blocks-manager-card,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .blocks-manager-card {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+}
+
+html body #root .home-page .blocks-manager-row .blocks-manager-actions > button.blocks-view-post-button,
+html body #root .home-page .blocks-manager-row .blocks-manager-actions > button.blocks-view-post-button:is(:hover, :focus, :focus-visible, :active) {
+  border: 1px solid #681421 !important;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  color: #681421 !important;
+  -webkit-text-fill-color: #681421 !important;
+}
+
+html body #root .home-page .blocks-manager-row .blocks-manager-actions > button:not(.blocks-view-post-button),
+html body #root .home-page .blocks-manager-row .blocks-manager-actions > button:not(.blocks-view-post-button):is(:hover, :focus, :focus-visible, :active) {
+  border: 1px solid #681421 !important;
+  background: #681421 !important;
+  background-color: #681421 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html body .portal-post-detail-modal.blocks-post-detail-modal {
+  box-sizing: border-box !important;
+  width: min(92vw, 30rem) !important;
+  max-width: calc(100vw - 1.4rem) !important;
+  max-height: min(88dvh, 44rem) !important;
+  padding: 1rem !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+html body .blocks-post-detail-modal .portal-post-detail-header.portal-opened-post-detail-header {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: 2.35rem minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 0.62rem !important;
+  width: 100% !important;
+  min-height: 2.35rem !important;
+  margin: 0 0 0.82rem !important;
+  padding: 0 2rem 0 0 !important;
+}
+
+html body .blocks-post-detail-modal .portal-post-detail-header .portal-author-open-button.portal-post-avatar,
+html body .blocks-post-detail-modal .portal-post-detail-header .portal-author-open-button.portal-post-avatar:not(.has-default-profile-icon) {
+  display: grid !important;
+  place-items: center !important;
+  width: 2.35rem !important;
+  min-width: 2.35rem !important;
+  max-width: 2.35rem !important;
+  height: 2.35rem !important;
+  min-height: 2.35rem !important;
+  max-height: 2.35rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 50% !important;
+  background: #d9e8e4 !important;
+}
+
+html body .blocks-post-detail-modal .portal-post-detail-header .portal-post-avatar :is(img, .portal-default-profile-icon, svg) {
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+}
+
+html body .blocks-post-detail-modal .portal-post-detail-header .portal-post-title-block {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+html body .blocks-post-detail-modal .portal-post-detail-header .portal-post-title-block :is(h3, span, p) {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body .blocks-post-detail-modal .portal-post-detail-body {
+  position: relative !important;
+  z-index: 1 !important;
+  width: 100% !important;
+  margin: 0 0 0.8rem !important;
+}
+
+html body .blocks-post-detail-modal .portal-post-detail-media,
+html body .blocks-post-detail-modal .portal-post-media.portal-post-detail-media {
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  margin: 0.65rem 0 0.85rem !important;
+  overflow: hidden !important;
+}
+
+html body .blocks-post-detail-modal .portal-post-detail-media .portal-post-image-preview-button,
+html body .blocks-post-detail-modal .portal-post-detail-media .portal-post-image-preview-button:is(:hover, :focus, :focus-visible, :active) {
+  display: grid !important;
+  place-items: center !important;
+  width: auto !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+html body .blocks-post-detail-modal .portal-post-detail-media :is(img, video),
+html body .blocks-post-detail-modal .portal-post-detail-media .portal-post-image-preview-button img {
+  display: block !important;
+  width: auto !important;
+  max-width: min(100%, 14rem) !important;
+  height: auto !important;
+  max-height: 17rem !important;
+  margin: 0 auto !important;
+  border-radius: 0.55rem !important;
+  object-fit: contain !important;
+}
+
+/* About uses the page scroller; Settings loses the sharp white wrapper. */
+html body #root .home-page .main-content.mobile-section-about-jumptake {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior-y: auto !important;
+  touch-action: pan-y !important;
+}
+
+html body #root .home-page .mobile-section-about-jumptake > .portal-section-transition-shell,
+html body #root .home-page .mobile-section-about-jumptake .about-jumptake-section {
+  height: auto !important;
+  min-height: min-content !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+html body #root .home-page .portal-section-transition-shell[data-section="settings"],
+html body #root .home-page .portal-section-transition-shell[data-section="settings"] > .settings-container,
+html body #root .home-page .settings-container > .settings-tabs,
+html body #root .home-page .settings-container .tabs-content,
+html body #root .home-page .settings-container .settings-tab {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Screenshots 113-115: real viewport modal and compact pastel-green analytics CTA. */
+html body .analytics-detail-overlay {
+  position: fixed !important;
+  z-index: 12050 !important;
+  inset: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  padding: 1rem !important;
+  overflow: hidden !important;
+  background: rgba(0, 0, 0, 0.64) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+html body .analytics-detail-overlay .analytics-detail-modal {
+  position: relative !important;
+  box-sizing: border-box !important;
+  width: min(92vw, 35rem) !important;
+  min-width: 0 !important;
+  max-width: calc(100vw - 2rem) !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: calc(100dvh - 2rem) !important;
+  margin: 0 !important;
+  padding: 1.05rem !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  border: 1px solid rgba(86, 170, 161, 0.35) !important;
+  border-radius: 1rem !important;
+  background: #eaf7f0 !important;
+  box-shadow: 0 1.4rem 4rem rgba(0, 0, 0, 0.42) !important;
+  color: #173b37 !important;
+}
+
+html body .analytics-detail-overlay .analytics-detail-modal > .analytics-detail-close,
+html body .analytics-detail-overlay .analytics-detail-modal > .analytics-detail-close:is(:hover, :focus, :focus-visible, :active) {
+  position: absolute !important;
+  top: 0.55rem !important;
+  right: 0.62rem !important;
+  z-index: 3 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 1.65rem !important;
+  min-width: 1.65rem !important;
+  max-width: 1.65rem !important;
+  height: 1.65rem !important;
+  min-height: 1.65rem !important;
+  max-height: 1.65rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #681421 !important;
+  -webkit-text-fill-color: #681421 !important;
+  font-size: 1.35rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+}
+
+html body #root .home-page .analytics-card-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 0.65rem !important;
+}
+
+html body #root .home-page .analytics-card-footer > span {
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
+}
+
+html body #root .home-page .analytics-card-footer > button,
+html body #root .home-page .analytics-card-footer > button:is(:hover, :focus, :focus-visible, :active) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+  gap: 0.32rem !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  min-height: 2rem !important;
+  margin: 0 !important;
+  padding: 0.42rem 0.82rem !important;
+  border: 1px solid #8fbea9 !important;
+  border-radius: 999px !important;
+  background: #9ccbb6 !important;
+  background-color: #9ccbb6 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 0.7rem !important;
+  font-weight: 850 !important;
+  white-space: nowrap !important;
+}
+
+html body #root .home-page .analytics-card-footer > button :is(svg, path) {
+  width: 0.9rem !important;
+  height: 0.9rem !important;
+  color: #ffffff !important;
+  fill: none !important;
+  stroke: #ffffff !important;
+}
+
+/* Conflict cleanup: remove legacy white wrappers and keep controls in their owning component. */
+html body #root .home-page .portal-section-transition-shell[data-section="settings"]::before,
+html body #root .home-page .portal-section-transition-shell[data-section="settings"]::after,
+html body #root .home-page .settings-container::before,
+html body #root .home-page .settings-container::after,
+html body #root .home-page .settings-container :is(.settings-tabs, .tabs-content, .settings-tab)::before,
+html body #root .home-page .settings-container :is(.settings-tabs, .tabs-content, .settings-tab)::after {
+  display: none !important;
+  content: none !important;
+}
+
+html body #root .home-page .portal-section-transition-shell[data-section="settings"],
+html body #root .home-page .portal-section-transition-shell[data-section="settings"] > .settings-container,
+html body #root .home-page .settings-container :is(.settings-tabs, .tabs-content, .settings-tab) {
+  outline: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html body #root .home-page .applications-hub-panel > .draft-applications-container,
+html body #root .home-page .applications-hub-panel > .draft-applications-container > .applications-list,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .applications-hub-panel > .draft-applications-container,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .applications-hub-panel > .draft-applications-container > .applications-list {
+  min-height: 0 !important;
+  padding-bottom: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .friend-invitations-section .friend-invitation-actions > button.friend-cancel-button,
+html body #root .home-page .friend-invitations-section .friend-invitation-actions > button.friend-cancel-button:is(:hover, :focus, :focus-visible, :active, :disabled),
+html body #root .home-page .friend-invitations-section .friend-invitation-actions > button.friend-cancel-button :is(span, svg, path) {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html body .portal-post-detail-modal.blocks-post-detail-modal .blocks-post-avatar {
+  position: static !important;
+  inset: auto !important;
+  display: grid !important;
+  place-items: center !important;
+  box-sizing: border-box !important;
+  width: 2.5rem !important;
+  min-width: 2.5rem !important;
+  max-width: 2.5rem !important;
+  height: 2.5rem !important;
+  min-height: 2.5rem !important;
+  max-height: 2.5rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 50% !important;
+  transform: none !important;
+}
+
+html body .portal-post-detail-modal.blocks-post-detail-modal .blocks-post-avatar > :is(img, svg) {
+  position: static !important;
+  inset: auto !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  border-radius: 50% !important;
+  transform: none !important;
+}
+
+html body #root .floating-messenger-assistant-chat .public-ai-chat-header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  justify-content: stretch !important;
+}
+
+html body #root .floating-messenger-assistant-chat .portal-ai-clear-chat-button {
+  position: static !important;
+  justify-self: end !important;
+  margin: 0 0 0 auto !important;
+  transform: none !important;
+}
+
+/* Messages workspace: shared navigation and conversation actions. */
+.message-workspace-nav {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.42rem;
+  width: 100%;
+  margin: 0.65rem 0;
+  padding: 0.5rem;
+  border: 1px solid rgba(104, 20, 33, 0.13);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.message-workspace-tab {
+  position: relative;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 0.22rem;
+  min-width: 0;
+  min-height: 4.15rem;
+  padding: 0.45rem 0.3rem;
+  border: 1px solid rgba(60, 51, 45, 0.13);
+  border-radius: 0.82rem;
+  background: #fff;
+  color: #1f2937;
+  cursor: pointer;
+}
+
+.message-workspace-tab:is(.is-active, :hover, :focus-visible) {
+  border-color: rgba(104, 20, 33, 0.35);
+  background: #f8efea;
+  color: #681421;
+}
+
+.message-workspace-tab svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: currentColor;
+}
+
+.message-workspace-tab > span {
+  max-width: 100%;
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1.05;
+  text-align: center;
+}
+
+.message-workspace-tab > small {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.3rem;
+  display: grid;
+  place-items: center;
+  min-width: 1rem;
+  height: 1rem;
+  padding: 0 0.22rem;
+  border-radius: 999px;
+  background: #681421;
+  color: #fff;
+  font-size: 0.58rem;
+}
+
+.message-workspace-nav.is-compact {
+  grid-template-columns: none;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(5.25rem, 1fr);
+  margin: 0;
+  padding: 0.42rem;
+  overflow-x: auto;
+  border-width: 0 0 1px;
+  border-radius: 0;
+  scrollbar-width: thin;
+}
+
+.message-workspace-nav.is-compact .message-workspace-tab {
+  min-height: 3.55rem;
+  padding: 0.38rem 0.28rem;
+}
+
+.message-thread-options {
+  position: relative;
+  z-index: auto;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.message-thread-options.is-open,
+.message-thread-options.is-closing {
+  z-index: 90;
+}
+
+.message-thread-options-trigger,
+.message-thread-options-trigger:is(:hover, :focus, :focus-visible, :active) {
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  min-width: 1.9rem;
+  max-width: 1.9rem;
+  height: 1.9rem;
+  min-height: 1.9rem;
+  max-height: 1.9rem;
+  margin: 0;
+  padding: 0 0 0.35rem;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: none;
+  color: #681421;
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.message-thread-options-menu {
+  position: absolute;
+  top: calc(100% + 0.28rem);
+  right: 0;
+  z-index: 40;
+  display: grid;
+  width: max-content;
+  min-width: 10rem;
+  padding: 0.38rem;
+  border: 1px solid rgba(104, 20, 33, 0.2);
+  border-radius: 0.78rem;
+  background: #fffaf5;
+  box-shadow: 0 0.8rem 2rem rgba(45, 31, 25, 0.18);
+  transform-origin: top right;
+  will-change: opacity, transform;
+}
+
+@keyframes message-options-menu-in {
+  from { opacity: 0; transform: translateY(-0.35rem) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes message-options-menu-out {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(-0.28rem) scale(0.97); }
+}
+
+.message-thread-options-menu.is-opening {
+  animation: message-options-menu-in 180ms cubic-bezier(0.2, 0.82, 0.3, 1) both;
+}
+
+.message-thread-options-menu.is-closing {
+  pointer-events: none;
+  animation: message-options-menu-out 180ms ease both;
+}
+
+.message-thread-options-menu > button {
+  width: 100%;
+  min-height: 2rem;
+  padding: 0.45rem 0.62rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: #2b2523;
+  font-size: 0.72rem;
+  font-weight: 750;
+  text-align: left;
+  cursor: pointer;
+}
+
+.message-thread-options-menu > button:hover {
+  background: #f3e5df;
+  color: #681421;
+}
+
+.messenger-chat-header,
+.floating-messenger-chat-bar {
+  position: relative;
+}
+
+.messenger-chat-header > .message-thread-options,
+.floating-messenger-chat-bar > .message-thread-options {
+  margin-left: auto;
+}
+
+.message-profile-avatar-button,
+.message-profile-avatar-button:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: auto;
+  min-width: 0;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: none;
+  opacity: 1;
+  cursor: pointer;
+}
+
+.message-profile-avatar-button:disabled {
+  cursor: default;
+}
+
+.message-unblock-chat-button {
+  align-self: center;
+  width: max-content;
+  margin: 0.75rem auto;
+  padding: 0.58rem 1rem;
+  border: 1px solid #681421;
+  border-radius: 999px;
+  background: #681421;
+  color: #fff;
+  font-weight: 800;
+}
+
+.new-message-finder {
+  display: grid;
+  gap: 0.6rem;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.new-message-finder-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.65rem;
+}
+
+.new-message-finder :is(h3, h4, p) {
+  margin: 0;
+}
+
+.new-message-finder h3 {
+  color: #321f20;
+  font-size: 0.92rem;
+}
+
+.new-message-finder h4 {
+  margin-top: 0.3rem;
+  color: #681421;
+  font-size: 0.76rem;
+}
+
+.new-message-finder-heading p,
+.message-workspace-empty-copy {
+  color: #6d625e;
+  font-size: 0.68rem;
+  line-height: 1.35;
+}
+
+.new-message-id-toggle,
+.new-message-id-toggle:is(:hover, :focus, :focus-visible, :active) {
+  display: grid;
+  flex: 0 0 1.8rem;
+  place-items: center;
+  width: 1.8rem;
+  min-width: 1.8rem;
+  max-width: 1.8rem;
+  height: 1.8rem;
+  min-height: 1.8rem;
+  max-height: 1.8rem;
+  padding: 0;
+  border: 1px solid #681421;
+  border-radius: 0.5rem;
+  background: #681421;
+  color: #fff;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.new-message-id-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.42rem;
+}
+
+.new-message-id-form input {
+  min-width: 0;
+  min-height: 2.35rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid rgba(104, 20, 33, 0.25);
+  border-radius: 999px;
+  background: #fff;
+}
+
+.new-message-id-form button {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #681421;
+  border-radius: 999px;
+  background: #681421;
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.new-message-contact-list {
+  display: grid;
+  gap: 0.38rem;
+}
+
+.new-message-contact {
+  display: grid;
+  grid-template-columns: 2.2rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.48rem;
+  border: 1px solid rgba(104, 20, 33, 0.12);
+  border-radius: 0.78rem;
+  background: #fff;
+  color: #252122;
+  text-align: left;
+}
+
+.new-message-contact-avatar {
+  width: 2.2rem;
+  height: 2.2rem;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.new-message-contact-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.new-message-contact > span {
+  display: grid;
+  min-width: 0;
+}
+
+.new-message-contact :is(strong, small) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.new-message-contact strong { font-size: 0.75rem; }
+.new-message-contact small { color: #706662; font-size: 0.63rem; }
+.new-message-contact > b { color: #681421; font-size: 1.1rem; text-align: center; }
+
+.message-settings-panel {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  text-align: left;
+}
+
+.message-settings-heading :is(h3, p) {
+  margin: 0;
+}
+
+.message-settings-heading h3 {
+  color: #311f21;
+  font-size: 0.95rem;
+}
+
+.message-settings-heading p {
+  margin-top: 0.18rem;
+  color: #6d625e;
+  font-size: 0.68rem;
+  line-height: 1.35;
+}
+
+.message-settings-list {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.message-setting-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.7rem;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 4.2rem;
+  padding: 0.75rem;
+  border: 1px solid rgba(104, 20, 33, 0.14);
+  border-radius: 0.85rem;
+  background: #fff;
+  cursor: pointer;
+}
+
+.message-setting-row > span {
+  display: grid;
+  gap: 0.18rem;
+}
+
+.message-setting-row strong {
+  color: #2b2222;
+  font-size: 0.78rem;
+}
+
+.message-setting-row small {
+  color: #6d625e;
+  font-size: 0.64rem;
+  line-height: 1.35;
+}
+
+.message-setting-row > input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.message-setting-row > i {
+  position: relative;
+  width: 2.7rem;
+  height: 1.55rem;
+  border: 1px solid rgba(104, 20, 33, 0.25);
+  border-radius: 999px;
+  background: #e8dfdc;
+  transition: background 180ms ease, border-color 180ms ease;
+}
+
+.message-setting-row > i > b {
+  position: absolute;
+  top: 0.16rem;
+  left: 0.17rem;
+  width: 1.12rem;
+  height: 1.12rem;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0.15rem 0.35rem rgba(0, 0, 0, 0.2);
+  transition: transform 180ms ease;
+}
+
+.message-setting-row > input:checked + i {
+  border-color: #681421;
+  background: #681421;
+}
+
+.message-setting-row > input:checked + i > b {
+  transform: translateX(1.12rem);
+}
+
+.message-setting-row > input:focus-visible + i {
+  outline: 2px solid rgba(104, 20, 33, 0.25);
+  outline-offset: 2px;
+}
+
+.inbox-thread-card.button-message[role="button"],
+.floating-messenger-contact[role="button"] {
+  cursor: pointer;
+}
+
+.inbox-thread-card.button-message[role="button"] {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+}
+
+.floating-messenger-contact-copy,
+.floating-messenger-chat-copy,
+.messenger-chat-head > div,
+.inbox-thread-card .notice-content {
+  min-width: 0;
+  text-align: left !important;
+}
+
+.floating-messenger-contact-copy :is(strong, span),
+.floating-messenger-chat-copy :is(strong, span),
+.messenger-chat-head :is(h2, p) {
+  display: block;
+  width: 100%;
+  margin-inline: 0;
+  text-align: left !important;
+}
+
+.floating-messenger-contact[role="button"] > .message-thread-options,
+.inbox-thread-card[role="button"] > .message-thread-options {
+  justify-self: end;
+}
+
+.floating-messenger-contact[role="button"] {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+}
+
+.portal-composer-tagged-users,
+.portal-post-tagged-users {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.32rem;
+  color: #645956;
+  font-size: 0.7rem;
+}
+
+.portal-composer-tagging {
+  position: relative;
+}
+
+.portal-composer-tagged-users > button.portal-composer-add-tag {
+  border-style: dashed;
+  background: #681421;
+  color: #fff;
+}
+
+.portal-composer-tag-picker {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  z-index: 25;
+  display: grid;
+  gap: 0.28rem;
+  width: min(19rem, 90vw);
+  max-height: 13rem;
+  padding: 0.45rem;
+  overflow-y: auto;
+  border: 1px solid rgba(104, 20, 33, 0.2);
+  border-radius: 0.8rem;
+  background: #fffaf5;
+  box-shadow: 0 0.9rem 2.2rem rgba(44, 29, 26, 0.2);
+}
+
+.portal-composer-tag-picker > button {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  min-height: 2.25rem;
+  padding: 0.42rem 0.55rem;
+  border: 1px solid rgba(104, 20, 33, 0.1);
+  border-radius: 0.58rem;
+  background: #fff;
+  color: #2c2524;
+  text-align: left;
+}
+
+.portal-composer-tag-picker > button.is-selected {
+  border-color: rgba(104, 20, 33, 0.35);
+  background: #f4e6e2;
+  color: #681421;
+}
+
+.portal-composer-tag-picker > button :is(span, small) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.portal-composer-tag-picker > button span { font-size: 0.72rem; font-weight: 800; }
+.portal-composer-tag-picker > button small { color: #726561; font-size: 0.62rem; }
+.portal-composer-tag-picker > button b { font-size: 0.62rem; }
+.portal-composer-tag-picker > p { margin: 0; padding: 0.6rem; font-size: 0.7rem; }
+
+.portal-composer-tagged-users > span,
+.portal-post-tagged-users > span {
+  font-weight: 800;
+}
+
+.portal-composer-tagged-users > button,
+.portal-post-tagged-users > button {
+  width: auto;
+  min-width: 0;
+  min-height: 1.55rem;
+  margin: 0;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid rgba(104, 20, 33, 0.22);
+  border-radius: 999px;
+  background: #fff7f1;
+  color: #681421;
+  font-size: 0.68rem;
+  font-weight: 750;
+}
+
+.portal-post-tagged-users {
+  margin-top: 0.42rem;
+  padding-top: 0.38rem;
+  border-top: 1px solid rgba(104, 20, 33, 0.08);
+}
+
+.portal-post-tagged-users > button.portal-post-tagged-more {
+  display: grid;
+  place-items: center;
+  width: 1.6rem;
+  min-width: 1.6rem;
+  height: 1.6rem;
+  padding: 0;
+  background: #681421;
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .message-workspace-nav:not(.is-compact) {
+    grid-template-columns: repeat(6, minmax(4.4rem, 1fr));
+    overflow-x: auto;
+  }
+
+  .message-workspace-tab {
+    min-height: 3.75rem;
+  }
+
+  .message-workspace-tab > span {
+    font-size: 0.61rem;
+  }
+
+  .message-thread-options-menu {
+    right: 0;
+    min-width: 9.3rem;
+  }
+}
+
+/* Screenshot 116-118: compact send control, bounded animated menus, and chat presence header. */
+html body > .floating-messenger.is-open .message-thread-options-menu,
+html body > .floating-messenger.is-open .message-thread-options-menu > button,
+html body > .floating-messenger.is-open .message-thread-options-menu > button:is(:hover, :focus, :focus-visible, :active),
+html body #root .messenger-inbox .message-thread-options-menu,
+html body #root .messenger-inbox .message-thread-options-menu > button,
+html body #root .messenger-inbox .message-thread-options-menu > button:is(:hover, :focus, :focus-visible, :active) {
+  color: #211d1c !important;
+  -webkit-text-fill-color: #211d1c !important;
+  text-shadow: none !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-contact .message-thread-options-menu {
+  top: calc(100% + 0.18rem) !important;
+  right: 0 !important;
+  left: auto !important;
+  width: 9.1rem !important;
+  min-width: 9.1rem !important;
+  max-width: min(9.1rem, calc(100vw - 2.5rem)) !important;
+  padding: 0.3rem !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-contact:has(.message-thread-options.is-open),
+html body > .floating-messenger.is-open .floating-messenger-contact:has(.message-thread-options.is-closing) {
+  position: relative !important;
+  z-index: 100 !important;
+  overflow: visible !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-chat-bar .message-thread-options-menu {
+  top: calc(100% + 0.38rem) !important;
+  right: 0 !important;
+  left: auto !important;
+  width: 8.9rem !important;
+  min-width: 8.9rem !important;
+  max-width: min(8.9rem, calc(100vw - 1.5rem)) !important;
+  padding: 0.28rem !important;
+}
+
+html body > .floating-messenger.is-open .message-thread-options-menu > button {
+  min-height: 1.85rem !important;
+  padding: 0.38rem 0.5rem !important;
+  background: transparent !important;
+  font-size: 0.68rem !important;
+  line-height: 1.15 !important;
+  text-align: left !important;
+}
+
+html body > .floating-messenger.is-open .message-thread-options-menu > button:hover {
+  background: #f2e3dd !important;
+  color: #681421 !important;
+  -webkit-text-fill-color: #681421 !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-chat-bar {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+  min-height: 4.35rem !important;
+  padding: 0.55rem 0.62rem !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-chat-head {
+  display: grid !important;
+  grid-template-columns: 2.55rem minmax(0, 1fr) !important;
+  align-items: center !important;
+  justify-self: start !important;
+  gap: 0.48rem !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-chat-head .message-profile-avatar-button,
+html body > .floating-messenger.is-open .floating-messenger-chat-head .floating-messenger-chat-avatar {
+  width: 2.55rem !important;
+  min-width: 2.55rem !important;
+  max-width: 2.55rem !important;
+  height: 2.55rem !important;
+  min-height: 2.55rem !important;
+  max-height: 2.55rem !important;
+  margin: 0 !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-chat-copy {
+  display: grid !important;
+  align-content: center !important;
+  gap: 0.12rem !important;
+  min-width: 0 !important;
+  background: transparent !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-chat-copy > strong {
+  overflow: hidden !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 0.86rem !important;
+  font-weight: 850 !important;
+  line-height: 1.1 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-chat-copy > span {
+  overflow: hidden !important;
+  color: rgba(255, 255, 255, 0.78) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.78) !important;
+  font-size: 0.62rem !important;
+  font-weight: 650 !important;
+  line-height: 1.15 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-chat-actions {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  justify-self: end !important;
+  gap: 0.12rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-chat-actions .message-thread-options {
+  margin: 0 !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-chat-actions .message-thread-options-trigger,
+html body > .floating-messenger.is-open .floating-messenger-chat-actions .message-thread-options-trigger:is(:hover, :focus, :focus-visible, :active),
+html body > .floating-messenger.is-open .floating-messenger-chat-actions .floating-messenger-mobile-back,
+html body > .floating-messenger.is-open .floating-messenger-chat-actions .floating-messenger-mobile-back:is(:hover, :focus, :focus-visible, :active) {
+  display: grid !important;
+  place-items: center !important;
+  width: 1.9rem !important;
+  min-width: 1.9rem !important;
+  max-width: 1.9rem !important;
+  height: 1.9rem !important;
+  min-height: 1.9rem !important;
+  max-height: 1.9rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0.42rem !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html body > .floating-messenger.is-open .new-message-id-toggle,
+html body > .floating-messenger.is-open .new-message-id-toggle:is(:hover, :focus, :focus-visible, :active),
+html body #root .messenger-inbox .new-message-id-toggle,
+html body #root .messenger-inbox .new-message-id-toggle:is(:hover, :focus, :focus-visible, :active) {
+  width: 1.8rem !important;
+  min-width: 1.8rem !important;
+  max-width: 1.8rem !important;
+  height: 1.8rem !important;
+  min-height: 1.8rem !important;
+  max-height: 1.8rem !important;
+  padding: 0 !important;
+  border-radius: 0.5rem !important;
+  background: #681421 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 0.95rem !important;
+}
+
+.message-read-receipt {
+  margin-left: auto;
+  color: #79c9b7 !important;
+  -webkit-text-fill-color: #79c9b7 !important;
+  font-size: 0.58rem !important;
+  font-weight: 800 !important;
 }

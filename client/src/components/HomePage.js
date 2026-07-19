@@ -1008,7 +1008,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     userId={user?.id}
                 />;
             case 'blocks':
-                return <BlocksManager userId={user?.id} />;
+                return <BlocksManager userId={user?.id} profileData={jobSeekerData} />;
             case 'settings':
                 return <UserSettings
                     userId={user?.id}

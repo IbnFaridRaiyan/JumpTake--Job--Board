@@ -377,7 +377,7 @@ const BlocksManager = ({ userId, profileData }) => {
                                 onClick={() => setActiveSection(section.id)}
                                 aria-current={activeSection === section.id ? 'page' : undefined}
                             >
-                                {section.label}
+                                <span className="blocks-manager-tab-label">{section.label}</span>
                             </button>
                         ))}
                     </nav>

@@ -88131,3 +88131,293 @@ html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-
   font-size: 0.6rem !important;
   line-height: 1 !important;
 }
+
+/* July 19 consistency pass: tabs, empty states, Create icon colour, paper, and AI composer. */
+
+/* Blocks tabs are individually sized and allow a deliberate two-line label. */
+html body #root .home-page .blocks-manager-tabs {
+  align-items: stretch !important;
+  grid-template-columns: none !important;
+}
+
+html body #root .home-page .blocks-manager-tab,
+html body #root .home-page .blocks-manager-tab:is(:hover, :focus, :focus-visible, :active) {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 5.45rem !important;
+  max-width: 7.6rem !important;
+  min-height: 2.75rem !important;
+  height: auto !important;
+  padding: 0.38rem 0.68rem !important;
+  white-space: normal !important;
+  overflow: visible !important;
+}
+
+html body #root .home-page .blocks-manager-tab-label {
+  display: -webkit-box !important;
+  width: max-content !important;
+  max-width: 6.25rem !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  white-space: normal !important;
+  text-align: center !important;
+  text-wrap: balance !important;
+  line-height: 1.08 !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 2 !important;
+}
+
+/* Active rail glyphs use the logo's softer maroon, without recolouring labels. */
+html body #root .home-page .portal-uiverse-sidebar .sidebar__link.is-active > .icon,
+html body #root .home-page .portal-uiverse-sidebar .sidebar__link.is-active > .icon :is(svg, path),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-uiverse-sidebar .sidebar__link.is-active > .icon,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-uiverse-sidebar .sidebar__link.is-active > .icon :is(svg, path) {
+  color: #b45b72 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: #b45b72 !important;
+}
+
+/* One recognizable, roomy empty-state treatment for portal collections. */
+html body #root .home-page :is(
+  .no-applications-message,
+  .no-jobs-message,
+  .no-candidates,
+  .no-recommendations,
+  .notification-empty-state,
+  .portal-feed-empty,
+  .resume-playground-empty,
+  .friend-invitation-panel.is-empty-panel > .empty-info,
+  .friend-add-results > .empty-info
+),
+html body #root .home-page .blocks-manager-card > .blocks-empty {
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-height: 12rem !important;
+  margin: 0 !important;
+  padding: 1.35rem 1rem !important;
+  border: 1px solid rgba(104, 20, 33, 0.15) !important;
+  border-radius: 1rem !important;
+  background: #ffffff !important;
+  box-shadow: 0 0.48rem 1.2rem rgba(75, 48, 36, 0.06) !important;
+  color: #68736f !important;
+  text-align: center !important;
+  line-height: 1.45 !important;
+}
+
+html body #root .home-page :is(
+  .no-applications-message,
+  .no-jobs-message,
+  .no-candidates,
+  .no-recommendations,
+  .notification-empty-state,
+  .portal-feed-empty,
+  .resume-playground-empty,
+  .friend-invitation-panel.is-empty-panel > .empty-info,
+  .friend-add-results > .empty-info
+) :is(h3, p),
+html body #root .home-page .blocks-manager-card > .blocks-empty {
+  max-width: 31rem !important;
+}
+
+html body #root .home-page :is(
+  .no-applications-message,
+  .no-jobs-message,
+  .no-candidates,
+  .no-recommendations,
+  .notification-empty-state,
+  .portal-feed-empty,
+  .resume-playground-empty,
+  .friend-invitation-panel.is-empty-panel > .empty-info,
+  .friend-add-results > .empty-info
+):not(:has(.empty-state-image))::before,
+html body #root .home-page .blocks-manager-card > .blocks-empty::before {
+  content: '' !important;
+  display: block !important;
+  flex: 0 0 4.6rem !important;
+  width: 4.6rem !important;
+  height: 4.6rem !important;
+  margin: 0 auto 0.8rem !important;
+  border: 1px solid rgba(180, 91, 114, 0.2) !important;
+  border-radius: 1.25rem !important;
+  background-color: #f7ecef !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a45168' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 5h16l2 10v4H2v-4L4 5Z'/%3E%3Cpath d='M2 15h6l1.5 2h5L16 15h6'/%3E%3Cpath d='M9 9h6'/%3E%3C/svg%3E") !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: 2.55rem 2.55rem !important;
+}
+
+html body #root .home-page :is(
+  .no-applications-message,
+  .no-jobs-message,
+  .no-candidates,
+  .no-recommendations,
+  .notification-empty-state,
+  .portal-feed-empty,
+  .resume-playground-empty
+) > .empty-state-image {
+  display: grid !important;
+  flex: 0 0 4.6rem !important;
+  place-items: center !important;
+  width: 4.6rem !important;
+  height: 4.6rem !important;
+  margin: 0 auto 0.8rem !important;
+  border: 1px solid rgba(180, 91, 114, 0.2) !important;
+  border-radius: 1.25rem !important;
+  background: #f7ecef !important;
+  color: #a45168 !important;
+}
+
+html body #root .home-page :is(
+  .no-applications-message,
+  .no-jobs-message,
+  .no-candidates,
+  .no-recommendations,
+  .notification-empty-state,
+  .portal-feed-empty,
+  .resume-playground-empty
+) > .empty-state-image svg {
+  width: 2.55rem !important;
+  height: 2.55rem !important;
+  stroke: currentColor !important;
+}
+
+html body #root .home-page :is(
+  .no-applications-message,
+  .no-jobs-message,
+  .no-candidates,
+  .no-recommendations,
+  .notification-empty-state
+) > h3 {
+  margin: 0 0 0.28rem !important;
+  color: #24332e !important;
+  font-size: 0.9rem !important;
+  line-height: 1.2 !important;
+}
+
+html body #root .home-page :is(
+  .no-applications-message,
+  .no-jobs-message,
+  .no-candidates,
+  .no-recommendations,
+  .notification-empty-state
+) > p {
+  margin: 0 !important;
+  color: #68736f !important;
+  font-size: 0.69rem !important;
+  line-height: 1.45 !important;
+}
+
+/* Only the physical A4 sheets are locked to white; the surrounding editor stays themed. */
+html body #root .resume-playground-editor-page-layer {
+  background-color: #ffffff !important;
+}
+
+/* Isolate the assistant controls from generic full-width button rules. */
+html body #root .floating-messenger-chat:has(.floating-messenger-assistant-chat) {
+  padding-bottom: 1rem !important;
+}
+
+html body #root .floating-messenger-assistant-chat {
+  margin-bottom: 0.72rem !important;
+  padding-bottom: 0.3rem !important;
+}
+
+html body #root .floating-messenger-assistant-chat .portal-ai-chat-header-row {
+  position: relative !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-height: 3rem !important;
+  padding: 0.72rem 5.4rem 0.72rem 0.8rem !important;
+}
+
+html body #root .floating-messenger-assistant-chat .portal-ai-clear-chat-button-isolated,
+html body #root .floating-messenger-assistant-chat .portal-ai-clear-chat-button-isolated:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  appearance: none !important;
+  position: absolute !important;
+  inset: 50% 0.72rem auto auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  width: max-content !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  height: 1.55rem !important;
+  min-height: 1.55rem !important;
+  max-height: 1.55rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline-offset: 0.12rem !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #301f1a !important;
+  -webkit-text-fill-color: #301f1a !important;
+  line-height: 1 !important;
+  transform: translateY(-50%) !important;
+}
+
+html body #root .floating-messenger-assistant-chat .portal-ai-reply-row-aligned {
+  grid-template-columns: minmax(0, 1fr) 1.82rem !important;
+  align-items: center !important;
+  gap: 0.32rem !important;
+}
+
+html body #root .floating-messenger-assistant-chat .portal-ai-reply-row-aligned .public-ai-reply-field {
+  display: flex !important;
+  align-items: center !important;
+  height: 1.92rem !important;
+  min-height: 1.92rem !important;
+  max-height: 1.92rem !important;
+  gap: 0.32rem !important;
+  padding: 0.18rem 0.58rem !important;
+}
+
+html body #root .floating-messenger-assistant-chat .portal-ai-reply-row-aligned .public-ai-search-icon {
+  align-self: center !important;
+  flex: 0 0 0.78rem !important;
+  width: 0.78rem !important;
+  height: 0.78rem !important;
+  margin: 0 !important;
+}
+
+html body #root .floating-messenger-assistant-chat .portal-ai-reply-row-aligned .public-ai-reply-field textarea {
+  align-self: center !important;
+  flex: 1 1 auto !important;
+  height: 1.12rem !important;
+  min-height: 1.12rem !important;
+  max-height: 1.12rem !important;
+  padding: 0 !important;
+  line-height: 1.12rem !important;
+}
+
+html body #root .floating-messenger-assistant-chat .portal-ai-reply-row-aligned .public-ai-send-button,
+html body #root .floating-messenger-assistant-chat .portal-ai-reply-row-aligned .public-ai-send-button:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  width: 1.82rem !important;
+  min-width: 1.82rem !important;
+  max-width: 1.82rem !important;
+  height: 1.82rem !important;
+  min-height: 1.82rem !important;
+  max-height: 1.82rem !important;
+  border-radius: 0.55rem !important;
+}
+
+@media (max-width: 420px) {
+  html body #root .home-page .blocks-manager-tab,
+  html body #root .home-page .blocks-manager-tab:is(:hover, :focus, :focus-visible, :active) {
+    min-width: 5.15rem !important;
+    max-width: 6.7rem !important;
+  }
+}

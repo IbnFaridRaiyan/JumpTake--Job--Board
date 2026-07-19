@@ -8,7 +8,8 @@ const ICON_PATHS = {
     bell: 'M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22Zm7-6v-5a7 7 0 1 0-14 0v5l-2 2v1h18v-1l-2-2Zm-2 1H7v-6a5 5 0 1 1 10 0v6Z',
     star: 'm12 2 3.1 6.28 6.9 1-5 4.87 1.18 6.87L12 17.77l-6.18 3.25L7 14.15 2 9.28l6.9-1L12 2Z',
     send: 'M2 21 23 3l-7 20-4-9-10-3Zm5.5-10.2 5.2 1.8 1.9 4.5 3.7-10.5-10.8 4.2Z',
-    draft: 'M4 3h12l4 4v14H4V3Zm11 1.7V8h3.3L15 4.7ZM6 5v14h12V10h-5V5H6Zm2 8h8v2H8v-2Zm0 3h6v2H8v-2Z',
+    // Keep Create visually identical to the Resume Playground shortcut on the dashboard.
+    draft: 'M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z',
     users: 'M16 11a4 4 0 1 0-3.46-6A4 4 0 1 0 8 11a6 6 0 0 0-6 6v2h12v-2a5.98 5.98 0 0 0-1.08-3.44A5 5 0 0 1 20 18v1h2v-1a7 7 0 0 0-6-7Zm-8-2a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm4 8H4a4 4 0 0 1 8 0Zm4-8a2 2 0 1 1 0-4 2 2 0 0 1 0 4Z',
     'user-plus': 'M15 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.42 0-8 2.24-8 5v1h10.1A6.9 6.9 0 0 1 17 19c0-1.85.72-3.54 1.9-4.8A11.7 11.7 0 0 0 15 14Zm6-3V8h-2v3h-3v2h3v3h2v-3h3v-2h-3Z',
     user: 'M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z',
@@ -23,7 +24,7 @@ const ICON_PATHS = {
 };
 
 const PortalIcon = ({ name = 'dashboard' }) => (
-    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+    <svg width="18" height="18" viewBox={name === 'draft' ? '0 0 16 16' : '0 0 24 24'} aria-hidden="true">
         <path d={ICON_PATHS[name] || ICON_PATHS.dashboard} />
     </svg>
 );

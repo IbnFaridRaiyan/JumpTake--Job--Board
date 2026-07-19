@@ -110,13 +110,13 @@ const AssistantChat = ({ title = 'Jumptake chat', className = '', storageKey = '
 
     return (
         <div className={`public-ai-chat-card portal-ai-chat-card ${className}`}>
-            <div className="public-ai-chat-header">
+            <div className="public-ai-chat-header portal-ai-chat-header-row">
                 <div className="public-ai-chat-brand">
                     <p className="public-ai-chat-title">{title}</p>
                 </div>
                 <button
                     type="button"
-                    className="portal-ai-clear-chat-button"
+                    className="portal-ai-clear-chat-button portal-ai-clear-chat-button-isolated"
                     onClick={clearAssistantChat}
                     disabled={assistantLoading}
                 >
@@ -143,7 +143,7 @@ const AssistantChat = ({ title = 'Jumptake chat', className = '', storageKey = '
                 ) : null}
             </ul>
             <form className="public-ai-chat-reply" onSubmit={askAssistant}>
-                <div className="public-ai-reply-row">
+                <div className="public-ai-reply-row portal-ai-reply-row-aligned">
                     <div className="public-ai-reply-field">
                         <AssistantSearchIcon />
                         <textarea

@@ -86294,6 +86294,126 @@ html body #root .floating-messenger-assistant-chat .portal-ai-clear-chat-button 
   color: #fff;
 }
 
+/* Feed action and tagging refinements. Keep this block after legacy feed rules. */
+html body #root .portal-home-feed .portal-post-reactions.portal-reaction-rail.is-popover,
+html body #root .portal-home-feed .portal-social-post-card .portal-post-reactions.portal-reaction-rail.is-popover,
+html[data-theme="light"] body[data-theme="light"] #root .portal-home-feed .portal-post-reactions.portal-reaction-rail.is-popover {
+  background: #e9e4de !important;
+  background-color: #e9e4de !important;
+  border: 0.5px solid #d4ccc4 !important;
+  box-shadow: 0 0.55rem 1.35rem rgba(61, 49, 44, 0.14) !important;
+}
+
+html body #root .portal-home-feed .portal-post-action-row > .portal-feed-reach-wrap {
+  order: -1 !important;
+  flex: 0 0 auto !important;
+  margin: 0 0.08rem 0 0 !important;
+}
+
+html body .portal-create-story-modal .portal-composer-tagging,
+html body .portal-create-story-modal .portal-composer-tagged-users {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+html body .portal-create-story-modal .portal-composer-tagged-users {
+  display: flex !important;
+  flex-flow: row wrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.28rem !important;
+}
+
+html body .portal-create-story-modal .portal-composer-tagged-users > span {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  margin: 0 0.08rem 0 0 !important;
+  font-size: 0.65rem !important;
+}
+
+html body .portal-create-story-modal .portal-composer-tagged-users > button,
+html body .portal-create-story-modal .portal-composer-tagged-users > button.portal-composer-add-tag {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  min-height: 1.42rem !important;
+  height: 1.42rem !important;
+  margin: 0 !important;
+  padding: 0.18rem 0.45rem !important;
+  border-radius: 999px !important;
+  font-size: 0.61rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+html body #root .portal-home-feed .portal-social-post-card > .portal-post-tagged-users {
+  display: flex !important;
+  flex-flow: row wrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.18rem 0.28rem !important;
+  width: 100% !important;
+  margin: 0.32rem 0 0 !important;
+  padding: 0.32rem 0 0 !important;
+  border-top: 1px solid rgba(104, 20, 33, 0.07) !important;
+  color: #544a47 !important;
+  font-size: 0.67rem !important;
+}
+
+html body #root .portal-home-feed .portal-social-post-card > .portal-post-tagged-users > span {
+  flex: 0 0 auto !important;
+  font-size: 0.67rem !important;
+}
+
+html body #root .portal-home-feed .portal-social-post-card > .portal-post-tagged-users > button:not(.portal-post-tagged-more) {
+  display: inline !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #681421 !important;
+  font-size: 0.67rem !important;
+  line-height: 1.25 !important;
+}
+
+html body #root .portal-home-feed .portal-social-post-card > .portal-post-tagged-users > button.portal-post-tagged-more {
+  display: inline-grid !important;
+  flex: 0 0 auto !important;
+  place-items: center !important;
+  width: 1rem !important;
+  min-width: 1rem !important;
+  max-width: 1rem !important;
+  height: 1rem !important;
+  min-height: 1rem !important;
+  max-height: 1rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #681421 !important;
+  -webkit-text-fill-color: #681421 !important;
+  font-size: 1rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+}
+
+html body #root .portal-home-feed .portal-social-post-card > .portal-post-tagged-users + .portal-post-comments {
+  margin-top: 0.24rem !important;
+}
+
 @media (max-width: 768px) {
   .message-workspace-nav:not(.is-compact) {
     grid-template-columns: repeat(6, minmax(4.4rem, 1fr));

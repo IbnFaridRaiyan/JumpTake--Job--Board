@@ -5087,9 +5087,11 @@ const PortalHomeFeed = ({
                                 </span>
                             </div>
                         </div>
-                        <div className="portal-post-reach-row">
-                            {renderReachButton(post, postKey, 'portal-feed-reach-wrap', Boolean(options.profilePreview))}
-                        </div>
+                        {options.profilePreview && (
+                            <div className="portal-post-reach-row">
+                                {renderReachButton(post, postKey, 'portal-feed-reach-wrap', true)}
+                            </div>
+                        )}
                         {postBodyText && (
                             <div className={`portal-post-body-wrap ${isLongPostBody && !isPostBodyExpanded ? 'is-collapsed' : 'is-expanded'}`}>
                                 <p className="portal-post-body">{postBodyText}</p>
@@ -5176,6 +5178,7 @@ const PortalHomeFeed = ({
                                 </ul>
                             )}
                             <div className="portal-post-action-row">
+                                {!options.profilePreview && renderReachButton(post, postKey, 'portal-feed-reach-wrap')}
                                 <button
                                     type="button"
                                     className={`portal-reaction-trigger ${selectedReaction ? `has-reaction reaction-${selectedReaction.toLowerCase()}` : ''}`}
@@ -5323,7 +5326,7 @@ const PortalHomeFeed = ({
                                         }}
                                         aria-label={expandedPostTags[postKey] ? 'Show fewer tagged people' : 'View all tagged people'}
                                     >
-                                        {expandedPostTags[postKey] ? '−' : `+${post.taggedUsers.length - 4}`}
+                                        {expandedPostTags[postKey] ? '−' : '+'}
                                     </button>
                                 )}
                             </div>

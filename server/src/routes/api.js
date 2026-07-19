@@ -304,6 +304,7 @@ router.get('/candidate-likes', engagementController.getCandidateLikeSummary);
 router.post('/candidate-likes/toggle', engagementController.toggleCandidateLike);
 router.get('/candidate-network/matches/:userId', candidateNetworkController.getMatchedCandidates);
 router.get('/candidate-network/profile/:userId', candidateNetworkController.getMyNetworkProfile);
+router.get('/candidate-network/search', candidateNetworkController.searchCandidates);
 router.get('/candidate-network/find/:jumpTakeId', candidateNetworkController.findCandidateByJumpTakeId);
 router.post('/candidate-connections/request', candidateNetworkController.sendFriendRequest);
 router.post('/candidate-connections/block', candidateNetworkController.blockCandidate);

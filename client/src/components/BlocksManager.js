@@ -21,6 +21,7 @@ const BlocksManager = ({ userId, profileData }) => {
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState('');
     const [selectedPost, setSelectedPost] = useState(null);
+    const [activeSection, setActiveSection] = useState('blocked-users');
 
     const loadBlocks = useCallback(async () => {
         if (!userId) {
@@ -296,53 +297,93 @@ const BlocksManager = ({ userId, profileData }) => {
 
     const renderEmpty = (text) => <p className="blocks-empty">{text}</p>;
 
+    const blockSections = [
+        { id: 'blocked-users', label: 'Blocked Users' },
+        { id: 'blocked-sources', label: 'Blocked Feed Sources' },
+        { id: 'hidden-posts', label: 'Hidden Posts' },
+        { id: 'hidden-content', label: 'Hidden Comments & Content' }
+    ];
+
+    const renderActiveSection = () => {
+        if (activeSection === 'blocked-users') {
+            return (
+                <article className="blocks-manager-card">
+                    <h3>Blocked Users</h3>
+                    {blockedConnections.length ? blockedConnections.map((connection) => (
+                        <div className="blocks-manager-row" key={connection._id}>
+                            <span><strong>{connection.peer?.name || 'Candidate'}</strong><small>{connection.peer?.jumptakeId || 'JumpTake user'}</small></span>
+                            <button type="button" onClick={() => unblockCandidate(connection._id)}>Unblock</button>
+                        </div>
+                    )) : renderEmpty('No blocked users.')}
+                </article>
+            );
+        }
+
+        if (activeSection === 'blocked-sources') {
+            return (
+                <article className="blocks-manager-card">
+                    <h3>Blocked Feed Sources</h3>
+                    {blockedFeedSources.length ? blockedFeedSources.map((source) => (
+                        <div className="blocks-manager-row" key={source.id}>
+                            <span><strong>{source.name}</strong><small>Posts hidden from your feed</small></span>
+                            <button type="button" onClick={() => unblockFeedSource(source.id)}>Unblock</button>
+                        </div>
+                    )) : renderEmpty('No blocked feed sources.')}
+                </article>
+            );
+        }
+
+        if (activeSection === 'hidden-posts') {
+            return (
+                <article className="blocks-manager-card blocks-manager-card-wide">
+                    <h3>Hidden Posts</h3>
+                    {hiddenPosts.length ? hiddenPosts.map((post) => (
+                        <div className="blocks-manager-row blocks-manager-hidden-post-row" key={post._id || post.id}>
+                            <span>
+                                <strong title={post.authorName || 'JumpTake post'}>{post.authorName || 'JumpTake post'}</strong>
+                                <small title={post.body || 'Hidden post'}>{String(post.body || 'Hidden post').slice(0, 90)}</small>
+                            </span>
+                            <span className="blocks-manager-actions">
+                                <button type="button" className="blocks-view-post-button" onClick={() => setSelectedPost(post)}>View post</button>
+                                <button type="button" onClick={() => unhidePost(post)}>Unhide</button>
+                            </span>
+                        </div>
+                    )) : renderEmpty('No hidden posts.')}
+                </article>
+            );
+        }
+
+        return (
+            <article className="blocks-manager-card blocks-manager-card-wide">
+                <h3>Hidden Comments and Content</h3>
+                {renderEmpty('No hidden comments or additional content.')}
+            </article>
+        );
+    };
+
     return (
         <section className="blocks-manager-section">
             {message && <div className={`notification-message ${message.startsWith('Error:') ? 'error' : 'success'}`}>{message}</div>}
             {loading ? (
                 <div className="loading-message">Loading blocked and hidden content...</div>
             ) : (
-                <div className="blocks-manager-grid">
-                    <article className="blocks-manager-card">
-                        <h3>Blocked Users</h3>
-                        {blockedConnections.length ? blockedConnections.map((connection) => (
-                            <div className="blocks-manager-row" key={connection._id}>
-                                <span><strong>{connection.peer?.name || 'Candidate'}</strong><small>{connection.peer?.jumptakeId || 'JumpTake user'}</small></span>
-                                <button type="button" onClick={() => unblockCandidate(connection._id)}>Unblock</button>
-                            </div>
-                        )) : renderEmpty('No blocked users.')}
-                    </article>
-
-                    <article className="blocks-manager-card">
-                        <h3>Blocked Feed Sources</h3>
-                        {blockedFeedSources.length ? blockedFeedSources.map((source) => (
-                            <div className="blocks-manager-row" key={source.id}>
-                                <span><strong>{source.name}</strong><small>Posts hidden from your feed</small></span>
-                                <button type="button" onClick={() => unblockFeedSource(source.id)}>Unblock</button>
-                            </div>
-                        )) : renderEmpty('No blocked feed sources.')}
-                    </article>
-
-                    <article className="blocks-manager-card blocks-manager-card-wide">
-                        <h3>Hidden Posts</h3>
-                        {hiddenPosts.length ? hiddenPosts.map((post) => (
-                            <div className="blocks-manager-row blocks-manager-hidden-post-row" key={post._id || post.id}>
-                                <span>
-                                    <strong title={post.authorName || 'JumpTake post'}>{post.authorName || 'JumpTake post'}</strong>
-                                    <small title={post.body || 'Hidden post'}>{String(post.body || 'Hidden post').slice(0, 90)}</small>
-                                </span>
-                                <span className="blocks-manager-actions">
-                                    <button type="button" className="blocks-view-post-button" onClick={() => setSelectedPost(post)}>View post</button>
-                                    <button type="button" onClick={() => unhidePost(post)}>Unhide</button>
-                                </span>
-                            </div>
-                        )) : renderEmpty('No hidden posts.')}
-                    </article>
-
-                    <article className="blocks-manager-card blocks-manager-card-wide">
-                        <h3>Hidden Comments and Content</h3>
-                        {renderEmpty('No hidden comments or additional content.')}
-                    </article>
+                <div className="blocks-manager-shell">
+                    <nav className="friend-invitation-tabs blocks-manager-tabs" aria-label="Blocked and hidden content sections">
+                        {blockSections.map((section) => (
+                            <button
+                                key={section.id}
+                                type="button"
+                                className={`friend-invitation-tab blocks-manager-tab ${activeSection === section.id ? 'is-active' : ''}`}
+                                onClick={() => setActiveSection(section.id)}
+                                aria-current={activeSection === section.id ? 'page' : undefined}
+                            >
+                                {section.label}
+                            </button>
+                        ))}
+                    </nav>
+                    <div className="blocks-manager-grid">
+                        {renderActiveSection()}
+                    </div>
                 </div>
             )}
             {renderPostPreview()}

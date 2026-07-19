@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ContactCandidate from './ContactCandidate';
 import ProfileAvatar from './ProfileAvatar';
 import TalentPool from './TalentPool';
@@ -35,8 +35,10 @@ const FriendInvitations = ({ userId }) => {
     const [suggestedCandidates, setSuggestedCandidates] = useState([]);
     const [suggestionsLoading, setSuggestionsLoading] = useState(false);
     const [friendSearch, setFriendSearch] = useState('');
-    const [foundCandidate, setFoundCandidate] = useState(null);
+    const [searchResults, setSearchResults] = useState([]);
+    const [searchOpen, setSearchOpen] = useState(false);
     const [searching, setSearching] = useState(false);
+    const searchAbortRef = useRef(null);
 
     const fetchConnections = useCallback(async () => {
         if (!userId) {
@@ -212,11 +214,11 @@ const FriendInvitations = ({ userId }) => {
                     ? { ...item, connectionStatus: pendingStatus }
                     : item
             )));
-            setFoundCandidate((current) => (
-                current && String(current._id || '') === candidateId
-                    ? { ...current, connectionStatus: pendingStatus }
-                    : current
-            ));
+            setSearchResults((current) => current.map((item) => (
+                String(item._id || '') === candidateId
+                    ? { ...item, connectionStatus: pendingStatus }
+                    : item
+            )));
             setMessage('Friend invitation sent.');
             await Promise.all([fetchConnections(), fetchSuggestedCandidates()]);
         } catch (requestError) {
@@ -226,32 +228,74 @@ const FriendInvitations = ({ userId }) => {
         }
     };
 
-    const searchForFriend = async (event) => {
-        event.preventDefault();
-        const query = friendSearch.trim().replace(/^@/, '');
+    const runCandidateSearch = useCallback(async (rawQuery) => {
+        const query = String(rawQuery || '').trim().replace(/^@/, '');
         if (!query) {
-            setError('Enter a JumpTake ID or candidate name.');
+            setSearchResults([]);
+            setSearchOpen(false);
             return;
         }
 
+        searchAbortRef.current?.abort();
+        const controller = new AbortController();
+        searchAbortRef.current = controller;
         try {
             setSearching(true);
             setError('');
             const response = await fetch(
-                apiUrl(`/api/candidate-network/find/${encodeURIComponent(query)}`),
-                { headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` } }
+                apiUrl(`/api/candidate-network/search?q=${encodeURIComponent(query)}`),
+                {
+                    signal: controller.signal,
+                    headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` }
+                }
             );
-            const data = await response.json().catch(() => ({}));
+            const data = await response.json().catch(() => ([]));
             if (!response.ok) {
-                throw new Error(data.error || 'Candidate not found');
+                throw new Error(data.error || 'Failed to search candidates');
             }
-            setFoundCandidate(data);
+            setSearchResults(Array.isArray(data) ? data : []);
+            setSearchOpen(true);
         } catch (searchError) {
-            setFoundCandidate(null);
-            setError(searchError.message || 'Candidate not found.');
+            if (searchError.name !== 'AbortError') {
+                setSearchResults([]);
+                setSearchOpen(true);
+                setError(searchError.message || 'Failed to search candidates.');
+            }
         } finally {
-            setSearching(false);
+            if (searchAbortRef.current === controller) {
+                searchAbortRef.current = null;
+                setSearching(false);
+            }
         }
+    }, []);
+
+    useEffect(() => {
+        const query = friendSearch.trim().replace(/^@/, '');
+        if (activeTab !== 'add' || !query) {
+            searchAbortRef.current?.abort();
+            setSearchResults([]);
+            setSearchOpen(false);
+            setSearching(false);
+            return undefined;
+        }
+
+        setSearchOpen(true);
+        setSearchResults([]);
+        setSearching(true);
+        const timer = window.setTimeout(() => runCandidateSearch(query), 240);
+        return () => window.clearTimeout(timer);
+    }, [activeTab, friendSearch, runCandidateSearch]);
+
+    useEffect(() => () => searchAbortRef.current?.abort(), []);
+
+    const searchForFriend = (event) => {
+        event.preventDefault();
+        const query = friendSearch.trim();
+        if (!query) {
+            setError('Enter a JumpTake ID or candidate name.');
+            return;
+        }
+        runCandidateSearch(query);
     };
 
     const renderAddCandidate = (candidate, source = 'suggestion') => {
@@ -277,7 +321,10 @@ const FriendInvitations = ({ userId }) => {
                     <span>{matchCopy || (source === 'search' ? 'JumpTake candidate' : 'Matched by profile details')}</span>
                 </div>
                 <div className="friend-add-candidate-actions">
-                    <button type="button" className="secondary-button" onClick={() => setSelectedCandidate(candidate)}>
+                    <button type="button" className="secondary-button" onClick={() => {
+                        setSelectedCandidate(candidate);
+                        if (source === 'search') setSearchOpen(false);
+                    }}>
                         <FriendActionIcon type="profile" />
                         View Profile
                     </button>
@@ -453,7 +500,7 @@ const FriendInvitations = ({ userId }) => {
     ];
 
     const isActiveTabEmpty = (
-        (activeTab === 'add' && !foundCandidate && suggestedCandidates.length === 0)
+        (activeTab === 'add' && searchResults.length === 0 && suggestedCandidates.length === 0)
         || (activeTab === 'incoming' && connections.incoming.length === 0)
         || (activeTab === 'outgoing' && connections.outgoing.length === 0)
         || (activeTab === 'friends' && connections.friends.length === 0)
@@ -463,26 +510,41 @@ const FriendInvitations = ({ userId }) => {
         if (activeTab === 'add') {
             return (
                 <div className="friend-add-panel">
-                    <form className="friend-add-search" onSubmit={searchForFriend}>
-                        <label htmlFor="friend-search">Find someone on JumpTake</label>
-                        <div>
-                            <input
-                                id="friend-search"
-                                type="search"
-                                value={friendSearch}
-                                onChange={(event) => setFriendSearch(event.target.value)}
-                                placeholder="JumpTake ID, e.g. @bob262"
-                            />
-                            <button type="submit" disabled={searching} aria-busy={searching}>Find</button>
-                        </div>
-                    </form>
+                    <div className="friend-search-directory">
+                        <form className="friend-add-search" onSubmit={searchForFriend}>
+                            <label htmlFor="friend-search">Find someone on JumpTake</label>
+                            <div>
+                                <input
+                                    id="friend-search"
+                                    type="search"
+                                    value={friendSearch}
+                                    onChange={(event) => {
+                                        setFriendSearch(event.target.value);
+                                        setSearchOpen(Boolean(event.target.value.trim()));
+                                    }}
+                                    onFocus={() => {
+                                        if (friendSearch.trim()) setSearchOpen(true);
+                                    }}
+                                    onKeyDown={(event) => {
+                                        if (event.key === 'Escape') setSearchOpen(false);
+                                    }}
+                                    placeholder="JumpTake ID, e.g. @bob262"
+                                    autoComplete="off"
+                                />
+                                <button type="submit" disabled={searching} aria-busy={searching}>Find</button>
+                            </div>
+                        </form>
 
-                    {foundCandidate && (
-                        <div className="friend-add-results">
-                            <h3>Search result</h3>
-                            {renderAddCandidate(foundCandidate, 'search')}
-                        </div>
-                    )}
+                        {searchOpen && friendSearch.trim() && (
+                            <div className="friend-search-popover" role="listbox" aria-label="Matching candidates">
+                                {searching && searchResults.length === 0
+                                    ? <p className="empty-info">Searching candidates...</p>
+                                    : searchResults.length
+                                        ? searchResults.map((candidate) => renderAddCandidate(candidate, 'search'))
+                                        : <p className="empty-info">No candidates match those letters yet.</p>}
+                            </div>
+                        )}
+                    </div>
 
                     <div className="friend-add-results">
                         <h3>Suggested for you</h3>

@@ -230,6 +230,10 @@ const TalentPool = ({
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [directoryQuery, setDirectoryQuery] = useState('');
+    const [directoryResults, setDirectoryResults] = useState([]);
+    const [directorySearching, setDirectorySearching] = useState(false);
+    const [directorySearched, setDirectorySearched] = useState(false);
     const [selectedCandidate, setSelectedCandidate] = useState(initialSelectedCandidate);
     const [spotlightActive, setSpotlightActive] = useState(false);
     const [currentCandidatePage, setCurrentCandidatePage] = useState(1);
@@ -534,6 +538,36 @@ const TalentPool = ({
             setLikedCandidateIds((data.likedCandidateIds || []).map((candidateId) => String(candidateId)));
         } catch (likeError) {
             console.error('Error fetching candidate likes:', likeError);
+        }
+    };
+
+    const findCandidates = async (event) => {
+        event.preventDefault();
+        const query = directoryQuery.trim();
+        if (!query) {
+            setDirectoryResults([]);
+            setDirectorySearched(false);
+            setFriendNotice('Error: Enter a candidate name or JumpTake ID.');
+            return;
+        }
+
+        try {
+            setDirectorySearching(true);
+            setDirectorySearched(true);
+            const response = await fetch(
+                apiUrl(`/api/candidate-network/search?q=${encodeURIComponent(query)}`),
+                { headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` } }
+            );
+            const data = await response.json().catch(() => ([]));
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to search candidates');
+            }
+            setDirectoryResults(Array.isArray(data) ? data : []);
+        } catch (directoryError) {
+            setDirectoryResults([]);
+            setFriendNotice(`Error: ${directoryError.message || 'Failed to search candidates.'}`);
+        } finally {
+            setDirectorySearching(false);
         }
     };
 
@@ -1094,7 +1128,7 @@ const TalentPool = ({
             return (a.candidate.name || '').localeCompare(b.candidate.name || '');
         });
 
-    const filteredCandidateRows = candidateRows.filter(({ candidate, spotlight }) => {
+    const filteredCandidateRows = mode === 'candidate' ? candidateRows : candidateRows.filter(({ candidate, spotlight }) => {
         const searchLower = searchTerm.toLowerCase();
 
         const searchablePublicProfile = [
@@ -2265,19 +2299,59 @@ const TalentPool = ({
                 </div>
             )}
 
-            <div className="talent-pool-controls">
-                <div className="search-container">
-                    <input 
-                        type="text" 
-                        placeholder={mode === 'candidate'
-                            ? 'Search by name, skills, education or experience...'
-                            : 'Search candidates by name, email or skills...'}
-                        className="candidate-search"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+            {mode === 'candidate' ? (
+                <section className="candidate-directory-search-card">
+                    <label htmlFor="candidate-directory-search">Find someone on JumpTake</label>
+                    <form onSubmit={findCandidates}>
+                        <input
+                            id="candidate-directory-search"
+                            type="search"
+                            value={directoryQuery}
+                            onChange={(event) => {
+                                setDirectoryQuery(event.target.value);
+                                if (!event.target.value.trim()) {
+                                    setDirectoryResults([]);
+                                    setDirectorySearched(false);
+                                }
+                            }}
+                            placeholder="Name or JumpTake ID"
+                            autoComplete="off"
+                        />
+                        <button type="submit" disabled={directorySearching} aria-busy={directorySearching}>
+                            {directorySearching ? 'Finding...' : 'Find'}
+                        </button>
+                    </form>
+                </section>
+            ) : (
+                <div className="talent-pool-controls">
+                    <div className="search-container">
+                        <input
+                            type="text"
+                            placeholder="Search candidates by name, email or skills..."
+                            className="candidate-search"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
                 </div>
-            </div>
+            )}
+
+            {mode === 'candidate' && directorySearched && (
+                <section className="candidate-directory-results" aria-label="Candidate search results">
+                    <h3>Search results</h3>
+                    {directorySearching ? (
+                        <p className="empty-info">Finding candidates...</p>
+                    ) : directoryResults.length ? (
+                        <div className="candidate-list">
+                            {directoryResults.map((candidate) => renderCandidateListRow(candidate, null))}
+                        </div>
+                    ) : (
+                        <p className="empty-info">No candidates match that name or JumpTake ID.</p>
+                    )}
+                </section>
+            )}
+
+            {mode === 'candidate' && <h3 className="candidate-suggestions-heading">Suggested candidates</h3>}
 
             {isLoading ? (
                 <div className="loading-container">

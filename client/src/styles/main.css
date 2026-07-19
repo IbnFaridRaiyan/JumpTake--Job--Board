@@ -86656,6 +86656,38 @@ html body #root .messenger-inbox .new-message-id-toggle:is(:hover, :focus, :focu
   background: #ffffff;
 }
 
+.friend-search-directory {
+  position: relative;
+  z-index: 12;
+}
+
+.friend-search-popover {
+  position: absolute;
+  inset: calc(100% + 0.35rem) 0 auto;
+  z-index: 80;
+  display: grid;
+  gap: 0.42rem;
+  max-height: min(24rem, 52dvh);
+  padding: 0.48rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border: 1px solid rgba(104, 20, 33, 0.22);
+  border-radius: 0.95rem;
+  background: #fffaf3;
+  box-shadow: 0 0.85rem 1.7rem rgba(49, 31, 21, 0.2);
+}
+
+.friend-search-popover > .empty-info {
+  margin: 0;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.friend-search-popover .friend-add-candidate-card {
+  padding: 0.58rem;
+  box-shadow: 0 0.15rem 0.5rem rgba(49, 31, 21, 0.06);
+}
+
 .friend-add-search label {
   color: #24332e;
   font-size: 0.76rem;
@@ -87244,4 +87276,360 @@ html body #root .home-page .friend-invitations-section .friend-add-candidate-act
   html body #root .home-page .friend-invitations-section .friend-add-candidate-actions {
     padding-left: 0 !important;
   }
+}
+
+/* Candidate directory: separate universal name/ID search from profile-match suggestions. */
+html body #root .talent-pool-container.candidate-view-candidates .candidate-directory-search-card {
+  display: grid !important;
+  gap: 0.44rem !important;
+  width: 100% !important;
+  margin: 0 0 0.72rem !important;
+  padding: 0.72rem !important;
+  border: 1px solid rgba(104, 20, 33, 0.18) !important;
+  border-radius: 0.9rem !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-directory-search-card > label {
+  color: #24332e !important;
+  -webkit-text-fill-color: #24332e !important;
+  font-size: 0.76rem !important;
+  font-weight: 850 !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-directory-search-card > form {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 0.44rem !important;
+  width: 100% !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-directory-search-card input {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 2.12rem !important;
+  min-height: 2.12rem !important;
+  padding: 0.3rem 0.72rem !important;
+  border: 1px solid rgba(112, 83, 52, 0.28) !important;
+  border-radius: 999px !important;
+  background: #fffaf3 !important;
+  color: #24332e !important;
+  -webkit-text-fill-color: #24332e !important;
+  font-size: 0.68rem !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-directory-search-card button,
+html body #root .talent-pool-container.candidate-view-candidates .candidate-directory-search-card button:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 3.7rem !important;
+  height: 1.88rem !important;
+  min-height: 1.88rem !important;
+  margin: 0 !important;
+  padding: 0.2rem 0.68rem !important;
+  border: 1px solid #173f68 !important;
+  border-radius: 999px !important;
+  background: #173f68 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+  font-size: 0.66rem !important;
+  font-weight: 850 !important;
+  white-space: nowrap !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-directory-results {
+  display: grid !important;
+  gap: 0.48rem !important;
+  margin: 0 0 0.72rem !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates :is(.candidate-directory-results, .candidate-suggestions-heading) > h3,
+html body #root .talent-pool-container.candidate-view-candidates .candidate-directory-results > h3,
+html body #root .talent-pool-container.candidate-view-candidates h3.candidate-suggestions-heading {
+  margin: 0 0 0.42rem !important;
+  color: #321f20 !important;
+  -webkit-text-fill-color: #321f20 !important;
+  font-size: 0.82rem !important;
+  font-weight: 850 !important;
+}
+
+/* Keep the complete Candidates intro on one line and gently enlarge Grow Together. */
+html body #root .talent-pool-container.candidate-view-candidates .candidate-community-copy,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy {
+  display: block !important;
+  width: 100% !important;
+  white-space: nowrap !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-community-line,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-line {
+  display: inline-flex !important;
+  flex-wrap: nowrap !important;
+  align-items: baseline !important;
+  width: auto !important;
+  max-width: 100% !important;
+  gap: 0.24rem !important;
+  font-size: 0.8rem !important;
+  white-space: nowrap !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-together,
+html body #root .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-text,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-together,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-text {
+  font-size: 1.34rem !important;
+  line-height: 0.92 !important;
+  white-space: nowrap !important;
+}
+
+html body #root .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-icon,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-icon {
+  width: 1rem !important;
+  min-width: 1rem !important;
+  height: 1rem !important;
+}
+
+/* Notifications: maroon means unread; read records have no visible indicator. */
+html body #root .home-page .notifications-page .notification-row,
+html body #root .home-page .notifications-page .notification-row:is(.read, .unread, :hover, :focus, :focus-visible) {
+  border: 0.5px solid #cfc3b5 !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .notifications-page .notification-status-slot {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 0.55rem !important;
+  min-width: 0.55rem !important;
+  height: 0.55rem !important;
+}
+
+html body #root .home-page .notifications-page .notification-status-dot {
+  display: block !important;
+  width: 0.46rem !important;
+  min-width: 0.46rem !important;
+  height: 0.46rem !important;
+  min-height: 0.46rem !important;
+  border-radius: 50% !important;
+  background: #bd6c80 !important;
+  box-shadow: 0 0 0 0.18rem rgba(189, 108, 128, 0.12) !important;
+}
+
+/* Message directory controls: circular add, slimmer ID field, compact blue action. */
+html body :is(.messenger-inbox, .floating-messenger) .new-message-id-toggle,
+html body :is(.messenger-inbox, .floating-messenger) .new-message-id-toggle:is(:hover, :focus, :focus-visible, :active) {
+  flex: 0 0 1.58rem !important;
+  width: 1.58rem !important;
+  min-width: 1.58rem !important;
+  max-width: 1.58rem !important;
+  height: 1.58rem !important;
+  min-height: 1.58rem !important;
+  max-height: 1.58rem !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  font-size: 0.9rem !important;
+  line-height: 1 !important;
+}
+
+html body :is(.messenger-inbox, .floating-messenger) .new-message-id-form {
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 0.38rem !important;
+}
+
+html body :is(.messenger-inbox, .floating-messenger) .new-message-id-form input,
+html body :is(.messenger-inbox, .floating-messenger) .new-message-id-form input::placeholder {
+  box-sizing: border-box !important;
+  height: 1.92rem !important;
+  min-height: 1.92rem !important;
+  max-height: 1.92rem !important;
+  padding: 0.24rem 0.62rem !important;
+  font-size: 0.61rem !important;
+  line-height: 1 !important;
+}
+
+html body :is(.messenger-inbox, .floating-messenger) .new-message-id-form button,
+html body :is(.messenger-inbox, .floating-messenger) .new-message-id-form button:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  width: auto !important;
+  min-width: 3.8rem !important;
+  height: 1.75rem !important;
+  min-height: 1.75rem !important;
+  max-height: 1.75rem !important;
+  margin: 0 !important;
+  padding: 0.2rem 0.62rem !important;
+  border: 1px solid #173f68 !important;
+  border-radius: 999px !important;
+  background: #173f68 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+  font-size: 0.62rem !important;
+  font-weight: 850 !important;
+  white-space: nowrap !important;
+}
+
+/* Blocks uses the Friends-style tab strip and compact themed action pills. */
+html body #root .home-page .blocks-manager-shell {
+  display: grid !important;
+  gap: 0.62rem !important;
+  min-width: 0 !important;
+}
+
+html body #root .home-page .blocks-manager-tabs {
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 0.38rem !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0.48rem !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  border: 1px solid rgba(104, 20, 33, 0.14) !important;
+  border-radius: 0.9rem !important;
+  background: #ffffff !important;
+  scrollbar-width: none !important;
+  scroll-snap-type: x proximity !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+html body #root .home-page .blocks-manager-tabs::-webkit-scrollbar {
+  display: none !important;
+}
+
+html body #root .home-page .blocks-manager-tab,
+html body #root .home-page .blocks-manager-tab:is(:hover, :focus, :focus-visible, :active) {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: max-content !important;
+  min-height: 2.05rem !important;
+  margin: 0 !important;
+  padding: 0.38rem 0.62rem !important;
+  border: 1px solid rgba(104, 20, 33, 0.16) !important;
+  border-radius: 0.76rem !important;
+  background: #ffffff !important;
+  color: #24332e !important;
+  -webkit-text-fill-color: #24332e !important;
+  box-shadow: none !important;
+  font-size: 0.64rem !important;
+  font-weight: 800 !important;
+  line-height: 1.05 !important;
+  white-space: nowrap !important;
+  scroll-snap-align: start !important;
+}
+
+html body #root .home-page .blocks-manager-tab.is-active,
+html body #root .home-page .blocks-manager-tab.is-active:is(:hover, :focus, :focus-visible, :active) {
+  border-color: rgba(104, 20, 33, 0.34) !important;
+  background: #f6ece6 !important;
+  color: #681421 !important;
+  -webkit-text-fill-color: #681421 !important;
+}
+
+html body #root .home-page .blocks-manager-grid {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+html body #root .home-page .blocks-manager-row > button,
+html body #root .home-page .blocks-manager-row .blocks-manager-actions > button,
+html body #root .home-page .blocks-manager-row > button:is(:hover, :focus, :focus-visible, :active),
+html body #root .home-page .blocks-manager-row .blocks-manager-actions > button:is(:hover, :focus, :focus-visible, :active) {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  height: 1.65rem !important;
+  min-height: 1.65rem !important;
+  max-height: 1.65rem !important;
+  margin: 0 !important;
+  padding: 0.22rem 0.52rem !important;
+  border: 1px solid #c8bbac !important;
+  border-radius: 999px !important;
+  box-shadow: none !important;
+  font-size: 0.6rem !important;
+  font-weight: 820 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+html body #root .home-page .blocks-manager-row .blocks-manager-actions {
+  justify-content: flex-start !important;
+}
+
+/* High-specificity locks for the light mobile portal's older override layers. */
+html body > .floating-messenger.is-open .new-message-id-toggle,
+html body > .floating-messenger.is-open .new-message-id-toggle:is(:hover, :focus, :focus-visible, :active),
+html body #root .messenger-inbox .new-message-id-toggle,
+html body #root .messenger-inbox .new-message-id-toggle:is(:hover, :focus, :focus-visible, :active) {
+  width: 1.58rem !important;
+  min-width: 1.58rem !important;
+  max-width: 1.58rem !important;
+  height: 1.58rem !important;
+  min-height: 1.58rem !important;
+  max-height: 1.58rem !important;
+  border-radius: 50% !important;
+}
+
+html body #root .home-page .blocks-manager-row .blocks-manager-actions > button.blocks-view-post-button,
+html body #root .home-page .blocks-manager-row .blocks-manager-actions > button.blocks-view-post-button:is(:hover, :focus, :focus-visible, :active),
+html body #root .home-page .blocks-manager-row .blocks-manager-actions > button:not(.blocks-view-post-button),
+html body #root .home-page .blocks-manager-row .blocks-manager-actions > button:not(.blocks-view-post-button):is(:hover, :focus, :focus-visible, :active) {
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  height: 1.65rem !important;
+  min-height: 1.65rem !important;
+  max-height: 1.65rem !important;
+  padding: 0.22rem 0.52rem !important;
+  border-color: #c8bbac !important;
+  font-size: 0.6rem !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy {
+  display: block !important;
+  width: 100% !important;
+  white-space: nowrap !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-line {
+  display: inline-flex !important;
+  flex-wrap: nowrap !important;
+  width: auto !important;
+  max-width: 100% !important;
+  gap: 0.24rem !important;
+  font-size: 0.8rem !important;
+  white-space: nowrap !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-together,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-text {
+  font-size: 1.34rem !important;
+  line-height: 0.92 !important;
+  white-space: nowrap !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-community-copy .candidate-grow-icon {
+  width: 1rem !important;
+  min-width: 1rem !important;
+  height: 1rem !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .notifications-page .notification-row,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .notifications-page .notification-row:is(.read, .unread, :hover, :focus, :focus-visible) {
+  border: 0.5px solid #cfc3b5 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .notifications-page .notification-status-dot {
+  background: #bd6c80 !important;
+  box-shadow: 0 0 0 0.18rem rgba(189, 108, 128, 0.12) !important;
 }

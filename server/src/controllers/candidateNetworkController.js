@@ -282,6 +282,102 @@ const findCandidateByJumpTakeId = async (req, res) => {
     }
 };
 
+const searchCandidates = async (req, res) => {
+    try {
+        const viewerId = getAuthenticatedUserId(req);
+        const searchValue = String(req.query.q || '').trim().replace(/^@/, '').slice(0, 80);
+
+        if (!searchValue) {
+            return res.status(200).json([]);
+        }
+
+        const escapedSearch = searchValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const partialMatch = { $regex: escapedSearch, $options: 'i' };
+        const [matchingAccounts, matchingProfiles] = await Promise.all([
+            User.find({
+                _id: { $ne: viewerId },
+                jumptakeId: partialMatch
+            }).select('_id jumptakeId').limit(40),
+            JobSeeker.find({
+                user: { $exists: true, $ne: viewerId },
+                name: partialMatch
+            }).sort({ createdAt: -1 }).limit(40)
+        ]);
+
+        const accountUserIds = matchingAccounts.map((account) => account._id);
+        const profilesForAccountMatches = accountUserIds.length
+            ? await JobSeeker.find({ user: { $in: accountUserIds } }).sort({ createdAt: -1 })
+            : [];
+
+        const profileByUserId = new Map();
+        [...matchingProfiles, ...profilesForAccountMatches].forEach((candidate) => {
+            const candidateUserId = String(candidate.user || '');
+            if (candidateUserId && candidateUserId !== viewerId && !profileByUserId.has(candidateUserId)) {
+                profileByUserId.set(candidateUserId, candidate);
+            }
+        });
+
+        const candidateUserIds = [...profileByUserId.keys()];
+        if (!candidateUserIds.length) {
+            return res.status(200).json([]);
+        }
+
+        const pairKeys = candidateUserIds.map((candidateUserId) => pairKeyFor(viewerId, candidateUserId));
+        const [candidateAccounts, relationships] = await Promise.all([
+            User.find({ _id: { $in: candidateUserIds } }).select('_id jumptakeId'),
+            CandidateConnection.find({ pairKey: { $in: pairKeys } })
+        ]);
+        const accountByUserId = new Map(candidateAccounts.map((account) => [String(account._id), account]));
+        const relationshipByPair = new Map(relationships.map((relationship) => [relationship.pairKey, relationship]));
+        const normalizedSearch = searchValue.toLowerCase();
+        const matchRank = (value) => {
+            const normalizedValue = String(value || '').toLowerCase();
+            if (normalizedValue === normalizedSearch) return 0;
+            if (normalizedValue.startsWith(normalizedSearch)) return 1;
+            if (normalizedValue.split(/\s+/).some((word) => word.startsWith(normalizedSearch))) return 2;
+            return normalizedValue.includes(normalizedSearch) ? 3 : 4;
+        };
+
+        const results = candidateUserIds
+            .map((candidateUserId) => {
+                const candidate = profileByUserId.get(candidateUserId);
+                const account = accountByUserId.get(candidateUserId);
+                const relationship = relationshipByPair.get(pairKeyFor(viewerId, candidateUserId));
+
+                if (!candidate || !account || relationship?.status === 'blocked') {
+                    return null;
+                }
+
+                return {
+                    candidate: {
+                        ...publicCandidate(
+                            candidate,
+                            { skills: [], education: [], experience: [], interests: [], score: 0 },
+                            relationship ? {
+                                id: relationship._id,
+                                status: relationship.status,
+                                direction: String(relationship.requester) === viewerId ? 'outgoing' : 'incoming'
+                            } : null
+                        ),
+                        jumptakeId: account.jumptakeId || ''
+                    },
+                    rank: Math.min(matchRank(candidate.name), matchRank(account.jumptakeId))
+                };
+            })
+            .filter(Boolean)
+            .sort((first, second) => (
+                first.rank - second.rank
+                || String(first.candidate.name || '').localeCompare(String(second.candidate.name || ''))
+            ))
+            .slice(0, 12)
+            .map(({ candidate }) => candidate);
+
+        return res.status(200).json(results);
+    } catch (error) {
+        return res.status(error.status || 500).json({ error: error.message || 'Failed to search candidates' });
+    }
+};
+
 const blockCandidate = async (req, res) => {
     try {
         const blockerId = getAuthenticatedUserId(req);
@@ -485,6 +581,7 @@ module.exports = {
     getMatchedCandidates,
     getMyNetworkProfile,
     findCandidateByJumpTakeId,
+    searchCandidates,
     sendFriendRequest,
     blockCandidate,
     getConnections,

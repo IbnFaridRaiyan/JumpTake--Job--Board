@@ -206,7 +206,9 @@ const Notifications = ({ mode, recipientId, onOpenNotification, onUnreadCountCha
                             className={`notification-row ${notification.read ? 'read' : 'unread'}`}
                             onClick={() => handleOpen(notification)}
                         >
-                            <span className="notification-status-dot"></span>
+                            <span className="notification-status-slot" aria-hidden="true">
+                                {!notification.read && <span className="notification-status-dot"></span>}
+                            </span>
                             <div>
                                 <h3>{notification.title}</h3>
                                 <p>{notification.message}</p>

@@ -26,7 +26,7 @@ Account creation:
 - If they ask to log in, ask whether candidate or employer unless they already specified.
 
 Career tools:
-- Resume requests: ask for work history, education, target role, skills, or an existing resume.
+- Resume advice may ask for work history, education, target role, skills, or an existing resume. A direct request to write a resume must produce the resume immediately from available profile facts and omit empty sections.
 - Cover letter requests: ask for job title, company, job description, and background.
 - Profile tailoring: ask for target role and the profile/summary to improve.
 
@@ -501,7 +501,7 @@ const inferAction = (message, context = {}) => {
     || (currentSection === 'resume-playground' && /\b(format|style|design|align|fix|polish|a4|template)\b/.test(normalized));
   const asksDocument = /\b(make|create|build|generate|write|draft)\b.{0,36}\b(document|letter|offer letter|policy|memo)\b/.test(normalized);
   const asksDocumentFormat = /\b(format|style|design|align|fix|polish|make)\b.{0,44}\b(document|letter|memo|policy)\b/.test(normalized)
-    || (currentSection === 'create-document' && /\b(format|style|design|align|fix|polish|a4|template)\b/.test(normalized));
+    || (['create-document', 'resume-playground'].includes(currentSection) && /\b(format|style|design|align|fix|polish|a4|template)\b/.test(normalized) && /\b(document|letter|memo|policy)\b/.test(normalized));
   const asksApply = /\b(apply|application)\b/.test(normalized) && /\b(job|role|position|posting)\b/.test(normalized);
   const asksStory = actionVerbPattern.test(normalized)
     && (
@@ -519,12 +519,13 @@ const inferAction = (message, context = {}) => {
 
   if (asksResumeFormat && portalMode !== 'employer') return 'candidate-format-resume';
   if (asksDocumentFormat && portalMode === 'employer') return 'employer-format-document';
+  if (asksDocumentFormat && portalMode !== 'employer') return 'candidate-format-document';
   if (asksResume) return 'candidate-create-resume';
   if (asksApply) return 'candidate-apply-job';
   if ((asksEmployerPost || asksStory) && portalMode === 'employer') return 'employer-create-post';
   if (asksStory) return 'candidate-create-story';
   if (asksAssessment) return 'employer-create-assessment';
-  if (asksDocument) return 'employer-create-document';
+  if (asksDocument) return portalMode === 'employer' ? 'employer-create-document' : 'candidate-create-document';
   if (sectionAction) return sectionAction;
 
   if (asksRegister && mentionsCandidate) return 'candidate-register';
@@ -540,6 +541,8 @@ const inferAction = (message, context = {}) => {
 const PORTAL_ACTIONS = new Set([
   'candidate-create-resume',
   'candidate-format-resume',
+  'candidate-create-document',
+  'candidate-format-document',
   'candidate-apply-job',
   'candidate-create-story',
   'employer-create-post',
@@ -645,13 +648,24 @@ const normalizeDraftList = (value) => {
 const getProfileDisplayName = (context = {}) => {
   const profile = context.profile || {};
   const user = context.user || {};
-  return String(
-    profile.name
-    || user.name
-    || profile.fullName
-    || user.email
-    || 'Your Name'
-  ).trim();
+  const identityValues = [profile.email, user.email, profile.username, user.username, profile.jumptakeId, user.jumptakeId]
+    .map((value) => String(value || '').trim().toLowerCase())
+    .filter(Boolean);
+  const joinedName = [profile.firstName || user.firstName, profile.lastName || user.lastName]
+    .map((value) => String(value || '').trim())
+    .filter(Boolean)
+    .join(' ');
+  const candidates = [profile.name, profile.fullName, joinedName, user.name, user.fullName];
+  const name = candidates
+    .map((value) => String(value || '').replace(/\s+/g, ' ').trim())
+    .find((value) => value
+      && value.length >= 2
+      && value.length <= 80
+      && !/@|https?:|\d/.test(value)
+      && !identityValues.includes(value.toLowerCase())
+      && /^[\p{L}][\p{L}\p{M}' -]*$/u.test(value));
+
+  return name || 'Your Name';
 };
 
 const getTargetRole = (message = '', context = {}) => {
@@ -698,18 +712,8 @@ const buildResumeActionDraft = (message = '', context = {}) => {
         '- Improved skills by learning from feedback and applying new knowledge quickly.'
       ]),
     '',
-    'EDUCATION',
-    ...(education.length
-      ? education.map((item) => `- ${item}`)
-      : ['- Add your school, college, degree, or certification here.']),
-    '',
-    'ACHIEVEMENTS',
-    ...(achievements.length
-      ? achievements.map((item) => `- ${item}`)
-      : [
-        '- Add measurable achievements, awards, projects, or leadership examples here.',
-        '- Highlight results with numbers where possible, such as time saved, people helped, or quality improved.'
-      ])
+    ...(education.length ? ['', 'EDUCATION', ...education.map((item) => `- ${item}`)] : []),
+    ...(achievements.length ? ['', 'ACHIEVEMENTS', ...achievements.map((item) => `- ${item}`)] : [])
   ].join('\n');
 };
 
@@ -758,27 +762,58 @@ const buildAssessmentDraft = (message = '', context = {}) => ([
 ]).join('\n');
 
 const buildDocumentDraft = (message = '', context = {}) => {
-  const companyName = String(context.company?.name || 'Company Name').trim();
+  const request = String(message || '').trim();
+  const authorName = getProfileDisplayName(context);
+
+  if (/\bresign(?:ation|ing)?\b/i.test(request)) {
+    return [
+      'RESIGNATION LETTER',
+      '',
+      '[Date]',
+      '',
+      'Dear [Manager Name],',
+      '',
+      'Please accept this letter as formal notice of my resignation from my position as [Job Title] at [Company Name]. My final working day will be [Final Working Date], in accordance with my notice period.',
+      '',
+      'I am grateful for the opportunities, experience, and support I have received during my time with the company. I will do everything I can to support an orderly handover of my responsibilities before my departure.',
+      '',
+      'Thank you for your understanding. I wish you and the team continued success.',
+      '',
+      'Sincerely,',
+      authorName
+    ].join('\n');
+  }
+
+  if (/\baccept(?:ance|ing)?\b/i.test(request)) {
+    return [
+      'ACCEPTANCE LETTER',
+      '',
+      '[Date]',
+      '',
+      'Dear [Recipient Name],',
+      '',
+      'Thank you for your offer. I am pleased to formally accept the opportunity described in your correspondence and confirm my intention to proceed under the agreed terms.',
+      '',
+      'I appreciate your confidence in me and look forward to contributing positively. Please let me know if any final documentation is required before the agreed start date.',
+      '',
+      'Sincerely,',
+      authorName
+    ].join('\n');
+  }
+
   return [
-    `${companyName}`,
+    'PROFESSIONAL DOCUMENT',
     '',
-    'Document Draft',
+    '[Date]',
     '',
-    'Purpose',
-    'This document outlines the key details, expectations, and next steps for the topic requested.',
+    'To whom it may concern,',
     '',
-    'Overview',
-    'Add the main background, business context, and important points here. Keep the language clear, professional, and easy to follow.',
+    request || 'This document records the requested information in a clear and professional form.',
     '',
-    'Key Points',
-    '- Main point one',
-    '- Main point two',
-    '- Main point three',
+    'This statement is provided as a formal record of the matter described above and may be edited to reflect any final dates, recipients, or agreed details.',
     '',
-    'Next Steps',
-    '- Review the details',
-    '- Confirm responsibilities',
-    '- Share with the relevant people'
+    'Sincerely,',
+    authorName
   ].join('\n');
 };
 
@@ -787,6 +822,9 @@ const buildPortalActionFallbackDraft = (action, message = '', context = {}) => {
     case 'candidate-create-resume':
     case 'candidate-format-resume':
       return buildResumeActionDraft(message, context);
+    case 'candidate-create-document':
+    case 'candidate-format-document':
+      return buildDocumentDraft(message, context);
     case 'candidate-create-story':
       return buildStoryActionDraft(message, context);
     case 'employer-create-post':
@@ -1275,11 +1313,11 @@ const extractOpenAIResponseText = (data) => {
   return collected;
 };
 
-const askOpenAIResponsesApi = async ({ apiKey, model, prompt, useWebSearch = false }) => {
+const askOpenAIResponsesApi = async ({ apiKey, model, prompt, useWebSearch = false, maxOutputTokens = 500, timeout = 12000 }) => {
   const payload = {
     model,
     input: prompt,
-    max_output_tokens: 500
+    max_output_tokens: maxOutputTokens
   };
 
   if (useWebSearch) {
@@ -1291,7 +1329,7 @@ const askOpenAIResponsesApi = async ({ apiKey, model, prompt, useWebSearch = fal
     'https://api.openai.com/v1/responses',
     payload,
     {
-      timeout: 12000,
+      timeout,
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
@@ -1302,13 +1340,13 @@ const askOpenAIResponsesApi = async ({ apiKey, model, prompt, useWebSearch = fal
   return extractOpenAIResponseText(response.data);
 };
 
-const askOpenAIChatCompletionsApi = async ({ apiKey, model, prompt }) => {
+const askOpenAIChatCompletionsApi = async ({ apiKey, model, prompt, maxOutputTokens = 500, timeout = 12000 }) => {
   const response = await axios.post(
     'https://api.openai.com/v1/chat/completions',
     {
       model,
       temperature: 0.35,
-      max_tokens: 500,
+      max_tokens: maxOutputTokens,
       messages: [
         {
           role: 'user',
@@ -1317,7 +1355,7 @@ const askOpenAIChatCompletionsApi = async ({ apiKey, model, prompt }) => {
       ]
     },
     {
-      timeout: 12000,
+      timeout,
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
@@ -1328,9 +1366,9 @@ const askOpenAIChatCompletionsApi = async ({ apiKey, model, prompt }) => {
   return String(response.data?.choices?.[0]?.message?.content || '').trim();
 };
 
-const askOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = false }) => {
+const askOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = false, maxOutputTokens = 500, timeout = 12000 }) => {
   try {
-    const responseText = await askOpenAIResponsesApi({ apiKey, model, prompt, useWebSearch });
+    const responseText = await askOpenAIResponsesApi({ apiKey, model, prompt, useWebSearch, maxOutputTokens, timeout });
     if (responseText) {
       return responseText;
     }
@@ -1339,7 +1377,7 @@ const askOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = false 
     const shouldRetryWithoutSearch = useWebSearch && /web_search|tool|unsupported|invalid/i.test(message);
 
     if (shouldRetryWithoutSearch) {
-      return askOpenAIWithModel({ apiKey, model, prompt, useWebSearch: false });
+      return askOpenAIWithModel({ apiKey, model, prompt, useWebSearch: false, maxOutputTokens, timeout });
     }
 
     const shouldTryChatCompletions = /responses|output_text|max_output_tokens|unknown|not found|unsupported|model/i.test(message);
@@ -1350,16 +1388,18 @@ const askOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = false 
     console.warn(`[PUBLIC ASSISTANT] Responses API failed for ${model}, retrying with chat completions:`, message);
   }
 
-  return askOpenAIChatCompletionsApi({ apiKey, model, prompt });
+  return askOpenAIChatCompletionsApi({ apiKey, model, prompt, maxOutputTokens, timeout });
 };
 
-const askOpenAI = async ({ prompt }) => {
+const askOpenAI = async ({ prompt, useWebSearch, maxOutputTokens = 500, timeout = 12000 }) => {
   const apiKey = getOpenAIApiKey();
   if (!apiKey) {
     return '';
   }
 
-  const enableWebSearch = process.env.OPENAI_ENABLE_WEB_SEARCH !== 'false';
+  const enableWebSearch = typeof useWebSearch === 'boolean'
+    ? useWebSearch
+    : process.env.OPENAI_ENABLE_WEB_SEARCH !== 'false';
   const models = getOpenAIModelCandidates();
   let lastError = null;
 
@@ -1369,7 +1409,9 @@ const askOpenAI = async ({ prompt }) => {
         apiKey,
         model,
         prompt,
-        useWebSearch: enableWebSearch
+        useWebSearch: enableWebSearch,
+        maxOutputTokens,
+        timeout
       });
 
       if (answer) {
@@ -1386,6 +1428,87 @@ const askOpenAI = async ({ prompt }) => {
   }
 
   return '';
+};
+
+const parseDocumentSamples = (value = '') => {
+  const clean = String(value || '').replace(/```(?:json)?|```/gi, '').trim();
+  const arrayStart = clean.indexOf('[');
+  const arrayEnd = clean.lastIndexOf(']');
+  if (arrayStart < 0 || arrayEnd <= arrayStart) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(clean.slice(arrayStart, arrayEnd + 1));
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    return [];
+  }
+};
+
+const generateDocumentSamples = async (req, res) => {
+  const description = String(req.body?.description || '').trim().slice(0, 2000);
+  if (!description) {
+    return res.status(400).json({ error: 'Please describe the document you want to create.' });
+  }
+
+  if (!getOpenAIApiKey()) {
+    return res.status(503).json({ error: 'OpenAI document generation is not configured.' });
+  }
+
+  const suppliedProfile = req.body?.profile && typeof req.body.profile === 'object' ? req.body.profile : {};
+  const authorName = getProfileDisplayName({
+    profile: { ...suppliedProfile, name: req.body?.authorName || suppliedProfile.name },
+    user: {}
+  });
+  const profileContext = {
+    name: authorName,
+    location: String(suppliedProfile.location || '').slice(0, 160),
+    skills: normalizeDraftList(suppliedProfile.skills).slice(0, 10),
+    experience: normalizeDraftList(suppliedProfile.experience).slice(0, 8),
+    education: normalizeDraftList(suppliedProfile.education).slice(0, 6)
+  };
+  const prompt = `
+Generate exactly 10 distinct, complete, professional document drafts for this request:
+${description}
+
+Known author/profile context:
+${JSON.stringify(profileContext, null, 2)}
+
+Rules:
+- Return only a valid JSON array. Do not use Markdown fences and do not add commentary.
+- The array must contain exactly 10 objects with this shape: {"title":"short sample title","summary":"one short sentence describing the approach","content":"the complete editable document in plain text"}.
+- Every content value must be a finished document, not an outline, instruction, explanation, or request for more information.
+- Make the 10 drafts meaningfully different in tone, wording, structure, or formality while following the user's description.
+- Use the real author name ${JSON.stringify(authorName)} where a sender or author name belongs. Never substitute an email, username, or JumpTake ID for a person's name.
+- Do not invent resume experience, qualifications, dates, addresses, companies, recipients, legal terms, or other personal facts. When the request genuinely requires an unknown operational detail, use a concise bracketed field such as [Recipient Name] inside the finished document.
+- Keep each sample useful and concise enough to edit in an A4 document editor.
+`;
+
+  try {
+    const answer = await askOpenAI({
+      prompt,
+      useWebSearch: false,
+      maxOutputTokens: 8000,
+      timeout: 60000
+    });
+    const rawSamples = parseDocumentSamples(answer);
+    const samples = rawSamples.slice(0, 10).map((sample, index) => ({
+      id: `ai-document-${Date.now()}-${index + 1}`,
+      title: String(sample?.title || `Document Sample ${index + 1}`).trim().slice(0, 100),
+      summary: String(sample?.summary || 'A complete editable document draft.').trim().slice(0, 220),
+      content: String(sample?.content || '').trim()
+    })).filter((sample) => sample.content.length >= 80);
+
+    if (samples.length !== 10) {
+      return res.status(502).json({ error: 'OpenAI did not return all 10 complete document samples. Please try again.' });
+    }
+
+    return res.json({ samples });
+  } catch (error) {
+    console.error('[DOCUMENT SAMPLES] OpenAI generation failed:', error.response?.data?.error?.message || error.message);
+    return res.status(502).json({ error: 'OpenAI could not generate the document samples right now. Please try again.' });
+  }
 };
 
 const getGeminiApiKey = () => String(process.env.GEMINI_API_KEY || '').trim();
@@ -1491,8 +1614,10 @@ const askPublicAssistant = async (req, res) => {
   const contextBlock = JSON.stringify(buildCompactPortalContext(context), null, 2);
   const actionInstructions = isPortalAction(action) ? `
 The current portal action is ${action}.
-- For candidate-create-resume: write a complete resume draft using the provided user/profile context. Use clear section headings and concise bullet points. Use Portal context workspace.layout when present: fit the draft to the A4 editor size, margins, safe page height, and current viewport. Keep the resume compact, structured, and page-break friendly.
+- For candidate-create-resume: write a complete resume draft using only facts in the provided user/profile context. The first line must be the person's real profile name, never their email, username, or JumpTake ID. Omit sections with no factual data. Never ask for more details and never write placeholders such as "add your experience". Return only the resume, with no preamble or explanation. Use clear section headings and concise bullet points. Use Portal context workspace.layout when present: fit the draft to the A4 editor size, margins, safe page height, and current viewport. Keep the resume compact, structured, and page-break friendly.
 - For candidate-format-resume: rewrite the currently open resume from Portal context workspace.currentText into a polished, A4-ready resume. Use workspace.layout when present to respect the editor A4 width, height, margins, safe page height, and page count. Keep it concise enough for 1-2 pages, use clear section headings, strong alignment cues, ATS-friendly bullets, and do not invent facts.
+- For candidate-create-document: return only a complete, polished document based on the request. Never ask for more information, never add a preamble, and never explain what you created. Use the real profile name where an author or sender name is appropriate; never use an email, username, or JumpTake ID as the person's name.
+- For candidate-format-document: rewrite the currently open document from Portal context workspace.currentText into a polished, editable document. Return only the finished document and do not invent facts.
 - For employer-create-document: write a polished editable document draft based on the user's request and employer/company context.
 - For employer-format-document: rewrite the currently open document from Portal context workspace.currentText into a polished, A4-ready business document. Use the company profile context for company name, industry, headquarters, website, and tone where relevant.
 - For candidate-create-story: write a polished talent story/feed post ready to paste into the dashboard feed composer. Keep it first person when appropriate.
@@ -1523,7 +1648,7 @@ If the visitor asks a general question like coin toss, banana, New York, food, j
 If the visitor asks something unrelated and harmless, do not repeat a stock JumpTake paragraph. Keep the reply conversational and helpful.
 If the visitor asks a logic or riddle question, answer that exact question directly.
 If the visitor asks to create an account, log in, browse jobs, or take a product action, guide them into the correct JumpTake flow.
-If a request needs missing personal details, ask for the missing details instead of pretending you have them.
+For ordinary advice, ask for missing details when they are necessary. For resume or document creation actions, do not ask follow-up questions: produce the best complete draft from known facts, omit unsupported resume sections, and return only editor-ready content.
 
 ${SITE_GUIDE}
 
@@ -1591,5 +1716,6 @@ Visitor: ${message}
 };
 
 module.exports = {
-  askPublicAssistant
+  askPublicAssistant,
+  generateDocumentSamples
 };

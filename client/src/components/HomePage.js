@@ -281,7 +281,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         'friend-invitations': 'Friends',
         'bookmarked-candidates': 'Bookmarked Candidates',
         'interested-jobs': 'Job Preferences',
-        'resume-playground': 'Resume Playground',
+        'resume-playground': 'Create',
         'about-jumptake': 'About JumpTake',
         'progress-check': 'Progress Check',
         blocks: 'Blocks',
@@ -766,7 +766,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         { id: 'applications', label: 'My Applications', icon: 'profile' },
         { id: 'bookmarks', label: 'Bookmarks', icon: 'star' },
         { id: 'interested-jobs', label: 'Job Preferences', icon: 'briefcase' },
-        { id: 'resume-playground', label: 'Resume Playground', icon: 'draft' },
+        { id: 'resume-playground', label: 'Create', icon: 'draft' },
         { id: 'blocks', label: 'Blocks', icon: 'block' }
     ].map((item) => ({
         ...item,
@@ -999,6 +999,9 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             case 'resume-playground':
                 return <ResumePlayground
                     user={user}
+                    profileData={jobSeekerData}
+                    allowDocumentMode
+                    portalMode="candidate"
                     onFooterBack={goToPreviousSection}
                 />;
             case 'about-jumptake':

@@ -632,6 +632,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                     user={employer}
                     onFooterBack={goToPreviousSection}
                     mode="document"
+                    portalMode="employer"
                 />;
             case 'about-jumptake':
                 return <AboutJumpTake mode="employer" />;

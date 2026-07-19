@@ -64,7 +64,15 @@ const isWeakAssistantActionDraft = (value = '') => {
 const buildLocalResumeDraft = (context = {}, question = '') => {
     const profile = context.profile || {};
     const user = context.user || {};
-    const name = String(profile.name || user.name || user.email || 'Your Name').trim();
+    const identityValues = [profile.email, user.email, profile.username, user.username, profile.jumptakeId, user.jumptakeId]
+        .map((value) => String(value || '').trim().toLowerCase())
+        .filter(Boolean);
+    const name = [profile.name, profile.fullName, user.name, user.fullName]
+        .map((value) => String(value || '').replace(/\s+/g, ' ').trim())
+        .find((value) => value
+            && !/@|https?:|\d/.test(value)
+            && !identityValues.includes(value.toLowerCase())
+            && /^[\p{L}][\p{L}\p{M}' -]*$/u.test(value)) || 'Your Name';
     const skills = Array.isArray(profile.skills) ? profile.skills : String(profile.skills || '').split(/[\n,;|]+/).filter(Boolean);
     const education = Array.isArray(profile.education) ? profile.education : String(profile.education || '').split(/\n+/).filter(Boolean);
     const experience = Array.isArray(profile.experience) ? profile.experience : String(profile.experience || '').split(/\n+/).filter(Boolean);
@@ -79,12 +87,31 @@ const buildLocalResumeDraft = (context = {}, question = '') => {
         '',
         'CORE SKILLS',
         ...(skills.length ? skills.slice(0, 10).map((skill) => `- ${String(skill).trim()}`) : ['- Communication', '- Teamwork', '- Problem solving', '- Time management']),
+        ...(experience.length ? ['', 'EXPERIENCE', ...experience.slice(0, 6).map((item) => `- ${String(item).trim()}`)] : []),
+        ...(education.length ? ['', 'EDUCATION', ...education.slice(0, 5).map((item) => `- ${String(item).trim()}`)] : [])
+    ].join('\n');
+};
+
+const buildLocalDocumentDraft = (context = {}, question = '') => {
+    const profile = context.profile || {};
+    const user = context.user || {};
+    const identities = [profile.email, user.email, profile.username, user.username, profile.jumptakeId, user.jumptakeId]
+        .map((value) => String(value || '').trim().toLowerCase())
+        .filter(Boolean);
+    const name = [profile.name, profile.fullName, user.name, user.fullName]
+        .map((value) => String(value || '').replace(/\s+/g, ' ').trim())
+        .find((value) => value && !/@|\d/.test(value) && !identities.includes(value.toLowerCase())) || 'Your Name';
+    return [
+        'PROFESSIONAL DOCUMENT',
         '',
-        'EXPERIENCE',
-        ...(experience.length ? experience.slice(0, 6).map((item) => `- ${String(item).trim()}`) : ['- Add your recent role, project, internship, or volunteering experience here.', '- Highlight measurable achievements and responsibilities.']),
+        '[Date]',
         '',
-        'EDUCATION',
-        ...(education.length ? education.slice(0, 5).map((item) => `- ${String(item).trim()}`) : ['- Add your school, college, degree, or certification here.'])
+        'To whom it may concern,',
+        '',
+        String(question || 'This document records the requested information in a clear and professional form.').trim(),
+        '',
+        'Sincerely,',
+        name
     ].join('\n');
 };
 
@@ -105,6 +132,10 @@ const buildLocalActionDraft = (actionName = '', context = {}, question = '') => 
         return buildLocalResumeDraft(context, question);
     }
 
+    if (actionName === 'candidate-create-document' || actionName === 'candidate-format-document') {
+        return buildLocalDocumentDraft(context, question);
+    }
+
     if (actionName === 'candidate-create-story') {
         return buildLocalStoryDraft(context);
     }
@@ -117,12 +148,24 @@ const detectLocalAssistantAction = (message = '', context = {}) => {
     const portalMode = context?.portalMode || '';
     const activeSection = normalizeSearchText(context?.activeSection || '');
     const hasActionVerb = /\b(open|go to|show|start|create|make|write|draft|generate|compose|prepare)\b/.test(normalized);
+    const wantsResumeDraft = portalMode !== 'employer'
+        && /\b(create|make|write|draft|generate|prepare)\b.{0,40}\b(resume|cv)\b|\b(resume|cv)\b.{0,32}\b(create|make|write|draft|generate|prepare)\b/.test(normalized);
+    const wantsDocumentDraft = portalMode !== 'employer'
+        && /\b(create|make|write|draft|generate|prepare)\b.{0,40}\b(document|letter|memo|policy)\b|\b(document|letter|memo|policy)\b.{0,32}\b(create|make|write|draft|generate|prepare)\b/.test(normalized);
     const wantsStoryComposer = /\b(talent story|story|stories|talent post|feed post|post composer|create story|write story)\b/.test(normalized)
         && hasActionVerb
         && portalMode !== 'employer';
     const wantsEmployerPost = /\b(company post|work news|announcement|feed post|post composer|create post|write post)\b/.test(normalized)
         && hasActionVerb
         && portalMode === 'employer';
+
+    if (wantsResumeDraft) {
+        return 'candidate-create-resume';
+    }
+
+    if (wantsDocumentDraft) {
+        return 'candidate-create-document';
+    }
 
     if (wantsStoryComposer || (portalMode !== 'employer' && activeSection === 'job feed' && /\b(write|draft|generate|compose)\b.*\bpost\b/.test(normalized))) {
         return 'candidate-create-story';
@@ -922,6 +965,18 @@ const FloatingMessenger = ({
             storeAndOpenSection('resume-playground', 'jumptakeResumePlaygroundAiDraft', {
                 mode: 'resume',
                 name: 'AI Formatted Resume',
+                text: draftText,
+                source: 'ai-tailor',
+                style: 'professional'
+            }, 'jumptake-resume-playground-ai-draft');
+            minimizeAfterMobileAssistantAction();
+            return;
+        }
+
+        if ((actionName === 'candidate-create-document' || actionName === 'candidate-format-document') && !isEmployer) {
+            storeAndOpenSection('resume-playground', 'jumptakeResumePlaygroundAiDraft', {
+                mode: 'document',
+                name: actionName === 'candidate-format-document' ? 'AI Formatted Document' : 'AI Generated Document',
                 text: draftText,
                 source: 'ai-tailor',
                 style: 'professional'

@@ -28,6 +28,14 @@ const { getAuthenticatedPayload } = require('../utils/candidateAuth');
 
 router.use('/admin', adminRoutes);
 router.post('/public-assistant', publicAssistantController.askPublicAssistant);
+router.post('/public-assistant/document-samples', (req, res, next) => {
+    try {
+        getAuthenticatedPayload(req);
+        next();
+    } catch (error) {
+        res.status(error.status || 401).json({ error: error.message || 'Authentication is required' });
+    }
+}, publicAssistantController.generateDocumentSamples);
 router.get('/auth/:role/:provider/start', socialAuthController.startSocialAuth);
 router.get('/auth/:role/:provider/callback', socialAuthController.completeSocialAuth);
 router.post('/auth/:role/:provider/callback', socialAuthController.completeSocialAuth);

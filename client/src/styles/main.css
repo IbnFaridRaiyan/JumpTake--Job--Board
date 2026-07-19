@@ -82151,6 +82151,61 @@ body[data-theme="light"] #root .home-page .resume-playground-tabs button {
   -webkit-text-fill-color: #3f352c !important;
 }
 
+.resume-playground-tabs.has-four-tabs {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+.resume-playground-document-prompt {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid rgba(122, 96, 67, 0.18);
+  border-radius: 1rem;
+  background: rgba(255, 250, 242, 0.72);
+}
+
+.resume-playground-document-prompt label {
+  color: #3f352c;
+  font-weight: 800;
+}
+
+.resume-playground-document-prompt textarea {
+  width: 100%;
+  min-height: 7rem;
+  resize: vertical;
+  box-sizing: border-box;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid rgba(111, 22, 32, 0.28);
+  border-radius: 0.9rem;
+  background: #ffffff;
+  color: #171717;
+  font: inherit;
+  line-height: 1.45;
+}
+
+.resume-playground-generate-documents-button {
+  justify-self: start;
+  width: auto !important;
+  min-width: 0 !important;
+}
+
+@media (max-width: 768px) {
+  .resume-playground-tabs.has-four-tabs {
+    display: flex !important;
+    overflow-x: auto !important;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  .resume-playground-tabs.has-four-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .resume-playground-tabs.has-four-tabs > button {
+    flex: 0 0 5.4rem !important;
+  }
+}
+
 html[data-theme="light"] body #root .home-page .friend-invitation-tab-icon,
 body[data-theme="light"] #root .home-page .friend-invitation-tab-icon {
   color: currentColor !important;

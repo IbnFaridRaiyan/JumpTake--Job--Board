@@ -276,6 +276,16 @@ const isLikelyResumeNameLine = (line = '') => {
 };
 
 const isLikelyContactLine = (line = '') => /(@|\||\+?\d[\d\s().-]{6,}|linkedin|github|portfolio|email|phone|mobile|address)/i.test(line);
+const isLikelyAccountIdentifierLine = (line = '') => {
+    const clean = cleanResumeLine(line);
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean)) {
+        return false;
+    }
+
+    return /^@[A-Za-z0-9_.-]+$/.test(clean)
+        || /^[A-Za-z][A-Za-z0-9-]*[._][A-Za-z0-9_.-]+$/.test(clean)
+        || /^jumptake\s*(?:id)?\s*[:#-]/i.test(clean);
+};
 
 const createAiDraftHtml = (text = '', { documentMode = false, fallbackName = '' } = {}) => {
     const lines = normalizeDraftLines(text);
@@ -304,11 +314,15 @@ const createAiDraftHtml = (text = '', { documentMode = false, fallbackName = '' 
         `.trim().replace(/\u00e2\u20ac\u00a2/g, '&#8226;');
     }
 
-    const nameIndex = lines.findIndex((line, index) => index < 4 && isLikelyResumeNameLine(line));
-    const candidateName = nameIndex >= 0
-        ? cleanResumeLine(lines[nameIndex])
-        : cleanResumeLine(fallbackName || (looksLikeHeading(lines[0]) || isPlaceholderResumeName(lines[0]) ? 'Candidate' : lines[0] || 'Candidate'));
-    const remainingLines = lines.filter((_, index) => index !== (nameIndex >= 0 ? nameIndex : 0));
+    const accountIdentifierIndexes = new Set(lines
+        .map((line, index) => (index < 4 && isLikelyAccountIdentifierLine(line) ? index : -1))
+        .filter((index) => index >= 0));
+    const nameIndex = lines.findIndex((line, index) => index < 4 && !accountIdentifierIndexes.has(index) && isLikelyResumeNameLine(line));
+    const generatedName = nameIndex >= 0 ? cleanResumeLine(lines[nameIndex]) : '';
+    const candidateName = isRealPersonName(fallbackName)
+        ? normalizePersonName(fallbackName)
+        : (isRealPersonName(generatedName) ? generatedName : 'Your Name');
+    const remainingLines = lines.filter((_, index) => index !== nameIndex && !accountIdentifierIndexes.has(index));
     const contactIndex = remainingLines.findIndex((line, index) => index < 3 && isLikelyContactLine(line));
     const contactLine = contactIndex >= 0 ? cleanResumeLine(remainingLines[contactIndex]) : '';
     const bodyLines = remainingLines.filter((_, index) => index !== contactIndex);
@@ -555,15 +569,53 @@ const normalizeResumeItems = (value) => {
     return [];
 };
 
+const normalizePersonName = (value = '') => String(value || '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const isRealPersonName = (value = '', identity = {}) => {
+    const name = normalizePersonName(value);
+    const identityValues = [identity.email, identity.username, identity.userName, identity.jumptakeId, identity.jumpTakeId]
+        .map((item) => String(item || '').trim().toLowerCase())
+        .filter(Boolean);
+
+    if (!name || name.length < 2 || name.length > 80 || /@|https?:|\d/.test(name)) {
+        return false;
+    }
+
+    if (/^[._-]|[._-]$/.test(name) || identityValues.includes(name.toLowerCase())) {
+        return false;
+    }
+
+    return /^[\p{L}][\p{L}\p{M}' -]*$/u.test(name);
+};
+
+const resolvePersonName = (profileData = {}, user = {}) => {
+    const firstAndLastName = [profileData?.firstName || user?.firstName, profileData?.lastName || user?.lastName]
+        .map(normalizePersonName)
+        .filter(Boolean)
+        .join(' ');
+    const identity = { ...user, ...profileData };
+    const candidates = [
+        profileData?.name,
+        profileData?.fullName,
+        firstAndLastName,
+        user?.name,
+        user?.fullName
+    ];
+
+    return candidates.find((candidate) => isRealPersonName(candidate, identity)) || 'Your Name';
+};
+
 const renderResumeBullets = (items, fallback) => (
     (items.length ? items : [fallback])
         .map((item) => `<li>${escapeHtml(item)}</li>`)
         .join('')
 );
 
-const getTailorProfile = (profileData, user, displayName) => {
+const getTailorProfile = (profileData, user) => {
     const email = profileData?.email || user?.email || '';
-    const name = profileData?.name || user?.name || displayName || (email.includes('@') ? email.split('@')[0] : 'Your Name');
+    const name = resolvePersonName(profileData, user);
     const skills = normalizeResumeItems(profileData?.skills);
     const experience = normalizeResumeItems(profileData?.experience);
     const education = normalizeResumeItems(profileData?.education);
@@ -574,8 +626,8 @@ const getTailorProfile = (profileData, user, displayName) => {
     return {
         name,
         email,
-        phone: profileData?.phone || 'Phone',
-        location: profileData?.location || 'Location',
+        phone: profileData?.phone || '',
+        location: profileData?.location || '',
         profileImage: profileData?.profileImage || '',
         skills,
         experience,
@@ -598,7 +650,7 @@ const buildAtsResumeHtml = (profile, variantIndex = 0) => {
         <div data-resume-template-root="ats" style="font-family:${fonts[variantIndex % fonts.length]}; color:#111111; width:100%; max-width:100%; box-sizing:border-box; padding:0; font-size:${variantIndex % 3 === 0 ? '11px' : '11.5px'}; line-height:1.16; overflow-wrap:break-word;">
             <div style="text-align:${headerAlign}; margin-bottom:9px;">
                 <div style="font-size:${variantIndex % 2 === 0 ? '21px' : '23px'}; font-weight:700; color:${accent}; letter-spacing:${variantIndex % 2 === 0 ? '0.01em' : '0'};">${safeName}</div>
-                <div style="font-size:10.5px; margin-top:3px;">${contact || 'Location | Phone | Email'}</div>
+                ${contact ? `<div style="font-size:10.5px; margin-top:3px;">${contact}</div>` : ''}
             </div>
             <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:1.5px solid ${accent}; margin-top:8px;">Professional Summary</div>
             <p style="margin:4px 0 7px;">${escapeHtml(profile.summary)}</p>
@@ -606,24 +658,23 @@ const buildAtsResumeHtml = (profile, variantIndex = 0) => {
             <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:1.5px solid ${accent}; margin-top:8px;">Core Skills</div>
             <p style="margin:4px 0 7px;">${escapeHtml((profile.skills.length ? profile.skills : ['Communication', 'Teamwork', 'Problem Solving']).join(' | '))}</p>
 
-            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:1.5px solid ${accent}; margin-top:8px;">Professional Experience</div>
-            <ul style="margin:4px 0 7px 16px; padding:0;">
-                ${renderResumeBullets(profile.experience, 'Add your recent role, company, dates, responsibilities, and measurable achievements.')}
-            </ul>
-
-            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:1.5px solid ${accent}; margin-top:8px;">Projects & Achievements</div>
-            <ul style="margin:4px 0 7px 16px; padding:0;">
-                ${renderResumeBullets(profile.achievements, 'Add measurable achievements, awards, projects, or impact statements.')}
-            </ul>
-
-            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:1.5px solid ${accent}; margin-top:8px;">Education</div>
-            <ul style="margin:4px 0 7px 16px; padding:0;">
-                ${renderResumeBullets(profile.education, 'Add your institution, qualification, subjects, dates, and grade if relevant.')}
-            </ul>
-
-            <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:1.5px solid ${accent}; margin-top:8px;">Additional</div>
-            <p style="margin:4px 0 0;"><strong>Interests:</strong> ${escapeHtml((profile.interests.length ? profile.interests : ['Relevant interests']).join(', '))}</p>
-            <p style="margin:2px 0 0;"><strong>Hobbies:</strong> ${escapeHtml((profile.hobbies.length ? profile.hobbies : ['Relevant hobbies']).join(', '))}</p>
+            ${profile.experience.length ? `
+                <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:1.5px solid ${accent}; margin-top:8px;">Professional Experience</div>
+                <ul style="margin:4px 0 7px 16px; padding:0;">${renderResumeBullets(profile.experience, '')}</ul>
+            ` : ''}
+            ${profile.achievements.length ? `
+                <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:1.5px solid ${accent}; margin-top:8px;">Projects & Achievements</div>
+                <ul style="margin:4px 0 7px 16px; padding:0;">${renderResumeBullets(profile.achievements, '')}</ul>
+            ` : ''}
+            ${profile.education.length ? `
+                <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:1.5px solid ${accent}; margin-top:8px;">Education</div>
+                <ul style="margin:4px 0 7px 16px; padding:0;">${renderResumeBullets(profile.education, '')}</ul>
+            ` : ''}
+            ${profile.interests.length || profile.hobbies.length ? `
+                <div style="font-weight:800; color:${accent}; text-transform:uppercase; border-bottom:1.5px solid ${accent}; margin-top:8px;">Additional</div>
+                ${profile.interests.length ? `<p style="margin:4px 0 0;"><strong>Interests:</strong> ${escapeHtml(profile.interests.join(', '))}</p>` : ''}
+                ${profile.hobbies.length ? `<p style="margin:2px 0 0;"><strong>Hobbies:</strong> ${escapeHtml(profile.hobbies.join(', '))}</p>` : ''}
+            ` : ''}
         </div>
     `;
 };
@@ -634,6 +685,7 @@ const buildGeneralResumeHtml = (profile, variantIndex = 0, photo = '') => {
         ['#365314', '#bef264'], ['#374151', '#d1d5db'], ['#92400e', '#fcd34d'], ['#0f172a', '#38bdf8'], ['#7c2d12', '#fdba74']
     ];
     const [dark, light] = themes[variantIndex % themes.length];
+    const contact = [profile.phone, profile.email, profile.location].filter(Boolean).map(escapeHtml).join(' | ');
     const imageMarkup = photo
         ? `<img src="${photo}" alt="${escapeHtml(profile.name)}" style="width:78px;height:78px;object-fit:cover;border-radius:${variantIndex % 2 ? '16px' : '50%'};border:3px solid #ffffff;margin:0 auto 12px;display:block;" />`
         : `<div style="width:72px;height:72px;border-radius:${variantIndex % 2 ? '16px' : '50%'};border:3px solid #ffffff;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;background:${light};color:${dark};font-size:26px;font-weight:800;">${escapeHtml(profile.name.charAt(0).toUpperCase() || 'Y')}</div>`;
@@ -645,22 +697,18 @@ const buildGeneralResumeHtml = (profile, variantIndex = 0, photo = '') => {
                 <div style="min-width:0;flex:1 1 auto;">
                     <h1 style="font-size:25px;line-height:1.02;margin:0;color:#ffffff;">${escapeHtml(profile.name)}</h1>
                     <p style="margin:5px 0 0;font-weight:700;color:${light};">Professional Resume</p>
-                    <p style="font-size:9.5px;line-height:1.3;margin:6px 0 0;color:#ffffff;">${escapeHtml(profile.phone)} | ${escapeHtml(profile.email || 'Email')} | ${escapeHtml(profile.location)}</p>
+                    ${contact ? `<p style="font-size:9.5px;line-height:1.3;margin:6px 0 0;color:#ffffff;">${contact}</p>` : ''}
                 </div>
             </div>
             <div style="padding:18px 20px 20px;box-sizing:border-box;">
                 <h3 style="letter-spacing:0.14em;font-size:11px;margin:0 0 5px;color:${dark};border-bottom:2px solid ${light};padding-bottom:3px;">ABOUT ME</h3>
                 <p style="font-size:10px;line-height:1.28;margin:0 0 9px;">${escapeHtml(profile.summary)}</p>
-                <h3 style="letter-spacing:0.14em;font-size:11px;margin:8px 0 5px;color:${dark};border-bottom:2px solid ${light};padding-bottom:3px;">PROFESSIONAL EXPERIENCE</h3>
-                <ul style="font-size:10px;line-height:1.25;margin:0 0 9px 14px;padding:0;">${renderResumeBullets(profile.experience, 'Add professional experience and measurable achievements')}</ul>
-                <h3 style="letter-spacing:0.14em;font-size:11px;margin:8px 0 5px;color:${dark};border-bottom:2px solid ${light};padding-bottom:3px;">EDUCATION</h3>
-                <ul style="font-size:10px;line-height:1.25;margin:0 0 9px 14px;padding:0;">${renderResumeBullets(profile.education, 'Add education details')}</ul>
+                ${profile.experience.length ? `<h3 style="letter-spacing:0.14em;font-size:11px;margin:8px 0 5px;color:${dark};border-bottom:2px solid ${light};padding-bottom:3px;">PROFESSIONAL EXPERIENCE</h3><ul style="font-size:10px;line-height:1.25;margin:0 0 9px 14px;padding:0;">${renderResumeBullets(profile.experience, '')}</ul>` : ''}
+                ${profile.education.length ? `<h3 style="letter-spacing:0.14em;font-size:11px;margin:8px 0 5px;color:${dark};border-bottom:2px solid ${light};padding-bottom:3px;">EDUCATION</h3><ul style="font-size:10px;line-height:1.25;margin:0 0 9px 14px;padding:0;">${renderResumeBullets(profile.education, '')}</ul>` : ''}
                 <h3 style="letter-spacing:0.14em;font-size:11px;margin:8px 0 5px;color:${dark};border-bottom:2px solid ${light};padding-bottom:3px;">KEY SKILLS</h3>
                 <p style="font-size:10px;line-height:1.28;margin:0 0 9px;">${escapeHtml((profile.skills.length ? profile.skills : ['Communication', 'Teamwork', 'Problem Solving']).join(' | '))}</p>
-                <h3 style="letter-spacing:0.14em;font-size:11px;margin:8px 0 5px;color:${dark};border-bottom:2px solid ${light};padding-bottom:3px;">ACHIEVEMENTS</h3>
-                <ul style="font-size:10px;line-height:1.25;margin:0 0 9px 14px;padding:0;">${renderResumeBullets(profile.achievements, 'Add achievements, projects, certifications, or awards')}</ul>
-                <h3 style="letter-spacing:0.14em;font-size:11px;margin:8px 0 5px;color:${dark};border-bottom:2px solid ${light};padding-bottom:3px;">INTERESTS</h3>
-                <p style="font-size:10px;line-height:1.28;margin:0;">${escapeHtml([...profile.interests, ...profile.hobbies].join(', ') || 'Add relevant interests and hobbies')}</p>
+                ${profile.achievements.length ? `<h3 style="letter-spacing:0.14em;font-size:11px;margin:8px 0 5px;color:${dark};border-bottom:2px solid ${light};padding-bottom:3px;">ACHIEVEMENTS</h3><ul style="font-size:10px;line-height:1.25;margin:0 0 9px 14px;padding:0;">${renderResumeBullets(profile.achievements, '')}</ul>` : ''}
+                ${profile.interests.length || profile.hobbies.length ? `<h3 style="letter-spacing:0.14em;font-size:11px;margin:8px 0 5px;color:${dark};border-bottom:2px solid ${light};padding-bottom:3px;">INTERESTS</h3><p style="font-size:10px;line-height:1.28;margin:0;">${escapeHtml([...profile.interests, ...profile.hobbies].join(', '))}</p>` : ''}
             </div>
         </div>
     `;
@@ -754,6 +802,14 @@ const buildDocumentTemplates = () => [
     description: `Editable JumpTake document template for ${label.toLowerCase()}.`,
     category: 'document',
     html: buildDocumentTemplateHtml(label, index)
+}));
+
+const buildGeneratedDocumentTemplates = (samples = []) => (Array.isArray(samples) ? samples : buildDocumentTemplates()).slice(0, 10).map((sample, index) => ({
+    id: String(sample?.id || `ai-document-${index + 1}`),
+    label: String(sample?.title || `Document Sample ${index + 1}`),
+    description: String(sample?.summary || `AI-generated document sample ${index + 1}.`),
+    category: 'document',
+    html: sanitizeEditorHtml(createAiDraftHtml(String(sample?.content || ''), { documentMode: true }))
 }));
 
 const createTemplateLibrary = (name = 'YOUR NAME', email = 'Email') => {
@@ -1074,12 +1130,14 @@ const buildExportDocument = (title, html) => `
 </html>
 `;
 
-const ResumePlayground = ({ user, mode = 'resume' }) => {
-    const isDocumentMode = mode === 'document';
+const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, profileData = null, portalMode = 'candidate' }) => {
+    const [workspaceMode, setWorkspaceMode] = useState(mode === 'document' ? 'document' : 'resume');
+    const isDocumentMode = workspaceMode === 'document';
     const userId = user?.id || 'guest';
-    const displayEmail = typeof user?.email === 'string' ? user.email : '';
-    const displayName = displayEmail.includes('@') ? displayEmail.split('@')[0] : (displayEmail || 'Your Name');
-    const storageKey = getStorageKey(userId, mode);
+    const displayName = portalMode === 'employer'
+        ? String(user?.companyName || user?.name || 'JumpTake').trim()
+        : resolvePersonName(profileData, user);
+    const storageKey = getStorageKey(userId, workspaceMode);
     const resourceLabel = isDocumentMode ? 'Document' : 'Resume';
     const resourceLabelPlural = isDocumentMode ? 'documents' : 'resumes';
     const uploadInputRef = useRef(null);
@@ -1097,7 +1155,6 @@ const ResumePlayground = ({ user, mode = 'resume' }) => {
     const aiDraftTypingTokenRef = useRef(0);
 
     const [activeTab, setActiveTab] = useState('create');
-    const [createMode, setCreateMode] = useState('');
     const [editorSuspended, setEditorSuspended] = useState(false);
     const [savedResumes, setSavedResumes] = useState([]);
     const [editorResume, setEditorResume] = useState(null);
@@ -1108,9 +1165,11 @@ const ResumePlayground = ({ user, mode = 'resume' }) => {
     const [uploading, setUploading] = useState(false);
     const [tailorStep, setTailorStep] = useState('');
     const [tailorTemplates, setTailorTemplates] = useState([]);
-    const [tailorProfileData, setTailorProfileData] = useState(null);
+    const [tailorProfileData, setTailorProfileData] = useState(profileData);
     const [tailorPhoto, setTailorPhoto] = useState('');
     const [tailorPhotoProcessing, setTailorPhotoProcessing] = useState(false);
+    const [documentPrompt, setDocumentPrompt] = useState('');
+    const [documentGenerating, setDocumentGenerating] = useState(false);
     const [spellcheckEnabled, setSpellcheckEnabled] = useState(true);
     const [textColor, setTextColor] = useState(DEFAULT_TEXT_COLOR);
     const [mobileEditorZoom, setMobileEditorZoom] = useState(0.46);
@@ -1122,6 +1181,10 @@ const ResumePlayground = ({ user, mode = 'resume' }) => {
     const [isMobileViewport, setIsMobileViewport] = useState(() => (
         typeof window !== 'undefined' ? window.innerWidth <= 768 : false
     ));
+    useEffect(() => {
+        setTailorProfileData(profileData);
+    }, [profileData]);
+
     useEffect(() => {
         try {
             const stored = localStorage.getItem(storageKey);
@@ -1220,7 +1283,7 @@ const ResumePlayground = ({ user, mode = 'resume' }) => {
         const editorRect = editorRef.current?.getBoundingClientRect?.();
         const canvasRect = editorCanvasRef.current?.getBoundingClientRect?.();
         sessionStorage.setItem(WORKSPACE_SNAPSHOT_KEY, JSON.stringify({
-            mode,
+            mode: workspaceMode,
             type: isDocumentMode ? 'document' : 'resume',
             activeTab,
             name: resume.name || resourceLabel,
@@ -1251,7 +1314,7 @@ const ResumePlayground = ({ user, mode = 'resume' }) => {
             },
             updatedAt: new Date().toISOString()
         }));
-    }, [activeTab, editorMargins.left, editorMargins.top, editorPageCount, editorResume, isDocumentMode, mode, resourceLabel]);
+    }, [activeTab, editorMargins.left, editorMargins.top, editorPageCount, editorResume, isDocumentMode, resourceLabel, workspaceMode]);
 
     useEffect(() => {
         publishWorkspaceSnapshot();
@@ -1927,13 +1990,20 @@ const ResumePlayground = ({ user, mode = 'resume' }) => {
         const openAiDraft = (draft = {}) => {
             const draftMode = draft.mode || 'resume';
             if ((draftMode === 'document') !== isDocumentMode) {
-                return;
+                if (allowDocumentMode && ['resume', 'document'].includes(draftMode)) {
+                    sessionStorage.setItem('jumptakeResumePlaygroundAiDraft', JSON.stringify(draft));
+                    setEditorResume(null);
+                    setEditorSuspended(false);
+                    setActiveTab('create');
+                    setWorkspaceMode(draftMode);
+                }
+                return false;
             }
 
             const draftText = String(draft.text || '').trim();
             const cleanedDraftText = normalizeDraftLines(draftText).join('\n');
             if (!cleanedDraftText) {
-                return;
+                return false;
             }
 
             const fallbackName = getCurrentTailorProfile().name || displayName;
@@ -1944,17 +2014,19 @@ const ResumePlayground = ({ user, mode = 'resume' }) => {
                 source: draft.source || 'ai-tailor'
             });
 
-            setCreateMode('scratch');
             openEditor(draftRecord, 'edit');
             animateAiDraftIntoEditor(draftRecord, cleanedDraftText, formattedHtml);
+            return true;
         };
 
         const readStoredDraft = () => {
             try {
                 const storedDraft = JSON.parse(sessionStorage.getItem('jumptakeResumePlaygroundAiDraft') || 'null');
                 if (storedDraft) {
-                    sessionStorage.removeItem('jumptakeResumePlaygroundAiDraft');
-                    openAiDraft(storedDraft);
+                    const didOpen = openAiDraft(storedDraft);
+                    if (didOpen || !allowDocumentMode) {
+                        sessionStorage.removeItem('jumptakeResumePlaygroundAiDraft');
+                    }
                 }
             } catch (error) {
                 sessionStorage.removeItem('jumptakeResumePlaygroundAiDraft');
@@ -1969,7 +2041,7 @@ const ResumePlayground = ({ user, mode = 'resume' }) => {
         window.addEventListener('jumptake-resume-playground-ai-draft', handleAiDraft);
         return () => window.removeEventListener('jumptake-resume-playground-ai-draft', handleAiDraft);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isDocumentMode]);
+    }, [allowDocumentMode, isDocumentMode]);
 
     const saveSelection = () => {
         const selection = window.getSelection();
@@ -2341,7 +2413,6 @@ const ResumePlayground = ({ user, mode = 'resume' }) => {
     const handleStartScratch = () => {
         setTailorStep('');
         setTailorTemplates([]);
-        setCreateMode('scratch');
         openEditor(createResumeRecord({
             name: `${displayName} ${resourceLabel}`,
             html: isDocumentMode
@@ -2351,7 +2422,12 @@ const ResumePlayground = ({ user, mode = 'resume' }) => {
         }), 'create');
     };
 
-    const getCurrentTailorProfile = () => getTailorProfile(tailorProfileData, user, displayName);
+    const getCurrentTailorProfile = () => {
+        const profile = getTailorProfile(tailorProfileData, user);
+        return isDocumentMode && portalMode === 'employer'
+            ? { ...profile, name: displayName }
+            : profile;
+    };
 
     const generateTailorTemplates = (type, photo = tailorPhoto) => {
         const profile = getCurrentTailorProfile();
@@ -2363,19 +2439,71 @@ const ResumePlayground = ({ user, mode = 'resume' }) => {
     };
 
     const handleOpenTailor = () => {
-        setCreateMode('ai-tailor');
         setTailorStep('choose');
         setTailorTemplates([]);
         clearMessages();
     };
 
     const handleOpenDocumentTemplates = () => {
-        const templates = buildDocumentTemplates();
-        setCreateMode('document-template');
-        setTailorStep('document');
-        setTailorTemplates(templates);
-        setStatusMessage(`${templates.length} JumpTake document templates are ready. Choose one to edit.`);
-        setErrorMessage('');
+        setTailorStep('document-prompt');
+        setTailorTemplates([]);
+        clearMessages();
+    };
+
+    const handleGenerateDocumentSamples = async (event) => {
+        event?.preventDefault?.();
+        const description = documentPrompt.trim();
+        if (!description) {
+            setErrorMessage('Describe the document you want JumpTake AI to write.');
+            return;
+        }
+
+        setDocumentGenerating(true);
+        setTailorTemplates([]);
+        clearMessages();
+
+        try {
+            const token = portalMode === 'employer'
+                ? localStorage.getItem('employerToken')
+                : localStorage.getItem('token');
+            const profile = getCurrentTailorProfile();
+            const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/public-assistant/document-samples`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { Authorization: `Bearer ${token}` } : {})
+                },
+                body: JSON.stringify({
+                    description,
+                    authorName: profile.name,
+                    profile: {
+                        name: profile.name,
+                        location: profile.location,
+                        skills: profile.skills.slice(0, 10),
+                        experience: profile.experience.slice(0, 8),
+                        education: profile.education.slice(0, 6)
+                    }
+                })
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(data.error || 'JumpTake AI could not generate the document samples.');
+            }
+
+            const templates = buildGeneratedDocumentTemplates(data.samples);
+            if (templates.length !== 10 || templates.some((template) => !stripHtml(template.html))) {
+                throw new Error('JumpTake AI did not return all 10 complete samples. Please try again.');
+            }
+
+            setTailorTemplates(templates);
+            setTailorStep('document-results');
+            setStatusMessage('10 document samples are ready. Choose one to open in the editor.');
+        } catch (error) {
+            console.error('Failed to generate document samples:', error);
+            setErrorMessage(error.message || 'Could not generate document samples. Please try again.');
+        } finally {
+            setDocumentGenerating(false);
+        }
     };
 
     const handleGeneralTailorChoice = () => {
@@ -2416,7 +2544,6 @@ const ResumePlayground = ({ user, mode = 'resume' }) => {
         }
 
         const isDocumentTemplate = template.category === 'document';
-        setCreateMode(isDocumentTemplate ? 'document-template' : 'ai-tailor');
         openEditor(createResumeRecord({
             name: `${displayName} ${template.label}`,
             html: template.html,
@@ -2446,7 +2573,6 @@ const ResumePlayground = ({ user, mode = 'resume' }) => {
             }
 
             const baseName = file.name.replace(/\.[^.]+$/, '') || `${displayName} ${resourceLabel}`;
-            setCreateMode('upload');
             openEditor(createResumeRecord({
                 name: baseName,
                 html: plainTextToHtml(text),
@@ -2583,6 +2709,24 @@ const ResumePlayground = ({ user, mode = 'resume' }) => {
     const closeEditor = () => {
         setEditorResume(null);
         setEditorSuspended(false);
+        setAtsScanResult(null);
+        setShowAtsDetails(false);
+        clearMessages();
+    };
+
+    const handleWorkspaceModeChange = (nextMode) => {
+        if (!['resume', 'document'].includes(nextMode)) {
+            return;
+        }
+
+        clearAiDraftTyping();
+        setWorkspaceMode(nextMode);
+        setActiveTab('create');
+        setEditorResume(null);
+        setEditorSuspended(false);
+        setTailorStep('');
+        setTailorTemplates([]);
+        setDocumentPrompt('');
         setAtsScanResult(null);
         setShowAtsDetails(false);
         clearMessages();
@@ -2729,11 +2873,11 @@ const ResumePlayground = ({ user, mode = 'resume' }) => {
 
     return (
         <div className="resume-playground-section">
-            <div className="resume-playground-tabs">
+            <div className={`resume-playground-tabs${allowDocumentMode ? ' has-four-tabs' : ''}`}>
                 <button
                     type="button"
-                    className={activeTab === 'create' ? 'is-active' : ''}
-                    onClick={() => handleTabChange('create')}
+                    className={activeTab === 'create' && (!allowDocumentMode || workspaceMode === 'resume') ? 'is-active' : ''}
+                    onClick={() => allowDocumentMode ? handleWorkspaceModeChange('resume') : handleTabChange('create')}
                 >
                     <span className="resume-playground-tab-icon resume-playground-tab-icon-create" aria-hidden="true">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" focusable="false">
@@ -2741,8 +2885,22 @@ const ResumePlayground = ({ user, mode = 'resume' }) => {
                             <path fillRule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z" />
                         </svg>
                     </span>
-                    <span>{isDocumentMode ? 'Create Document' : 'Create Resume'}</span>
+                    <span>{allowDocumentMode ? 'Resume Playground' : (isDocumentMode ? 'Create Document' : 'Resume Playground')}</span>
                 </button>
+                {allowDocumentMode && (
+                    <button
+                        type="button"
+                        className={activeTab === 'create' && workspaceMode === 'document' ? 'is-active' : ''}
+                        onClick={() => handleWorkspaceModeChange('document')}
+                    >
+                        <span className="resume-playground-tab-icon resume-playground-tab-icon-create" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" focusable="false">
+                                <path d="M4.5 0A1.5 1.5 0 0 0 3 1.5v13A1.5 1.5 0 0 0 4.5 16h7a1.5 1.5 0 0 0 1.5-1.5V4.707a1.5 1.5 0 0 0-.44-1.06L9.354.439A1.5 1.5 0 0 0 8.293 0zM9 1.5 11.5 4H9zM5.5 7h5v1h-5zm0 2.5h5v1h-5zm0 2.5H9v1H5.5z" />
+                            </svg>
+                        </span>
+                        <span>Create Document</span>
+                    </button>
+                )}
                 <button
                     type="button"
                     className={activeTab === 'edit' ? 'is-active' : ''}
@@ -2766,7 +2924,7 @@ const ResumePlayground = ({ user, mode = 'resume' }) => {
                             <path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v7a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 12.5zM2.5 3a.5.5 0 0 0-.5.5V6h12v-.5a.5.5 0 0 0-.5-.5H9c-.964 0-1.71-.629-2.174-1.154C6.374 3.334 5.82 3 5.264 3zM14 7H2v5.5a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5z" />
                         </svg>
                     </span>
-                    <span>{isDocumentMode ? 'Saved Documents' : 'Saved Resumes'}</span>
+                    <span>Saved Documents</span>
                 </button>
             </div>
 
@@ -3222,15 +3380,15 @@ const ResumePlayground = ({ user, mode = 'resume' }) => {
                             <div className="resume-playground-choice-grid">
                                 <button type="button" className="resume-playground-choice-card resume-playground-choice-scratch" onClick={handleStartScratch}>
                                     <strong>Create from scratch</strong>
-                                    <span>{`Open a full ${resourceLabel.toLowerCase()} editor and start with a clean page.`}</span>
+                                    <span>{isDocumentMode ? 'Open editor and start with a clean page.' : 'Open a full resume editor and start with a clean page.'}</span>
                                 </button>
                                 <button
                                     type="button"
                                     className="resume-playground-choice-card resume-playground-choice-upload"
                                     onClick={() => uploadInputRef.current?.click()}
                                 >
-                                    <strong>{`Upload ${resourceLabel.toLowerCase()} to edit`}</strong>
-                                    <span>{`Convert a PDF, DOCX, or TXT ${resourceLabel.toLowerCase()} into editable content.`}</span>
+                                    <strong>{isDocumentMode ? 'Upload document to edit' : 'Upload resume to edit'}</strong>
+                                    <span>{isDocumentMode ? 'Convert a PDF, DOCX, or TXT document into editable content.' : 'Convert a PDF, DOCX, or TXT resume into editable content.'}</span>
                                 </button>
                                 {!isDocumentMode && (
                                     <button
@@ -3248,8 +3406,8 @@ const ResumePlayground = ({ user, mode = 'resume' }) => {
                                         className="resume-playground-choice-card resume-playground-ai-choice-card resume-playground-choice-ai-tailor"
                                         onClick={handleOpenDocumentTemplates}
                                     >
-                                        <strong>Let JumpTake Create</strong>
-                                        <span>Choose from 10 editable company document templates, then refine the one you need.</span>
+                                        <strong>Let AI Tailor it?</strong>
+                                        <span>Generate 10 samples based on your description.</span>
                                     </button>
                                 )}
                             </div>
@@ -3281,10 +3439,10 @@ const ResumePlayground = ({ user, mode = 'resume' }) => {
                                 <div className="resume-playground-ai-tailor-panel">
                                     <div className="resume-playground-ai-tailor-header">
                                         <div>
-                                            <h3>{isDocumentMode ? 'Let JumpTake Create' : 'Let AI Tailor it?'}</h3>
+                                            <h3>Let AI Tailor it?</h3>
                                             <p>
                                                 {isDocumentMode
-                                                    ? 'Choose a document template, preview the layout, then open it in the editor.'
+                                                    ? 'Describe what you need, generate 10 complete samples, then open your choice in the editor.'
                                                     : 'Choose a resume type, preview 10 generated styles, then open the one you like in the editor.'}
                                             </p>
                                         </div>
@@ -3331,6 +3489,24 @@ const ResumePlayground = ({ user, mode = 'resume' }) => {
                                                 </button>
                                             </div>
                                         </div>
+                                    )}
+
+                                    {isDocumentMode && tailorStep === 'document-prompt' && (
+                                        <form className="resume-playground-document-prompt" onSubmit={handleGenerateDocumentSamples}>
+                                            <label htmlFor="resume-playground-document-description">What document would you like to create?</label>
+                                            <textarea
+                                                id="resume-playground-document-description"
+                                                value={documentPrompt}
+                                                onChange={(event) => setDocumentPrompt(event.target.value)}
+                                                placeholder="For example: Write a professional resignation letter with a two-week notice, or write an acceptance letter for a new role."
+                                                rows="5"
+                                                maxLength="2000"
+                                                disabled={documentGenerating}
+                                            />
+                                            <button type="submit" className="settings-button primary resume-playground-generate-documents-button" disabled={documentGenerating || !documentPrompt.trim()}>
+                                                {documentGenerating ? 'Generating 10 Samples...' : 'Generate 10 Samples'}
+                                            </button>
+                                        </form>
                                     )}
 
                                     {tailorTemplates.length > 0 && (

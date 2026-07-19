@@ -87633,3 +87633,72 @@ html[data-theme="light"] body[data-theme="light"] #root .home-page .notification
   background: #bd6c80 !important;
   box-shadow: 0 0 0 0.18rem rgba(189, 108, 128, 0.12) !important;
 }
+
+/* Feed card footer: Reach stays left; reactions, comments, and share sit at the far right. */
+html body #root .home-page .portal-home-feed .portal-social-post-card > .portal-post-action-cluster,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed .portal-social-post-card > .portal-post-action-cluster {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0.68rem 0 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+html body #root .home-page .portal-home-feed .portal-social-post-card > .portal-post-action-cluster > .portal-post-action-row,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed .portal-social-post-card > .portal-post-action-cluster > .portal-post-action-row {
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  align-self: stretch !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 0.18rem !important;
+  overflow: visible !important;
+}
+
+html body #root .home-page .portal-home-feed .portal-social-post-card .portal-post-action-row > .portal-feed-reach-wrap,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed .portal-social-post-card .portal-post-action-row > .portal-feed-reach-wrap {
+  order: -1 !important;
+  flex: 0 0 auto !important;
+  margin: 0 auto 0 0 !important;
+}
+
+html body #root .home-page .portal-home-feed .portal-social-post-card .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle),
+html body #root .home-page .portal-home-feed .portal-social-post-card .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle):is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed .portal-social-post-card .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed .portal-social-post-card .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle):is(:hover, :focus, :focus-visible, :active) {
+  flex: 0 0 1.22rem !important;
+  width: 1.22rem !important;
+  min-width: 1.22rem !important;
+  max-width: 1.22rem !important;
+  height: 1.22rem !important;
+  min-height: 1.22rem !important;
+  max-height: 1.22rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .portal-home-feed .portal-social-post-card .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle) > :is(svg, img),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed .portal-social-post-card .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle) > :is(svg, img) {
+  width: 0.84rem !important;
+  min-width: 0.84rem !important;
+  max-width: 0.84rem !important;
+  height: 0.84rem !important;
+  min-height: 0.84rem !important;
+  max-height: 0.84rem !important;
+}
+
+html body #root .home-page .portal-home-feed .portal-social-post-card .portal-post-action-row :is(.portal-reaction-trigger-count, .portal-comment-trigger-count),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed .portal-social-post-card .portal-post-action-row :is(.portal-reaction-trigger-count, .portal-comment-trigger-count) {
+  min-width: 0 !important;
+  margin: 0 0.08rem 0 -0.05rem !important;
+  font-size: 0.6rem !important;
+  line-height: 1 !important;
+}

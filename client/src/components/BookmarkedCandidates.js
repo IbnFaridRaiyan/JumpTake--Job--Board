@@ -9,12 +9,8 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
     const [selectedCandidate, setSelectedCandidate] = useState(null);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
     const [connectionByUserId, setConnectionByUserId] = useState({});
     const [sendingFriendTo, setSendingFriendTo] = useState('');
-    const [isMobileView, setIsMobileView] = useState(() => (
-        typeof window !== 'undefined' ? window.innerWidth <= 768 : false
-    ));
     const containerRef = useRef(null);
 
     useEffect(() => {
@@ -22,14 +18,6 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
         fetchConnections();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userId]);
-
-    useEffect(() => {
-        const handleResize = () => setIsMobileView(window.innerWidth <= 768);
-
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
 
     useEffect(() => {
         if (!message) {
@@ -40,21 +28,6 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
         return () => window.clearTimeout(timer);
     }, [message]);
 
-    const bookmarksPerMobilePage = 6;
-    const totalPages = Math.max(1, Math.ceil(bookmarks.length / bookmarksPerMobilePage));
-    const pagedBookmarks = isMobileView
-        ? bookmarks.slice((currentPage - 1) * bookmarksPerMobilePage, currentPage * bookmarksPerMobilePage)
-        : bookmarks;
-
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [bookmarks.length, isMobileView]);
-
-    useEffect(() => {
-        if (currentPage > totalPages) {
-            setCurrentPage(totalPages);
-        }
-    }, [currentPage, totalPages]);
 
     const fetchBookmarks = async () => {
         if (!userId) {
@@ -214,17 +187,6 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
         }
     };
 
-    const changePage = (nextPage) => {
-        setCurrentPage(nextPage);
-        window.requestAnimationFrame(() => {
-            const scrollParent = containerRef.current?.closest('.mobile-dashboard-section-panel, .main-content');
-            if (scrollParent) {
-                scrollParent.scrollTop = 0;
-            }
-            containerRef.current?.scrollIntoView({ block: 'start', behavior: 'auto' });
-        });
-    };
-
     if (selectedCandidate) {
         const selectedUserId = String(selectedCandidate.user || selectedCandidate.userId || '');
         const selectedConnection = connectionByUserId[selectedUserId];
@@ -286,7 +248,7 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
                 <div className="no-candidates"><h3>No bookmarked candidates yet</h3><p>Star candidate cards in View Candidates to keep them here.</p></div>
             ) : (
                 <div className="candidates-grid">
-                    {pagedBookmarks.map((bookmark) => {
+                    {bookmarks.map((bookmark) => {
                         const candidate = bookmark.candidate;
                         const connection = connectionByUserId[String(candidate.user || '')];
                         return (
@@ -325,18 +287,6 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
                             </div>
                         );
                     })}
-                </div>
-            )}
-
-            {isMobileView && totalPages > 1 && !loading && !selectedCandidate && (
-                <div className="mobile-list-pagination" aria-label="Bookmarked candidate pages">
-                    <button type="button" className="secondary-button" onClick={() => changePage(Math.max(1, currentPage - 1))} disabled={currentPage === 1}>
-                        Previous
-                    </button>
-                    <span>Page {currentPage} of {totalPages}</span>
-                    <button type="button" className="secondary-button" onClick={() => changePage(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages}>
-                        Next
-                    </button>
                 </div>
             )}
 

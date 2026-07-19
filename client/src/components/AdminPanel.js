@@ -201,7 +201,7 @@ const AdminPanel = () => {
     try {
       const params = new URLSearchParams({
         page: String(page),
-        limit: '20'
+        limit: '5000'
       });
 
       if (search.trim()) {
@@ -1244,19 +1244,6 @@ const AdminPanel = () => {
             ))}
           </div>
 
-          <div className="admin-pagination">
-            <button type="button" disabled={page <= 1} onClick={() => setPage((current) => current - 1)}>
-              Previous
-            </button>
-            <span>Page {page} of {pagination.totalPages}</span>
-            <button
-              type="button"
-              disabled={page >= pagination.totalPages}
-              onClick={() => setPage((current) => current + 1)}
-            >
-              Next
-            </button>
-          </div>
         </section>
       </section>
 

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import confirmAction from '../utils/confirmAction';
 
-const BOOKMARKED_JOBS_PER_PAGE = 4;
 const BOOKMARKED_JOB_LIKE_STORAGE_KEY = 'jumptakeBookmarkedJobLikeMap';
 
 const readBookmarkedJobLikeMap = () => {
@@ -25,7 +24,6 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack, embedded = false 
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
     const [jobLikeMap, setJobLikeMap] = useState(readBookmarkedJobLikeMap);
 
     useEffect(() => {
@@ -34,27 +32,6 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack, embedded = false 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userId]);
 
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [bookmarks.length]);
-
-    const totalPages = Math.max(1, Math.ceil(bookmarks.length / BOOKMARKED_JOBS_PER_PAGE));
-    const safeCurrentPage = Math.min(currentPage, totalPages);
-    const visibleBookmarks = bookmarks.slice(
-        (safeCurrentPage - 1) * BOOKMARKED_JOBS_PER_PAGE,
-        safeCurrentPage * BOOKMARKED_JOBS_PER_PAGE
-    );
-
-    const changePage = (nextPage) => {
-        setCurrentPage(nextPage);
-        window.requestAnimationFrame(() => {
-            const container = document.querySelector('.applications-container');
-            const scrollParent = container?.closest('.mobile-dashboard-section-panel, .main-content');
-            if (scrollParent) {
-                scrollParent.scrollTop = 0;
-            }
-        });
-    };
 
     const fetchBookmarks = async () => {
         try {
@@ -247,7 +224,7 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack, embedded = false 
                 </div>
             ) : (
                 <div className="applications-list">
-                    {visibleBookmarks.map((bookmark) => {
+                    {bookmarks.map((bookmark) => {
                         const job = bookmark.job;
                         const hasApplied = appliedJobIds.includes(String(job?._id));
 
@@ -306,28 +283,6 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack, embedded = false 
                             </div>
                         );
                     })}
-                </div>
-            )}
-
-            {bookmarks.length > 0 && totalPages > 1 && (
-                <div className="mobile-list-pagination portal-list-pagination" aria-label="Bookmarked job pages">
-                    <button
-                        type="button"
-                        className="secondary-button portal-home-page-button"
-                        onClick={() => changePage(Math.max(1, safeCurrentPage - 1))}
-                        disabled={safeCurrentPage === 1}
-                    >
-                        Previous
-                    </button>
-                    <span>Page {safeCurrentPage} of {totalPages}</span>
-                    <button
-                        type="button"
-                        className="secondary-button portal-home-page-button portal-home-page-button-next"
-                        onClick={() => changePage(Math.min(totalPages, safeCurrentPage + 1))}
-                        disabled={safeCurrentPage === totalPages}
-                    >
-                        Next
-                    </button>
                 </div>
             )}
 

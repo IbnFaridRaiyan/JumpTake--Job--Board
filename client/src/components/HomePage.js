@@ -19,29 +19,8 @@ import PortalAiButton from './PortalAiButton';
 import BlocksManager from './BlocksManager';
 import { clearBrowserAccountState } from '../utils/authStorage';
 import dashboardLogo from './media/jumptake-logo-9.png';
-
-const JOB_INTEREST_OPTIONS = [
-    'Software Engineering',
-    'Frontend Development',
-    'Backend Development',
-    'Data Analysis',
-    'Artificial Intelligence',
-    'Cybersecurity',
-    'Product Management',
-    'Project Management',
-    'Marketing',
-    'Sales',
-    'Finance',
-    'Human Resources',
-    'Healthcare',
-    'Education',
-    'Customer Support',
-    'Design',
-    'Operations',
-    'Business Analysis',
-    'Cloud Engineering',
-    'Quality Assurance'
-];
+import JOB_INTEREST_OPTIONS from '../utils/jobInterestOptions';
+import GuidedPortalTour from './GuidedPortalTour';
 
 const CANDIDATE_SECTION_IDS = new Set([
     'home',
@@ -1174,6 +1153,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     localStorage.setItem('jumptakeCandidateInboxSeenAt', String(Date.now()));
                 }}
             />
+            <GuidedPortalTour mode="candidate" />
         </div>
     );
 };

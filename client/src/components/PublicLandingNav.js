@@ -474,14 +474,11 @@ const PublicLandingNav = () => {
     const [jobs, setJobs] = useState([]);
     const [jobsLoading, setJobsLoading] = useState(false);
     const [jobsError, setJobsError] = useState('');
-    const [jobsPage, setJobsPage] = useState(1);
     const [assistantInput, setAssistantInput] = useState('');
     const [assistantLoading, setAssistantLoading] = useState(false);
     const [assistantMessages, setAssistantMessages] = useState([]);
     const [assistantSettingsOpen, setAssistantSettingsOpen] = useState(false);
-    const jobsPerPage = 1;
-    const totalJobPages = Math.max(1, Math.ceil(jobs.length / jobsPerPage));
-    const visibleJobs = jobs.slice((jobsPage - 1) * jobsPerPage, jobsPage * jobsPerPage);
+    const visibleJobs = jobs;
     const assistantStarted = assistantMessages.length > 0;
 
     const clearPublicModalHash = () => {
@@ -498,12 +495,6 @@ const PublicLandingNav = () => {
         setActiveModal('');
         clearPublicModalHash();
     };
-
-    useEffect(() => {
-        if (jobsPage > totalJobPages) {
-            setJobsPage(totalJobPages);
-        }
-    }, [jobsPage, totalJobPages]);
 
     useEffect(() => {
         if (typeof window === 'undefined') {
@@ -527,9 +518,6 @@ const PublicLandingNav = () => {
     }, []);
 
     useEffect(() => {
-        if (activeModal === 'jobs') {
-            setJobsPage(1);
-        }
         if (activeModal === 'assistant') {
             setAssistantSettingsOpen(false);
         }
@@ -938,17 +926,6 @@ const PublicLandingNav = () => {
                                 );
                             })}
                         </div>
-                        {!jobsLoading && !jobsError && jobs.length > jobsPerPage ? (
-                            <div className="public-modal-pagination" aria-label="Job feed pagination">
-                                <button type="button" onClick={() => setJobsPage((page) => Math.max(1, page - 1))} disabled={jobsPage === 1} aria-label="Previous jobs page">
-                                    {'<'}
-                                </button>
-                                <span>{`Page ${jobsPage} of ${totalJobPages}`}</span>
-                                <button type="button" onClick={() => setJobsPage((page) => Math.min(totalJobPages, page + 1))} disabled={jobsPage === totalJobPages} aria-label="Next jobs page">
-                                    {'>'}
-                                </button>
-                            </div>
-                        ) : null}
                         <div className="public-modal-footer">
                             <BackArrowButton onClick={closeActiveModal} label="Close job feed" />
                         </div>

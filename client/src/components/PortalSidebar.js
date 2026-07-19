@@ -41,6 +41,7 @@ const PortalSidebar = ({
                 type="button"
                 className={`sidebar__link ${item.active ? 'is-active' : ''} ${item.danger ? 'is-danger' : ''}`}
                 data-tooltip={item.label}
+                data-tour-id={`nav-${item.id}`}
                 onClick={() => {
                     setExpanded(false);
                     item.onClick?.();

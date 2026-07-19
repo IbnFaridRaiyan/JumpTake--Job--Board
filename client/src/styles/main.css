@@ -85767,6 +85767,380 @@ html body #root .floating-messenger-assistant-chat .portal-ai-clear-chat-button 
   transform: none !important;
 }
 
+/* Authoritative assistant composer reset: compact, level controls with breathing room below. */
+html body #root .floating-messenger-chat:has(.floating-messenger-assistant-chat) {
+  box-sizing: border-box !important;
+  padding-bottom: 0.7rem !important;
+}
+
+html body #root .floating-messenger-assistant-chat {
+  box-sizing: border-box !important;
+  margin: 0 0 0.35rem !important;
+  padding-bottom: 0.45rem !important;
+}
+
+html body #root .floating-messenger-assistant-chat .public-ai-chat-header {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  min-height: 2.7rem !important;
+  padding: 0.65rem 0.8rem !important;
+}
+
+html body #root .floating-messenger-assistant-chat .public-ai-chat-brand {
+  display: flex !important;
+  align-items: center !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+html body #root .floating-messenger-assistant-chat .portal-ai-clear-chat-button,
+html body #root .floating-messenger-assistant-chat .portal-ai-clear-chat-button:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  position: static !important;
+  inset: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  min-height: 1.8rem !important;
+  margin: 0 0 0 auto !important;
+  padding: 0.25rem 0.45rem !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+html body #root .floating-messenger-assistant-chat .public-ai-chat-reply {
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0.55rem 0.72rem 0.68rem !important;
+}
+
+html body #root .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-reply-row {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 2.15rem !important;
+  align-items: center !important;
+  gap: 0.38rem !important;
+  width: 100% !important;
+}
+
+html body #root .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-reply-field {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: 0.95rem minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 2.15rem !important;
+  height: 2.15rem !important;
+  max-height: 2.15rem !important;
+  padding: 0.2rem 0.65rem !important;
+}
+
+html body #root .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-search-icon {
+  position: static !important;
+  inset: auto !important;
+  display: block !important;
+  align-self: center !important;
+  width: 0.9rem !important;
+  height: 0.9rem !important;
+  margin: 0 !important;
+  transform: none !important;
+}
+
+html body #root .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-reply-field textarea {
+  position: static !important;
+  display: block !important;
+  align-self: center !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 1.45rem !important;
+  height: 1.45rem !important;
+  max-height: 1.45rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  line-height: 1.45rem !important;
+  overflow: hidden !important;
+  transform: none !important;
+}
+
+html body #root .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button,
+html body #root .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  position: static !important;
+  inset: auto !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  align-self: center !important;
+  box-sizing: border-box !important;
+  width: 2.15rem !important;
+  min-width: 2.15rem !important;
+  max-width: 2.15rem !important;
+  height: 2.15rem !important;
+  min-height: 2.15rem !important;
+  max-height: 2.15rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0.66rem !important;
+  transform: none !important;
+}
+
+html body #root .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button span {
+  display: none !important;
+}
+
+html body #root .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button svg {
+  width: 0.82rem !important;
+  height: 0.82rem !important;
+}
+
+/* Dense preference pills: use every available row without oversized gaps. */
+html body #root .home-page :is(.interested-job-suggestion-section, .job-interest-modal) .job-interest-grid {
+  display: flex !important;
+  flex-flow: row wrap !important;
+  align-content: flex-start !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.24rem 0.28rem !important;
+  width: 100% !important;
+  padding: 0.38rem !important;
+}
+
+html body #root .home-page :is(.interested-job-suggestion-section, .job-interest-modal) .job-interest-grid > button,
+html body #root .home-page :is(.interested-job-suggestion-section, .job-interest-modal) .job-interest-grid > button:is(:hover, :focus, :focus-visible, :active, .selected) {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 1.58rem !important;
+  margin: 0 !important;
+  padding: 0.28rem 0.52rem !important;
+  font-size: 0.61rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+
+/* Image previews are portalled to body and must sit above every profile dialog. */
+html body > .portal-image-preview-backdrop,
+html body .portal-image-preview-backdrop {
+  z-index: 30050 !important;
+  isolation: isolate !important;
+}
+
+/* Automated JumpTake AI portal tour. */
+.guided-portal-tour {
+  position: fixed;
+  inset: 0;
+  z-index: 40000;
+  font-family: 'Lexend', 'Segoe UI', sans-serif;
+  pointer-events: auto;
+}
+
+.guided-tour-full-shade {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 9, 9, 0.78);
+  backdrop-filter: blur(2px);
+}
+
+.guided-tour-spotlight {
+  position: fixed;
+  z-index: 1;
+  box-sizing: border-box;
+  border: 2px solid rgba(255, 242, 209, 0.96);
+  border-radius: 0.9rem;
+  box-shadow: 0 0 0 9999px rgba(12, 9, 9, 0.8), 0 0 0.9rem rgba(255, 221, 154, 0.9);
+  pointer-events: none;
+  transition: top 0.35s ease, left 0.35s ease, width 0.35s ease, height 0.35s ease;
+}
+
+.guided-tour-top-actions {
+  position: fixed;
+  z-index: 4;
+  top: max(0.65rem, env(safe-area-inset-top));
+  right: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.guided-tour-top-actions button,
+.guided-tour-top-actions button:is(:hover, :focus-visible, :active) {
+  display: inline-grid;
+  place-items: center;
+  width: auto;
+  min-width: 0;
+  min-height: 2.2rem;
+  padding: 0.42rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 999px;
+  background: #681421;
+  color: #ffffff;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.25);
+  font-weight: 800;
+  transform: none;
+}
+
+.guided-tour-top-actions .guided-tour-close,
+.guided-tour-top-actions .guided-tour-close:is(:hover, :focus-visible, :active) {
+  width: 2.2rem;
+  min-width: 2.2rem;
+  padding: 0;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.guided-tour-card {
+  position: fixed;
+  left: 50%;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: 3.2rem minmax(0, 1fr);
+  gap: 0.8rem;
+  box-sizing: border-box;
+  width: min(33rem, calc(100vw - 1.5rem));
+  max-height: min(22rem, calc(100vh - 6rem));
+  padding: 1rem;
+  border: 1px solid rgba(104, 20, 33, 0.25);
+  border-radius: 1.15rem;
+  background: #fff8eb;
+  color: #201b17;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.35);
+  overflow: auto;
+  transform: translateX(-50%);
+}
+
+.guided-tour-ai-head {
+  display: grid;
+  place-items: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #f28a42, #c85224);
+  color: #ffffff;
+  box-shadow: 0 0.45rem 1rem rgba(139, 55, 22, 0.25);
+}
+
+.guided-tour-ai-head span {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.guided-tour-copy {
+  min-width: 0;
+}
+
+.guided-tour-eyebrow {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: #a94c24;
+  font-size: 0.67rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.guided-tour-card h2 {
+  margin: 0;
+  color: #3f0c15;
+  font-size: 1.12rem;
+  line-height: 1.15;
+}
+
+.guided-tour-card p {
+  margin: 0.48rem 0 0.7rem;
+  color: #493f37;
+  font-size: 0.82rem;
+  line-height: 1.48;
+}
+
+.guided-tour-progress-copy {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  color: #75685e;
+  font-size: 0.64rem;
+  font-weight: 700;
+}
+
+.guided-tour-progress {
+  height: 0.24rem;
+  margin: 0.38rem 0 0.72rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(104, 20, 33, 0.12);
+}
+
+.guided-tour-progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: #681421;
+  transform-origin: left;
+  animation: guided-tour-countdown 7s linear both;
+}
+
+.guided-tour-next,
+.guided-tour-next:is(:hover, :focus-visible, :active) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  min-width: 5rem;
+  min-height: 2rem;
+  padding: 0.38rem 0.75rem;
+  border: 0;
+  border-radius: 999px;
+  background: #681421;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 900;
+  transform: none;
+}
+
+@keyframes guided-tour-countdown {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@media (max-width: 768px) {
+  .guided-tour-card {
+    grid-template-columns: 2.6rem minmax(0, 1fr);
+    gap: 0.65rem;
+    width: calc(100vw - 1rem);
+    max-height: min(21rem, calc(100vh - 5.3rem));
+    padding: 0.8rem;
+    border-radius: 1rem;
+  }
+
+  .guided-tour-ai-head {
+    width: 2.6rem;
+    height: 2.6rem;
+  }
+
+  .guided-tour-ai-head span {
+    font-size: 1.45rem;
+  }
+
+  .guided-tour-card h2 {
+    font-size: 0.96rem;
+  }
+
+  .guided-tour-card p {
+    font-size: 0.74rem;
+  }
+}
+
 /* Messages workspace: shared navigation and conversation actions. */
 .message-workspace-nav {
   display: grid;

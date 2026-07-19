@@ -1,27 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
-const JOB_INTEREST_OPTIONS = [
-    'Software Engineering',
-    'Frontend Development',
-    'Backend Development',
-    'Data Analysis',
-    'Artificial Intelligence',
-    'Cybersecurity',
-    'Product Management',
-    'Project Management',
-    'Marketing',
-    'Sales',
-    'Finance',
-    'Human Resources',
-    'Healthcare',
-    'Education',
-    'Customer Support',
-    'Design',
-    'Operations',
-    'Business Analysis',
-    'Cloud Engineering',
-    'Quality Assurance'
-];
+import JOB_INTEREST_OPTIONS from '../utils/jobInterestOptions';
 
 const InterestedJobSuggestion = ({ user, onInterestsSaved }) => {
     const [selectedInterests, setSelectedInterests] = useState([]);

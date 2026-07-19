@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const StarLayer = ({ className }) => (
     <div className={className} aria-hidden="true">
@@ -29,8 +29,6 @@ const Astronaut = () => (
 const AboutJumpTake = ({ mode = 'candidate' }) => {
     const ratingStorageKey = `jumptake-about-rating-${mode}`;
     const [rating, setRating] = useState(0);
-    const [tourOpen, setTourOpen] = useState(false);
-    const tourModalRef = useRef(null);
 
     useEffect(() => {
         const savedRating = Number(localStorage.getItem(ratingStorageKey) || 0);
@@ -38,18 +36,6 @@ const AboutJumpTake = ({ mode = 'candidate' }) => {
             setRating(savedRating);
         }
     }, [ratingStorageKey]);
-
-    useEffect(() => {
-        if (!tourOpen) {
-            return;
-        }
-
-        const frameId = window.requestAnimationFrame(() => {
-            tourModalRef.current?.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-        });
-
-        return () => window.cancelAnimationFrame(frameId);
-    }, [tourOpen]);
 
     const saveRating = (nextRating) => {
         setRating(nextRating);
@@ -139,7 +125,9 @@ const AboutJumpTake = ({ mode = 'candidate' }) => {
                 <button
                     type="button"
                     className="settings-button primary about-tour-button"
-                    onClick={() => setTourOpen(true)}
+                    onClick={() => window.dispatchEvent(new CustomEvent('jumptake-start-guided-tour', {
+                        detail: { mode, sectionCount: tourItems.length }
+                    }))}
                 >
                     Give a tour
                 </button>
@@ -164,27 +152,6 @@ const AboutJumpTake = ({ mode = 'candidate' }) => {
                 </div>
             </div>
 
-            {tourOpen && (
-                <div className="about-tour-overlay" onClick={() => setTourOpen(false)}>
-                    <div ref={tourModalRef} className="about-tour-modal" onClick={(event) => event.stopPropagation()}>
-                        <div className="about-tour-header">
-                            <div>
-                                <span className="about-jumptake-kicker">Portal Tour</span>
-                                <h2>{mode === 'employer' ? 'Employer Portal Tour' : 'Candidate Portal Tour'}</h2>
-                            </div>
-                            <button type="button" className="about-tour-close" onClick={() => setTourOpen(false)}>x</button>
-                        </div>
-                        <div className="about-tour-list">
-                            {tourItems.map(([title, description]) => (
-                                <article key={title}>
-                                    <h3>{title}</h3>
-                                    <p>{description}</p>
-                                </article>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

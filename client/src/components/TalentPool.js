@@ -236,7 +236,6 @@ const TalentPool = ({
     const [directorySearched, setDirectorySearched] = useState(false);
     const [selectedCandidate, setSelectedCandidate] = useState(initialSelectedCandidate);
     const [spotlightActive, setSpotlightActive] = useState(false);
-    const [currentCandidatePage, setCurrentCandidatePage] = useState(1);
     const [showAddFriend, setShowAddFriend] = useState(false);
     const [friendJumpTakeId, setFriendJumpTakeId] = useState('');
     const [friendNotice, setFriendNotice] = useState('');
@@ -259,9 +258,6 @@ const TalentPool = ({
     const [closingProfileDetailModal, setClosingProfileDetailModal] = useState(false);
     const [profileActionsOpen, setProfileActionsOpen] = useState(false);
     const [growAnimationKey, setGrowAnimationKey] = useState(0);
-    const [isMobileView, setIsMobileView] = useState(() => (
-        typeof window !== 'undefined' ? window.innerWidth <= 768 : false
-    ));
     const candidateProfileRef = useRef(null);
     const profileDetailCloseTimerRef = useRef(null);
     const talentPoolRef = useRef(null);
@@ -360,14 +356,6 @@ const TalentPool = ({
             isMounted = false;
         };
     }, [mode, currentUserId]);
-
-    useEffect(() => {
-        const handleResize = () => setIsMobileView(window.innerWidth <= 768);
-
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
 
     useEffect(() => {
         if (mode !== 'candidate') {
@@ -732,17 +720,6 @@ const TalentPool = ({
             ? defaultProfileFemale
             : defaultProfileMale
     );
-
-    const changeCandidatePage = (nextPage) => {
-        setCurrentCandidatePage(nextPage);
-        window.requestAnimationFrame(() => {
-            const scrollParent = talentPoolRef.current?.closest('.mobile-dashboard-section-panel, .main-content');
-            if (scrollParent) {
-                scrollParent.scrollTop = 0;
-            }
-            talentPoolRef.current?.scrollIntoView({ block: 'start', behavior: 'auto' });
-        });
-    };
 
     const toggleTalentBookmark = async (candidate, event) => {
         if (event) {
@@ -1146,22 +1123,7 @@ const TalentPool = ({
             
         return matchesSearch;
     });
-    const candidatesPerPage = isMobileView ? 6 : 9;
-    const totalCandidatePages = Math.max(1, Math.ceil(filteredCandidateRows.length / candidatesPerPage));
-    const pagedCandidateRows = filteredCandidateRows.slice(
-        (currentCandidatePage - 1) * candidatesPerPage,
-        currentCandidatePage * candidatesPerPage
-    );
-
-    useEffect(() => {
-        setCurrentCandidatePage(1);
-    }, [searchTerm, spotlightActive, isMobileView, filteredCandidateRows.length]);
-
-    useEffect(() => {
-        if (currentCandidatePage > totalCandidatePages) {
-            setCurrentCandidatePage(totalCandidatePages);
-        }
-    }, [currentCandidatePage, totalCandidatePages]);
+    const pagedCandidateRows = filteredCandidateRows;
 
     const readCandidateStoredPosts = (storageKey) => {
         try {
@@ -2386,27 +2348,6 @@ const TalentPool = ({
                         <div className="candidate-list" aria-label="Candidates">
                             {pagedCandidateRows.map(({ candidate, spotlight }) => renderCandidateListRow(candidate, spotlight))}
                         </div>
-                        {totalCandidatePages > 1 && (
-                            <div className="mobile-list-pagination candidate-list-pagination" aria-label="Candidate pages">
-                                <button
-                                    type="button"
-                                    className="secondary-button"
-                                    onClick={() => changeCandidatePage(Math.max(1, currentCandidatePage - 1))}
-                                    disabled={currentCandidatePage === 1}
-                                >
-                                    Previous
-                                </button>
-                                <span>Page {currentCandidatePage} of {totalCandidatePages}</span>
-                                <button
-                                    type="button"
-                                    className="secondary-button"
-                                    onClick={() => changeCandidatePage(Math.min(totalCandidatePages, currentCandidatePage + 1))}
-                                    disabled={currentCandidatePage === totalCandidatePages}
-                                >
-                                    Next
-                                </button>
-                            </div>
-                        )}
                         </>
                     )}
                 </>

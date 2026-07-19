@@ -449,24 +449,8 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
     const [recommendedJobs, setRecommendedJobs] = useState([]);
     const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
     const [activeTab, setActiveTab] = useState('all'); 
-    const [currentJobPage, setCurrentJobPage] = useState(1);
     const [jobReachMap, setJobReachMap] = useState(readJobReachMap);
     const [jobLikeMap, setJobLikeMap] = useState(readJobLikeMap);
-    const [isDesktopView, setIsDesktopView] = useState(() => (
-        typeof window !== 'undefined' ? window.innerWidth > 768 : true
-    ));
-
-    const changeJobPage = (nextPage) => {
-        setCurrentJobPage(nextPage);
-        window.requestAnimationFrame(() => {
-            const container = document.querySelector('.mobile-section-job-feed .job-feed-container, .job-feed-container');
-            const scrollParent = container?.closest('.mobile-dashboard-section-panel, .main-content');
-            if (scrollParent) {
-                scrollParent.scrollTop = 0;
-            }
-            container?.scrollIntoView({ block: 'start', behavior: 'auto' });
-        });
-    };
     
     
     const [showFilters, setShowFilters] = useState(false);
@@ -499,16 +483,6 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
     const resolvedUser = currentUser || safeParseStoredUser();
     const candidateSkills = normalizeSkillList(jobSeekerData?.skills);
 
-    useEffect(() => {
-        const handleResize = () => {
-            setIsDesktopView(window.innerWidth > 768);
-        };
-
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-    
     useEffect(() => {
         if (safeJobs.length > 0) {
           
@@ -801,19 +775,7 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
         : activeTab === 'matched'
             ? matchedJobs
             : filteredJobs;
-    const jobsPerPage = isDesktopView ? 5 : 3;
-    const totalJobPages = Math.max(1, Math.ceil(displayedJobs.length / jobsPerPage));
-    const pagedJobs = displayedJobs.slice((currentJobPage - 1) * jobsPerPage, currentJobPage * jobsPerPage);
-
-    useEffect(() => {
-        setCurrentJobPage(1);
-    }, [activeTab, searchTerm, filters.jobType, filters.location, filters.salary, filters.skills.length, displayedJobs.length]);
-
-    useEffect(() => {
-        if (currentJobPage > totalJobPages) {
-            setCurrentJobPage(totalJobPages);
-        }
-    }, [currentJobPage, totalJobPages]);
+    const pagedJobs = displayedJobs;
     
     const recordJobReach = (job) => {
         const key = getJobStatsKey(job);
@@ -1603,27 +1565,6 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                         <div className="no-jobs-message">
                             <h3>No job listings available at this time</h3>
                             <p>Please check back later for new opportunities or try a different search.</p>
-                        </div>
-                    )}
-                    {displayedJobs.length > jobsPerPage && (
-                        <div className="job-feed-pagination" aria-label="Job feed pages">
-                            <button
-                                type="button"
-                                className="secondary-button"
-                                onClick={() => changeJobPage(Math.max(1, currentJobPage - 1))}
-                                disabled={currentJobPage === 1}
-                            >
-                                Previous
-                            </button>
-                            <span>Page {currentJobPage} of {totalJobPages}</span>
-                            <button
-                                type="button"
-                                className="secondary-button"
-                                onClick={() => changeJobPage(Math.min(totalJobPages, currentJobPage + 1))}
-                                disabled={currentJobPage === totalJobPages}
-                            >
-                                Next
-                            </button>
                         </div>
                     )}
                 </div>

@@ -21,6 +21,7 @@ import PortalAiButton from './PortalAiButton';
 import SavedPosts from './SavedPosts';
 import { clearBrowserAccountState } from '../utils/authStorage';
 import dashboardLogo from './media/jumptake-logo-9.png';
+import GuidedPortalTour from './GuidedPortalTour';
 
 const EMPLOYER_SECTION_IDS = new Set([
     'home',
@@ -867,6 +868,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                     localStorage.setItem('jumptakeEmployerInboxSeenAt', String(Date.now()));
                 }}
             />
+            <GuidedPortalTour mode="employer" />
         </div>
     );
 };

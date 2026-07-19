@@ -7,7 +7,6 @@ import VideoInterviews from './VideoInterviews';
 import DraftApplications from './DraftApplications';
 import confirmAction from '../utils/confirmAction';
 
-const APPLICATIONS_PER_PAGE = 4;
 const APPLICATION_HUB_TABS = [
     { id: 'applications', label: 'Applications', title: 'My Applications', icon: 'applications' },
     { id: 'assessments', label: 'Assessments', title: 'My Assessments', icon: 'assessments' },
@@ -31,30 +30,12 @@ const MyApplications = forwardRef(({
     const [selectedCompany, setSelectedCompany] = useState(null);
     const [companyLoading, setCompanyLoading] = useState(false);
     const [companyError, setCompanyError] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
-    const [isMobileView, setIsMobileView] = useState(() => (
-        typeof window !== 'undefined' ? window.innerWidth <= 768 : false
-    ));
     const [activeHubTab, setActiveHubTab] = useState(initialTab);
     
     useEffect(() => {
         fetchApplications();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userId]);
-
-    useEffect(() => {
-        const handleResize = () => {
-            setIsMobileView(window.innerWidth <= 768);
-        };
-
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [applications.length, isMobileView]);
 
     useEffect(() => {
         setActiveHubTab(initialTab);
@@ -137,26 +118,6 @@ const MyApplications = forwardRef(({
         if (switchSection) {
             switchSection('job-feed');
         }
-    };
-
-    const totalPages = Math.max(1, Math.ceil(applications.length / APPLICATIONS_PER_PAGE));
-    const safeCurrentPage = Math.min(currentPage, totalPages);
-
-    const visibleApplications = applications.slice(
-        (safeCurrentPage - 1) * APPLICATIONS_PER_PAGE,
-        safeCurrentPage * APPLICATIONS_PER_PAGE
-    );
-
-    const changePage = (nextPage) => {
-        setCurrentPage(nextPage);
-        window.requestAnimationFrame(() => {
-            const container = document.querySelector('.mobile-section-applications .applications-container, .applications-container');
-            const scrollParent = container?.closest('.mobile-dashboard-section-panel, .main-content');
-            if (scrollParent) {
-                scrollParent.scrollTop = 0;
-            }
-            container?.scrollIntoView({ block: 'start', behavior: 'auto' });
-        });
     };
 
     useImperativeHandle(ref, () => ({
@@ -562,7 +523,7 @@ const MyApplications = forwardRef(({
                 </div>
             ) : (
                 <div className="fresh-applications-list">
-                    {visibleApplications.map(app => {
+                    {applications.map(app => {
                         return (
                             <article
                                 className="fresh-application-card fresh-application-card-clickable"
@@ -608,27 +569,6 @@ const MyApplications = forwardRef(({
                 </div>
             )}
 
-            {applications.length > 0 && totalPages > 1 && !selectedApplication && !selectedCompany && (
-                <div className="mobile-list-pagination portal-list-pagination" aria-label="My applications pages">
-                    <button
-                        type="button"
-                        className="secondary-button portal-home-page-button"
-                        onClick={() => changePage(Math.max(1, safeCurrentPage - 1))}
-                        disabled={safeCurrentPage === 1}
-                    >
-                        Previous
-                    </button>
-                    <span>Page {safeCurrentPage} of {totalPages}</span>
-                    <button
-                        type="button"
-                        className="secondary-button portal-home-page-button portal-home-page-button-next"
-                        onClick={() => changePage(Math.min(totalPages, safeCurrentPage + 1))}
-                        disabled={safeCurrentPage === totalPages}
-                    >
-                        Next
-                    </button>
-                </div>
-            )}
         </>
     );
 });

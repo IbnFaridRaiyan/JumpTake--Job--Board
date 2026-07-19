@@ -5688,10 +5688,8 @@ const PortalHomeFeed = ({
     );
 
     const renderCandidateJobPosts = () => {
-        const totalPages = Math.max(1, Math.ceil(filteredHomeJobs.length / HOME_JOB_PAGE_SIZE));
-        const currentPage = Math.min(jobPage, totalPages);
-        const pageStart = (currentPage - 1) * HOME_JOB_PAGE_SIZE;
-        const visibleJobs = filteredHomeJobs.slice(pageStart, pageStart + HOME_JOB_PAGE_SIZE);
+        const pageStart = 0;
+        const visibleJobs = filteredHomeJobs;
 
         return (
             <div className="portal-candidate-job-list">
@@ -5964,29 +5962,6 @@ const PortalHomeFeed = ({
                 );
                 })}
 
-                {filteredHomeJobs.length > HOME_JOB_PAGE_SIZE && (
-                    <div className="portal-home-job-pagination" aria-label="Job post pages">
-                        <button
-                            type="button"
-                            className="portal-home-page-button"
-                            onClick={() => setJobPage((page) => Math.max(1, page - 1))}
-                            disabled={currentPage <= 1}
-                            aria-label="Previous job posts page"
-                        >
-                            <SimpleIcon path={utilityIconPaths.chevronDoubleLeft} />
-                        </button>
-                        <span>Page {currentPage} of {totalPages}</span>
-                        <button
-                            type="button"
-                            className="portal-home-page-button portal-home-page-button-next"
-                            onClick={() => setJobPage((page) => Math.min(totalPages, page + 1))}
-                            disabled={currentPage >= totalPages}
-                            aria-label="Next job posts page"
-                        >
-                            <SimpleIcon path={utilityIconPaths.chevronDoubleRight} />
-                        </button>
-                    </div>
-                )}
             </div>
         );
     };

@@ -811,7 +811,7 @@ router.get('/collections/:collection', async (req, res) => {
   try {
     const config = getCollectionConfig(req.params.collection);
     const page = Math.max(Number(req.query.page) || 1, 1);
-    const limit = Math.min(Math.max(Number(req.query.limit) || 25, 1), 100);
+    const limit = Math.min(Math.max(Number(req.query.limit) || 1000, 1), 5000);
     const query = getSearchQuery(config, req.query.q);
     const skip = (page - 1) * limit;
 

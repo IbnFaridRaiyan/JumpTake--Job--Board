@@ -9,12 +9,8 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
     const [selectedCandidate, setSelectedCandidate] = useState(null);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
     const [likedCandidateIds, setLikedCandidateIds] = useState([]);
     const [candidateLikeCounts, setCandidateLikeCounts] = useState({});
-    const [isMobileView, setIsMobileView] = useState(() => (
-        typeof window !== 'undefined' ? window.innerWidth <= 768 : false
-    ));
     const containerRef = useRef(null);
 
     useEffect(() => {
@@ -23,29 +19,6 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [companyId]);
 
-    useEffect(() => {
-        const handleResize = () => setIsMobileView(window.innerWidth <= 768);
-
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    const bookmarksPerMobilePage = 6;
-    const totalPages = Math.max(1, Math.ceil(bookmarks.length / bookmarksPerMobilePage));
-    const pagedBookmarks = isMobileView
-        ? bookmarks.slice((currentPage - 1) * bookmarksPerMobilePage, currentPage * bookmarksPerMobilePage)
-        : bookmarks;
-
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [bookmarks.length, isMobileView]);
-
-    useEffect(() => {
-        if (currentPage > totalPages) {
-            setCurrentPage(totalPages);
-        }
-    }, [currentPage, totalPages]);
 
     const fetchBookmarks = async () => {
         try {
@@ -168,17 +141,6 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
         }
     };
 
-    const changePage = (nextPage) => {
-        setCurrentPage(nextPage);
-        window.requestAnimationFrame(() => {
-            const scrollParent = containerRef.current?.closest('.mobile-dashboard-section-panel, .main-content');
-            if (scrollParent) {
-                scrollParent.scrollTop = 0;
-            }
-            containerRef.current?.scrollIntoView({ block: 'start', behavior: 'auto' });
-        });
-    };
-
     const renderList = (items, emptyMessage) => {
         if (!items || (Array.isArray(items) && items.length === 0)) {
             return <p className="empty-info">{emptyMessage}</p>;
@@ -233,7 +195,7 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
                 <div className="no-candidates"><h3>No bookmarked talents yet</h3><p>Star candidate cards in Talent Pool to keep them here.</p></div>
             ) : (
                 <div className="candidates-grid">
-                    {pagedBookmarks.map((bookmark) => {
+                    {bookmarks.map((bookmark) => {
                         const candidate = bookmark.candidate;
                         return (
                             <div key={bookmark._id} className="candidate-card uiverse-profile-card" onClick={() => setSelectedCandidate(candidate)}>
@@ -263,18 +225,6 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
                             </div>
                         );
                     })}
-                </div>
-            )}
-
-            {isMobileView && totalPages > 1 && !loading && !selectedCandidate && (
-                <div className="mobile-list-pagination" aria-label="Bookmarked talent pages">
-                    <button type="button" className="secondary-button" onClick={() => changePage(Math.max(1, currentPage - 1))} disabled={currentPage === 1}>
-                        Previous
-                    </button>
-                    <span>Page {currentPage} of {totalPages}</span>
-                    <button type="button" className="secondary-button" onClick={() => changePage(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages}>
-                        Next
-                    </button>
                 </div>
             )}
 

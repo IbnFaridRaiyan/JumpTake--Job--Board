@@ -462,7 +462,7 @@ const FriendInvitations = ({ userId }) => {
                                 type="search"
                                 value={friendSearch}
                                 onChange={(event) => setFriendSearch(event.target.value)}
-                                placeholder="JumpTake ID or candidate name"
+                                placeholder="JumpTake ID, e.g. @bob262"
                             />
                             <button type="submit" disabled={searching} aria-busy={searching}>Find</button>
                         </div>

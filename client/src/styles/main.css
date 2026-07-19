@@ -87014,3 +87014,63 @@ html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-uiver
     -webkit-overflow-scrolling: touch !important;
   }
 }
+
+/* Final Settings surface: replace the exposed square white wrapper with portal cream. */
+html body #root .home-page .main-content.mobile-section-settings,
+html body #root .home-page .mobile-dashboard-section-panel.mobile-section-settings,
+html body #root .home-page .portal-section-transition-shell[data-section="settings"],
+html body #root .home-page .portal-section-transition-shell[data-section="settings"] > .settings-container,
+html body #root .home-page .settings-container,
+html body #root .home-page .settings-container > .settings-tabs,
+html body #root .home-page .settings-container .tabs-content,
+html body #root .home-page .settings-container .settings-tab,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .main-content.mobile-section-settings,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-section-transition-shell[data-section="settings"],
+html[data-theme="light"] body[data-theme="light"] #root .home-page .settings-container :is(.settings-tabs, .tabs-content, .settings-tab) {
+  background: #f3eadb !important;
+  background-color: #f3eadb !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html body #root .home-page :is(.main-content.mobile-section-settings, .portal-section-transition-shell[data-section="settings"], .settings-container, .settings-tabs, .tabs-content, .settings-tab)::before,
+html body #root .home-page :is(.main-content.mobile-section-settings, .portal-section-transition-shell[data-section="settings"], .settings-container, .settings-tabs, .tabs-content, .settings-tab)::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Friends discovery copy stays compact and invitation labels stay on one line. */
+html body #root .home-page .friend-invitations-section .friend-add-search input#friend-search,
+html body #root .home-page .friend-invitations-section .friend-add-search input#friend-search::placeholder {
+  font-size: 0.66rem !important;
+  letter-spacing: 0 !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .home-page .friend-invitations-section .friend-invitation-tabs {
+    gap: 0.2rem !important;
+    padding-inline: 0.35rem !important;
+  }
+
+  html body #root .home-page .friend-invitations-section .friend-invitation-tab {
+    padding-inline: 0.08rem !important;
+  }
+
+  html body #root .home-page .friend-invitations-section .friend-invitation-tab-label {
+    width: max-content !important;
+    max-width: none !important;
+    overflow: visible !important;
+    font-size: clamp(0.43rem, 1.82vw, 0.52rem) !important;
+    letter-spacing: -0.025em !important;
+    line-height: 1 !important;
+    text-wrap: nowrap !important;
+    white-space: nowrap !important;
+  }
+}

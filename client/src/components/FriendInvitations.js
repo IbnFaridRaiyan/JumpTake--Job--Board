@@ -32,6 +32,11 @@ const FriendInvitations = ({ userId }) => {
     const [error, setError] = useState('');
     const [activeTab, setActiveTab] = useState('incoming');
     const [selectedCandidate, setSelectedCandidate] = useState(null);
+    const [suggestedCandidates, setSuggestedCandidates] = useState([]);
+    const [suggestionsLoading, setSuggestionsLoading] = useState(false);
+    const [friendSearch, setFriendSearch] = useState('');
+    const [foundCandidate, setFoundCandidate] = useState(null);
+    const [searching, setSearching] = useState(false);
 
     const fetchConnections = useCallback(async () => {
         if (!userId) {
@@ -77,6 +82,36 @@ const FriendInvitations = ({ userId }) => {
     useEffect(() => {
         fetchConnections();
     }, [fetchConnections]);
+
+    const fetchSuggestedCandidates = useCallback(async () => {
+        if (!userId) {
+            setSuggestedCandidates([]);
+            return;
+        }
+
+        try {
+            setSuggestionsLoading(true);
+            const response = await fetch(
+                apiUrl(`/api/candidate-network/matches/${userId}`),
+                { headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` } }
+            );
+            const data = await response.json().catch(() => ([]));
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to load friend suggestions');
+            }
+            setSuggestedCandidates((Array.isArray(data) ? data : []).filter((candidate) => (
+                !['accepted', 'blocked'].includes(candidate?.connectionStatus?.status)
+            )));
+        } catch (suggestionError) {
+            setError(suggestionError.message || 'Failed to load friend suggestions.');
+        } finally {
+            setSuggestionsLoading(false);
+        }
+    }, [userId]);
+
+    useEffect(() => {
+        fetchSuggestedCandidates();
+    }, [fetchSuggestedCandidates]);
 
     useEffect(() => {
         if (!message) {
@@ -124,6 +159,143 @@ const FriendInvitations = ({ userId }) => {
             interests: peer.interests || [],
             hobbies: peer.hobbies || []
         };
+    };
+
+    const getMatchCopy = (candidate) => {
+        const matchSummary = candidate?.matchSummary || {};
+        const matches = [
+            ...(Array.isArray(matchSummary.skills) ? matchSummary.skills : []),
+            ...(Array.isArray(matchSummary.education) ? matchSummary.education : []),
+            ...(Array.isArray(matchSummary.experience) ? matchSummary.experience : []),
+            ...(Array.isArray(matchSummary.interests) ? matchSummary.interests : [])
+        ];
+        return [...new Set(matches.map((item) => String(item).trim()).filter(Boolean))]
+            .slice(0, 4)
+            .join(', ');
+    };
+
+    const sendFriendRequest = async (candidate) => {
+        const candidateId = String(candidate?._id || candidate?.candidateId || '');
+        const jumpTakeId = String(candidate?.jumptakeId || '').replace(/^@/, '');
+        if (!candidateId && !jumpTakeId) {
+            setError('This candidate cannot receive a friend invitation yet.');
+            return;
+        }
+
+        const busyKey = `add:${candidateId || jumpTakeId}`;
+        try {
+            setBusyId(busyKey);
+            setError('');
+            setMessage('');
+            const response = await fetch(apiUrl('/api/candidate-connections/request'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token') || ''}`
+                },
+                body: JSON.stringify(candidateId
+                    ? { recipientCandidateId: candidateId }
+                    : { jumptakeId: jumpTakeId })
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to send friend invitation');
+            }
+
+            const pendingStatus = {
+                id: data.connection?._id || '',
+                status: 'pending',
+                direction: 'outgoing'
+            };
+            setSuggestedCandidates((current) => current.map((item) => (
+                String(item._id || '') === candidateId
+                    ? { ...item, connectionStatus: pendingStatus }
+                    : item
+            )));
+            setFoundCandidate((current) => (
+                current && String(current._id || '') === candidateId
+                    ? { ...current, connectionStatus: pendingStatus }
+                    : current
+            ));
+            setMessage('Friend invitation sent.');
+            await Promise.all([fetchConnections(), fetchSuggestedCandidates()]);
+        } catch (requestError) {
+            setError(requestError.message || 'Failed to send friend invitation.');
+        } finally {
+            setBusyId('');
+        }
+    };
+
+    const searchForFriend = async (event) => {
+        event.preventDefault();
+        const query = friendSearch.trim().replace(/^@/, '');
+        if (!query) {
+            setError('Enter a JumpTake ID or candidate name.');
+            return;
+        }
+
+        try {
+            setSearching(true);
+            setError('');
+            const response = await fetch(
+                apiUrl(`/api/candidate-network/find/${encodeURIComponent(query)}`),
+                { headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` } }
+            );
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(data.error || 'Candidate not found');
+            }
+            setFoundCandidate(data);
+        } catch (searchError) {
+            setFoundCandidate(null);
+            setError(searchError.message || 'Candidate not found.');
+        } finally {
+            setSearching(false);
+        }
+    };
+
+    const renderAddCandidate = (candidate, source = 'suggestion') => {
+        const candidateId = String(candidate?._id || '');
+        const connectionStatus = candidate?.connectionStatus || null;
+        const isPending = connectionStatus?.status === 'pending';
+        const isIncoming = isPending && connectionStatus?.direction === 'incoming';
+        const busyKey = `add:${candidateId || candidate?.jumptakeId || ''}`;
+        const matchCopy = getMatchCopy(candidate);
+
+        return (
+            <article className="friend-add-candidate-card" key={`${source}:${candidateId || candidate?.jumptakeId}`}>
+                <ProfileAvatar
+                    imageSrc={candidate?.profileImage || ''}
+                    name={candidate?.name || 'Candidate'}
+                    className="friend-invitation-avatar"
+                    imageClassName="profile-avatar-image"
+                />
+                <div className="friend-add-candidate-copy">
+                    <h3>{candidate?.name || 'Candidate'}</h3>
+                    {candidate?.jumptakeId && <p>@{String(candidate.jumptakeId).replace(/^@/, '')}</p>}
+                    <span>{matchCopy || (source === 'search' ? 'JumpTake candidate' : 'Matched by profile details')}</span>
+                </div>
+                <div className="friend-add-candidate-actions">
+                    <button type="button" className="secondary-button" onClick={() => setSelectedCandidate(candidate)}>
+                        <FriendActionIcon type="profile" />
+                        View Profile
+                    </button>
+                    {isIncoming ? (
+                        <button type="button" className="settings-button primary" onClick={() => setActiveTab('incoming')}>Review Request</button>
+                    ) : (
+                        <button
+                            type="button"
+                            className={`friend-add-button ${isPending ? 'is-pending' : ''}`}
+                            onClick={() => sendFriendRequest(candidate)}
+                            disabled={isPending || busyId === busyKey}
+                        >
+                            <FriendActionIcon type={isPending ? 'pending' : 'profile'} />
+                            {busyId === busyKey ? 'Sending...' : isPending ? 'Pending' : 'Add Friend'}
+                        </button>
+                    )}
+                </div>
+            </article>
+        );
     };
 
     const respond = async (connectionId, action) => {
@@ -226,6 +398,17 @@ const FriendInvitations = ({ userId }) => {
 
     const tabs = [
         {
+            id: 'add',
+            label: 'Add Friends',
+            iconClass: 'friend-tab-icon-add',
+            icon: (
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m0 1c-3.2 0-6 1.6-6 3.6V14h7.35a4.5 4.5 0 0 1-.35-1.75c0-1.18.45-2.25 1.18-3.05A9 9 0 0 0 8 9" />
+                    <path d="M13 9.5a.5.5 0 0 1 .5.5v1.5H15a.5.5 0 0 1 0 1h-1.5V14a.5.5 0 0 1-1 0v-1.5H11a.5.5 0 0 1 0-1h1.5V10a.5.5 0 0 1 .5-.5" />
+                </svg>
+            )
+        },
+        {
             id: 'incoming',
             label: 'Received Invitations',
             iconClass: 'friend-tab-icon-incoming',
@@ -261,12 +444,50 @@ const FriendInvitations = ({ userId }) => {
     ];
 
     const isActiveTabEmpty = (
-        (activeTab === 'incoming' && connections.incoming.length === 0)
+        (activeTab === 'add' && !foundCandidate && suggestedCandidates.length === 0)
+        || (activeTab === 'incoming' && connections.incoming.length === 0)
         || (activeTab === 'outgoing' && connections.outgoing.length === 0)
         || (activeTab === 'friends' && connections.friends.length === 0)
     );
 
     const renderActiveTab = () => {
+        if (activeTab === 'add') {
+            return (
+                <div className="friend-add-panel">
+                    <form className="friend-add-search" onSubmit={searchForFriend}>
+                        <label htmlFor="friend-search">Find someone on JumpTake</label>
+                        <div>
+                            <input
+                                id="friend-search"
+                                type="search"
+                                value={friendSearch}
+                                onChange={(event) => setFriendSearch(event.target.value)}
+                                placeholder="JumpTake ID or candidate name"
+                            />
+                            <button type="submit" disabled={searching}>{searching ? 'Finding...' : 'Find'}</button>
+                        </div>
+                    </form>
+
+                    {foundCandidate && (
+                        <div className="friend-add-results">
+                            <h3>Search result</h3>
+                            {renderAddCandidate(foundCandidate, 'search')}
+                        </div>
+                    )}
+
+                    <div className="friend-add-results">
+                        <h3>Suggested for you</h3>
+                        <p className="friend-add-description">Suggestions combine matching skills, education, experience, and interests.</p>
+                        {suggestionsLoading
+                            ? <p className="empty-info">Finding close profile matches...</p>
+                            : suggestedCandidates.length
+                                ? suggestedCandidates.map((candidate) => renderAddCandidate(candidate))
+                                : <p className="empty-info">No new profile matches are available yet.</p>}
+                    </div>
+                </div>
+            );
+        }
+
         if (activeTab === 'incoming') {
             return connections.incoming.length > 0
                 ? (

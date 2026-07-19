@@ -6,6 +6,7 @@ import MessageWorkspaceNav from './MessageWorkspaceNav';
 import NewMessageFinder from './NewMessageFinder';
 import MessageSettings from './MessageSettings';
 import TalentPool from './TalentPool';
+import MessageCompanyProfileModal from './MessageCompanyProfileModal';
 import { apiUrl } from '../utils/apiUrl';
 import confirmAction from '../utils/confirmAction';
 
@@ -42,6 +43,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
     const [openThreadMenuId, setOpenThreadMenuId] = useState('');
     const [closingThreadMenuId, setClosingThreadMenuId] = useState('');
     const [selectedProfile, setSelectedProfile] = useState(null);
+    const [selectedCompanyProfile, setSelectedCompanyProfile] = useState(null);
     const menuCloseTimerRef = useRef(null);
 
     const isEmployer = mode === 'employer';
@@ -74,6 +76,23 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
         }, 2000);
         return () => window.clearTimeout(timer);
     }, [error, message]);
+
+    useEffect(() => {
+        const handleThreadUpdated = (event) => {
+            const updatedThread = event.detail?.thread;
+            const action = event.detail?.action;
+            if (!updatedThread?._id) return;
+            setThreads((currentThreads) => currentThreads.map((thread) => (
+                thread._id === updatedThread._id ? updatedThread : thread
+            )));
+            setSelectedThread((currentThread) => {
+                if (currentThread?._id !== updatedThread._id) return currentThread;
+                return ['archive', 'delete', 'block-chat'].includes(action) ? null : updatedThread;
+            });
+        };
+        window.addEventListener('jumptake-message-thread-updated', handleThreadUpdated);
+        return () => window.removeEventListener('jumptake-message-thread-updated', handleThreadUpdated);
+    }, []);
 
     const fetchThreads = async () => {
         const endpoint = isEmployer
@@ -273,7 +292,15 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
     };
 
     const getThreadProfile = (thread) => {
-        if (!thread || !isDirectCandidateThread(thread)) return null;
+        if (!thread) return null;
+        if (isEmployer && thread.candidate) {
+            return {
+                ...thread.candidate,
+                user: thread.candidate.user || thread.candidateUser?._id || thread.candidateUser || '',
+                jumptakeId: thread.candidate.jumptakeId || thread.candidateUser?.jumptakeId || ''
+            };
+        }
+        if (!isDirectCandidateThread(thread)) return null;
         const candidate = getPeerCandidate(thread);
         const participant = (thread.participantUsers || []).find((item) => (
             String(item?._id || item) !== String(userId || '')
@@ -284,6 +311,24 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
             jumptakeId: candidate.jumptakeId || participant?.jumptakeId || ''
         } : null;
     };
+
+    const getThreadCompanyProfile = (thread) => (
+        !isEmployer && !isDirectCandidateThread(thread) ? (thread?.company || null) : null
+    );
+
+    const openThreadProfile = (thread) => {
+        const candidate = getThreadProfile(thread);
+        if (candidate) {
+            setSelectedProfile(candidate);
+            return;
+        }
+        const company = getThreadCompanyProfile(thread);
+        if (company) setSelectedCompanyProfile(company);
+    };
+
+    const canOpenThreadProfile = (thread) => Boolean(
+        getThreadProfile(thread) || getThreadCompanyProfile(thread)
+    );
 
     const getThreadPresence = (thread) => {
         if (!thread) return 'New conversation';
@@ -350,6 +395,12 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
             });
             const data = await response.json().catch(() => ({}));
             if (!response.ok) throw new Error(data.error || 'Could not update this chat');
+            setThreads((currentThreads) => currentThreads.map((currentThread) => (
+                currentThread._id === thread._id ? data : currentThread
+            )));
+            window.dispatchEvent(new CustomEvent('jumptake-message-thread-updated', {
+                detail: { thread: data, action }
+            }));
             setOpenThreadMenuId('');
             setMessage(
                 action === 'archive' ? 'Chat archived.'
@@ -362,6 +413,13 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                 setSelectedThread(null);
                 setPendingContact(null);
                 setActiveTab(action === 'archive' ? 'archived' : action === 'block-chat' ? 'blocked' : 'new');
+            } else {
+                if (action === 'unarchive' || action === 'unblock-chat') {
+                    setActiveTab('new');
+                }
+                setSelectedThread((currentThread) => (
+                    currentThread?._id === thread._id ? data : currentThread
+                ));
             }
             await fetchThreads();
             if (action === 'delete' || action === 'archive' || action === 'block-chat') {
@@ -394,7 +452,8 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
         if (!thread) return null;
         const menuOpen = openThreadMenuId === thread._id;
         const menuClosing = closingThreadMenuId === thread._id;
-        const canUseCandidateActions = !isEmployer && isDirectCandidateThread(thread);
+        const canTagCandidate = !isEmployer && isDirectCandidateThread(thread);
+        const canViewProfile = canOpenThreadProfile(thread);
         return (
             <div className={`message-thread-options ${menuOpen ? 'is-open' : ''} ${menuClosing ? 'is-closing' : ''}`}>
                 <button type="button" className="message-thread-options-trigger" onClick={(event) => {
@@ -403,8 +462,8 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                 }} aria-expanded={menuOpen} aria-label="Conversation options"><span aria-hidden="true">...</span></button>
                 {(menuOpen || menuClosing) && (
                     <div className={`message-thread-options-menu ${menuClosing ? 'is-closing' : 'is-opening'}`} role="menu" onClick={(event) => event.stopPropagation()}>
-                        {canUseCandidateActions && <button type="button" onClick={() => openTaggedPostComposer(thread)}>Tag to post</button>}
-                        {canUseCandidateActions && <button type="button" onClick={() => { setSelectedProfile(getThreadProfile(thread)); setOpenThreadMenuId(''); }}>View profile</button>}
+                        {canTagCandidate && <button type="button" onClick={() => openTaggedPostComposer(thread)}>Tag to post</button>}
+                        {canViewProfile && <button type="button" onClick={() => { openThreadProfile(thread); setOpenThreadMenuId(''); }}>View profile</button>}
                         <button type="button" onClick={() => updateThreadState(thread, thread.viewerState?.archived ? 'unarchive' : 'archive')}>{thread.viewerState?.archived ? 'Move to New Messages' : 'Archive chat'}</button>
                         <button type="button" onClick={() => updateThreadState(thread, 'delete')}>Delete chat</button>
                         <button type="button" onClick={() => updateThreadState(thread, thread.viewerState?.chatBlocked ? 'unblock-chat' : 'block-chat')}>{thread.viewerState?.chatBlocked ? 'Unblock to chat' : 'Block contact'}</button>
@@ -445,6 +504,15 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
         );
     }
 
+    if (selectedCompanyProfile) {
+        return (
+            <MessageCompanyProfileModal
+                company={selectedCompanyProfile}
+                onClose={() => setSelectedCompanyProfile(null)}
+            />
+        );
+    }
+
     if (showAssistant) {
         return (
             <div className="inbox-container messenger-inbox portal-inbox-ai">
@@ -481,7 +549,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                         Back to Chats
                     </button>
                     <div className="messenger-chat-head">
-                        <button type="button" className="message-profile-avatar-button" onClick={() => selectedThread && setSelectedProfile(getThreadProfile(selectedThread))} disabled={!selectedThread || !isDirectCandidateThread(selectedThread)} aria-label={`View ${chatTitle} profile`}>
+                        <button type="button" className="message-profile-avatar-button" onClick={() => selectedThread && openThreadProfile(selectedThread)} disabled={!canOpenThreadProfile(selectedThread)} aria-label={`View ${chatTitle} profile`}>
                             <ChatAvatar imageSrc={chatAvatar} className="messenger-avatar" label={chatTitle} />
                         </button>
                         <div>
@@ -613,7 +681,18 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                             >
                                 <div className="content-avatar">
                                     <div className="avatar">
-                                        <ChatAvatar imageSrc={getThreadAvatar(thread)} className="user-img" label={getThreadTitle(thread)} />
+                                        <button
+                                            type="button"
+                                            className="message-list-avatar-button"
+                                            disabled={!canOpenThreadProfile(thread)}
+                                            aria-label={`View ${getThreadTitle(thread)} profile`}
+                                            onClick={(event) => {
+                                                event.stopPropagation();
+                                                openThreadProfile(thread);
+                                            }}
+                                        >
+                                            <ChatAvatar imageSrc={getThreadAvatar(thread)} className="user-img" label={getThreadTitle(thread)} />
+                                        </button>
                                     </div>
                                     <span className="status-user"></span>
                                 </div>

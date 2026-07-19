@@ -86613,3 +86613,257 @@ html body #root .messenger-inbox .new-message-id-toggle:is(:hover, :focus, :focu
   font-size: 0.58rem !important;
   font-weight: 800 !important;
 }
+
+/* Friends: mobile-only discovery tab and profile-match suggestions. */
+.friend-invitation-tab.is-add {
+  display: none !important;
+}
+
+.friend-add-panel,
+.friend-add-results {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.friend-add-results + .friend-add-results {
+  margin-top: 0.35rem;
+}
+
+.friend-add-results > h3,
+.friend-add-description {
+  margin: 0;
+}
+
+.friend-add-description {
+  color: #64726c;
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.friend-add-search {
+  display: grid;
+  gap: 0.42rem;
+  padding: 0.78rem;
+  border: 1px solid rgba(104, 20, 33, 0.18);
+  border-radius: 0.9rem;
+  background: #ffffff;
+}
+
+.friend-add-search label {
+  color: #24332e;
+  font-size: 0.76rem;
+  font-weight: 850;
+}
+
+.friend-add-search > div {
+  display: flex;
+  gap: 0.42rem;
+}
+
+.friend-add-search input {
+  min-width: 0;
+  flex: 1 1 auto;
+  padding: 0.58rem 0.68rem;
+  border: 1px solid rgba(112, 83, 52, 0.28);
+  border-radius: 999px;
+  background: #fffaf3;
+  color: #24332e;
+}
+
+.friend-add-search button,
+.friend-add-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.52rem 0.78rem;
+  border: 1px solid #681421;
+  border-radius: 999px;
+  background: #681421;
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.friend-add-button.is-pending,
+.friend-add-button:disabled {
+  opacity: 0.72;
+  cursor: default;
+}
+
+.friend-add-candidate-card {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: 0.48rem 0.62rem;
+  align-items: center;
+  padding: 0.72rem;
+  border: 1px solid rgba(112, 83, 52, 0.2);
+  border-radius: 0.92rem;
+  background: #ffffff;
+  box-shadow: none;
+}
+
+.friend-add-candidate-copy {
+  min-width: 0;
+}
+
+.friend-add-candidate-copy :is(h3, p, span) {
+  display: block;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.friend-add-candidate-copy h3 {
+  color: #24332e;
+  font-size: 0.8rem;
+}
+
+.friend-add-candidate-copy p,
+.friend-add-candidate-copy span {
+  color: #65736d;
+  font-size: 0.64rem;
+}
+
+.friend-add-candidate-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.42rem;
+  padding-left: 3.12rem;
+}
+
+.friend-add-candidate-actions > button {
+  width: auto !important;
+  min-width: 0 !important;
+}
+
+/* Remove every legacy square Settings surface while retaining the rounded cards and tab bar. */
+html body #root .home-page .main-content.mobile-section-settings,
+html body #root .home-page .portal-section-transition-shell[data-section="settings"],
+html body #root .home-page .portal-section-transition-shell[data-section="settings"] > .settings-container,
+html body #root .home-page .settings-container,
+html body #root .home-page .settings-container > .settings-tabs,
+html body #root .home-page .settings-container .tabs-content,
+html body #root .home-page .settings-container .settings-tab {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html body #root .home-page .main-content.mobile-section-settings::before,
+html body #root .home-page .main-content.mobile-section-settings::after,
+html body #root .home-page .portal-section-transition-shell[data-section="settings"]::before,
+html body #root .home-page .portal-section-transition-shell[data-section="settings"]::after,
+html body #root .home-page .settings-container::before,
+html body #root .home-page .settings-container::after,
+html body #root .home-page .settings-container :is(.settings-tabs, .tabs-content, .settings-tab)::before,
+html body #root .home-page .settings-container :is(.settings-tabs, .tabs-content, .settings-tab)::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* The floating message glyph follows the surface currently passing beneath it. */
+html body .floating-messenger:not(.is-open) .floating-messenger-trigger,
+html body .floating-messenger:not(.is-open) .floating-messenger-trigger svg {
+  transition: color 180ms ease, stroke 180ms ease, filter 180ms ease !important;
+}
+
+html body .floating-messenger.is-trigger-white:not(.is-open) .floating-messenger-trigger,
+html body .floating-messenger.is-trigger-white:not(.is-open) .floating-messenger-trigger svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.78)) !important;
+}
+
+html body .floating-messenger.is-trigger-maroon:not(.is-open) .floating-messenger-trigger,
+html body .floating-messenger.is-trigger-maroon:not(.is-open) .floating-messenger-trigger svg {
+  color: #6f1422 !important;
+  stroke: #6f1422 !important;
+  -webkit-text-fill-color: #6f1422 !important;
+  filter: drop-shadow(0 1px 2px rgba(255, 255, 255, 0.84)) !important;
+}
+
+html body .floating-messenger.is-trigger-black:not(.is-open) .floating-messenger-trigger,
+html body .floating-messenger.is-trigger-black:not(.is-open) .floating-messenger-trigger svg {
+  color: #111111 !important;
+  stroke: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  filter: drop-shadow(0 1px 2px rgba(255, 255, 255, 0.8)) !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .home-page .friend-invitation-tab.is-add {
+    display: grid !important;
+  }
+
+  html body #root .home-page .friend-invitation-tabs {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 0.3rem !important;
+  }
+
+  html body #root .home-page .friend-invitation-tab-label {
+    font-size: 0.57rem !important;
+  }
+
+  .friend-add-candidate-actions {
+    padding-left: 0;
+  }
+}
+
+/* July 2026 portal defaults: maroon navigation, fixed light mode, and clickable message avatars. */
+html body #root .home-page .portal-uiverse-sidebar .sidebar__link.is-active,
+html body #root .home-page .portal-uiverse-sidebar .sidebar__link.is-active :is(.text, .icon, svg, path),
+html[data-theme="light"] body #root .home-page .portal-uiverse-sidebar .sidebar__link.is-active,
+html[data-theme="light"] body #root .home-page .portal-uiverse-sidebar .sidebar__link.is-active :is(.text, .icon, svg, path) {
+  color: #6f1422 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: #6f1422 !important;
+}
+
+html body #root .app-mode-switch:has(input:disabled) {
+  cursor: not-allowed !important;
+}
+
+html body #root .app-mode-switch input:disabled + .app-mode-switch-track {
+  opacity: 0.72 !important;
+  cursor: not-allowed !important;
+}
+
+html body :is(.messenger-inbox, .floating-messenger) .message-list-avatar-button,
+html body :is(.messenger-inbox, .floating-messenger) .message-list-avatar-button:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  color: inherit !important;
+}
+
+html body :is(.messenger-inbox, .floating-messenger) .message-list-avatar-button:not(:disabled) {
+  cursor: pointer !important;
+}
+
+html body :is(.messenger-inbox, .floating-messenger) .message-list-avatar-button:disabled {
+  opacity: 1 !important;
+  cursor: default !important;
+}

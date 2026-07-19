@@ -46,6 +46,7 @@ const JOB_INTEREST_OPTIONS = [
 
 const CANDIDATE_SECTION_IDS = new Set([
     'home',
+    'dashboard',
     'inbox',
     'job-feed',
     'notifications',
@@ -264,9 +265,10 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     };
 
     const sectionTitles = {
-        home: 'Dashboard',
+        home: 'Home',
+        dashboard: 'Dashboard',
         inbox: 'Inbox',
-        'job-feed': 'Dashboard',
+        'job-feed': 'Home',
         applications: 'My Applications',
         assessments: 'My Assessments',
         'video-interviews': 'Video Interviews',
@@ -758,7 +760,8 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     }, [activeSection, mobileSectionVisible, user?.id]);
 
     const candidatePrimaryNavItems = [
-        { id: 'home', label: 'Dashboard', icon: 'dashboard' },
+        { id: 'home', label: 'Home', icon: 'home' },
+        { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
         { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 },
         { id: 'view-candidates', label: 'Candidates', icon: 'users' },
         { id: 'friend-invitations', label: 'Friends', icon: 'user-plus', notification: pendingFriendInvitationCount > 0 },
@@ -905,6 +908,16 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
 
         switch (activeSection) {
             case 'home':
+            case 'job-feed':
+                return <PortalHomeFeed
+                    mode="candidate"
+                    currentUser={user}
+                    profileData={jobSeekerData}
+                    jobs={safeJobs}
+                    switchSection={switchSection}
+                    onRefresh={refreshData}
+                />;
+            case 'dashboard':
                 return <PortalDefaultLanding
                     mode="candidate"
                     displayName={displayName}
@@ -921,15 +934,6 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     userId={user?.id}
                     onBack={goToPreviousSection}
                     onFooterBack={goToPreviousSection}
-                />;
-            case 'job-feed':
-                return <PortalHomeFeed
-                    mode="candidate"
-                    currentUser={user}
-                    profileData={jobSeekerData}
-                    jobs={safeJobs}
-                    switchSection={switchSection}
-                    onRefresh={refreshData}
                 />;
             case 'applications':
             case 'assessments':
@@ -1031,7 +1035,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         }
     };
 
-    const showSectionTitle = !['home', 'job-feed'].includes(activeSection);
+    const showSectionTitle = !['home', 'job-feed', 'dashboard'].includes(activeSection);
 
     if (loading && !jobSeekerData) {
         return (

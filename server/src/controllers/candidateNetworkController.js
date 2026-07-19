@@ -75,12 +75,17 @@ const summarizeMatch = (viewer, candidate) => {
 
     const matchedEducation = intersection(tokenSet(viewer.education), tokenSet(candidate.education)).slice(0, 6);
     const matchedExperience = intersection(tokenSet(viewer.experience), tokenSet(candidate.experience)).slice(0, 6);
+    const matchedInterests = intersection(tokenSet(viewer.interests), tokenSet(candidate.interests)).slice(0, 6);
 
     return {
         skills: matchedSkills,
         education: matchedEducation,
         experience: matchedExperience,
-        score: (matchedSkills.length * 3) + (matchedEducation.length * 2) + (matchedExperience.length * 2)
+        interests: matchedInterests,
+        score: (matchedSkills.length * 3)
+            + (matchedEducation.length * 2)
+            + (matchedExperience.length * 2)
+            + matchedInterests.length
     };
 };
 
@@ -229,19 +234,32 @@ const sendFriendRequest = async (req, res) => {
 const findCandidateByJumpTakeId = async (req, res) => {
     try {
         const viewerId = getAuthenticatedUserId(req);
-        const jumpTakeId = String(req.params.jumpTakeId || '').trim().replace(/^@/, '');
-        if (!jumpTakeId) {
-            return res.status(400).json({ error: 'Enter a JumpTake ID' });
+        const searchValue = String(req.params.jumpTakeId || '').trim().replace(/^@/, '');
+        if (!searchValue) {
+            return res.status(400).json({ error: 'Enter a JumpTake ID or candidate name' });
         }
 
-        const account = await User.findOne({
-            jumptakeId: { $regex: `^${jumpTakeId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, $options: 'i' }
+        const escapedSearch = searchValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        let account = await User.findOne({
+            jumptakeId: { $regex: `^${escapedSearch}$`, $options: 'i' }
         }).select('_id jumptakeId');
-        if (!account || String(account._id) === viewerId) {
-            return res.status(404).json({ error: 'No candidate found with that JumpTake ID' });
+        let candidate = null;
+
+        if (!account) {
+            candidate = await JobSeeker.findOne({
+                name: { $regex: `^${escapedSearch}$`, $options: 'i' },
+                user: { $exists: true, $ne: viewerId }
+            }).sort({ createdAt: -1 });
+            account = candidate?.user
+                ? await User.findById(candidate.user).select('_id jumptakeId')
+                : null;
         }
 
-        const candidate = await JobSeeker.findOne({ user: account._id });
+        if (!account || String(account._id) === viewerId) {
+            return res.status(404).json({ error: 'No candidate found with that JumpTake ID or name' });
+        }
+
+        candidate = candidate || await JobSeeker.findOne({ user: account._id });
         if (!candidate) {
             return res.status(404).json({ error: 'This account does not have a candidate profile yet' });
         }
@@ -252,12 +270,12 @@ const findCandidateByJumpTakeId = async (req, res) => {
         }
 
         return res.status(200).json({
-            ...publicCandidate(candidate, { skills: [], education: [], experience: [], score: 0 }, relationship ? {
+            ...publicCandidate(candidate, { skills: [], education: [], experience: [], interests: [], score: 0 }, relationship ? {
                 id: relationship._id,
                 status: relationship.status,
                 direction: String(relationship.requester) === viewerId ? 'outgoing' : 'incoming'
             } : null),
-            jumptakeId: account.jumptakeId || jumpTakeId
+            jumptakeId: account.jumptakeId || searchValue
         });
     } catch (error) {
         return res.status(error.status || 500).json({ error: error.message || 'Failed to find candidate' });

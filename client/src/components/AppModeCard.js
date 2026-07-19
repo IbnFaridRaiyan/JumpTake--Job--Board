@@ -1,34 +1,27 @@
 import React from 'react';
 
-const AppModeCard = ({ appMode = 'dark', onAppModeChange }) => {
-    const isLightMode = appMode === 'light';
-
-    const handleToggle = () => {
-        if (onAppModeChange) {
-            onAppModeChange(isLightMode ? 'dark' : 'light');
-        }
-    };
-
+const AppModeCard = () => {
     return (
         <div className="settings-card app-mode-card">
             <div className="app-mode-copy">
                 <h3>App Mode</h3>
-                <p>Switch between the current dark mode and a clean light mode across JumpTake.</p>
+                <p>JumpTake currently uses its clean light mode across both portals.</p>
                 <p className="app-mode-development-note">
-                    Light mode is still under development. It is advised not to visit right now. Thanks :D
+                    Dark mode is under development and is temporarily unavailable.
                 </p>
             </div>
             <label className="app-mode-switch">
                 <input
                     type="checkbox"
-                    checked={isLightMode}
-                    onChange={handleToggle}
-                    aria-label="Toggle light mode"
+                    checked
+                    disabled
+                    readOnly
+                    aria-label="Light mode enabled. Dark mode is under development."
                 />
                 <span className="app-mode-switch-track">
                     <span className="app-mode-switch-thumb"></span>
                 </span>
-                <span className="app-mode-switch-label">{isLightMode ? 'Light Mode' : 'Dark Mode'}</span>
+                <span className="app-mode-switch-label">Light Mode</span>
             </label>
         </div>
     );

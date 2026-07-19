@@ -7,6 +7,7 @@ import MessageWorkspaceNav from './MessageWorkspaceNav';
 import NewMessageFinder from './NewMessageFinder';
 import MessageSettings from './MessageSettings';
 import TalentPool from './TalentPool';
+import MessageCompanyProfileModal from './MessageCompanyProfileModal';
 import { apiUrl } from '../utils/apiUrl';
 import confirmAction from '../utils/confirmAction';
 
@@ -198,6 +199,8 @@ const FloatingMessenger = ({
     const [openThreadMenuId, setOpenThreadMenuId] = useState('');
     const [closingThreadMenuId, setClosingThreadMenuId] = useState('');
     const [selectedProfile, setSelectedProfile] = useState(null);
+    const [selectedCompanyProfile, setSelectedCompanyProfile] = useState(null);
+    const [triggerTone, setTriggerTone] = useState('maroon');
     const [isMobileView, setIsMobileView] = useState(() => (
         typeof window !== 'undefined' ? window.matchMedia('(max-width: 768px)').matches : false
     ));
@@ -208,6 +211,7 @@ const FloatingMessenger = ({
     const selectedThreadIdRef = useRef(selectedThreadId);
     const isMobileViewRef = useRef(isMobileView);
     const menuCloseTimerRef = useRef(null);
+    const triggerRef = useRef(null);
     const openEventName = isEmployer ? 'jumptake-open-employer-messenger' : 'jumptake-open-candidate-messenger';
 
     const endpoint = useMemo(() => (
@@ -243,6 +247,70 @@ const FloatingMessenger = ({
         isMobileViewRef.current = isMobileView;
     }, [isMobileView]);
 
+    useEffect(() => {
+        const handleThreadUpdated = (event) => {
+            const updatedThread = event.detail?.thread;
+            const action = event.detail?.action;
+            if (!updatedThread?._id) return;
+            setThreads((currentThreads) => currentThreads.map((thread) => (
+                thread._id === updatedThread._id ? updatedThread : thread
+            )));
+            if (['archive', 'delete', 'block-chat'].includes(action)
+                && selectedThreadIdRef.current === updatedThread._id) {
+                setSelectedThreadId('');
+                setPendingContact(null);
+            }
+        };
+        window.addEventListener('jumptake-message-thread-updated', handleThreadUpdated);
+        return () => window.removeEventListener('jumptake-message-thread-updated', handleThreadUpdated);
+    }, []);
+
+    useEffect(() => {
+        if (open || typeof document === 'undefined') return undefined;
+        let animationFrame = 0;
+
+        const parseSurface = (element) => {
+            const color = window.getComputedStyle(element).backgroundColor;
+            const match = color?.match(/rgba?\((\d+(?:\.\d+)?)[,\s]+(\d+(?:\.\d+)?)[,\s]+(\d+(?:\.\d+)?)(?:[,\s/]+(\d*(?:\.\d+)?))?\)/i);
+            if (!match) return null;
+            const alpha = match[4] === undefined || match[4] === '' ? 1 : Number(match[4]);
+            if (alpha < 0.12) return null;
+            return [Number(match[1]), Number(match[2]), Number(match[3])];
+        };
+
+        const updateTriggerTone = () => {
+            animationFrame = 0;
+            const rect = triggerRef.current?.getBoundingClientRect();
+            if (!rect) return;
+            const x = Math.min(window.innerWidth - 1, Math.max(0, rect.left + rect.width / 2));
+            const y = Math.min(window.innerHeight - 1, Math.max(0, rect.top + rect.height / 2));
+            const surface = document.elementsFromPoint(x, y)
+                .filter((element) => !element.closest?.('.floating-messenger'))
+                .map(parseSurface)
+                .find(Boolean) || [255, 255, 255];
+            const [red, green, blue] = surface.map((channel) => channel / 255);
+            const luminance = (0.2126 * red) + (0.7152 * green) + (0.0722 * blue);
+            const isWarmCream = surface[0] > surface[2] + 7 && surface[1] >= surface[2];
+            setTriggerTone(luminance < 0.43 ? 'white' : (isWarmCream || luminance > 0.9 ? 'maroon' : 'black'));
+        };
+
+        const scheduleUpdate = () => {
+            if (!animationFrame) animationFrame = window.requestAnimationFrame(updateTriggerTone);
+        };
+
+        scheduleUpdate();
+        document.addEventListener('scroll', scheduleUpdate, true);
+        window.addEventListener('resize', scheduleUpdate);
+        const observer = new MutationObserver(scheduleUpdate);
+        observer.observe(document.body, { attributes: true, attributeFilter: ['class', 'style', 'data-theme'], subtree: true });
+        return () => {
+            if (animationFrame) window.cancelAnimationFrame(animationFrame);
+            document.removeEventListener('scroll', scheduleUpdate, true);
+            window.removeEventListener('resize', scheduleUpdate);
+            observer.disconnect();
+        };
+    }, [activeSection, open]);
+
     const isDirectCandidateThread = (thread) => thread?.conversationType === 'candidate-candidate';
 
     const getPeerCandidate = (thread) => {
@@ -276,7 +344,15 @@ const FloatingMessenger = ({
     };
 
     const getThreadProfile = (thread) => {
-        if (!thread || !isDirectCandidateThread(thread)) return null;
+        if (!thread) return null;
+        if (isEmployer && thread.candidate) {
+            return {
+                ...thread.candidate,
+                user: thread.candidate.user || thread.candidateUser?._id || thread.candidateUser || '',
+                jumptakeId: thread.candidate.jumptakeId || thread.candidateUser?.jumptakeId || ''
+            };
+        }
+        if (!isDirectCandidateThread(thread)) return null;
         const candidate = getPeerCandidate(thread);
         const participant = (thread.participantUsers || []).find((item) => (
             String(item?._id || item) !== String(userId || '')
@@ -287,6 +363,24 @@ const FloatingMessenger = ({
             jumptakeId: candidate.jumptakeId || participant?.jumptakeId || ''
         } : null;
     };
+
+    const getThreadCompanyProfile = (thread) => (
+        !isEmployer && !isDirectCandidateThread(thread) ? (thread?.company || null) : null
+    );
+
+    const openThreadProfile = (thread) => {
+        const candidate = getThreadProfile(thread);
+        if (candidate) {
+            setSelectedProfile(candidate);
+            return;
+        }
+        const company = getThreadCompanyProfile(thread);
+        if (company) setSelectedCompanyProfile(company);
+    };
+
+    const canOpenThreadProfile = (thread) => Boolean(
+        getThreadProfile(thread) || getThreadCompanyProfile(thread)
+    );
 
     const getThreadPresence = (thread) => {
         if (!thread) return 'New conversation';
@@ -554,6 +648,12 @@ const FloatingMessenger = ({
             });
             const data = await response.json().catch(() => ({}));
             if (!response.ok) throw new Error(data.error || 'Could not update this chat');
+            setThreads((currentThreads) => currentThreads.map((currentThread) => (
+                currentThread._id === thread._id ? data : currentThread
+            )));
+            window.dispatchEvent(new CustomEvent('jumptake-message-thread-updated', {
+                detail: { thread: data, action }
+            }));
             setOpenThreadMenuId('');
             setMessage(action === 'archive' ? 'Chat archived.' : action === 'delete' ? 'Chat deleted.' : action === 'block-chat' ? 'Contact blocked in Messages.' : 'Chat updated.');
             if (['archive', 'delete', 'block-chat'].includes(action)) {
@@ -564,6 +664,9 @@ const FloatingMessenger = ({
             if (['archive', 'delete', 'block-chat'].includes(action)) {
                 setSelectedThreadId('');
                 setPendingContact(null);
+            } else if (action === 'unarchive' || action === 'unblock-chat') {
+                setActiveTab('new');
+                setSelectedThreadId(data._id);
             }
         } catch (stateError) {
             setError(stateError.message || 'Could not update this chat.');
@@ -591,7 +694,8 @@ const FloatingMessenger = ({
         if (!thread) return null;
         const isOpen = openThreadMenuId === thread._id;
         const isClosing = closingThreadMenuId === thread._id;
-        const candidateActions = !isEmployer && isDirectCandidateThread(thread);
+        const canTagCandidate = !isEmployer && isDirectCandidateThread(thread);
+        const canViewProfile = canOpenThreadProfile(thread);
         return (
             <div className={`message-thread-options ${isOpen ? 'is-open' : ''} ${isClosing ? 'is-closing' : ''}`}>
                 <button type="button" className="message-thread-options-trigger" onClick={(event) => {
@@ -600,8 +704,8 @@ const FloatingMessenger = ({
                 }} aria-expanded={isOpen} aria-label="Conversation options"><span aria-hidden="true">...</span></button>
                 {(isOpen || isClosing) && (
                     <div className={`message-thread-options-menu ${isClosing ? 'is-closing' : 'is-opening'}`} role="menu" onClick={(event) => event.stopPropagation()}>
-                        {candidateActions && <button type="button" onClick={() => openTaggedPostComposer(thread)}>Tag to post</button>}
-                        {candidateActions && <button type="button" onClick={() => { setSelectedProfile(getThreadProfile(thread)); setOpenThreadMenuId(''); }}>View profile</button>}
+                        {canTagCandidate && <button type="button" onClick={() => openTaggedPostComposer(thread)}>Tag to post</button>}
+                        {canViewProfile && <button type="button" onClick={() => { openThreadProfile(thread); setOpenThreadMenuId(''); }}>View profile</button>}
                         <button type="button" onClick={() => updateThreadState(thread, thread.viewerState?.archived ? 'unarchive' : 'archive')}>{thread.viewerState?.archived ? 'Move to New Messages' : 'Archive chat'}</button>
                         <button type="button" onClick={() => updateThreadState(thread, 'delete')}>Delete chat</button>
                         <button type="button" onClick={() => updateThreadState(thread, thread.viewerState?.chatBlocked ? 'unblock-chat' : 'block-chat')}>{thread.viewerState?.chatBlocked ? 'Unblock to chat' : 'Block contact'}</button>
@@ -889,7 +993,7 @@ const FloatingMessenger = ({
     };
 
     const messengerMarkup = (
-        <div className={`floating-messenger ${open ? 'is-open' : ''}`}>
+        <div className={`floating-messenger ${open ? 'is-open' : ''} is-trigger-${triggerTone}`}>
             {open && (
                 <>
                     <div className="floating-messenger-backdrop" onClick={handleClose} aria-hidden="true" />
@@ -969,7 +1073,18 @@ const FloatingMessenger = ({
                                             onClick={() => handleSelectThread(thread._id)}
                                             onKeyDown={(event) => { if (event.key === 'Enter') handleSelectThread(thread._id); }}
                                         >
-                                            <ChatAvatar imageSrc={getThreadAvatar(thread)} className="floating-messenger-contact-avatar" label={getThreadTitle(thread)} />
+                                            <button
+                                                type="button"
+                                                className="message-list-avatar-button"
+                                                disabled={!canOpenThreadProfile(thread)}
+                                                aria-label={`View ${getThreadTitle(thread)} profile`}
+                                                onClick={(event) => {
+                                                    event.stopPropagation();
+                                                    openThreadProfile(thread);
+                                                }}
+                                            >
+                                                <ChatAvatar imageSrc={getThreadAvatar(thread)} className="floating-messenger-contact-avatar" label={getThreadTitle(thread)} />
+                                            </button>
                                             <div className="floating-messenger-contact-copy">
                                                 <strong>{getThreadTitle(thread)}</strong>
                                                 <span>{lastMessagePreview(thread)}</span>
@@ -1032,8 +1147,8 @@ const FloatingMessenger = ({
                                             <button
                                                 type="button"
                                                 className="message-profile-avatar-button"
-                                                onClick={() => selectedThread && setSelectedProfile(getThreadProfile(selectedThread))}
-                                                disabled={!selectedThread || !isDirectCandidateThread(selectedThread)}
+                                                onClick={() => selectedThread && openThreadProfile(selectedThread)}
+                                                disabled={!canOpenThreadProfile(selectedThread)}
                                                 aria-label="View contact profile"
                                             >
                                                 <ChatAvatar
@@ -1117,6 +1232,12 @@ const FloatingMessenger = ({
                             onProfileClose={() => setSelectedProfile(null)}
                         />
                     )}
+                    {selectedCompanyProfile && (
+                        <MessageCompanyProfileModal
+                            company={selectedCompanyProfile}
+                            onClose={() => setSelectedCompanyProfile(null)}
+                        />
+                    )}
                     </div>
                 </>
             )}
@@ -1125,6 +1246,7 @@ const FloatingMessenger = ({
                 <button
                     type="button"
                     className="floating-messenger-trigger"
+                    ref={triggerRef}
                     onClick={handleOpen}
                     aria-label="Open messages"
                 >

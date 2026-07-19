@@ -16,11 +16,7 @@ const ADMIN_PANEL_PATH = process.env.REACT_APP_ADMIN_PANEL_PATH || '/jt-owner-co
 const PORTAL_THEME_PATHS = ['/home', '/employer-dashboard'];
 
 const getInitialAppMode = () => {
-  if (typeof window === 'undefined') {
-    return 'dark';
-  }
-
-  return localStorage.getItem(APP_MODE_STORAGE_KEY) === 'light' ? 'light' : 'dark';
+  return 'light';
 };
 
 const getInitialCookieConsent = () => {
@@ -71,19 +67,23 @@ const AppRoutes = ({ appMode, setAppMode }) => {
   const location = useLocation();
 
   useEffect(() => {
-    localStorage.setItem(APP_MODE_STORAGE_KEY, appMode);
+    const enforcedMode = 'light';
+    if (appMode !== enforcedMode) {
+      setAppMode(enforcedMode);
+    }
+    localStorage.setItem(APP_MODE_STORAGE_KEY, enforcedMode);
 
     const isPortalRoute = PORTAL_THEME_PATHS.some((path) => location.pathname.startsWith(path));
 
     if (isPortalRoute) {
-      document.documentElement.setAttribute('data-theme', appMode);
-      document.body.setAttribute('data-theme', appMode);
+      document.documentElement.setAttribute('data-theme', enforcedMode);
+      document.body.setAttribute('data-theme', enforcedMode);
       return;
     }
 
     document.documentElement.removeAttribute('data-theme');
     document.body.removeAttribute('data-theme');
-  }, [appMode, location.pathname]);
+  }, [appMode, location.pathname, setAppMode]);
 
   return (
     <div className="app-container">

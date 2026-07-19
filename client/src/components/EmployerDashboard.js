@@ -45,9 +45,7 @@ const EMPLOYER_SECTION_IDS = new Set([
 
 const EMPLOYER_SECTION_STORAGE_KEY = 'jumptakeEmployerSection';
 
-const normalizeEmployerSection = (section) => (
-    section === 'dashboard' ? 'home' : section
-);
+const normalizeEmployerSection = (section) => section;
 
 const isMobileViewport = () => (
     typeof window !== 'undefined'
@@ -95,9 +93,9 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     };
 
     const sectionTitles = {
-        home: 'Dashboard',
+        home: 'Home',
         inbox: 'Inbox',
-        'home-feed': 'Dashboard',
+        'home-feed': 'Home',
         dashboard: 'Dashboard',
         'post-job': 'Post a Job',
         'manage-jobs': 'Manage Jobs',
@@ -437,7 +435,8 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     }, [activeSection, mobileSectionVisible, employer?.companyId]);
 
     const employerPrimaryNavItems = [
-        { id: 'home', label: 'Dashboard', icon: 'dashboard' },
+        { id: 'home', label: 'Home', icon: 'home' },
+        { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
         { id: 'post-job', label: 'Post a Job', icon: 'briefcase' },
         { id: 'manage-jobs', label: 'Manage Jobs', icon: 'briefcase' },
         { id: 'make-assessment', label: 'Make an Assessment', icon: 'assessment' },
@@ -535,6 +534,16 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     const renderContent = () => {
         switch (activeSection) {
             case 'home':
+            case 'home-feed':
+                return <PortalHomeFeed
+                    mode="employer"
+                    currentUser={employer}
+                    companyData={companyData}
+                    jobs={jobs}
+                    switchSection={switchSection}
+                    onRefresh={refreshJobs}
+                />;
+            case 'dashboard':
                 return <PortalDefaultLanding
                     mode="employer"
                     displayName={employer?.companyName || employer?.username || 'Employer'}
@@ -550,15 +559,6 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                     companyId={employer?.companyId}
                     onBack={goToPreviousSection}
                     onFooterBack={goToPreviousSection}
-                />;
-            case 'home-feed':
-                return <PortalHomeFeed
-                    mode="employer"
-                    currentUser={employer}
-                    companyData={companyData}
-                    jobs={jobs}
-                    switchSection={switchSection}
-                    onRefresh={refreshJobs}
                 />;
             case 'post-job':
                 return <PostJob
@@ -782,7 +782,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         }
     };
 
-    const showSectionTitle = !['home', 'home-feed'].includes(activeSection);
+    const showSectionTitle = !['home', 'home-feed', 'dashboard'].includes(activeSection);
 
     if (loading) {
         return (

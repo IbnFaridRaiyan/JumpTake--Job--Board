@@ -42,5 +42,12 @@ const NotificationSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 NotificationSchema.index({ recipientType: 1, recipientId: 1, createdAt: -1 });
+NotificationSchema.index(
+  { recipientType: 1, recipientId: 1, 'payload.systemKey': 1 },
+  {
+    unique: true,
+    partialFilterExpression: { 'payload.systemKey': { $type: 'string' } }
+  }
+);
 
 module.exports = mongoose.model('Notification', NotificationSchema);

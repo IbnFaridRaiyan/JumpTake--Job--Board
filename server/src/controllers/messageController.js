@@ -96,11 +96,11 @@ const stripHtml = (html = '') => (
 );
 
 const populateThread = (query) => query
-    .populate('company', 'name industry logo')
-    .populate('candidate', 'name email profileImage skills education experience')
-    .populate('candidateUser', 'email lastOnlineAt messagePreferences')
+    .populate('company', 'name industry logo founded headquarters website description')
+    .populate('candidate', 'user name email profileImage coverImage skills education degrees experience achievements interests hobbies socialProfile')
+    .populate('candidateUser', 'email jumptakeId lastOnlineAt messagePreferences')
     .populate('participantUsers', 'jumptakeId lastOnlineAt messagePreferences')
-    .populate('candidateProfiles', 'name profileImage skills education experience achievements interests hobbies user');
+    .populate('candidateProfiles', 'name profileImage coverImage skills education degrees experience achievements interests hobbies socialProfile user');
 
 const getDirectKey = (firstUserId, secondUserId) => (
     [String(firstUserId), String(secondUserId)].sort().join(':')
@@ -659,7 +659,7 @@ const updateThreadState = async (req, res) => {
                 return res.status(403).json({ error: 'You cannot update this company conversation' });
             }
             actorKey = getCompanyStateKey(companyId);
-        } else if (senderType === 'candidate' && await companyAllowsMessageNotifications(companyId)) {
+        } else {
             const participantIds = (thread.participantUsers || []).map(String);
             const ownsEmployerCandidateThread = String(thread.candidateUser || '') === authenticatedId;
             if (!participantIds.includes(authenticatedId) && !ownsEmployerCandidateThread) {

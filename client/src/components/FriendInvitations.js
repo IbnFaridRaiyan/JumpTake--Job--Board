@@ -269,6 +269,7 @@ const FriendInvitations = ({ userId }) => {
                     name={candidate?.name || 'Candidate'}
                     className="friend-invitation-avatar"
                     imageClassName="profile-avatar-image"
+                    useProfileIconFallback
                 />
                 <div className="friend-add-candidate-copy">
                     <h3>{candidate?.name || 'Candidate'}</h3>
@@ -366,7 +367,13 @@ const FriendInvitations = ({ userId }) => {
 
         return (
             <>
-                <ProfileAvatar imageSrc={candidate.profileImage} name={candidate.name} className="friend-invitation-avatar" imageClassName="profile-avatar-image" />
+                <ProfileAvatar
+                    imageSrc={candidate.profileImage}
+                    name={candidate.name}
+                    className="friend-invitation-avatar"
+                    imageClassName="profile-avatar-image"
+                    useProfileIconFallback
+                />
                 <div className="friend-invitation-copy">
                     <h3>{candidate.name || 'Candidate'}</h3>
                     {candidate.jumptakeId && <p>JumpTake ID: {candidate.jumptakeId}</p>}

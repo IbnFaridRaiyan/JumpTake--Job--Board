@@ -1,5 +1,6 @@
 node_modules/
 node_modules
+node-v*-win-x64/
 .env
 .env.local
 client/build

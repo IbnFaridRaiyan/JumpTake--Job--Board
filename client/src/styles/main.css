@@ -87707,6 +87707,667 @@ html body #root .home-page .friend-invitations-section .friend-add-candidate-act
   }
 }
 
+/* Screenshot 126: keep Blocks tabs lateral and isolate the compact tour controls. */
+html body #root .home-page .blocks-manager-shell > .blocks-manager-tabs,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .blocks-manager-shell > .blocks-manager-tabs {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
+  align-content: stretch !important;
+  justify-content: flex-start !important;
+  justify-items: initial !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+
+html body #root .home-page .blocks-manager-shell > .blocks-manager-tabs > .blocks-manager-tab,
+html body #root .home-page .blocks-manager-shell > .blocks-manager-tabs > .blocks-manager-tab:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .blocks-manager-shell > .blocks-manager-tabs > .blocks-manager-tab,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .blocks-manager-shell > .blocks-manager-tabs > .blocks-manager-tab:is(:hover, :focus, :focus-visible, :active) {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: stretch !important;
+  width: auto !important;
+  min-width: 5.2rem !important;
+  max-width: 7.5rem !important;
+  min-height: 2.72rem !important;
+  margin: 0 !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+html body #root .home-page .blocks-manager-shell .blocks-manager-tab-label {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-height: 2.05em !important;
+  max-width: 6.15rem !important;
+  margin: auto !important;
+  text-align: center !important;
+  white-space: normal !important;
+  line-height: 1.05 !important;
+  -webkit-line-clamp: unset !important;
+}
+
+html body .guided-portal-tour .guided-tour-top-actions {
+  align-items: center !important;
+  gap: 0.38rem !important;
+}
+
+html body .guided-portal-tour .guided-tour-top-actions > button:not(.guided-tour-close),
+html body .guided-portal-tour .guided-tour-top-actions > button:not(.guided-tour-close):is(:hover, :focus, :focus-visible, :active) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  height: 1.72rem !important;
+  min-height: 1.72rem !important;
+  max-height: 1.72rem !important;
+  margin: 0 !important;
+  padding: 0.22rem 0.58rem !important;
+  border: 1px solid #b68508 !important;
+  border-radius: 999px !important;
+  background: #d9a51b !important;
+  background-color: #d9a51b !important;
+  background-image: none !important;
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.18) !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  font-size: 0.64rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  transform: none !important;
+}
+
+html body .guided-portal-tour .guided-tour-top-actions > .guided-tour-close,
+html body .guided-portal-tour .guided-tour-top-actions > .guided-tour-close:is(:hover, :focus, :focus-visible, :active) {
+  appearance: none !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 1.65rem !important;
+  min-width: 1.65rem !important;
+  max-width: 1.65rem !important;
+  height: 1.65rem !important;
+  min-height: 1.65rem !important;
+  max-height: 1.65rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline-offset: 0.08rem !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 1.35rem !important;
+  line-height: 1 !important;
+  transform: none !important;
+}
+
+html body .guided-portal-tour .guided-tour-card .guided-tour-next,
+html body .guided-portal-tour .guided-tour-card .guided-tour-next:is(:hover, :focus, :focus-visible, :active) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 3.85rem !important;
+  max-width: max-content !important;
+  height: 1.72rem !important;
+  min-height: 1.72rem !important;
+  max-height: 1.72rem !important;
+  margin: 0.08rem 0 0 !important;
+  padding: 0.22rem 0.62rem !important;
+  border: 1px solid #276f93 !important;
+  border-radius: 999px !important;
+  background: #2f83aa !important;
+  background-color: #2f83aa !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 0.64rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  transform: none !important;
+}
+
+html body .guided-portal-tour .guided-tour-card.is-complete .guided-tour-begin,
+html body .guided-portal-tour .guided-tour-card.is-complete .guided-tour-begin:is(:hover, :focus, :focus-visible, :active) {
+  margin: 0.08rem auto 0 !important;
+}
+
+/* Keep every in-tour navigation action in one compact, aligned row. */
+html body .guided-portal-tour .guided-tour-controls {
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 0.28rem !important;
+  width: 100% !important;
+  margin: 0.05rem 0 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+html body .guided-portal-tour .guided-tour-controls > :is(.guided-tour-previous, .guided-tour-next),
+html body .guided-portal-tour .guided-tour-controls > :is(.guided-tour-previous, .guided-tour-next):is(:hover, :focus, :focus-visible, :active, :disabled) {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 2.95rem !important;
+  max-width: max-content !important;
+  height: 1.55rem !important;
+  min-height: 1.55rem !important;
+  max-height: 1.55rem !important;
+  margin: 0 !important;
+  padding: 0.18rem 0.46rem !important;
+  border: 1px solid #276f93 !important;
+  border-radius: 999px !important;
+  background: #2f83aa !important;
+  background-color: #2f83aa !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 0.56rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  transform: none !important;
+}
+
+html body .guided-portal-tour .guided-tour-controls > .guided-tour-previous:disabled {
+  opacity: 0.42 !important;
+  cursor: default !important;
+}
+
+html body .guided-portal-tour .guided-tour-controls > .guided-tour-skip,
+html body .guided-portal-tour .guided-tour-controls > .guided-tour-skip:is(:hover, :focus, :focus-visible, :active) {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  height: 1.55rem !important;
+  min-height: 1.55rem !important;
+  max-height: 1.55rem !important;
+  margin: 0 !important;
+  padding: 0.18rem 0.46rem !important;
+  border: 1px solid #b68508 !important;
+  border-radius: 999px !important;
+  background: #d9a51b !important;
+  background-color: #d9a51b !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  font-size: 0.56rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  transform: none !important;
+}
+
+html body .guided-portal-tour .guided-tour-controls > .guided-tour-close,
+html body .guided-portal-tour .guided-tour-controls > .guided-tour-close:is(:hover, :focus, :focus-visible, :active) {
+  appearance: none !important;
+  display: inline-grid !important;
+  flex: 0 0 1.35rem !important;
+  place-items: center !important;
+  width: 1.35rem !important;
+  min-width: 1.35rem !important;
+  max-width: 1.35rem !important;
+  height: 1.55rem !important;
+  min-height: 1.55rem !important;
+  max-height: 1.55rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  font-size: 1.15rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  transform: none !important;
+}
+
+/* Guided tour motion and the Begin-only completion moment. */
+.guided-portal-tour .guided-tour-full-shade {
+  animation: guided-tour-shade-in 420ms ease-out both;
+}
+
+.guided-portal-tour .guided-tour-spotlight {
+  will-change: top, left, width, height, border-radius;
+  transition:
+    top 680ms cubic-bezier(0.22, 1, 0.36, 1),
+    left 680ms cubic-bezier(0.22, 1, 0.36, 1),
+    width 680ms cubic-bezier(0.22, 1, 0.36, 1),
+    height 680ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-radius 680ms ease !important;
+}
+
+.guided-portal-tour .guided-tour-card {
+  animation: guided-tour-card-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition:
+    top 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    bottom 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 320ms ease !important;
+}
+
+.guided-portal-tour .guided-tour-copy {
+  animation: guided-tour-copy-in 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.guided-portal-tour .guided-tour-ai-head {
+  animation: guided-tour-ai-breathe 3.4s ease-in-out infinite;
+}
+
+.guided-portal-tour .guided-tour-card.is-complete {
+  align-items: center;
+  width: min(31rem, calc(100vw - 1.5rem));
+  max-height: calc(100vh - 2rem);
+  text-align: center;
+  transform: translate(-50%, -50%);
+  animation: guided-tour-complete-in 650ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.guided-portal-tour .guided-tour-card.is-complete .guided-tour-ai-head {
+  width: 3.65rem;
+  height: 3.65rem;
+  margin: 0 auto;
+}
+
+.guided-portal-tour .guided-tour-card.is-complete .guided-tour-progress.is-complete span {
+  animation: none !important;
+  transform: scaleX(1) !important;
+}
+
+.guided-portal-tour .guided-tour-card.is-complete .guided-tour-begin,
+.guided-portal-tour .guided-tour-card.is-complete .guided-tour-begin:is(:hover, :focus-visible, :active) {
+  min-width: 7.2rem;
+  margin: 0.1rem auto 0;
+}
+
+@keyframes guided-tour-shade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes guided-tour-card-in {
+  from { opacity: 0; transform: translate(-50%, 0.7rem) scale(0.975); }
+  to { opacity: 1; transform: translateX(-50%) scale(1); }
+}
+
+@keyframes guided-tour-copy-in {
+  from { opacity: 0; transform: translateY(0.42rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes guided-tour-ai-breathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-0.13rem) scale(1.025); }
+}
+
+@keyframes guided-tour-complete-in {
+  from { opacity: 0; transform: translate(-50%, calc(-50% + 1rem)) scale(0.94); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guided-portal-tour :is(.guided-tour-full-shade, .guided-tour-spotlight, .guided-tour-card, .guided-tour-copy, .guided-tour-ai-head) {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+/* Screenshots 128 and 129: deterministic mobile tour sizing and completion layout. */
+html body .guided-portal-tour .guided-tour-controls {
+  position: static !important;
+  inset: auto !important;
+  display: grid !important;
+  grid-template-columns: 3.35rem 2.8rem 3.85rem 1.2rem !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.22rem !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  margin: 0.05rem auto 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  transform: none !important;
+}
+
+html body .guided-portal-tour .guided-tour-controls > .guided-tour-previous,
+html body .guided-portal-tour .guided-tour-controls > .guided-tour-previous:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  position: static !important;
+  inset: auto !important;
+  box-sizing: border-box !important;
+  width: 3.35rem !important;
+  min-width: 3.35rem !important;
+  max-width: 3.35rem !important;
+  height: 1.42rem !important;
+  min-height: 1.42rem !important;
+  max-height: 1.42rem !important;
+  margin: 0 !important;
+  padding: 0.12rem 0.25rem !important;
+  overflow: hidden !important;
+  font-size: 0.5rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  transform: none !important;
+}
+
+html body .guided-portal-tour .guided-tour-controls > .guided-tour-next,
+html body .guided-portal-tour .guided-tour-controls > .guided-tour-next:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  position: static !important;
+  inset: auto !important;
+  box-sizing: border-box !important;
+  width: 2.8rem !important;
+  min-width: 2.8rem !important;
+  max-width: 2.8rem !important;
+  height: 1.42rem !important;
+  min-height: 1.42rem !important;
+  max-height: 1.42rem !important;
+  margin: 0 !important;
+  padding: 0.12rem 0.25rem !important;
+  overflow: hidden !important;
+  font-size: 0.5rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  transform: none !important;
+}
+
+html body .guided-portal-tour .guided-tour-controls > .guided-tour-skip,
+html body .guided-portal-tour .guided-tour-controls > .guided-tour-skip:is(:hover, :focus, :focus-visible, :active) {
+  position: static !important;
+  inset: auto !important;
+  box-sizing: border-box !important;
+  width: 3.85rem !important;
+  min-width: 3.85rem !important;
+  max-width: 3.85rem !important;
+  height: 1.42rem !important;
+  min-height: 1.42rem !important;
+  max-height: 1.42rem !important;
+  margin: 0 !important;
+  padding: 0.12rem 0.22rem !important;
+  overflow: hidden !important;
+  font-size: 0.48rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  transform: none !important;
+}
+
+html body .guided-portal-tour .guided-tour-controls > .guided-tour-close,
+html body .guided-portal-tour .guided-tour-controls > .guided-tour-close:is(:hover, :focus, :focus-visible, :active) {
+  position: static !important;
+  inset: auto !important;
+  box-sizing: border-box !important;
+  width: 1.2rem !important;
+  min-width: 1.2rem !important;
+  max-width: 1.2rem !important;
+  height: 1.42rem !important;
+  min-height: 1.42rem !important;
+  max-height: 1.42rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  font-size: 1rem !important;
+  line-height: 1 !important;
+  transform: none !important;
+}
+
+html body .guided-portal-tour .guided-tour-card.is-complete {
+  position: fixed !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  width: min(23rem, calc(100vw - 1.5rem)) !important;
+  min-height: 0 !important;
+  max-height: calc(100vh - 2rem) !important;
+  padding: 0.82rem 0.92rem 0.78rem !important;
+  text-align: center !important;
+}
+
+html body .guided-portal-tour .guided-tour-card.is-complete > .guided-tour-ai-head {
+  position: absolute !important;
+  inset: 0.58rem auto auto 0.58rem !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 2.05rem !important;
+  min-width: 2.05rem !important;
+  max-width: 2.05rem !important;
+  height: 2.05rem !important;
+  min-height: 2.05rem !important;
+  max-height: 2.05rem !important;
+  margin: 0 !important;
+}
+
+html body .guided-portal-tour .guided-tour-card.is-complete > .guided-tour-ai-head > span {
+  font-size: 1rem !important;
+  line-height: 1 !important;
+}
+
+html body .guided-portal-tour .guided-tour-card.is-complete > .guided-tour-copy {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 0.15rem !important;
+  text-align: center !important;
+}
+
+html body .guided-portal-tour .guided-tour-card.is-complete .guided-tour-eyebrow,
+html body .guided-portal-tour .guided-tour-card.is-complete h2,
+html body .guided-portal-tour .guided-tour-card.is-complete p {
+  width: 100% !important;
+  max-width: 100% !important;
+  text-align: center !important;
+}
+
+html body .guided-portal-tour .guided-tour-card.is-complete h2 {
+  margin: 0.34rem auto 0 !important;
+  padding: 0 2.05rem !important;
+  font-size: 0.94rem !important;
+  line-height: 1.12 !important;
+}
+
+html body .guided-portal-tour .guided-tour-card.is-complete p {
+  margin: 0.38rem auto 0.52rem !important;
+  font-size: 0.66rem !important;
+  line-height: 1.35 !important;
+}
+
+html body .guided-portal-tour .guided-tour-card.is-complete .guided-tour-progress-copy {
+  font-size: 0.56rem !important;
+}
+
+html body .guided-portal-tour .guided-tour-card.is-complete .guided-tour-progress {
+  margin: 0.28rem 0 0.48rem !important;
+}
+
+html body .guided-portal-tour .guided-tour-card.is-complete .guided-tour-begin,
+html body .guided-portal-tour .guided-tour-card.is-complete .guided-tour-begin:is(:hover, :focus, :focus-visible, :active) {
+  position: static !important;
+  inset: auto !important;
+  display: inline-flex !important;
+  width: 4.1rem !important;
+  min-width: 4.1rem !important;
+  max-width: 4.1rem !important;
+  height: 1.48rem !important;
+  min-height: 1.48rem !important;
+  max-height: 1.48rem !important;
+  margin: 0 auto !important;
+  padding: 0.12rem 0.42rem !important;
+  font-size: 0.54rem !important;
+  line-height: 1 !important;
+  transform: none !important;
+}
+
+/* Screenshot 130: elongated tour capsules and a single corner bookmark on saved jobs. */
+html body .guided-portal-tour .guided-tour-controls {
+  grid-template-columns: 4.6rem 3.8rem 5.2rem 1.2rem !important;
+  gap: 0.2rem !important;
+}
+
+html body .guided-portal-tour .guided-tour-controls > .guided-tour-previous,
+html body .guided-portal-tour .guided-tour-controls > .guided-tour-previous:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  width: 4.6rem !important;
+  min-width: 4.6rem !important;
+  max-width: 4.6rem !important;
+  height: 1.36rem !important;
+  min-height: 1.36rem !important;
+  max-height: 1.36rem !important;
+  padding: 0.1rem 0.48rem !important;
+  border-radius: 999px !important;
+  font-size: 0.6rem !important;
+  white-space: nowrap !important;
+}
+
+html body .guided-portal-tour .guided-tour-controls > .guided-tour-next,
+html body .guided-portal-tour .guided-tour-controls > .guided-tour-next:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  width: 3.8rem !important;
+  min-width: 3.8rem !important;
+  max-width: 3.8rem !important;
+  height: 1.36rem !important;
+  min-height: 1.36rem !important;
+  max-height: 1.36rem !important;
+  padding: 0.1rem 0.48rem !important;
+  border-radius: 999px !important;
+  font-size: 0.6rem !important;
+  white-space: nowrap !important;
+}
+
+html body .guided-portal-tour .guided-tour-controls > .guided-tour-skip,
+html body .guided-portal-tour .guided-tour-controls > .guided-tour-skip:is(:hover, :focus, :focus-visible, :active) {
+  width: 5.2rem !important;
+  min-width: 5.2rem !important;
+  max-width: 5.2rem !important;
+  height: 1.36rem !important;
+  min-height: 1.36rem !important;
+  max-height: 1.36rem !important;
+  padding: 0.1rem 0.5rem !important;
+  border-radius: 999px !important;
+  font-size: 0.58rem !important;
+  white-space: nowrap !important;
+}
+
+html body #root .home-page .bookmarked-job-card {
+  position: relative !important;
+}
+
+html body #root .home-page .bookmarked-job-card > .application-card-header {
+  padding-right: 1.8rem !important;
+}
+
+html body #root .home-page .bookmarked-job-card > button.bookmarked-job-corner-star,
+html body #root .home-page .bookmarked-job-card > button.bookmarked-job-corner-star:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  appearance: none !important;
+  position: absolute !important;
+  inset: 0.62rem 0.62rem auto auto !important;
+  z-index: 4 !important;
+  display: grid !important;
+  place-items: center !important;
+  box-sizing: border-box !important;
+  width: 1.45rem !important;
+  min-width: 1.45rem !important;
+  max-width: 1.45rem !important;
+  height: 1.45rem !important;
+  min-height: 1.45rem !important;
+  max-height: 1.45rem !important;
+  margin: 0 !important;
+  padding: 0.18rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #5b1118 !important;
+  -webkit-text-fill-color: #5b1118 !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+html body #root .home-page .bookmarked-job-card > button.bookmarked-job-corner-star::before,
+html body #root .home-page .bookmarked-job-card > button.bookmarked-job-corner-star::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+}
+
+html body #root .home-page .bookmarked-job-card > button.bookmarked-job-corner-star > .bookmarked-job-star-glyph {
+  position: static !important;
+  display: block !important;
+  width: 1rem !important;
+  min-width: 1rem !important;
+  max-width: 1rem !important;
+  height: 1rem !important;
+  min-height: 1rem !important;
+  max-height: 1rem !important;
+  margin: 0 !important;
+  object-fit: contain !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+html body #root .home-page .bookmarked-job-card > .application-card-actions {
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.36rem !important;
+  width: 100% !important;
+  margin: 0.48rem 0 0 !important;
+}
+
+html body #root .home-page .bookmarked-job-card > .application-card-actions > button.view-profile-btn,
+html body #root .home-page .bookmarked-job-card > .application-card-actions > button.view-profile-btn:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  position: static !important;
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 4.15rem !important;
+  max-width: max-content !important;
+  height: 1.56rem !important;
+  min-height: 1.56rem !important;
+  max-height: 1.56rem !important;
+  margin: 0 !important;
+  padding: 0.18rem 0.58rem !important;
+  border-radius: 999px !important;
+  box-shadow: none !important;
+  font-size: 0.58rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  transform: none !important;
+}
+
 /* Candidate directory: separate universal name/ID search from profile-match suggestions. */
 html body #root .talent-pool-container.candidate-view-candidates .candidate-directory-search-card {
   display: grid !important;

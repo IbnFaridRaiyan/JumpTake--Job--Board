@@ -182,6 +182,7 @@ const Notifications = ({ mode, recipientId, onOpenNotification, onUnreadCountCha
                             key={notification._id}
                             type="button"
                             className={`notification-row ${notification.read ? 'read' : 'unread'}`}
+                            data-tour-label="Notification stacks"
                             onClick={() => handleOpen(notification)}
                         >
                             <span className="notification-status-slot" aria-hidden="true">

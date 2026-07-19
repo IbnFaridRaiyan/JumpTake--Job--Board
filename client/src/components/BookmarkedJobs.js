@@ -230,6 +230,22 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack, embedded = false 
 
                         return (
                             <div className="application-card bookmarked-job-card" key={bookmark._id}>
+                                <button
+                                    type="button"
+                                    className="bookmark-star-button bookmarked-job-remove-button bookmarked-job-corner-star"
+                                    onClick={() => removeBookmark(job?._id)}
+                                    aria-pressed="true"
+                                    aria-label="Remove bookmark"
+                                    title="Remove bookmark"
+                                    disabled={!job?._id}
+                                >
+                                    <img
+                                        className="bookmarked-job-star-glyph"
+                                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%235b1118' d='m12 1.9 3.1 6.28 6.93 1.01-5.02 4.89 1.19 6.9L12 17.72l-6.2 3.26 1.19-6.9-5.02-4.89L8.9 8.18 12 1.9Z'/%3E%3C/svg%3E"
+                                        alt=""
+                                        aria-hidden="true"
+                                    />
+                                </button>
                                 <div className="application-card-header">
                                     <div>
                                         <h3>{job?.title || 'Saved Job'}</h3>
@@ -253,23 +269,6 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack, embedded = false 
                                         <span aria-hidden="true">👍</span>
                                         <span className="portal-reaction-tooltip" role="tooltip">Like</span>
                                         <strong>{getJobLikeCount(job)}</strong>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="bookmark-star-button job-card-bookmark-action portal-reaction-icon-button bookmarked-job-remove-button"
-                                        onClick={() => removeBookmark(job?._id)}
-                                        aria-pressed="true"
-                                        aria-label="Remove bookmark"
-                                        title="Remove bookmark"
-                                        disabled={!job?._id}
-                                    >
-                                        <img
-                                            className="bookmarked-job-star-glyph"
-                                            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%235b1118' d='m12 1.9 3.1 6.28 6.93 1.01-5.02 4.89 1.19 6.9L12 17.72l-6.2 3.26 1.19-6.9-5.02-4.89L8.9 8.18 12 1.9Z'/%3E%3C/svg%3E"
-                                            alt=""
-                                            aria-hidden="true"
-                                        />
-                                        <span className="portal-reaction-tooltip" role="tooltip">Remove bookmark</span>
                                     </button>
                                 </div>
                                 <div className="application-card-actions">

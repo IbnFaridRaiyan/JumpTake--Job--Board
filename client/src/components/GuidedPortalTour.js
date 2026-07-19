@@ -4,45 +4,45 @@ import { createPortal } from 'react-dom';
 const AUTO_ADVANCE_MS = 7000;
 
 const CANDIDATE_TOUR_SECTIONS = [
-    ['job-feed', 'Home', 'Your Home feed brings job posts, talent stories, work news, reactions, comments, sharing, and profile tools together. It helps you discover opportunities while building useful professional connections.'],
-    ['dashboard', 'Dashboard', 'The dashboard is your concise starting point. It summarizes activity and provides quick routes into jobs, applications, creation tools, and account settings.'],
-    ['notifications', 'Notifications', 'Notifications keep important changes visible, including messages, friend activity, application updates, and newly posted opportunities.'],
-    ['view-candidates', 'Candidates', 'Candidates helps you find people by name or JumpTake ID, inspect relevant profiles, connect, message, and learn from professionals with related interests.'],
-    ['friend-invitations', 'Friends', 'Friends organizes discovery, received invitations, sent invitations, and confirmed connections so your network stays easy to manage.'],
-    ['applications', 'My Applications', 'My Applications brings submitted applications, assessments, video interviews, and drafts into one workspace so every hiring step is easier to follow.'],
-    ['assessments', 'My Assessments', 'My Assessments contains employer invitations, instructions, completion tools, and results connected to your active applications.'],
-    ['video-interviews', 'Video Interviews', 'Video Interviews keeps interview invitations, scheduling choices, and meeting details organized alongside the relevant opportunity.'],
-    ['draft-applications', 'Draft Applications', 'Draft Applications preserves unfinished work so you can continue carefully instead of restarting an application.'],
-    ['bookmarks', 'Bookmarks', 'Bookmarks keeps saved candidates, jobs, and posts together so valuable opportunities and content are never difficult to find again.'],
-    ['bookmarked-candidates', 'Bookmarked Candidates', 'Bookmarked Candidates keeps useful professional profiles available for later comparison, messaging, and networking.'],
-    ['bookmarked-jobs', 'Bookmarked Jobs', 'Bookmarked Jobs preserves opportunities you may want to evaluate or apply to later.'],
-    ['saved-posts', 'Saved Posts', 'Saved Posts keeps useful community content available in a focused viewer without forcing you to search the feed again.'],
-    ['interested-jobs', 'Job Preferences', 'Job Preferences improves recommendations by recording the fields and job families that match your goals. Choose several options for broader, more useful matching.'],
-    ['resume-playground', 'Create', 'Create provides a professional résumé playground, document creation, uploads, AI-generated samples, editing, saving, exporting, and printing.'],
-    ['blocks', 'Blocks', 'Blocks gives you control over blocked users, sources, hidden posts, comments, and other content, supporting a safer and more relevant experience.'],
-    ['inbox', 'Messages', 'Messages organizes new conversations, requests, archived chats, blocked contacts, new messages, and communication preferences in one place.'],
-    ['progress-check', 'Progress Check', 'Progress Check turns activity into clear signals such as applications, job searching, matching, employer views, and response rates.'],
-    ['settings', 'Settings', 'Settings controls account information, security, notifications, and other preferences that shape your JumpTake experience.'],
-    ['about-jumptake', 'About JumpTake', 'About JumpTake explains the platform and lets you restart this guided experience whenever you need a refresher.']
+    ['job-feed', 'Home', 'Stay visible in your professional community, discover fresh opportunities, and learn from other people’s ideas in one place. Consistent participation can grow your reach and lead to valuable connections.'],
+    ['dashboard', 'Dashboard', 'See what deserves attention first, reduce time spent checking separate areas, and move into your highest-value career activity with less effort.'],
+    ['notifications', 'Notifications', 'Respond while opportunities and conversations are still fresh. Timely awareness helps you protect application momentum and avoid missing an employer or connection.'],
+    ['view-candidates', 'Candidates', 'Meet people with relevant knowledge, exchange ideas, and build relationships that can introduce you to industries, collaborators, and opportunities beyond your existing network.'],
+    ['friend-invitations', 'Friends', 'Turn promising introductions into a useful professional network. Stronger connections can bring advice, referrals, encouragement, and visibility to new career paths.'],
+    ['applications', 'My Applications', 'Keep every opportunity moving without relying on memory. A clear view of your progress helps you follow up sooner, prepare better, and spend more time on strong applications.'],
+    ['assessments', 'My Assessments', 'Demonstrate your ability with confidence and keep preparation focused on real employer requests, helping your strongest evidence reach hiring teams sooner.'],
+    ['video-interviews', 'Video Interviews', 'Stay prepared for important conversations and reduce scheduling friction, so you can focus your energy on presenting your experience and personality well.'],
+    ['draft-applications', 'Draft Applications', 'Protect the work you have already completed and return when you can give it proper attention, saving time while improving the quality of each submission.'],
+    ['bookmarks', 'Bookmarks', 'Build a personal shortlist of opportunities, people, and ideas. Keeping high-value discoveries together reduces repeated searching and makes future decisions faster.'],
+    ['bookmarked-candidates', 'Bookmarked Candidates', 'Remember people who could become mentors, collaborators, or valuable industry contacts, then reconnect when the timing or opportunity is right.'],
+    ['bookmarked-jobs', 'Bookmarked Jobs', 'Compare promising roles on your own schedule and prepare thoughtful applications without losing opportunities you discovered earlier.'],
+    ['saved-posts', 'Saved Posts', 'Create a reusable library of advice, market insight, and inspiration that can improve your decisions and spark stronger professional ideas later.'],
+    ['interested-jobs', 'Job Preferences', 'Guide JumpTake toward the work you genuinely want, improving the relevance of future discoveries and reducing time spent filtering unsuitable roles.'],
+    ['resume-playground', 'Create', 'Turn your experience and ideas into polished resumes and documents faster. AI-supported starting points reduce repetitive writing while leaving you in control of the final result.'],
+    ['blocks', 'Blocks', 'Protect your attention and wellbeing by shaping a safer, more relevant environment, leaving more energy for constructive people and useful content.'],
+    ['inbox', 'Messages', 'Build real professional relationships through focused conversation. Keeping communication organized makes follow-ups faster and helps promising introductions become lasting connections.'],
+    ['progress-check', 'Progress Check', 'Use evidence from your activity to understand what creates momentum, adjust your strategy earlier, and invest time in the actions most likely to improve results.'],
+    ['settings', 'Settings', 'Shape a secure, focused experience around your preferences so JumpTake supports your goals without creating unnecessary interruptions.'],
+    ['about-jumptake', 'About JumpTake', 'Return here whenever you want to refresh your understanding, discover overlooked value, or help your next career move start with greater confidence.']
 ].map(([id, title, description]) => ({ id, title, description }));
 
 const EMPLOYER_TOUR_SECTIONS = [
-    ['home-feed', 'Home', 'The employer Home feed combines Work News, talent stories, job posts, engagement, company visibility, and professional community activity.'],
-    ['dashboard', 'Dashboard', 'The dashboard summarizes hiring activity and provides direct access to the tools used most often.'],
-    ['post-job', 'Post a Job', 'Post a Job guides you through creating a complete opportunity with responsibilities, requirements, skills, compensation, and company context.'],
-    ['manage-jobs', 'Manage Jobs', 'Manage Jobs centralizes editing, applicant review, invitations, assessments, interviews, holds, rejections, and hiring decisions for each role.'],
-    ['make-assessment', 'Make an Assessment', 'Build structured assessments that help compare candidates consistently and identify the evidence most relevant to a role.'],
-    ['general-assessment', 'General Assessment', 'General Assessment stores reusable screening material that can be applied across suitable jobs when needed.'],
-    ['talent-pool', 'Talent Pool', 'Talent Pool helps you discover candidates, compare profile evidence, bookmark promising people, and begin professional conversations.'],
-    ['bookmarked-talents', 'Bookmarked Talents', 'Bookmarked Talents keeps promising candidates available for later review and future opportunities.'],
-    ['saved-posts', 'Saved Posts', 'Saved Posts preserves useful professional content and opens it in a focused viewer without losing your current workspace.'],
-    ['notifications', 'Notifications', 'Notifications surface candidate messages, application activity, and other hiring events that may require attention.'],
-    ['create-document', 'Create Document', 'Create Document supports blank documents, uploaded files, AI-generated samples, editing, saving, exporting, and printing.'],
-    ['inbox', 'Messages', 'Messages keeps candidate communication, requests, archives, blocked contacts, and messaging settings organized.'],
-    ['company-profile', 'Company Profile', 'Company Profile controls the public information candidates use to understand your organization and evaluate opportunities.'],
-    ['application-tracking', 'Application Tracking', 'Application Tracking presents hiring performance signals so you can identify momentum, bottlenecks, and response patterns.'],
-    ['settings', 'Settings', 'Settings controls employer account details, security, notifications, and company-facing preferences.'],
-    ['about-jumptake', 'About JumpTake', 'About JumpTake explains the platform and lets your team restart this guided experience whenever needed.']
+    ['home-feed', 'Home', 'Strengthen employer visibility, share ideas and progress, and engage with the professional community so more relevant people recognize your organization.'],
+    ['dashboard', 'Dashboard', 'See hiring priorities quickly and reduce the time spent moving between workflows, helping your team act on strong candidates while interest is high.'],
+    ['post-job', 'Post a Job', 'Present opportunities clearly enough to attract better-aligned applicants, reduce avoidable questions, and give candidates confidence in your role and organization.'],
+    ['manage-jobs', 'Manage Jobs', 'Keep hiring decisions coordinated and reduce administrative delay, so candidates receive faster responses and your team can move strong people forward consistently.'],
+    ['make-assessment', 'Make an Assessment', 'Collect comparable evidence of ability, reduce bias from unstructured screening, and focus interview time on candidates who show the strongest role-relevant potential.'],
+    ['general-assessment', 'General Assessment', 'Reuse effective evaluation material across suitable roles, saving preparation time while maintaining a consistent standard for candidate review.'],
+    ['talent-pool', 'Talent Pool', 'Discover capable people before competitors do, build relationships beyond active applicants, and create a warmer pipeline for current and future hiring needs.'],
+    ['bookmarked-talents', 'Bookmarked Talents', 'Maintain a focused shortlist of promising people so future vacancies can begin with informed prospects instead of a completely new search.'],
+    ['saved-posts', 'Saved Posts', 'Preserve useful market insight, candidate ideas, and community knowledge that can improve hiring strategy and inspire stronger employer communication.'],
+    ['notifications', 'Notifications', 'Respond to candidate interest and hiring changes sooner, protecting momentum and creating a more attentive experience for potential employees.'],
+    ['create-document', 'Create Document', 'Produce polished hiring documents faster with reusable and AI-supported starting points, reducing repetitive writing across the team.'],
+    ['inbox', 'Messages', 'Build trust through timely, organized candidate communication and reduce the chance that valuable conversations are delayed or forgotten.'],
+    ['company-profile', 'Company Profile', 'Give candidates a credible reason to choose you by presenting a clear employer identity, improving trust before they apply or accept an interview.'],
+    ['application-tracking', 'Application Tracking', 'Recognize delays and conversion patterns early, then focus time and resources where they can improve hiring speed and candidate experience most.'],
+    ['settings', 'Settings', 'Keep employer access secure and communication focused, allowing the team to work efficiently without unnecessary interruptions.'],
+    ['about-jumptake', 'About JumpTake', 'Return here to refresh your team’s understanding and uncover more value from the platform as your hiring needs evolve.']
 ].map(([id, title, description]) => ({ id, title, description }));
 
 const isVisibleControl = (element) => {
@@ -55,32 +55,33 @@ const isVisibleControl = (element) => {
 };
 
 const getControlLabel = (element, index) => {
-    const explicit = element.getAttribute('aria-label') || element.getAttribute('title') || element.getAttribute('placeholder');
+    const explicit = element.getAttribute('data-tour-label') || element.getAttribute('aria-label') || element.getAttribute('title') || element.getAttribute('placeholder');
     const text = String(explicit || element.innerText || element.value || '').replace(/\s+/g, ' ').trim();
     return text || `${element.tagName.toLowerCase()} control ${index + 1}`;
 };
 
-const describeControl = (label, sectionTitle) => {
+const describeControl = (label, section) => {
     const normalized = label.toLowerCase();
     const descriptions = [
-        [/search|find/, 'Use this control to find relevant people, jobs, or content faster and reduce the time spent browsing.'],
-        [/apply|application/, 'This action moves you into the application workflow, where your details can be reviewed before submission.'],
-        [/bookmark|save/, 'Save this item for reliable access later without interrupting what you are doing now.'],
-        [/message|chat|inbox/, 'Start or manage a direct professional conversation while keeping communication connected to the relevant person or opportunity.'],
-        [/friend|connect|invitation/, 'Use this networking action to create and manage a professional connection on JumpTake.'],
-        [/profile/, 'Open the complete profile view to evaluate public experience, education, skills, activity, and available contact actions.'],
-        [/create|new|post|publish/, 'Use this creation action to turn your information or idea into editable, shareable content.'],
-        [/upload|attach/, 'Upload an existing file so JumpTake can preserve or convert it for the current workflow.'],
-        [/edit|continue/, 'Continue editing while keeping the existing information available for refinement.'],
-        [/delete|remove|withdraw/, 'This removes or withdraws the selected item. JumpTake presents confirmation where recovery or status may be affected.'],
-        [/block|hide|unhide|unblock/, 'Use this safety and visibility control to decide which people or content can appear in your experience.'],
-        [/filter|sort/, 'Narrow or reorder the visible results so the most relevant information reaches you first.'],
-        [/like|react|comment|share|reach/, 'This engagement control helps you respond to content, join the discussion, distribute it, or understand its visibility.'],
-        [/save|update|submit|confirm/, 'Confirm the current information so the latest choices are available throughout JumpTake.'],
-        [/back|close|cancel/, 'Leave the current view safely and return to the previous workspace without performing another action.']
+        [/search|find/, 'Reach relevant people, jobs, or ideas sooner and spend less time browsing results that do not support your goals.'],
+        [/apply|application/, 'Act while an opportunity is fresh and present your experience in a focused way that helps employers understand your potential.'],
+        [/bookmark|save/, 'Reduce repeated searching and mental load by keeping valuable opportunities, people, and ideas ready for the moment you need them.'],
+        [/message|chat|inbox/, 'Turn discovery into a real relationship through timely conversation, stronger follow-up, and a clearer path to collaboration or opportunity.'],
+        [/notification|alert|stack/, 'Keep opportunities, conversations, and application progress visible so you can respond sooner and protect valuable momentum.'],
+        [/friend|connect|invitation/, 'Grow a professional network that can bring knowledge, encouragement, referrals, collaboration, and access to new communities.'],
+        [/profile/, 'Build confidence before a conversation by understanding relevant experience and shared interests, or strengthen how others understand your own value.'],
+        [/create|new|post|publish/, 'Turn knowledge and ideas into visible professional value, helping others discover your perspective while reducing the time needed to start.'],
+        [/upload|attach/, 'Reuse work you already have instead of recreating it, preserving effort and accelerating the path to a polished result.'],
+        [/edit|continue/, 'Refine work over time without losing earlier progress, making quality easier to improve even when your time is limited.'],
+        [/delete|remove|withdraw/, 'Keep attention on current priorities by clearing work that no longer supports your goals or has become outdated.'],
+        [/block|hide|unhide|unblock/, 'Protect focus and wellbeing by shaping a professional environment around constructive people and relevant information.'],
+        [/filter|sort/, 'Reduce information overload and bring the most useful choices forward, making decisions faster and more confidently.'],
+        [/like|react|comment|share|reach/, 'Increase professional visibility, support useful ideas, and begin conversations that can grow into meaningful community connections.'],
+        [/save|update|submit|confirm/, 'Protect your latest progress and keep information dependable across JumpTake, reducing repetition in future tasks.'],
+        [/back|close|cancel/, 'Stay in control of your pace and attention while preserving the progress that still matters.']
     ];
     const match = descriptions.find(([pattern]) => pattern.test(normalized));
-    return match?.[1] || `This ${sectionTitle} control performs “${label}”. It keeps the related task accessible without leaving the wider portal workflow.`;
+    return match?.[1] || `${section.title} can help you make useful progress with less friction. ${section.description}`;
 };
 
 const GuidedPortalTour = ({ mode = 'candidate' }) => {
@@ -98,6 +99,12 @@ const GuidedPortalTour = ({ mode = 'candidate' }) => {
         setControls([]);
         setSpotlightRect(null);
         document.body.removeAttribute('data-jumptake-tour-active');
+    }, []);
+
+    const showCompletion = useCallback(() => {
+        setStage('complete');
+        setControls([]);
+        setSpotlightRect(null);
     }, []);
 
     useEffect(() => {
@@ -163,6 +170,9 @@ const GuidedPortalTour = ({ mode = 'candidate' }) => {
         if (!active || !section) {
             return null;
         }
+        if (stage === 'complete') {
+            return null;
+        }
         if (stage === 'navigation') {
             return document.querySelector(`[data-tour-id="nav-${section.id}"]`)
                 || document.querySelector(`.portal-section-transition-shell[data-section="${section.id}"]`);
@@ -208,15 +218,18 @@ const GuidedPortalTour = ({ mode = 'candidate' }) => {
 
     const moveToNextSection = useCallback(() => {
         if (sectionIndex >= sections.length - 1) {
-            closeTour();
+            showCompletion();
             return;
         }
         setSectionIndex((index) => index + 1);
         setStage('navigation');
         setControlIndex(0);
-    }, [closeTour, sectionIndex, sections.length]);
+    }, [sectionIndex, sections.length, showCompletion]);
 
     const advance = useCallback(() => {
+        if (stage === 'complete') {
+            return;
+        }
         if (stage === 'navigation') {
             setStage('overview');
             return;
@@ -237,8 +250,29 @@ const GuidedPortalTour = ({ mode = 'candidate' }) => {
         }
     }, [controlIndex, controls.length, moveToNextSection, stage]);
 
+    const goBack = useCallback(() => {
+        if (stage === 'control') {
+            if (controlIndex > 0) {
+                setControlIndex((index) => index - 1);
+            } else {
+                setStage('overview');
+            }
+            return;
+        }
+        if (stage === 'overview') {
+            setStage('navigation');
+            return;
+        }
+        if (stage === 'navigation' && sectionIndex > 0) {
+            setSectionIndex((index) => index - 1);
+            setStage('navigation');
+            setControlIndex(0);
+            setControls([]);
+        }
+    }, [controlIndex, sectionIndex, stage]);
+
     useEffect(() => {
-        if (!active) {
+        if (!active || stage === 'complete') {
             return undefined;
         }
         const timer = window.setTimeout(advance, AUTO_ADVANCE_MS);
@@ -250,57 +284,68 @@ const GuidedPortalTour = ({ mode = 'candidate' }) => {
             return undefined;
         }
         const handleKeyDown = (event) => {
-            if (event.key === 'Escape') {
-                closeTour();
+            if (event.key === 'Escape' && stage !== 'complete') {
+                showCompletion();
             }
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [active, closeTour]);
+    }, [active, showCompletion, stage]);
 
     if (!active || typeof document === 'undefined') {
         return null;
     }
 
     const control = controls[controlIndex];
+    const isComplete = stage === 'complete';
+    const canGoBack = !isComplete && (sectionIndex > 0 || stage !== 'navigation');
     const hasNavigationTarget = Boolean(document.querySelector(`[data-tour-id="nav-${section.id}"]`));
-    const title = stage === 'navigation'
+    const title = isComplete
+        ? 'Your JumpTake journey starts here'
+        : stage === 'navigation'
         ? (hasNavigationTarget ? `${section.title} navigation` : `Opening ${section.title}`)
         : stage === 'overview'
             ? section.title
             : control?.label || section.title;
-    const description = stage === 'navigation'
+    const description = isComplete
+        ? "Happy JumpTake, let's get it going now!"
+        : stage === 'navigation'
         ? (hasNavigationTarget
-            ? `This navigation button opens ${section.title}. JumpTake keeps it available from the main rail so you can move directly to this workspace.`
-            : `JumpTake has opened ${section.title} automatically so this related workspace can be explained as part of the complete portal tour.`)
+            ? `Moving into ${section.title} now. Keeping this opportunity close helps you protect momentum and spend more time on meaningful progress.`
+            : `${section.title} is ready. This part of JumpTake can help you move toward better results with less repeated effort.`)
         : stage === 'overview'
             ? section.description
-            : describeControl(control?.label || 'this control', section.title);
-    const cardStyle = spotlightRect && spotlightRect.top > window.innerHeight * 0.48
+            : describeControl(control?.label || 'this control', section);
+    const cardStyle = isComplete
+        ? { top: '50%', bottom: 'auto' }
+        : spotlightRect && spotlightRect.top > window.innerHeight * 0.48
         ? { top: 'max(4.4rem, 5vh)' }
         : { bottom: 'max(1rem, env(safe-area-inset-bottom))' };
 
     return createPortal(
         <div className="guided-portal-tour" role="dialog" aria-modal="true" aria-label="JumpTake guided portal tour">
-            {spotlightRect ? <div className="guided-tour-spotlight" style={spotlightRect} /> : <div className="guided-tour-full-shade" />}
-            <div className="guided-tour-top-actions">
-                <button type="button" onClick={moveToNextSection}>Skip section</button>
-                <button type="button" className="guided-tour-close" onClick={closeTour} aria-label="Close tour">&times;</button>
-            </div>
-            <article className="guided-tour-card" style={cardStyle}>
+            {!isComplete && spotlightRect ? <div className="guided-tour-spotlight" style={spotlightRect} /> : <div className="guided-tour-full-shade" />}
+            <article className={`guided-tour-card ${isComplete ? 'is-complete' : ''}`} style={cardStyle}>
                 <div className="guided-tour-ai-head" aria-hidden="true"><span>✦</span></div>
-                <div className="guided-tour-copy">
+                <div className="guided-tour-copy" key={`${sectionIndex}-${stage}-${controlIndex}`}>
                     <span className="guided-tour-eyebrow">JumpTake AI guide</span>
                     <h2>{title}</h2>
                     <p>{description}</p>
                     <div className="guided-tour-progress-copy">
-                        <span>Section {sectionIndex + 1} of {sections.length}</span>
-                        <span>{stage === 'control' && controls.length ? `Control ${controlIndex + 1} of ${controls.length}` : 'Overview'}</span>
+                        <span>{isComplete ? 'Tour complete' : `Section ${sectionIndex + 1} of ${sections.length}`}</span>
+                        <span>{isComplete ? 'Ready to begin' : stage === 'control' && controls.length ? `Control ${controlIndex + 1} of ${controls.length}` : 'Overview'}</span>
                     </div>
-                    <div className="guided-tour-progress"><span key={`${sectionIndex}-${stage}-${controlIndex}`} /></div>
-                    <button type="button" className="guided-tour-next" onClick={advance}>
-                        {sectionIndex === sections.length - 1 && stage === 'control' && controlIndex >= controls.length - 1 ? 'Finish tour' : 'Next'}
-                    </button>
+                    <div className={`guided-tour-progress ${isComplete ? 'is-complete' : ''}`}><span key={`${sectionIndex}-${stage}-${controlIndex}`} /></div>
+                    {isComplete ? (
+                        <button type="button" className="guided-tour-next guided-tour-begin" onClick={closeTour}>Begin</button>
+                    ) : (
+                        <div className="guided-tour-controls" aria-label="Tour controls">
+                            <button type="button" className="guided-tour-previous" onClick={goBack} disabled={!canGoBack}>Previous</button>
+                            <button type="button" className="guided-tour-next" onClick={advance}>Next</button>
+                            <button type="button" className="guided-tour-skip" onClick={moveToNextSection}>Skip section</button>
+                            <button type="button" className="guided-tour-close" onClick={showCompletion} aria-label="End tour and continue">&times;</button>
+                        </div>
+                    )}
                 </div>
             </article>
         </div>,

@@ -443,7 +443,9 @@ const MyApplications = forwardRef(({
 
                     <div className="profile-section">
                         <h3>Submitted Cover Letter</h3>
-                        {renderRichTextPreview(selectedApplication.coverLetterHtml, 'No cover letter included.')}
+                        {selectedApplication.uploadedCoverLetter ? (
+                            <ResumeFilePreview resume={selectedApplication.uploadedCoverLetter} className="application-cover-letter-preview application-uploaded-resume-preview-readonly" />
+                        ) : renderRichTextPreview(selectedApplication.coverLetterHtml, 'No cover letter included.')}
                     </div>
 
                     {uploadedResume ? (

@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
+const { recordLogin } = require('../utils/securityNotifications');
 
 const User = require('../models/User');
 const JobSeeker = require('../models/JobSeeker');
@@ -319,7 +320,7 @@ const fetchProviderProfile = async (req, provider, role, code, body) => {
   return fetchAppleProfile(req, code, role, body);
 };
 
-const signCandidateIn = async (profile) => {
+const signCandidateIn = async (profile, req) => {
   const email = normalizeEmail(profile.email);
   if (!email) {
     throw new Error('The provider did not return a verified email address.');
@@ -368,6 +369,14 @@ const signCandidateIn = async (profile) => {
 
   const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: '1d' });
 
+  await recordLogin({
+    account: user,
+    recipientType: 'candidate',
+    recipientId: user._id,
+    req,
+    securityAlerts: user.notificationPreferences?.securityAlerts !== false
+  });
+
   return {
     role: 'candidate',
     token,
@@ -381,7 +390,7 @@ const signCandidateIn = async (profile) => {
   };
 };
 
-const signEmployerIn = async (profile) => {
+const signEmployerIn = async (profile, req) => {
   const email = normalizeEmail(profile.email);
   if (!email) {
     throw new Error('The provider did not return a verified email address.');
@@ -420,6 +429,13 @@ const signEmployerIn = async (profile) => {
     { expiresIn: '1d' }
   );
 
+  await recordLogin({
+    account: employer,
+    recipientType: 'employer',
+    recipientId: employer.companyId,
+    req
+  });
+
   return {
     role: 'employer',
     token,
@@ -452,8 +468,8 @@ const completeSocialAuth = async (req, res) => {
 
     const profile = await fetchProviderProfile(req, provider, role, code, req.body || {});
     const result = role === 'employer'
-      ? await signEmployerIn(profile)
-      : await signCandidateIn(profile);
+      ? await signEmployerIn(profile, req)
+      : await signCandidateIn(profile, req);
 
     const params = new URLSearchParams({
       role,

@@ -45,6 +45,10 @@ const ApplicationSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  uploadedCoverLetter: {
+    type: mongoose.Schema.Types.Mixed,
+    default: null
+  },
   profileSnapshot: {
     type: mongoose.Schema.Types.Mixed,
     default: null

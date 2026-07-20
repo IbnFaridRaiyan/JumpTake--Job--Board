@@ -27,7 +27,6 @@ const escapeHtml = (value = '') => (
         .replace(/'/g, '&#39;')
 );
 
-const RESUME_PLAYGROUND_STORAGE_KEY = 'jumptakeResumePlayground:';
 const JOB_REACH_STORAGE_KEY = 'jumptakeJobReachMap';
 const JOB_FEED_LIKE_STORAGE_KEY = 'jumptakeJobFeedLikeMap';
 
@@ -75,36 +74,6 @@ const normalizeJobApplications = (job) => {
     }
 
     return [];
-};
-
-const buildSavedResumePreview = (resumeRecord) => {
-    if (!resumeRecord?.html) {
-        return null;
-    }
-
-    const resumeMarkup = `<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <title>${escapeHtml(resumeRecord.name || 'Saved Resume')}</title>
-  <style>
-    body { margin: 0; padding: 24px; background: #ffffff; color: #111111; font-family: Arial, sans-serif; }
-    .resume-preview-root { max-width: 850px; margin: 0 auto; }
-    img, iframe, table { max-width: 100%; }
-  </style>
-</head>
-<body>
-  <div class="resume-preview-root">${resumeRecord.html}</div>
-</body>
-</html>`;
-
-    const encoded = window.btoa(unescape(encodeURIComponent(resumeMarkup)));
-    return {
-        fileName: `${resumeRecord.name || 'Saved Resume'}.html`,
-        mimeType: 'text/html',
-        dataUrl: `data:text/html;base64,${encoded}`,
-        source: 'saved-resume'
-    };
 };
 
 const formatCommaSeparatedValue = (value) => {
@@ -281,6 +250,34 @@ const readResumeFileAsDataUrl = (file) => new Promise((resolve, reject) => {
     reader.readAsDataURL(file);
 });
 
+const isSupportedApplicationDocument = (file) => {
+    const mimeType = file?.type || '';
+    return (
+        mimeType === 'application/pdf'
+        || mimeType === 'application/msword'
+        || mimeType.includes('officedocument.wordprocessingml.document')
+        || mimeType === 'text/plain'
+        || /\.(pdf|doc|docx|txt)$/i.test(file?.name || '')
+    );
+};
+
+const prepareApplicationDocument = async (file, source) => {
+    if (!isSupportedApplicationDocument(file)) {
+        throw new Error('Upload a PDF, DOC, DOCX, or TXT file.');
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+        throw new Error('Choose a file smaller than 10 MB.');
+    }
+
+    return {
+        fileName: file.name,
+        mimeType: file.type || '',
+        dataUrl: await readResumeFileAsDataUrl(file),
+        source
+    };
+};
+
 const createCoverLetterTemplate = (profileData, job, userData = {}) => {
     const applicantName = profileData?.name || userData?.email?.split('@')[0] || 'Candidate';
     const jobTitle = job?.title || 'this role';
@@ -439,11 +436,13 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
     const [bookmarkedJobIds, setBookmarkedJobIds] = useState([]);
     const [applicationMessage, setApplicationMessage] = useState('');
     const [coverLetterHtml, setCoverLetterHtml] = useState('');
+    const [applicationCoverLetterUpload, setApplicationCoverLetterUpload] = useState(null);
     const [applicationProfile, setApplicationProfile] = useState(() => createApplicationProfileDraft(jobSeekerData, currentUser));
     const [applicationResumeUpload, setApplicationResumeUpload] = useState(null);
     const [activeDraftId, setActiveDraftId] = useState(null);
     const [activeReturnSection, setActiveReturnSection] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isPreparingCoverLetterUpload, setIsPreparingCoverLetterUpload] = useState(false);
     const [isPreparingResumeUpload, setIsPreparingResumeUpload] = useState(false);
     const [message, setMessage] = useState('');
     const [recommendedJobs, setRecommendedJobs] = useState([]);
@@ -468,6 +467,7 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
     const [previewJob, setPreviewJob] = useState(null);
     const previewModalRef = useRef(null);
     const applicationModalRef = useRef(null);
+    const applicationCoverLetterInputRef = useRef(null);
     const applicationResumeInputRef = useRef(null);
 
     useEffect(() => {
@@ -818,6 +818,7 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
         setActiveDraftId(null);
         setApplicationMessage('');
         setCoverLetterHtml(createCoverLetterTemplate(jobSeekerData, job, resolvedUser));
+        setApplicationCoverLetterUpload(null);
         setApplicationProfile(createApplicationProfileDraft(jobSeekerData, resolvedUser));
         setApplicationResumeUpload(null);
         setPreviewJob(null); 
@@ -842,6 +843,7 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
         setApplicationJob(null);
         setApplicationMessage('');
         setCoverLetterHtml('');
+        setApplicationCoverLetterUpload(null);
         setActiveDraftId(null);
         setApplicationProfile(createApplicationProfileDraft(jobSeekerData, resolvedUser));
         setApplicationResumeUpload(null);
@@ -875,6 +877,7 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
             setActiveDraftId(selectedDraft._id);
             setApplicationMessage(selectedDraft.message || '');
             setCoverLetterHtml(selectedDraft.coverLetterHtml || createCoverLetterTemplate(jobSeekerData, selectedDraft.job, resolvedUser));
+            setApplicationCoverLetterUpload(selectedDraft.uploadedCoverLetter || null);
             setApplicationProfile(createApplicationProfileDraft(selectedDraft.profileSnapshot || jobSeekerData, resolvedUser));
             setApplicationResumeUpload(selectedDraft.uploadedResume || null);
             setPreviewJob(null);
@@ -892,6 +895,26 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
         }));
     };
 
+    const handleApplicationCoverLetterUpload = async (event) => {
+        const file = event.target.files?.[0];
+        event.target.value = '';
+
+        if (!file) {
+            return;
+        }
+
+        try {
+            setIsPreparingCoverLetterUpload(true);
+            setApplicationCoverLetterUpload(await prepareApplicationDocument(file, 'uploaded-cover-letter'));
+            setMessage('Cover letter attached to this application.');
+            setTimeout(() => setMessage(''), 3000);
+        } catch (coverLetterError) {
+            setMessage(`Error: ${coverLetterError.message}`);
+        } finally {
+            setIsPreparingCoverLetterUpload(false);
+        }
+    };
+
     const handleApplicationResumeUpload = async (event) => {
         const file = event.target.files?.[0];
         event.target.value = '';
@@ -902,29 +925,7 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
 
         try {
             setIsPreparingResumeUpload(true);
-            const mimeType = file.type || '';
-            const isSupportedFile = (
-                mimeType === 'application/pdf'
-                || mimeType === 'application/msword'
-                || mimeType.includes('officedocument.wordprocessingml.document')
-                || mimeType === 'text/plain'
-                || /\.pdf$/i.test(file.name)
-                || /\.doc$/i.test(file.name)
-                || /\.docx$/i.test(file.name)
-                || /\.txt$/i.test(file.name)
-            );
-
-            if (!isSupportedFile) {
-                throw new Error('Upload a PDF, DOC, DOCX, or TXT resume.');
-            }
-
-            const dataUrl = await readResumeFileAsDataUrl(file);
-
-            setApplicationResumeUpload({
-                fileName: file.name,
-                mimeType,
-                dataUrl
-            });
+            setApplicationResumeUpload(await prepareApplicationDocument(file, 'uploaded-resume'));
             setMessage('New resume attached to this application.');
             setTimeout(() => setMessage(''), 3000);
         } catch (resumeError) {
@@ -932,50 +933,6 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
             setMessage(`Error: ${resumeError.message}`);
         } finally {
             setIsPreparingResumeUpload(false);
-        }
-    };
-
-    const handleApplyUsingSavedResume = () => {
-        try {
-            const storageKey = `${RESUME_PLAYGROUND_STORAGE_KEY}${userId || 'guest'}`;
-            const savedRecords = JSON.parse(localStorage.getItem(storageKey) || '[]');
-            const resumes = Array.isArray(savedRecords) ? savedRecords.filter((item) => item?.html) : [];
-
-            if (!resumes.length) {
-                setMessage('No saved resumes found in Resume Playground yet.');
-                setTimeout(() => setMessage(''), 3000);
-                return;
-            }
-
-            const optionsText = resumes
-                .map((resume, index) => `${index + 1}. ${resume.name || `Saved Resume ${index + 1}`}`)
-                .join('\n');
-
-            const selectedValue = window.prompt(`Choose a saved resume by number:\n\n${optionsText}`, '1');
-            if (!selectedValue) {
-                return;
-            }
-
-            const selectedIndex = Number(selectedValue) - 1;
-            const selectedResume = resumes[selectedIndex];
-
-            if (!selectedResume) {
-                setMessage('Saved resume selection was not valid.');
-                setTimeout(() => setMessage(''), 3000);
-                return;
-            }
-
-            const previewPayload = buildSavedResumePreview(selectedResume);
-            if (!previewPayload) {
-                throw new Error('Could not prepare that saved resume for preview.');
-            }
-
-            setApplicationResumeUpload(previewPayload);
-            setMessage(`Saved resume "${selectedResume.name || 'Saved Resume'}" attached to this application.`);
-            setTimeout(() => setMessage(''), 3000);
-        } catch (savedResumeError) {
-            console.error('Error attaching saved resume:', savedResumeError);
-            setMessage(`Error: ${savedResumeError.message}`);
         }
     };
 
@@ -998,8 +955,9 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                     jobId: applicationJob._id,
                     userId,
                     message: applicationMessage,
-                    coverLetterHtml,
-                    profileSnapshot: prepareApplicationProfileSnapshot(applicationProfile),
+                    coverLetterHtml: applicationCoverLetterUpload ? '' : coverLetterHtml,
+                    uploadedCoverLetter: applicationCoverLetterUpload,
+                    profileSnapshot: applicationResumeUpload ? null : prepareApplicationProfileSnapshot(applicationProfile),
                     uploadedResume: applicationResumeUpload
                 })
             });
@@ -1044,8 +1002,9 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                     jobId,
                     userId,
                     message: applicationMessage,
-                    coverLetterHtml,
-                    profileSnapshot: prepareApplicationProfileSnapshot(applicationProfile),
+                    coverLetterHtml: applicationCoverLetterUpload ? '' : coverLetterHtml,
+                    uploadedCoverLetter: applicationCoverLetterUpload,
+                    profileSnapshot: applicationResumeUpload ? null : prepareApplicationProfileSnapshot(applicationProfile),
                     uploadedResume: applicationResumeUpload,
                     draftId: activeDraftId
                 })
@@ -1065,6 +1024,7 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
             setApplicationJob(null);
             setApplicationMessage('');
             setCoverLetterHtml('');
+            setApplicationCoverLetterUpload(null);
             setActiveDraftId(null);
             setApplicationProfile(createApplicationProfileDraft(jobSeekerData, resolvedUser));
             setApplicationResumeUpload(null);
@@ -1790,6 +1750,13 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                         </div>
                         <div className="application-workspace-body">
                                 <input
+                                    ref={applicationCoverLetterInputRef}
+                                    type="file"
+                                    className="profile-resume-input"
+                                    accept=".pdf,.doc,.docx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+                                    onChange={handleApplicationCoverLetterUpload}
+                                />
+                                <input
                                     ref={applicationResumeInputRef}
                                     type="file"
                                     className="profile-resume-input"
@@ -1797,12 +1764,36 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                                     onChange={handleApplicationResumeUpload}
                                 />
                             <div className="application-form-section">
-                                <h4>Cover Letter</h4>
-                                <RichTextEditor
-                                    value={coverLetterHtml}
-                                    onChange={setCoverLetterHtml}
-                                    disabled={isSubmitting}
-                                />
+                                <h4>{applicationCoverLetterUpload ? 'Cover Letter Preview' : 'Cover Letter'}</h4>
+                                {applicationCoverLetterUpload ? (
+                                    <>
+                                        <ResumeFilePreview resume={applicationCoverLetterUpload} className="application-cover-letter-preview" />
+                                        <button
+                                            type="button"
+                                            className="application-alternative-pill"
+                                            onClick={() => setApplicationCoverLetterUpload(null)}
+                                            disabled={isSubmitting}
+                                        >
+                                            Add manually
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <RichTextEditor
+                                            value={coverLetterHtml}
+                                            onChange={setCoverLetterHtml}
+                                            disabled={isSubmitting}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="application-alternative-pill"
+                                            onClick={() => applicationCoverLetterInputRef.current?.click()}
+                                            disabled={isSubmitting || isPreparingCoverLetterUpload}
+                                        >
+                                            {isPreparingCoverLetterUpload ? 'Reading...' : 'Upload instead'}
+                                        </button>
+                                    </>
+                                )}
                             </div>
                             <div className="application-form-section">
                                 <h4>Message</h4>
@@ -1824,6 +1815,17 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                                         <ResumeFilePreview resume={applicationResumeUpload} />
                                     </>
                                 ) : (
+                                    <>
+                                    <div className="application-alternative-row">
+                                        <button
+                                            type="button"
+                                            className="application-alternative-pill application-alternative-pill-maroon"
+                                            onClick={() => applicationResumeInputRef.current?.click()}
+                                            disabled={isSubmitting || isPreparingResumeUpload}
+                                        >
+                                            {isPreparingResumeUpload ? 'Reading...' : 'Upload resume instead'}
+                                        </button>
+                                    </div>
                                     <div className="application-profile-grid">
                                         <label className="application-profile-field">
                                             <span>Full Name</span>
@@ -1858,28 +1860,26 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                                             <textarea name="achievements" value={applicationProfile.achievements} onChange={handleApplicationProfileChange} rows="4" disabled={isSubmitting} />
                                         </label>
                                     </div>
+                                    </>
+                                )}
+                                {applicationResumeUpload && (
+                                    <button
+                                        type="button"
+                                        className="application-alternative-pill application-alternative-pill-maroon"
+                                        onClick={() => {
+                                            setApplicationResumeUpload(null);
+                                            setApplicationProfile(createApplicationProfileDraft(jobSeekerData, resolvedUser));
+                                        }}
+                                        disabled={isSubmitting}
+                                    >
+                                        Add manually
+                                    </button>
                                 )}
                             </div>
                         </div>
                         <div className="application-workspace-actions">
                             <button className="submit-application-button" onClick={() => handleApplySubmit(applicationJob._id)} disabled={isSubmitting}>
                                 {isSubmitting ? 'Submitting...' : 'Submit Application'}
-                            </button>
-                            <button
-                                type="button"
-                                    className="submit-application-button application-resume-upload-button"
-                                    onClick={() => applicationResumeInputRef.current?.click()}
-                                    disabled={isSubmitting || isPreparingResumeUpload}
-                                >
-                                {isPreparingResumeUpload ? 'Reading Resume...' : applicationResumeUpload ? 'Change Resume' : 'Apply with Resume'}
-                            </button>
-                            <button
-                                type="button"
-                                className="submit-application-button application-resume-upload-button"
-                                onClick={handleApplyUsingSavedResume}
-                                disabled={isSubmitting || isPreparingResumeUpload}
-                            >
-                                Apply using Saved Resume
                             </button>
                             <button className="secondary-button" onClick={handleSaveDraft} disabled={isSubmitting}>
                                 {activeDraftId ? 'Update Draft' : 'Save Draft'}

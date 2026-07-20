@@ -51,14 +51,14 @@ const AboutJumpTake = ({ mode = 'candidate' }) => {
             ['General Assessment', 'Send saved general assessments to selected jobs when you need them later.'],
             ['Talent Pool', 'Browse candidate profiles, bookmark candidates, like profiles, and contact people directly.'],
             ['Bookmarked Talents', 'Review saved candidates and remove bookmarks when they are no longer needed.'],
-            ['Inbox', 'Open conversations, reply with formatted messages, and keep candidate communication in one place.'],
+            ['Messages', 'Open conversations, reply with formatted messages, and use JumpTake AI to navigate or begin useful work.'],
             ['Company Profile', 'Maintain public company information candidates see when they inspect your jobs.'],
             ['Application Tracking System', 'Check hiring analytics, application rates, job posting rates, and assessment activity.'],
             ['Settings', 'Update account, contact, security, and notification preferences.']
         ]
         : [
             ['Job Feed', 'Browse jobs, preview details, view companies, apply, and bookmark roles.'],
-            ['Inbox', 'Open employer and candidate conversations, then reply from a messenger-style chat box.'],
+            ['Messages', 'Open employer and candidate conversations, reply from the chat box, and use JumpTake AI to navigate or begin useful work.'],
             ['View Candidates', 'Browse other candidate profiles, bookmark them, like them, and send messages.'],
             ['Bookmarked Candidates', 'Return to saved candidate profiles and remove candidates from the list.'],
             ['My Applications', 'Track submitted applications, view details, and withdraw when needed.'],

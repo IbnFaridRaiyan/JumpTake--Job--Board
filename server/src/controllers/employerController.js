@@ -1,6 +1,7 @@
 const Employer = require('../models/Employer');
 const Company = require('../models/Company');
 const jwt = require('jsonwebtoken');
+const { createSecurityNotification, recordLogin } = require('../utils/securityNotifications');
 
 
 const JWT_SECRET = process.env.JWT_SECRET || 'jumptake-jwt-secret';
@@ -93,6 +94,13 @@ const loginEmployer = async (req, res) => {
             JWT_SECRET,
             { expiresIn: '1d' } 
         );
+
+        await recordLogin({
+            account: employer,
+            recipientType: 'employer',
+            recipientId: employer.companyId,
+            req
+        });
         
        
         return res.status(200).json({
@@ -167,9 +175,20 @@ const updateEmployerContact = async (req, res) => {
             return res.status(404).json({ error: 'Employer not found' });
         }
 
+        const previousEmail = employer.email || '';
         employer.email = email ? email.toLowerCase() : '';
         employer.phone = phone || '';
         await employer.save();
+
+        if (previousEmail !== employer.email) {
+            await createSecurityNotification({
+                recipientType: 'employer',
+                recipientId: employer.companyId,
+                title: 'Email address changed',
+                message: `Your employer sign-in email was changed to ${employer.email || 'no email address'}. If this was not you, secure your account now.`,
+                payload: { event: 'email-changed' }
+            });
+        }
 
         return res.json({
             message: 'Employer contact details updated successfully',
@@ -216,6 +235,14 @@ const updateEmployerPassword = async (req, res) => {
 
         employer.password = newPassword;
         await employer.save();
+
+        await createSecurityNotification({
+            recipientType: 'employer',
+            recipientId: employer.companyId,
+            title: 'Password changed',
+            message: 'Your JumpTake employer password was changed. If this was not you, reset it immediately.',
+            payload: { event: 'password-changed' }
+        });
 
         return res.json({ message: 'Password updated successfully' });
     } catch (error) {

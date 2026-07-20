@@ -325,6 +325,7 @@ router.put('/notifications/read-all', notificationController.markAllNotification
 router.get('/feed-posts', feedPostController.getFeedPosts);
 router.post('/feed-posts', feedPostController.createFeedPost);
 router.put('/feed-posts/:id', feedPostController.updateFeedPost);
+router.post('/feed-posts/:id/activity', feedPostController.notifyFeedPostActivity);
 router.delete('/feed-posts/:id', feedPostController.deleteFeedPost);
 router.get('/saved-posts', savedPostController.getSavedPosts);
 router.post('/saved-posts', savedPostController.savePost);

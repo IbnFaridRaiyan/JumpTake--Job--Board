@@ -5,6 +5,7 @@ import { apiUrl } from '../utils/apiUrl';
 import { loadSavedPosts, savePostToAccount } from '../utils/savedPostsApi';
 import { createSquareProfileImage } from '../utils/profileImages';
 import confirmAction from '../utils/confirmAction';
+import usePinchZoom from '../utils/usePinchZoom';
 import ProfileDetailsCard from './ProfileDetailsCard';
 import reactionButtonIcon from './media/reaction.png';
 import defaultJobPostAvatar from './media/default-job-post-avatar.png';
@@ -21,7 +22,6 @@ const HOME_JOB_REVIEW_STORAGE_KEY = 'jumptakeHomeJobReviewMap';
 const TAILOR_PROFILE_STORAGE_PREFIX = 'jumptakeTailorProfile:';
 const CANDIDATE_PROFILE_RATING_PREFIX = 'jumptakeCandidateProfileRatings:';
 const PROFILE_IMAGE_UPDATED_EVENT = 'jumptake-profile-image-updated';
-const RESUME_PLAYGROUND_STORAGE_KEY = 'jumptakeResumePlayground:';
 const BLOCKED_FEED_AUTHORS_STORAGE_PREFIX = 'jumptakeBlockedFeedAuthors:';
 const HOME_JOB_PAGE_SIZE = 7;
 const MOBILE_FEED_TOUCH_SCROLL_RATIO = 1.13;
@@ -341,36 +341,6 @@ const getCountryFromLocation = (location = '') => {
     return finalClean && finalClean.length > 2 ? finalClean : '';
 };
 
-const buildSavedResumePreview = (resumeRecord) => {
-    if (!resumeRecord?.html || typeof window === 'undefined') {
-        return null;
-    }
-
-    const resumeMarkup = `<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <title>${escapeHtml(resumeRecord.name || 'Saved Resume')}</title>
-  <style>
-    body { margin: 0; padding: 24px; background: #ffffff; color: #111111; font-family: Arial, sans-serif; }
-    .resume-preview-root { max-width: 850px; margin: 0 auto; }
-    img, iframe, table { max-width: 100%; }
-  </style>
-</head>
-<body>
-  <div class="resume-preview-root">${resumeRecord.html}</div>
-</body>
-</html>`;
-
-    const encoded = window.btoa(unescape(encodeURIComponent(resumeMarkup)));
-    return {
-        fileName: `${resumeRecord.name || 'Saved Resume'}.html`,
-        mimeType: 'text/html',
-        dataUrl: `data:text/html;base64,${encoded}`,
-        source: 'saved-resume'
-    };
-};
-
 const formatCommaSeparatedValue = (value) => {
     if (Array.isArray(value)) {
         return value.join(', ');
@@ -439,6 +409,34 @@ const readResumeFileAsDataUrl = (file) => new Promise((resolve, reject) => {
     reader.onload = (event) => resolve(String(event.target.result || ''));
     reader.readAsDataURL(file);
 });
+
+const isSupportedApplicationDocument = (file) => {
+    const mimeType = file?.type || '';
+    return (
+        mimeType === 'application/pdf'
+        || mimeType === 'application/msword'
+        || mimeType.includes('officedocument.wordprocessingml.document')
+        || mimeType === 'text/plain'
+        || /\.(pdf|doc|docx|txt)$/i.test(file?.name || '')
+    );
+};
+
+const prepareApplicationDocument = async (file, source) => {
+    if (!isSupportedApplicationDocument(file)) {
+        throw new Error('Upload a PDF, DOC, DOCX, or TXT file.');
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+        throw new Error('Choose a file smaller than 10 MB.');
+    }
+
+    return {
+        fileName: file.name,
+        mimeType: file.type || '',
+        dataUrl: await readResumeFileAsDataUrl(file),
+        source
+    };
+};
 
 const createCoverLetterTemplate = (profileData, job, userData = {}) => {
     const applicantName = profileData?.name || userData?.name || userData?.email?.split('@')[0] || 'Candidate';
@@ -871,6 +869,8 @@ const DefaultUserProfileImage = ({ gender = '', alt = '' }) => (
         className="portal-default-profile-image"
         src={getDefaultUserProfileImage(gender)}
         alt={alt}
+        loading="lazy"
+        decoding="async"
     />
 );
 
@@ -1235,6 +1235,12 @@ const PortalHomeFeed = ({
     const [openPostDetail, setOpenPostDetail] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [imagePreviewZoom, setImagePreviewZoom] = useState(1);
+    const imagePinchZoom = usePinchZoom({
+        active: Boolean(imagePreview),
+        zoom: imagePreviewZoom,
+        setZoom: setImagePreviewZoom,
+        maximum: 3
+    });
     const [openProfileDetail, setOpenProfileDetail] = useState(null);
     const [, setSavedPosts] = useState([]);
     const [blockedFeedAuthors, setBlockedFeedAuthors] = useState([]);
@@ -1277,6 +1283,7 @@ const PortalHomeFeed = ({
     const [activeTailorSocialEditor, setActiveTailorSocialEditor] = useState('');
     const [activeDraftId, setActiveDraftId] = useState(null);
     const [savingApplicationDraft, setSavingApplicationDraft] = useState(false);
+    const applicationCoverLetterInputRef = useRef(null);
     const applicationResumeInputRef = useRef(null);
     const tailorProfileImageInputRef = useRef(null);
     const reactionTooltipTimerRef = useRef(null);
@@ -1310,8 +1317,10 @@ const PortalHomeFeed = ({
     const [applicationJob, setApplicationJob] = useState(null);
     const [applicationMessage, setApplicationMessage] = useState('');
     const [coverLetterText, setCoverLetterText] = useState('');
+    const [applicationCoverLetterUpload, setApplicationCoverLetterUpload] = useState(null);
     const [applicationProfile, setApplicationProfile] = useState(() => createApplicationProfileDraft(profileData, currentUser));
     const [applicationResumeUpload, setApplicationResumeUpload] = useState(null);
+    const [isPreparingCoverLetterUpload, setIsPreparingCoverLetterUpload] = useState(false);
     const [isPreparingResumeUpload, setIsPreparingResumeUpload] = useState(false);
 
     const viewerId = useMemo(
@@ -2097,6 +2106,29 @@ const PortalHomeFeed = ({
             setTalentStories(nextPosts);
         }
     }, [activeTab, viewerId, workNewsPosts, talentStories]);
+
+    const notifyPostActivity = async (post, type, details = {}) => {
+        const postId = post?._id || post?.id;
+        const tokenKey = mode === 'employer' ? 'employerToken' : 'token';
+        const token = typeof window !== 'undefined' ? localStorage.getItem(tokenKey) : '';
+
+        if (!postId || !token || String(postId).startsWith(`${post?.type || 'post'}-`)) {
+            return;
+        }
+
+        try {
+            await fetch(apiUrl(`/api/feed-posts/${postId}/activity`), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ type, actorName: authorName, ...details })
+            });
+        } catch (error) {
+            console.error('Could not create post activity notification:', error);
+        }
+    };
 
     const persistPost = async (post) => {
         const postId = post?._id || post?.id;
@@ -3190,6 +3222,7 @@ const PortalHomeFeed = ({
             setApplicationJob(null);
             setApplicationMessage('');
             setCoverLetterText('');
+            setApplicationCoverLetterUpload(null);
             setApplicationResumeUpload(null);
             setApplicationProfile(createApplicationProfileDraft(profileData, currentUser));
             setActiveDraftId(null);
@@ -3513,6 +3546,7 @@ const PortalHomeFeed = ({
         setActiveDraftId(null);
         setApplicationMessage(`I would like to apply for ${asDisplayText(job.title, 'this role')}.`);
         setCoverLetterText(createCoverLetterTemplate(profileData, job, currentUser));
+        setApplicationCoverLetterUpload(null);
         setApplicationProfile(createApplicationProfileDraft(profileData, currentUser));
         setApplicationResumeUpload(null);
         setJobActionMessage('');
@@ -3572,6 +3606,7 @@ const PortalHomeFeed = ({
             setActiveDraftId(selectedDraft._id);
             setApplicationMessage(selectedDraft.message || `I would like to apply for ${asDisplayText(jobForDraft.title, 'this role')}.`);
             setCoverLetterText(htmlToPlainText(selectedDraft.coverLetterHtml) || createCoverLetterTemplate(profileData, jobForDraft, currentUser));
+            setApplicationCoverLetterUpload(selectedDraft.uploadedCoverLetter || null);
             setApplicationProfile(createApplicationProfileDraft(selectedDraft.profileSnapshot || profileData, currentUser));
             setApplicationResumeUpload(selectedDraft.uploadedResume || null);
             setJobActionMessage('Draft application opened for editing.');
@@ -3871,6 +3906,25 @@ const PortalHomeFeed = ({
         }));
     };
 
+    const handleApplicationCoverLetterUpload = async (event) => {
+        const file = event.target.files?.[0];
+        event.target.value = '';
+
+        if (!file) {
+            return;
+        }
+
+        try {
+            setIsPreparingCoverLetterUpload(true);
+            setApplicationCoverLetterUpload(await prepareApplicationDocument(file, 'uploaded-cover-letter'));
+            setJobActionMessage('Cover letter attached to this application.');
+        } catch (error) {
+            setJobActionMessage(error.message || 'Could not attach that cover letter.');
+        } finally {
+            setIsPreparingCoverLetterUpload(false);
+        }
+    };
+
     const handleApplicationResumeUpload = async (event) => {
         const file = event.target.files?.[0];
         event.target.value = '';
@@ -3881,68 +3935,12 @@ const PortalHomeFeed = ({
 
         try {
             setIsPreparingResumeUpload(true);
-            const mimeType = file.type || '';
-            const isSupportedFile = (
-                mimeType === 'application/pdf'
-                || mimeType === 'application/msword'
-                || mimeType.includes('officedocument.wordprocessingml.document')
-                || mimeType === 'text/plain'
-                || /\.pdf$/i.test(file.name)
-                || /\.doc$/i.test(file.name)
-                || /\.docx$/i.test(file.name)
-                || /\.txt$/i.test(file.name)
-            );
-
-            if (!isSupportedFile) {
-                throw new Error('Upload a PDF, DOC, DOCX, or TXT resume.');
-            }
-
-            const dataUrl = await readResumeFileAsDataUrl(file);
-            setApplicationResumeUpload({
-                fileName: file.name,
-                mimeType,
-                dataUrl,
-                source: 'uploaded-resume'
-            });
+            setApplicationResumeUpload(await prepareApplicationDocument(file, 'uploaded-resume'));
             setJobActionMessage('Uploaded resume attached to this application.');
         } catch (error) {
             setJobActionMessage(error.message || 'Could not attach that resume.');
         } finally {
             setIsPreparingResumeUpload(false);
-        }
-    };
-
-    const handleApplyUsingSavedResume = () => {
-        try {
-            const userId = currentUser?.id || currentUser?._id || currentUser?.userId || viewerId || 'guest';
-            const savedRecords = JSON.parse(localStorage.getItem(`${RESUME_PLAYGROUND_STORAGE_KEY}${userId}`) || '[]');
-            const resumes = Array.isArray(savedRecords) ? savedRecords.filter((item) => item?.html) : [];
-
-            if (!resumes.length) {
-                setJobActionMessage('No saved resumes found in Resume Playground yet.');
-                return;
-            }
-
-            const optionsText = resumes
-                .map((resume, index) => `${index + 1}. ${resume.name || `Saved Resume ${index + 1}`}`)
-                .join('\n');
-            const selectedValue = window.prompt(`Choose a saved resume by number:\n\n${optionsText}`, '1');
-
-            if (!selectedValue) {
-                return;
-            }
-
-            const selectedResume = resumes[Number(selectedValue) - 1];
-            const previewPayload = buildSavedResumePreview(selectedResume);
-
-            if (!previewPayload) {
-                throw new Error('Saved resume selection was not valid.');
-            }
-
-            setApplicationResumeUpload(previewPayload);
-            setJobActionMessage(`Saved resume "${selectedResume.name || 'Saved Resume'}" attached to this application.`);
-        } catch (error) {
-            setJobActionMessage(error.message || 'Could not attach saved resume.');
         }
     };
 
@@ -3979,8 +3977,9 @@ const PortalHomeFeed = ({
                     jobId: applicationJob._id,
                     userId,
                     message: applicationMessage,
-                    coverLetterHtml: createCoverLetterHtml(coverLetterText),
-                    profileSnapshot: prepareApplicationProfileSnapshot(applicationProfile),
+                    coverLetterHtml: applicationCoverLetterUpload ? '' : createCoverLetterHtml(coverLetterText),
+                    uploadedCoverLetter: applicationCoverLetterUpload,
+                    profileSnapshot: applicationResumeUpload ? null : prepareApplicationProfileSnapshot(applicationProfile),
                     uploadedResume: applicationResumeUpload
                 })
             });
@@ -4034,8 +4033,9 @@ const PortalHomeFeed = ({
                     jobId: job._id,
                     userId: currentUser.id || currentUser._id || currentUser.userId,
                     message: applicationMessage,
-                    coverLetterHtml: createCoverLetterHtml(coverLetterText),
-                    profileSnapshot: prepareApplicationProfileSnapshot(applicationProfile),
+                    coverLetterHtml: applicationCoverLetterUpload ? '' : createCoverLetterHtml(coverLetterText),
+                    uploadedCoverLetter: applicationCoverLetterUpload,
+                    profileSnapshot: applicationResumeUpload ? null : prepareApplicationProfileSnapshot(applicationProfile),
                     uploadedResume: applicationResumeUpload,
                     draftId: activeDraftId
                 })
@@ -4058,6 +4058,7 @@ const PortalHomeFeed = ({
             setApplicationJob(null);
             setApplicationMessage('');
             setCoverLetterText('');
+            setApplicationCoverLetterUpload(null);
             setApplicationResumeUpload(null);
             setApplicationProfile(createApplicationProfileDraft(profileData, currentUser));
             setActiveDraftId(null);
@@ -4119,6 +4120,12 @@ const PortalHomeFeed = ({
             return;
         }
 
+        const sourcePosts = key === WORK_NEWS_STORAGE_KEY ? workNewsPosts : talentStories;
+        const targetPost = sourcePosts.find((post) => getPostKey(post) === postId);
+        const isNewReaction = targetPost
+            ? !normalizeViewerReactions(getViewerReaction(targetPost, viewerId)).includes(reaction)
+            : false;
+
         updatePosts(key, (posts) => posts.map((post) => (
             getPostKey(post) === postId
                 ? (() => {
@@ -4143,6 +4150,9 @@ const PortalHomeFeed = ({
                 })()
                 : post
         )));
+        if (isNewReaction) {
+            notifyPostActivity(targetPost, 'reaction', { reaction });
+        }
         reactionCloseTimerRef.current = window.setTimeout(() => {
             setOpenReactionPostId('');
             setAnimatingReactionKey('');
@@ -4157,6 +4167,8 @@ const PortalHomeFeed = ({
         }
 
         const mentions = Array.from(text.matchAll(/@([\w.-]+)/g)).map((match) => match[1]);
+        const sourcePosts = key === WORK_NEWS_STORAGE_KEY ? workNewsPosts : talentStories;
+        const targetPost = sourcePosts.find((post) => getPostKey(post) === postId);
         updatePosts(key, (posts) => posts.map((post) => (
             getPostKey(post) === postId
                 ? {
@@ -4179,6 +4191,7 @@ const PortalHomeFeed = ({
                 }
                 : post
         )));
+        notifyPostActivity(targetPost, 'comment');
         setCommentDrafts((drafts) => ({ ...drafts, [postId]: '' }));
         closeCommentComposer(postId);
     };
@@ -4205,6 +4218,7 @@ const PortalHomeFeed = ({
                     ? { ...item, reach: Number(item.reach || 0) + 1 }
                     : item
             )));
+            notifyPostActivity(post, 'share');
             setShareStatus('Post link copied.');
         } catch (error) {
             setShareStatus('Could not open sharing. Try again.');
@@ -4276,6 +4290,8 @@ const PortalHomeFeed = ({
                     }
                     : item
             )));
+
+            notifyPostActivity(post, 'share');
 
             setShareStatus(`Shared with ${friend.name}.`);
             setOpenSharePostId('');
@@ -5140,7 +5156,7 @@ const PortalHomeFeed = ({
                                 aria-label={`Open ${asDisplayText(post.authorName, 'Unknown author')} profile`}
                             >
                                 {postAvatar ? (
-                                    <img src={postAvatar} alt={asDisplayText(post.authorName, 'Post author')} />
+                                    <img src={postAvatar} alt={asDisplayText(post.authorName, 'Post author')} loading="lazy" decoding="async" />
                                 ) : (
                                     <span className="portal-default-profile-icon">
                                         <DefaultUserProfileImage gender={post.authorGender} />
@@ -5230,7 +5246,7 @@ const PortalHomeFeed = ({
                                             onClick={(event) => openImagePreview(post.media, event)}
                                             aria-label="Open attached image full screen"
                                         >
-                                            <img src={post.media.dataUrl} alt={post.media.name} />
+                                            <img src={post.media.dataUrl} alt={post.media.name} loading="lazy" decoding="async" />
                                         </button>
                                     )}
                                 </div>
@@ -5409,7 +5425,7 @@ const PortalHomeFeed = ({
                                             aria-label={`Open ${asDisplayText(comment.authorName, 'User')} profile`}
                                         >
                                             {commentAvatar ? (
-                                                <img src={commentAvatar} alt={asDisplayText(comment.authorName, 'Comment author')} />
+                                                <img src={commentAvatar} alt={asDisplayText(comment.authorName, 'Comment author')} loading="lazy" decoding="async" />
                                             ) : (
                                                 <span className="portal-default-profile-icon">
                                                     <DefaultUserProfileImage gender={comment.authorGender || comment.gender} />
@@ -5851,7 +5867,7 @@ const PortalHomeFeed = ({
                         </div>
                         <div className="portal-candidate-job-header">
                             <div className="portal-job-company-avatar">
-                                <img src={job.companyLogo || defaultJobPostAvatar} alt={job.companyName || 'Job post'} />
+                                <img src={job.companyLogo || defaultJobPostAvatar} alt={job.companyName || 'Job post'} loading="lazy" decoding="async" />
                             </div>
                             <div>
                                 <h3>{job.title}</h3>
@@ -6029,6 +6045,13 @@ const PortalHomeFeed = ({
         return (
             <section className="portal-application-workspace" aria-label="Apply to this job">
                 <input
+                    ref={applicationCoverLetterInputRef}
+                    type="file"
+                    className="profile-resume-input"
+                    accept=".pdf,.doc,.docx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+                    onChange={handleApplicationCoverLetterUpload}
+                />
+                <input
                     ref={applicationResumeInputRef}
                     type="file"
                     className="profile-resume-input"
@@ -6036,14 +6059,38 @@ const PortalHomeFeed = ({
                     onChange={handleApplicationResumeUpload}
                 />
                 <div className="application-form-section">
-                    <h4>Cover Letter</h4>
-                    <textarea
-                        value={coverLetterText}
-                        onChange={(event) => setCoverLetterText(event.target.value)}
-                        className="application-message portal-cover-letter-textarea"
-                        rows="7"
-                        disabled={Boolean(applyingHomeJobId)}
-                    />
+                    <h4>{applicationCoverLetterUpload ? 'Cover Letter Preview' : 'Cover Letter'}</h4>
+                    {applicationCoverLetterUpload ? (
+                        <>
+                            <ResumeFilePreview resume={applicationCoverLetterUpload} className="application-cover-letter-preview" />
+                            <button
+                                type="button"
+                                className="application-alternative-pill"
+                                onClick={() => setApplicationCoverLetterUpload(null)}
+                                disabled={Boolean(applyingHomeJobId)}
+                            >
+                                Add manually
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <textarea
+                                value={coverLetterText}
+                                onChange={(event) => setCoverLetterText(event.target.value)}
+                                className="application-message portal-cover-letter-textarea"
+                                rows="7"
+                                disabled={Boolean(applyingHomeJobId)}
+                            />
+                            <button
+                                type="button"
+                                className="application-alternative-pill"
+                                onClick={() => applicationCoverLetterInputRef.current?.click()}
+                                disabled={Boolean(applyingHomeJobId) || isPreparingCoverLetterUpload}
+                            >
+                                {isPreparingCoverLetterUpload ? 'Reading...' : 'Upload instead'}
+                            </button>
+                        </>
+                    )}
                 </div>
                 <div className="application-form-section">
                     <h4>Message</h4>
@@ -6066,6 +6113,17 @@ const PortalHomeFeed = ({
                             <ResumeFilePreview resume={applicationResumeUpload} />
                         </>
                     ) : (
+                        <>
+                        <div className="application-alternative-row">
+                            <button
+                                type="button"
+                                className="application-alternative-pill application-alternative-pill-maroon"
+                                onClick={() => applicationResumeInputRef.current?.click()}
+                                disabled={Boolean(applyingHomeJobId) || isPreparingResumeUpload}
+                            >
+                                {isPreparingResumeUpload ? 'Reading...' : 'Upload resume instead'}
+                            </button>
+                        </div>
                         <div className="application-profile-grid">
                             <label className="application-profile-field">
                                 <span>Full Name</span>
@@ -6100,6 +6158,17 @@ const PortalHomeFeed = ({
                                 <textarea name="achievements" value={applicationProfile.achievements} onChange={handleApplicationProfileChange} rows="3" disabled={Boolean(applyingHomeJobId)} />
                             </label>
                         </div>
+                        </>
+                    )}
+                    {applicationResumeUpload && (
+                        <button
+                            type="button"
+                            className="application-alternative-pill application-alternative-pill-maroon"
+                            onClick={handleApplyWithProfileSnapshot}
+                            disabled={Boolean(applyingHomeJobId)}
+                        >
+                            Add manually
+                        </button>
                     )}
                 </div>
                 <div className="portal-application-actions">
@@ -6111,33 +6180,6 @@ const PortalHomeFeed = ({
                     >
                         <PortalActionIcon type="submit" />
                         {applyingHomeJobId ? 'Submitting...' : hasAppliedToJob(applicationJob) ? 'Applied' : 'Submit Application'}
-                    </button>
-                    <button
-                        type="button"
-                        className="portal-view-job-button secondary"
-                        onClick={() => applicationResumeInputRef.current?.click()}
-                        disabled={Boolean(applyingHomeJobId) || savingApplicationDraft || isPreparingResumeUpload}
-                    >
-                        <PortalActionIcon type="upload" />
-                        {isPreparingResumeUpload ? 'Reading Resume...' : applicationResumeUpload ? 'Change Uploaded Resume' : 'Apply with Uploaded Resume'}
-                    </button>
-                    <button
-                        type="button"
-                        className="portal-view-job-button secondary"
-                        onClick={handleApplyUsingSavedResume}
-                        disabled={Boolean(applyingHomeJobId) || savingApplicationDraft || isPreparingResumeUpload}
-                    >
-                        <PortalActionIcon type="resume" />
-                        Apply with Saved Resume
-                    </button>
-                    <button
-                        type="button"
-                        className="portal-view-job-button secondary"
-                        onClick={handleApplyWithProfileSnapshot}
-                        disabled={Boolean(applyingHomeJobId) || savingApplicationDraft}
-                    >
-                        <PortalActionIcon type="profile" />
-                        Apply with Profile Snapshot
                     </button>
                     <button
                         type="button"
@@ -6155,6 +6197,7 @@ const PortalHomeFeed = ({
                             setApplicationJob(null);
                             setApplicationMessage('');
                             setCoverLetterText('');
+                            setApplicationCoverLetterUpload(null);
                             setApplicationResumeUpload(null);
                             setApplicationProfile(createApplicationProfileDraft(profileData, currentUser));
                             setActiveDraftId(null);
@@ -6791,7 +6834,7 @@ const PortalHomeFeed = ({
                             aria-label={`Open ${asDisplayText(post.authorName, 'Unknown author')} profile`}
                         >
                             {postAvatar ? (
-                                <img src={postAvatar} alt={asDisplayText(post.authorName, 'Post author')} />
+                                <img src={postAvatar} alt={asDisplayText(post.authorName, 'Post author')} loading="lazy" decoding="async" />
                             ) : (
                                 <span className="portal-default-profile-icon">
                                     <DefaultUserProfileImage gender={post.authorGender} />
@@ -6834,7 +6877,7 @@ const PortalHomeFeed = ({
                                         onClick={(event) => openImagePreview(post.media, event)}
                                         aria-label="Open attached image full screen"
                                     >
-                                        <img src={post.media.dataUrl} alt={post.media.name || 'Post media'} />
+                                        <img src={post.media.dataUrl} alt={post.media.name || 'Post media'} loading="lazy" decoding="async" />
                                     </button>
                                 )}
                             </div>
@@ -6892,7 +6935,7 @@ const PortalHomeFeed = ({
                                             aria-label={`Open ${asDisplayText(comment.authorName, 'User')} profile`}
                                         >
                                             {commentAvatar ? (
-                                                <img src={commentAvatar} alt={asDisplayText(comment.authorName, 'Comment author')} />
+                                                <img src={commentAvatar} alt={asDisplayText(comment.authorName, 'Comment author')} loading="lazy" decoding="async" />
                                             ) : (
                                                 <span className="portal-default-profile-icon">
                                                     <DefaultUserProfileImage gender={comment.authorGender || comment.gender} />
@@ -7192,7 +7235,11 @@ const PortalHomeFeed = ({
                             +
                         </button>
                     </div>
-                    <div className="portal-image-preview-stage">
+                    <div
+                        className="portal-image-preview-stage"
+                        ref={imagePinchZoom.stageRef}
+                        {...imagePinchZoom.touchHandlers}
+                    >
                         <img
                             src={imagePreview.dataUrl}
                             alt={imagePreview.name || 'Post image'}

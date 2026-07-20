@@ -1,4 +1,6 @@
 const FeedPost = require('../models/FeedPost');
+const { createNotification } = require('./notificationController');
+const { getAuthenticatedPayload } = require('../utils/candidateAuth');
 
 const VALID_TYPES = new Set(['work-news', 'talent-story']);
 const VALID_AUDIENCES = new Set(['everyone', 'friends', 'only-me']);
@@ -139,9 +141,75 @@ const deleteFeedPost = async (req, res) => {
     }
 };
 
+const notifyFeedPostActivity = async (req, res) => {
+    try {
+        const authenticated = getAuthenticatedPayload(req);
+        const post = await FeedPost.findById(req.params.id);
+
+        if (!post) {
+            return res.status(404).json({ error: 'Feed post not found' });
+        }
+
+        const activityType = String(req.body.type || '').toLowerCase();
+        if (!['reaction', 'comment', 'share'].includes(activityType)) {
+            return res.status(400).json({ error: 'Unknown post activity type' });
+        }
+
+        const actorType = authenticated.companyId ? 'employer' : 'candidate';
+        const actorId = String(authenticated.companyId || authenticated.id || '');
+        if (!actorId) {
+            return res.status(401).json({ error: 'Authentication is required' });
+        }
+
+        if (actorType === post.authorType && actorId === String(post.authorId)) {
+            return res.status(200).json({ notified: false });
+        }
+
+        const actorName = String(req.body.actorName || 'Someone').trim().slice(0, 160) || 'Someone';
+        const reaction = String(req.body.reaction || '').trim().slice(0, 40);
+        const activityCopy = {
+            reaction: {
+                title: 'New post reaction',
+                message: `${actorName} reacted${reaction ? ` ${reaction}` : ''} to your post.`
+            },
+            comment: {
+                title: 'New post comment',
+                message: `${actorName} commented on your post.`
+            },
+            share: {
+                title: 'Your post was shared',
+                message: `${actorName} shared your post.`
+            }
+        }[activityType];
+
+        const notification = await createNotification({
+            recipientType: post.authorType,
+            recipientId: post.authorId,
+            title: activityCopy.title,
+            message: activityCopy.message,
+            section: 'home',
+            actionLabel: 'View post',
+            payload: {
+                postId: String(post._id),
+                postType: post.type,
+                activityType,
+                actorId,
+                actorType
+            }
+        });
+
+        return res.status(201).json({ notified: true, notification });
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            error: error.message || 'Failed to create post notification'
+        });
+    }
+};
+
 module.exports = {
     getFeedPosts,
     createFeedPost,
     updateFeedPost,
-    deleteFeedPost
+    deleteFeedPost,
+    notifyFeedPostActivity
 };

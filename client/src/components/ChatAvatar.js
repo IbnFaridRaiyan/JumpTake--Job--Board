@@ -1,9 +1,9 @@
 import React from 'react';
 
 const PersonCircleIcon = () => (
-    <svg className="chat-avatar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-        <path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+    <svg className="chat-avatar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4.5 21a7.5 7.5 0 0 1 15 0H4.5Z" />
     </svg>
 );
 
@@ -14,7 +14,7 @@ const StarsIcon = () => (
 );
 
 const ChatAvatar = ({ imageSrc, label = 'Chat avatar', ai = false, className = '' }) => (
-    <div className={className} aria-label={label}>
+    <div className={`${className}${imageSrc ? ' chat-avatar-photo' : ai ? ' chat-avatar-ai' : ' chat-avatar-default'}`.trim()} aria-label={label}>
         {imageSrc ? (
             <img className="chat-avatar-image" src={imageSrc} alt={label} />
         ) : ai ? (

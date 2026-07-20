@@ -219,7 +219,9 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
                 <div className="candidate-profile-body">
                     <div className="profile-section">
                         <h3>Submitted Cover Letter</h3>
-                        {renderRichTextPreview(selectedApplication.coverLetterHtml, 'No cover letter included.')}
+                        {selectedApplication.uploadedCoverLetter ? (
+                            <ResumeFilePreview resume={selectedApplication.uploadedCoverLetter} className="application-cover-letter-preview application-uploaded-resume-preview-readonly" />
+                        ) : renderRichTextPreview(selectedApplication.coverLetterHtml, 'No cover letter included.')}
                     </div>
 
                     <div className="profile-section">
@@ -468,7 +470,9 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
 
                     <div className="profile-section">
                         <h3>Submitted Cover Letter</h3>
-                        {renderRichTextPreview(selectedApplication.coverLetterHtml, 'No cover letter included.')}
+                        {selectedApplication.uploadedCoverLetter ? (
+                            <ResumeFilePreview resume={selectedApplication.uploadedCoverLetter} className="application-cover-letter-preview application-uploaded-resume-preview-readonly" />
+                        ) : renderRichTextPreview(selectedApplication.coverLetterHtml, 'No cover letter included.')}
                     </div>
 
                     {selectedApplication.uploadedResume && (

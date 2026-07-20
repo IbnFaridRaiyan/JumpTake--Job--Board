@@ -1202,7 +1202,12 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
 
                     <div className="profile-section">
                         <h3>Submitted Cover Letter</h3>
-                        {selectedApplication.coverLetterHtml ? (
+                        {selectedApplication.uploadedCoverLetter ? (
+                            <ResumeFilePreview
+                                resume={selectedApplication.uploadedCoverLetter}
+                                className="application-cover-letter-preview application-uploaded-resume-preview-readonly"
+                            />
+                        ) : selectedApplication.coverLetterHtml ? (
                             <div className="cover-letter-preview" dangerouslySetInnerHTML={{ __html: selectedApplication.coverLetterHtml }} />
                         ) : (
                             <p className="empty-info">No cover letter included.</p>

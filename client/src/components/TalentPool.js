@@ -7,6 +7,7 @@ import defaultProfileFemale from './media/default-profile-female.png';
 import { apiUrl } from '../utils/apiUrl';
 import confirmAction from '../utils/confirmAction';
 import ProfileDetailsCard from './ProfileDetailsCard';
+import usePinchZoom from '../utils/usePinchZoom';
 
 const WORK_NEWS_STORAGE_KEY = 'jumptakeWorkNewsPosts';
 const TALENT_STORIES_STORAGE_KEY = 'jumptakeTalentStoriesPosts';
@@ -251,6 +252,12 @@ const TalentPool = ({
     const [candidateReachInsightPost, setCandidateReachInsightPost] = useState(null);
     const [candidateImagePreview, setCandidateImagePreview] = useState(null);
     const [candidateImagePreviewZoom, setCandidateImagePreviewZoom] = useState(1);
+    const candidateImagePinchZoom = usePinchZoom({
+        active: Boolean(candidateImagePreview),
+        zoom: candidateImagePreviewZoom,
+        setZoom: setCandidateImagePreviewZoom,
+        maximum: 3
+    });
     const [candidateCommentDrafts, setCandidateCommentDrafts] = useState({});
     const [candidateShareFriends, setCandidateShareFriends] = useState([]);
     const [candidateShareStatus, setCandidateShareStatus] = useState('');
@@ -1565,7 +1572,11 @@ const TalentPool = ({
                             +
                         </button>
                     </div>
-                    <div className="portal-image-preview-stage">
+                    <div
+                        className="portal-image-preview-stage"
+                        ref={candidateImagePinchZoom.stageRef}
+                        {...candidateImagePinchZoom.touchHandlers}
+                    >
                         <img
                             src={candidateImagePreview.dataUrl}
                             alt={candidateImagePreview.name || 'Post image'}
@@ -1631,6 +1642,8 @@ const TalentPool = ({
                         <img
                             src={post.authorAvatar || candidate.profileImage || getCandidateDefaultProfileImage(candidate)}
                             alt={asCandidatePostText(post.authorName || candidate.name, 'Candidate')}
+                            loading="lazy"
+                            decoding="async"
                         />
                     </button>
                     <div className="portal-post-title-block">
@@ -1727,7 +1740,7 @@ const TalentPool = ({
                                     onClick={(event) => openCandidateImagePreview(media, event)}
                                     aria-label="Open attached image full screen"
                                 >
-                                    <img src={media.dataUrl} alt={media.name || 'Post media'} />
+                                    <img src={media.dataUrl} alt={media.name || 'Post media'} loading="lazy" decoding="async" />
                                 </button>
                             )}
                         </div>

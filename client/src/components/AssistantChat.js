@@ -63,6 +63,24 @@ const AssistantChat = ({ title = 'Jumptake chat', className = '', storageKey = '
         inputRef.current.style.height = `${Math.min(inputRef.current.scrollHeight, 96)}px`;
     }, [assistantInput]);
 
+    useEffect(() => {
+        if (typeof window === 'undefined' || !className.includes('floating-messenger-assistant-chat')) {
+            return undefined;
+        }
+
+        const showTourPrompt = (event) => {
+            const prompt = String(event?.detail?.prompt || '').trim();
+            if (!prompt) {
+                return;
+            }
+            setAssistantInput(prompt);
+            window.requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
+        };
+
+        window.addEventListener('jumptake-assistant-demo-prompt', showTourPrompt);
+        return () => window.removeEventListener('jumptake-assistant-demo-prompt', showTourPrompt);
+    }, [className]);
+
     const clearAssistantChat = () => {
         setAssistantMessages(createInitialAssistantMessages());
         setAssistantInput('');

@@ -9671,13 +9671,13 @@ html,
 body,
 #root,
 .App,
-main,
-section,
-article,
-aside,
-nav,
-header,
-footer {
+#root main,
+#root section,
+#root article,
+#root aside,
+#root nav,
+#root header,
+#root footer {
   background: #000000 !important;
   color: #ffffff !important;
 }
@@ -9751,21 +9751,21 @@ footer {
   background: rgba(0, 0, 0, 0.92) !important;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-label,
-small,
-li,
-td,
-th,
-span,
-strong,
-em,
+#root h1,
+#root h2,
+#root h3,
+#root h4,
+#root h5,
+#root h6,
+#root p,
+#root label,
+#root small,
+#root li,
+#root td,
+#root th,
+#root span,
+#root strong,
+#root em,
 .header-subtitle,
 .landing-subtitle,
 .drop-message,
@@ -11439,10 +11439,10 @@ button .loading-spinner {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  background-color: #2d2d2d !important;
+  background-color: #2d2d2d;
   padding: 0 15px !important;
   border-radius: 10px !important;
-  border: 1px solid rgb(63, 63, 63) !important;
+  border: 1px solid rgb(63, 63, 63);
   position: relative !important;
 }
 
@@ -11524,7 +11524,7 @@ button .loading-spinner {
   outline: none !important;
   border: none !important;
   padding: 10px 10px !important;
-  color: white !important;
+  color: white;
 }
 
 .sendButton {
@@ -17486,8 +17486,8 @@ button .loading-spinner,
   height: 100% !important;
   border-radius: 50% !important;
   overflow: hidden !important;
-  background: linear-gradient(135deg, #0d3b34, #63c0b8) !important;
-  color: #ffffff !important;
+  background: linear-gradient(135deg, #0d3b34, #63c0b8);
+  color: #ffffff;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -19549,12 +19549,12 @@ html[data-theme="light"] body,
 html[data-theme="light"] #root,
 html[data-theme="light"] .app-container,
 html[data-theme="light"] .home-page,
-html[data-theme="light"] main,
-html[data-theme="light"] section,
-html[data-theme="light"] article,
-html[data-theme="light"] aside,
-html[data-theme="light"] nav,
-html[data-theme="light"] footer {
+html[data-theme="light"] #root main,
+html[data-theme="light"] #root section,
+html[data-theme="light"] #root article,
+html[data-theme="light"] #root aside,
+html[data-theme="light"] #root nav,
+html[data-theme="light"] #root footer {
   background: #eef6f3 !important;
   color: #10211d !important;
 }
@@ -19662,18 +19662,18 @@ html[data-theme="light"] .analytics-detail-overlay {
   background: rgba(7, 21, 18, 0.36) !important;
 }
 
-html[data-theme="light"] h1,
-html[data-theme="light"] h2,
-html[data-theme="light"] h3,
-html[data-theme="light"] h4,
-html[data-theme="light"] p,
-html[data-theme="light"] label,
-html[data-theme="light"] li,
-html[data-theme="light"] span,
-html[data-theme="light"] strong,
-html[data-theme="light"] small,
-html[data-theme="light"] td,
-html[data-theme="light"] th {
+html[data-theme="light"] #root h1,
+html[data-theme="light"] #root h2,
+html[data-theme="light"] #root h3,
+html[data-theme="light"] #root h4,
+html[data-theme="light"] #root p,
+html[data-theme="light"] #root label,
+html[data-theme="light"] #root li,
+html[data-theme="light"] #root span,
+html[data-theme="light"] #root strong,
+html[data-theme="light"] #root small,
+html[data-theme="light"] #root td,
+html[data-theme="light"] #root th {
   color: #10211d !important;
 }
 
@@ -19740,8 +19740,8 @@ html[data-theme="light"] .desktop-back-to-manage-jobs:hover {
 html[data-theme="light"] .rich-message-toolbar,
 html[data-theme="light"] .messageBox,
 html[data-theme="light"] .message-composer-panel {
-  background: #eef6f3 !important;
-  border-color: rgba(13, 59, 52, 0.18) !important;
+  background: #ffffff;
+  border-color: rgba(67, 37, 28, 0.18);
 }
 
 html[data-theme="light"] .rich-message-toolbar button {
@@ -20138,65 +20138,6 @@ html[data-theme="light"] .home-page .analytics-detail-overlay {
   html[data-theme="light"] .home-page .job-preview-modal,
   html[data-theme="light"] .home-page .candidate-job-preview-modal,
   html[data-theme="light"] .home-page .application-workspace-modal {
-    background: var(--cream-panel) !important;
-    color: var(--cream-text) !important;
-  }
-}
-
-@media (max-width: 768px) {
-  .application-workspace-overlay {
-    position: fixed !important;
-    inset: 0 !important;
-    z-index: 10000 !important;
-    width: 100vw !important;
-    height: 100dvh !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    align-items: stretch !important;
-    justify-content: stretch !important;
-    background: #000000 !important;
-    overflow: hidden !important;
-  }
-
-  .application-workspace-modal {
-    width: 100vw !important;
-    max-width: 100vw !important;
-    height: 100dvh !important;
-    max-height: 100dvh !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
-    border: 0 !important;
-    box-shadow: none !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
-  }
-
-  .application-workspace-header {
-    flex: 0 0 auto !important;
-    padding: 1rem 1rem 0.9rem !important;
-  }
-
-  .application-workspace-body {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    padding: 1rem !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-  }
-
-  .application-workspace-actions {
-    flex: 0 0 auto !important;
-    padding: 0.9rem 1rem calc(1rem + env(safe-area-inset-bottom)) !important;
-  }
-}
-
-@media (max-width: 768px) {
-  html[data-theme="light"] .application-workspace-overlay {
-    background: var(--cream-panel) !important;
-  }
-
-  html[data-theme="light"] .application-workspace-modal {
     background: var(--cream-panel) !important;
     color: var(--cream-text) !important;
   }
@@ -25087,7 +25028,7 @@ html[data-theme="light"] .add-friend-form input {
   height: min(680px, calc(100vh - 8rem));
   border-radius: 1.35rem;
   overflow: hidden;
-  background: rgba(12, 16, 18, 0.97);
+  background: #c8c0b4;
   border: 1px solid rgba(148, 163, 184, 0.18);
   box-shadow: 0 35px 80px rgba(0, 0, 0, 0.5);
 }
@@ -25097,18 +25038,20 @@ html[data-theme="light"] .add-friend-form input {
   grid-template-columns: minmax(280px, 320px) minmax(0, 1fr);
   width: 100%;
   height: 100%;
+  background: #c8c0b4;
 }
 
 .floating-messenger-contacts {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  background: rgba(255, 255, 255, 0.04);
+  background: #c8c0b4;
   border-right: 1px solid rgba(148, 163, 184, 0.14);
 }
 
 .floating-messenger-header {
   position: relative;
+  flex: 0 0 auto;
   padding: 1.2rem 1.2rem 1rem;
   border-bottom: 1px solid rgba(148, 163, 184, 0.14);
 }
@@ -25136,28 +25079,77 @@ html[data-theme="light"] .add-friend-form input {
 
 .floating-messenger-contact-list {
   flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
-  padding: 0.9rem;
+  padding: 0.55rem 0.75rem 0.75rem;
   display: grid;
   gap: 0.75rem;
 }
 
+.floating-messenger-contact-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  margin: 0.25rem 0.55rem 0.55rem;
+  overflow: hidden;
+  border-radius: 1rem;
+  background: #ded7cc;
+  background-color: #ded7cc;
+}
+
+.floating-messenger-list-bottom-back,
+.floating-messenger-list-bottom-back:is(:hover, :focus, :focus-visible, :active) {
+  appearance: none;
+  box-sizing: border-box;
+  display: inline-grid;
+  place-items: center;
+  align-self: center;
+  flex: 0 0 1.5rem;
+  width: 1.5rem;
+  min-width: 1.5rem;
+  max-width: 1.5rem;
+  height: 1.5rem;
+  min-height: 1.5rem;
+  max-height: 1.5rem;
+  margin: 0.1rem auto 0.45rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  outline-offset: 0.12rem;
+  background: transparent;
+  box-shadow: none;
+  color: #111111;
+  -webkit-text-fill-color: #111111;
+  font: inherit;
+  font-size: 1.3rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.floating-messenger-list-bottom-back::before,
+.floating-messenger-list-bottom-back::after {
+  display: none;
+  content: none;
+}
+
 .floating-messenger-contact {
-  width: 100% !important;
-  display: grid !important;
-  grid-template-columns: 3rem minmax(0, 1fr) auto !important;
-  align-items: center !important;
-  gap: 0.75rem !important;
-  padding: 0.85rem !important;
-  border: 1px solid rgba(148, 163, 184, 0.12) !important;
-  border-radius: 1rem !important;
-  background: rgba(255, 255, 255, 0.04) !important;
-  text-align: left !important;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  text-align: left;
 }
 
 .floating-messenger-contact.is-active {
-  border-color: rgba(99, 192, 184, 0.42) !important;
-  background: rgba(99, 192, 184, 0.12) !important;
+  border-color: rgba(99, 192, 184, 0.42);
+  background: rgba(99, 192, 184, 0.12);
 }
 
 .floating-messenger-contact-avatar,
@@ -25254,12 +25246,12 @@ html[data-theme="light"] .add-friend-form input {
 
 .floating-messenger-message-meta {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 0.8rem;
-  margin-bottom: 0.45rem;
+  margin-top: 0.45rem;
 }
 
-.floating-messenger-message-meta strong,
+.floating-messenger-message-sender,
 .floating-messenger-message-meta span,
 .floating-messenger-message-body,
 .floating-messenger-message-body p,
@@ -25267,7 +25259,7 @@ html[data-theme="light"] .add-friend-form input {
 .floating-messenger-message-body span,
 .floating-messenger-message-body strong,
 .floating-messenger-message-body em {
-  color: #ffffff !important;
+  color: #ffffff;
 }
 
 .floating-messenger-input {
@@ -25327,19 +25319,100 @@ html[data-theme="light"] .add-friend-form input {
 }
 
 html[data-theme="light"] .floating-messenger-panel {
-  background: rgba(248, 244, 236, 0.98);
+  background: #c8c0b4;
   border-color: rgba(113, 88, 64, 0.16);
 }
 
 html[data-theme="light"] .floating-messenger-contacts {
-  background: rgba(255, 255, 255, 0.7);
+  background: #c8c0b4;
   border-right-color: rgba(113, 88, 64, 0.14);
+}
+
+html[data-theme="light"] .message-workspace-nav.is-compact {
+  background: #c8c0b4;
+}
+
+html[data-theme="light"] .floating-messenger-contact-body {
+  border: 1px solid rgba(255, 248, 234, 0.16);
+  background: #ded7cc;
+  background-color: #ded7cc;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="light"] .floating-messenger-contact-body .floating-messenger-list-bottom-back {
+  color: #111111;
+  -webkit-text-fill-color: #111111;
+}
+
+html[data-theme="light"] .floating-messenger-contact-list {
+  background: transparent;
 }
 
 html[data-theme="light"] .floating-messenger-chat,
 html[data-theme="light"] .floating-messenger-messages,
 html[data-theme="light"] .floating-messenger-input {
-  background: #f7f0e5;
+  background: #fbf6ee;
+}
+
+html[data-theme="light"] .floating-messenger-header {
+  margin: 0.6rem 0.6rem 0;
+  padding: 0.72rem 0.85rem;
+  border: 1px solid rgba(104, 20, 33, 0.12);
+  border-radius: 1rem;
+  background: #ded7cc;
+  background-color: #ded7cc;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
+  color: #111111;
+}
+
+html[data-theme="light"] .floating-messenger-chat-bar {
+  background: #43251c;
+  color: #ffffff;
+}
+
+.floating-messenger-message-sender {
+  display: block;
+  margin: 0 0 0.42rem;
+  font-size: 0.72rem;
+  font-weight: 850;
+  line-height: 1.1;
+}
+
+html[data-theme="light"] .floating-messenger-title-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.34rem 0.9rem;
+  border: 1px solid rgba(104, 20, 33, 0.12);
+  border-radius: 999px;
+  background: #ded7cc;
+  background-color: #ded7cc;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42), 0 0.28rem 0.75rem rgba(77, 50, 31, 0.08);
+  color: #681421;
+  -webkit-text-fill-color: #681421;
+  font-family: 'Boogaloo', 'Arial Narrow', Arial, sans-serif;
+  font-size: 1.22rem;
+  font-weight: 400;
+  animation: jumptake-activities-loop 7.5s infinite both;
+}
+
+html[data-theme="light"] .floating-messenger-contact,
+html[data-theme="light"] .floating-messenger-contact.is-active {
+  border-color: rgba(67, 37, 28, 0.12);
+  background: #ffffff;
+  box-shadow: none;
+  color: #241713;
+}
+
+html[data-theme="light"] .floating-messenger-contacts .floating-messenger-contact-copy :is(strong, span),
+html[data-theme="light"] .floating-messenger-contacts .new-message-finder :is(h3, h4, p, strong, small),
+html[data-theme="light"] .floating-messenger-contacts .message-workspace-tab > span {
+  color: #111111;
+  -webkit-text-fill-color: #111111;
+}
+
+html[data-theme="light"] .floating-messenger-contacts .message-workspace-tab {
+  color: #111111;
 }
 
 html[data-theme="light"] .floating-messenger-header,
@@ -25351,14 +25424,15 @@ html[data-theme="light"] .floating-messenger-input {
 html[data-theme="light"] .floating-messenger-header h2,
 html[data-theme="light"] .floating-messenger-contact-copy strong,
 html[data-theme="light"] .floating-messenger-chat-head strong,
-html[data-theme="light"] .floating-messenger-message-meta strong,
+html[data-theme="light"] .floating-messenger-message-sender,
+html[data-theme="light"] .floating-messenger-message-meta span,
 html[data-theme="light"] .floating-messenger-message-body,
 html[data-theme="light"] .floating-messenger-message-body p,
 html[data-theme="light"] .floating-messenger-message-body li,
 html[data-theme="light"] .floating-messenger-message-body span,
 html[data-theme="light"] .floating-messenger-message-body strong,
 html[data-theme="light"] .floating-messenger-message-body em {
-  color: #2f241b !important;
+  color: #2f241b;
 }
 
 html[data-theme="light"] .floating-messenger-contact-copy span,
@@ -25366,7 +25440,7 @@ html[data-theme="light"] .floating-messenger-chat-head span,
 html[data-theme="light"] .floating-messenger-contact time,
 html[data-theme="light"] .floating-messenger-chat-seen,
 html[data-theme="light"] .floating-messenger-empty {
-  color: #6a5542 !important;
+  color: #6a5542;
 }
 
 html[data-theme="light"] .floating-messenger-message {
@@ -25374,8 +25448,97 @@ html[data-theme="light"] .floating-messenger-message {
   border-color: rgba(113, 88, 64, 0.12);
 }
 
+html[data-theme="light"] .floating-messenger-message .floating-messenger-message-sender {
+  color: #111111;
+  -webkit-text-fill-color: #111111;
+}
+
+html[data-theme="light"] .floating-messenger-message:not(.is-own) :is(
+  .floating-messenger-message-sender,
+  .floating-messenger-message-meta,
+  .floating-messenger-message-body,
+  p,
+  li,
+  span,
+  strong,
+  em,
+  time
+) {
+  color: #111111;
+  -webkit-text-fill-color: #111111;
+}
+
 html[data-theme="light"] .floating-messenger-message.is-own {
-  background: #d6efe9;
+  border-color: #c8baa4;
+  border-radius: 1rem;
+  background: linear-gradient(145deg, #fff8ea 0%, #f3e4cc 54%, #e8d6ba 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 0.25rem 0.7rem rgba(77, 50, 31, 0.08);
+  color: #681421;
+}
+
+html[data-theme="light"] .floating-messenger-message.is-own .floating-messenger-message-meta {
+  margin: 0.45rem 0 0;
+}
+
+html[data-theme="light"] .floating-messenger-message.is-own :is(.floating-messenger-message-sender, .floating-messenger-message-meta, .floating-messenger-message-body, p, li, span, strong, em, time) {
+  color: #681421;
+  -webkit-text-fill-color: #681421;
+}
+
+html[data-theme="light"] .floating-messenger-input .messageBox {
+  background: #ffffff;
+  border-color: rgba(67, 37, 28, 0.18);
+}
+
+html[data-theme="light"] .floating-messenger-input :is(.messageInput, .rich-message-input),
+html[data-theme="light"] .floating-messenger-input :is(.messageInput, .rich-message-input) * {
+  color: #111111;
+  -webkit-text-fill-color: #111111;
+  caret-color: #681421;
+}
+
+.floating-messenger-contact-list:has(> .message-workspace-empty-state) {
+  display: flex !important;
+  align-items: stretch !important;
+}
+
+.message-workspace-empty-state {
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 12rem;
+  height: auto;
+  margin: 0;
+  border-radius: 0.9rem;
+  background: #ded7cc;
+  background-color: #ded7cc;
+  color: #111111;
+}
+
+.message-workspace-empty-state > .empty-state-image {
+  display: grid;
+  flex: 0 0 4.6rem;
+  place-items: center;
+  width: 4.6rem;
+  height: 4.6rem;
+  margin: 0 auto 0.8rem;
+  border: 1px solid rgba(180, 91, 114, 0.2);
+  border-radius: 1.25rem;
+  background: #f7ecef;
+  color: #a45168;
+}
+
+.message-workspace-empty-state > .empty-state-image svg {
+  width: 2.55rem;
+  height: 2.55rem;
+  stroke: currentColor;
+}
+
+.message-workspace-empty-state > h3 {
+  margin: 0;
+  color: #111111;
+  -webkit-text-fill-color: #111111;
+  font-size: 0.9rem;
+  line-height: 1.2;
 }
 
 @media (max-width: 768px) {
@@ -48037,11 +48200,29 @@ select {
   overflow: hidden !important;
 }
 
-.button-message .avatar .user-img,
-.messenger-avatar,
-.floating-messenger-contact-avatar,
-.floating-messenger-chat-avatar {
+.button-message .avatar .user-img:not(.chat-avatar-default),
+.messenger-avatar:not(.chat-avatar-default),
+.floating-messenger-contact-avatar:not(.chat-avatar-default),
+.floating-messenger-chat-avatar:not(.chat-avatar-default) {
   color: #ffffff !important;
+}
+
+.chat-avatar-default,
+.button-message .avatar:has(.chat-avatar-default) {
+  background: transparent;
+  background-image: none;
+  color: #111111;
+  box-shadow: none;
+}
+
+.chat-avatar-default .chat-avatar-icon {
+  width: 72% !important;
+  height: 72% !important;
+  color: #111111 !important;
+}
+
+.content-avatar:has(.chat-avatar-default) .status-user {
+  display: none !important;
 }
 
 .button-message .avatar .user-img:has(.chat-avatar-icon-ai),
@@ -51330,7 +51511,7 @@ select {
   }
 }
 
-/* Final chat bubble colors: AI sent messages use the JumpTake AI orange, direct messages use dark green. */
+/* AI conversations retain their own warm accent. */
 .public-ai-chat-card .public-ai-chat-bubble.is-user,
 .portal-ai-chat-card .public-ai-chat-bubble.is-user,
 .floating-messenger-assistant-chat .public-ai-chat-bubble.is-user {
@@ -51340,19 +51521,12 @@ select {
   box-shadow: none !important;
 }
 
-.floating-messenger-message.is-own {
-  background: #0b3b2e !important;
-  border-color: rgba(45, 212, 191, 0.18) !important;
-  color: #ffffff !important;
-}
-
 .floating-messenger-message-meta {
-  align-items: center !important;
-  margin-bottom: 0.32rem !important;
-  gap: 0.5rem !important;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.floating-messenger-message-meta strong,
+.floating-messenger-message-sender,
 .floating-messenger-message-meta span {
   font-size: 0.66rem !important;
   line-height: 1.1 !important;
@@ -51360,11 +51534,11 @@ select {
 }
 
 .floating-messenger-message-meta span {
-  opacity: 0.72 !important;
+  opacity: 0.72;
 }
 
 @media (max-width: 768px) {
-  .floating-messenger-message-meta strong,
+  .floating-messenger-message-sender,
   .floating-messenger-message-meta span {
     font-size: 0.62rem !important;
   }
@@ -54171,41 +54345,8 @@ select {
   }
 }
 
-/* Screenshot 177-179 refinements: messenger back behavior, smoother feed scroll, and lower reaction rail. */
+/* Screenshot 177-179 refinements: smoother feed scroll and lower reaction rail. */
 @media (max-width: 768px) {
-  .floating-messenger-list-bottom-back {
-    align-items: center !important;
-    background: transparent !important;
-    border: 0 !important;
-    bottom: max(1.05rem, env(safe-area-inset-bottom)) !important;
-    box-shadow: none !important;
-    color: #ffffff !important;
-    cursor: pointer !important;
-    display: inline-flex !important;
-    font: inherit !important;
-    font-size: 1.45rem !important;
-    height: 2.5rem !important;
-    justify-content: center !important;
-    left: 50% !important;
-    line-height: 1 !important;
-    min-height: 2.5rem !important;
-    min-width: 2.5rem !important;
-    padding: 0 !important;
-    position: fixed !important;
-    transform: translateX(-50%) !important;
-    width: 2.5rem !important;
-    z-index: 10075 !important;
-  }
-
-  .floating-messenger-list-bottom-back:hover,
-  .floating-messenger-list-bottom-back:focus-visible,
-  .floating-messenger-list-bottom-back:active {
-    background: transparent !important;
-    border: 0 !important;
-    box-shadow: none !important;
-    color: #ffffff !important;
-  }
-
   .portal-home-feed-scroll,
   .home-page .portal-home-feed-scroll {
     scroll-behavior: auto !important;
@@ -59069,23 +59210,6 @@ html[data-theme="light"] body[data-theme="light"] :is(.mobile-dashboard-section-
   padding-inline: max(0.75rem, env(safe-area-inset-left)) max(0.75rem, env(safe-area-inset-right)) !important;
 }
 
-html[data-theme="light"] body[data-theme="light"] .floating-messenger-panel,
-html[data-theme="light"] body[data-theme="light"] .floating-messenger-shell,
-html[data-theme="light"] body[data-theme="light"] .floating-messenger-chat,
-html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat,
-html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-card,
-html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .portal-ai-chat-card,
-html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-messages {
-  background: var(--jt-dark-brown) !important;
-  background-color: var(--jt-dark-brown) !important;
-  color: #ffffff !important;
-}
-
-html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat :is(.public-ai-chat-bubble, .public-ai-chat-time, .public-ai-chat-title, .public-ai-chat-subtitle, p, li, span, strong) {
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-}
-
 html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat .public-ai-chat-bubble.is-user {
   background: #8a3a1f !important;
   background-color: #8a3a1f !important;
@@ -59103,37 +59227,10 @@ html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-
   -webkit-text-fill-color: #6b5b4b !important;
 }
 
-html[data-theme="light"] body[data-theme="light"] .floating-messenger-list-bottom-back {
-  width: auto !important;
-  min-width: 2.25rem !important;
-  max-width: 3.25rem !important;
-  height: 1.85rem !important;
-  min-height: 1.85rem !important;
-  margin: 0.35rem auto 0.45rem !important;
-  padding: 0 0.72rem !important;
-  border-radius: 0.48rem !important;
-  border: 1px solid #d6c6b4 !important;
-  background: var(--jt-light-cream) !important;
-  background-color: var(--jt-light-cream) !important;
-  color: #111111 !important;
-  box-shadow: none !important;
-}
-
 html[data-theme="light"] body[data-theme="light"] :is(.applications-container, .assessments-container, .video-interviews-container, .draft-applications-container, .bookmarked-jobs-container) :is(button, .settings-button, .secondary-button, .primary-button),
 html[data-theme="light"] body[data-theme="light"] :is(.applications-container, .assessments-container, .video-interviews-container, .draft-applications-container, .bookmarked-jobs-container) :is(button, .settings-button, .secondary-button, .primary-button) * {
   color: #111111 !important;
   -webkit-text-fill-color: #111111 !important;
-}
-
-/* Light-mode final correction for screenshots 32-37. */
-html[data-theme="light"] body[data-theme="light"] .floating-messenger-chat-bar,
-html[data-theme="light"] body[data-theme="light"] .floating-messenger-chat-head,
-html[data-theme="light"] body[data-theme="light"] .floating-messenger-chat-copy,
-html[data-theme="light"] body[data-theme="light"] .floating-messenger-chat-copy :is(strong, span) {
-  background: var(--jt-dark-brown) !important;
-  background-color: var(--jt-dark-brown) !important;
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
 }
 
 html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-chat,
@@ -59199,25 +59296,6 @@ html[data-theme="light"] body[data-theme="light"] .floating-messenger-assistant-
   outline: 0 !important;
   border-radius: 0.72rem !important;
   box-shadow: none !important;
-}
-
-html[data-theme="light"] body[data-theme="light"] .floating-messenger-list-bottom-back,
-html[data-theme="light"] body[data-theme="light"] .floating-messenger-list-bottom-back:hover,
-html[data-theme="light"] body[data-theme="light"] .floating-messenger-list-bottom-back:focus-visible {
-  position: static !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  align-self: center !important;
-  flex: 0 0 auto !important;
-  width: 2.55rem !important;
-  min-width: 2.55rem !important;
-  max-width: 2.55rem !important;
-  height: 1.65rem !important;
-  min-height: 1.65rem !important;
-  padding: 0 !important;
-  margin: 0.35rem auto 0.5rem !important;
-  border-radius: 0.42rem !important;
 }
 
 html[data-theme="light"] body[data-theme="light"] .portal-home-feed > .portal-home-tabs,
@@ -61280,31 +61358,6 @@ html[data-theme="light"] .portal-post-reactions.is-popover .portal-reaction-butt
   border: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
-}
-
-html[data-theme="light"] .floating-messenger .floating-messenger-list-bottom-back,
-html[data-theme="light"] .floating-messenger .floating-messenger-list-bottom-back:is(:hover, :focus, :focus-visible, :active),
-html[data-theme="light"] .floating-messenger-panel .floating-messenger-list-bottom-back,
-html[data-theme="light"] .floating-messenger-panel .floating-messenger-list-bottom-back:is(:hover, :focus, :focus-visible, :active) {
-  display: inline-grid !important;
-  place-items: center !important;
-  align-self: flex-start !important;
-  width: 2.15rem !important;
-  min-width: 2.15rem !important;
-  max-width: 2.15rem !important;
-  height: 1.7rem !important;
-  min-height: 1.7rem !important;
-  max-height: 1.7rem !important;
-  padding: 0 !important;
-  margin: 0.28rem 0 0.5rem 0.55rem !important;
-  background: transparent !important;
-  background-color: transparent !important;
-  background-image: none !important;
-  border: 0 !important;
-  border-radius: 0.35rem !important;
-  box-shadow: none !important;
-  color: #111111 !important;
-  -webkit-text-fill-color: #111111 !important;
 }
 
 html[data-theme="light"] .floating-messenger .portal-ai-clear-chat-button,
@@ -64188,12 +64241,12 @@ body[data-theme="light"] .home-page .messenger-inbox :is(.messenger-compose-card
   }
 }
 
-html[data-theme="light"] .floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back),
-html[data-theme="light"] .floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back):is(:hover, :focus, :focus-visible, :active),
-body[data-theme="light"] .floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back),
-body[data-theme="light"] .floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back):is(:hover, :focus, :focus-visible, :active),
-.floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back),
-.floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back):is(:hover, :focus, :focus-visible, :active) {
+html[data-theme="light"] .floating-messenger .floating-messenger-mobile-back,
+html[data-theme="light"] .floating-messenger .floating-messenger-mobile-back:is(:hover, :focus, :focus-visible, :active),
+body[data-theme="light"] .floating-messenger .floating-messenger-mobile-back,
+body[data-theme="light"] .floating-messenger .floating-messenger-mobile-back:is(:hover, :focus, :focus-visible, :active),
+.floating-messenger .floating-messenger-mobile-back,
+.floating-messenger .floating-messenger-mobile-back:is(:hover, :focus, :focus-visible, :active) {
   all: unset !important;
   box-sizing: border-box !important;
   display: inline-grid !important;
@@ -64221,12 +64274,12 @@ body[data-theme="light"] .floating-messenger :is(.floating-messenger-mobile-back
   cursor: pointer !important;
 }
 
-html[data-theme="light"] .floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back)::before,
-html[data-theme="light"] .floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back)::after,
-body[data-theme="light"] .floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back)::before,
-body[data-theme="light"] .floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back)::after,
-.floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back)::before,
-.floating-messenger :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back)::after {
+html[data-theme="light"] .floating-messenger .floating-messenger-mobile-back::before,
+html[data-theme="light"] .floating-messenger .floating-messenger-mobile-back::after,
+body[data-theme="light"] .floating-messenger .floating-messenger-mobile-back::before,
+body[data-theme="light"] .floating-messenger .floating-messenger-mobile-back::after,
+.floating-messenger .floating-messenger-mobile-back::before,
+.floating-messenger .floating-messenger-mobile-back::after {
   display: none !important;
   content: none !important;
 }
@@ -64909,23 +64962,6 @@ body[data-theme="light"] #root .floating-messenger-assistant-chat .portal-ai-cle
   color: #111111 !important;
   -webkit-text-fill-color: #111111 !important;
   text-align: right !important;
-}
-
-html[data-theme="light"] body[data-theme="light"] #root :is(.floating-messenger-message.is-own, .message-bubble.sent, .chat-message.sent),
-html[data-theme="light"] #root :is(.floating-messenger-message.is-own, .message-bubble.sent, .chat-message.sent),
-body[data-theme="light"] #root :is(.floating-messenger-message.is-own, .message-bubble.sent, .chat-message.sent) {
-  background: #a94f18 !important;
-  background-color: #a94f18 !important;
-  border-color: #a94f18 !important;
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-}
-
-html[data-theme="light"] body[data-theme="light"] #root :is(.floating-messenger-message.is-own, .message-bubble.sent, .chat-message.sent) :is(.floating-messenger-message-meta, .floating-messenger-message-body, p, span, strong, em, time),
-html[data-theme="light"] #root :is(.floating-messenger-message.is-own, .message-bubble.sent, .chat-message.sent) :is(.floating-messenger-message-meta, .floating-messenger-message-body, p, span, strong, em, time),
-body[data-theme="light"] #root :is(.floating-messenger-message.is-own, .message-bubble.sent, .chat-message.sent) :is(.floating-messenger-message-meta, .floating-messenger-message-body, p, span, strong, em, time) {
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
 }
 
 /* Light mode: final corrections for screenshots 128-131. */
@@ -83538,15 +83574,9 @@ html body #root .home-page .portal-uiverse-sidebar :is(.sidebar__list, .sidebar_
   }
 }
 
-/* Portalled messenger controls and sent-message contrast. */
-html body > .floating-messenger.is-open :is(
-  button.floating-messenger-list-bottom-back,
-  button.floating-messenger-mobile-back
-),
-html body > .floating-messenger.is-open :is(
-  button.floating-messenger-list-bottom-back,
-  button.floating-messenger-mobile-back
-):is(:hover, :focus, :focus-visible, :active) {
+/* Portalled conversation back control. */
+html body > .floating-messenger.is-open button.floating-messenger-mobile-back,
+html body > .floating-messenger.is-open button.floating-messenger-mobile-back:is(:hover, :focus, :focus-visible, :active) {
   appearance: none !important;
   -webkit-appearance: none !important;
   box-sizing: border-box !important;
@@ -83565,29 +83595,6 @@ html body > .floating-messenger.is-open :is(
   box-shadow: none !important;
   outline: 0 !important;
   filter: none !important;
-}
-
-html body > .floating-messenger.is-open .floating-messenger-message.is-own {
-  background: #0b3b2e !important;
-  background-color: #0b3b2e !important;
-  border-color: rgba(45, 212, 191, 0.18) !important;
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-}
-
-html body > .floating-messenger.is-open .floating-messenger-message.is-own *,
-html body > .floating-messenger.is-open .floating-messenger-message.is-own :is(
-  .floating-messenger-message-meta,
-  .floating-messenger-message-body,
-  p,
-  span,
-  strong,
-  em,
-  time,
-  a
-) {
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
 }
 
 /* Messenger opens as a centered modal over a blurred portal backdrop at every viewport. */
@@ -86165,14 +86172,16 @@ html body .portal-image-preview-backdrop {
   padding: 0.45rem 0.3rem;
   border: 1px solid rgba(60, 51, 45, 0.13);
   border-radius: 0.82rem;
-  background: #fff;
+  background: #ded7cc;
+  background-color: #ded7cc;
   color: #1f2937;
   cursor: pointer;
 }
 
 .message-workspace-tab:is(.is-active, :hover, :focus-visible) {
   border-color: rgba(104, 20, 33, 0.35);
-  background: #f8efea;
+  background: #ded7cc;
+  background-color: #ded7cc;
   color: #681421;
 }
 
@@ -86184,6 +86193,8 @@ html body .portal-image-preview-backdrop {
 
 .message-workspace-tab > span {
   max-width: 100%;
+  color: #111111;
+  -webkit-text-fill-color: #111111;
   font-size: 0.68rem;
   font-weight: 800;
   line-height: 1.05;
@@ -86206,19 +86217,26 @@ html body .portal-image-preview-backdrop {
 }
 
 .message-workspace-nav.is-compact {
+  box-sizing: border-box;
+  flex: 0 0 auto;
   grid-template-columns: none;
   grid-auto-flow: column;
   grid-auto-columns: minmax(5.25rem, 1fr);
+  min-height: 4.4rem;
+  max-height: 4.4rem;
   margin: 0;
   padding: 0.42rem;
   overflow-x: auto;
-  border-width: 0 0 1px;
+  border: 0;
   border-radius: 0;
   scrollbar-width: thin;
 }
 
 .message-workspace-nav.is-compact .message-workspace-tab {
+  box-sizing: border-box;
+  height: 3.55rem;
   min-height: 3.55rem;
+  max-height: 3.55rem;
   padding: 0.38rem 0.28rem;
 }
 
@@ -86489,7 +86507,17 @@ html body .portal-image-preview-backdrop {
   display: grid;
   gap: 0.75rem;
   padding: 0.85rem;
+  border: 1px solid rgba(104, 20, 33, 0.1);
+  border-radius: 1rem;
+  background: #ded7cc;
+  background-color: #ded7cc;
+  color: #111111;
   text-align: left;
+}
+
+.message-settings-panel :is(h3, p, span, strong, small, label) {
+  color: #111111;
+  -webkit-text-fill-color: #111111;
 }
 
 .message-settings-heading :is(h3, p) {
@@ -86497,13 +86525,15 @@ html body .portal-image-preview-backdrop {
 }
 
 .message-settings-heading h3 {
-  color: #311f21;
+  color: #111111;
+  -webkit-text-fill-color: #111111;
   font-size: 0.95rem;
 }
 
 .message-settings-heading p {
   margin-top: 0.18rem;
-  color: #6d625e;
+  color: #111111;
+  -webkit-text-fill-color: #111111;
   font-size: 0.68rem;
   line-height: 1.35;
 }
@@ -86533,12 +86563,14 @@ html body .portal-image-preview-backdrop {
 }
 
 .message-setting-row strong {
-  color: #2b2222;
+  color: #111111;
+  -webkit-text-fill-color: #111111;
   font-size: 0.78rem;
 }
 
 .message-setting-row small {
-  color: #6d625e;
+  color: #111111;
+  -webkit-text-fill-color: #111111;
   font-size: 0.64rem;
   line-height: 1.35;
 }
@@ -86620,8 +86652,20 @@ html body .portal-image-preview-backdrop {
 
 .floating-messenger-contact[role="button"] {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  grid-template-columns: 2rem minmax(0, 1fr) auto auto !important;
   align-items: center;
+  gap: 0.35rem !important;
+  padding-left: 0.45rem !important;
+}
+
+.floating-messenger-contact[role="button"] > .message-list-avatar-button,
+.floating-messenger-contact[role="button"] > .message-list-avatar-button .floating-messenger-contact-avatar {
+  width: 2rem !important;
+  min-width: 2rem !important;
+  max-width: 2rem !important;
+  height: 2rem !important;
+  min-height: 2rem !important;
+  max-height: 2rem !important;
 }
 
 .portal-composer-tagged-users,
@@ -86937,7 +86981,7 @@ html body > .floating-messenger.is-open .floating-messenger-chat-bar {
 html body > .floating-messenger.is-open .floating-messenger-chat-head {
   display: grid !important;
   grid-template-columns: 2.55rem minmax(0, 1fr) !important;
-  align-items: center !important;
+  align-items: start !important;
   justify-self: start !important;
   gap: 0.48rem !important;
   width: 100% !important;
@@ -86957,12 +87001,25 @@ html body > .floating-messenger.is-open .floating-messenger-chat-head .floating-
   margin: 0 !important;
 }
 
+html body > .floating-messenger.is-open .floating-messenger-chat-head > .message-profile-avatar-button,
+html body > .floating-messenger.is-open .floating-messenger-chat-head > .floating-messenger-chat-avatar {
+  align-self: start !important;
+  transform: translateY(-0.14rem) !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-chat-head .floating-messenger-chat-avatar.chat-avatar-default .chat-avatar-icon {
+  width: 88% !important;
+  height: 88% !important;
+  transform: translateY(-0.28rem) !important;
+}
+
 html body > .floating-messenger.is-open .floating-messenger-chat-copy {
   display: grid !important;
   align-content: center !important;
   gap: 0.12rem !important;
   min-width: 0 !important;
   background: transparent !important;
+  transform: translateY(0.16rem) !important;
 }
 
 html body > .floating-messenger.is-open .floating-messenger-chat-copy > strong {
@@ -87044,10 +87101,10 @@ html body #root .messenger-inbox .new-message-id-toggle:is(:hover, :focus, :focu
 
 .message-read-receipt {
   margin-left: auto;
-  color: #79c9b7 !important;
-  -webkit-text-fill-color: #79c9b7 !important;
-  font-size: 0.58rem !important;
-  font-weight: 800 !important;
+  color: inherit;
+  -webkit-text-fill-color: currentColor;
+  font-size: 0.58rem;
+  font-weight: 800;
 }
 
 /* Friends: mobile-only discovery tab and profile-match suggestions. */
@@ -87704,6 +87761,241 @@ html body #root .home-page .friend-invitations-section .friend-add-candidate-act
 @media (max-width: 420px) {
   html body #root .home-page .friend-invitations-section .friend-add-candidate-actions {
     padding-left: 0 !important;
+  }
+}
+
+/* High-refresh rendering, scoped media gestures, and application alternatives. */
+html {
+  scroll-behavior: smooth;
+}
+
+@supports (content-visibility: auto) {
+  html body #root :is(
+    .portal-post-card,
+    .portal-candidate-job-card,
+    .portal-job-summary-card,
+    .job-card
+  ) {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 28rem;
+  }
+}
+
+html body #root :is(
+  .portal-space-animation .star,
+  .portal-space-animation .astronaut,
+  .about-space-corner .jt-space-star,
+  .about-space-corner .jt-astronaut,
+  .portal-title-jello-text,
+  .guided-portal-tour-card
+) {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+html body .portal-image-preview-backdrop,
+html body .portal-image-preview-modal {
+  overscroll-behavior: none !important;
+}
+
+html body .portal-image-preview-stage,
+html body .portal-image-preview-stage img {
+  touch-action: none !important;
+  overscroll-behavior: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  -webkit-user-drag: none !important;
+}
+
+html body .portal-image-preview-stage img {
+  will-change: transform !important;
+}
+
+@media (pointer: coarse) {
+  html body .portal-image-preview-stage img {
+    transition: none !important;
+  }
+}
+
+/* Create uses the same compact, single-rail navigation language as Friends. */
+html body #root .home-page .resume-playground-tabs.has-four-tabs,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .resume-playground-tabs.has-four-tabs {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  align-items: stretch !important;
+  gap: 0.35rem !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0.42rem !important;
+  border: 1px solid rgba(112, 83, 52, 0.16) !important;
+  border-radius: 0.85rem !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  background-color: rgba(255, 255, 255, 0.72) !important;
+  background-image: none !important;
+  box-shadow: 0 0.65rem 1.8rem rgba(31, 41, 55, 0.06) !important;
+}
+
+html body #root .home-page .resume-playground-tabs.has-four-tabs > button,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .resume-playground-tabs.has-four-tabs > button {
+  box-sizing: border-box !important;
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  grid-template-rows: 0.95rem auto !important;
+  align-items: center !important;
+  justify-items: center !important;
+  gap: 0.16rem !important;
+  min-width: 0 !important;
+  min-height: 2.75rem !important;
+  padding: 0.32rem 0.14rem !important;
+  border: 1px solid rgba(112, 83, 52, 0.14) !important;
+  border-radius: 0.72rem !important;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+  color: #1f2937 !important;
+  -webkit-text-fill-color: #1f2937 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+html body #root .home-page .resume-playground-tabs.has-four-tabs > button:is(.is-active, :hover, :focus-visible),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .resume-playground-tabs.has-four-tabs > button:is(.is-active, :hover, :focus-visible) {
+  border-color: rgba(125, 48, 68, 0.3) !important;
+  background: rgba(247, 239, 231, 0.96) !important;
+  background-color: rgba(247, 239, 231, 0.96) !important;
+  color: #6b1428 !important;
+  -webkit-text-fill-color: #6b1428 !important;
+  box-shadow: inset 0 0 0 1px rgba(125, 48, 68, 0.08) !important;
+}
+
+html body #root .home-page .resume-playground-tabs.has-four-tabs > button::after {
+  display: none !important;
+  content: none !important;
+}
+
+html body #root .home-page .resume-playground-tabs.has-four-tabs .resume-playground-tab-icon {
+  display: grid !important;
+  place-items: center !important;
+  width: 0.88rem !important;
+  height: 0.88rem !important;
+  color: currentColor !important;
+  fill: currentColor !important;
+}
+
+html body #root .home-page .resume-playground-tabs.has-four-tabs > button > span:last-child {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  overflow: visible !important;
+  color: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+  font-size: clamp(0.48rem, 1.75vw, 0.66rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  text-overflow: clip !important;
+  white-space: nowrap !important;
+}
+
+/* Only the A4 sheets are forced to paper white; the editor chrome is untouched. */
+html body #root .resume-playground-editor-page-frame,
+html body #root .resume-playground-editor-page-layer,
+html body #root .resume-playground-editor-document,
+html[data-theme="light"] body[data-theme="light"] #root .resume-playground-editor-page-frame,
+html[data-theme="light"] body[data-theme="light"] #root .resume-playground-editor-page-layer,
+html[data-theme="light"] body[data-theme="light"] #root .resume-playground-editor-document {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+}
+
+html body .application-form-section .application-alternative-pill,
+html body .application-form-section .application-alternative-pill:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-width: 0;
+  min-height: 1.75rem;
+  margin-top: 0.55rem;
+  padding: 0.3rem 0.72rem;
+  border: 1px solid rgba(91, 17, 24, 0.28);
+  border-radius: 999px;
+  background: #fffaf4;
+  color: #5b1118;
+  box-shadow: none;
+  font-size: 0.72rem;
+  font-weight: 850;
+  line-height: 1;
+  transform: none;
+}
+
+html body .application-form-section .application-alternative-pill-maroon,
+html body .application-form-section .application-alternative-pill-maroon:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  border-color: #5b1118;
+  background: #5b1118;
+  color: #ffffff;
+}
+
+html body .application-alternative-row {
+  display: flex;
+  justify-content: flex-start;
+}
+
+html body .application-alternative-row + .application-profile-grid {
+  margin-top: 0.65rem;
+}
+
+html body :is(.application-workspace-modal, .portal-application-workspace) .application-uploaded-resume-preview {
+  max-height: 15rem;
+  padding: 0.6rem;
+}
+
+html body :is(.application-workspace-modal, .portal-application-workspace) .resume-file-preview-frame,
+html body :is(.application-workspace-modal, .portal-application-workspace) .resume-file-preview-image {
+  width: 100%;
+  min-height: 10.5rem;
+  height: 10.5rem;
+  max-height: 10.5rem;
+  background: #ffffff;
+  object-fit: contain;
+}
+
+html body :is(.application-workspace-modal, .portal-application-workspace) .application-uploaded-resume-meta {
+  margin-bottom: 0.45rem;
+  font-size: 0.72rem;
+}
+
+@media (max-width: 420px) {
+  html body #root .home-page .resume-playground-tabs.has-four-tabs {
+    gap: 0.2rem !important;
+    padding: 0.3rem !important;
+  }
+
+  html body #root .home-page .resume-playground-tabs.has-four-tabs > button {
+    min-height: 2.55rem !important;
+    padding-inline: 0.06rem !important;
+  }
+
+  html body #root .home-page .resume-playground-tabs.has-four-tabs > button > span:last-child {
+    font-size: clamp(0.41rem, 1.95vw, 0.52rem) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  html body #root *,
+  html body #root *::before,
+  html body #root *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
   }
 }
 
@@ -89080,5 +89372,257 @@ html body #root .floating-messenger-assistant-chat .portal-ai-reply-row-aligned 
   html body #root .home-page .blocks-manager-tab:is(:hover, :focus, :focus-visible, :active) {
     min-width: 5.15rem !important;
     max-width: 6.7rem !important;
+  }
+}
+
+/* July 20 Create rail sizing: readable two-line labels without leaving the rail. */
+html body #root .home-page .resume-playground-tabs.has-four-tabs > button,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .resume-playground-tabs.has-four-tabs > button {
+  grid-template-rows: 1.2rem minmax(1.55rem, auto) !important;
+  gap: 0.22rem !important;
+  min-height: 3.75rem !important;
+  padding: 0.42rem 0.24rem !important;
+}
+
+html body #root .home-page .resume-playground-tabs.has-four-tabs .resume-playground-tab-icon,
+html body #root .home-page .resume-playground-tabs.has-four-tabs .resume-playground-tab-icon svg {
+  width: 1.12rem !important;
+  height: 1.12rem !important;
+}
+
+html body #root .home-page .resume-playground-tabs.has-four-tabs > button > span:last-child,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .resume-playground-tabs.has-four-tabs > button > span:last-child {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 1.55rem !important;
+  overflow-wrap: normal !important;
+  font-size: clamp(0.61rem, 1.9vw, 0.72rem) !important;
+  letter-spacing: -0.015em !important;
+  line-height: 1.12 !important;
+  white-space: normal !important;
+}
+
+/* Add Friends search stays white through every mobile focus state. */
+html body #root .home-page .friend-invitations-section .friend-add-search input#friend-search,
+html body #root .home-page .friend-invitations-section .friend-add-search input#friend-search:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .friend-invitations-section .friend-add-search input#friend-search,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .friend-invitations-section .friend-add-search input#friend-search:is(:hover, :focus, :focus-visible, :active) {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+  color: #171717 !important;
+  -webkit-text-fill-color: #171717 !important;
+  caret-color: #681421 !important;
+}
+
+/* Messages light theme: warm paper body, brown chrome, white AI-aligned rows. */
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox,
+body[data-theme="light"] #root .home-page .messenger-inbox {
+  background: #fbf6ee !important;
+  background-color: #fbf6ee !important;
+  border-color: rgba(67, 37, 28, 0.16) !important;
+  color: #241713 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox > .manage-jobs-header,
+body[data-theme="light"] #root .home-page .messenger-inbox > .manage-jobs-header,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox > .messenger-chat-header,
+body[data-theme="light"] #root .home-page .messenger-inbox > .messenger-chat-header {
+  background: #43251c !important;
+  background-color: #43251c !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox > .manage-jobs-header {
+  box-sizing: border-box !important;
+  margin: -1.5rem -1.5rem 0 !important;
+  padding: 0.85rem 1rem !important;
+  border-radius: 1.05rem 1.05rem 0 0 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox > .manage-jobs-header h2 {
+  margin: 0 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox > .manage-jobs-header .portal-title-jello-text {
+  color: #3a2116 !important;
+  -webkit-text-fill-color: #3a2116 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox .message-workspace-nav,
+body[data-theme="light"] #root .home-page .messenger-inbox .message-workspace-nav {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox .inbox-thread-card.button-message,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox .inbox-thread-card.button-message:is(:hover, :focus, :focus-visible, :active),
+body[data-theme="light"] #root .home-page .messenger-inbox .inbox-thread-card.button-message,
+body[data-theme="light"] #root .home-page .messenger-inbox .inbox-thread-card.button-message:is(:hover, :focus, :focus-visible, :active) {
+  grid-template-columns: auto minmax(0, 1fr) auto auto !important;
+  min-height: 4.1rem !important;
+  max-height: 4.1rem !important;
+  padding: 0.55rem 0.68rem !important;
+  border: 1px solid rgba(67, 37, 28, 0.12) !important;
+  border-radius: 0.95rem !important;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #241713 !important;
+  transform: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox .inbox-thread-card .username,
+body[data-theme="light"] #root .home-page .messenger-inbox .inbox-thread-card .username {
+  color: #2b1c17 !important;
+  -webkit-text-fill-color: #2b1c17 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox .inbox-thread-card :is(.user-id, .thread-preview, time),
+body[data-theme="light"] #root .home-page .messenger-inbox .inbox-thread-card :is(.user-id, .thread-preview, time) {
+  color: #75665e !important;
+  -webkit-text-fill-color: #75665e !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox .inbox-thread-card .thread-preview,
+body[data-theme="light"] #root .home-page .messenger-inbox .inbox-thread-card .thread-preview,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox .inbox-thread-card .thread-time,
+body[data-theme="light"] #root .home-page .messenger-inbox .inbox-thread-card .thread-time {
+  display: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox > .messenger-chat-header,
+body[data-theme="light"] #root .home-page .messenger-inbox > .messenger-chat-header {
+  margin: -1.5rem -1.5rem 0 !important;
+  padding: 0.85rem 1rem !important;
+  border-radius: 1.05rem 1.05rem 0 0 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox .messenger-chat-head :is(h2, p),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox > .messenger-chat-header :is(button, svg),
+body[data-theme="light"] #root .home-page .messenger-inbox .messenger-chat-head :is(h2, p),
+body[data-theme="light"] #root .home-page .messenger-inbox > .messenger-chat-header :is(button, svg) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox .messenger-thread,
+body[data-theme="light"] #root .home-page .messenger-inbox .messenger-thread {
+  background: #fbf6ee !important;
+  background-color: #fbf6ee !important;
+  border-radius: 0 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox .message-bubble.sent,
+body[data-theme="light"] #root .home-page .messenger-inbox .message-bubble.sent {
+  display: flex !important;
+  flex-direction: column !important;
+  border-color: #c8baa4 !important;
+  border-radius: 1rem !important;
+  background: linear-gradient(145deg, #fff8ea 0%, #f3e4cc 54%, #e8d6ba 100%) !important;
+  background-color: #f3e4cc !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 0.25rem 0.7rem rgba(77, 50, 31, 0.08) !important;
+  color: #681421 !important;
+  -webkit-text-fill-color: #681421 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox .message-bubble.sent .message-body,
+body[data-theme="light"] #root .home-page .messenger-inbox .message-bubble.sent .message-body {
+  order: 1 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox .message-bubble.sent .message-meta,
+body[data-theme="light"] #root .home-page .messenger-inbox .message-bubble.sent .message-meta {
+  order: 2 !important;
+  margin: 0.45rem 0 0 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox .message-bubble.sent :is(.message-meta, .message-body, p, li, span, strong, em, time),
+body[data-theme="light"] #root .home-page .messenger-inbox .message-bubble.sent :is(.message-meta, .message-body, p, li, span, strong, em, time) {
+  color: #681421 !important;
+  -webkit-text-fill-color: #681421 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox .message-bubble.received,
+body[data-theme="light"] #root .home-page .messenger-inbox .message-bubble.received {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  border-color: rgba(67, 37, 28, 0.1) !important;
+  color: #171717 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox .message-bubble.received :is(.message-meta, .message-body, p, li, span, strong, em, time),
+body[data-theme="light"] #root .home-page .messenger-inbox .message-bubble.received :is(.message-meta, .message-body, p, li, span, strong, em, time) {
+  color: #171717 !important;
+  -webkit-text-fill-color: #171717 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox .messenger-compose-card,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox .messenger-compose-card :is(.rich-message-editor, .messageBox),
+body[data-theme="light"] #root .home-page .messenger-inbox .messenger-compose-card,
+body[data-theme="light"] #root .home-page .messenger-inbox .messenger-compose-card :is(.rich-message-editor, .messageBox) {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  border-color: rgba(67, 37, 28, 0.18) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox .messenger-compose-card .rich-message-input,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox .messenger-compose-card .rich-message-input :is(p, span, strong, em),
+body[data-theme="light"] #root .home-page .messenger-inbox .messenger-compose-card .rich-message-input,
+body[data-theme="light"] #root .home-page .messenger-inbox .messenger-compose-card .rich-message-input :is(p, span, strong, em) {
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  caret-color: #681421 !important;
+}
+
+@media (max-width: 420px) {
+  html body #root .home-page .resume-playground-tabs.has-four-tabs > button {
+    min-height: 3.6rem !important;
+    padding-inline: 0.14rem !important;
+  }
+
+  html body #root .home-page .resume-playground-tabs.has-four-tabs > button > span:last-child {
+    font-size: clamp(0.57rem, 2.35vw, 0.64rem) !important;
+  }
+}
+
+/* Canonical light portal shell: one dark off-white surface in both portals. */
+html[data-theme="light"] body #root .home-page > .dashboard-container > .main-content.mobile-dashboard-section-panel,
+html body[data-theme="light"] #root .home-page > .dashboard-container > .main-content.mobile-dashboard-section-panel {
+  background: #ded7cc !important;
+  background-color: #ded7cc !important;
+  background-image: none !important;
+  border-color: rgba(104, 20, 33, 0.12) !important;
+}
+
+/* Dashboard and Candidates use more of the rounded shell's available width. */
+html body #root .home-page .portal-section-transition-shell[data-section="dashboard"],
+html body #root .home-page .portal-section-transition-shell[data-section="view-candidates"],
+html body #root .home-page .portal-section-transition-shell[data-section="talent-pool"] {
+  box-sizing: border-box !important;
+  width: calc(100% + 1rem) !important;
+  max-width: none !important;
+  margin-inline: -0.5rem !important;
+  border-radius: 1rem !important;
+}
+
+html body #root .home-page .portal-section-transition-shell[data-section="dashboard"] > .portal-default-landing,
+html body #root .home-page .portal-section-transition-shell[data-section="view-candidates"] > .talent-pool-container.candidate-view-candidates,
+html body #root .home-page .portal-section-transition-shell[data-section="talent-pool"] > .talent-pool-container {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-inline: 0 !important;
+}
+
+@media (min-width: 769px) {
+  html body #root .home-page .portal-section-transition-shell[data-section="dashboard"],
+  html body #root .home-page .portal-section-transition-shell[data-section="view-candidates"],
+  html body #root .home-page .portal-section-transition-shell[data-section="talent-pool"] {
+    width: calc(100% + 1.4rem) !important;
+    margin-inline: -0.7rem !important;
   }
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AnimatedDeleteButton from './AnimatedDeleteButton';
 import ProfileAvatar from './ProfileAvatar';
+import ResumeFilePreview from './ResumeFilePreview';
 import confirmAction from '../utils/confirmAction';
 
 const BookmarkedApplications = ({ companyId, onBack, onFooterBack }) => {
@@ -104,7 +105,7 @@ const BookmarkedApplications = ({ companyId, onBack, onFooterBack }) => {
                     </div>
                 </div>
                 <div className="candidate-profile-body">
-                    <div className="profile-section"><h3>Submitted Cover Letter</h3>{renderCoverLetter(selectedApplication.coverLetterHtml)}</div>
+                    <div className="profile-section"><h3>Submitted Cover Letter</h3>{selectedApplication.uploadedCoverLetter ? <ResumeFilePreview resume={selectedApplication.uploadedCoverLetter} className="application-cover-letter-preview application-uploaded-resume-preview-readonly" /> : renderCoverLetter(selectedApplication.coverLetterHtml)}</div>
                     <div className="profile-section"><h3>Message</h3><p>{selectedApplication.message || 'No message included.'}</p></div>
                     <div className="profile-section"><h3>Skills</h3><div className="skills-container">{Array.isArray(candidate.skills) && candidate.skills.length > 0 ? candidate.skills.map((skill, index) => <span key={index} className="skill-tag">{skill}</span>) : <p>No skills listed</p>}</div></div>
                     <div className="profile-section"><h3>Education</h3>{Array.isArray(candidate.education) && candidate.education.length > 0 ? <ul className="profile-list">{candidate.education.map((item, index) => <li key={index}>{item}</li>)}</ul> : <p>No education information available</p>}</div>
@@ -144,7 +145,7 @@ const BookmarkedApplications = ({ companyId, onBack, onFooterBack }) => {
                         <p><strong>Applied On:</strong> {new Date(selectedApplication.createdAt).toLocaleDateString()}</p>
                     </div>
                     <div className="profile-section"><h3>Candidate Message</h3><div className="application-message-preview"><p>{selectedApplication.message || 'No message included.'}</p></div></div>
-                    <div className="profile-section"><h3>Submitted Cover Letter</h3>{renderCoverLetter(selectedApplication.coverLetterHtml)}</div>
+                    <div className="profile-section"><h3>Submitted Cover Letter</h3>{selectedApplication.uploadedCoverLetter ? <ResumeFilePreview resume={selectedApplication.uploadedCoverLetter} className="application-cover-letter-preview application-uploaded-resume-preview-readonly" /> : renderCoverLetter(selectedApplication.coverLetterHtml)}</div>
                     <div className="section-footer-nav"><button className="back-button" onClick={() => setSelectedApplication(null)}>Back</button></div>
                 </div>
             </div>

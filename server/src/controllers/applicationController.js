@@ -177,7 +177,7 @@ const buildUploadedResume = (resumeInput = null) => {
 
 const createApplication = async (req, res) => {
     try {
-        const { jobId, userId, message, coverLetterHtml, profileSnapshot, uploadedResume, draftId } = req.body;
+        const { jobId, userId, message, coverLetterHtml, uploadedCoverLetter, profileSnapshot, uploadedResume, draftId } = req.body;
         
         
         if (!jobId || !userId) {
@@ -218,7 +218,8 @@ const createApplication = async (req, res) => {
             message: message || '',
             coverLetterHtml: sanitizeCoverLetterHtml(coverLetterHtml || ''),
             coverLetterText: stripHtml(coverLetterHtml || ''),
-            profileSnapshot: buildProfileSnapshot(profileSnapshot, user, baseProfile),
+            uploadedCoverLetter: buildUploadedResume(uploadedCoverLetter),
+            profileSnapshot: uploadedResume ? null : buildProfileSnapshot(profileSnapshot, user, baseProfile),
             uploadedResume: buildUploadedResume(uploadedResume),
             status: 'Submitted'
         });

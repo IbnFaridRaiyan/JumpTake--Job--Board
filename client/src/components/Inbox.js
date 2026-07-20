@@ -621,7 +621,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
     return (
         <div className="inbox-container messenger-inbox">
             <div className="manage-jobs-header">
-                <h2>Inbox</h2>
+                <h2><span className="portal-title-jello-text">Messages</span></h2>
             </div>
 
             <MessageWorkspaceNav activeTab={activeTab} onChange={(tab) => {
@@ -668,7 +668,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                 <div className="loading-spinner">Loading inbox...</div>
             ) : visibleThreads.length === 0 ? (
                 <div className="no-jobs-message">
-                    <h3>No {activeTab === 'new' ? 'messages' : activeTab} here</h3>
+                    <h3>No {activeTab === 'new' ? 'messages' : activeTab === 'blocked' ? 'blocked contacts' : activeTab} here</h3>
                     <p>{activeTab === 'requests' ? 'Introductory messages from people outside your friends list will appear here.' : activeTab === 'blocked' ? 'Contacts blocked only in Messages will appear here.' : 'Conversations for this section will appear here.'}</p>
                 </div>
             ) : (

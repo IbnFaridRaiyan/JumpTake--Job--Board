@@ -97,7 +97,10 @@ const createJob = async (req, res) => {
         
         await job.save();
 
-        const candidateUsers = await User.find({ jobSeekerId: { $exists: true, $ne: null } }).select('_id').limit(200);
+        const candidateUsers = await User.find({
+            jobSeekerId: { $exists: true, $ne: null },
+            'notificationPreferences.jobRecommendations': { $ne: false }
+        }).select('_id').limit(200);
         await Promise.allSettled(candidateUsers.map((candidateUser) => (
             createNotification({
                 recipientType: 'candidate',

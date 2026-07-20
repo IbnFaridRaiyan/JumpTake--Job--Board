@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const User = require('../models/User');
 const Employer = require('../models/Employer');
 const JobSeeker = require('../models/JobSeeker');
+const { createSecurityNotification } = require('../utils/securityNotifications');
 
 const DEFAULT_RESET_EXPIRY_MINUTES = 60;
 
@@ -83,6 +84,15 @@ const requestPasswordReset = async (req, res) => {
         account.passwordResetExpiresAt = new Date(Date.now() + getResetExpiryMs());
         await account.save();
 
+        const normalizedType = normalizeAccountType(resolvedAccountType);
+        await createSecurityNotification({
+            recipientType: normalizedType,
+            recipientId: normalizedType === 'employer' ? account.companyId : account._id,
+            title: 'Password reset requested',
+            message: 'A password reset was requested for your JumpTake account. If this was not you, secure your email account.',
+            payload: { event: 'password-reset-requested' }
+        });
+
         return res.status(200).json({
             message: 'Password reset link created successfully.',
             resetUrl: buildResetUrl({
@@ -158,6 +168,15 @@ const confirmPasswordReset = async (req, res) => {
         account.passwordResetToken = null;
         account.passwordResetExpiresAt = null;
         await account.save();
+
+        const normalizedType = normalizeAccountType(accountType);
+        await createSecurityNotification({
+            recipientType: normalizedType,
+            recipientId: normalizedType === 'employer' ? account.companyId : account._id,
+            title: 'Password reset completed',
+            message: 'Your JumpTake password was reset successfully. If this was not you, contact support and secure your email account.',
+            payload: { event: 'password-reset' }
+        });
 
         return res.status(200).json({
             message: 'Password reset successfully'

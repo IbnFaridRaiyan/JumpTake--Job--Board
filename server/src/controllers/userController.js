@@ -3,6 +3,7 @@ const JobSeeker = require('../models/JobSeeker');
 const Application = require('../models/Application');
 const jwt = require('jsonwebtoken');
 const { generateJumpTakeId } = require('../utils/jumptakeId');
+const { createSecurityNotification, recordLogin } = require('../utils/securityNotifications');
 
 
 const JWT_SECRET = process.env.JWT_SECRET || 'jumptake-jwt-secret';
@@ -98,6 +99,14 @@ const login = async (req, res) => {
             JWT_SECRET,
             { expiresIn: '1d' } 
         );
+
+        await recordLogin({
+            account: user,
+            recipientType: 'candidate',
+            recipientId: user._id,
+            req,
+            securityAlerts: user.notificationPreferences?.securityAlerts !== false
+        });
         
      
         return res.status(200).json({
@@ -143,8 +152,19 @@ const updateEmail = async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
         
+        const previousEmail = user.email;
         user.email = email;
         await user.save();
+
+        if (user.notificationPreferences?.securityAlerts !== false && previousEmail !== user.email) {
+            await createSecurityNotification({
+                recipientType: 'candidate',
+                recipientId: user._id,
+                title: 'Email address changed',
+                message: `Your JumpTake sign-in email was changed to ${user.email}. If this was not you, secure your account now.`,
+                payload: { event: 'email-changed' }
+            });
+        }
         
         return res.status(200).json({
             message: 'Email updated successfully',
@@ -188,6 +208,16 @@ const updatePassword = async (req, res) => {
      
         user.password = newPassword;
         await user.save();
+
+        if (user.notificationPreferences?.securityAlerts !== false) {
+            await createSecurityNotification({
+                recipientType: 'candidate',
+                recipientId: user._id,
+                title: 'Password changed',
+                message: 'Your JumpTake password was changed. If this was not you, reset it immediately.',
+                payload: { event: 'password-changed' }
+            });
+        }
         
         return res.status(200).json({
             message: 'Password updated successfully'

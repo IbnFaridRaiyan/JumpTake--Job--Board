@@ -2,6 +2,53 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 const AUTO_ADVANCE_MS = 7000;
+const AI_DEMO_SECTION_ID = 'messages-ai-demo';
+
+const CANDIDATE_AI_DEMOS = [
+    {
+        label: 'AI resume demo',
+        prompt: 'Create a professional resume using the experience and skills in my JumpTake profile.',
+        description: 'This request shows how JumpTake AI can open Create, start a resume draft from your profile context, and leave the final editing decisions with you.'
+    },
+    {
+        label: 'AI job-search demo',
+        prompt: 'Find software engineer jobs that match my skills and experience.',
+        description: 'This request shows how the assistant can help you move toward relevant job discovery without manually searching through every section.'
+    },
+    {
+        label: 'AI post demo',
+        prompt: 'Create a professional post about a career achievement I am proud of.',
+        description: 'This request shows how JumpTake AI can prepare a post draft and open the Home composer so you can review it before publishing.'
+    },
+    {
+        label: 'AI Settings demo',
+        prompt: 'Open Settings and show me where to change my notification preferences.',
+        description: 'This request shows how plain-language navigation can take you directly to Settings and help you find the preference you need.'
+    }
+];
+
+const EMPLOYER_AI_DEMOS = [
+    {
+        label: 'AI candidate-search demo',
+        prompt: 'Find candidates with software engineering experience for my open role.',
+        description: 'This request demonstrates how JumpTake AI can guide an employer toward the Talent Pool and a more focused candidate search.'
+    },
+    {
+        label: 'AI post demo',
+        prompt: 'Create an employer post announcing our newest job opportunity.',
+        description: 'This request demonstrates how the assistant can prepare a professional employer post and open the composer for review.'
+    },
+    {
+        label: 'AI document demo',
+        prompt: 'Create a professional hiring document for a software engineer role.',
+        description: 'This request demonstrates how JumpTake AI can open Create Document with a useful starting draft while keeping the employer in control.'
+    },
+    {
+        label: 'AI Settings demo',
+        prompt: 'Open Settings and show me the security and notification options.',
+        description: 'This request demonstrates direct, plain-language navigation to the account controls an employer needs.'
+    }
+];
 
 const CANDIDATE_TOUR_SECTIONS = [
     ['job-feed', 'Home', 'Stay visible in your professional community, discover fresh opportunities, and learn from other people’s ideas in one place. Consistent participation can grow your reach and lead to valuable connections.'],
@@ -21,10 +68,11 @@ const CANDIDATE_TOUR_SECTIONS = [
     ['resume-playground', 'Create', 'Turn your experience and ideas into polished resumes and documents faster. AI-supported starting points reduce repetitive writing while leaving you in control of the final result.'],
     ['blocks', 'Blocks', 'Protect your attention and wellbeing by shaping a safer, more relevant environment, leaving more energy for constructive people and useful content.'],
     ['inbox', 'Messages', 'Build real professional relationships through focused conversation. Keeping communication organized makes follow-ups faster and helps promising introductions become lasting connections.'],
+    [AI_DEMO_SECTION_ID, 'JumpTake AI in Messages', 'Ask JumpTake AI inside Messages to find jobs, create a resume or post, and open areas such as Settings. The following prompts are demonstrations and will not submit or publish anything.', CANDIDATE_AI_DEMOS],
     ['progress-check', 'Progress Check', 'Use evidence from your activity to understand what creates momentum, adjust your strategy earlier, and invest time in the actions most likely to improve results.'],
     ['settings', 'Settings', 'Shape a secure, focused experience around your preferences so JumpTake supports your goals without creating unnecessary interruptions.'],
     ['about-jumptake', 'About JumpTake', 'Return here whenever you want to refresh your understanding, discover overlooked value, or help your next career move start with greater confidence.']
-].map(([id, title, description]) => ({ id, title, description }));
+].map(([id, title, description, demoPrompts]) => ({ id, title, description, demoPrompts }));
 
 const EMPLOYER_TOUR_SECTIONS = [
     ['home-feed', 'Home', 'Strengthen employer visibility, share ideas and progress, and engage with the professional community so more relevant people recognize your organization.'],
@@ -39,11 +87,12 @@ const EMPLOYER_TOUR_SECTIONS = [
     ['notifications', 'Notifications', 'Respond to candidate interest and hiring changes sooner, protecting momentum and creating a more attentive experience for potential employees.'],
     ['create-document', 'Create Document', 'Produce polished hiring documents faster with reusable and AI-supported starting points, reducing repetitive writing across the team.'],
     ['inbox', 'Messages', 'Build trust through timely, organized candidate communication and reduce the chance that valuable conversations are delayed or forgotten.'],
+    [AI_DEMO_SECTION_ID, 'JumpTake AI in Messages', 'Ask JumpTake AI inside Messages to find candidates, create posts or documents, and open areas such as Settings. The following prompts are demonstrations and will not submit or publish anything.', EMPLOYER_AI_DEMOS],
     ['company-profile', 'Company Profile', 'Give candidates a credible reason to choose you by presenting a clear employer identity, improving trust before they apply or accept an interview.'],
     ['application-tracking', 'Application Tracking', 'Recognize delays and conversion patterns early, then focus time and resources where they can improve hiring speed and candidate experience most.'],
     ['settings', 'Settings', 'Keep employer access secure and communication focused, allowing the team to work efficiently without unnecessary interruptions.'],
     ['about-jumptake', 'About JumpTake', 'Return here to refresh your team’s understanding and uncover more value from the platform as your hiring needs evolve.']
-].map(([id, title, description]) => ({ id, title, description }));
+].map(([id, title, description, demoPrompts]) => ({ id, title, description, demoPrompts }));
 
 const isVisibleControl = (element) => {
     if (!element || element.closest('.guided-portal-tour')) {
@@ -136,6 +185,31 @@ const GuidedPortalTour = ({ mode = 'candidate' }) => {
             return undefined;
         }
 
+        if (section.id === AI_DEMO_SECTION_ID) {
+            const messengerEvent = mode === 'employer'
+                ? 'jumptake-open-employer-messenger'
+                : 'jumptake-open-candidate-messenger';
+            setStage('overview');
+            setControlIndex(0);
+            setControls((section.demoPrompts || []).map((demo) => ({
+                ...demo,
+                selector: '.floating-messenger-assistant-chat .public-ai-reply-field textarea'
+            })));
+            window.dispatchEvent(new CustomEvent(messengerEvent, {
+                detail: { assistant: true, guidedTour: true }
+            }));
+            const revealTimer = window.setTimeout(() => {
+                setControls((current) => [...current]);
+            }, 250);
+
+            return () => {
+                window.clearTimeout(revealTimer);
+                window.dispatchEvent(new CustomEvent(messengerEvent, {
+                    detail: { tourClose: true }
+                }));
+            };
+        }
+
         window.dispatchEvent(new CustomEvent('jumptake-ai-open-section', {
             detail: { mode, section: section.id }
         }));
@@ -173,6 +247,12 @@ const GuidedPortalTour = ({ mode = 'candidate' }) => {
         if (stage === 'complete') {
             return null;
         }
+        if (section.id === AI_DEMO_SECTION_ID) {
+            if (stage === 'overview') {
+                return document.querySelector('.floating-messenger-panel');
+            }
+            return document.querySelector(controls[controlIndex]?.selector || '.floating-messenger-assistant-chat .public-ai-reply-field textarea');
+        }
         if (stage === 'navigation') {
             return document.querySelector(`[data-tour-id="nav-${section.id}"]`)
                 || document.querySelector(`.portal-section-transition-shell[data-section="${section.id}"]`);
@@ -181,6 +261,19 @@ const GuidedPortalTour = ({ mode = 'candidate' }) => {
             return document.querySelector(`.portal-section-transition-shell[data-section="${section.id}"]`);
         }
         return controls[controlIndex]?.element || null;
+    }, [active, controlIndex, controls, section, stage]);
+
+    useEffect(() => {
+        if (!active || section?.id !== AI_DEMO_SECTION_ID || stage !== 'control') {
+            return;
+        }
+
+        const prompt = controls[controlIndex]?.prompt;
+        if (prompt) {
+            window.dispatchEvent(new CustomEvent('jumptake-assistant-demo-prompt', {
+                detail: { prompt }
+            }));
+        }
     }, [active, controlIndex, controls, section, stage]);
 
     useEffect(() => {
@@ -260,6 +353,13 @@ const GuidedPortalTour = ({ mode = 'candidate' }) => {
             return;
         }
         if (stage === 'overview') {
+            if (section?.id === AI_DEMO_SECTION_ID && sectionIndex > 0) {
+                setSectionIndex((index) => index - 1);
+                setStage('navigation');
+                setControlIndex(0);
+                setControls([]);
+                return;
+            }
             setStage('navigation');
             return;
         }
@@ -269,7 +369,7 @@ const GuidedPortalTour = ({ mode = 'candidate' }) => {
             setControlIndex(0);
             setControls([]);
         }
-    }, [controlIndex, sectionIndex, stage]);
+    }, [controlIndex, section, sectionIndex, stage]);
 
     useEffect(() => {
         if (!active || stage === 'complete') {
@@ -300,8 +400,13 @@ const GuidedPortalTour = ({ mode = 'candidate' }) => {
     const isComplete = stage === 'complete';
     const canGoBack = !isComplete && (sectionIndex > 0 || stage !== 'navigation');
     const hasNavigationTarget = Boolean(document.querySelector(`[data-tour-id="nav-${section.id}"]`));
+    const isAiDemo = section.id === AI_DEMO_SECTION_ID;
     const title = isComplete
         ? 'Your JumpTake journey starts here'
+        : isAiDemo && stage === 'overview'
+            ? section.title
+            : isAiDemo && stage === 'control'
+                ? control?.label || section.title
         : stage === 'navigation'
         ? (hasNavigationTarget ? `${section.title} navigation` : `Opening ${section.title}`)
         : stage === 'overview'
@@ -309,6 +414,10 @@ const GuidedPortalTour = ({ mode = 'candidate' }) => {
             : control?.label || section.title;
     const description = isComplete
         ? "Happy JumpTake, let's get it going now!"
+        : isAiDemo && stage === 'overview'
+            ? section.description
+            : isAiDemo && stage === 'control'
+                ? `${control?.description || section.description} Demo prompt: "${control?.prompt || ''}"`
         : stage === 'navigation'
         ? (hasNavigationTarget
             ? `Moving into ${section.title} now. Keeping this opportunity close helps you protect momentum and spend more time on meaningful progress.`
@@ -333,7 +442,7 @@ const GuidedPortalTour = ({ mode = 'candidate' }) => {
                     <p>{description}</p>
                     <div className="guided-tour-progress-copy">
                         <span>{isComplete ? 'Tour complete' : `Section ${sectionIndex + 1} of ${sections.length}`}</span>
-                        <span>{isComplete ? 'Ready to begin' : stage === 'control' && controls.length ? `Control ${controlIndex + 1} of ${controls.length}` : 'Overview'}</span>
+                        <span>{isComplete ? 'Ready to begin' : stage === 'control' && controls.length ? `${isAiDemo ? 'Demo' : 'Control'} ${controlIndex + 1} of ${controls.length}` : 'Overview'}</span>
                     </div>
                     <div className={`guided-tour-progress ${isComplete ? 'is-complete' : ''}`}><span key={`${sectionIndex}-${stage}-${controlIndex}`} /></div>
                     {isComplete ? (

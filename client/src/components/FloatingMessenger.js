@@ -311,6 +311,8 @@ const FloatingMessenger = ({
     useEffect(() => {
         if (open || typeof document === 'undefined') return undefined;
         let animationFrame = 0;
+        let updateTimer = 0;
+        let lastToneUpdateAt = 0;
 
         const parseSurface = (element) => {
             const color = window.getComputedStyle(element).backgroundColor;
@@ -323,6 +325,7 @@ const FloatingMessenger = ({
 
         const updateTriggerTone = () => {
             animationFrame = 0;
+            lastToneUpdateAt = performance.now();
             const rect = triggerRef.current?.getBoundingClientRect();
             if (!rect) return;
             const x = Math.min(window.innerWidth - 1, Math.max(0, rect.left + rect.width / 2));
@@ -338,16 +341,29 @@ const FloatingMessenger = ({
         };
 
         const scheduleUpdate = () => {
-            if (!animationFrame) animationFrame = window.requestAnimationFrame(updateTriggerTone);
+            if (animationFrame || updateTimer) return;
+
+            const elapsed = performance.now() - lastToneUpdateAt;
+            if (elapsed < 80) {
+                updateTimer = window.setTimeout(() => {
+                    updateTimer = 0;
+                    animationFrame = window.requestAnimationFrame(updateTriggerTone);
+                }, 80 - elapsed);
+                return;
+            }
+
+            animationFrame = window.requestAnimationFrame(updateTriggerTone);
         };
 
         scheduleUpdate();
         document.addEventListener('scroll', scheduleUpdate, true);
         window.addEventListener('resize', scheduleUpdate);
         const observer = new MutationObserver(scheduleUpdate);
-        observer.observe(document.body, { attributes: true, attributeFilter: ['class', 'style', 'data-theme'], subtree: true });
+        observer.observe(document.body, { attributes: true, attributeFilter: ['class', 'style', 'data-theme'] });
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'style', 'data-theme'] });
         return () => {
             if (animationFrame) window.cancelAnimationFrame(animationFrame);
+            if (updateTimer) window.clearTimeout(updateTimer);
             document.removeEventListener('scroll', scheduleUpdate, true);
             window.removeEventListener('resize', scheduleUpdate);
             observer.disconnect();
@@ -562,6 +578,17 @@ const FloatingMessenger = ({
 
     useEffect(() => {
         const handleOpenEvent = (event) => {
+            if (event?.detail?.tourClose === true) {
+                setOpen(false);
+                setSelectedThreadId('');
+                setPendingContact(null);
+                setReplyHtml('');
+                setMessage('');
+                setError('');
+                assistantDirectOpenRef.current = false;
+                return;
+            }
+
             const shouldOpenAssistant = event?.detail?.assistant === true;
             const nextContact = event?.detail?.contact && typeof event.detail.contact === 'object'
                 ? event.detail.contact
@@ -1081,7 +1108,7 @@ const FloatingMessenger = ({
                                         <CloseIcon />
                                     </button>
                                 )}
-                                <h2>Messages</h2>
+                                <h2><span className="floating-messenger-title-pill">Messages</span></h2>
                             </div>
 
                             <MessageWorkspaceNav
@@ -1097,6 +1124,7 @@ const FloatingMessenger = ({
                                 compact
                             />
 
+                            <div className="floating-messenger-contact-body">
                             <div className="floating-messenger-contact-list">
                                 {activeTab === 'new' && <button
                                     type="button"
@@ -1124,8 +1152,15 @@ const FloatingMessenger = ({
                                         <p>Loading messages...</p>
                                     </div>
                                 ) : visibleThreads.length === 0 ? (
-                                    <div className="floating-messenger-empty">
-                                        <p>No {activeTab === 'new' ? 'messages' : activeTab} here</p>
+                                    <div className="floating-messenger-empty message-workspace-empty-state">
+                                        <div className="empty-state-image" aria-hidden="true">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M4 5h16l2 10v4H2v-4L4 5Z" />
+                                                <path d="M2 15h6l1.5 2h5L16 15h6" />
+                                                <path d="M9 9h6" />
+                                            </svg>
+                                        </div>
+                                        <h3>No {activeTab === 'new' ? 'messages' : activeTab === 'blocked' ? 'blocked contacts' : activeTab} here</h3>
                                     </div>
                                 ) : (
                                     <>
@@ -1171,6 +1206,7 @@ const FloatingMessenger = ({
                                     {'<'}
                                 </button>
                             )}
+                            </div>
                         </aside>
 
                         <section className="floating-messenger-chat">
@@ -1256,12 +1292,14 @@ const FloatingMessenger = ({
                                                 key={item._id}
                                                 className={`floating-messenger-message ${isOwnMessage(selectedThread, item) ? 'is-own' : ''}`}
                                             >
+                                                <strong className="floating-messenger-message-sender">
+                                                    {getMessageSenderLabel(selectedThread, item)}
+                                                </strong>
+                                                <div className="floating-messenger-message-body" dangerouslySetInnerHTML={{ __html: item.bodyHtml }} />
                                                 <div className="floating-messenger-message-meta">
-                                                    <strong>{getMessageSenderLabel(selectedThread, item)}</strong>
                                                     <span>{formatDateTime(item.createdAt)}</span>
                                                     {isOwnMessage(selectedThread, item) && item.readReceipt ? <span className="message-read-receipt">Read</span> : null}
                                                 </div>
-                                                <div className="floating-messenger-message-body" dangerouslySetInnerHTML={{ __html: item.bodyHtml }} />
                                             </div>
                                         ))}
                                     </div>

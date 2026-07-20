@@ -189,7 +189,7 @@ const resolveBaseProfile = async (userId) => {
 
 const createOrUpdateDraftApplication = async (req, res) => {
     try {
-        const { draftId, jobId, userId, message, coverLetterHtml, profileSnapshot, uploadedResume } = req.body;
+        const { draftId, jobId, userId, message, coverLetterHtml, uploadedCoverLetter, profileSnapshot, uploadedResume } = req.body;
 
         if (!jobId || !userId) {
             return res.status(400).json({ error: 'Job ID and user ID are required' });
@@ -209,7 +209,8 @@ const createOrUpdateDraftApplication = async (req, res) => {
         nextDraft.message = message || '';
         nextDraft.coverLetterHtml = sanitizeCoverLetterHtml(coverLetterHtml || '');
         nextDraft.coverLetterText = stripHtml(coverLetterHtml || '');
-        nextDraft.profileSnapshot = buildProfileSnapshot(profileSnapshot, user, baseProfile);
+        nextDraft.uploadedCoverLetter = buildUploadedResume(uploadedCoverLetter);
+        nextDraft.profileSnapshot = uploadedResume ? null : buildProfileSnapshot(profileSnapshot, user, baseProfile);
         nextDraft.uploadedResume = buildUploadedResume(uploadedResume);
 
         await nextDraft.save();

@@ -65,6 +65,15 @@ const EmployerSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
+  lastLoginIp: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  lastLoginAt: {
+    type: Date,
+    default: null
+  },
   messagePreferences: {
     workInSilence: {
       type: Boolean,

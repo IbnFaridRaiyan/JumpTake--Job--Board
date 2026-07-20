@@ -9,6 +9,7 @@ import TalentPool from './TalentPool';
 import MessageCompanyProfileModal from './MessageCompanyProfileModal';
 import { apiUrl } from '../utils/apiUrl';
 import confirmAction from '../utils/confirmAction';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const stripHtml = (html = '') => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 const hasMessageContent = (html = '') => stripHtml(html).length > 0 || /<img\b/i.test(html);
@@ -665,7 +666,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
             {activeTab === 'settings' ? <MessageSettings mode={mode} companyId={companyId} /> : null}
 
             {!['compose', 'settings'].includes(activeTab) && (loading ? (
-                <div className="loading-spinner">Loading inbox...</div>
+                <PortalPageSkeleton compact label="Loading messages" />
             ) : visibleThreads.length === 0 ? (
                 <div className="no-jobs-message">
                     <h3>No {activeTab === 'new' ? 'messages' : activeTab === 'blocked' ? 'blocked contacts' : activeTab} here</h3>

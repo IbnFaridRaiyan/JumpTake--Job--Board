@@ -12,6 +12,7 @@ import defaultJobPostAvatar from './media/default-job-post-avatar.png';
 import defaultProfileMaleImage from './media/default-profile-male.png';
 import defaultProfileFemaleImage from './media/default-profile-female.png';
 import defaultTailorCoverImage from './media/default-tailor-cover.png';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const WORK_NEWS_STORAGE_KEY = 'jumptakeWorkNewsPosts';
 const TALENT_STORIES_STORAGE_KEY = 'jumptakeTalentStoriesPosts';
@@ -7299,28 +7300,33 @@ const PortalHomeFeed = ({
                 onScroll={handleFeedScroll}
             >
                 <div key={activeTab} className="portal-home-tab-panel">
-                    {feedLoading ? <div className="loading-spinner">Loading live feed...</div> : null}
-                    {activeTab === 'work-news' && renderPostList(workNewsPosts, WORK_NEWS_STORAGE_KEY, 'work')}
-                    {activeTab === 'job-posts' && renderCandidateJobPosts()}
-                    {activeTab === 'talent-stories' && (
+                    {feedLoading ? (
+                        <PortalPageSkeleton compact label="Loading posts" />
+                    ) : (
                         <>
-                            <div className="portal-create-story-action-row">
-                                <button
-                                    type="button"
-                                    className="portal-create-story-button"
-                                    onClick={openCreateStoryModal}
-                                >
-                                    Create <strong>+</strong>
-                                </button>
-                            </div>
-                            {renderPostList(talentStories, TALENT_STORIES_STORAGE_KEY, 'talent')}
+                            {activeTab === 'work-news' && renderPostList(workNewsPosts, WORK_NEWS_STORAGE_KEY, 'work')}
+                            {activeTab === 'job-posts' && renderCandidateJobPosts()}
+                            {activeTab === 'talent-stories' && (
+                                <>
+                                    <div className="portal-create-story-action-row">
+                                        <button
+                                            type="button"
+                                            className="portal-create-story-button"
+                                            onClick={openCreateStoryModal}
+                                        >
+                                            Create <strong>+</strong>
+                                        </button>
+                                    </div>
+                                    {renderPostList(talentStories, TALENT_STORIES_STORAGE_KEY, 'talent')}
+                                </>
+                            )}
+                            {activeTab === 'create-story' && mode === 'candidate' && renderTailorProfileSection()}
+                            {activeTab === 'create-post' && renderComposer()}
+                            {activeTab === 'my-feed' && renderPostList(ownTalentStories, TALENT_STORIES_STORAGE_KEY, 'talent')}
+                            {activeTab === 'my-company-posts' && renderPostList(ownCompanyPosts, WORK_NEWS_STORAGE_KEY, 'work')}
+                            {activeTab === 'my-job-posts' && renderMyJobPosts()}
                         </>
                     )}
-                    {activeTab === 'create-story' && mode === 'candidate' && renderTailorProfileSection()}
-                    {activeTab === 'create-post' && renderComposer()}
-                    {activeTab === 'my-feed' && renderPostList(ownTalentStories, TALENT_STORIES_STORAGE_KEY, 'talent')}
-                    {activeTab === 'my-company-posts' && renderPostList(ownCompanyPosts, WORK_NEWS_STORAGE_KEY, 'work')}
-                    {activeTab === 'my-job-posts' && renderMyJobPosts()}
                 </div>
             </div>
             {renderJobDetailsModal()}

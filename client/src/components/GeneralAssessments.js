@@ -1,6 +1,7 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import AnimatedDeleteButton from './AnimatedDeleteButton';
 import confirmAction from '../utils/confirmAction';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const GeneralAssessments = forwardRef(({ companyId, jobs = [], onBack, onFooterBack }, ref) => {
     const [assessments, setAssessments] = useState([]);
@@ -246,7 +247,7 @@ const GeneralAssessments = forwardRef(({ companyId, jobs = [], onBack, onFooterB
             {error && <div className="error-message">{error}</div>}
 
             {loading ? (
-                <div className="loading-spinner">Loading general assessments...</div>
+                <PortalPageSkeleton compact label="Loading general assessments" />
             ) : assessments.length === 0 ? (
                 <div className="no-jobs-message">
                     <h3>No general assessments yet</h3>

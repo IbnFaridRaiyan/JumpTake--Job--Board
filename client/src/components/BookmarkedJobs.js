@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import confirmAction from '../utils/confirmAction';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const BOOKMARKED_JOB_LIKE_STORAGE_KEY = 'jumptakeBookmarkedJobLikeMap';
 
@@ -213,10 +214,7 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack, embedded = false 
             {error && <div className="error-message">{error}</div>}
 
             {loading ? (
-                <div className="loading-container">
-                    <div className="loading-spinner"></div>
-                    <p>Loading bookmarked jobs...</p>
-                </div>
+                <PortalPageSkeleton compact label="Loading bookmarked jobs" />
             ) : bookmarks.length === 0 ? (
                 <div className="no-applications-message">
                     <h3>No bookmarked jobs yet</h3>

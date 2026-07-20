@@ -25359,8 +25359,8 @@ html[data-theme="light"] .floating-messenger-header {
   padding: 0.72rem 0.85rem;
   border: 1px solid rgba(104, 20, 33, 0.12);
   border-radius: 1rem;
-  background: #ded7cc;
-  background-color: #ded7cc;
+  background: #c8c0b4;
+  background-color: #c8c0b4;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
   color: #111111;
 }
@@ -25383,11 +25383,14 @@ html[data-theme="light"] .floating-messenger-title-pill {
   align-items: center;
   justify-content: center;
   padding: 0.34rem 0.9rem;
-  border: 1px solid rgba(104, 20, 33, 0.12);
+  border: 1px solid #c8baa4;
   border-radius: 999px;
-  background: #ded7cc;
-  background-color: #ded7cc;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42), 0 0.28rem 0.75rem rgba(77, 50, 31, 0.08);
+  background: linear-gradient(145deg, rgba(255, 248, 234, 0.3) 0%, rgba(243, 228, 204, 0.16) 52%, rgba(232, 214, 186, 0.24) 100%);
+  background-color: rgba(243, 228, 204, 0.2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(156, 130, 96, 0.12),
+    0 0.28rem 0.75rem rgba(77, 50, 31, 0.08);
   color: #681421;
   -webkit-text-fill-color: #681421;
   font-family: 'Boogaloo', 'Arial Narrow', Arial, sans-serif;
@@ -78954,15 +78957,15 @@ html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-
   animation-fill-mode: both !important;
 }
 
-/* Final candidates card sizing: make the rounded page and profile cards wider. */
+/* Candidate page sizing: do not cap the directory below its available portal width. */
 html body #root .home-page .mobile-section-view-candidates .mobile-dashboard-section-panel,
 html body #root .home-page .main-content.mobile-section-view-candidates,
 html body #root .home-page .main-content.mobile-section-view-candidates.is-open,
 html[data-theme="light"] body[data-theme="light"] #root .home-page .mobile-section-view-candidates .mobile-dashboard-section-panel,
 html[data-theme="light"] body[data-theme="light"] #root .home-page .main-content.mobile-section-view-candidates,
 html[data-theme="light"] body[data-theme="light"] #root .home-page .main-content.mobile-section-view-candidates.is-open {
-  width: min(100%, 24rem) !important;
-  max-width: calc(100vw - 0.36rem) !important;
+  width: 100% !important;
+  max-width: none !important;
 }
 
 html body #root .talent-pool-container.candidate-view-candidates,
@@ -78970,11 +78973,11 @@ html body #root .home-page .talent-pool-container.candidate-view-candidates,
 html[data-theme="light"] body[data-theme="light"] #root .talent-pool-container.candidate-view-candidates,
 html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates {
   width: 100% !important;
-  max-width: 23rem !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  padding-left: 0.44rem !important;
-  padding-right: 0.44rem !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
   overflow: visible !important;
 }
 
@@ -86178,10 +86181,18 @@ html body .portal-image-preview-backdrop {
   cursor: pointer;
 }
 
-.message-workspace-tab:is(.is-active, :hover, :focus-visible) {
+.message-workspace-tab:is(:hover, :focus-visible) {
   border-color: rgba(104, 20, 33, 0.35);
   background: #ded7cc;
   background-color: #ded7cc;
+  color: #681421;
+}
+
+.message-workspace-tab.is-active,
+.message-workspace-tab.is-active:is(:hover, :focus-visible) {
+  border-color: rgba(104, 20, 33, 0.35);
+  background: rgba(164, 81, 104, 0.18);
+  background-color: rgba(164, 81, 104, 0.18);
   color: #681421;
 }
 
@@ -89589,24 +89600,35 @@ body[data-theme="light"] #root .home-page .messenger-inbox .messenger-compose-ca
   }
 }
 
-/* Canonical light portal shell: one dark off-white surface in both portals. */
+/* Dashboard and Candidates use a wide, centered rounded panel. */
 html[data-theme="light"] body #root .home-page > .dashboard-container > .main-content.mobile-dashboard-section-panel,
 html body[data-theme="light"] #root .home-page > .dashboard-container > .main-content.mobile-dashboard-section-panel {
   background: #ded7cc !important;
   background-color: #ded7cc !important;
   background-image: none !important;
-  border-color: rgba(104, 20, 33, 0.12) !important;
 }
 
-/* Dashboard and Candidates use more of the rounded shell's available width. */
+html body #root .home-page > .dashboard-container > .main-content:is(
+  .mobile-section-dashboard,
+  .mobile-section-view-candidates,
+  .mobile-section-talent-pool
+) {
+  box-sizing: border-box !important;
+  padding-inline: 0.35rem !important;
+}
+
 html body #root .home-page .portal-section-transition-shell[data-section="dashboard"],
 html body #root .home-page .portal-section-transition-shell[data-section="view-candidates"],
 html body #root .home-page .portal-section-transition-shell[data-section="talent-pool"] {
   box-sizing: border-box !important;
-  width: calc(100% + 1rem) !important;
-  max-width: none !important;
-  margin-inline: -0.5rem !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-inline: auto !important;
   border-radius: 1rem !important;
+}
+
+html body #root .home-page .portal-section-transition-shell[data-section="dashboard"] {
+  margin-top: 0.55rem !important;
 }
 
 html body #root .home-page .portal-section-transition-shell[data-section="dashboard"] > .portal-default-landing,
@@ -89619,10 +89641,327 @@ html body #root .home-page .portal-section-transition-shell[data-section="talent
 }
 
 @media (min-width: 769px) {
-  html body #root .home-page .portal-section-transition-shell[data-section="dashboard"],
-  html body #root .home-page .portal-section-transition-shell[data-section="view-candidates"],
-  html body #root .home-page .portal-section-transition-shell[data-section="talent-pool"] {
-    width: calc(100% + 1.4rem) !important;
-    margin-inline: -0.7rem !important;
+  html body #root .home-page > .dashboard-container > .main-content:is(
+    .mobile-section-dashboard,
+    .mobile-section-view-candidates,
+    .mobile-section-talent-pool
+  ) {
+    padding-inline: 0.55rem !important;
+  }
+}
+
+/* Home/feed and profile post cards return to solid white in light mode. */
+html[data-theme="light"] body #root .home-page :is(
+  .portal-social-post-card,
+  .portal-post-card,
+  .portal-profile-preview-post-card,
+  .candidate-profile-home-post-card,
+  .candidate-popup-post-card
+),
+html body[data-theme="light"] #root .home-page :is(
+  .portal-social-post-card,
+  .portal-post-card,
+  .portal-profile-preview-post-card,
+  .candidate-profile-home-post-card,
+  .candidate-popup-post-card
+),
+html[data-theme="light"] body :is(
+  .portal-profile-detail-backdrop,
+  .candidate-profile-popup
+) :is(.portal-social-post-card, .portal-profile-preview-post-card, .candidate-popup-post-card),
+html body[data-theme="light"] :is(
+  .portal-profile-detail-backdrop,
+  .candidate-profile-popup
+) :is(.portal-social-post-card, .portal-profile-preview-post-card, .candidate-popup-post-card) {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+}
+
+/* Every portal page uses the shared off-white shell without a second cream wrapper. */
+html[data-theme="light"] body #root .home-page .main-content > .portal-section-transition-shell,
+html body[data-theme="light"] #root .home-page .main-content > .portal-section-transition-shell,
+html[data-theme="light"] body #root .home-page .main-content > .portal-section-transition-shell > :is(section, div, article),
+html body[data-theme="light"] #root .home-page .main-content > .portal-section-transition-shell > :is(section, div, article) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Let every candidate and employer section use the available page width. */
+html body #root .home-page > .dashboard-container > .main-content.mobile-dashboard-section-panel {
+  box-sizing: border-box !important;
+  padding-inline: 0.35rem !important;
+}
+
+html body #root .home-page .main-content > .portal-section-transition-shell,
+html body #root .home-page .main-content > .portal-section-transition-shell > :is(section, div, article) {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  margin-inline: 0 !important;
+}
+
+html body #root .home-page .portal-home-feed > .portal-home-feed-scroll,
+html body #root .home-page .portal-home-feed-scroll > .portal-home-tab-panel {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+@media (min-width: 769px) {
+  html body #root .home-page > .dashboard-container > .main-content.mobile-dashboard-section-panel {
+    padding-inline: 0.55rem !important;
+  }
+}
+
+/* Keep breathing room before the first Blocks navigation button. */
+html body #root .home-page .blocks-manager-tabs {
+  padding-left: 0.7rem !important;
+  scroll-padding-inline-start: 0.7rem !important;
+}
+
+html body #root .home-page .blocks-manager-tabs > .blocks-manager-tab:first-child {
+  margin-left: 0.12rem !important;
+}
+
+/* Friends: keep suggested candidate names compact inside the Add Friends cards. */
+html body #root .home-page .friend-invitations-section .friend-add-panel .friend-add-candidate-copy > h3 {
+  font-size: 0.68rem !important;
+  line-height: 1.12 !important;
+}
+
+/* Candidates: remove the last nested gutters so the directory uses the full panel width. */
+html body #root .home-page > .dashboard-container > .main-content.mobile-section-view-candidates,
+html body #root .home-page > .dashboard-container > .main-content.mobile-section-view-candidates.is-open {
+  padding-inline: 0 !important;
+}
+
+html body #root .home-page .main-content.mobile-section-view-candidates > .portal-section-transition-shell[data-section="view-candidates"],
+html body #root .home-page .portal-section-transition-shell[data-section="view-candidates"] > .talent-pool-container.candidate-view-candidates {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  margin-inline: 0 !important;
+}
+
+html body #root .home-page .portal-section-transition-shell[data-section="view-candidates"] > .talent-pool-container.candidate-view-candidates {
+  padding-inline: 0.08rem !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .home-page > .dashboard-container.mobile-section-open > .main-content.mobile-dashboard-section-panel.mobile-section-view-candidates.is-open,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page > .dashboard-container.mobile-section-open > .main-content.mobile-dashboard-section-panel.mobile-section-view-candidates.is-open {
+    left: 3.32rem !important;
+    right: 0.08rem !important;
+    width: auto !important;
+    max-width: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  html body #root .home-page .main-content.mobile-section-view-candidates.is-open > .portal-section-transition-shell[data-section="view-candidates"],
+  html body #root .home-page .main-content.mobile-section-view-candidates.is-open .talent-pool-container.candidate-view-candidates {
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+@media (min-width: 769px) {
+  html body #root .home-page > .dashboard-container > .main-content.mobile-section-view-candidates {
+    padding-inline: 0.3rem !important;
+  }
+
+  html body #root .home-page .portal-section-transition-shell[data-section="view-candidates"] > .talent-pool-container.candidate-view-candidates {
+    padding-inline: 0.24rem !important;
+  }
+}
+
+/* Applications and Friends: remove legacy cream wrapper fills without changing their cards. */
+html body #root .home-page .portal-section-transition-shell[data-section="applications"] > .applications-hub-container,
+html body #root .home-page .applications-hub-container,
+html body #root .home-page .applications-hub-container > .applications-hub-panel,
+html body #root .home-page .applications-hub-panel > .applications-container,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-section-transition-shell[data-section="applications"] > .applications-hub-container,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .applications-hub-container,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .applications-hub-container > .applications-hub-panel,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .applications-hub-panel > .applications-container {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .portal-section-transition-shell[data-section="friend-invitations"] > .friend-invitations-section,
+html body #root .home-page .friend-invitations-section,
+html body #root .home-page .friend-invitations-section > .friend-invitations-shell,
+html body #root .home-page .friend-invitations-section .friend-invitation-panel,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-section-transition-shell[data-section="friend-invitations"] > .friend-invitations-section,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .friend-invitations-section,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .friend-invitations-section > .friend-invitations-shell,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .friend-invitations-section .friend-invitation-panel {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .friend-invitations-section .friend-invitation-panel {
+  border-radius: 0 !important;
+}
+
+/* Shared portal page skeleton used by every candidate and employer section transition. */
+.portal-page-skeleton {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.72rem;
+  width: 100%;
+  min-width: 0;
+  min-height: clamp(20rem, 58vh, 36rem);
+  padding: 0.75rem;
+  overflow: hidden;
+  border-radius: 1rem;
+  background: transparent;
+}
+
+.portal-page-skeleton.is-compact {
+  min-height: clamp(15rem, 44vh, 27rem);
+  padding: 0.4rem 0;
+}
+
+.portal-page-skeleton :is(
+  .portal-page-skeleton-title,
+  .portal-page-skeleton-tabs > span,
+  .portal-page-skeleton-card,
+  .portal-page-skeleton-avatar,
+  .portal-page-skeleton-line
+) {
+  display: block;
+  background: #e7dfd4;
+  animation: jt-page-skeleton-pulse 900ms ease-in-out infinite alternate;
+  will-change: opacity;
+}
+
+.portal-page-skeleton-title {
+  grid-column: 1 / -1;
+  width: min(10rem, 48%);
+  height: 2.45rem;
+  border-radius: 999px;
+}
+
+.portal-page-skeleton-tabs {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.48rem;
+}
+
+.portal-page-skeleton-tabs > span {
+  height: 3.5rem;
+  border-radius: 0.85rem;
+}
+
+.portal-page-skeleton-card {
+  grid-column: 1 / -1;
+  display: grid !important;
+  grid-template-columns: 2.6rem minmax(0, 1fr);
+  grid-template-rows: repeat(2, auto);
+  align-items: center;
+  gap: 0.42rem 0.7rem;
+  min-height: 6.4rem;
+  padding: 0.85rem;
+  border-radius: 1rem;
+}
+
+.portal-page-skeleton-avatar {
+  grid-row: 1 / 3;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  background: #d5cabd !important;
+}
+
+.portal-page-skeleton-line {
+  height: 0.72rem;
+  border-radius: 999px;
+  background: #d5cabd !important;
+}
+
+.portal-page-skeleton-line.is-wide {
+  width: 82%;
+}
+
+.portal-page-skeleton-line.is-medium {
+  width: 58%;
+}
+
+.portal-page-skeleton-line.is-short {
+  width: 38%;
+}
+
+.portal-page-skeleton.is-compact > .portal-page-skeleton-title,
+.portal-page-skeleton.is-compact > .portal-page-skeleton-tabs {
+  display: none;
+}
+
+.portal-page-skeleton-accessible-text {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.portal-section-transition-shell.is-loading-behind-skeleton {
+  display: none !important;
+}
+
+@keyframes jt-page-skeleton-pulse {
+  from { opacity: 0.58; }
+  to { opacity: 1; }
+}
+
+html[data-theme="dark"] .portal-page-skeleton :is(
+  .portal-page-skeleton-title,
+  .portal-page-skeleton-tabs > span,
+  .portal-page-skeleton-card
+),
+body[data-theme="dark"] .portal-page-skeleton :is(
+  .portal-page-skeleton-title,
+  .portal-page-skeleton-tabs > span,
+  .portal-page-skeleton-card
+) {
+  background: #342f2c;
+}
+
+html[data-theme="dark"] .portal-page-skeleton :is(.portal-page-skeleton-avatar, .portal-page-skeleton-line),
+body[data-theme="dark"] .portal-page-skeleton :is(.portal-page-skeleton-avatar, .portal-page-skeleton-line) {
+  background: #4a423d !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal-page-skeleton :is(
+    .portal-page-skeleton-title,
+    .portal-page-skeleton-tabs > span,
+    .portal-page-skeleton-card,
+    .portal-page-skeleton-avatar,
+    .portal-page-skeleton-line
+  ) {
+    animation: none !important;
   }
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { apiUrl } from '../utils/apiUrl';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const MessageSettingToggle = ({ checked, onChange, label, description, disabled }) => (
     <label className="message-setting-row">
@@ -77,7 +78,7 @@ const MessageSettings = ({ mode, companyId }) => {
                 <p>Choose how your presence and new-message alerts work.</p>
             </div>
             {notice && <div className={`notification-message ${notice.startsWith('Error:') ? 'error' : 'success'}`}>{notice}</div>}
-            {loading ? <p className="message-workspace-empty-copy">Loading message settings...</p> : (
+            {loading ? <PortalPageSkeleton compact label="Loading message settings" /> : (
                 <div className="message-settings-list">
                     <MessageSettingToggle
                         label="Work in silence"

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const countWords = (text = '') => text.trim().split(/\s+/).filter(Boolean).length;
 
@@ -331,10 +332,7 @@ const MyAssessments = ({ userId, onRefresh, onPendingCountChange, switchSection,
                         <h2>My Assessments</h2>
                     </div>
                 )}
-                <div className="loading-container">
-                    <div className="loading-spinner"></div>
-                    <p>Loading your assessments...</p>
-                </div>
+                <PortalPageSkeleton compact label="Loading your assessments" />
             </div>
         );
     }

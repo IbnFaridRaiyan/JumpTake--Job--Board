@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { apiUrl } from '../utils/apiUrl';
 import ProfileAvatar from './ProfileAvatar';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const blockedFeedKey = (userId) => `jumptakeBlockedFeedAuthors:${userId || 'guest'}`;
 
@@ -365,7 +366,7 @@ const BlocksManager = ({ userId, profileData }) => {
         <section className="blocks-manager-section">
             {message && <div className={`notification-message ${message.startsWith('Error:') ? 'error' : 'success'}`}>{message}</div>}
             {loading ? (
-                <div className="loading-message">Loading blocked and hidden content...</div>
+                <PortalPageSkeleton compact label="Loading blocked and hidden content" />
             ) : (
                 <div className="blocks-manager-shell">
                     <nav className="friend-invitation-tabs blocks-manager-tabs" aria-label="Blocked and hidden content sections">

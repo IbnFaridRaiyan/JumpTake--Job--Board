@@ -5,6 +5,7 @@ import ResumeFilePreview from './ResumeFilePreview';
 import ProfileAvatar from './ProfileAvatar';
 import { sendApplicationStatusEmail } from '../utils/emailVerification';
 import confirmAction from '../utils/confirmAction';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const createQuestion = (type = 'multiple-choice') => ({
     clientId: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -1909,7 +1910,7 @@ const JobManagement = ({ job, companyId, onBack, onJobUpdated }) => {
 
     const renderActiveSection = () => {
         if (loading) {
-            return <div className="loading-spinner">Loading job workspace...</div>;
+            return <PortalPageSkeleton compact label="Loading job workspace" />;
         }
 
         if (activeSection === 'edit') {

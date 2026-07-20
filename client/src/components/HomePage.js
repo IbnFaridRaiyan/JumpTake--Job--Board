@@ -21,6 +21,7 @@ import { clearBrowserAccountState } from '../utils/authStorage';
 import dashboardLogo from './media/jumptake-logo-9.png';
 import JOB_INTEREST_OPTIONS from '../utils/jobInterestOptions';
 import GuidedPortalTour from './GuidedPortalTour';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const CANDIDATE_SECTION_IDS = new Set([
     'home',
@@ -153,6 +154,7 @@ const normalizeCandidateProfile = (profile) => {
 
 const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const [activeSection, setActiveSection] = useState('job-feed');
+    const [sectionSkeletonVisible, setSectionSkeletonVisible] = useState(true);
     const [titleAnimationReplayKey, setTitleAnimationReplayKey] = useState(0);
     const [sectionErrorResetKey, setSectionErrorResetKey] = useState(0);
     const sectionHistoryRef = useRef([]);
@@ -179,6 +181,12 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const displayName = displayEmail.includes('@') ? displayEmail.split('@')[0] : (displayEmail || 'User');
     const displayInitial = displayName ? displayName.charAt(0).toUpperCase() : 'U';
     const safeJobs = useMemo(() => normalizeJobsResponse(jobs), [jobs]);
+
+    useEffect(() => {
+        setSectionSkeletonVisible(true);
+        const skeletonTimer = window.setTimeout(() => setSectionSkeletonVisible(false), 420);
+        return () => window.clearTimeout(skeletonTimer);
+    }, [activeSection]);
 
     useEffect(() => {
         const handleProfileImageUpdated = (event) => {
@@ -879,9 +887,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
 
     const renderContent = () => {
         if (loading && activeSection === 'home') {
-            return (
-                <div className="loading-spinner">Loading job listings...</div>
-            );
+            return <PortalPageSkeleton compact label="Loading job listings" />;
         }
 
         switch (activeSection) {
@@ -1034,7 +1040,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                         </div>
                     </div>
                 </div>
-                <div className="loading-spinner">Loading your dashboard...</div>
+                <PortalPageSkeleton label="Loading your dashboard" />
             </div>
         );
     }
@@ -1123,9 +1129,15 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                             setMobileSectionVisible(isMobileViewport());
                         }}
                     >
+                        {sectionSkeletonVisible && (
+                            <PortalPageSkeleton
+                                className="portal-section-skeleton-overlay"
+                                label={`Loading ${sectionTitles[activeSection] || 'section'}`}
+                            />
+                        )}
                         <div
                             key={`candidate-section-${activeSection}`}
-                            className="portal-section-transition-shell"
+                            className={`portal-section-transition-shell ${sectionSkeletonVisible ? 'is-loading-behind-skeleton' : ''}`}
                             data-section={activeSection}
                         >
                             {renderContent()}

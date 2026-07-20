@@ -8,6 +8,7 @@ import { apiUrl } from '../utils/apiUrl';
 import confirmAction from '../utils/confirmAction';
 import ProfileDetailsCard from './ProfileDetailsCard';
 import usePinchZoom from '../utils/usePinchZoom';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const WORK_NEWS_STORAGE_KEY = 'jumptakeWorkNewsPosts';
 const TALENT_STORIES_STORAGE_KEY = 'jumptakeTalentStoriesPosts';
@@ -264,7 +265,6 @@ const TalentPool = ({
     const [candidateSharingTargetId, setCandidateSharingTargetId] = useState('');
     const [closingProfileDetailModal, setClosingProfileDetailModal] = useState(false);
     const [profileActionsOpen, setProfileActionsOpen] = useState(false);
-    const [growAnimationKey, setGrowAnimationKey] = useState(0);
     const candidateProfileRef = useRef(null);
     const profileDetailCloseTimerRef = useRef(null);
     const talentPoolRef = useRef(null);
@@ -279,14 +279,6 @@ const TalentPool = ({
         fetchCandidateLikes();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [companyId, mode, currentUserId]);
-
-    useEffect(() => {
-        if (mode !== 'candidate') {
-            return;
-        }
-
-        setGrowAnimationKey(Date.now());
-    }, [mode]);
 
     useEffect(() => {
         if (!friendNotice) {
@@ -2224,21 +2216,6 @@ const TalentPool = ({
                 </div>
             )}
 
-            {mode === 'candidate' && (
-                <div className="candidate-community-intro">
-                    <p className="candidate-community-copy">
-                        <span className="candidate-community-line">Connect, learn, and{' '}
-                        <span key={`candidate-grow-${growAnimationKey}`} className="candidate-grow-together candidate-grow-replay">
-                            <span className="candidate-grow-text">Grow Together</span>
-                            <svg className="candidate-grow-icon" viewBox="0 0 16 16" aria-hidden="true">
-                                <path fillRule="evenodd" d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5" />
-                            </svg>
-                        </span>
-                        </span>
-                    </p>
-                </div>
-            )}
-
             {friendNotice && (
                 <div className={`notification-message ${friendNotice.startsWith('Error:') ? 'error' : 'success'}`}>
                     {friendNotice}
@@ -2329,10 +2306,7 @@ const TalentPool = ({
             {mode === 'candidate' && <h3 className="candidate-suggestions-heading">Suggested candidates</h3>}
 
             {isLoading ? (
-                <div className="loading-container">
-                    <div className="loading-spinner"></div>
-                            <p>Loading candidates...</p>
-                </div>
+                <PortalPageSkeleton compact label="Loading candidates" />
             ) : (
                 <>
                     {filteredCandidateRows.length === 0 ? (

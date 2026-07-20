@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import ProfileAvatar from './ProfileAvatar';
 import confirmAction from '../utils/confirmAction';
 import TalentPool from './TalentPool';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }) => {
     const [bookmarks, setBookmarks] = useState([]);
@@ -243,7 +244,7 @@ const BookmarkedCandidates = ({ userId, onBack, onFooterBack, embedded = false }
             {error && <div className="error-message">{error}</div>}
 
             {loading ? (
-                <div className="loading-container"><div className="loading-spinner"></div><p>Loading bookmarked candidates...</p></div>
+                <PortalPageSkeleton compact label="Loading bookmarked candidates" />
             ) : bookmarks.length === 0 ? (
                 <div className="no-candidates"><h3>No bookmarked candidates yet</h3><p>Star candidate cards in View Candidates to keep them here.</p></div>
             ) : (

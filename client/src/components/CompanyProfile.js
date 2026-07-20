@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ProfileAvatar from './ProfileAvatar';
 import { createSquareProfileImage } from '../utils/profileImages';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const CompanyProfile = ({ company, jobStats, onBack, onCompanyUpdated, onFooterBack }) => {
     const [isEditing, setIsEditing] = useState(false);
@@ -39,9 +40,7 @@ const CompanyProfile = ({ company, jobStats, onBack, onCompanyUpdated, onFooterB
                 <div className="company-profile-header">
                     <h2>Company Profile</h2>
                 </div>
-                <div className="loading-message">
-                    Loading company profile...
-                </div>
+                <PortalPageSkeleton compact label="Loading company profile" />
             </div>
         );
     }

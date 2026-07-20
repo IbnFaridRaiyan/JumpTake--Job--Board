@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import confirmAction from '../utils/confirmAction';
 import { loadSavedPosts, readLegacySavedPosts, removePostFromAccount } from '../utils/savedPostsApi';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const getSavedRecordId = (savedPost) => String(
     savedPost?.postId
@@ -219,7 +220,7 @@ const SavedPosts = ({ viewerId = 'guest', mode = 'candidate', onFooterBack, embe
         <section className="saved-posts-section">
             {errorMessage ? <div className="portal-feed-error">{errorMessage}</div> : null}
             {loading && savedPosts.length === 0 ? (
-                <div className="portal-feed-empty">Loading saved posts...</div>
+                <PortalPageSkeleton compact label="Loading saved posts" />
             ) : savedPosts.length === 0 ? (
                 <div className="portal-feed-empty">No saved posts yet.</div>
             ) : (

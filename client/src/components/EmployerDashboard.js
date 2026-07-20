@@ -22,6 +22,7 @@ import SavedPosts from './SavedPosts';
 import { clearBrowserAccountState } from '../utils/authStorage';
 import dashboardLogo from './media/jumptake-logo-9.png';
 import GuidedPortalTour from './GuidedPortalTour';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const EMPLOYER_SECTION_IDS = new Set([
     'home',
@@ -56,6 +57,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     const [employer, setEmployer] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeSection, setActiveSection] = useState('home-feed');
+    const [sectionSkeletonVisible, setSectionSkeletonVisible] = useState(true);
     const [titleAnimationReplayKey, setTitleAnimationReplayKey] = useState(0);
     const sectionHistoryRef = useRef([]);
     const manageJobsRef = useRef(null);
@@ -69,6 +71,12 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     const [isManagingEmployerJob, setIsManagingEmployerJob] = useState(false);
     const mobilePanelRef = useRef(null);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        setSectionSkeletonVisible(true);
+        const skeletonTimer = window.setTimeout(() => setSectionSkeletonVisible(false), 420);
+        return () => window.clearTimeout(skeletonTimer);
+    }, [activeSection]);
 
     const updateActiveSection = (section, { push = true } = {}) => {
         const nextSectionValue = normalizeEmployerSection(section);
@@ -799,7 +807,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                         </div>
                     </div>
                 </div>
-                <div className="loading-spinner">Loading...</div>
+                <PortalPageSkeleton label="Loading your dashboard" />
             </div>
         );
     }
@@ -846,9 +854,15 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                             <h2><span key={`mobile-${activeSection}-${titleAnimationReplayKey}`} className="portal-title-jello-text">{sectionTitles[activeSection] || 'Dashboard Section'}</span></h2>
                         </div>
                     )}
+                    {sectionSkeletonVisible && (
+                        <PortalPageSkeleton
+                            className="portal-section-skeleton-overlay"
+                            label={`Loading ${sectionTitles[activeSection] || 'section'}`}
+                        />
+                    )}
                     <div
                         key={`employer-section-${activeSection}`}
-                        className="portal-section-transition-shell"
+                        className={`portal-section-transition-shell ${sectionSkeletonVisible ? 'is-loading-behind-skeleton' : ''}`}
                         data-section={activeSection}
                     >
                         {renderContent()}

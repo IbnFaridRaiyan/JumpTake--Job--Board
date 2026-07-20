@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 
 const formatNotificationTime = (dateString) => {
@@ -169,7 +170,7 @@ const Notifications = ({ mode, recipientId, onOpenNotification, onUnreadCountCha
             {error && <div className="error-message">{error}</div>}
 
             {loading ? (
-                <div className="loading-spinner"></div>
+                <PortalPageSkeleton compact label="Loading notifications" />
             ) : notifications.length === 0 ? (
                 <div className="no-jobs-message notification-empty-state">
                     <h3>No notifications yet</h3>

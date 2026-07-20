@@ -2,6 +2,7 @@ import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'rea
 import AnimatedDeleteButton from './AnimatedDeleteButton';
 import JobManagement from './JobManagement';
 import confirmAction from '../utils/confirmAction';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const ManageJobs = forwardRef(({ jobs, companyId, onJobUpdated, onBack, onFooterBack, onManagingChange }, ref) => {
     const [managingJob, setManagingJob] = useState(null);
@@ -206,10 +207,7 @@ const ManageJobs = forwardRef(({ jobs, companyId, onJobUpdated, onBack, onFooter
             )}
             
             {isLoading ? (
-                <div className="job-list-loading">
-                    <div className="loading-spinner"></div>
-                    <p>Processing your request...</p>
-                </div>
+                <PortalPageSkeleton compact label="Loading jobs" />
             ) : jobs.length === 0 ? (
                 <div className="no-jobs-message">
                     <div className="empty-state-image">

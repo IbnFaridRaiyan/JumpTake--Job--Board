@@ -3,6 +3,7 @@ import AnimatedDeleteButton from './AnimatedDeleteButton';
 import ProfileAvatar from './ProfileAvatar';
 import ResumeFilePreview from './ResumeFilePreview';
 import confirmAction from '../utils/confirmAction';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const BookmarkedApplications = ({ companyId, onBack, onFooterBack }) => {
     const [bookmarks, setBookmarks] = useState([]);
@@ -162,7 +163,7 @@ const BookmarkedApplications = ({ companyId, onBack, onFooterBack }) => {
             {error && <div className="error-message">{error}</div>}
 
             {loading ? (
-                <div className="job-list-loading"><div className="loading-spinner"></div><p>Loading bookmarked applications...</p></div>
+                <PortalPageSkeleton compact label="Loading bookmarked applications" />
             ) : bookmarks.length === 0 ? (
                 <div className="no-jobs-message"><h3>No bookmarked applications yet</h3><p>Star candidate applications in Manage Applications to keep them here.</p></div>
             ) : (

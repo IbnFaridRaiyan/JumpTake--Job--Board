@@ -4,6 +4,7 @@ import ResumeFilePreview from './ResumeFilePreview';
 import ProfileAvatar from './ProfileAvatar';
 import defaultJobPostAvatar from './media/default-job-post-avatar.png';
 import confirmAction from '../utils/confirmAction';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const FONT_OPTIONS = [
     { label: 'Share Tech', value: 'Share Tech' },
@@ -1394,10 +1395,7 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
             {error && <div className="error-message">{asDisplayText(error?.message || error, 'Unable to load jobs right now.')}</div>}
 
             {isLoadingRecommendations && activeTab === 'recommended' ? (
-                <div className="loading-recommendations">
-                    <div className="loading-spinner"></div>
-                    <p>Finding the best jobs for you...</p>
-                </div>
+                <PortalPageSkeleton compact label="Loading job recommendations" />
             ) : activeTab === 'recommended' && recommendedJobs.length === 0 ? (
                 <div className="no-recommendations">
                     <div className="empty-state-image">

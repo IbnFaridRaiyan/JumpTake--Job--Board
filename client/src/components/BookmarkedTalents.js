@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import ContactCandidate from './ContactCandidate';
 import ProfileAvatar from './ProfileAvatar';
 import confirmAction from '../utils/confirmAction';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
     const [bookmarks, setBookmarks] = useState([]);
@@ -190,7 +191,7 @@ const BookmarkedTalents = ({ companyId, onBack, onFooterBack }) => {
             {error && <div className="error-message">{error}</div>}
 
             {loading ? (
-                <div className="loading-container"><div className="loading-spinner"></div><p>Loading bookmarked talents...</p></div>
+                <PortalPageSkeleton compact label="Loading bookmarked talents" />
             ) : bookmarks.length === 0 ? (
                 <div className="no-candidates"><h3>No bookmarked talents yet</h3><p>Star candidate cards in Talent Pool to keep them here.</p></div>
             ) : (

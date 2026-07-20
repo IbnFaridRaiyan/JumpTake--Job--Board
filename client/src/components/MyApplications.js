@@ -6,6 +6,7 @@ import MyAssessments from './MyAssessments';
 import VideoInterviews from './VideoInterviews';
 import DraftApplications from './DraftApplications';
 import confirmAction from '../utils/confirmAction';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const APPLICATION_HUB_TABS = [
     { id: 'applications', label: 'Applications', title: 'My Applications', icon: 'applications' },
@@ -342,10 +343,7 @@ const MyApplications = forwardRef(({
 
     if (loading) {
         return renderHubShell(
-                <div className="loading-container">
-                    <div className="loading-spinner"></div>
-                    <p>Loading your applications...</p>
-                </div>
+            <PortalPageSkeleton compact label="Loading your applications" />
         );
     }
 

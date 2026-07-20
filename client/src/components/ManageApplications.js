@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ResumeFilePreview from './ResumeFilePreview';
 import ProfileAvatar from './ProfileAvatar';
 import confirmAction from '../utils/confirmAction';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
     const [applications, setApplications] = useState([]);
@@ -518,10 +519,7 @@ const ManageApplications = ({ companyId, onBack, onFooterBack }) => {
             )}
 
             {isLoading ? (
-                <div className="job-list-loading">
-                    <div className="loading-spinner"></div>
-                    <p>Loading applications...</p>
-                </div>
+                <PortalPageSkeleton compact label="Loading applications" />
             ) : applications.length === 0 ? (
                 <div className="no-jobs-message">
                     <div className="empty-state-image">

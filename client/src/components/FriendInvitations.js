@@ -4,6 +4,7 @@ import ProfileAvatar from './ProfileAvatar';
 import TalentPool from './TalentPool';
 import { apiUrl } from '../utils/apiUrl';
 import confirmAction from '../utils/confirmAction';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const FriendActionIcon = ({ type }) => {
     const paths = {
@@ -653,7 +654,7 @@ const FriendInvitations = ({ userId }) => {
             {error && <div className="error-message">{error}</div>}
 
             {loading ? (
-                <div className="loading-message">Loading invitations...</div>
+                <PortalPageSkeleton compact label="Loading friends" />
             ) : (
                 <div className="friend-invitations-shell">
                     <div className="friend-invitation-tabs" role="tablist" aria-label="Friend invitation categories">

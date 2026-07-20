@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AppModeCard from './AppModeCard';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const EmployerSettings = ({ employer, switchSection, onEmployerUpdated, onLogout, onFooterBack, appMode, onAppModeChange }) => {
     const [currentPassword, setCurrentPassword] = useState('');
@@ -221,7 +222,7 @@ const EmployerSettings = ({ employer, switchSection, onEmployerUpdated, onLogout
                 <div className="section-header">
                     <h2>Settings</h2>
                 </div>
-                <div className="loading-spinner">Loading settings...</div>
+                <PortalPageSkeleton compact label="Loading settings" />
             </div>
         );
     }

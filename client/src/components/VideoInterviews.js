@@ -1,5 +1,6 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import AnimatedDeleteButton from './AnimatedDeleteButton';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const VideoInterviews = forwardRef(({ userId, switchSection, onFooterBack, embedded = false }, ref) => {
     const [interviews, setInterviews] = useState([]);
@@ -133,10 +134,7 @@ const VideoInterviews = forwardRef(({ userId, switchSection, onFooterBack, embed
                         <h2>Video Interviews</h2>
                     </div>
                 )}
-                <div className="loading-container">
-                    <div className="loading-spinner"></div>
-                    <p>Loading video interviews...</p>
-                </div>
+                <PortalPageSkeleton compact label="Loading video interviews" />
             </div>
         );
     }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AnimatedDeleteButton from './AnimatedDeleteButton';
 import confirmAction from '../utils/confirmAction';
+import PortalPageSkeleton from './PortalPageSkeleton';
 
 const DraftApplications = ({ userId, switchSection, embedded = false }) => {
     const [drafts, setDrafts] = useState([]);
@@ -97,10 +98,7 @@ const DraftApplications = ({ userId, switchSection, embedded = false }) => {
             {error && <div className="error-message">{error}</div>}
 
             {loading ? (
-                <div className="loading-container">
-                    <div className="loading-spinner"></div>
-                    <p>Loading draft applications...</p>
-                </div>
+                <PortalPageSkeleton compact label="Loading draft applications" />
             ) : drafts.length === 0 ? (
                 <div className="no-applications-message">
                     <h3>No saved drafts yet</h3>

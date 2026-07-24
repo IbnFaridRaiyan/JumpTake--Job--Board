@@ -486,6 +486,15 @@ const inferSectionAction = (normalized, context = {}) => {
 
 const inferAction = (message, context = {}) => {
   const normalized = String(message || '').toLowerCase();
+  if (context?.assistantTask === 'polish-document') {
+    if (context?.documentType === 'resume') {
+      return 'candidate-format-resume';
+    }
+    return context?.portalMode === 'employer'
+      ? 'employer-format-document'
+      : 'candidate-format-document';
+  }
+
   const mentionsCandidate = /\b(candidate|job seeker|jobseeker)\b/.test(normalized);
   const mentionsEmployer = /\b(employer|company|recruiter)\b/.test(normalized);
   const portalMode = context?.portalMode || '';

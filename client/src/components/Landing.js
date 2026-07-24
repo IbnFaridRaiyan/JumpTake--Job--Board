@@ -6,12 +6,18 @@ import logo from './media/logo4.png';
 import lightThemeLogo from './media/jumptake-logo-main-light.png';
 import { apiUrl } from '../utils/apiUrl';
 import '../styles/public-home.css';
+import '../styles/public-home-light.css';
 
 const PUBLIC_HOME_THEME_KEY = 'jumptakePublicHomeTheme';
 
 const getInitialPublicHomeTheme = () => {
     if (typeof window === 'undefined') {
         return 'dark';
+    }
+
+    const previewTheme = new URLSearchParams(window.location.search).get('theme');
+    if (previewTheme === 'light' || previewTheme === 'dark') {
+        return previewTheme;
     }
 
     try {
@@ -212,12 +218,23 @@ const Landing = () => {
         }
     ]);
     const [assistantLoading, setAssistantLoading] = useState(false);
+    const [assistantPopupOpen, setAssistantPopupOpen] = useState(false);
     const [editorMode, setEditorMode] = useState('resume');
     const [editorText, setEditorText] = useState(EDITOR_TEMPLATES.resume);
     const [editorLoading, setEditorLoading] = useState(false);
+    const [editorTyping, setEditorTyping] = useState(false);
+    const [editorTypingProgress, setEditorTypingProgress] = useState(0);
+    const [editorPopupOpen, setEditorPopupOpen] = useState(false);
     const [editorNotice, setEditorNotice] = useState('Your draft stays editable in this browser.');
     const assistantInputRef = useRef(null);
+    const assistantMessagesRef = useRef(null);
+    const editorTypingTimerRef = useRef(null);
     const activeLogo = homeTheme === 'light' ? lightThemeLogo : logo;
+    const editorDocumentLabel = editorMode === 'cover'
+        ? 'Cover letter'
+        : editorMode === 'description'
+            ? 'Job description'
+            : 'Resume';
 
     useEffect(() => {
         try {
@@ -225,6 +242,14 @@ const Landing = () => {
         } catch (error) {
             // The selected theme still applies for this visit when storage is unavailable.
         }
+
+        document.documentElement.setAttribute('data-public-home-theme', homeTheme);
+        document.body.setAttribute('data-public-home-theme', homeTheme);
+
+        return () => {
+            document.documentElement.removeAttribute('data-public-home-theme');
+            document.body.removeAttribute('data-public-home-theme');
+        };
     }, [homeTheme]);
 
     useEffect(() => {
@@ -313,6 +338,52 @@ const Landing = () => {
         };
     }, [selectedJob]);
 
+    useEffect(() => {
+        const messages = assistantMessagesRef.current;
+        if (!messages) {
+            return undefined;
+        }
+
+        const frame = window.requestAnimationFrame(() => {
+            messages.scrollTo({ top: messages.scrollHeight, behavior: 'smooth' });
+        });
+        return () => window.cancelAnimationFrame(frame);
+    }, [assistantMessages, assistantLoading, assistantPopupOpen]);
+
+    useEffect(() => {
+        if (!assistantPopupOpen && !editorPopupOpen) {
+            return undefined;
+        }
+
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        document.body.classList.add('jt-public-ai-modal-open');
+
+        const closeOnEscape = (event) => {
+            if (event.key !== 'Escape') {
+                return;
+            }
+            if (editorPopupOpen) {
+                setEditorPopupOpen(false);
+                return;
+            }
+            setAssistantPopupOpen(false);
+        };
+
+        window.addEventListener('keydown', closeOnEscape);
+        return () => {
+            document.body.style.overflow = previousOverflow;
+            document.body.classList.remove('jt-public-ai-modal-open');
+            window.removeEventListener('keydown', closeOnEscape);
+        };
+    }, [assistantPopupOpen, editorPopupOpen]);
+
+    useEffect(() => () => {
+        if (editorTypingTimerRef.current) {
+            window.clearInterval(editorTypingTimerRef.current);
+        }
+    }, []);
+
     const jobTypes = useMemo(() => (
         ['All roles', ...new Set(jobs.map((job) => job.jobType).filter(Boolean))]
     ), [jobs]);
@@ -344,6 +415,7 @@ const Landing = () => {
         }
 
         const history = assistantMessages.slice(-8);
+        setAssistantPopupOpen(true);
         setAssistantMessages((messages) => [...messages, { role: 'user', text: question }]);
         setAssistantInput('');
         setAssistantLoading(true);
@@ -384,22 +456,57 @@ const Landing = () => {
     const changeEditorMode = (nextMode) => {
         setEditorMode(nextMode);
         setEditorText(EDITOR_TEMPLATES[nextMode]);
+        setEditorTypingProgress(0);
         setEditorNotice('Starter template loaded. Make it yours or ask AI to improve it.');
     };
+
+    const typeDocumentDraft = (nextDraft) => new Promise((resolve) => {
+        const draft = String(nextDraft || '');
+        if (editorTypingTimerRef.current) {
+            window.clearInterval(editorTypingTimerRef.current);
+        }
+
+        if (!draft) {
+            setEditorTyping(false);
+            setEditorTypingProgress(100);
+            resolve();
+            return;
+        }
+
+        const chunkSize = Math.max(1, Math.ceil(draft.length / 150));
+        let cursor = 0;
+        setEditorText('');
+        setEditorTyping(true);
+        setEditorTypingProgress(0);
+
+        const writeNextChunk = () => {
+            cursor = Math.min(draft.length, cursor + chunkSize);
+            setEditorText(draft.slice(0, cursor));
+            setEditorTypingProgress(Math.round((cursor / draft.length) * 100));
+
+            if (cursor >= draft.length) {
+                window.clearInterval(editorTypingTimerRef.current);
+                editorTypingTimerRef.current = null;
+                setEditorTyping(false);
+                resolve();
+            }
+        };
+
+        editorTypingTimerRef.current = window.setInterval(writeNextChunk, 18);
+        writeNextChunk();
+    });
 
     const improveDocument = async () => {
         if (editorLoading) {
             return;
         }
 
+        setEditorPopupOpen(true);
         setEditorLoading(true);
+        setEditorTyping(false);
+        setEditorTypingProgress(0);
         setEditorNotice('JumpTake AI is shaping your draft…');
-        const documentLabel = editorMode === 'cover'
-            ? 'cover letter'
-            : editorMode === 'description'
-                ? 'job description'
-                : 'resume';
-        const prompt = `Rewrite the following ${documentLabel} into a polished, modern, editable draft. Keep factual placeholders when facts are missing and return only the finished document.\n\n${editorText}`;
+        const prompt = `Rewrite the following ${editorDocumentLabel.toLowerCase()} into a polished, modern, editable draft. Keep factual placeholders when facts are missing and return only the finished document.\n\n${editorText}`;
 
         try {
             const response = await fetch(apiUrl('/api/public-assistant'), {
@@ -408,8 +515,15 @@ const Landing = () => {
                 body: JSON.stringify({
                     message: prompt,
                     context: {
+                        assistantTask: 'polish-document',
+                        documentType: editorMode,
                         portalMode: editorMode === 'description' ? 'employer' : 'candidate',
-                        workspace: { currentText: editorText }
+                        activeSection: editorMode === 'resume' ? 'resume-playground' : 'create-document',
+                        workspace: {
+                            mode: editorMode,
+                            title: editorDocumentLabel,
+                            currentText: editorText
+                        }
                     }
                 })
             });
@@ -417,7 +531,7 @@ const Landing = () => {
             if (!response.ok) {
                 throw new Error(data.error || 'AI editing is unavailable right now.');
             }
-            setEditorText(data.answer || editorText);
+            await typeDocumentDraft(data.answer || editorText);
             setEditorNotice('AI polish complete. Review the details before using your draft.');
         } catch (error) {
             setEditorNotice(error.message || 'AI editing is reconnecting. Your draft is safe.');
@@ -806,7 +920,18 @@ const Landing = () => {
                     </div>
                 </section>
 
-                <section className="jt-section jt-ai-section" id="ai-guide">
+                <section
+                    className={`jt-section jt-ai-section${assistantPopupOpen ? ' is-conversation-open' : ''}`}
+                    id="ai-guide"
+                >
+                    {assistantPopupOpen ? (
+                        <button
+                            type="button"
+                            className="jt-ai-conversation-scrim"
+                            onClick={() => setAssistantPopupOpen(false)}
+                            aria-label="Close JumpTake AI conversation"
+                        />
+                    ) : null}
                     <div className="jt-ai-copy jt-reveal">
                         <span className="jt-kicker">JumpTake AI</span>
                         <h2>A career co-pilot that knows where you are going.</h2>
@@ -825,15 +950,30 @@ const Landing = () => {
                         </div>
                     </div>
 
-                    <div className="jt-chat-shell jt-reveal">
+                    <div
+                        className={`jt-chat-shell jt-reveal${assistantPopupOpen ? ' is-popout' : ''}`}
+                        role={assistantPopupOpen ? 'dialog' : undefined}
+                        aria-modal={assistantPopupOpen ? 'true' : undefined}
+                        aria-label={assistantPopupOpen ? 'JumpTake AI conversation' : undefined}
+                    >
                         <div className="jt-chat-header">
                             <div className="jt-chat-ai-logo"><Icon name="spark" /></div>
                             <div>
                                 <strong>JumpTake AI</strong>
                                 <span><i /> Online and ready</span>
                             </div>
+                            {assistantPopupOpen ? (
+                                <button
+                                    type="button"
+                                    className="jt-chat-popout-close"
+                                    onClick={() => setAssistantPopupOpen(false)}
+                                    aria-label="Close JumpTake AI conversation"
+                                >
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            ) : null}
                         </div>
-                        <div className="jt-chat-messages" aria-live="polite">
+                        <div ref={assistantMessagesRef} className="jt-chat-messages" aria-live="polite">
                             {assistantMessages.map((message, index) => (
                                 <div className={`jt-chat-message is-${message.role}`} key={`${message.role}-${index}`}>
                                     {message.text}
@@ -884,6 +1024,7 @@ const Landing = () => {
                                     key={item.id}
                                     className={editorMode === item.id ? 'is-active' : ''}
                                     onClick={() => changeEditorMode(item.id)}
+                                    disabled={editorLoading}
                                 >
                                     <Icon name={item.icon} />
                                     {item.label}
@@ -903,7 +1044,7 @@ const Landing = () => {
                                     <span className="jt-window-dot" />
                                     <span className="jt-window-dot" />
                                 </div>
-                                <strong>{editorMode === 'cover' ? 'Cover letter' : editorMode === 'description' ? 'Job description' : 'Resume'} draft</strong>
+                                <strong>{editorDocumentLabel} draft</strong>
                                 <div className="jt-editor-tools">
                                     <button type="button" onClick={copyDocument} title="Copy draft"><Icon name="copy" /></button>
                                     <button type="button" onClick={downloadDocument} title="Download draft"><Icon name="download" /></button>
@@ -925,6 +1066,116 @@ const Landing = () => {
                         </div>
                     </div>
                 </section>
+
+                {editorPopupOpen ? (
+                    <div
+                        className="jt-ai-editor-overlay"
+                        onMouseDown={(event) => {
+                            if (event.target === event.currentTarget) {
+                                setEditorPopupOpen(false);
+                            }
+                        }}
+                    >
+                        <section
+                            className="jt-ai-editor-dialog"
+                            role="dialog"
+                            aria-modal="true"
+                            aria-labelledby="jt-ai-editor-title"
+                            aria-busy={editorLoading}
+                        >
+                            <header className="jt-ai-editor-dialog-header">
+                                <div className="jt-ai-editor-dialog-brand">
+                                    <span><Icon name="spark" /></span>
+                                    <div>
+                                        <small>JumpTake AI editor</small>
+                                        <h2 id="jt-ai-editor-title">{editorDocumentLabel}</h2>
+                                    </div>
+                                </div>
+                                <div className={`jt-ai-editor-live-state${editorLoading ? ' is-active' : ''}`} aria-live="polite">
+                                    <i />
+                                    <span>
+                                        {editorTyping
+                                            ? `AI is typing · ${editorTypingProgress}%`
+                                            : editorLoading
+                                                ? 'AI is reading your draft'
+                                                : 'Ready for your edits'}
+                                    </span>
+                                </div>
+                                <button
+                                    type="button"
+                                    className="jt-ai-editor-close"
+                                    onClick={() => setEditorPopupOpen(false)}
+                                    aria-label="Close AI document editor"
+                                >
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </header>
+
+                            <div className="jt-ai-editor-mode-tabs" aria-label="Document type">
+                                {[
+                                    { id: 'resume', label: 'Resume', icon: 'document' },
+                                    { id: 'cover', label: 'Cover letter', icon: 'message' },
+                                    { id: 'description', label: 'Job description', icon: 'briefcase' }
+                                ].map((item) => (
+                                    <button
+                                        type="button"
+                                        key={item.id}
+                                        className={editorMode === item.id ? 'is-active' : ''}
+                                        onClick={() => changeEditorMode(item.id)}
+                                        disabled={editorLoading}
+                                    >
+                                        <Icon name={item.icon} />
+                                        {item.label}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="jt-ai-editor-workspace">
+                                <div className="jt-ai-editor-workspace-toolbar">
+                                    <div>
+                                        <span className="jt-window-dot" />
+                                        <span className="jt-window-dot" />
+                                        <span className="jt-window-dot" />
+                                    </div>
+                                    <strong>{editorDocumentLabel} · editable draft</strong>
+                                    <div>
+                                        <button type="button" onClick={copyDocument} title="Copy draft"><Icon name="copy" /></button>
+                                        <button type="button" onClick={downloadDocument} title="Download draft"><Icon name="download" /></button>
+                                    </div>
+                                </div>
+                                <div className={`jt-ai-editor-paper${editorTyping ? ' is-typing' : ''}`}>
+                                    <textarea
+                                        value={editorText}
+                                        onChange={(event) => setEditorText(event.target.value)}
+                                        aria-label={`Editable ${editorDocumentLabel.toLowerCase()}`}
+                                        readOnly={editorLoading}
+                                        spellCheck="true"
+                                    />
+                                    {editorTyping ? <span className="jt-ai-editor-caret" aria-hidden="true" /> : null}
+                                </div>
+                            </div>
+
+                            <footer className="jt-ai-editor-dialog-footer">
+                                <span aria-live="polite">{editorNotice}</span>
+                                <div>
+                                    <button type="button" className="jt-ai-editor-secondary" onClick={copyDocument}>
+                                        <Icon name="copy" />
+                                        Copy
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="jt-ai-edit-button"
+                                        onClick={improveDocument}
+                                        disabled={editorLoading}
+                                    >
+                                        <Icon name="spark" />
+                                        {editorTyping ? 'AI is typing…' : editorLoading ? 'Reading draft…' : 'Polish again'}
+                                    </button>
+                                </div>
+                            </footer>
+                        </section>
+                    </div>
+                ) : null}
 
                 <section className="jt-section jt-steps-section" id="how-it-works">
                     <div className="jt-section-heading jt-reveal">

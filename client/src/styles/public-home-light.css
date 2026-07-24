@@ -1,0 +1,2109 @@
+/*
+ * Standalone light presentation for the public homepage.
+ * Layout and interaction stay shared with dark mode; every visual surface is
+ * authored here so light mode does not inherit dark section treatments.
+ */
+
+.jt-public-home.is-light {
+  --jt-light-page: #f2eadc;
+  --jt-light-shell: #fff8ec;
+  --jt-light-panel: #fff3e2;
+  --jt-light-card: #fffaf1;
+  --jt-light-raised: #fffdf7;
+  --jt-light-soft: #edf7f0;
+  --jt-light-line: #d8c5a8;
+  --jt-light-ink: #102f2a;
+  --jt-light-copy: #63756d;
+  --jt-light-muted: #73847c;
+  --jt-light-teal: #56aaa1;
+  --jt-light-teal-dark: #2f746d;
+  --jt-light-shadow: rgba(86, 66, 37, 0.12);
+  color: var(--jt-light-ink);
+  background: var(--jt-light-page);
+}
+
+.jt-public-home.is-light .jt-home-header {
+  color: var(--jt-light-ink);
+  border-color: rgba(16, 24, 39, 0.1);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 18px 55px rgba(31, 51, 72, 0.12);
+}
+
+.jt-public-home.is-light .jt-header-links {
+  background: #f0f4f2;
+}
+
+.jt-public-home.is-light .jt-header-links button,
+.jt-public-home.is-light .jt-text-button {
+  color: var(--jt-light-ink);
+}
+
+.jt-public-home.is-light .jt-header-links button:hover,
+.jt-public-home.is-light .jt-text-button:hover {
+  color: #000000;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(29, 45, 63, 0.08);
+}
+
+.jt-public-home.is-light .jt-theme-toggle {
+  color: var(--jt-light-ink) !important;
+  border-color: rgba(16, 24, 39, 0.1);
+  background: #edf2ef;
+}
+
+.jt-public-home.is-light .jt-theme-toggle:hover {
+  background: #e3ebe7;
+}
+
+.jt-public-home.is-light .jt-pill-button {
+  color: #ffffff !important;
+  background: var(--jt-light-ink);
+  box-shadow: 0 10px 24px rgba(16, 24, 39, 0.18);
+}
+
+.jt-public-home.is-light .jt-hero {
+  color: var(--jt-light-ink);
+  background:
+    radial-gradient(circle at 76% 19%, rgba(24, 183, 164, 0.14), transparent 28%),
+    radial-gradient(circle at 8% 78%, rgba(199, 243, 107, 0.2), transparent 25%),
+    linear-gradient(145deg, #ffffff 0%, #f5faf7 54%, #ffffff 100%);
+}
+
+.jt-public-home.is-light .jt-hero-grid,
+.jt-public-home.is-light .jt-final-cta-grid {
+  opacity: 0.2;
+}
+
+.jt-public-home.is-light .jt-eyebrow {
+  color: #087d73;
+  border-color: rgba(8, 125, 115, 0.14);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.jt-public-home.is-light .jt-hero h1,
+.jt-public-home.is-light .jt-hero-proof strong {
+  color: var(--jt-light-ink);
+}
+
+.jt-public-home.is-light .jt-hero h1 span {
+  color: #087d73;
+}
+
+.jt-public-home.is-light .jt-hero-copy > p,
+.jt-public-home.is-light .jt-hero-proof p {
+  color: var(--jt-light-copy);
+}
+
+.jt-public-home.is-light .jt-secondary-button {
+  color: var(--jt-light-ink) !important;
+  border-color: var(--jt-light-line);
+  background: #ffffff;
+}
+
+.jt-public-home.is-light .jt-hero-visual {
+  border-color: rgba(16, 24, 39, 0.08);
+  background:
+    radial-gradient(circle at center, rgba(199, 243, 107, 0.23), transparent 43%),
+    linear-gradient(145deg, #ffffff, #eaf5f0);
+  box-shadow: 0 30px 80px rgba(29, 50, 70, 0.12);
+}
+
+.jt-public-home.is-light .jt-floating-card {
+  color: var(--jt-light-ink);
+  border-color: rgba(16, 24, 39, 0.08);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 20px 45px rgba(29, 48, 73, 0.12);
+}
+
+.jt-public-home.is-light .jt-floating-card strong {
+  color: var(--jt-light-ink);
+}
+
+.jt-public-home.is-light .jt-floating-card span,
+.jt-public-home.is-light .jt-floating-card small {
+  color: var(--jt-light-muted);
+}
+
+.jt-public-home.is-light .jt-signal-strip {
+  color: var(--jt-light-ink);
+  border-top: 1px solid var(--jt-light-line);
+  border-bottom: 1px solid var(--jt-light-line);
+  background: #e9f5f1;
+}
+
+.jt-public-home.is-light .jt-signal-track span {
+  color: #2b3a4d;
+}
+
+.jt-public-home.is-light .jt-signal-track span::after,
+.jt-public-home.is-light .jt-signal-track .jt-icon {
+  color: #087d73;
+}
+
+.jt-public-home.is-light .jt-platform-section,
+.jt-public-home.is-light .jt-ai-section,
+.jt-public-home.is-light .jt-steps-section {
+  color: var(--jt-light-ink);
+  background: transparent;
+}
+
+.jt-public-home.is-light .jt-section-heading h2,
+.jt-public-home.is-light .jt-ai-copy h2,
+.jt-public-home.is-light .jt-feature-card h3,
+.jt-public-home.is-light .jt-step-card h3 {
+  color: var(--jt-light-ink);
+}
+
+.jt-public-home.is-light .jt-section-heading > p,
+.jt-public-home.is-light .jt-heading-side > p,
+.jt-public-home.is-light .jt-ai-copy > p,
+.jt-public-home.is-light .jt-feature-card p,
+.jt-public-home.is-light .jt-step-card p {
+  color: var(--jt-light-copy);
+}
+
+.jt-public-home.is-light .jt-kicker,
+.jt-public-home.is-light .jt-feature-card > span,
+.jt-public-home.is-light .jt-feature-card > div > span {
+  color: #087d73;
+}
+
+.jt-public-home.is-light .jt-feature-card,
+.jt-public-home.is-light .jt-step-card {
+  color: var(--jt-light-ink);
+  border-color: var(--jt-light-line);
+  background: #ffffff;
+  box-shadow: 0 18px 50px rgba(31, 51, 72, 0.06);
+}
+
+.jt-public-home.is-light .jt-feature-card.is-large {
+  color: var(--jt-light-ink);
+  border-color: var(--jt-light-line);
+  background:
+    radial-gradient(circle at 86% 80%, rgba(24, 183, 164, 0.13), transparent 31%),
+    linear-gradient(145deg, #ffffff, #f0f8f4);
+}
+
+.jt-public-home.is-light .jt-feature-card.is-large > span {
+  color: #087d73;
+}
+
+.jt-public-home.is-light .jt-feature-card.is-large p {
+  color: var(--jt-light-copy);
+}
+
+.jt-public-home.is-light .jt-feature-card.is-wide {
+  background: linear-gradient(120deg, #e8f8f3, #fbfdf9);
+}
+
+.jt-public-home.is-light .jt-feature-art {
+  color: var(--jt-light-ink);
+  border: 1px solid var(--jt-light-line);
+  background: #ffffff;
+  box-shadow: 0 26px 55px rgba(31, 51, 72, 0.14);
+}
+
+.jt-public-home.is-light .jt-jobs-section {
+  color: var(--jt-light-ink);
+  border-top: 1px solid #edf1ef;
+  border-bottom: 1px solid #edf1ef;
+  background: #ffffff;
+}
+
+.jt-public-home.is-light .jt-search-field,
+.jt-public-home.is-light .jt-select-field,
+.jt-public-home.is-light .jt-search-field input,
+.jt-public-home.is-light .jt-select-field select {
+  color: #000000 !important;
+  border-color: var(--jt-light-line);
+  background: #ffffff !important;
+}
+
+.jt-public-home.is-light .jt-select-field span {
+  color: #000000 !important;
+}
+
+.jt-public-home.is-light .jt-job-card {
+  color: var(--jt-light-ink);
+  border-color: var(--jt-light-line);
+  background: #ffffff;
+  box-shadow: 0 16px 40px rgba(31, 51, 72, 0.045);
+}
+
+.jt-public-home.is-light .jt-job-card:hover {
+  border-color: rgba(8, 125, 115, 0.26);
+  box-shadow: 0 24px 55px rgba(31, 51, 72, 0.1);
+}
+
+.jt-public-home.is-light .jt-job-card h3,
+.jt-public-home.is-light .jt-job-company,
+.jt-public-home.is-light .jt-job-card-footer button {
+  color: var(--jt-light-ink);
+}
+
+.jt-public-home.is-light .jt-job-card > p {
+  color: var(--jt-light-copy);
+}
+
+.jt-public-home.is-light .jt-job-meta span {
+  color: #000000 !important;
+  background: #f0f4f2;
+}
+
+.jt-public-home.is-light .jt-job-skills span {
+  color: #39475a;
+  border-color: var(--jt-light-line);
+  background: #ffffff;
+}
+
+.jt-public-home.is-light .jt-job-social-actions button,
+.jt-public-home.is-light .jt-job-card-footer > span {
+  color: #657184;
+}
+
+.jt-public-home.is-light .jt-section-cta {
+  color: #000000;
+  border-color: rgba(8, 125, 115, 0.16);
+  background: #edf8f4;
+}
+
+.jt-public-home.is-light .jt-section-cta p,
+.jt-public-home.is-light .jt-section-cta strong {
+  color: #000000 !important;
+}
+
+.jt-public-home.is-light .jt-news-section {
+  color: var(--jt-light-ink);
+  border-top: 1px solid var(--jt-light-line);
+  border-bottom: 1px solid var(--jt-light-line);
+  background:
+    radial-gradient(circle at 12% 34%, rgba(24, 183, 164, 0.12), transparent 26%),
+    #eef6f2;
+}
+
+.jt-public-home.is-light .jt-news-section .jt-section-heading h2,
+.jt-public-home.is-light .jt-news-intro-card h3,
+.jt-public-home.is-light .jt-news-author strong,
+.jt-public-home.is-light .jt-empty-state.is-dark h3 {
+  color: var(--jt-light-ink);
+}
+
+.jt-public-home.is-light .jt-news-section .jt-kicker,
+.jt-public-home.is-light .jt-news-intro-card > span {
+  color: #087d73;
+}
+
+.jt-public-home.is-light .jt-news-section .jt-heading-side > p,
+.jt-public-home.is-light .jt-news-intro-card p {
+  color: var(--jt-light-copy);
+}
+
+.jt-public-home.is-light .jt-news-section .jt-live-count {
+  color: #087d73;
+  background: rgba(24, 183, 164, 0.1);
+}
+
+.jt-public-home.is-light .jt-news-section .jt-live-count i {
+  background: #18b7a4;
+  box-shadow: 0 0 0 4px rgba(24, 183, 164, 0.12);
+}
+
+.jt-public-home.is-light .jt-news-intro-card,
+.jt-public-home.is-light .jt-news-card {
+  color: var(--jt-light-ink);
+  border-color: var(--jt-light-line);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 22px 55px rgba(31, 51, 72, 0.08);
+}
+
+.jt-public-home.is-light .jt-news-orbit {
+  border-color: rgba(8, 125, 115, 0.26);
+}
+
+.jt-public-home.is-light .jt-news-orbit::before,
+.jt-public-home.is-light .jt-news-orbit::after {
+  border-color: rgba(16, 24, 39, 0.12);
+}
+
+.jt-public-home.is-light .jt-news-orbit span {
+  border-color: #eef6f2;
+}
+
+.jt-public-home.is-light .jt-news-orbit .jt-icon {
+  color: #087d73;
+}
+
+.jt-public-home.is-light .jt-news-intro-card button,
+.jt-public-home.is-light .jt-news-card > p {
+  color: #344256;
+}
+
+.jt-public-home.is-light .jt-news-author span,
+.jt-public-home.is-light .jt-news-metrics {
+  color: #6e7b8e;
+}
+
+.jt-public-home.is-light .jt-news-author > b {
+  color: #087d73;
+  background: rgba(24, 183, 164, 0.1);
+}
+
+.jt-public-home.is-light .jt-news-metrics {
+  border-top-color: var(--jt-light-line);
+}
+
+.jt-public-home.is-light .jt-social-actions button {
+  color: #566478;
+}
+
+.jt-public-home.is-light .jt-social-actions button:hover {
+  color: #087d73;
+  background: rgba(24, 183, 164, 0.08);
+}
+
+.jt-public-home.is-light .jt-empty-state.is-dark {
+  color: var(--jt-light-copy);
+  border: 1px solid var(--jt-light-line);
+  background: #ffffff;
+}
+
+.jt-public-home.is-light .jt-chat-shell {
+  border-color: var(--jt-light-line);
+  background: #ffffff;
+  box-shadow: 0 28px 75px rgba(31, 51, 72, 0.11);
+}
+
+.jt-public-home.is-light .jt-chat-header strong,
+.jt-public-home.is-light .jt-chat-header span {
+  color: #000000 !important;
+}
+
+.jt-public-home.is-light .jt-chat-messages {
+  background:
+    radial-gradient(circle at 90% 10%, rgba(199, 243, 107, 0.16), transparent 22%),
+    #eef5f2;
+}
+
+.jt-public-home.is-light .jt-chat-message.is-assistant {
+  color: #344256;
+  background: #ffffff;
+}
+
+.jt-public-home.is-light .jt-chat-message.is-user {
+  color: #ffffff;
+  background: #087d73;
+}
+
+.jt-public-home.is-light .jt-chat-form,
+.jt-public-home.is-light .jt-chat-form input {
+  color: #000000 !important;
+  border-color: var(--jt-light-line);
+  background: #ffffff !important;
+}
+
+.jt-public-home.is-light .jt-document-section {
+  color: var(--jt-light-ink);
+  border-top: 1px solid var(--jt-light-line);
+  border-bottom: 1px solid var(--jt-light-line);
+  background: #f0f6f3;
+}
+
+.jt-public-home.is-light .jt-editor-shell {
+  border-color: var(--jt-light-line);
+  background: #ffffff;
+  box-shadow: 0 30px 80px rgba(31, 51, 72, 0.11);
+}
+
+.jt-public-home.is-light .jt-editor-sidebar {
+  color: var(--jt-light-ink);
+  border-right: 1px solid var(--jt-light-line);
+  background: #ffffff;
+}
+
+.jt-public-home.is-light .jt-editor-brand small,
+.jt-public-home.is-light .jt-editor-sidebar > p,
+.jt-public-home.is-light .jt-editor-side-note span {
+  color: var(--jt-light-muted);
+}
+
+.jt-public-home.is-light .jt-editor-sidebar > button {
+  color: #536174;
+}
+
+.jt-public-home.is-light .jt-editor-sidebar > button:hover,
+.jt-public-home.is-light .jt-editor-sidebar > button.is-active {
+  color: var(--jt-light-ink);
+  background: #edf5f1;
+}
+
+.jt-public-home.is-light .jt-editor-side-note {
+  border-color: rgba(8, 125, 115, 0.14);
+  background: #edf8f4;
+}
+
+.jt-public-home.is-light .jt-editor-side-note .jt-icon {
+  color: #087d73;
+}
+
+.jt-public-home.is-light .jt-editor-main {
+  background: #f4f7f5;
+}
+
+.jt-public-home.is-light .jt-editor-toolbar,
+.jt-public-home.is-light .jt-editor-footer {
+  color: var(--jt-light-ink);
+  border-color: var(--jt-light-line);
+  background: #ffffff;
+}
+
+.jt-public-home.is-light .jt-editor-main textarea {
+  color: #000000 !important;
+  background: #ffffff !important;
+  box-shadow: 0 15px 45px rgba(31, 51, 72, 0.1);
+}
+
+.jt-public-home.is-light .jt-steps-section {
+  background: var(--jt-light-canvas);
+}
+
+.jt-public-home.is-light .jt-step-icon {
+  color: var(--jt-light-ink);
+  background: #e6f0eb;
+}
+
+.jt-public-home.is-light .jt-step-card:nth-child(3) .jt-step-icon {
+  background: var(--jt-lime);
+}
+
+.jt-public-home.is-light .jt-final-cta {
+  color: var(--jt-light-ink);
+  border: 1px solid var(--jt-light-line);
+  background:
+    radial-gradient(circle at 10% 100%, rgba(24, 183, 164, 0.15), transparent 32%),
+    linear-gradient(135deg, #e9f5ef, #f9fcfa);
+  box-shadow: 0 25px 65px rgba(31, 51, 72, 0.08);
+}
+
+.jt-public-home.is-light .jt-final-mark {
+  border-color: var(--jt-light-line);
+  background: #ffffff;
+}
+
+.jt-public-home.is-light .jt-final-cta > div:nth-child(3) > span {
+  color: #087d73;
+}
+
+.jt-public-home.is-light .jt-final-cta h2 {
+  color: var(--jt-light-ink);
+}
+
+.jt-public-home.is-light .jt-final-cta p {
+  color: var(--jt-light-copy);
+}
+
+.jt-public-home.is-light .jt-final-cta .jt-secondary-button.is-dark {
+  color: var(--jt-light-ink) !important;
+  border-color: var(--jt-light-line);
+  background: #ffffff;
+}
+
+.jt-public-home.is-light .jt-home-footer {
+  color: var(--jt-light-copy);
+  border-top: 1px solid var(--jt-light-line);
+  background: #ffffff;
+}
+
+.jt-public-home.is-light .jt-footer-links strong {
+  color: var(--jt-light-ink);
+}
+
+.jt-public-home.is-light .jt-footer-links button,
+.jt-public-home.is-light .jt-footer-links a {
+  color: #5f6d80;
+}
+
+.jt-public-home.is-light .jt-footer-links button:hover,
+.jt-public-home.is-light .jt-footer-links a:hover {
+  color: #087d73;
+}
+
+.jt-public-home.is-light .jt-terms {
+  border-color: var(--jt-light-line);
+}
+
+.jt-public-home.is-light .jt-terms summary,
+.jt-public-home.is-light .jt-terms-grid strong {
+  color: #2d3b4e;
+}
+
+.jt-public-home.is-light .jt-terms-grid p,
+.jt-public-home.is-light .jt-footer-bottom {
+  color: #778396;
+}
+
+.jt-public-home.is-light .jt-footer-bottom button {
+  color: #48566a;
+}
+
+/* Mobile and tablet light mode */
+@media (max-width: 760px) {
+  .jt-public-home.is-light .jt-home-header {
+    background: rgba(255, 255, 255, 0.97);
+  }
+
+  .jt-public-home.is-light .jt-hero {
+    background:
+      radial-gradient(circle at 82% 18%, rgba(24, 183, 164, 0.13), transparent 26%),
+      linear-gradient(180deg, #ffffff, #f4faf7);
+  }
+
+  .jt-public-home.is-light .jt-hero-visual,
+  .jt-public-home.is-light .jt-feature-card,
+  .jt-public-home.is-light .jt-job-card,
+  .jt-public-home.is-light .jt-news-card,
+  .jt-public-home.is-light .jt-chat-shell,
+  .jt-public-home.is-light .jt-step-card {
+    box-shadow: 0 16px 40px rgba(31, 51, 72, 0.08);
+  }
+
+  .jt-public-home.is-light .jt-news-intro-card {
+    background: #ffffff;
+  }
+
+  .jt-public-home.is-light .jt-editor-sidebar {
+    border-right: 0;
+    border-bottom: 1px solid var(--jt-light-line);
+    background: #ffffff;
+  }
+
+  .jt-public-home.is-light .jt-editor-sidebar > button {
+    color: #445267;
+    background: #f2f6f4;
+  }
+
+  .jt-public-home.is-light .jt-editor-sidebar > button.is-active {
+    color: #087d73;
+    background: #e4f2ec;
+  }
+
+  .jt-public-home.is-light .jt-editor-main textarea {
+    border: 1px solid var(--jt-light-line);
+  }
+
+  .jt-public-home.is-light .jt-final-cta {
+    background: linear-gradient(145deg, #e8f5ef, #ffffff);
+  }
+}
+
+/* Light-theme treatment for the interactive AI overlays */
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-conversation-scrim {
+  border-color: rgba(89, 55, 66, 0.16) !important;
+  background: rgba(77, 47, 56, 0.34) !important;
+  box-shadow: 0 30px 90px rgba(77, 47, 56, 0.24) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-chat-shell.is-popout {
+  color: #4b1f2e !important;
+  border-color: #d8c5a8 !important;
+  background:
+    radial-gradient(circle at 88% 4%, rgba(86, 170, 161, 0.18), transparent 28%),
+    #fff8ec !important;
+  box-shadow: 0 34px 100px rgba(86, 66, 37, 0.28) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-chat-shell.is-popout .jt-chat-header strong,
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-chat-shell.is-popout .jt-chat-header span {
+  color: #4b1f2e !important;
+  -webkit-text-fill-color: #4b1f2e !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-chat-shell.is-popout .jt-chat-messages {
+  color: #4b1f2e !important;
+  background:
+    linear-gradient(rgba(86, 170, 161, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(86, 170, 161, 0.055) 1px, transparent 1px),
+    #f2eadc !important;
+  background-size: 34px 34px !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-chat-shell.is-popout .jt-chat-message.is-assistant {
+  color: #4b1f2e !important;
+  -webkit-text-fill-color: #4b1f2e !important;
+  border-color: rgba(216, 197, 168, 0.82) !important;
+  background: #fffaf1 !important;
+  box-shadow: 0 12px 28px rgba(86, 66, 37, 0.1) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-chat-shell.is-popout .jt-chat-message.is-user {
+  color: #fffaf1 !important;
+  -webkit-text-fill-color: #fffaf1 !important;
+  background: #3d8f87 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-chat-popout-close,
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-close {
+  color: #4b1f2e !important;
+  -webkit-text-fill-color: #4b1f2e !important;
+  border-color: #d8c5a8 !important;
+  background: #fffaf1 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-overlay {
+  color: #4b1f2e !important;
+  background: rgba(72, 44, 53, 0.46) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-dialog {
+  color: #4b1f2e !important;
+  border-color: #d8c5a8 !important;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(86, 170, 161, 0.16), transparent 30%),
+    #fff8ec !important;
+  box-shadow: 0 45px 130px rgba(86, 66, 37, 0.3) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-dialog-header {
+  color: #4b1f2e !important;
+  border-color: #d8c5a8 !important;
+  background: #fffaf1 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-dialog-brand > span {
+  color: #fffaf1 !important;
+  background: #3d8f87 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-dialog-brand small {
+  color: #2f746d !important;
+  -webkit-text-fill-color: #2f746d !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-dialog-brand h2 {
+  color: #4b1f2e !important;
+  -webkit-text-fill-color: #4b1f2e !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-live-state {
+  color: #6d3d4b !important;
+  border-color: #d8c5a8 !important;
+  background: #fff8ec !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-live-state.is-active {
+  color: #2f746d !important;
+  border-color: rgba(61, 143, 135, 0.42) !important;
+  background: rgba(86, 170, 161, 0.12) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-live-state.is-active i {
+  background: #3d8f87 !important;
+  box-shadow: 0 0 0 6px rgba(61, 143, 135, 0.12) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-mode-tabs {
+  border-color: #d8c5a8 !important;
+  background: #f2eadc !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-mode-tabs button {
+  color: #6d3d4b !important;
+  -webkit-text-fill-color: #6d3d4b !important;
+  border-color: rgba(216, 197, 168, 0.86) !important;
+  background: #fffaf1 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-mode-tabs button.is-active,
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-mode-tabs button.is-active :is(span, svg, path) {
+  color: #fffaf1 !important;
+  -webkit-text-fill-color: #fffaf1 !important;
+  border-color: #3d8f87 !important;
+  background: #3d8f87 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-workspace {
+  background:
+    linear-gradient(rgba(86, 170, 161, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(86, 170, 161, 0.045) 1px, transparent 1px),
+    #eadfce !important;
+  background-size: 34px 34px !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-workspace-toolbar {
+  color: #4b1f2e !important;
+  border-color: #d8c5a8 !important;
+  background: #fffaf1 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-workspace-toolbar strong {
+  color: #4b1f2e !important;
+  -webkit-text-fill-color: #4b1f2e !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-workspace-toolbar button {
+  color: #4b1f2e !important;
+  border-color: #d8c5a8 !important;
+  background: #fff8ec !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-paper {
+  border-color: #d8c5a8 !important;
+  background: #e9decc !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-paper textarea {
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  border-color: rgba(143, 116, 86, 0.22) !important;
+  background: #ffffff !important;
+  box-shadow: 0 20px 55px rgba(86, 66, 37, 0.18) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-dialog-footer {
+  color: #6d3d4b !important;
+  border-color: #d8c5a8 !important;
+  background: #fffaf1 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-dialog-footer > span {
+  color: #6d3d4b !important;
+  -webkit-text-fill-color: #6d3d4b !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-secondary {
+  color: #4b1f2e !important;
+  -webkit-text-fill-color: #4b1f2e !important;
+  border-color: #d8c5a8 !important;
+  background: #fff8ec !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-dialog-footer .jt-ai-edit-button,
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-dialog-footer .jt-ai-edit-button :is(span, svg, path) {
+  color: #fffaf1 !important;
+  -webkit-text-fill-color: #fffaf1 !important;
+  background: linear-gradient(135deg, #56aaa1, #2f746d) !important;
+}
+
+/*
+ * Full light canvas reset.
+ * The dark presentation intentionally uses mixed light and dark bands, so the
+ * light theme owns every page-sized surface explicitly instead of relying on
+ * the shared section defaults.
+ */
+html[data-public-home-theme="light"],
+body[data-public-home-theme="light"],
+body[data-public-home-theme="light"] #root {
+  color-scheme: light;
+  background-color: #f2eadc !important;
+}
+
+body[data-public-home-theme="light"] .jt-public-home.is-light,
+body[data-public-home-theme="light"] .jt-public-home.is-light > main {
+  background-color: #f2eadc !important;
+}
+
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-hero {
+  background:
+    radial-gradient(circle at 78% 16%, rgba(86, 170, 161, 0.2), transparent 30%),
+    radial-gradient(circle at 8% 86%, rgba(216, 197, 168, 0.36), transparent 28%),
+    linear-gradient(140deg, #fffdf7 0%, #fff8ec 48%, #edf7f0 100%) !important;
+}
+
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-signal-strip {
+  background-color: #fff3e2 !important;
+}
+
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-platform-section,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-ai-section,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-steps-section {
+  position: relative;
+  isolation: isolate;
+  background: transparent !important;
+}
+
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-platform-section::before,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-ai-section::before,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-steps-section::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-platform-section::before {
+  background:
+    radial-gradient(circle at 90% 12%, rgba(86, 170, 161, 0.08), transparent 25%),
+    #f2eadc !important;
+}
+
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-jobs-section {
+  background:
+    linear-gradient(rgba(86, 170, 161, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(86, 170, 161, 0.035) 1px, transparent 1px),
+    #fff8ec !important;
+  background-size: 52px 52px, 52px 52px, auto !important;
+}
+
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-news-section {
+  background:
+    radial-gradient(circle at 12% 30%, rgba(86, 170, 161, 0.18), transparent 28%),
+    linear-gradient(135deg, #edf7f0 0%, #e4f2ea 55%, #fff8ec 100%) !important;
+}
+
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-ai-section::before {
+  background:
+    radial-gradient(circle at 8% 18%, rgba(216, 197, 168, 0.24), transparent 25%),
+    #fffdf7 !important;
+}
+
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-document-section {
+  background:
+    radial-gradient(circle at 88% 12%, rgba(86, 170, 161, 0.1), transparent 27%),
+    #fff3e2 !important;
+}
+
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-steps-section::before {
+  background:
+    radial-gradient(circle at 75% 22%, rgba(86, 170, 161, 0.12), transparent 24%),
+    #edf7f0 !important;
+}
+
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-final-cta {
+  background:
+    radial-gradient(circle at 12% 100%, rgba(86, 170, 161, 0.22), transparent 34%),
+    linear-gradient(130deg, #fff3e2 0%, #edf7f0 100%) !important;
+}
+
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-home-footer {
+  background:
+    linear-gradient(180deg, #fff8ec 0%, #f2eadc 100%) !important;
+}
+
+@media (max-width: 760px) {
+  body[data-public-home-theme="light"] .jt-public-home.is-light .jt-hero {
+    background:
+      radial-gradient(circle at 86% 18%, rgba(86, 170, 161, 0.19), transparent 28%),
+      linear-gradient(180deg, #fffdf7 0%, #fff8ec 58%, #edf7f0 100%) !important;
+  }
+
+  body[data-public-home-theme="light"] .jt-public-home.is-light .jt-jobs-section {
+    background:
+      linear-gradient(rgba(86, 170, 161, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(86, 170, 161, 0.03) 1px, transparent 1px),
+      #fff8ec !important;
+    background-size: 38px 38px, 38px 38px, auto !important;
+  }
+
+  body[data-public-home-theme="light"] .jt-public-home.is-light .jt-news-section {
+    background: linear-gradient(155deg, #edf7f0 0%, #fff8ec 100%) !important;
+  }
+
+  body[data-public-home-theme="light"] .jt-public-home.is-light .jt-document-section {
+    background: #fff3e2 !important;
+  }
+}
+
+@media (max-width: 410px) {
+  .jt-public-home.is-light .jt-theme-toggle {
+    width: 36px;
+    height: 36px;
+  }
+
+  .jt-public-home.is-light .jt-pill-button {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+}
+
+/* Portal cream palette: authoritative light-mode treatment */
+.jt-public-home.is-light {
+  color: var(--jt-light-ink);
+  background:
+    radial-gradient(circle at 8% 7%, rgba(86, 170, 161, 0.1), transparent 24%),
+    var(--jt-light-page);
+}
+
+.jt-public-home.is-light .jt-home-header {
+  color: var(--jt-light-ink);
+  border-color: rgba(216, 197, 168, 0.86);
+  background: rgba(255, 248, 236, 0.96);
+  box-shadow: 0 18px 45px rgba(86, 66, 37, 0.13);
+}
+
+.jt-public-home.is-light .jt-header-links {
+  background: var(--jt-light-panel);
+  box-shadow: inset 0 0 0 1px rgba(216, 197, 168, 0.62);
+}
+
+.jt-public-home.is-light .jt-header-links button,
+.jt-public-home.is-light .jt-text-button {
+  color: var(--jt-light-ink);
+}
+
+.jt-public-home.is-light .jt-header-links button:hover,
+.jt-public-home.is-light .jt-text-button:hover,
+.jt-public-home.is-light .jt-theme-toggle:hover {
+  color: var(--jt-light-teal-dark);
+  background: var(--jt-light-raised);
+  box-shadow: 0 6px 16px rgba(86, 66, 37, 0.08);
+}
+
+.jt-public-home.is-light .jt-theme-toggle {
+  color: var(--jt-light-ink) !important;
+  border-color: rgba(216, 197, 168, 0.88);
+  background: var(--jt-light-raised);
+}
+
+.jt-public-home.is-light .jt-pill-button,
+.jt-public-home.is-light .jt-primary-button {
+  color: #fffaf1 !important;
+  border: 1px solid var(--jt-light-teal);
+  background: var(--jt-light-teal);
+  box-shadow: 0 12px 25px rgba(47, 116, 109, 0.18);
+}
+
+.jt-public-home.is-light .jt-pill-button:hover,
+.jt-public-home.is-light .jt-primary-button:hover {
+  background: var(--jt-light-teal-dark);
+  border-color: var(--jt-light-teal-dark);
+}
+
+.jt-public-home.is-light .jt-secondary-button,
+.jt-public-home.is-light .jt-secondary-button.is-dark {
+  color: var(--jt-light-ink) !important;
+  border: 1px solid rgba(86, 170, 161, 0.48);
+  background: var(--jt-light-raised);
+  box-shadow: 0 8px 20px rgba(86, 66, 37, 0.07);
+}
+
+.jt-public-home.is-light .jt-hero {
+  color: var(--jt-light-ink);
+  background:
+    radial-gradient(circle at 76% 19%, rgba(86, 170, 161, 0.2), transparent 28%),
+    radial-gradient(circle at 8% 80%, rgba(237, 247, 240, 0.95), transparent 28%),
+    linear-gradient(145deg, var(--jt-light-shell) 0%, #e7f4ed 58%, #f8f0df 100%);
+}
+
+.jt-public-home.is-light .jt-hero-grid,
+.jt-public-home.is-light .jt-final-cta-grid {
+  opacity: 0.28;
+  background-image:
+    linear-gradient(rgba(47, 116, 109, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47, 116, 109, 0.09) 1px, transparent 1px);
+}
+
+.jt-public-home.is-light .jt-hero-orb-one {
+  border-color: rgba(86, 170, 161, 0.38);
+  box-shadow: inset 0 0 70px rgba(86, 170, 161, 0.14);
+}
+
+.jt-public-home.is-light .jt-hero-orb-two {
+  background: rgba(217, 240, 233, 0.9);
+}
+
+.jt-public-home.is-light .jt-eyebrow {
+  color: var(--jt-light-teal-dark);
+  border-color: rgba(86, 170, 161, 0.34);
+  background: rgba(255, 250, 241, 0.9);
+}
+
+.jt-public-home.is-light .jt-live-dot,
+.jt-public-home.is-light .jt-chat-header span i,
+.jt-public-home.is-light .jt-live-count i {
+  background: var(--jt-light-teal);
+  box-shadow: 0 0 0 5px rgba(86, 170, 161, 0.14);
+}
+
+.jt-public-home.is-light .jt-hero h1,
+.jt-public-home.is-light .jt-hero-proof strong,
+.jt-public-home.is-light .jt-floating-card strong {
+  color: var(--jt-light-ink);
+}
+
+.jt-public-home.is-light .jt-hero h1 span,
+.jt-public-home.is-light .jt-kicker,
+.jt-public-home.is-light .jt-job-company {
+  color: var(--jt-light-teal-dark);
+}
+
+.jt-public-home.is-light .jt-hero-copy > p,
+.jt-public-home.is-light .jt-hero-proof p,
+.jt-public-home.is-light .jt-floating-card span,
+.jt-public-home.is-light .jt-floating-card small {
+  color: var(--jt-light-muted);
+}
+
+.jt-public-home.is-light .jt-avatar-stack span {
+  color: #fffaf1;
+  border-color: var(--jt-light-shell);
+  background: var(--jt-light-teal-dark);
+}
+
+.jt-public-home.is-light .jt-avatar-stack span:nth-child(2) {
+  background: var(--jt-light-teal);
+}
+
+.jt-public-home.is-light .jt-avatar-stack span:nth-child(3) {
+  color: var(--jt-light-ink);
+  background: #e1cfb2;
+}
+
+.jt-public-home.is-light .jt-avatar-stack span:nth-child(4) {
+  color: var(--jt-light-ink);
+  background: var(--jt-light-soft);
+}
+
+.jt-public-home.is-light .jt-hero-visual {
+  border-color: rgba(216, 197, 168, 0.82);
+  background:
+    radial-gradient(circle at center, rgba(217, 240, 233, 0.88), transparent 43%),
+    linear-gradient(145deg, var(--jt-light-raised), var(--jt-light-panel));
+  box-shadow: 0 28px 64px rgba(86, 66, 37, 0.14);
+}
+
+.jt-public-home.is-light .jt-visual-radar,
+.jt-public-home.is-light .jt-visual-radar::before,
+.jt-public-home.is-light .jt-visual-radar::after,
+.jt-public-home.is-light .jt-visual-radar > span {
+  border-color: rgba(86, 170, 161, 0.26);
+}
+
+.jt-public-home.is-light .jt-visual-radar > span:nth-child(2) {
+  border-top-color: rgba(86, 170, 161, 0.28);
+}
+
+.jt-public-home.is-light .jt-visual-radar > span:nth-child(3) {
+  border-left-color: rgba(86, 170, 161, 0.28);
+}
+
+.jt-public-home.is-light .jt-radar-core {
+  color: #fffaf1;
+  border-color: rgba(255, 250, 241, 0.78);
+  background: var(--jt-light-teal);
+  box-shadow: 0 25px 50px rgba(47, 116, 109, 0.24);
+}
+
+.jt-public-home.is-light .jt-floating-card {
+  color: var(--jt-light-ink);
+  border-color: rgba(216, 197, 168, 0.84);
+  background: rgba(255, 250, 241, 0.95);
+  box-shadow: 0 18px 38px rgba(86, 66, 37, 0.13);
+}
+
+.jt-public-home.is-light .jt-floating-card b,
+.jt-public-home.is-light .jt-job-type,
+.jt-public-home.is-light .jt-live-count {
+  color: var(--jt-light-teal-dark);
+  background: rgba(86, 170, 161, 0.13);
+}
+
+.jt-public-home.is-light .jt-mini-logo,
+.jt-public-home.is-light .jt-mini-logo.is-purple {
+  color: #fffaf1;
+  background: var(--jt-light-teal);
+}
+
+.jt-public-home.is-light .jt-mini-logo.is-orange {
+  color: var(--jt-light-ink);
+  background: #e6d3b5;
+}
+
+.jt-public-home.is-light .jt-progress {
+  background: #eadfce;
+}
+
+.jt-public-home.is-light .jt-progress i {
+  background: linear-gradient(90deg, var(--jt-light-teal-dark), var(--jt-light-teal));
+}
+
+.jt-public-home.is-light .jt-signal-strip {
+  color: var(--jt-light-ink);
+  border-color: rgba(216, 197, 168, 0.86);
+  background: var(--jt-light-panel);
+}
+
+.jt-public-home.is-light .jt-signal-track span {
+  color: var(--jt-light-ink);
+}
+
+.jt-public-home.is-light .jt-signal-track span::after,
+.jt-public-home.is-light .jt-signal-track .jt-icon {
+  color: var(--jt-light-teal-dark);
+}
+
+.jt-public-home.is-light .jt-platform-section,
+.jt-public-home.is-light .jt-ai-section,
+.jt-public-home.is-light .jt-steps-section {
+  background: var(--jt-light-page);
+}
+
+.jt-public-home.is-light .jt-section-heading h2,
+.jt-public-home.is-light .jt-ai-copy h2,
+.jt-public-home.is-light .jt-feature-card h3,
+.jt-public-home.is-light .jt-step-card h3 {
+  color: var(--jt-light-ink);
+}
+
+.jt-public-home.is-light .jt-section-heading > p,
+.jt-public-home.is-light .jt-heading-side > p,
+.jt-public-home.is-light .jt-ai-copy > p,
+.jt-public-home.is-light .jt-feature-card p,
+.jt-public-home.is-light .jt-step-card p {
+  color: var(--jt-light-copy);
+}
+
+.jt-public-home.is-light .jt-feature-card,
+.jt-public-home.is-light .jt-step-card,
+.jt-public-home.is-light .jt-job-card {
+  color: var(--jt-light-ink);
+  border-color: rgba(216, 197, 168, 0.82);
+  background: var(--jt-light-card);
+  box-shadow: 0 14px 32px rgba(86, 66, 37, 0.08);
+}
+
+.jt-public-home.is-light .jt-feature-card.is-large {
+  color: var(--jt-light-ink);
+  border-color: rgba(216, 197, 168, 0.82);
+  background:
+    radial-gradient(circle at 85% 80%, rgba(86, 170, 161, 0.15), transparent 30%),
+    linear-gradient(145deg, var(--jt-light-card), var(--jt-light-panel));
+}
+
+.jt-public-home.is-light .jt-feature-card.is-wide {
+  background: linear-gradient(125deg, var(--jt-light-soft), var(--jt-light-panel));
+}
+
+.jt-public-home.is-light .jt-feature-card > span,
+.jt-public-home.is-light .jt-feature-card > div > span,
+.jt-public-home.is-light .jt-feature-card.is-large > span {
+  color: var(--jt-light-teal-dark);
+}
+
+.jt-public-home.is-light .jt-feature-card.is-large p {
+  color: var(--jt-light-copy);
+}
+
+.jt-public-home.is-light .jt-feature-icon,
+.jt-public-home.is-light .jt-feature-icon.is-blue,
+.jt-public-home.is-light .jt-feature-icon.is-purple {
+  color: #fffaf1;
+  background: var(--jt-light-teal);
+}
+
+.jt-public-home.is-light .jt-feature-icon.is-orange {
+  color: var(--jt-light-ink);
+  background: #e6d3b5;
+}
+
+.jt-public-home.is-light .jt-feature-art {
+  color: var(--jt-light-ink);
+  border-color: var(--jt-light-line);
+  background: var(--jt-light-raised);
+  box-shadow: 0 24px 52px rgba(86, 66, 37, 0.15);
+}
+
+.jt-public-home.is-light .jt-feature-art i {
+  background: #e5d8c5;
+}
+
+.jt-public-home.is-light .jt-feature-art b {
+  color: #fffaf1;
+  background: var(--jt-light-teal);
+}
+
+.jt-public-home.is-light .jt-jobs-section {
+  color: var(--jt-light-ink);
+  border-color: rgba(216, 197, 168, 0.74);
+  background: var(--jt-light-shell);
+}
+
+.jt-public-home.is-light .jt-search-field,
+.jt-public-home.is-light .jt-select-field,
+.jt-public-home.is-light .jt-search-field input,
+.jt-public-home.is-light .jt-select-field select {
+  color: var(--jt-light-ink) !important;
+  border-color: rgba(216, 197, 168, 0.9);
+  background: var(--jt-light-raised) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.68);
+}
+
+.jt-public-home.is-light .jt-search-field .jt-icon,
+.jt-public-home.is-light .jt-select-field span {
+  color: var(--jt-light-teal-dark) !important;
+}
+
+.jt-public-home.is-light .jt-search-field input::placeholder {
+  color: #798a83 !important;
+}
+
+.jt-public-home.is-light .jt-select-field select option {
+  color: var(--jt-light-ink);
+  background: var(--jt-light-raised);
+}
+
+.jt-public-home.is-light .jt-job-card:hover {
+  border-color: rgba(86, 170, 161, 0.7);
+  box-shadow: 0 22px 48px rgba(86, 66, 37, 0.13);
+}
+
+.jt-public-home.is-light .jt-job-card h3,
+.jt-public-home.is-light .jt-job-card-footer button {
+  color: var(--jt-light-ink);
+}
+
+.jt-public-home.is-light .jt-job-card > p,
+.jt-public-home.is-light .jt-job-card-footer > span,
+.jt-public-home.is-light .jt-job-social-actions button {
+  color: var(--jt-light-copy);
+}
+
+.jt-public-home.is-light .jt-job-meta span {
+  color: var(--jt-light-ink) !important;
+  background: #eadfce;
+}
+
+.jt-public-home.is-light .jt-job-skills span {
+  color: var(--jt-light-ink);
+  border-color: rgba(86, 170, 161, 0.25);
+  background: var(--jt-light-soft);
+}
+
+.jt-public-home.is-light .jt-job-social-actions button:hover {
+  color: var(--jt-light-teal-dark);
+  background: rgba(86, 170, 161, 0.12);
+}
+
+.jt-public-home.is-light .jt-section-cta {
+  color: var(--jt-light-ink);
+  border-color: rgba(86, 170, 161, 0.34);
+  background: var(--jt-light-soft);
+}
+
+.jt-public-home.is-light .jt-section-cta p,
+.jt-public-home.is-light .jt-section-cta strong {
+  color: var(--jt-light-ink) !important;
+}
+
+.jt-public-home.is-light .jt-news-section {
+  color: var(--jt-light-ink);
+  border-color: rgba(216, 197, 168, 0.82);
+  background:
+    radial-gradient(circle at 12% 35%, rgba(86, 170, 161, 0.13), transparent 27%),
+    var(--jt-light-panel);
+}
+
+.jt-public-home.is-light .jt-news-section .jt-section-heading h2,
+.jt-public-home.is-light .jt-news-intro-card h3,
+.jt-public-home.is-light .jt-news-author strong,
+.jt-public-home.is-light .jt-empty-state.is-dark h3 {
+  color: var(--jt-light-ink);
+}
+
+.jt-public-home.is-light .jt-news-section .jt-kicker,
+.jt-public-home.is-light .jt-news-intro-card > span,
+.jt-public-home.is-light .jt-news-section .jt-live-count {
+  color: var(--jt-light-teal-dark);
+}
+
+.jt-public-home.is-light .jt-news-section .jt-heading-side > p,
+.jt-public-home.is-light .jt-news-intro-card p,
+.jt-public-home.is-light .jt-news-author span,
+.jt-public-home.is-light .jt-news-metrics {
+  color: var(--jt-light-copy);
+}
+
+.jt-public-home.is-light .jt-news-intro-card,
+.jt-public-home.is-light .jt-news-card,
+.jt-public-home.is-light .jt-empty-state.is-dark {
+  color: var(--jt-light-ink);
+  border-color: rgba(216, 197, 168, 0.84);
+  background: var(--jt-light-card);
+  box-shadow: 0 16px 36px rgba(86, 66, 37, 0.09);
+}
+
+.jt-public-home.is-light .jt-news-orbit {
+  border-color: rgba(86, 170, 161, 0.36);
+}
+
+.jt-public-home.is-light .jt-news-orbit::before,
+.jt-public-home.is-light .jt-news-orbit::after {
+  border-color: rgba(86, 170, 161, 0.22);
+}
+
+.jt-public-home.is-light .jt-news-orbit span {
+  border-color: var(--jt-light-card);
+  background: var(--jt-light-teal);
+}
+
+.jt-public-home.is-light .jt-news-orbit span:nth-child(3) {
+  background: #d8c5a8;
+}
+
+.jt-public-home.is-light .jt-news-orbit .jt-icon,
+.jt-public-home.is-light .jt-news-intro-card button {
+  color: var(--jt-light-teal-dark);
+}
+
+.jt-public-home.is-light .jt-news-author > b {
+  color: var(--jt-light-teal-dark);
+  background: rgba(86, 170, 161, 0.13);
+}
+
+.jt-public-home.is-light .jt-news-card > p {
+  color: var(--jt-light-ink);
+}
+
+.jt-public-home.is-light .jt-news-metrics {
+  border-color: rgba(216, 197, 168, 0.7);
+}
+
+.jt-public-home.is-light .jt-social-actions button {
+  color: var(--jt-light-copy);
+}
+
+.jt-public-home.is-light .jt-social-actions button:hover {
+  color: var(--jt-light-teal-dark);
+  background: rgba(86, 170, 161, 0.12);
+}
+
+.jt-public-home.is-light .jt-ai-section {
+  background: var(--jt-light-page);
+}
+
+.jt-public-home.is-light .jt-ai-prompt-list button {
+  color: var(--jt-light-ink);
+  border-color: rgba(216, 197, 168, 0.86);
+  background: var(--jt-light-card);
+}
+
+.jt-public-home.is-light .jt-ai-prompt-list button:hover {
+  border-color: var(--jt-light-teal);
+  background: var(--jt-light-soft);
+}
+
+.jt-public-home.is-light .jt-ai-prompt-list .jt-icon {
+  color: var(--jt-light-teal-dark);
+}
+
+.jt-public-home.is-light .jt-chat-shell {
+  border-color: rgba(216, 197, 168, 0.86);
+  background: var(--jt-light-shell);
+  box-shadow: 0 24px 58px rgba(86, 66, 37, 0.13);
+}
+
+.jt-public-home.is-light .jt-chat-ai-logo {
+  color: #fffaf1;
+  background: var(--jt-light-teal);
+}
+
+.jt-public-home.is-light .jt-chat-header strong,
+.jt-public-home.is-light .jt-chat-header span {
+  color: var(--jt-light-ink) !important;
+}
+
+.jt-public-home.is-light .jt-chat-messages {
+  background:
+    radial-gradient(circle at 90% 10%, rgba(86, 170, 161, 0.12), transparent 23%),
+    var(--jt-light-panel);
+}
+
+.jt-public-home.is-light .jt-chat-message.is-assistant {
+  color: var(--jt-light-ink);
+  border: 1px solid rgba(216, 197, 168, 0.72);
+  background: var(--jt-light-raised);
+  box-shadow: 0 9px 22px rgba(86, 66, 37, 0.07);
+}
+
+.jt-public-home.is-light .jt-chat-message.is-user {
+  color: #fffaf1;
+  background: var(--jt-light-teal);
+}
+
+.jt-public-home.is-light .jt-chat-message.is-typing i {
+  background: var(--jt-light-teal);
+}
+
+.jt-public-home.is-light .jt-chat-form,
+.jt-public-home.is-light .jt-chat-form input {
+  color: var(--jt-light-ink) !important;
+  border-color: rgba(216, 197, 168, 0.9);
+  background: var(--jt-light-raised) !important;
+}
+
+.jt-public-home.is-light .jt-chat-form > .jt-icon {
+  color: var(--jt-light-teal-dark);
+}
+
+.jt-public-home.is-light .jt-chat-form button {
+  color: #fffaf1;
+  background: var(--jt-light-teal);
+}
+
+.jt-public-home.is-light .jt-document-section {
+  color: var(--jt-light-ink);
+  border-color: rgba(216, 197, 168, 0.82);
+  background: var(--jt-light-shell);
+}
+
+.jt-public-home.is-light .jt-editor-shell {
+  border-color: rgba(216, 197, 168, 0.88);
+  background: var(--jt-light-card);
+  box-shadow: 0 24px 58px rgba(86, 66, 37, 0.13);
+}
+
+.jt-public-home.is-light .jt-editor-sidebar {
+  color: var(--jt-light-ink);
+  border-color: rgba(216, 197, 168, 0.88);
+  background: var(--jt-light-panel);
+}
+
+.jt-public-home.is-light .jt-editor-brand > div {
+  color: #fffaf1;
+  background: var(--jt-light-teal);
+}
+
+.jt-public-home.is-light .jt-editor-brand small,
+.jt-public-home.is-light .jt-editor-sidebar > p,
+.jt-public-home.is-light .jt-editor-side-note span {
+  color: var(--jt-light-muted);
+}
+
+.jt-public-home.is-light .jt-editor-sidebar > button {
+  color: var(--jt-light-copy);
+}
+
+.jt-public-home.is-light .jt-editor-sidebar > button:hover,
+.jt-public-home.is-light .jt-editor-sidebar > button.is-active {
+  color: var(--jt-light-ink);
+  background: var(--jt-light-raised);
+}
+
+.jt-public-home.is-light .jt-editor-sidebar > button.is-active .jt-icon,
+.jt-public-home.is-light .jt-editor-side-note .jt-icon {
+  color: var(--jt-light-teal-dark);
+}
+
+.jt-public-home.is-light .jt-editor-side-note {
+  border-color: rgba(86, 170, 161, 0.28);
+  background: var(--jt-light-soft);
+}
+
+.jt-public-home.is-light .jt-editor-main {
+  background: #eadfce;
+}
+
+.jt-public-home.is-light .jt-editor-toolbar,
+.jt-public-home.is-light .jt-editor-footer {
+  color: var(--jt-light-ink);
+  border-color: rgba(216, 197, 168, 0.88);
+  background: var(--jt-light-raised);
+}
+
+.jt-public-home.is-light .jt-editor-tools button {
+  color: var(--jt-light-ink);
+  border-color: var(--jt-light-line);
+  background: var(--jt-light-card);
+}
+
+.jt-public-home.is-light .jt-editor-main textarea {
+  color: var(--jt-light-ink) !important;
+  border: 1px solid rgba(216, 197, 168, 0.86);
+  background: var(--jt-light-raised) !important;
+  box-shadow: 0 14px 38px rgba(86, 66, 37, 0.11);
+}
+
+.jt-public-home.is-light .jt-editor-footer > span {
+  color: var(--jt-light-copy);
+}
+
+.jt-public-home.is-light .jt-ai-edit-button {
+  color: #fffaf1 !important;
+  background: linear-gradient(135deg, var(--jt-light-teal), var(--jt-light-teal-dark));
+  box-shadow: 0 12px 25px rgba(47, 116, 109, 0.2);
+}
+
+.jt-public-home.is-light .jt-step-icon,
+.jt-public-home.is-light .jt-step-card:nth-child(3) .jt-step-icon {
+  color: var(--jt-light-ink);
+  background: var(--jt-light-soft);
+}
+
+.jt-public-home.is-light .jt-step-card:nth-child(3) .jt-step-icon {
+  color: #fffaf1;
+  background: var(--jt-light-teal);
+}
+
+.jt-public-home.is-light .jt-step-card > span {
+  color: var(--jt-light-teal-dark);
+}
+
+.jt-public-home.is-light .jt-final-cta {
+  color: var(--jt-light-ink);
+  border-color: rgba(216, 197, 168, 0.88);
+  background:
+    radial-gradient(circle at 10% 100%, rgba(86, 170, 161, 0.16), transparent 33%),
+    linear-gradient(135deg, var(--jt-light-panel), var(--jt-light-soft));
+  box-shadow: 0 22px 54px rgba(86, 66, 37, 0.1);
+}
+
+.jt-public-home.is-light .jt-final-mark {
+  border-color: rgba(216, 197, 168, 0.9);
+  background: var(--jt-light-raised);
+}
+
+.jt-public-home.is-light .jt-final-cta > div:nth-child(3) > span {
+  color: var(--jt-light-teal-dark);
+}
+
+.jt-public-home.is-light .jt-final-cta h2 {
+  color: var(--jt-light-ink);
+}
+
+.jt-public-home.is-light .jt-final-cta p {
+  color: var(--jt-light-copy);
+}
+
+.jt-public-home.is-light .jt-home-footer {
+  color: var(--jt-light-copy);
+  border-color: rgba(216, 197, 168, 0.88);
+  background: var(--jt-light-shell);
+}
+
+.jt-public-home.is-light .jt-footer-links strong,
+.jt-public-home.is-light .jt-terms summary,
+.jt-public-home.is-light .jt-terms-grid strong {
+  color: var(--jt-light-ink);
+}
+
+.jt-public-home.is-light .jt-footer-links button,
+.jt-public-home.is-light .jt-footer-links a,
+.jt-public-home.is-light .jt-terms-grid p,
+.jt-public-home.is-light .jt-footer-bottom {
+  color: var(--jt-light-copy);
+}
+
+.jt-public-home.is-light .jt-footer-links button:hover,
+.jt-public-home.is-light .jt-footer-links a:hover,
+.jt-public-home.is-light .jt-footer-bottom button {
+  color: var(--jt-light-teal-dark);
+}
+
+.jt-public-home.is-light .jt-terms {
+  border-color: rgba(216, 197, 168, 0.82);
+}
+
+.jt-public-home.is-light .jt-job-modal-backdrop {
+  background: rgba(242, 234, 220, 0.78);
+}
+
+.jt-public-home.is-light .jt-job-modal {
+  color: var(--jt-light-ink);
+  border: 1px solid var(--jt-light-line);
+  background: var(--jt-light-card);
+  box-shadow: 0 35px 90px rgba(86, 66, 37, 0.22);
+}
+
+.jt-public-home.is-light .jt-job-modal-company {
+  border-color: var(--jt-light-line);
+  background: var(--jt-light-panel);
+}
+
+.jt-public-home.is-light .jt-job-modal-company h2,
+.jt-public-home.is-light .jt-job-modal-body h3 {
+  color: var(--jt-light-ink);
+}
+
+.jt-public-home.is-light .jt-job-modal-company span {
+  color: var(--jt-light-teal-dark);
+}
+
+.jt-public-home.is-light .jt-job-modal-company p,
+.jt-public-home.is-light .jt-job-modal-body p,
+.jt-public-home.is-light .jt-job-modal-body li {
+  color: var(--jt-light-copy);
+}
+
+.jt-public-home.is-light .jt-job-modal-actions {
+  border-color: var(--jt-light-line);
+  background: rgba(255, 250, 241, 0.96);
+}
+
+.jt-public-home.is-light .jt-modal-close,
+.jt-public-home.is-light .jt-gate-toast {
+  color: var(--jt-light-ink);
+  border: 1px solid var(--jt-light-line);
+  background: var(--jt-light-raised);
+}
+
+.jt-public-home.is-light .jt-gate-toast {
+  box-shadow: 0 18px 38px rgba(86, 66, 37, 0.16);
+}
+
+.jt-public-home.is-light .jt-gate-toast > .jt-icon {
+  color: var(--jt-light-teal-dark);
+}
+
+.jt-public-home.is-light .jt-skeleton {
+  background: #eadfce !important;
+}
+
+.jt-public-home.is-light .jt-skeleton::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 253, 247, 0.85), transparent);
+}
+
+.jt-public-home.is-light .jt-news-card.jt-skeleton {
+  background: #e6d9c7 !important;
+}
+
+/* Portal-colored public account dialogs rendered outside the homepage root. */
+body[data-public-home-theme="light"] .public-landing-modal-backdrop {
+  background: rgba(242, 234, 220, 0.82) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+body[data-public-home-theme="light"] .public-auth-card,
+body[data-public-home-theme="light"] .public-assistant-dialog,
+body[data-public-home-theme="light"] .public-jobs-dialog {
+  color: #102f2a !important;
+  border-color: #d8c5a8 !important;
+  background: #fff3e2 !important;
+  box-shadow: 0 30px 80px rgba(86, 66, 37, 0.2) !important;
+}
+
+body[data-public-home-theme="light"] .public-auth-form-shell,
+body[data-public-home-theme="light"] .public-auth-form,
+body[data-public-home-theme="light"] .public-modal-footer {
+  color: #102f2a !important;
+  background: #fffaf1 !important;
+  border-color: #d8c5a8 !important;
+}
+
+body[data-public-home-theme="light"] .public-auth-card input {
+  color: #102f2a !important;
+  border-color: #d8c5a8 !important;
+  background: #fffdf7 !important;
+}
+
+body[data-public-home-theme="light"] .public-auth-card input::placeholder {
+  color: #63756d !important;
+}
+
+body[data-public-home-theme="light"] .public-auth-card button {
+  border-color: rgba(86, 170, 161, 0.55) !important;
+}
+
+/* Portal cream mobile treatment */
+@media (max-width: 760px) {
+  .jt-public-home.is-light {
+    background: var(--jt-light-page);
+  }
+
+  .jt-public-home.is-light .jt-home-header {
+    border-color: rgba(216, 197, 168, 0.9);
+    background: rgba(255, 248, 236, 0.98);
+  }
+
+  .jt-public-home.is-light .jt-hero {
+    background:
+      radial-gradient(circle at 82% 18%, rgba(86, 170, 161, 0.17), transparent 27%),
+      linear-gradient(180deg, var(--jt-light-shell), var(--jt-light-page));
+  }
+
+  .jt-public-home.is-light .jt-hero-visual,
+  .jt-public-home.is-light .jt-feature-card,
+  .jt-public-home.is-light .jt-job-card,
+  .jt-public-home.is-light .jt-news-card,
+  .jt-public-home.is-light .jt-chat-shell,
+  .jt-public-home.is-light .jt-step-card {
+    border-color: rgba(216, 197, 168, 0.86);
+    box-shadow: 0 14px 32px rgba(86, 66, 37, 0.1);
+  }
+
+  .jt-public-home.is-light .jt-editor-sidebar {
+    border-right: 0;
+    border-bottom: 1px solid var(--jt-light-line);
+    background: var(--jt-light-panel);
+  }
+
+  .jt-public-home.is-light .jt-editor-sidebar > button {
+    color: var(--jt-light-ink);
+    background: var(--jt-light-raised);
+  }
+
+  .jt-public-home.is-light .jt-editor-sidebar > button.is-active {
+    color: var(--jt-light-teal-dark);
+    border: 1px solid rgba(86, 170, 161, 0.42);
+    background: var(--jt-light-soft);
+  }
+
+  .jt-public-home.is-light .jt-editor-main {
+    background: #eadfce;
+  }
+
+  .jt-public-home.is-light .jt-editor-main textarea {
+    border-color: var(--jt-light-line);
+    background: var(--jt-light-raised) !important;
+  }
+
+  .jt-public-home.is-light .jt-final-cta {
+    background: linear-gradient(145deg, var(--jt-light-panel), var(--jt-light-soft));
+  }
+
+  body[data-public-home-theme="light"] .public-auth-card,
+  body[data-public-home-theme="light"] .public-assistant-dialog,
+  body[data-public-home-theme="light"] .public-jobs-dialog {
+    border-radius: 20px !important;
+    background: #fff3e2 !important;
+  }
+}
+
+/* Final light-card palette: cream surfaces with portal maroon typography. */
+body[data-public-home-theme="light"] .jt-public-home.is-light {
+  --jt-light-ink: #4b1f2e;
+  --jt-light-copy: #6d3d4b;
+  --jt-light-muted: #805c67;
+  color: var(--jt-light-ink) !important;
+}
+
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-hero-visual,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-floating-card,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-feature-card,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-feature-card.is-large,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-feature-card.is-wide,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-job-card,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-section-cta,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-news-intro-card,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-news-card,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-empty-state,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-empty-state.is-dark,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-chat-shell,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-chat-message.is-assistant,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-editor-shell,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-editor-sidebar,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-step-card,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-final-cta,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-final-mark,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-job-modal {
+  color: var(--jt-light-ink) !important;
+  border-color: #d8c5a8 !important;
+  background: #fff3e2 !important;
+}
+
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-feature-art,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-search-field,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-select-field,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-search-field input,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-select-field select,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-chat-form,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-chat-form input,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-editor-toolbar,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-editor-footer,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-editor-main textarea,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-job-modal-company,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-job-modal-actions {
+  color: var(--jt-light-ink) !important;
+  border-color: #d8c5a8 !important;
+  background: #fffaf1 !important;
+}
+
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-chat-messages,
+body[data-public-home-theme="light"] .jt-public-home.is-light .jt-editor-main {
+  color: var(--jt-light-ink) !important;
+  background: #f2eadc !important;
+}
+
+body[data-public-home-theme="light"] .jt-public-home.is-light :is(
+  .jt-hero-copy,
+  .jt-hero-proof,
+  .jt-floating-card,
+  .jt-section-heading,
+  .jt-feature-card,
+  .jt-job-card,
+  .jt-section-cta,
+  .jt-news-section,
+  .jt-news-intro-card,
+  .jt-news-card,
+  .jt-ai-copy,
+  .jt-chat-header,
+  .jt-chat-message.is-assistant,
+  .jt-editor-sidebar,
+  .jt-editor-toolbar,
+  .jt-editor-footer,
+  .jt-step-card,
+  .jt-final-cta,
+  .jt-home-footer
+) :is(h1, h2, h3, h4, strong) {
+  color: var(--jt-light-ink) !important;
+}
+
+body[data-public-home-theme="light"] .jt-public-home.is-light :is(
+  .jt-hero-copy,
+  .jt-hero-proof,
+  .jt-floating-card,
+  .jt-section-heading,
+  .jt-feature-card,
+  .jt-job-card,
+  .jt-section-cta,
+  .jt-news-section,
+  .jt-news-intro-card,
+  .jt-news-card,
+  .jt-ai-copy,
+  .jt-chat-header,
+  .jt-chat-message.is-assistant,
+  .jt-editor-sidebar,
+  .jt-editor-toolbar,
+  .jt-editor-footer,
+  .jt-step-card,
+  .jt-final-cta,
+  .jt-home-footer
+) :is(p, small, span) {
+  color: var(--jt-light-copy) !important;
+}
+
+body[data-public-home-theme="light"] .public-auth-card,
+body[data-public-home-theme="light"] .public-assistant-dialog,
+body[data-public-home-theme="light"] .public-jobs-dialog,
+body[data-public-home-theme="light"] .public-auth-form-shell,
+body[data-public-home-theme="light"] .public-auth-form,
+body[data-public-home-theme="light"] .public-modal-footer,
+body[data-public-home-theme="light"] .public-auth-card input {
+  color: #4b1f2e !important;
+}
+
+/*
+ * The legacy portal stylesheet has an ID-level site-wide black reset for every
+ * semantic element. These homepage rules deliberately include #root so the
+ * selected light presentation wins that reset in the rendered application.
+ */
+body[data-public-home-theme="light"] #root .jt-public-home.is-light,
+body[data-public-home-theme="light"] #root .jt-public-home.is-light > main {
+  color: #4b1f2e !important;
+  background: #f2eadc !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-home-header {
+  color: #4b1f2e !important;
+  border-color: #d8c5a8 !important;
+  background: rgba(255, 248, 236, 0.97) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-header-links {
+  color: #4b1f2e !important;
+  background: #fff3e2 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-hero {
+  color: #4b1f2e !important;
+  background:
+    radial-gradient(circle at 78% 16%, rgba(86, 170, 161, 0.2), transparent 30%),
+    radial-gradient(circle at 8% 86%, rgba(216, 197, 168, 0.36), transparent 28%),
+    linear-gradient(140deg, #fffdf7 0%, #fff8ec 48%, #edf7f0 100%) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-signal-strip {
+  color: #4b1f2e !important;
+  background: #fff3e2 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-platform-section {
+  color: #4b1f2e !important;
+  background: #f2eadc !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-jobs-section {
+  color: #4b1f2e !important;
+  background:
+    linear-gradient(rgba(86, 170, 161, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(86, 170, 161, 0.035) 1px, transparent 1px),
+    #fff8ec !important;
+  background-size: 52px 52px, 52px 52px, auto !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-news-section {
+  color: #4b1f2e !important;
+  background:
+    radial-gradient(circle at 12% 30%, rgba(86, 170, 161, 0.18), transparent 28%),
+    linear-gradient(135deg, #edf7f0 0%, #e4f2ea 55%, #fff8ec 100%) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-section {
+  color: #4b1f2e !important;
+  background: #fffdf7 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-document-section {
+  color: #4b1f2e !important;
+  background:
+    radial-gradient(circle at 88% 12%, rgba(86, 170, 161, 0.1), transparent 27%),
+    #fff3e2 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-steps-section {
+  color: #4b1f2e !important;
+  background: #edf7f0 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light :is(
+  .jt-hero-visual,
+  .jt-floating-card,
+  .jt-feature-card,
+  .jt-feature-card.is-large,
+  .jt-feature-card.is-wide,
+  .jt-job-card,
+  .jt-section-cta,
+  .jt-news-intro-card,
+  .jt-news-card,
+  .jt-empty-state,
+  .jt-chat-shell,
+  .jt-chat-message.is-assistant,
+  .jt-editor-shell,
+  .jt-editor-sidebar,
+  .jt-step-card,
+  .jt-final-mark,
+  .jt-job-modal
+) {
+  color: #4b1f2e !important;
+  border-color: #d8c5a8 !important;
+  background: #fff3e2 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light :is(
+  .jt-feature-art,
+  .jt-search-field,
+  .jt-select-field,
+  .jt-search-field input,
+  .jt-select-field select,
+  .jt-chat-form,
+  .jt-chat-form input,
+  .jt-editor-toolbar,
+  .jt-editor-footer,
+  .jt-editor-main textarea,
+  .jt-job-modal-company,
+  .jt-job-modal-actions
+) {
+  color: #4b1f2e !important;
+  border-color: #d8c5a8 !important;
+  background: #fffaf1 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-chat-messages,
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-editor-main {
+  color: #4b1f2e !important;
+  background: #f2eadc !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-final-cta {
+  color: #4b1f2e !important;
+  border-color: #d8c5a8 !important;
+  background:
+    radial-gradient(circle at 12% 100%, rgba(86, 170, 161, 0.22), transparent 34%),
+    linear-gradient(130deg, #fff3e2 0%, #edf7f0 100%) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-home-footer {
+  color: #6d3d4b !important;
+  border-color: #d8c5a8 !important;
+  background: linear-gradient(180deg, #fff8ec 0%, #f2eadc 100%) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light :is(
+  .jt-hero,
+  .jt-home-header,
+  .jt-feature-card,
+  .jt-job-card,
+  .jt-section-cta,
+  .jt-news-section,
+  .jt-news-card,
+  .jt-news-intro-card,
+  .jt-ai-section,
+  .jt-chat-shell,
+  .jt-editor-shell,
+  .jt-editor-sidebar,
+  .jt-step-card,
+  .jt-final-cta,
+  .jt-home-footer
+) :is(h1, h2, h3, h4, strong, p, small, span, button, label) {
+  color: #4b1f2e !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light :is(
+  .jt-primary-button,
+  .jt-pill-button,
+  .jt-ai-edit-button,
+  .jt-chat-form button,
+  .jt-chat-message.is-user
+) {
+  color: #fffaf1 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light :is(
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  strong,
+  small,
+  span,
+  label,
+  summary,
+  a,
+  button,
+  input,
+  select,
+  textarea
+) {
+  color: #4b1f2e !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light :is(
+  .jt-primary-button,
+  .jt-pill-button,
+  .jt-ai-edit-button,
+  .jt-chat-form button,
+  .jt-chat-message.is-user
+),
+body[data-public-home-theme="light"] #root .jt-public-home.is-light :is(
+  .jt-primary-button,
+  .jt-pill-button,
+  .jt-ai-edit-button,
+  .jt-chat-form button
+) :is(span, strong, small) {
+  color: #fffaf1 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-avatar-stack span {
+  color: #fffaf1 !important;
+}
+
+@media (max-width: 760px) {
+  body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-hero {
+    background:
+      radial-gradient(circle at 86% 18%, rgba(86, 170, 161, 0.19), transparent 28%),
+      linear-gradient(180deg, #fffdf7 0%, #fff8ec 58%, #edf7f0 100%) !important;
+  }
+
+  body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-jobs-section {
+    background:
+      linear-gradient(rgba(86, 170, 161, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(86, 170, 161, 0.03) 1px, transparent 1px),
+      #fff8ec !important;
+    background-size: 38px 38px, 38px 38px, auto !important;
+  }
+
+  body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-search-field input,
+  body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-select-field select {
+    min-width: 0;
+  }
+
+  body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-select-field span {
+    min-width: 38px;
+    flex: 0 0 38px;
+    white-space: nowrap;
+  }
+}

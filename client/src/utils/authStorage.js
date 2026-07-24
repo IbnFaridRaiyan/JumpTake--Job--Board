@@ -1,6 +1,7 @@
 const GLOBAL_LOCAL_STORAGE_KEYS = new Set([
     'jumptakeAppMode',
-    'jumptakeCookieConsent'
+    'jumptakeCookieConsent',
+    'jumptakePublicHomeTheme'
 ]);
 
 const AUTH_LOCAL_STORAGE_KEYS = new Set([

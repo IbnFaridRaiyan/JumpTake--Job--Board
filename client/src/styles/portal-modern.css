@@ -1865,6 +1865,292 @@ body[data-public-home-theme] .public-auth-message {
   }
 }
 
+/*
+ * Authoritative dark portal polish.
+ * The modern layer is mounted only for dark app mode, keeping light mode
+ * completely independent while preventing legacy cream surfaces from leaking.
+ */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern {
+  --pm-page: #060305;
+  --pm-page-alt: #0d0709;
+  --pm-header: rgba(17, 8, 12, 0.88);
+  --pm-shell: rgba(20, 10, 14, 0.94);
+  --pm-panel: #160b10;
+  --pm-panel-2: #1d0e14;
+  --pm-card: #211017;
+  --pm-card-hover: #2a141d;
+  --pm-input: #10070b;
+  --pm-text: #f8f4ee;
+  --pm-heading: #ffffff;
+  --pm-muted: #d2c9c5;
+  --pm-faint: #a89899;
+  --pm-line: rgba(214, 106, 125, 0.2);
+  --pm-line-strong: rgba(214, 106, 125, 0.42);
+  color: var(--pm-text) !important;
+  color-scheme: dark !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .dashboard-section-title h2,
+  .dashboard-section-title h2 span,
+  .mobile-section-panel-header h2,
+  .mobile-section-panel-header h2 span,
+  .portal-title-jello-text,
+  .section-header h2,
+  .manage-jobs-header h2,
+  .post-job-header h2,
+  .talent-pool-header h2,
+  .bookmarks-hub-header h2,
+  .settings-container h2,
+  .settings-container h3,
+  .employer-settings-container h2,
+  .employer-settings-container h3,
+  .friend-invitations-section h2,
+  .friend-invitations-section h3,
+  .resume-playground-section h2,
+  .resume-playground-section h3,
+  .tailor-profile-section h2,
+  .tailor-profile-section h3
+) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-shadow: none !important;
+  background-image: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern .portal-section-transition-shell :is(
+  p,
+  li,
+  dt,
+  dd,
+  label,
+  figcaption,
+  .empty-info,
+  .portal-post-body,
+  .portal-post-detail-body,
+  .portal-candidate-job-description,
+  .portal-comment-line,
+  .portal-comment-copy,
+  .portal-comment-name,
+  .portal-post-author-name,
+  .portal-author-name-button,
+  .portal-candidate-job-header h3,
+  .portal-job-modal-title-block h2,
+  .portal-job-modal-section,
+  .portal-profile-detail-bio,
+  .tailor-profile-name,
+  .tailor-profile-title,
+  .tailor-profile-bio,
+  .tailor-stat-value,
+  .tailor-stat-label,
+  .notification-title,
+  .notification-description,
+  .friend-invitation-copy,
+  .friend-add-candidate-copy,
+  .application-job-summary,
+  .candidate-email
+) {
+  color: var(--pm-text) !important;
+  -webkit-text-fill-color: var(--pm-text) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern .portal-section-transition-shell :is(
+  small,
+  time,
+  .portal-candidate-job-posted-date,
+  .portal-post-source-link,
+  .portal-post-detail-empty,
+  .form-hint,
+  .friend-add-description,
+  .resume-playground-saved-source,
+  .application-resume-upload-note
+) {
+  color: var(--pm-muted) !important;
+  -webkit-text-fill-color: var(--pm-muted) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .portal-social-post-card,
+  .portal-candidate-job-card,
+  .portal-job-summary-card,
+  .portal-post-composer,
+  .portal-post-detail-modal,
+  .portal-profile-detail-modal,
+  .portal-profile-detail-card,
+  .portal-job-modal,
+  .portal-job-review-modal,
+  .tailor-profile-details-card,
+  .tailor-profile-posts,
+  .profile-details-card,
+  .profile-details-section,
+  .profile-details-summary,
+  .settings-tabs,
+  .tabs-content,
+  .settings-tab,
+  .settings-card,
+  .notification-card,
+  .notification-option,
+  .app-mode-card,
+  .friend-invitations-shell,
+  .friend-invitation-panel,
+  .friend-add-panel,
+  .friend-search-directory,
+  .friend-search-popover,
+  .friend-add-results,
+  .friend-add-candidate-card,
+  .friend-invitation-card,
+  .friend-outgoing-row,
+  .bookmarks-hub-container,
+  .bookmarks-hub-nav,
+  .bookmarks-hub-panel,
+  .application-card,
+  .candidate-card,
+  .candidate-profile,
+  .candidate-profile-header,
+  .candidate-profile-body,
+  .application-detail-view,
+  .resume-playground-section,
+  .resume-playground-tabs,
+  .resume-playground-editor-shell,
+  .resume-playground-editor-topbar,
+  .resume-playground-toolbar-shell,
+  .resume-playground-ats-panel,
+  .resume-playground-ats-score-card,
+  .resume-playground-signature-card,
+  .resume-playground-saved-card,
+  .post-job-content,
+  .job-form-intro,
+  .form-section
+) {
+  color: var(--pm-text) !important;
+  border-color: var(--pm-line) !important;
+  background: var(--pm-card) !important;
+  background-color: var(--pm-card) !important;
+  background-image: none !important;
+  box-shadow: var(--pm-card-shadow) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .tailor-profile-card,
+  .portal-profile-detail-card
+) {
+  color: var(--pm-text) !important;
+  border-color: var(--pm-line-strong) !important;
+  background-color: var(--pm-card) !important;
+  box-shadow: var(--pm-card-shadow) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .portal-home-feed-scroll,
+  .portal-home-tab-panel,
+  .tailor-profile-section,
+  .settings-container,
+  .employer-settings-container,
+  .friend-invitations-section,
+  .bookmarks-hub-container,
+  .resume-playground-section,
+  .post-job-container,
+  .applications-container,
+  .manage-applications-container,
+  .talent-pool-container
+) {
+  color: var(--pm-text) !important;
+  background-color: transparent !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  input,
+  textarea,
+  select,
+  .form-control,
+  .application-message,
+  .profile-resume-input,
+  .resume-playground-name-field input
+) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff !important;
+  border-color: var(--pm-line-strong) !important;
+  background: var(--pm-input) !important;
+  background-color: var(--pm-input) !important;
+  box-shadow: none !important;
+  color-scheme: dark !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  input,
+  textarea
+)::placeholder {
+  color: #9f9295 !important;
+  -webkit-text-fill-color: #9f9295 !important;
+  opacity: 1 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern select option {
+  color: #ffffff !important;
+  background: var(--pm-input) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .portal-job-meta-chip,
+  .portal-audience-pill,
+  .skill-tag,
+  .candidate-skill-tag,
+  .status-badge,
+  .friend-status-pill
+) {
+  color: #f8f4ee !important;
+  -webkit-text-fill-color: #f8f4ee !important;
+  border-color: var(--pm-line) !important;
+  background: var(--pm-panel-2) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .tabs-header,
+  .friend-invitation-tabs,
+  .bookmarks-hub-nav,
+  .resume-playground-tabs,
+  .portal-home-tabs
+) {
+  border-color: var(--pm-line) !important;
+  background: rgba(18, 9, 13, 0.88) !important;
+  box-shadow: var(--pm-card-shadow) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .tab-button,
+  .friend-invitation-tab,
+  .bookmarks-hub-tab,
+  .resume-playground-tabs > button
+):not(.active):not(.is-active) {
+  color: var(--pm-muted) !important;
+  -webkit-text-fill-color: var(--pm-muted) !important;
+  background: transparent !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .portal-post-action-row,
+  .portal-candidate-job-action-row,
+  .portal-candidate-job-footer,
+  .application-card-actions,
+  .page-footer-actions
+) {
+  border-color: var(--pm-line) !important;
+  background-color: transparent !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-options-button,
+  .job-post-reaction-button,
+  .candidate-card-action
+):not(.active):not(.has-reaction) {
+  color: #e8ddda !important;
+  -webkit-text-fill-color: #e8ddda !important;
+}
+
 @media (max-width: 420px) {
   #root .portal-modern .portal-vertical-sidebar .sidebar__list {
     grid-template-columns: 1fr !important;

@@ -1040,7 +1040,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
 
     if (loading && !jobSeekerData) {
         return (
-            <div className="loading-container">
+            <div className={`loading-container ${appMode === 'dark' ? 'portal-modern' : ''}`.trim()}>
                 <div className="dashboard-header candidate-dashboard-header">
                     <div className="portal-header-ai-action">
                         <PortalAiButton onClick={openPortalAssistant} />
@@ -1060,7 +1060,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     }
 
     return (
-        <div className="home-page">
+        <div className={`home-page ${appMode === 'dark' ? 'portal-modern' : ''}`.trim()}>
             <div className="dashboard-header candidate-dashboard-header">
                 <div className="portal-header-ai-action">
                     <PortalAiButton onClick={openPortalAssistant} />

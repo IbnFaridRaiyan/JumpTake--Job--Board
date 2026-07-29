@@ -616,6 +616,87 @@ body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-final-ma
   }
 }
 
+/* Absolute-final light action and floating-navbar colors. */
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-card-footer > button,
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-card-footer > button:is(:hover, :focus-visible, :active),
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-card-footer > button :is(
+  span,
+  strong,
+  svg,
+  path
+) {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-card-footer > button :is(svg, path) {
+  fill: none !important;
+  stroke: currentColor !important;
+}
+
+@media (max-width: 760px) {
+  body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-home-header {
+    border-color: rgba(127, 29, 50, 0.18) !important;
+    background:
+      linear-gradient(135deg, rgba(255, 248, 236, 0.82), rgba(247, 236, 239, 0.7)) !important;
+    box-shadow:
+      0 16px 38px rgba(75, 31, 46, 0.16),
+      inset 0 1px 0 rgba(255, 255, 255, 0.78) !important;
+    backdrop-filter: blur(22px) saturate(145%) !important;
+    -webkit-backdrop-filter: blur(22px) saturate(145%) !important;
+  }
+
+  body[data-public-home-theme="light"] #root .jt-public-home.is-light :is(
+    .jt-header-links button,
+    .jt-text-button,
+    .jt-theme-toggle
+  ) {
+    color: #4b1f2e !important;
+    -webkit-text-fill-color: #4b1f2e !important;
+  }
+}
+
+/* Final light-mode action and floating-navbar colors. */
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-card-footer > button,
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-card-footer > button:is(:hover, :focus-visible, :active),
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-card-footer > button :is(
+  span,
+  strong,
+  svg,
+  path
+) {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+@media (max-width: 760px) {
+  body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-home-header {
+    border-color: rgba(127, 29, 50, 0.18) !important;
+    background:
+      linear-gradient(135deg, rgba(255, 248, 236, 0.82), rgba(247, 236, 239, 0.7)) !important;
+    box-shadow:
+      0 16px 38px rgba(75, 31, 46, 0.16),
+      inset 0 1px 0 rgba(255, 255, 255, 0.78) !important;
+    backdrop-filter: blur(22px) saturate(145%) !important;
+    -webkit-backdrop-filter: blur(22px) saturate(145%) !important;
+  }
+
+  body[data-public-home-theme="light"] #root .jt-public-home.is-light :is(
+    .jt-header-links button,
+    .jt-text-button,
+    .jt-theme-toggle
+  ) {
+    color: #4b1f2e !important;
+    -webkit-text-fill-color: #4b1f2e !important;
+  }
+}
+
 body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-card-footer > button,
 body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-card-footer > button:is(:hover, :focus-visible, :active) {
   border: 0 !important;
@@ -2366,5 +2447,58 @@ body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-final-ma
     letter-spacing: 0.075em !important;
     line-height: 1.1 !important;
     white-space: nowrap !important;
+  }
+}
+
+/* True final light action and floating-navbar colors. */
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-home-header {
+  border-color: rgba(127, 29, 50, 0.16) !important;
+  background:
+    linear-gradient(135deg, rgba(255, 248, 236, 0.68), rgba(247, 236, 239, 0.52)) !important;
+  box-shadow:
+    0 15px 36px rgba(75, 31, 46, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62) !important;
+  backdrop-filter: blur(19px) saturate(138%) !important;
+  -webkit-backdrop-filter: blur(19px) saturate(138%) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-card-footer > button,
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-card-footer > button:is(:hover, :focus-visible, :active),
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-card-footer > button :is(
+  span,
+  strong,
+  svg,
+  path
+) {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-card-footer > button :is(svg, path) {
+  fill: none !important;
+  stroke: currentColor !important;
+}
+
+@media (max-width: 760px) {
+  body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-home-header {
+    border-color: rgba(127, 29, 50, 0.18) !important;
+    background:
+      linear-gradient(135deg, rgba(255, 248, 236, 0.56), rgba(247, 236, 239, 0.42)) !important;
+    box-shadow:
+      0 14px 34px rgba(75, 31, 46, 0.11),
+      inset 0 1px 0 rgba(255, 255, 255, 0.58) !important;
+    backdrop-filter: blur(18px) saturate(135%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(135%) !important;
+  }
+
+  body[data-public-home-theme="light"] #root .jt-public-home.is-light :is(
+    .jt-header-links button,
+    .jt-text-button,
+    .jt-theme-toggle
+  ) {
+    color: #4b1f2e !important;
+    -webkit-text-fill-color: #4b1f2e !important;
   }
 }

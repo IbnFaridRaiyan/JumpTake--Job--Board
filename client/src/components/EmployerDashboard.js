@@ -807,7 +807,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
 
     if (loading) {
         return (
-            <div className="loading-container">
+            <div className={`loading-container ${appMode === 'dark' ? 'portal-modern' : ''}`.trim()}>
                 <div className="dashboard-header employer-dashboard-header">
                     <div className="portal-header-ai-action">
                         <PortalAiButton onClick={openPortalAssistant} />
@@ -827,7 +827,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     }
 
     return (
-        <div className="home-page">
+        <div className={`home-page ${appMode === 'dark' ? 'portal-modern' : ''}`.trim()}>
             <div className="dashboard-header employer-dashboard-header">
                 <div className="portal-header-ai-action">
                     <PortalAiButton onClick={openPortalAssistant} />

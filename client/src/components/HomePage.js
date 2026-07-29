@@ -18,7 +18,8 @@ import PortalDefaultLanding from './PortalDefaultLanding';
 import PortalAiButton from './PortalAiButton';
 import BlocksManager from './BlocksManager';
 import { clearBrowserAccountState } from '../utils/authStorage';
-import dashboardLogo from './media/jumptake-logo-9.png';
+import dashboardLogoLight from './media/jumptake-logo-9.png';
+import dashboardLogoDark from './media/jumptake-logo-dark-maroon.png';
 import JOB_INTEREST_OPTIONS from '../utils/jobInterestOptions';
 import GuidedPortalTour from './GuidedPortalTour';
 import PortalPageSkeleton from './PortalPageSkeleton';
@@ -154,7 +155,7 @@ const normalizeCandidateProfile = (profile) => {
 
 const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const [activeSection, setActiveSection] = useState('job-feed');
-    const [sectionSkeletonVisible, setSectionSkeletonVisible] = useState(true);
+    const [openedSections, setOpenedSections] = useState(() => ['job-feed']);
     const [titleAnimationReplayKey, setTitleAnimationReplayKey] = useState(0);
     const [sectionErrorResetKey, setSectionErrorResetKey] = useState(0);
     const sectionHistoryRef = useRef([]);
@@ -180,12 +181,15 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const displayEmail = typeof user?.email === 'string' ? user.email : '';
     const displayName = displayEmail.includes('@') ? displayEmail.split('@')[0] : (displayEmail || 'User');
     const displayInitial = displayName ? displayName.charAt(0).toUpperCase() : 'U';
+    const dashboardLogo = appMode === 'dark' ? dashboardLogoDark : dashboardLogoLight;
     const safeJobs = useMemo(() => normalizeJobsResponse(jobs), [jobs]);
 
     useEffect(() => {
-        setSectionSkeletonVisible(true);
-        const skeletonTimer = window.setTimeout(() => setSectionSkeletonVisible(false), 420);
-        return () => window.clearTimeout(skeletonTimer);
+        setOpenedSections((currentSections) => (
+            currentSections.includes(activeSection)
+                ? currentSections
+                : [...currentSections, activeSection]
+        ));
     }, [activeSection]);
 
     useEffect(() => {
@@ -238,6 +242,11 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
 
         setSectionErrorResetKey((key) => key + 1);
         setTitleAnimationReplayKey((key) => key + 1);
+        setOpenedSections((currentSections) => (
+            currentSections.includes(nextSectionValue)
+                ? currentSections
+                : [...currentSections, nextSectionValue]
+        ));
         setActiveSection(nextSectionValue);
         sessionStorage.setItem(CANDIDATE_SECTION_STORAGE_KEY, nextSectionValue);
 
@@ -364,6 +373,11 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
 
             const nextSection = normalizeCandidateSection(section);
             setTitleAnimationReplayKey((key) => key + 1);
+            setOpenedSections((currentSections) => (
+                currentSections.includes(nextSection)
+                    ? currentSections
+                    : [...currentSections, nextSection]
+            ));
             setActiveSection(nextSection);
             sessionStorage.setItem(CANDIDATE_SECTION_STORAGE_KEY, nextSection);
             if (isMobileViewport()) {
@@ -885,12 +899,12 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         resetMobilePanelScroll();
     };
 
-    const renderContent = () => {
-        if (loading && activeSection === 'home') {
+    const renderContent = (section = activeSection) => {
+        if (loading && section === 'home') {
             return <PortalPageSkeleton compact label="Loading job listings" />;
         }
 
-        switch (activeSection) {
+        switch (section) {
             case 'home':
             case 'job-feed':
                 return <PortalHomeFeed
@@ -929,11 +943,11 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     onRefresh={refreshData}
                     switchSection={switchSection}
                     onFooterBack={goToPreviousSection}
-                    initialTab={activeSection === 'assessments'
+                    initialTab={section === 'assessments'
                         ? 'assessments'
-                        : activeSection === 'video-interviews'
+                        : section === 'video-interviews'
                             ? 'video-interviews'
-                            : activeSection === 'draft-applications'
+                            : section === 'draft-applications'
                                 ? 'draft-applications'
                                 : 'applications'}
                     onPendingAssessmentCountChange={setPendingAssessmentCount}
@@ -948,9 +962,9 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     viewerId={user?.id || user?._id || user?.userId || 'candidate-guest'}
                     switchSection={switchSection}
                     onFooterBack={goToPreviousSection}
-                    initialTab={activeSection === 'bookmarked-jobs'
+                    initialTab={section === 'bookmarked-jobs'
                         ? 'bookmarked-jobs'
-                        : activeSection === 'saved-posts'
+                        : section === 'saved-posts'
                             ? 'saved-posts'
                             : 'bookmarked-candidates'}
                 />;
@@ -1121,28 +1135,25 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                             <h2><span key={`mobile-${activeSection}-${titleAnimationReplayKey}`} className="portal-title-jello-text">{sectionTitles[activeSection] || 'Dashboard Section'}</span></h2>
                         </div>
                     )}
-                    <CandidatePortalErrorBoundary
-                        resetKey={`${activeSection}:${sectionErrorResetKey}`}
-                        onHome={() => {
-                            setSectionErrorResetKey((key) => key + 1);
-                            updateActiveSection('job-feed', { push: false });
-                            setMobileSectionVisible(isMobileViewport());
-                        }}
-                    >
-                        {sectionSkeletonVisible && (
-                            <PortalPageSkeleton
-                                className="portal-section-skeleton-overlay"
-                                label={`Loading ${sectionTitles[activeSection] || 'section'}`}
-                            />
-                        )}
-                        <div
-                            key={`candidate-section-${activeSection}`}
-                            className={`portal-section-transition-shell ${sectionSkeletonVisible ? 'is-loading-behind-skeleton' : ''}`}
-                            data-section={activeSection}
+                    {openedSections.map((section) => (
+                        <CandidatePortalErrorBoundary
+                            key={`candidate-boundary-${section}`}
+                            resetKey={`${section}:${sectionErrorResetKey}`}
+                            onHome={() => {
+                                setSectionErrorResetKey((key) => key + 1);
+                                updateActiveSection('job-feed', { push: false });
+                                setMobileSectionVisible(isMobileViewport());
+                            }}
                         >
-                            {renderContent()}
-                        </div>
-                    </CandidatePortalErrorBoundary>
+                            <div
+                                className={`portal-section-transition-shell ${section === activeSection ? 'is-active-portal-section' : 'is-cached-portal-section'}`}
+                                data-section={section}
+                                aria-hidden={section === activeSection ? undefined : 'true'}
+                            >
+                                {renderContent(section)}
+                            </div>
+                        </CandidatePortalErrorBoundary>
+                    ))}
                     {mobileSectionVisible && ['notifications', 'about-jumptake', 'progress-check'].includes(activeSection) && (
                         <div className="page-footer-actions mobile-section-fallback-footer">
                             <button type="button" className="back-button responsive-back-button mobile-bottom-back-button" onClick={goToPreviousSection}>

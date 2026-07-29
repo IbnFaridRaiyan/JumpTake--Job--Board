@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PublicLandingNav from './PublicLandingNav';
 import ProfileAvatar from './ProfileAvatar';
 import defaultJobPostAvatar from './media/default-job-post-avatar.png';
-import logo from './media/logo4.png';
+import darkThemeLogo from './media/logo4.png';
 import lightThemeLogo from './media/jumptake-logo-main-light.png';
 import { apiUrl } from '../utils/apiUrl';
 import '../styles/public-home.css';
@@ -173,6 +173,39 @@ const formatDate = (value) => {
         : date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 };
 
+const formatSalary = (salary) => {
+    if (!salary) {
+        return 'Salary shared during process';
+    }
+
+    if (typeof salary === 'string' || typeof salary === 'number') {
+        return String(salary);
+    }
+
+    if (typeof salary === 'object') {
+        const minimum = salary.min ?? salary.minimum ?? salary.from;
+        const maximum = salary.max ?? salary.maximum ?? salary.to;
+        const currency = salary.currency || salary.currencyCode || '$';
+        const formatAmount = (value) => (
+            typeof value === 'number'
+                ? new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(value)
+                : value
+        );
+
+        if (minimum != null && maximum != null) {
+            return `${currency}${formatAmount(minimum)} – ${currency}${formatAmount(maximum)}`;
+        }
+        if (minimum != null) {
+            return `From ${currency}${formatAmount(minimum)}`;
+        }
+        if (maximum != null) {
+            return `Up to ${currency}${formatAmount(maximum)}`;
+        }
+    }
+
+    return 'Salary shared during process';
+};
+
 const reactionCount = (reactions) => {
     if (!reactions || typeof reactions !== 'object') {
         return 0;
@@ -229,7 +262,7 @@ const Landing = () => {
     const assistantInputRef = useRef(null);
     const assistantMessagesRef = useRef(null);
     const editorTypingTimerRef = useRef(null);
-    const activeLogo = homeTheme === 'light' ? lightThemeLogo : logo;
+    const activeLogo = homeTheme === 'light' ? lightThemeLogo : darkThemeLogo;
     const editorDocumentLabel = editorMode === 'cover'
         ? 'Cover letter'
         : editorMode === 'description'
@@ -609,7 +642,7 @@ const Landing = () => {
                         </div>
                         <h1>
                             Work moves fast.
-                            <span>Take your next jump.</span>
+                            <span>Take the next jump.</span>
                         </h1>
                         <p>
                             Discover live roles, build stronger applications with AI, follow what companies are doing,
@@ -792,7 +825,7 @@ const Landing = () => {
                                     <h3>{job.title}</h3>
                                     <div className="jt-job-meta">
                                         <span>{job.location || 'Location flexible'}</span>
-                                        <span>{job.salary || 'Salary shared during process'}</span>
+                                        <span>{formatSalary(job.salary)}</span>
                                     </div>
                                     <p>{job.description}</p>
                                     <div className="jt-job-skills">
@@ -934,7 +967,7 @@ const Landing = () => {
                     ) : null}
                     <div className="jt-ai-copy jt-reveal">
                         <span className="jt-kicker">JumpTake AI</span>
-                        <h2>A career co-pilot that knows where you are going.</h2>
+                        <h2>Career support that knows where you are going.</h2>
                         <p>Ask about the platform, job searching, resumes, applications, interviews, hiring, or the next practical move. Start with a real question.</p>
                         <div className="jt-ai-prompt-list">
                             {[
@@ -951,7 +984,7 @@ const Landing = () => {
                     </div>
 
                     <div
-                        className={`jt-chat-shell jt-reveal${assistantPopupOpen ? ' is-popout' : ''}`}
+                        className={`jt-chat-shell jt-reveal${assistantPopupOpen ? ' is-popout' : ' is-docked'}`}
                         role={assistantPopupOpen ? 'dialog' : undefined}
                         aria-modal={assistantPopupOpen ? 'true' : undefined}
                         aria-label={assistantPopupOpen ? 'JumpTake AI conversation' : undefined}
@@ -1296,7 +1329,7 @@ const Landing = () => {
                             <div>
                                 <span>{selectedJob.company?.name || 'JumpTake company'}</span>
                                 <h2>{selectedJob.title}</h2>
-                                <p>{selectedJob.location || 'Location flexible'} · {selectedJob.jobType || 'Full-time'} · {selectedJob.salary || 'Salary shared during process'}</p>
+                                <p>{selectedJob.location || 'Location flexible'} · {selectedJob.jobType || 'Full-time'} · {formatSalary(selectedJob.salary)}</p>
                             </div>
                         </div>
                         <div className="jt-job-modal-body">

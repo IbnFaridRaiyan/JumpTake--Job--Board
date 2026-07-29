@@ -16,7 +16,16 @@ const ADMIN_PANEL_PATH = process.env.REACT_APP_ADMIN_PANEL_PATH || '/jt-owner-co
 const PORTAL_THEME_PATHS = ['/home', '/employer-dashboard'];
 
 const getInitialAppMode = () => {
-  return 'light';
+  if (typeof window === 'undefined') {
+    return 'light';
+  }
+
+  try {
+    const savedMode = localStorage.getItem(APP_MODE_STORAGE_KEY);
+    return savedMode === 'dark' ? 'dark' : 'light';
+  } catch (error) {
+    return 'light';
+  }
 };
 
 const getInitialCookieConsent = () => {
@@ -67,17 +76,22 @@ const AppRoutes = ({ appMode, setAppMode }) => {
   const location = useLocation();
 
   useEffect(() => {
-    const enforcedMode = 'light';
-    if (appMode !== enforcedMode) {
-      setAppMode(enforcedMode);
+    const activeMode = appMode === 'dark' ? 'dark' : 'light';
+    if (appMode !== activeMode) {
+      setAppMode(activeMode);
     }
-    localStorage.setItem(APP_MODE_STORAGE_KEY, enforcedMode);
+
+    try {
+      localStorage.setItem(APP_MODE_STORAGE_KEY, activeMode);
+    } catch (error) {
+      // The selected mode still applies for this session when storage is unavailable.
+    }
 
     const isPortalRoute = PORTAL_THEME_PATHS.some((path) => location.pathname.startsWith(path));
 
     if (isPortalRoute) {
-      document.documentElement.setAttribute('data-theme', enforcedMode);
-      document.body.setAttribute('data-theme', enforcedMode);
+      document.documentElement.setAttribute('data-theme', activeMode);
+      document.body.setAttribute('data-theme', activeMode);
       return;
     }
 

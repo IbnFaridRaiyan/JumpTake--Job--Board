@@ -5,6 +5,7 @@ import ProfileAvatar from './ProfileAvatar';
 import SocialAuthButtons from './SocialAuthButtons';
 import defaultJobPostAvatar from './media/default-job-post-avatar.png';
 import logoDark from './media/logo4.png';
+import logoLight from './media/jumptake-logo-main-light.png';
 import { sendPasswordResetEmail, validateEmailAddress } from '../utils/emailVerification';
 import { persistCandidateSession, persistEmployerSession } from '../utils/authStorage';
 
@@ -363,9 +364,20 @@ const PublicLoginDialog = ({ apiBase, onClose, onOpenRegister, onSuccessCandidat
         <div className="public-landing-modal-backdrop" role="presentation" onMouseDown={onClose}>
             <section className="public-auth-card" role="dialog" aria-modal="true" aria-label="Log in to JumpTake" onMouseDown={(event) => event.stopPropagation()}>
                 <div className="public-auth-form-shell">
+                    <div className="public-auth-brand-row">
+                        <span className="public-auth-brand-mark" aria-hidden="true">
+                            <img src={logoDark} className="is-dark-logo" alt="" />
+                            <img src={logoLight} className="is-light-logo" alt="" />
+                        </span>
+                        <span className="public-auth-brand-status"><i /> Secure workspace access</span>
+                    </div>
                     {mode === 'login' ? (
                         <form className="public-auth-form" onSubmit={handleSubmit}>
-                            <h4 className="public-auth-heading">Log In!</h4>
+                            <div className="public-auth-title-block">
+                                <span className="public-auth-eyebrow">Welcome back</span>
+                                <h4 className="public-auth-heading">Log in to JumpTake</h4>
+                                <p>Continue to your candidate or employer workspace.</p>
+                            </div>
                             <div className="public-auth-field">
                                 <PublicAuthFieldIcon type="identifier" />
                                 <input
@@ -409,7 +421,11 @@ const PublicLoginDialog = ({ apiBase, onClose, onOpenRegister, onSuccessCandidat
                         </form>
                     ) : (
                         <form className="public-auth-form" onSubmit={handleForgotPassword}>
-                            <h4 className="public-auth-heading">Reset Password</h4>
+                            <div className="public-auth-title-block">
+                                <span className="public-auth-eyebrow">Account recovery</span>
+                                <h4 className="public-auth-heading">Reset your password</h4>
+                                <p>We will send a secure reset link to your candidate account email.</p>
+                            </div>
                             <div className="public-auth-field">
                                 <PublicAuthFieldIcon type="identifier" />
                                 <input
@@ -450,10 +466,35 @@ const PublicRegisterDialog = ({ onClose, onCandidate, onEmployer }) => (
     <div className="public-landing-modal-backdrop" role="presentation" onMouseDown={onClose}>
         <section className="public-auth-card is-register" role="dialog" aria-modal="true" aria-label="Create a JumpTake account" onMouseDown={(event) => event.stopPropagation()}>
             <div className="public-auth-form-shell">
-                <h4 className="public-auth-heading">Join Us!</h4>
+                <div className="public-auth-brand-row">
+                    <span className="public-auth-brand-mark" aria-hidden="true">
+                        <img src={logoDark} className="is-dark-logo" alt="" />
+                        <img src={logoLight} className="is-light-logo" alt="" />
+                    </span>
+                    <span className="public-auth-brand-status"><i /> Free to get started</span>
+                </div>
+                <div className="public-auth-title-block">
+                    <span className="public-auth-eyebrow">Join JumpTake</span>
+                    <h4 className="public-auth-heading">Choose your workspace</h4>
+                    <p>Find your next opportunity or build your next great team.</p>
+                </div>
                 <div className="public-auth-form public-auth-register-actions">
-                    <button type="button" className="public-auth-submit" onClick={onCandidate}>Start as Candidate</button>
-                    <button type="button" className="public-auth-submit" onClick={onEmployer}>Start as Employer</button>
+                    <button type="button" className="public-auth-role-card is-candidate" onClick={onCandidate}>
+                        <span className="public-auth-role-icon"><PublicLandingIcon name="candidate" /></span>
+                        <span className="public-auth-role-copy">
+                            <strong>Candidate</strong>
+                            <small>Discover jobs, create documents, apply, and grow your network.</small>
+                        </span>
+                        <span className="public-auth-role-arrow" aria-hidden="true">→</span>
+                    </button>
+                    <button type="button" className="public-auth-role-card is-employer" onClick={onEmployer}>
+                        <span className="public-auth-role-icon"><PublicLandingIcon name="employer" /></span>
+                        <span className="public-auth-role-copy">
+                            <strong>Employer</strong>
+                            <small>Publish roles, discover talent, and manage your hiring pipeline.</small>
+                        </span>
+                        <span className="public-auth-role-arrow" aria-hidden="true">→</span>
+                    </button>
                 </div>
                 <BackArrowButton onClick={onClose} label="Close account creation options" />
             </div>

@@ -3,12 +3,12 @@
 
 :root {
   
-  --primary-color: #42a49b;
-  --primary-light: #63c0b8;
-  --primary-dark: #34837b;
+  --primary-color: #b44a5f;
+  --primary-light: #d37a8b;
+  --primary-dark: #7f1d32;
 
  
-  --primary-color-rgb: 66, 164, 155;
+  --primary-color-rgb: 180, 74, 95;
   
   
   --off-white: #f8f9fa;
@@ -16,7 +16,7 @@
   --off-white-lightest: #fcfcfd;
   
   
-  --primary-color-rgb: 66, 164, 155;
+  --primary-color-rgb: 180, 74, 95;
   
  
   --secondary-color: #2c3e50;
@@ -2536,7 +2536,7 @@ textarea:focus {
 
 .job-type-badge.internship {
   background-color: #e0f2f1;
-  color: #00897b;
+  color: #9c2f48;
 }
 
 .job-description {
@@ -7626,7 +7626,7 @@ html[data-theme="light"] .resume-playground-ruler-labels {
 }
 
 .employer-cta {
-  background: linear-gradient(135deg, #009688 0%, #4DB6AC 100%);
+  background: linear-gradient(135deg, #a5354f 0%, #4DB6AC 100%);
   color: white;
 }
 
@@ -7640,7 +7640,7 @@ html[data-theme="light"] .resume-playground-ruler-labels {
 }
 
 .employer-cta:hover {
-  background: linear-gradient(135deg, #00887a 0%, #3ca69b 100%);
+  background: linear-gradient(135deg, #9b3049 0%, #3ca69b 100%);
 }
 
 
@@ -8700,7 +8700,7 @@ html[data-theme="light"] .resume-playground-ruler-labels {
 .notifications-eyebrow {
   display: inline-flex;
   margin-bottom: 8px;
-  color: #8ff2dd;
+  color: #f0a4b4;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -8781,7 +8781,7 @@ html[data-theme="light"] .resume-playground-ruler-labels {
 }
 
 .notification-action {
-  color: #8ff2dd;
+  color: #f0a4b4;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -8837,7 +8837,7 @@ html[data-theme="light"] .resume-playground-ruler-labels {
 .job-invite-candidate-check input {
   width: 18px;
   height: 18px;
-  accent-color: #63c0b8;
+  accent-color: #d37a8b;
 }
 
 .job-invite-candidate-check span {
@@ -15561,7 +15561,7 @@ body,
   height: 30px;
   width: 30px;
   border-radius: 50%;
-  background: #2a9d8f;
+  background: #b64b61;
   animation: loading-bounce 0.5s ease-in-out infinite alternate;
 }
 
@@ -16749,14 +16749,14 @@ button .loading-spinner,
 }
 
 .shadow__input {
-  background-color: #63c0b8 !important;
+  background-color: #d37a8b !important;
   background-image:
     radial-gradient(at 85% 51%, #d7d760 0, #0000 50%),
-    radial-gradient(at 74% 68%, #34837b 0, #0000 50%),
-    radial-gradient(at 64% 79%, #63c0b8 0, #0000 50%),
-    radial-gradient(at 75% 16%, #34837b 0, #0000 50%),
+    radial-gradient(at 74% 68%, #7f1d32 0, #0000 50%),
+    radial-gradient(at 64% 79%, #d37a8b 0, #0000 50%),
+    radial-gradient(at 75% 16%, #7f1d32 0, #0000 50%),
     radial-gradient(at 90% 65%, #63e3aa 0, #0000 50%),
-    radial-gradient(at 91% 83%, #63c0b8 0, #0000 50%),
+    radial-gradient(at 91% 83%, #d37a8b 0, #0000 50%),
     radial-gradient(at 72% 91%, #fff 0, #0000 50%) !important;
 }
 
@@ -16950,7 +16950,7 @@ button .loading-spinner,
   height: 100px !important;
   border-radius: 50% !important;
   background-color: rgba(240, 242, 245, 0.92) !important;
-  color: #163a31 !important;
+  color: #3e1923 !important;
   margin: 0 auto 1rem !important;
   overflow: hidden !important;
   border: 3px solid white !important;
@@ -17354,7 +17354,7 @@ button .loading-spinner,
 
 /* Final theme pass: green/cyan analytics, shared messenger inbox, and dark form fields */
 .analytics-card {
-  background: #041713 !important;
+  background: #1e090f !important;
   box-shadow: 0 24px 58px rgba(6, 43, 36, 0.5) !important;
 }
 
@@ -17365,17 +17365,17 @@ button .loading-spinner,
 .analytics-card-glow,
 .analytics-detail-fill,
 .analytics-card-footer button {
-  background: linear-gradient(90deg, #0d3b34, #63c0b8, #9ee493) !important;
+  background: linear-gradient(90deg, #411923, #d37a8b, #9ee493) !important;
 }
 
 .analytics-card-inner,
 .analytics-detail-modal {
-  background: #03110f !important;
+  background: #19070c !important;
   border-color: rgba(99, 192, 184, 0.28) !important;
 }
 
 .analytics-icon {
-  background: linear-gradient(135deg, #0b4a3f, #63c0b8, #9ee493) !important;
+  background: linear-gradient(135deg, #491824, #d37a8b, #9ee493) !important;
   box-shadow: 0 0 22px rgba(99, 192, 184, 0.24) !important;
 }
 
@@ -17432,8 +17432,8 @@ button .loading-spinner,
 
 .button-message {
   --text-color: rgb(255, 255, 255);
-  --bg-color-sup: #63c0b8;
-  --bg-color: #10221f;
+  --bg-color-sup: #d37a8b;
+  --bg-color: #281016;
   --bg-hover-color: #07110f;
   --online-status: #63e3aa;
   --font-size: 16px;
@@ -17486,7 +17486,7 @@ button .loading-spinner,
   height: 100% !important;
   border-radius: 50% !important;
   overflow: hidden !important;
-  background: linear-gradient(135deg, #0d3b34, #63c0b8);
+  background: linear-gradient(135deg, #411923, #d37a8b);
   color: #ffffff;
   display: flex !important;
   align-items: center !important;
@@ -17631,7 +17631,7 @@ button .loading-spinner,
 
 .message-bubble.sent {
   margin-left: auto !important;
-  background: linear-gradient(135deg, #0d3b34, #48bfb6) !important;
+  background: linear-gradient(135deg, #411923, #48bfb6) !important;
 }
 
 .message-bubble.received {
@@ -17729,7 +17729,7 @@ input[type="time"]:focus,
 textarea:focus,
 select:focus {
   background: #464646 !important;
-  border-color: #63c0b8 !important;
+  border-color: #d37a8b !important;
   box-shadow: 0 0 0 3px rgba(99, 192, 184, 0.14) !important;
 }
 
@@ -17748,7 +17748,7 @@ select:focus {
 
 .search-label:hover,
 .search-label:focus-within {
-  border-color: #63c0b8;
+  border-color: #d37a8b;
   background: #464646;
 }
 
@@ -18049,7 +18049,7 @@ select:focus {
 }
 
 .message-bubble.sent {
-  background: #0d3b34 !important;
+  background: #411923 !important;
 }
 
 @media (max-width: 768px) {
@@ -18204,7 +18204,7 @@ button.reject-button,
 .contact-candidate-panel .rich-message-editor,
 .messenger-compose-card .rich-message-editor {
   background: #000 !important;
-  border-color: #063c31 !important;
+  border-color: #3b131e !important;
 }
 
 .messenger-compose-card .rich-message-toolbar,
@@ -18216,7 +18216,7 @@ button.reject-button,
 .messenger-compose-card .rich-message-toolbar button,
 .contact-candidate-panel .rich-message-toolbar button {
   background: #000 !important;
-  border: 1px solid #0d5a47 !important;
+  border: 1px solid #551b2a !important;
   border-radius: 999px !important;
   box-shadow: 0 0 0 0 #32d6a2 !important;
   color: #fff !important;
@@ -18240,7 +18240,7 @@ button.reject-button,
 }
 
 .message-bubble.sent {
-  background: #0b3a31 !important;
+  background: #3e1520 !important;
   background-image: none !important;
 }
 
@@ -19355,7 +19355,7 @@ button.reject-button,
 }
 
 .desktop-back-to-manage-jobs:hover {
-  background: #63c0b8 !important;
+  background: #d37a8b !important;
   color: #000000 !important;
 }
 
@@ -19381,8 +19381,8 @@ button.reject-button,
 
 .job-management-nav button:hover,
 .job-management-nav button.active {
-  background: #63c0b8 !important;
-  border-color: #63c0b8 !important;
+  background: #d37a8b !important;
+  border-color: #d37a8b !important;
   color: #000000 !important;
 }
 
@@ -19457,7 +19457,7 @@ button.reject-button,
 .settings-eyebrow {
   display: inline-flex;
   margin-bottom: 0.35rem;
-  color: #8ff2dd;
+  color: #f0a4b4;
   font-family: 'Lexend', 'Share Tech', sans-serif;
   font-size: 0.72rem;
   font-weight: 800;
@@ -19500,7 +19500,7 @@ button.reject-button,
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #63c0b8, #9ee493);
+  background: linear-gradient(135deg, #d37a8b, #9ee493);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
   transition: transform 0.25s ease, background 0.25s ease;
 }
@@ -19537,8 +19537,8 @@ html[data-theme="light"] {
   --secondary-color: #dcebe7;
   --secondary-light: #ffffff;
   --secondary-dark: #b9d4ce;
-  --text-dark: #10211d;
-  --text-light: #10211d;
+  --text-dark: #271016;
+  --text-light: #271016;
   --text-muted: #527069;
   --border-color: #c8dcd7;
   --shadow-color: rgba(9, 31, 26, 0.12);
@@ -19556,7 +19556,7 @@ html[data-theme="light"] #root aside,
 html[data-theme="light"] #root nav,
 html[data-theme="light"] #root footer {
   background: #eef6f3 !important;
-  color: #10211d !important;
+  color: #271016 !important;
 }
 
 html[data-theme="light"] .home-page > .dashboard-header,
@@ -19574,7 +19574,7 @@ html[data-theme="light"] .candidate-dashboard-title h1,
 html[data-theme="light"] .candidate-dashboard-title p,
 html[data-theme="light"] .employer-dashboard-title h1,
 html[data-theme="light"] .employer-dashboard-title p {
-  color: #0b2f29 !important;
+  color: #35131c !important;
 }
 
 html[data-theme="light"] .dashboard-container,
@@ -19582,7 +19582,7 @@ html[data-theme="light"] .main-content,
 html[data-theme="light"] .dashboard-content,
 html[data-theme="light"] .dashboard-main {
   background: rgba(255, 255, 255, 0.7) !important;
-  color: #10211d !important;
+  color: #271016 !important;
   border-color: rgba(13, 59, 52, 0.12) !important;
 }
 
@@ -19591,21 +19591,21 @@ html[data-theme="light"] .dashboard-nav,
 html[data-theme="light"] .dashboard-nav ul,
 html[data-theme="light"] .user-profile {
   background: linear-gradient(180deg, rgba(245, 255, 251, 0.96), rgba(221, 241, 235, 0.92)) !important;
-  color: #10211d !important;
+  color: #271016 !important;
   border-color: rgba(13, 59, 52, 0.16) !important;
 }
 
 html[data-theme="light"] .dashboard-nav li {
   background: rgba(255, 255, 255, 0.9) !important;
-  color: #173a34 !important;
+  color: #3c1822 !important;
   border-color: rgba(13, 59, 52, 0.12) !important;
 }
 
 html[data-theme="light"] .dashboard-nav li:hover,
 html[data-theme="light"] .dashboard-nav li.active {
   background: linear-gradient(135deg, rgba(99, 192, 184, 0.22), rgba(158, 228, 147, 0.2)) !important;
-  color: #062c25 !important;
-  border-color: rgba(66, 164, 155, 0.65) !important;
+  color: #311019 !important;
+  border-color: rgba(180, 74, 95, 0.65) !important;
 }
 
 html[data-theme="light"] .settings-card,
@@ -19651,7 +19651,7 @@ html[data-theme="light"] .video-interviews-container,
 html[data-theme="light"] .draft-applications-container,
 html[data-theme="light"] .interested-job-card {
   background: rgba(255, 255, 255, 0.92) !important;
-  color: #10211d !important;
+  color: #271016 !important;
   border-color: rgba(13, 59, 52, 0.14) !important;
   box-shadow: 0 16px 38px rgba(12, 43, 37, 0.09) !important;
 }
@@ -19674,7 +19674,7 @@ html[data-theme="light"] #root strong,
 html[data-theme="light"] #root small,
 html[data-theme="light"] #root td,
 html[data-theme="light"] #root th {
-  color: #10211d !important;
+  color: #271016 !important;
 }
 
 html[data-theme="light"] .empty-info,
@@ -19696,7 +19696,7 @@ html[data-theme="light"] .search-label,
 html[data-theme="light"] .input__search,
 html[data-theme="light"] .message-input-shell {
   background: #ffffff !important;
-  color: #10211d !important;
+  color: #271016 !important;
   border-color: rgba(13, 59, 52, 0.22) !important;
 }
 
@@ -19712,9 +19712,9 @@ html[data-theme="light"] .preview-apply-button,
 html[data-theme="light"] .submit-application-button,
 html[data-theme="light"] .save-profile-button,
 html[data-theme="light"] .send-candidate-button {
-  background: #42a49b !important;
+  background: #b44a5f !important;
   color: #ffffff !important;
-  border-color: #42a49b !important;
+  border-color: #b44a5f !important;
 }
 
 html[data-theme="light"] .secondary-button,
@@ -19725,16 +19725,16 @@ html[data-theme="light"] .cancel-edit-button,
 html[data-theme="light"] .job-management-nav button,
 html[data-theme="light"] .desktop-back-to-manage-jobs {
   background: #ffffff !important;
-  color: #0b2f29 !important;
-  border-color: rgba(66, 164, 155, 0.45) !important;
+  color: #35131c !important;
+  border-color: rgba(180, 74, 95, 0.45) !important;
 }
 
 html[data-theme="light"] .job-management-nav button:hover,
 html[data-theme="light"] .job-management-nav button.active,
 html[data-theme="light"] .desktop-back-to-manage-jobs:hover {
   background: #d9f4ed !important;
-  color: #062c25 !important;
-  border-color: #42a49b !important;
+  color: #311019 !important;
+  border-color: #b44a5f !important;
 }
 
 html[data-theme="light"] .rich-message-toolbar,
@@ -19746,8 +19746,8 @@ html[data-theme="light"] .message-composer-panel {
 
 html[data-theme="light"] .rich-message-toolbar button {
   background: #ffffff !important;
-  color: #0b2f29 !important;
-  border-color: rgba(66, 164, 155, 0.55) !important;
+  color: #35131c !important;
+  border-color: rgba(180, 74, 95, 0.55) !important;
   box-shadow: 0 0 0 0 rgba(13, 59, 52, 0.24) !important;
 }
 
@@ -19755,18 +19755,18 @@ html[data-theme="light"] .message-bubble.sent,
 html[data-theme="light"] .chat-message.sent,
 html[data-theme="light"] .message-row.outgoing {
   background: #d9f4ed !important;
-  color: #10211d !important;
+  color: #271016 !important;
 }
 
 html[data-theme="light"] .message-bubble.received,
 html[data-theme="light"] .chat-message.received,
 html[data-theme="light"] .message-row.incoming {
   background: #ffffff !important;
-  color: #10211d !important;
+  color: #271016 !important;
 }
 
 html[data-theme="light"] .app-mode-switch-label {
-  color: #10211d !important;
+  color: #271016 !important;
 }
 
 html[data-theme="light"] .settings-eyebrow {
@@ -20152,7 +20152,7 @@ html[data-theme="light"] .home-page .analytics-detail-overlay {
   --sidebar-muted: rgba(236, 255, 251, 0.62);
   --sidebar-text: rgba(247, 255, 253, 0.94);
   --sidebar-strong: #ffffff;
-  --sidebar-accent: #63c0b8;
+  --sidebar-accent: #d37a8b;
   --sidebar-accent-soft: #9ee493;
   --expanded: 16.875rem;
   --collapsed: 3.35rem;
@@ -20511,9 +20511,9 @@ html[data-theme="light"] .home-page .portal-vertical-sidebar.sidebar {
   --sidebar-hover: rgba(99, 192, 184, 0.13);
   --sidebar-focus: rgba(255, 255, 255, 0.9);
   --sidebar-muted: rgba(24, 60, 53, 0.62);
-  --sidebar-text: #173a34;
+  --sidebar-text: #3c1822;
   --sidebar-strong: #102c27;
-  --sidebar-accent: #55aaa1;
+  --sidebar-accent: #b85a6d;
   --sidebar-accent-soft: #7acb8b;
 }
 
@@ -20531,7 +20531,7 @@ html[data-theme="light"] .home-page .portal-sidebar-profile {
 }
 
 html[data-theme="light"] .home-page .portal-sidebar-avatar {
-  background: #55aaa1;
+  background: #b85a6d;
   color: #fffaf0;
 }
 
@@ -20662,12 +20662,12 @@ html[data-theme="light"] .home-page {
   --cream-shell: #fff7ea;
   --cream-panel: #fff3e1;
   --cream-card: #fffaf0;
-  --cream-soft: #edf7f0;
+  --cream-soft: #f7ecef;
   --cream-border: #dcc9ad;
   --cream-ink: #12352f;
   --cream-muted: #5e7169;
-  --cream-teal: #55aaa1;
-  --cream-teal-dark: #347d75;
+  --cream-teal: #b85a6d;
+  --cream-teal-dark: #7f1d32;
 }
 
 html[data-theme="light"] body,
@@ -20894,10 +20894,10 @@ html[data-theme="light"] .home-page {
   --cream-card: #fffaf1;
   --cream-raised: #fffdf7;
   --cream-line: #d8c5a8;
-  --cream-ink: #102f2a;
+  --cream-ink: #34141d;
   --cream-muted: #63756d;
-  --cream-teal: #56aaa1;
-  --cream-teal-dark: #2f746d;
+  --cream-teal: #b85a6d;
+  --cream-teal-dark: #7f1d32;
 }
 
 html[data-theme="light"] .home-page .dashboard-container,
@@ -21307,15 +21307,15 @@ html[data-theme="light"] .home-page .job-interest-grid button {
 }
 
 html[data-theme="light"] .home-page .job-interest-grid button.selected {
-  background: rgba(86, 170, 161, 0.22) !important;
-  border-color: rgba(86, 170, 161, 0.85) !important;
+  background: rgba(184, 90, 109, 0.22) !important;
+  border-color: rgba(184, 90, 109, 0.85) !important;
   color: #0f3933 !important;
 }
 
 html[data-theme="light"] .home-page .skill-tag,
 html[data-theme="light"] .home-page .candidate-skill-tag {
   background: rgba(218, 244, 235, 0.94) !important;
-  border: 1px solid rgba(86, 170, 161, 0.22) !important;
+  border: 1px solid rgba(184, 90, 109, 0.22) !important;
   color: var(--cream-ink) !important;
 }
 
@@ -21437,7 +21437,7 @@ html[data-theme="light"] .home-page .analytics-summary-box,
 html[data-theme="light"] .home-page .analytics-mini-chart,
 html[data-theme="light"] .home-page .analytics-detail-modal {
   background: #eaf7f0 !important;
-  border-color: rgba(86, 170, 161, 0.35) !important;
+  border-color: rgba(184, 90, 109, 0.35) !important;
   color: var(--cream-ink) !important;
 }
 
@@ -21454,7 +21454,7 @@ html[data-theme="light"] .home-page .analytics-icon,
 html[data-theme="light"] .home-page .analytics-bar-fill,
 html[data-theme="light"] .home-page .analytics-live span,
 html[data-theme="light"] .home-page .analytics-detail-fill {
-  background: #56aaa1 !important;
+  background: #b85a6d !important;
 }
 
 html[data-theme="light"] .home-page .analytics-card h3,
@@ -21472,12 +21472,12 @@ html[data-theme="light"] .home-page .analytics-detail-modal p {
 
 html[data-theme="light"] .home-page .analytics-summary-box span,
 html[data-theme="light"] .home-page .analytics-live {
-  color: #2f746d !important;
+  color: #7f1d32 !important;
 }
 
 html[data-theme="light"] .home-page .analytics-card-footer button {
   background: var(--cream-raised) !important;
-  border: 1px solid rgba(86, 170, 161, 0.55) !important;
+  border: 1px solid rgba(184, 90, 109, 0.55) !important;
   color: var(--cream-ink) !important;
 }
 
@@ -21487,7 +21487,7 @@ html[data-theme="light"] .home-page .analytics-card-footer button svg {
 
 html[data-theme="light"] .home-page .about-rating-card {
   background: #eef8f2 !important;
-  border-color: rgba(86, 170, 161, 0.32) !important;
+  border-color: rgba(184, 90, 109, 0.32) !important;
 }
 
 html[data-theme="light"] .home-page .about-rating-card h3,
@@ -21502,7 +21502,7 @@ html[data-theme="light"] .home-page .rating label:before {
 html[data-theme="light"] .home-page .rating input:checked ~ label:before,
 html[data-theme="light"] .home-page .rating label:hover:before,
 html[data-theme="light"] .home-page .rating label:hover ~ label:before {
-  color: #56aaa1 !important;
+  color: #b85a6d !important;
 }
 
 @media (max-width: 920px) {
@@ -21643,15 +21643,15 @@ html[data-theme="light"] .candidates-loading,
 html[data-theme="light"] .loading-recommendations {
   background: var(--cream-panel, #fff3e2) !important;
   background-color: var(--cream-panel, #fff3e2) !important;
-  color: var(--cream-ink, #102f2a) !important;
+  color: var(--cream-ink, #34141d) !important;
 }
 
 html[data-theme="light"] .loading-container *,
 html[data-theme="light"] .job-list-loading *,
 html[data-theme="light"] .candidates-loading *,
 html[data-theme="light"] .loading-recommendations * {
-  color: var(--cream-ink, #102f2a) !important;
-  -webkit-text-fill-color: var(--cream-ink, #102f2a) !important;
+  color: var(--cream-ink, #34141d) !important;
+  -webkit-text-fill-color: var(--cream-ink, #34141d) !important;
 }
 
 /* Employer dashboard QA pass: keep dashboard controls inside the content panel. */
@@ -21731,15 +21731,15 @@ html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .dash
   background: #fff1df !important;
   background-color: #fff1df !important;
   border-color: rgba(216, 197, 168, 0.82) !important;
-  color: var(--cream-ink, #102f2a) !important;
+  color: var(--cream-ink, #34141d) !important;
 }
 
 html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .stat-card h3,
 html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .stat-card p,
 html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .dashboard-card h3,
 html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .dashboard-card p {
-  color: var(--cream-ink, #102f2a) !important;
-  -webkit-text-fill-color: var(--cream-ink, #102f2a) !important;
+  color: var(--cream-ink, #34141d) !important;
+  -webkit-text-fill-color: var(--cream-ink, #34141d) !important;
 }
 
 html[data-theme="light"] .employer-dashboard-header ~ .dashboard-container .dashboard-card .card-button,
@@ -21966,15 +21966,15 @@ html[data-theme="light"] .home-page .portal-sidebar-user-id,
 html[data-theme="light"] .home-page .portal-sidebar-user-role,
 html[data-theme="light"] .home-page .portal-vertical-sidebar .sidebar__item--heading,
 html[data-theme="light"] .home-page .portal-vertical-sidebar .text {
-  color: #17342e !important;
-  -webkit-text-fill-color: #17342e !important;
+  color: #391820 !important;
+  -webkit-text-fill-color: #391820 !important;
 }
 
 html[data-theme="light"] .home-page .portal-vertical-sidebar .sidebar__link {
   background: #fffaf1 !important;
   background-color: #fffaf1 !important;
   border-color: rgba(216, 197, 168, 0.88) !important;
-  color: #17342e !important;
+  color: #391820 !important;
   box-shadow: 0 6px 14px rgba(86, 66, 37, 0.05) !important;
 }
 
@@ -21982,7 +21982,7 @@ html[data-theme="light"] .home-page .portal-vertical-sidebar .sidebar__link:hove
 html[data-theme="light"] .home-page .portal-vertical-sidebar .sidebar__link.is-active {
   background: #fff0dc !important;
   background-color: #fff0dc !important;
-  border-color: rgba(86, 170, 161, 0.62) !important;
+  border-color: rgba(184, 90, 109, 0.62) !important;
 }
 
 html[data-theme="light"] .home-page .portal-vertical-sidebar .sidebar__link.is-danger {
@@ -23512,7 +23512,7 @@ html[data-theme="light"] .notifications-page .notification-action {
   width: 1rem;
   height: 1rem;
   margin: 0;
-  accent-color: #63c0b8;
+  accent-color: #d37a8b;
 }
 
 .edit-job-container .form-checkbox label span {
@@ -23701,14 +23701,14 @@ html[data-theme="light"] .notifications-page .notification-action {
 
   .candidate-assessment-detail .assessment-response-option:has(input:checked) {
     background: rgba(99, 192, 184, 0.18) !important;
-    border-color: #63c0b8 !important;
+    border-color: #d37a8b !important;
   }
 
   .candidate-assessment-detail .assessment-response-option input {
     width: 1rem !important;
     height: 1rem !important;
     margin: 0 !important;
-    accent-color: #63c0b8 !important;
+    accent-color: #d37a8b !important;
   }
 
   .candidate-assessment-detail .assessment-response-option-text {
@@ -24090,8 +24090,8 @@ html[data-theme="light"] .notifications-page .notification-action {
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, #63c0b8, #8fe0d5);
-  color: #10211e;
+  background: linear-gradient(135deg, #d37a8b, #8fe0d5);
+  color: #271016;
   font-weight: 800;
   font-size: 1rem;
 }
@@ -24886,7 +24886,7 @@ html[data-theme="light"] .add-friend-form input {
 }
 
 .candidate-connection-corner-button.accepted {
-  color: #0b4f35 !important;
+  color: #4b1725 !important;
 }
 
 @media (max-width: 768px) {
@@ -24959,7 +24959,7 @@ html[data-theme="light"] .add-friend-form input {
 
   .home-page .talent-pool-container .candidate-card > .candidate-connection-corner-anchor .candidate-connection-corner-button.accepted,
   .home-page .candidate-bookmarked-container .candidate-card > .candidate-connection-corner-anchor .candidate-connection-corner-button.accepted {
-    color: #0b4f35 !important;
+    color: #4b1725 !important;
   }
 }
 
@@ -25160,7 +25160,7 @@ html[data-theme="light"] .add-friend-form input {
   display: grid;
   place-items: center;
   background: linear-gradient(135deg, #7b9488, #4a8e8a);
-  color: #10211e;
+  color: #271016;
   font-weight: 800;
 }
 
@@ -25655,8 +25655,8 @@ html[data-theme="light"] .floating-messenger-input :is(.messageInput, .rich-mess
 .talent-bookmark-button::before {
   content: "★" !important;
   display: block !important;
-  color: #0b4f35 !important;
-  -webkit-text-fill-color: #0b4f35 !important;
+  color: #4b1725 !important;
+  -webkit-text-fill-color: #4b1725 !important;
   font-size: 1.7rem !important;
   line-height: 1 !important;
   text-shadow: none !important;
@@ -25667,8 +25667,8 @@ html[data-theme="light"] .floating-messenger-input :is(.messageInput, .rich-mess
 .talent-bookmark-button.active::before,
 .bookmark-star-button:hover::before,
 .talent-bookmark-button:hover::before {
-  color: #0b4f35 !important;
-  -webkit-text-fill-color: #0b4f35 !important;
+  color: #4b1725 !important;
+  -webkit-text-fill-color: #4b1725 !important;
 }
 
 @media (max-width: 768px) {
@@ -25711,12 +25711,12 @@ html[data-theme="light"] .floating-messenger-input :is(.messageInput, .rich-mess
     min-height: 2.8rem !important;
     margin: -0.18rem -10px 0.28rem !important;
     padding: 0.32rem 0.78rem !important;
-    background: #0a211c !important;
-    background-color: #0a211c !important;
+    background: #260e15 !important;
+    background-color: #260e15 !important;
     border-color: rgba(99, 192, 184, 0.16) !important;
     border-radius: 0 0 0.8rem 0.8rem !important;
     box-shadow:
-      0 -1.45rem 0 0.72rem #0a211c,
+      0 -1.45rem 0 0.72rem #260e15,
       0 0.55rem 0.8rem 0 rgba(10, 33, 28, 0.98) !important;
   }
 
@@ -25726,7 +25726,7 @@ html[data-theme="light"] .floating-messenger-input :is(.messageInput, .rich-mess
     right: -0.75rem !important;
     bottom: -0.28rem !important;
     left: -0.75rem !important;
-    background: linear-gradient(to bottom, #0a211c 0%, #0a211c 62%, rgba(10, 33, 28, 0) 100%) !important;
+    background: linear-gradient(to bottom, #260e15 0%, #260e15 62%, rgba(10, 33, 28, 0) 100%) !important;
   }
 
   .dashboard-container.mobile-section-open .mobile-dashboard-section-panel.is-open > .mobile-section-panel-header h2,
@@ -25743,8 +25743,8 @@ html[data-theme="light"] .floating-messenger-input :is(.messageInput, .rich-mess
 
 html[data-theme="light"] .bookmark-star-button::before,
 html[data-theme="light"] .talent-bookmark-button::before {
-  color: #0b4f35 !important;
-  -webkit-text-fill-color: #0b4f35 !important;
+  color: #4b1725 !important;
+  -webkit-text-fill-color: #4b1725 !important;
 }
 
 @media (max-width: 768px) {
@@ -25785,8 +25785,8 @@ html[data-theme="light"] .talent-bookmark-button::before {
   display: grid !important;
   place-items: center !important;
   text-indent: 0 !important;
-  color: #0b4f35 !important;
-  -webkit-text-fill-color: #0b4f35 !important;
+  color: #4b1725 !important;
+  -webkit-text-fill-color: #4b1725 !important;
   font-size: 1.7rem !important;
   line-height: 1 !important;
   text-shadow: none !important;
@@ -25803,8 +25803,8 @@ html[data-theme="light"] .talent-bookmark-button::before {
 
 .bookmark-star-button:hover::before,
 .talent-bookmark-button:hover::before {
-  color: #0b4f35 !important;
-  -webkit-text-fill-color: #0b4f35 !important;
+  color: #4b1725 !important;
+  -webkit-text-fill-color: #4b1725 !important;
 }
 
 @media (max-width: 768px) {
@@ -25827,8 +25827,8 @@ html[data-theme="light"] .talent-bookmark-button::before {
 
 html[data-theme="light"] .bookmark-star-button::before,
 html[data-theme="light"] .talent-bookmark-button::before {
-  color: #0b4f35 !important;
-  -webkit-text-fill-color: #0b4f35 !important;
+  color: #4b1725 !important;
+  -webkit-text-fill-color: #4b1725 !important;
 }
 
 @media (max-width: 768px) {
@@ -25926,8 +25926,8 @@ html[data-theme="light"] .talent-bookmark-button::before {
 
 .bookmark-star-button::before,
 .talent-bookmark-button::before {
-  color: #0b4f35 !important;
-  -webkit-text-fill-color: #0b4f35 !important;
+  color: #4b1725 !important;
+  -webkit-text-fill-color: #4b1725 !important;
 }
 
 .bookmark-star-button.active::before,
@@ -26363,7 +26363,7 @@ html[data-theme="light"] .talent-bookmark-button::before {
   .home-page .dashboard-container.mobile-section-open .mobile-dashboard-section-panel.is-open > .mobile-section-panel-header,
   .home-page .dashboard-container.mobile-section-open .mobile-job-management-section-panel.is-open > .mobile-section-panel-header {
     background: linear-gradient(180deg, #070e0efa, #070e0ef0) !important;
-    border: 1px solid #63c0b833 !important;
+    border: 1px solid #d37a8b33 !important;
     border-radius: 1rem !important;
     box-shadow: inset 0 1px 0 #ffffff0a !important;
     justify-content: flex-end !important;
@@ -27363,7 +27363,7 @@ html[data-theme="light"] .home-page .job-feed-container .job-card-footer {
   border: 2px solid rgba(255, 255, 255, 0.82);
   border-radius: 14px;
   background: #59a89f;
-  color: #102f2a;
+  color: #34141d;
   font-size: 1.25rem;
   font-weight: 700;
   margin-bottom: 0.65rem;
@@ -27380,7 +27380,7 @@ html[data-theme="light"] .home-page .job-feed-container .job-card-footer {
   border: 3px solid rgba(255, 255, 255, 0.9);
   border-radius: 18px;
   background: #59a89f;
-  color: #102f2a;
+  color: #34141d;
   font-size: 2rem;
   font-weight: 700;
   margin: 0 auto 0.8rem;
@@ -27587,7 +27587,7 @@ html[data-theme="light"] .home-page .job-feed-container .job-card-footer {
 .resume-playground-saved-actions .settings-button.primary,
 .resume-playground-template-card .settings-button.primary,
 .resume-playground-saved-card .settings-button.primary {
-  background: linear-gradient(135deg, rgba(66, 164, 155, 0.32), rgba(11, 64, 54, 0.42)) !important;
+  background: linear-gradient(135deg, rgba(180, 74, 95, 0.32), rgba(11, 64, 54, 0.42)) !important;
   border: 1px solid rgba(23, 112, 95, 0.92) !important;
   color: #f8fffd !important;
   -webkit-text-fill-color: #f8fffd !important;
@@ -27668,8 +27668,8 @@ html[data-theme="light"] .home-page :is(
 ):not(.portal-sidebar-button):not(.dashboard-logo-button):not(.mobile-menu-toggle):not(.resume-playground-tool-button):not(.resume-playground-icon-button),
 html[data-theme="light"] .resume-playground-editor-actions .secondary-button,
 html[data-theme="light"] .resume-playground-saved-actions .secondary-button {
-  color: #12372f !important;
-  -webkit-text-fill-color: #12372f !important;
+  color: #3d1721 !important;
+  -webkit-text-fill-color: #3d1721 !important;
   background: linear-gradient(135deg, rgba(99, 192, 184, 0.22), rgba(15, 118, 110, 0.12)) !important;
   border-color: rgba(15, 118, 110, 0.42) !important;
 }
@@ -28202,7 +28202,7 @@ html[data-theme="light"] .resume-playground-saved-actions .secondary-button {
 }
 
 .portal-comment-button {
-  --reaction-color: #8ff2dd;
+  --reaction-color: #f0a4b4;
   padding: 0.35rem 0.2rem;
   white-space: nowrap;
 }
@@ -28275,7 +28275,7 @@ html[data-theme="light"] .resume-playground-saved-actions .secondary-button {
 }
 
 .portal-profile-link:hover {
-  color: #8ff2dd;
+  color: #f0a4b4;
 }
 
 .portal-audience-pill {
@@ -28391,7 +28391,7 @@ html[data-theme="light"] .resume-playground-saved-actions .secondary-button {
 }
 
 .portal-job-stat-reach svg {
-  color: #8ff2dd;
+  color: #f0a4b4;
 }
 
 .portal-job-stat-applicants svg {
@@ -30242,7 +30242,7 @@ html[data-theme="light"] .home-page .floating-messenger-trigger {
   height: 3.2rem;
   border: 2px solid rgba(255, 255, 255, 0.88);
   border-radius: 0.75rem;
-  background: #6fc6bd;
+  background: #d27a8b;
   color: #14302d;
   display: grid;
   place-items: center;
@@ -32533,7 +32533,7 @@ html[data-theme="light"] .home-page .dashboard-section-title {
 }
 
 .candidate-community-note {
-  --animated-border-mask: #06120f;
+  --animated-border-mask: #1b080e;
 }
 
 .fresh-application-card,
@@ -32590,7 +32590,7 @@ html[data-theme="light"] .home-page .dashboard-section-title {
   bottom: 0.22rem !important;
   height: 2px !important;
   border-radius: 999px !important;
-  background: #63c0b8 !important;
+  background: #d37a8b !important;
   transform: scaleX(0) !important;
   transform-origin: center !important;
   transition: transform 0.22s ease !important;
@@ -34154,9 +34154,9 @@ html[data-theme="light"] .home-page .dashboard-section-title {
   padding: clamp(1rem, 2vw, 1.4rem);
   color: #f8fafc;
   background:
-    radial-gradient(circle at top left, rgba(94, 234, 212, 0.12), transparent 34%),
+    radial-gradient(circle at top left, rgba(214, 106, 125, 0.12), transparent 34%),
     linear-gradient(145deg, rgba(6, 23, 20, 0.96), rgba(0, 0, 0, 0.98));
-  border: 1px solid rgba(94, 234, 212, 0.28);
+  border: 1px solid rgba(214, 106, 125, 0.28);
   border-radius: 1rem;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03), 0 18px 45px rgba(0, 0, 0, 0.32);
 }
@@ -34205,7 +34205,7 @@ html[data-theme="light"] .home-page .dashboard-section-title {
   min-height: 5.4rem;
   padding: 0.9rem;
   background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(94, 234, 212, 0.24);
+  border: 1px solid rgba(214, 106, 125, 0.24);
   border-radius: 0.8rem;
 }
 
@@ -34234,7 +34234,7 @@ html[data-theme="light"] .home-page .dashboard-section-title {
   color: #f8fafc;
   font-weight: 900;
   background: rgba(13, 37, 33, 0.88);
-  border: 1px solid rgba(94, 234, 212, 0.45);
+  border: 1px solid rgba(214, 106, 125, 0.45);
   border-radius: 999px;
   transition: transform 180ms ease, border-color 180ms ease, background-color 180ms ease;
 }
@@ -34452,7 +34452,7 @@ html[data-theme="light"] .home-page .dashboard-section-title {
   border-radius: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
-  color: #63c0b8 !important;
+  color: #d37a8b !important;
   font-size: 0 !important;
   line-height: 1 !important;
   overflow: hidden !important;
@@ -35805,7 +35805,7 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
 }
 
 .portal-default-action-profile .portal-default-action-icon {
-  color: #5eead4 !important;
+  color: #e5899c !important;
 }
 
 .portal-default-action-profile:hover .portal-default-action-icon,
@@ -36024,7 +36024,7 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
   width: 230px !important;
   height: 50px !important;
   background-color: #000 !important;
-  border: 1px solid rgba(94, 234, 212, 0.28) !important;
+  border: 1px solid rgba(214, 106, 125, 0.28) !important;
   border-radius: 160px !important;
   transition: all 0.3s ease !important;
 }
@@ -37536,7 +37536,7 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
 .home-page > .dashboard-header.employer-dashboard-header,
 .loading-container > .dashboard-header.candidate-dashboard-header,
 .loading-container > .dashboard-header.employer-dashboard-header {
-  border: 1px solid rgba(94, 234, 212, 0.28) !important;
+  border: 1px solid rgba(214, 106, 125, 0.28) !important;
   border-radius: 1rem !important;
   background: #000000 !important;
   background-color: #000000 !important;
@@ -37564,7 +37564,7 @@ html[data-theme="light"] .home-page > .dashboard-header.candidate-dashboard-head
 html[data-theme="light"] .home-page > .dashboard-header.employer-dashboard-header,
 html[data-theme="light"] .loading-container > .dashboard-header.candidate-dashboard-header,
 html[data-theme="light"] .loading-container > .dashboard-header.employer-dashboard-header {
-  border-color: rgba(94, 234, 212, 0.28) !important;
+  border-color: rgba(214, 106, 125, 0.28) !important;
   background: #000000 !important;
   color: #ffffff !important;
 }
@@ -38059,7 +38059,7 @@ html[data-theme="light"] .employer-dashboard-header .dashboard-title p {
 .uiverse-profile-card .candidate-card-action:focus-visible,
 .uiverse-profile-card .candidate-like-button:hover,
 .uiverse-profile-card .candidate-like-button:focus-visible {
-  color: #5eead4 !important;
+  color: #e5899c !important;
   background: rgba(255, 255, 255, 0.06) !important;
   transform: scale(1.08) !important;
 }
@@ -38752,7 +38752,7 @@ html[data-theme="light"] .employer-dashboard-header .dashboard-title p {
   padding: clamp(1.15rem, 3vw, 1.8rem) !important;
   color: #f8fafc !important;
   background: #050505 !important;
-  border: 1px solid rgba(94, 234, 212, 0.38) !important;
+  border: 1px solid rgba(214, 106, 125, 0.38) !important;
   border-radius: 1.15rem !important;
   box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.55) !important;
 }
@@ -38813,7 +38813,7 @@ html[data-theme="light"] .employer-dashboard-header .dashboard-title p {
   padding: 0.7rem 1rem !important;
   color: #ffffff !important;
   background: rgba(9, 54, 46, 0.9) !important;
-  border: 1px solid rgba(94, 234, 212, 0.55) !important;
+  border: 1px solid rgba(214, 106, 125, 0.55) !important;
   border-radius: 999px !important;
   font-weight: 900 !important;
   cursor: pointer !important;
@@ -38822,7 +38822,7 @@ html[data-theme="light"] .employer-dashboard-header .dashboard-title p {
 .public-choice-actions button:hover,
 .public-job-actions button:hover,
 .public-assistant-form button:hover {
-  background: #5eead4 !important;
+  background: #e5899c !important;
   color: #001512 !important;
 }
 
@@ -38874,7 +38874,7 @@ html[data-theme="light"] .employer-dashboard-header .dashboard-title p {
   padding: 1rem !important;
   color: #ffffff !important;
   background: #111111 !important;
-  border: 1px solid rgba(94, 234, 212, 0.28) !important;
+  border: 1px solid rgba(214, 106, 125, 0.28) !important;
   border-radius: 1rem !important;
 }
 
@@ -38898,7 +38898,7 @@ html[data-theme="light"] .employer-dashboard-header .dashboard-title p {
 .public-job-meta span {
   padding: 0.25rem 0.55rem !important;
   border-radius: 999px !important;
-  background: rgba(94, 234, 212, 0.13) !important;
+  background: rgba(214, 106, 125, 0.13) !important;
 }
 
 @media (max-width: 768px) {
@@ -39262,7 +39262,7 @@ html[data-theme="light"] .employer-dashboard-header .dashboard-title p {
 .public-choice-dialog,
 .public-assistant-dialog,
 .public-jobs-dialog {
-  border: 1px solid rgba(94, 234, 212, 0.24) !important;
+  border: 1px solid rgba(214, 106, 125, 0.24) !important;
   border-radius: 1.2rem !important;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34) !important;
 }
@@ -39997,7 +39997,7 @@ html[data-theme="light"] .employer-dashboard-header .dashboard-title p {
 
 .public-modal-pagination button:hover,
 .public-modal-pagination button:focus-visible {
-  color: #5eead4 !important;
+  color: #e5899c !important;
   outline: 0 !important;
 }
 
@@ -40884,7 +40884,7 @@ select {
   align-items: center !important;
   min-height: 2.7rem !important;
   border-radius: 0.9rem !important;
-  border: 1px solid rgba(94, 234, 212, 0.25) !important;
+  border: 1px solid rgba(214, 106, 125, 0.25) !important;
   background: rgba(13, 24, 23, 0.88) !important;
   font-size: 0.82rem !important;
   font-weight: 700 !important;
@@ -40917,7 +40917,7 @@ select {
   width: 100% !important;
   min-height: 3rem !important;
   border-radius: 999px !important;
-  border: 1px solid rgba(94, 234, 212, 0.28) !important;
+  border: 1px solid rgba(214, 106, 125, 0.28) !important;
   background: rgba(16, 49, 44, 0.78) !important;
   font-size: 1rem !important;
   font-weight: 800 !important;
@@ -43534,7 +43534,7 @@ select {
   gap: 0.85rem !important;
   padding: 1.1rem 1rem !important;
   background: rgba(0, 0, 0, 0.98) !important;
-  border: 1px solid rgba(94, 234, 212, 0.2) !important;
+  border: 1px solid rgba(214, 106, 125, 0.2) !important;
   box-shadow: 0 22px 60px rgba(0, 0, 0, 0.32) !important;
 }
 
@@ -43585,7 +43585,7 @@ select {
   flex-direction: column !important;
   min-height: 24rem !important;
   background: #000000 !important;
-  border: 1px solid rgba(94, 234, 212, 0.2) !important;
+  border: 1px solid rgba(214, 106, 125, 0.2) !important;
   box-shadow: 0 22px 60px rgba(0, 0, 0, 0.32) !important;
 }
 
@@ -43646,7 +43646,7 @@ select {
   gap: 0.45rem !important;
   padding: 1.1rem 1rem 0.85rem !important;
   background: rgba(0, 0, 0, 0.98) !important;
-  border: 1px solid rgba(94, 234, 212, 0.2) !important;
+  border: 1px solid rgba(214, 106, 125, 0.2) !important;
   border-radius: 1.6rem !important;
   box-shadow: 0 24px 72px rgba(0, 0, 0, 0.34) !important;
 }
@@ -44317,7 +44317,7 @@ select {
   gap: 1rem !important;
   padding: 1.15rem 0.95rem !important;
   background: #000000 !important;
-  border: 1px solid rgba(94, 234, 212, 0.18) !important;
+  border: 1px solid rgba(214, 106, 125, 0.18) !important;
   border-radius: 1.2rem !important;
   box-shadow: 0 22px 58px rgba(0, 0, 0, 0.34) !important;
 }
@@ -44440,7 +44440,7 @@ select {
   gap: 0.7rem !important;
   padding: 1.2rem 1rem 0.85rem !important;
   background: #000000 !important;
-  border: 1px solid rgba(94, 234, 212, 0.2) !important;
+  border: 1px solid rgba(214, 106, 125, 0.2) !important;
   border-radius: 1.5rem !important;
   box-shadow: 0 26px 72px rgba(0, 0, 0, 0.36) !important;
 }
@@ -44689,7 +44689,7 @@ select {
   align-items: center !important;
   min-height: 2.55rem !important;
   border-radius: 0.9rem !important;
-  border: 1px solid rgba(94, 234, 212, 0.25) !important;
+  border: 1px solid rgba(214, 106, 125, 0.25) !important;
   background: rgba(13, 24, 23, 0.88) !important;
   font-size: 0.8rem !important;
   font-weight: 700 !important;
@@ -44722,7 +44722,7 @@ select {
   width: 100% !important;
   min-height: 2.8rem !important;
   border-radius: 999px !important;
-  border: 1px solid rgba(94, 234, 212, 0.28) !important;
+  border: 1px solid rgba(214, 106, 125, 0.28) !important;
   background: rgba(16, 49, 44, 0.78) !important;
   font-size: 0.98rem !important;
   font-weight: 800 !important;
@@ -45020,7 +45020,7 @@ select {
 
 .public-jobs-join-link:hover,
 .public-jobs-join-link:focus-visible {
-  color: #5eead4 !important;
+  color: #e5899c !important;
   outline: 0 !important;
 }
 
@@ -45206,7 +45206,7 @@ select {
 
 .public-jobs-join-link:hover,
 .public-jobs-join-link:focus-visible {
-  color: #5eead4 !important;
+  color: #e5899c !important;
   outline: 0 !important;
 }
 
@@ -45371,7 +45371,7 @@ select {
   display: flex !important;
   flex-direction: column !important;
   background: rgba(5, 5, 5, 0.98) !important;
-  border: 1px solid rgba(94, 234, 212, 0.24) !important;
+  border: 1px solid rgba(214, 106, 125, 0.24) !important;
   border-radius: 1.2rem !important;
   box-shadow: 0 28px 80px rgba(0, 0, 0, 0.42) !important;
 }
@@ -45479,7 +45479,7 @@ select {
   max-height: min(88vh, 56rem) !important;
   padding: 1.15rem 1.1rem 0.9rem !important;
   background: rgba(4, 4, 4, 0.98) !important;
-  border: 1px solid rgba(94, 234, 212, 0.24) !important;
+  border: 1px solid rgba(214, 106, 125, 0.24) !important;
   border-radius: 1.2rem !important;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4) !important;
 }
@@ -45658,7 +45658,7 @@ select {
 
 .public-ai-launch-form {
   padding: 1rem 1rem 0.95rem !important;
-  border: 1px solid rgba(94, 234, 212, 0.2) !important;
+  border: 1px solid rgba(214, 106, 125, 0.2) !important;
   border-radius: 1.1rem !important;
 }
 
@@ -45704,7 +45704,7 @@ select {
 
 .public-ai-chat-card {
   background: #000000 !important;
-  border: 1px solid rgba(94, 234, 212, 0.18) !important;
+  border: 1px solid rgba(214, 106, 125, 0.18) !important;
   border-radius: 1.1rem !important;
 }
 
@@ -46001,7 +46001,7 @@ select {
   border-radius: 0.9rem !important;
   text-align: center !important;
   background: rgba(255, 255, 255, 0.04) !important;
-  border: 1px solid rgba(94, 234, 212, 0.22) !important;
+  border: 1px solid rgba(214, 106, 125, 0.22) !important;
   color: rgba(255, 255, 255, 0.92) !important;
 }
 
@@ -46043,7 +46043,7 @@ select {
 }
 
 .public-job-feed-card-shell .apply-button {
-  border: 1px solid rgba(94, 234, 212, 0.32) !important;
+  border: 1px solid rgba(214, 106, 125, 0.32) !important;
   background: rgba(12, 74, 64, 0.86) !important;
   color: #ffffff !important;
 }
@@ -48736,7 +48736,7 @@ select {
   padding: 1rem 0.85rem !important;
   color: #ffffff !important;
   background: rgba(255, 255, 255, 0.04) !important;
-  border-color: rgba(94, 234, 212, 0.8) !important;
+  border-color: rgba(214, 106, 125, 0.8) !important;
 }
 
 .job-seeker-page .drop-message,
@@ -51742,7 +51742,7 @@ select {
   min-width: 0 !important;
   padding: 0.34rem 0.44rem !important;
   background: rgba(0, 0, 0, 0.64) !important;
-  border: 1px solid rgba(94, 234, 212, 0.18) !important;
+  border: 1px solid rgba(214, 106, 125, 0.18) !important;
   border-radius: 999px !important;
   box-shadow: none !important;
 }
@@ -51825,7 +51825,7 @@ select {
   overflow-x: auto !important;
   overflow-y: visible !important;
   background: #000000 !important;
-  border: 1px solid rgba(94, 234, 212, 0.28) !important;
+  border: 1px solid rgba(214, 106, 125, 0.28) !important;
   border-radius: 999px !important;
   box-shadow: 0 18px 42px rgba(0, 0, 0, 0.42) !important;
   list-style: none !important;
@@ -51951,7 +51951,7 @@ select {
   padding: 0.78rem !important;
   color: #f8fafc !important;
   background: #050708 !important;
-  border: 1px solid rgba(94, 234, 212, 0.28) !important;
+  border: 1px solid rgba(214, 106, 125, 0.28) !important;
   border-radius: 0.9rem !important;
   box-shadow: 0 20px 48px rgba(0, 0, 0, 0.48) !important;
 }
@@ -51995,7 +51995,7 @@ select {
   width: 1.75rem !important;
   height: 1.75rem !important;
   border-radius: 50% !important;
-  background: rgba(94, 234, 212, 0.22) !important;
+  background: rgba(214, 106, 125, 0.22) !important;
   color: #ffffff !important;
   overflow: hidden !important;
   font-size: 0.76rem !important;
@@ -52753,7 +52753,7 @@ select {
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
-  background: #03251e !important;
+  background: #2b0e16 !important;
   border-color: rgba(34, 197, 94, 0.34) !important;
   color: #dffcf2 !important;
 }
@@ -52772,7 +52772,7 @@ select {
   min-height: 2.45rem !important;
   margin: 0.12rem 0 0 !important;
   padding: 0.32rem 0.52rem !important;
-  border: 1px solid rgba(94, 234, 212, 0.18) !important;
+  border: 1px solid rgba(214, 106, 125, 0.18) !important;
   border-radius: 999px !important;
   background: #000000 !important;
   overflow: visible !important;
@@ -53197,7 +53197,7 @@ select {
 .job-skills .skill-tag,
 .public-job-feed-skills span,
 .portal-candidate-job-skills span {
-  background: #03251e !important;
+  background: #2b0e16 !important;
   border-color: rgba(34, 197, 94, 0.34) !important;
   color: #dffcf2 !important;
 }
@@ -55982,7 +55982,7 @@ button.sky-apply-button,
   align-items: center !important;
   align-self: center !important;
   background-color: #000000 !important;
-  border: 1px solid rgba(94, 234, 212, 0.26) !important;
+  border: 1px solid rgba(214, 106, 125, 0.26) !important;
   border-radius: 5px !important;
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.34) !important;
   display: flex !important;
@@ -56140,8 +56140,8 @@ button.sky-apply-button,
 .employer-settings-container .settings-card,
 .settings-container .settings-card {
   background: linear-gradient(135deg, rgba(6, 18, 16, 0.98), rgba(0, 0, 0, 0.96)) !important;
-  border: 1px solid rgba(94, 234, 212, 0.24) !important;
-  border-left: 1px solid rgba(94, 234, 212, 0.24) !important;
+  border: 1px solid rgba(214, 106, 125, 0.24) !important;
+  border-left: 1px solid rgba(214, 106, 125, 0.24) !important;
   border-radius: 10px !important;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28) !important;
   color: #f8fafc !important;
@@ -56486,7 +56486,7 @@ button.sky-apply-button,
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)),
     rgba(0, 0, 0, 0.86) !important;
-  border-color: rgba(94, 234, 212, 0.3) !important;
+  border-color: rgba(214, 106, 125, 0.3) !important;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.075),
     0 12px 28px rgba(0, 0, 0, 0.42) !important;
@@ -59633,8 +59633,8 @@ html[data-theme="light"] body[data-theme="light"] :is(
   box-shadow: none !important;
   outline: 0 !important;
   filter: none !important;
-  color: #173a33 !important;
-  -webkit-text-fill-color: #173a33 !important;
+  color: #3c1822 !important;
+  -webkit-text-fill-color: #3c1822 !important;
 }
 
 html[data-theme="light"] body[data-theme="light"] :is(
@@ -60413,7 +60413,7 @@ html[data-theme="light"] body[data-theme="light"] .portal-ai-top-button {
 
 html[data-theme="light"] body[data-theme="light"] .portal-ai-top-button :is(svg, path),
 html[data-theme="light"] body[data-theme="light"] .portal-ai-top-icon {
-  color: #173a33 !important;
+  color: #3c1822 !important;
   fill: none !important;
   stroke: currentColor !important;
 }
@@ -60683,7 +60683,7 @@ html[data-theme="light"] body[data-theme="light"] .portal-ai-top-button :is(svg,
 html[data-theme="light"] body[data-theme="light"] .portal-ai-top-icon {
   width: 1.65rem !important;
   height: 1.65rem !important;
-  color: #173a33 !important;
+  color: #3c1822 !important;
   fill: none !important;
   stroke: currentColor !important;
   stroke-width: 2 !important;
@@ -60769,7 +60769,7 @@ html[data-theme="light"] body[data-theme="light"] .portal-ai-top-button:is(:hove
   max-height: 1.8rem !important;
   padding: 0 !important;
   margin: 0 !important;
-  color: #173a33 !important;
+  color: #3c1822 !important;
   cursor: pointer !important;
 }
 
@@ -60777,7 +60777,7 @@ html[data-theme="light"] body[data-theme="light"] .portal-ai-top-button :is(svg,
 html[data-theme="light"] body[data-theme="light"] .portal-ai-top-button .portal-ai-top-icon {
   width: 1.65rem !important;
   height: 1.65rem !important;
-  color: #173a33 !important;
+  color: #3c1822 !important;
   fill: none !important;
   stroke: currentColor !important;
   stroke-width: 2.2 !important;
@@ -60953,8 +60953,8 @@ html[data-theme="light"] body[data-theme="light"] .portal-home-feed :is(
   box-shadow: none !important;
   outline: 0 !important;
   filter: none !important;
-  color: #173a33 !important;
-  -webkit-text-fill-color: #173a33 !important;
+  color: #3c1822 !important;
+  -webkit-text-fill-color: #3c1822 !important;
 }
 
 html[data-theme="light"] body[data-theme="light"] .portal-home-feed :is(
@@ -61148,8 +61148,8 @@ html[data-theme="light"] .portal-home-feed :is(
   box-shadow: none !important;
   outline: 0 !important;
   filter: none !important;
-  color: #173a33 !important;
-  -webkit-text-fill-color: #173a33 !important;
+  color: #3c1822 !important;
+  -webkit-text-fill-color: #3c1822 !important;
 }
 
 html[data-theme="light"] .portal-home-feed :is(
@@ -61555,7 +61555,7 @@ html[data-theme="light"] .portal-home-tabs :is(.portal-home-tab-create-story, .p
 
 html[data-theme="light"] .portal-home-tabs :is(.portal-home-tab-my-feed, .portal-home-tab-my-company-posts):is(.active, :hover),
 html[data-theme="light"] .portal-home-tabs :is(.portal-home-tab-my-feed, .portal-home-tab-my-company-posts):is(.active, :hover) :is(svg, path, i, .icon, span) {
-  color: #62c9bf !important;
+  color: #d98092 !important;
   fill: currentColor !important;
   stroke: currentColor !important;
   -webkit-text-fill-color: currentColor !important;
@@ -61583,13 +61583,13 @@ html[data-theme="light"] .portal-home-tabs :is(.portal-home-tab-my-feed, .portal
     background-color: #faf8f2 !important;
     border: 1px solid rgba(82, 56, 42, 0.2) !important;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
-    color: #17362f !important;
-    -webkit-text-fill-color: #17362f !important;
+    color: #3a1821 !important;
+    -webkit-text-fill-color: #3a1821 !important;
   }
 
   html[data-theme="light"] body[data-theme="light"] .home-page .main-content.mobile-section-job-feed .portal-home-feed > .portal-home-tabs .portal-home-tab :is(svg, path, i, .icon, span),
   html[data-theme="light"] body[data-theme="light"] .home-page .main-content.mobile-section-home-feed .portal-home-feed > .portal-home-tabs .portal-home-tab :is(svg, path, i, .icon, span) {
-    color: #17362f !important;
+    color: #3a1821 !important;
     fill: currentColor !important;
     stroke: currentColor !important;
     -webkit-text-fill-color: currentColor !important;
@@ -61597,13 +61597,13 @@ html[data-theme="light"] .portal-home-tabs :is(.portal-home-tab-my-feed, .portal
 }
 
 html[data-theme="light"] body[data-theme="light"] .portal-home-tabs .portal-home-tab:not(.active):not(:hover):not(:focus-visible) {
-  color: #17362f !important;
-  -webkit-text-fill-color: #17362f !important;
+  color: #3a1821 !important;
+  -webkit-text-fill-color: #3a1821 !important;
 }
 
 html[data-theme="light"] body[data-theme="light"] .portal-home-tabs .portal-home-tab:not(.active):not(:hover):not(:focus-visible) span {
-  color: #17362f !important;
-  -webkit-text-fill-color: #17362f !important;
+  color: #3a1821 !important;
+  -webkit-text-fill-color: #3a1821 !important;
 }
 
 html[data-theme="light"] body[data-theme="light"] .portal-home-tabs .portal-home-tab-work-news:not(.active):not(:hover):not(:focus-visible) :is(svg, path, i, .icon) {
@@ -61664,10 +61664,10 @@ html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home
 html[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab:not(.active):not(:hover):not(:focus-visible) > svg path,
 html[data-theme="light"] .dashboard-container .portal-home-feed .portal-home-tabs .portal-home-tab:not(.active):not(:hover):not(:focus-visible) > svg,
 html[data-theme="light"] .dashboard-container .portal-home-feed .portal-home-tabs .portal-home-tab:not(.active):not(:hover):not(:focus-visible) > svg path {
-  color: var(--tab-inactive-icon, #17362f) !important;
-  fill: var(--tab-inactive-icon, #17362f) !important;
-  stroke: var(--tab-inactive-icon, #17362f) !important;
-  -webkit-text-fill-color: var(--tab-inactive-icon, #17362f) !important;
+  color: var(--tab-inactive-icon, #3a1821) !important;
+  fill: var(--tab-inactive-icon, #3a1821) !important;
+  stroke: var(--tab-inactive-icon, #3a1821) !important;
+  -webkit-text-fill-color: var(--tab-inactive-icon, #3a1821) !important;
 }
 
 html[data-theme="light"] body[data-theme="light"] .home-page .main-content .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, :hover, :focus-visible) > svg,
@@ -62020,13 +62020,13 @@ html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home
   body[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab > .portal-home-tab-icon path,
   html[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab > .portal-home-tab-icon,
   html[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab > .portal-home-tab-icon path {
-    color: var(--tab-current-icon, var(--tab-inactive-icon, #17362f)) !important;
-    fill: var(--tab-current-icon, var(--tab-inactive-icon, #17362f)) !important;
+    color: var(--tab-current-icon, var(--tab-inactive-icon, #3a1821)) !important;
+    fill: var(--tab-current-icon, var(--tab-inactive-icon, #3a1821)) !important;
     stroke: none !important;
     stroke-width: 0 !important;
     filter: none !important;
     paint-order: normal !important;
-    -webkit-text-fill-color: var(--tab-current-icon, var(--tab-inactive-icon, #17362f)) !important;
+    -webkit-text-fill-color: var(--tab-current-icon, var(--tab-inactive-icon, #3a1821)) !important;
   }
 
   body[data-theme="light"] .home-page .portal-home-feed .portal-home-tabs .portal-home-tab:is(.active, [data-active="true"], :active, :hover, :focus-visible),
@@ -62084,13 +62084,13 @@ html[data-theme="light"] body[data-theme="light"] .portal-home-feed .portal-home
   body[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-color-override, .portal-home-tab) > .portal-home-tab-icon path,
   html[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-color-override, .portal-home-tab) > .portal-home-tab-icon,
   html[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-color-override, .portal-home-tab) > .portal-home-tab-icon path {
-    color: var(--tab-current-icon, var(--tab-inactive-icon, #17362f)) !important;
-    fill: var(--tab-current-icon, var(--tab-inactive-icon, #17362f)) !important;
+    color: var(--tab-current-icon, var(--tab-inactive-icon, #3a1821)) !important;
+    fill: var(--tab-current-icon, var(--tab-inactive-icon, #3a1821)) !important;
     stroke: none !important;
     stroke-width: 0 !important;
     filter: none !important;
     paint-order: normal !important;
-    -webkit-text-fill-color: var(--tab-current-icon, var(--tab-inactive-icon, #17362f)) !important;
+    -webkit-text-fill-color: var(--tab-current-icon, var(--tab-inactive-icon, #3a1821)) !important;
   }
 
   body[data-theme="light"] .portal-home-feed .portal-home-tabs :is(#portal-home-tab-color-override, .portal-home-tab):is(.active, [data-active="true"], :active, :hover, :focus-visible) > .portal-home-tab-icon,
@@ -63320,10 +63320,10 @@ html[data-theme="light"] .portal-home-feed .portal-job-country-row .portal-job-c
   outline: 0 !important;
   box-shadow: none !important;
   filter: none !important;
-  color: #17362f !important;
+  color: #3a1821 !important;
   line-height: 1 !important;
   text-align: right !important;
-  -webkit-text-fill-color: #17362f !important;
+  -webkit-text-fill-color: #3a1821 !important;
 }
 
 body[data-theme="light"] .portal-home-feed .portal-job-country-row .portal-job-country-button::before,
@@ -63500,9 +63500,9 @@ html[data-theme="light"] .portal-home-feed .portal-job-country-row .portal-job-c
   border: 1px solid rgba(154, 63, 13, 0.34) !important;
   border-radius: 999px !important;
   box-shadow: none !important;
-  color: #17362f !important;
+  color: #3a1821 !important;
   line-height: 1 !important;
-  -webkit-text-fill-color: #17362f !important;
+  -webkit-text-fill-color: #3a1821 !important;
 }
 
 /* Light mode: tiny floating shadow below home feed post cards. */
@@ -64097,8 +64097,8 @@ body[data-theme="light"] .home-page .messenger-inbox :is(.button-message, .inbox
   border: 1px solid #d8c5a8 !important;
   border-left: 1px solid #d8c5a8 !important;
   box-shadow: none !important;
-  color: #102f2a !important;
-  -webkit-text-fill-color: #102f2a !important;
+  color: #34141d !important;
+  -webkit-text-fill-color: #34141d !important;
   filter: none !important;
   text-shadow: none !important;
 }
@@ -64152,8 +64152,8 @@ body[data-theme="light"] .home-page .messenger-inbox :is(.messenger-compose-card
   border: 0 !important;
   border-radius: 0 !important;
   box-shadow: none !important;
-  color: #102f2a !important;
-  -webkit-text-fill-color: #102f2a !important;
+  color: #34141d !important;
+  -webkit-text-fill-color: #34141d !important;
   filter: none !important;
   text-shadow: none !important;
 }
@@ -65198,8 +65198,8 @@ body[data-theme="light"] #root .candidate-card .candidate-card-socialbar.socialb
   border: 0 !important;
   border-radius: 0 !important;
   box-shadow: none !important;
-  color: #123b34 !important;
-  -webkit-text-fill-color: #123b34 !important;
+  color: #411923 !important;
+  -webkit-text-fill-color: #411923 !important;
 }
 
 html[data-theme="light"] body[data-theme="light"] #root :is(.notifications-page, .talent-pool-container, .candidate-bookmarked-container, .bookmarked-talents-container, .applications-container, .assessments-container, .video-interviews-container, .draft-applications-container, .bookmarked-jobs-container, .interested-job-suggestion-section, .resume-playground-section, .profile-container, .settings-container, .about-jumptake-section, .progress-check-section),
@@ -66675,18 +66675,18 @@ body[data-theme="light"] #root .portal-default-actions .portal-default-action:is
   border: 1px solid #111111 !important;
   border-color: #111111 !important;
   box-shadow: none !important;
-  color: #123b34 !important;
-  -webkit-text-fill-color: #123b34 !important;
+  color: #411923 !important;
+  -webkit-text-fill-color: #411923 !important;
   outline: 0 !important;
 }
 
 html[data-theme="light"] body[data-theme="light"] #root .portal-default-actions .portal-default-action :is(svg, path),
 html[data-theme="light"] #root .portal-default-actions .portal-default-action :is(svg, path),
 body[data-theme="light"] #root .portal-default-actions .portal-default-action :is(svg, path) {
-  color: #123b34 !important;
+  color: #411923 !important;
   fill: currentColor !important;
   stroke: currentColor !important;
-  -webkit-text-fill-color: #123b34 !important;
+  -webkit-text-fill-color: #411923 !important;
 }
 
 /* Mobile dashboard title: keep "Start your" and "JumpTake day" as two clean lines. */
@@ -75080,8 +75080,8 @@ html[data-theme="light"] body #root .home-page .resume-playground-panel button.r
   background-color: #dfeee3 !important;
   background-image: none !important;
   border: 1px solid rgba(102, 143, 113, 0.38) !important;
-  color: #173526 !important;
-  -webkit-text-fill-color: #173526 !important;
+  color: #3a1821 !important;
+  -webkit-text-fill-color: #3a1821 !important;
 }
 
 html[data-theme="light"] body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-upload,
@@ -75809,8 +75809,8 @@ html[data-theme="light"] body .resume-playground-panel > .resume-playground-choi
   background-color: #dfeee3 !important;
   background-image: none !important;
   border-color: rgba(102, 143, 113, 0.38) !important;
-  color: #173526 !important;
-  -webkit-text-fill-color: #173526 !important;
+  color: #3a1821 !important;
+  -webkit-text-fill-color: #3a1821 !important;
   box-shadow: none !important;
 }
 
@@ -75892,8 +75892,8 @@ html body #root .home-page .resume-playground-panel button.resume-playground-cho
   background-color: #dfeee3 !important;
   background-image: none !important;
   border: 1px solid rgba(102, 143, 113, 0.38) !important;
-  color: #173526 !important;
-  -webkit-text-fill-color: #173526 !important;
+  color: #3a1821 !important;
+  -webkit-text-fill-color: #3a1821 !important;
   box-shadow: none !important;
 }
 
@@ -76619,8 +76619,8 @@ html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .p
 
 html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row .job-post-bookmark-reaction.active,
 html body #root .home-page :is(.portal-candidate-job-card, .portal-job-modal) .portal-candidate-job-action-row .job-post-bookmark-reaction.active :is(svg, path, span, strong) {
-  color: #0f4a43 !important;
-  -webkit-text-fill-color: #0f4a43 !important;
+  color: #491a27 !important;
+  -webkit-text-fill-color: #491a27 !important;
   fill: currentColor !important;
   stroke: currentColor !important;
   filter: drop-shadow(0 0 0.32rem rgba(15, 74, 67, 0.34)) !important;
@@ -77059,8 +77059,8 @@ html[data-theme="light"] body #root .home-page .resume-playground-panel button.r
   background-color: #dfeee3 !important;
   background-image: none !important;
   border: 1px solid rgba(102, 143, 113, 0.38) !important;
-  color: #173526 !important;
-  -webkit-text-fill-color: #173526 !important;
+  color: #3a1821 !important;
+  -webkit-text-fill-color: #3a1821 !important;
 }
 
 html[data-theme="light"] body #root .home-page .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-upload,
@@ -83895,8 +83895,8 @@ html body .floating-messenger.is-open > .floating-messenger-panel.is-mobile-chat
     border-radius: 0 !important;
     background: transparent !important;
     box-shadow: none !important;
-    color: #173a33 !important;
-    -webkit-text-fill-color: #173a33 !important;
+    color: #3c1822 !important;
+    -webkit-text-fill-color: #3c1822 !important;
     transform: none !important;
   }
 
@@ -85603,7 +85603,7 @@ html body .analytics-detail-overlay .analytics-detail-modal {
   padding: 1.05rem !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
-  border: 1px solid rgba(86, 170, 161, 0.35) !important;
+  border: 1px solid rgba(184, 90, 109, 0.35) !important;
   border-radius: 1rem !important;
   background: #eaf7f0 !important;
   box-shadow: 0 1.4rem 4rem rgba(0, 0, 0, 0.42) !important;
@@ -85668,8 +85668,8 @@ html body #root .home-page .analytics-card-footer > button:is(:hover, :focus, :f
   padding: 0.42rem 0.82rem !important;
   border: 1px solid #8fbea9 !important;
   border-radius: 999px !important;
-  background: #9ccbb6 !important;
-  background-color: #9ccbb6 !important;
+  background: #d6a9b2 !important;
+  background-color: #d6a9b2 !important;
   background-image: none !important;
   box-shadow: none !important;
   color: #ffffff !important;
@@ -87186,7 +87186,7 @@ html body #root .messenger-inbox .new-message-id-toggle:is(:hover, :focus, :focu
 }
 
 .friend-add-search label {
-  color: #24332e;
+  color: #352127;
   font-size: 0.76rem;
   font-weight: 850;
 }
@@ -87203,7 +87203,7 @@ html body #root .messenger-inbox .new-message-id-toggle:is(:hover, :focus, :focu
   border: 1px solid rgba(112, 83, 52, 0.28);
   border-radius: 999px;
   background: #fffaf3;
-  color: #24332e;
+  color: #352127;
 }
 
 .friend-add-search button,
@@ -87254,7 +87254,7 @@ html body #root .messenger-inbox .new-message-id-toggle:is(:hover, :focus, :focu
 }
 
 .friend-add-candidate-copy h3 {
-  color: #24332e;
+  color: #352127;
   font-size: 0.8rem;
 }
 
@@ -87374,6 +87374,293 @@ html body #root .app-mode-switch:has(input:disabled) {
 html body #root .app-mode-switch input:disabled + .app-mode-switch-track {
   opacity: 0.72 !important;
   cursor: not-allowed !important;
+}
+
+/* Give both portal workspaces a darker off-white desktop canvas in light mode. */
+@media (min-width: 769px) {
+  html[data-theme="light"] body[data-theme="light"] #root .home-page > .dashboard-container > .main-content {
+    background: #e5dfd4 !important;
+    background-color: #e5dfd4 !important;
+  }
+}
+
+/*
+ * Work News and Job Posts keep their established section palettes. The
+ * surrounding portal chrome still follows the selected JumpTake theme.
+ */
+html body #root .home-page .portal-home-feed[data-active-tab="work-news"] {
+  --primary-color: #d17842;
+  --primary-light: #e9a46c;
+  --primary-dark: #8a451f;
+  --primary-color-rgb: 209, 120, 66;
+  --jt-feed-maroon: #9b5724;
+  --jt-feed-maroon-dark: #5f3218;
+  --jt-feed-maroon-soft: #c9824d;
+  --jt-feed-maroon-pale: #fff7ed;
+}
+
+html body #root .home-page .portal-home-feed:is(
+  [data-active-tab="job-posts"],
+  [data-active-tab="my-job-posts"]
+) {
+  --primary-color: #3b82f6;
+  --primary-light: #7db4ff;
+  --primary-dark: #1d4ed8;
+  --primary-color-rgb: 59, 130, 246;
+  --jt-feed-maroon: #2563eb;
+  --jt-feed-maroon-dark: #123d72;
+  --jt-feed-maroon-soft: #4aa3ff;
+  --jt-feed-maroon-pale: #eff6ff;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-home-feed:is(
+  [data-active-tab="work-news"],
+  [data-active-tab="job-posts"],
+  [data-active-tab="my-job-posts"]
+) > .portal-home-tabs,
+html body[data-theme="dark"] #root .home-page .portal-home-feed:is(
+  [data-active-tab="work-news"],
+  [data-active-tab="job-posts"],
+  [data-active-tab="my-job-posts"]
+) > .portal-home-tabs {
+  background: rgba(15, 19, 24, 0.9) !important;
+  background-color: rgba(15, 19, 24, 0.9) !important;
+  border-color: rgba(148, 163, 184, 0.24) !important;
+}
+
+html body #root .home-page .portal-home-feed[data-active-tab="work-news"] :is(
+  button.portal-post-reach,
+  .portal-post-reach.portal-reach-button
+),
+html body #root .home-page .portal-home-feed[data-active-tab="work-news"] :is(
+  button.portal-post-reach,
+  .portal-post-reach.portal-reach-button
+):is(:hover, :focus-visible, :active) {
+  background: #b66a36 !important;
+  background-color: #b66a36 !important;
+  border-color: rgba(138, 69, 31, 0.22) !important;
+  box-shadow: 0 0.32rem 0.9rem rgba(138, 69, 31, 0.18) !important;
+}
+
+html body #root .home-page .portal-home-feed[data-active-tab="work-news"] .portal-post-action-row :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle
+):not(.active):not(.has-reaction),
+html body #root .home-page .portal-home-feed[data-active-tab="work-news"] .portal-post-action-row :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle
+):not(.active):not(.has-reaction) :is(svg, path, span, strong) {
+  color: #5f3218 !important;
+  -webkit-text-fill-color: #5f3218 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html body #root .home-page .portal-home-feed[data-active-tab="work-news"] .portal-post-action-row .portal-comment-toggle.active,
+html body #root .home-page .portal-home-feed[data-active-tab="work-news"] .portal-post-action-row .portal-comment-toggle.active :is(svg, path, span, strong) {
+  color: #9b5724 !important;
+  -webkit-text-fill-color: #9b5724 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html body #root .home-page .portal-home-feed:is(
+  [data-active-tab="job-posts"],
+  [data-active-tab="my-job-posts"]
+) .job-post-action-reactions {
+  border-color: rgba(59, 130, 246, 0.28) !important;
+}
+
+html body #root .home-page .portal-home-feed:is(
+  [data-active-tab="job-posts"],
+  [data-active-tab="my-job-posts"]
+) .portal-candidate-job-action-row :is(
+  button,
+  .job-post-reaction-button,
+  .job-post-comment-button,
+  .job-post-share-button,
+  .job-post-review-button,
+  .portal-job-like-toggle,
+  .portal-job-bookmark-toggle
+):not(.active),
+html body #root .home-page .portal-home-feed:is(
+  [data-active-tab="job-posts"],
+  [data-active-tab="my-job-posts"]
+) .portal-candidate-job-action-row :is(
+  button,
+  .job-post-reaction-button,
+  .job-post-comment-button,
+  .job-post-share-button,
+  .job-post-review-button,
+  .portal-job-like-toggle,
+  .portal-job-bookmark-toggle
+):not(.active) :is(svg, path, span, strong) {
+  color: #123d72 !important;
+  -webkit-text-fill-color: #123d72 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html body #root .home-page .portal-home-feed:is(
+  [data-active-tab="job-posts"],
+  [data-active-tab="my-job-posts"]
+) .portal-candidate-job-action-row .job-post-review-reaction.active,
+html body #root .home-page .portal-home-feed:is(
+  [data-active-tab="job-posts"],
+  [data-active-tab="my-job-posts"]
+) .portal-candidate-job-action-row .job-post-review-reaction.active :is(svg, path, span, strong) {
+  color: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html body #root .home-page .portal-home-feed:is(
+  [data-active-tab="job-posts"],
+  [data-active-tab="my-job-posts"]
+) :is(
+  .portal-view-job-button,
+  .sky-apply-button,
+  .portal-job-filter-clear,
+  .portal-job-country-button
+),
+html body #root .home-page .portal-home-feed:is(
+  [data-active-tab="job-posts"],
+  [data-active-tab="my-job-posts"]
+) :is(
+  .portal-view-job-button,
+  .sky-apply-button,
+  .portal-job-filter-clear,
+  .portal-job-country-button
+):is(:hover, :focus-visible, :active) {
+  border-color: #2563eb !important;
+  background: #2563eb !important;
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html body #root .home-page .portal-home-feed:is(
+  [data-active-tab="job-posts"],
+  [data-active-tab="my-job-posts"]
+) .portal-job-filter-bar :is(select, input):focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16) !important;
+  outline: 0 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-home-feed[data-active-tab="work-news"] .portal-post-action-row :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle
+):not(.active):not(.has-reaction),
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-home-feed[data-active-tab="work-news"] .portal-post-action-row :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle
+):not(.active):not(.has-reaction) :is(svg, path, span, strong) {
+  color: #e9a46c !important;
+  -webkit-text-fill-color: #e9a46c !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-home-feed:is(
+  [data-active-tab="job-posts"],
+  [data-active-tab="my-job-posts"]
+) .portal-candidate-job-action-row :is(
+  button,
+  .job-post-reaction-button,
+  .job-post-comment-button,
+  .job-post-share-button,
+  .job-post-review-button,
+  .portal-job-like-toggle,
+  .portal-job-bookmark-toggle
+):not(.active),
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-home-feed:is(
+  [data-active-tab="job-posts"],
+  [data-active-tab="my-job-posts"]
+) .portal-candidate-job-action-row :is(
+  button,
+  .job-post-reaction-button,
+  .job-post-comment-button,
+  .job-post-share-button,
+  .job-post-review-button,
+  .portal-job-like-toggle,
+  .portal-job-bookmark-toggle
+):not(.active) :is(svg, path, span, strong) {
+  color: #7db4ff !important;
+  -webkit-text-fill-color: #7db4ff !important;
+}
+
+/* JumpTake maroon brand palette for the public logo refresh. */
+html[data-theme="dark"],
+body[data-theme="dark"] {
+  --primary-color: #c15167;
+  --primary-light: #df8294;
+  --primary-dark: #7f1d32;
+  --primary-color-rgb: 193, 81, 103;
+}
+
+html[data-theme="light"],
+body[data-theme="light"] {
+  --primary-color: #b44a5f;
+  --primary-light: #d88a99;
+  --primary-dark: #7f1d32;
+  --primary-color-rgb: 180, 74, 95;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-home-feed > .portal-home-tabs,
+html body[data-theme="dark"] #root .home-page .portal-home-feed > .portal-home-tabs {
+  border-color: rgba(214, 106, 125, 0.28) !important;
+  background: rgba(35, 13, 20, 0.86) !important;
+  background-color: rgba(35, 13, 20, 0.86) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 12px 28px rgba(0, 0, 0, 0.28) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail,
+html body[data-theme="dark"] #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+  border-color: rgba(214, 106, 125, 0.34) !important;
+  background: #210e14 !important;
+  background-color: #210e14 !important;
+  box-shadow: 0 0.65rem 1.6rem rgba(0, 0, 0, 0.38) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page > :is(
+  .dashboard-header.candidate-dashboard-header,
+  .dashboard-header.employer-dashboard-header
+),
+html body[data-theme="dark"] #root .home-page > :is(
+  .dashboard-header.candidate-dashboard-header,
+  .dashboard-header.employer-dashboard-header
+) {
+  border-color: rgba(214, 106, 125, 0.3) !important;
+  background: rgba(27, 10, 16, 0.9) !important;
+  background-color: rgba(27, 10, 16, 0.9) !important;
+  box-shadow: 0 0.8rem 2rem rgba(0, 0, 0, 0.32) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(
+  button,
+  a,
+  input,
+  textarea,
+  select
+):focus-visible,
+html body[data-theme="light"] #root .home-page :is(
+  button,
+  a,
+  input,
+  textarea,
+  select
+):focus-visible {
+  outline-color: rgba(180, 74, 95, 0.72) !important;
 }
 
 html body :is(.messenger-inbox, .floating-messenger) .message-list-avatar-button,
@@ -88685,8 +88972,8 @@ html body #root .talent-pool-container.candidate-view-candidates .candidate-dire
 }
 
 html body #root .talent-pool-container.candidate-view-candidates .candidate-directory-search-card > label {
-  color: #24332e !important;
-  -webkit-text-fill-color: #24332e !important;
+  color: #352127 !important;
+  -webkit-text-fill-color: #352127 !important;
   font-size: 0.76rem !important;
   font-weight: 850 !important;
 }
@@ -88709,8 +88996,8 @@ html body #root .talent-pool-container.candidate-view-candidates .candidate-dire
   border: 1px solid rgba(112, 83, 52, 0.28) !important;
   border-radius: 999px !important;
   background: #fffaf3 !important;
-  color: #24332e !important;
-  -webkit-text-fill-color: #24332e !important;
+  color: #352127 !important;
+  -webkit-text-fill-color: #352127 !important;
   font-size: 0.68rem !important;
 }
 
@@ -88907,8 +89194,8 @@ html body #root .home-page .blocks-manager-tab:is(:hover, :focus, :focus-visible
   border: 1px solid rgba(104, 20, 33, 0.16) !important;
   border-radius: 0.76rem !important;
   background: #ffffff !important;
-  color: #24332e !important;
-  -webkit-text-fill-color: #24332e !important;
+  color: #352127 !important;
+  -webkit-text-fill-color: #352127 !important;
   box-shadow: none !important;
   font-size: 0.64rem !important;
   font-weight: 800 !important;
@@ -89263,7 +89550,7 @@ html body #root .home-page :is(
   .notification-empty-state
 ) > h3 {
   margin: 0 0 0.28rem !important;
-  color: #24332e !important;
+  color: #352127 !important;
   font-size: 0.9rem !important;
   line-height: 1.2 !important;
 }
@@ -89931,6 +90218,10 @@ html body #root .home-page .friend-invitations-section .friend-invitation-panel 
   display: none !important;
 }
 
+.portal-section-transition-shell.is-cached-portal-section {
+  display: none !important;
+}
+
 @keyframes jt-page-skeleton-pulse {
   from { opacity: 0.58; }
   to { opacity: 1; }
@@ -89964,4 +90255,275 @@ body[data-theme="dark"] .portal-page-skeleton :is(.portal-page-skeleton-avatar, 
   ) {
     animation: none !important;
   }
+}
+
+/* Carry the public-home grid into the bottom-most canvas of both portals on desktop. */
+@media (min-width: 769px) {
+  html[data-theme="light"] body[data-theme="light"] #root > .app-container > .home-page,
+  html body[data-theme="light"] #root > .app-container > .home-page {
+    background:
+      linear-gradient(rgba(127, 29, 50, 0.09) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(127, 29, 50, 0.09) 1px, transparent 1px),
+      #e5dfd4 !important;
+    background-size: 54px 54px, 54px 54px, auto !important;
+    background-position: 0 0 !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root > .app-container > .home-page,
+  html body[data-theme="dark"] #root > .app-container > .home-page {
+    background:
+      linear-gradient(rgba(190, 82, 103, 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(190, 82, 103, 0.07) 1px, transparent 1px),
+      radial-gradient(circle at 14% 0%, rgba(var(--primary-color-rgb), 0.18), transparent 34%),
+      linear-gradient(180deg, #050607 0%, #000000 100%) !important;
+    background-size: 54px 54px, 54px 54px, auto, auto !important;
+    background-position: 0 0 !important;
+  }
+}
+
+/*
+ * Final desktop portal navigation cleanup.
+ * Keep this after the legacy theme passes so the portal header stays compact
+ * and the feed cannot regain a second pale header surface.
+ */
+@media (min-width: 769px) {
+  html body #root > .app-container > .home-page > :is(
+    .dashboard-header.candidate-dashboard-header,
+    .dashboard-header.employer-dashboard-header
+  ) {
+    box-sizing: border-box !important;
+    height: 4.6rem !important;
+    min-height: 4.6rem !important;
+    max-height: 4.6rem !important;
+    margin-top: 0.45rem !important;
+    margin-bottom: 0.3rem !important;
+    padding: 0.38rem 1rem !important;
+  }
+
+  html body #root > .app-container > .home-page > :is(
+    .dashboard-header.candidate-dashboard-header,
+    .dashboard-header.employer-dashboard-header
+  ) :is(.candidate-dashboard-logo, .employer-dashboard-logo) {
+    width: auto !important;
+    max-width: 8.2rem !important;
+    height: auto !important;
+    max-height: 3.35rem !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container,
+  html body #root > .app-container > .home-page > .dashboard-container.mobile-section-open {
+    margin-top: 0.35rem !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container > .main-content:is(
+    .mobile-section-job-feed,
+    .mobile-section-home-feed
+  ) {
+    padding-top: 0.14rem !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root > .app-container > .home-page > .dashboard-container > .main-content:is(
+    .mobile-section-job-feed,
+    .mobile-section-home-feed
+  ),
+  html body[data-theme="light"] #root > .app-container > .home-page > .dashboard-container > .main-content:is(
+    .mobile-section-job-feed,
+    .mobile-section-home-feed
+  ) {
+    background: #ded7cc !important;
+    background-color: #ded7cc !important;
+    background-image: none !important;
+  }
+
+  html body #root > .app-container > .home-page .main-content .portal-home-feed {
+    position: relative !important;
+    display: block !important;
+    gap: 0 !important;
+    row-gap: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  html body #root > .app-container > .home-page .main-content .portal-home-feed.is-tabs-hidden {
+    gap: 0 !important;
+    row-gap: 0 !important;
+  }
+
+  html body #root > .app-container > .home-page .main-content .portal-home-feed > .portal-home-tabs {
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: 0 !important;
+    z-index: 30 !important;
+    width: 100% !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  html body #root > .app-container > .home-page .main-content .portal-home-feed > .portal-home-feed-scroll {
+    box-sizing: border-box !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    padding-top: 3.75rem !important;
+  }
+
+  html body #root > .app-container > .home-page .main-content .portal-home-feed > .portal-home-feed-scroll,
+  html body #root > .app-container > .home-page .main-content .portal-home-feed > .portal-home-feed-scroll > .portal-home-tab-panel {
+    margin-top: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+  }
+
+  html body #root > .app-container > .home-page .main-content .portal-home-feed > .portal-home-feed-scroll::before,
+  html body #root > .app-container > .home-page .main-content .portal-home-feed > .portal-home-feed-scroll::after,
+  html body #root > .app-container > .home-page .main-content .portal-home-feed > .portal-home-feed-scroll > .portal-home-tab-panel::before,
+  html body #root > .app-container > .home-page .main-content .portal-home-feed > .portal-home-feed-scroll > .portal-home-tab-panel::after {
+    display: none !important;
+    content: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  /*
+   * Match the side navigation rail to the inset page panel. Keeping both
+   * edges inside the rounded dashboard shell prevents the menu control from
+   * crossing the outer border in either its collapsed or expanded state.
+   */
+  html body #root > .app-container > .home-page > .dashboard-container > .portal-uiverse-sidebar,
+  html body #root > .app-container > .home-page > .dashboard-container > .portal-uiverse-sidebar.sidebar,
+  html body #root > .app-container > .home-page > .dashboard-container > .portal-uiverse-sidebar.is-collapsed,
+  html body #root > .app-container > .home-page > .dashboard-container > .portal-uiverse-sidebar.is-expanded {
+    top: 1.15rem !important;
+    bottom: 1.15rem !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container > .portal-uiverse-sidebar .portal-sidebar-nav,
+  html body #root > .app-container > .home-page > .dashboard-container > .portal-uiverse-sidebar .portal-uiverse-rail {
+    box-sizing: border-box !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+  }
+
+  /*
+   * The main portal title capsule already names the active section. Hide the
+   * repeated component title introduced beneath the transition shell.
+   */
+  html body #root > .app-container > .home-page .main-content > .portal-section-transition-shell[data-section] > :is(
+    section,
+    div,
+    article
+  ) > :is(
+    .section-header,
+    .job-feed-header,
+    .profile-header,
+    .post-job-header,
+    .manage-jobs-header,
+    .talent-pool-header,
+    .candidate-feed-header,
+    .company-profile-header
+  ):first-child > h2:first-child {
+    display: none !important;
+  }
+
+  html body #root > .app-container > .home-page .main-content > .portal-section-transition-shell[data-section] > :is(
+    section,
+    div,
+    article
+  ) > :is(
+    .section-header,
+    .job-feed-header,
+    .profile-header,
+    .post-job-header,
+    .manage-jobs-header,
+    .talent-pool-header,
+    .candidate-feed-header,
+    .company-profile-header
+  ):first-child:has(> h2:first-child):not(:has(> :not(h2))) {
+    display: none !important;
+  }
+}
+
+/*
+ * Public authentication fields keep a stable surface and text color while
+ * typing, focusing, or when browser autofill is active.
+ */
+body[data-public-home-theme="dark"] :is(.public-auth-card, .public-auth-form-shell) .public-auth-field {
+  border-color: rgba(223, 130, 148, 0.42) !important;
+  background: #2a0f18 !important;
+  background-color: #2a0f18 !important;
+}
+
+body[data-public-home-theme="dark"] :is(.public-auth-card, .public-auth-form-shell) .public-auth-input,
+body[data-public-home-theme="dark"] :is(.public-auth-card, .public-auth-form-shell) .public-auth-input:is(
+  :focus,
+  :active,
+  :hover,
+  :not(:placeholder-shown)
+) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+body[data-public-home-theme="dark"] :is(.public-auth-card, .public-auth-form-shell) .public-auth-input::placeholder {
+  color: rgba(255, 255, 255, 0.58) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.58) !important;
+}
+
+body[data-public-home-theme="light"] :is(.public-auth-card, .public-auth-form-shell) .public-auth-field {
+  border-color: rgba(127, 29, 50, 0.26) !important;
+  background: #fffaf1 !important;
+  background-color: #fffaf1 !important;
+}
+
+body[data-public-home-theme="light"] :is(.public-auth-card, .public-auth-form-shell) .public-auth-input,
+body[data-public-home-theme="light"] :is(.public-auth-card, .public-auth-form-shell) .public-auth-input:is(
+  :focus,
+  :active,
+  :hover,
+  :not(:placeholder-shown)
+) {
+  color: #2b1720 !important;
+  -webkit-text-fill-color: #2b1720 !important;
+  caret-color: #2b1720 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+body[data-public-home-theme="light"] :is(.public-auth-card, .public-auth-form-shell) .public-auth-input::placeholder {
+  color: rgba(43, 23, 32, 0.56) !important;
+  -webkit-text-fill-color: rgba(43, 23, 32, 0.56) !important;
+}
+
+body[data-public-home-theme="dark"] :is(.public-auth-card, .public-auth-form-shell) .public-auth-input:-webkit-autofill,
+body[data-public-home-theme="dark"] :is(.public-auth-card, .public-auth-form-shell) .public-auth-input:-webkit-autofill:is(
+  :hover,
+  :focus,
+  :active
+) {
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff !important;
+  -webkit-box-shadow: 0 0 0 1000px #2a0f18 inset !important;
+  box-shadow: 0 0 0 1000px #2a0f18 inset !important;
+}
+
+body[data-public-home-theme="light"] :is(.public-auth-card, .public-auth-form-shell) .public-auth-input:-webkit-autofill,
+body[data-public-home-theme="light"] :is(.public-auth-card, .public-auth-form-shell) .public-auth-input:-webkit-autofill:is(
+  :hover,
+  :focus,
+  :active
+) {
+  -webkit-text-fill-color: #2b1720 !important;
+  caret-color: #2b1720 !important;
+  -webkit-box-shadow: 0 0 0 1000px #fffaf1 inset !important;
+  box-shadow: 0 0 0 1000px #fffaf1 inset !important;
 }

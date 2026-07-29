@@ -2057,7 +2057,8 @@ const PortalHomeFeed = ({
             const nextScrollTop = Math.max(0, Math.min(maxScrollTop, rememberedTop));
             scroller.scrollTop = nextScrollTop;
             feedScrollTopRef.current = nextScrollTop;
-            const shouldHideTabs = nextScrollTop > 12;
+            const tabsHideThreshold = window.matchMedia('(max-width: 768px)').matches ? 78 : 64;
+            const shouldHideTabs = nextScrollTop > tabsHideThreshold;
             tabsHiddenRef.current = shouldHideTabs;
             setTabsHidden(shouldHideTabs);
             feedScrollRestoreFrameRef.current = null;
@@ -4347,7 +4348,10 @@ const PortalHomeFeed = ({
             return;
         }
 
-        const shouldHideTabs = nextScrollTop > 12 && delta > 0;
+        const tabsHideThreshold = typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches
+            ? 78
+            : 64;
+        const shouldHideTabs = nextScrollTop > tabsHideThreshold && delta > 0;
         if (tabsHiddenRef.current !== shouldHideTabs) {
             tabsHiddenRef.current = shouldHideTabs;
             setTabsHidden(shouldHideTabs);
@@ -7259,7 +7263,9 @@ const PortalHomeFeed = ({
     const ownTalentStories = talentStories.filter((post) => String(post.authorId) === viewerId);
     const ownCompanyPosts = workNewsPosts.filter((post) => String(post.authorId) === viewerId);
     return (
-        <div className={`portal-home-feed portal-home-feed-${mode} ${tabsHidden ? 'is-tabs-hidden' : ''}`}>
+        <div
+            className={`portal-home-feed portal-home-feed-${mode} ${tabsHidden ? 'is-tabs-hidden' : ''}`}
+        >
             {feedError ? <div className="notification-message error">{feedError}</div> : null}
             <div className="portal-home-tabs" aria-label={`${mode} home sections`}>
                 {tabs.map((tab) => {

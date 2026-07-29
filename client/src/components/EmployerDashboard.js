@@ -20,7 +20,8 @@ import PortalDefaultLanding from './PortalDefaultLanding';
 import PortalAiButton from './PortalAiButton';
 import SavedPosts from './SavedPosts';
 import { clearBrowserAccountState } from '../utils/authStorage';
-import dashboardLogo from './media/jumptake-logo-9.png';
+import dashboardLogoLight from './media/jumptake-logo-9.png';
+import dashboardLogoDark from './media/jumptake-logo-dark-maroon.png';
 import GuidedPortalTour from './GuidedPortalTour';
 import PortalPageSkeleton from './PortalPageSkeleton';
 
@@ -57,7 +58,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     const [employer, setEmployer] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeSection, setActiveSection] = useState('home-feed');
-    const [sectionSkeletonVisible, setSectionSkeletonVisible] = useState(true);
+    const [openedSections, setOpenedSections] = useState(() => ['home-feed']);
     const [titleAnimationReplayKey, setTitleAnimationReplayKey] = useState(0);
     const sectionHistoryRef = useRef([]);
     const manageJobsRef = useRef(null);
@@ -71,11 +72,14 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     const [isManagingEmployerJob, setIsManagingEmployerJob] = useState(false);
     const mobilePanelRef = useRef(null);
     const navigate = useNavigate();
+    const dashboardLogo = appMode === 'dark' ? dashboardLogoDark : dashboardLogoLight;
 
     useEffect(() => {
-        setSectionSkeletonVisible(true);
-        const skeletonTimer = window.setTimeout(() => setSectionSkeletonVisible(false), 420);
-        return () => window.clearTimeout(skeletonTimer);
+        setOpenedSections((currentSections) => (
+            currentSections.includes(activeSection)
+                ? currentSections
+                : [...currentSections, activeSection]
+        ));
     }, [activeSection]);
 
     const updateActiveSection = (section, { push = true } = {}) => {
@@ -86,6 +90,11 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         }
 
         setTitleAnimationReplayKey((key) => key + 1);
+        setOpenedSections((currentSections) => (
+            currentSections.includes(nextSectionValue)
+                ? currentSections
+                : [...currentSections, nextSectionValue]
+        ));
         setActiveSection(nextSectionValue);
         sessionStorage.setItem(EMPLOYER_SECTION_STORAGE_KEY, nextSectionValue);
 
@@ -183,6 +192,11 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
 
             const nextSection = normalizeEmployerSection(section);
             setTitleAnimationReplayKey((key) => key + 1);
+            setOpenedSections((currentSections) => (
+                currentSections.includes(nextSection)
+                    ? currentSections
+                    : [...currentSections, nextSection]
+            ));
             setActiveSection(nextSection);
             sessionStorage.setItem(EMPLOYER_SECTION_STORAGE_KEY, nextSection);
             if (isMobileViewport()) {
@@ -537,8 +551,8 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         resetMobilePanelScroll();
     };
 
-    const renderContent = () => {
-        switch (activeSection) {
+    const renderContent = (section = activeSection) => {
+        switch (section) {
             case 'home':
             case 'home-feed':
                 return <PortalHomeFeed
@@ -854,19 +868,16 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                             <h2><span key={`mobile-${activeSection}-${titleAnimationReplayKey}`} className="portal-title-jello-text">{sectionTitles[activeSection] || 'Dashboard Section'}</span></h2>
                         </div>
                     )}
-                    {sectionSkeletonVisible && (
-                        <PortalPageSkeleton
-                            className="portal-section-skeleton-overlay"
-                            label={`Loading ${sectionTitles[activeSection] || 'section'}`}
-                        />
-                    )}
-                    <div
-                        key={`employer-section-${activeSection}`}
-                        className={`portal-section-transition-shell ${sectionSkeletonVisible ? 'is-loading-behind-skeleton' : ''}`}
-                        data-section={activeSection}
-                    >
-                        {renderContent()}
-                    </div>
+                    {openedSections.map((section) => (
+                        <div
+                            key={`employer-section-${section}`}
+                            className={`portal-section-transition-shell ${section === activeSection ? 'is-active-portal-section' : 'is-cached-portal-section'}`}
+                            data-section={section}
+                            aria-hidden={section === activeSection ? undefined : 'true'}
+                        >
+                            {renderContent(section)}
+                        </div>
+                    ))}
                 </main>
             </div>
             <FloatingMessenger

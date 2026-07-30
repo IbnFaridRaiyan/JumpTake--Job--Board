@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const ICON_PATHS = {
     home: 'M12 2.5 2 11v10h7v-6h6v6h7V11L12 2.5Zm0 2.63 8 6.8V19h-3v-6H7v6H4v-7.07l8-6.8Z',
@@ -35,6 +35,54 @@ const PortalSidebar = ({
     onLogout
 }) => {
     const [expanded, setExpanded] = useState(false);
+    const [hidden, setHidden] = useState(false);
+    const touchStartRef = useRef(null);
+
+    useEffect(() => {
+        const mobileQuery = window.matchMedia('(max-width: 768px)');
+        const handleViewportChange = (event) => {
+            if (!event.matches) {
+                setHidden(false);
+            }
+        };
+
+        mobileQuery.addEventListener?.('change', handleViewportChange);
+        return () => mobileQuery.removeEventListener?.('change', handleViewportChange);
+    }, []);
+
+    const handleTouchStart = (event) => {
+        if (!window.matchMedia('(max-width: 768px)').matches) {
+            return;
+        }
+
+        const touch = event.changedTouches?.[0];
+        if (touch) {
+            touchStartRef.current = {
+                x: touch.clientX,
+                y: touch.clientY
+            };
+        }
+    };
+
+    const handleTouchEnd = (event) => {
+        const start = touchStartRef.current;
+        const touch = event.changedTouches?.[0];
+        touchStartRef.current = null;
+
+        if (!start || !touch || !window.matchMedia('(max-width: 768px)').matches) {
+            return;
+        }
+
+        const distanceX = touch.clientX - start.x;
+        const distanceY = touch.clientY - start.y;
+        const isIntentionalLeftSwipe = distanceX < -48
+            && Math.abs(distanceX) > Math.abs(distanceY) * 1.2;
+
+        if (isIntentionalLeftSwipe) {
+            setExpanded(false);
+            setHidden(true);
+        }
+    };
 
     const renderItem = (item) => (
         <li key={item.id || item.label} className="sidebar__item">
@@ -60,45 +108,67 @@ const PortalSidebar = ({
     );
 
     return (
-        <aside className={`sidebar vertical-sidebar portal-vertical-sidebar portal-uiverse-sidebar ${expanded ? 'is-expanded' : 'is-collapsed'}`}>
-            <nav className="portal-sidebar-nav" aria-label="Portal navigation">
-                <article className="portal-uiverse-rail">
-                    <label className="menu-icon portal-sidebar-menu-icon" aria-label="Toggle portal navigation">
-                        <input
-                            type="checkbox"
-                            checked={expanded}
-                            onChange={(event) => setExpanded(event.target.checked)}
-                        />
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </label>
-                    <ul className="sidebar__list list--primary">
-                        {primaryItems.map(renderItem)}
-                    </ul>
-                    <ul className="sidebar__list list--secondary">
-                        {secondaryItems.map(renderItem)}
-                        <li className="sidebar__item">
-                            <button
-                                type="button"
-                                className="sidebar__link is-danger"
-                                data-tooltip="Log Out"
-                                onClick={() => {
-                                    setExpanded(false);
-                                    onLogout?.();
+        <>
+            <button
+                type="button"
+                className={`portal-sidebar-reopen ${hidden ? 'is-visible' : ''}`}
+                onClick={() => {
+                    setExpanded(false);
+                    setHidden(false);
+                }}
+                aria-label="Show navigation"
+                aria-hidden={!hidden}
+                tabIndex={hidden ? 0 : -1}
+            >
+                &gt;
+            </button>
+            <aside
+                className={`sidebar vertical-sidebar portal-vertical-sidebar portal-uiverse-sidebar ${expanded ? 'is-expanded' : 'is-collapsed'} ${hidden ? 'is-hidden' : ''}`}
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+            >
+                <nav className="portal-sidebar-nav" aria-label="Portal navigation">
+                    <article className="portal-uiverse-rail">
+                        <label className="menu-icon portal-sidebar-menu-icon" aria-label="Toggle portal navigation">
+                            <input
+                                type="checkbox"
+                                checked={expanded}
+                                onChange={(event) => {
+                                    setHidden(false);
+                                    setExpanded(event.target.checked);
                                 }}
-                                aria-label="Log Out"
-                            >
-                                <span className="icon">
-                                    <PortalIcon name="logout" />
-                                </span>
-                                <span className="text">Log Out</span>
-                            </button>
-                        </li>
-                    </ul>
-                </article>
-            </nav>
-        </aside>
+                            />
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </label>
+                        <ul className="sidebar__list list--primary">
+                            {primaryItems.map(renderItem)}
+                        </ul>
+                        <ul className="sidebar__list list--secondary">
+                            {secondaryItems.map(renderItem)}
+                            <li className="sidebar__item">
+                                <button
+                                    type="button"
+                                    className="sidebar__link is-danger"
+                                    data-tooltip="Log Out"
+                                    onClick={() => {
+                                        setExpanded(false);
+                                        onLogout?.();
+                                    }}
+                                    aria-label="Log Out"
+                                >
+                                    <span className="icon">
+                                        <PortalIcon name="logout" />
+                                    </span>
+                                    <span className="text">Log Out</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </article>
+                </nav>
+            </aside>
+        </>
     );
 };
 

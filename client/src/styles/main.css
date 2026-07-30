@@ -87780,28 +87780,6 @@ html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-uiver
   }
 }
 
-/* Final Settings surface: replace the exposed square white wrapper with portal cream. */
-html body #root .home-page .main-content.mobile-section-settings,
-html body #root .home-page .mobile-dashboard-section-panel.mobile-section-settings,
-html body #root .home-page .portal-section-transition-shell[data-section="settings"],
-html body #root .home-page .portal-section-transition-shell[data-section="settings"] > .settings-container,
-html body #root .home-page .settings-container,
-html body #root .home-page .settings-container > .settings-tabs,
-html body #root .home-page .settings-container .tabs-content,
-html body #root .home-page .settings-container .settings-tab,
-html[data-theme="light"] body[data-theme="light"] #root .home-page .main-content.mobile-section-settings,
-html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-section-transition-shell[data-section="settings"],
-html[data-theme="light"] body[data-theme="light"] #root .home-page .settings-container :is(.settings-tabs, .tabs-content, .settings-tab) {
-  background: #f3eadb !important;
-  background-color: #f3eadb !important;
-  background-image: none !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  outline: 0 !important;
-  box-shadow: none !important;
-  filter: none !important;
-}
-
 html body #root .home-page :is(.main-content.mobile-section-settings, .portal-section-transition-shell[data-section="settings"], .settings-container, .settings-tabs, .tabs-content, .settings-tab)::before,
 html body #root .home-page :is(.main-content.mobile-section-settings, .portal-section-transition-shell[data-section="settings"], .settings-container, .settings-tabs, .tabs-content, .settings-tab)::after {
   display: none !important;

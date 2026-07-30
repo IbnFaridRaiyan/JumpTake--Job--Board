@@ -91,7 +91,6 @@ const PortalSidebar = ({
             && Math.abs(distanceY) > Math.abs(distanceX) * 1.15;
 
         if (isIntentionalDownSwipe) {
-            setExpanded(false);
             setHidden(true);
         }
     };
@@ -161,7 +160,6 @@ const PortalSidebar = ({
                                 type="button"
                                 className="portal-dock-hide"
                                 onClick={() => {
-                                    setExpanded(false);
                                     setHidden(true);
                                 }}
                                 aria-label="Hide navigation below the screen"

@@ -3953,21 +3953,6 @@ html body #root .home-page .portal-sidebar-reopen {
 }
 
 @media (max-width: 768px) {
-  html body #root .home-page .dashboard-container,
-  html body #root .home-page .dashboard-container > :is(
-    .main-content,
-    .main-content.mobile-dashboard-section-panel.is-open,
-    .mobile-job-management-section-panel.is-open
-  ) {
-    transition:
-      left 280ms cubic-bezier(0.22, 1, 0.36, 1),
-      right 280ms cubic-bezier(0.22, 1, 0.36, 1),
-      width 280ms cubic-bezier(0.22, 1, 0.36, 1),
-      max-width 280ms cubic-bezier(0.22, 1, 0.36, 1),
-      padding 280ms cubic-bezier(0.22, 1, 0.36, 1),
-      margin 280ms cubic-bezier(0.22, 1, 0.36, 1) !important;
-  }
-
   html body #root .home-page .portal-sidebar-reopen.is-visible {
     position: fixed !important;
     top: 50% !important;
@@ -4008,35 +3993,6 @@ html body #root .home-page .portal-sidebar-reopen {
     opacity: 0 !important;
     pointer-events: none !important;
     transform: translateX(calc(-100% - 0.75rem)) !important;
-  }
-
-  html body #root .home-page .dashboard-container:has(> aside.portal-uiverse-sidebar.is-hidden),
-  html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern .dashboard-container:has(> aside.portal-uiverse-sidebar.is-hidden) {
-    padding-left: 0.25rem !important;
-  }
-
-  html body #root .home-page .dashboard-container:has(> aside.portal-uiverse-sidebar.is-hidden) > .main-content,
-  html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern .dashboard-container:has(> aside.portal-uiverse-sidebar.is-hidden) > .main-content {
-    box-sizing: border-box !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    margin-left: 0 !important;
-  }
-
-  html body #root .home-page .dashboard-container:has(> aside.portal-uiverse-sidebar.is-hidden) > :is(
-    .main-content.mobile-dashboard-section-panel.is-open,
-    .mobile-job-management-section-panel.is-open
-  ),
-  html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern .dashboard-container:has(> aside.portal-uiverse-sidebar.is-hidden) > :is(
-    .main-content.mobile-dashboard-section-panel.is-open,
-    .mobile-job-management-section-panel.is-open
-  ) {
-    inset: 0.2rem 0.25rem 0 0.25rem !important;
-    right: 0.25rem !important;
-    left: 0.25rem !important;
-    width: auto !important;
-    max-width: none !important;
   }
 
   html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern .portal-sidebar-reopen.is-visible {
@@ -5629,6 +5585,7 @@ html[data-theme="dark"] body[data-theme="dark"] :is(
     margin: 0 4px !important;
     padding: 0 !important;
     overflow: hidden !important;
+    transition: none !important;
   }
 
   html[data-theme] body[data-theme] #root > .app-container > .home-page > .dashboard-container > .main-content,
@@ -5688,18 +5645,33 @@ html[data-theme="dark"] body[data-theme="dark"] :is(
     opacity: 1 !important;
     visibility: visible !important;
     transform: translate3d(-50%, 0, 0) !important;
+    will-change: transform, opacity !important;
+    transition:
+      transform 600ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 460ms ease,
+      visibility 0s linear 0s !important;
   }
 
-  html[data-theme] body[data-theme] #root > .app-container > .home-page.portal-dock-hidden > .dashboard-container > aside.portal-uiverse-sidebar.portal-vertical-sidebar.is-hidden {
+  /*
+   * Mobile has no icon-only collapsed state. Both collapsed and hidden move
+   * completely below the viewport, while desktop keeps its original rail.
+   */
+  html[data-theme] body[data-theme] #root > .app-container > .home-page.portal-dock-open > .dashboard-container > aside.portal-uiverse-sidebar.portal-vertical-sidebar.is-collapsed,
+  html[data-theme] body[data-theme] #root > .app-container > .home-page.portal-dock-open > .dashboard-container > aside.portal-uiverse-sidebar.portal-vertical-sidebar.is-hidden,
+  html[data-theme] body[data-theme] #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.portal-vertical-sidebar.is-hidden {
     pointer-events: none !important;
     opacity: 0 !important;
     visibility: hidden !important;
     transform: translate3d(-50%, calc(100% + 24px), 0) !important;
+    transition:
+      transform 600ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 460ms ease,
+      visibility 0s linear 600ms !important;
   }
 
   html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
     box-sizing: border-box !important;
-    padding: 2px 10px 1px 5px !important;
+    padding: 6px 10px 0 5px !important;
     display: flex !important;
     flex-flow: row nowrap !important;
     align-items: center !important;
@@ -5881,6 +5853,10 @@ html[data-theme="dark"] body[data-theme="dark"] :is(
     visibility: visible !important;
     pointer-events: auto !important;
     transform: translate3d(-50%, 0, 0) !important;
+    transition:
+      opacity 420ms ease,
+      transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0s linear 0s !important;
   }
 }
 
@@ -5999,12 +5975,87 @@ html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern .
 }
 
 @media (max-width: 768px) {
+  /* Keep the feed rail and its first card comfortably separated. */
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .main-content:is(
+    .mobile-section-job-feed,
+    .mobile-section-home-feed
+  ) .portal-home-feed > .portal-home-feed-scroll {
+    padding-top: 4.25rem !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .main-content:is(
+    .mobile-section-job-feed,
+    .mobile-section-home-feed
+  ) .portal-home-feed-scroll > .portal-home-tab-panel {
+    row-gap: 0.68rem !important;
+  }
+
   html[data-theme="dark"] body[data-theme="dark"] #root > .app-container > .home-page.portal-modern .main-content:is(
     .mobile-section-job-feed,
     .mobile-section-home-feed
   ) .portal-home-feed > .portal-home-feed-scroll {
-    padding-top: 4.45rem !important;
+    padding-top: 5.15rem !important;
   }
+
+  /* The message glyph sits just above the dock, slightly lower than before. */
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .floating-messenger:not(.is-open) .floating-messenger-trigger {
+    bottom: calc(var(--portal-dock-bottom) + var(--portal-dock-height) + 4px) !important;
+  }
+
+  /* Dark comments use the same compact, single-line rail as light comments. */
+  html[data-theme="dark"] body[data-theme="dark"] :is(
+    #root .home-page.portal-modern,
+    .portal-post-detail-backdrop,
+    .portal-profile-detail-backdrop
+  ) .portal-post-comments .portal-comment-item {
+    flex-flow: row nowrap !important;
+    min-width: 0 !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] :is(
+    #root .home-page.portal-modern,
+    .portal-post-detail-backdrop,
+    .portal-profile-detail-backdrop
+  ) .portal-post-comments .portal-comment-item p {
+    display: block !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    text-overflow: ellipsis !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] :is(
+    #root .home-page.portal-modern,
+    .portal-post-detail-backdrop,
+    .portal-profile-detail-backdrop
+  ) .portal-post-comments .portal-comment-item :is(
+    .portal-comment-name,
+    .portal-comment-author-inline,
+    .portal-author-name-button
+  ) {
+    white-space: nowrap !important;
+  }
+}
+
+/* Settings owns only its rounded cards; the square page wrapper is transparent. */
+html[data-theme] body[data-theme] #root .home-page :is(
+  .main-content.mobile-section-settings,
+  .portal-section-transition-shell[data-section="settings"],
+  .settings-container,
+  .settings-container > .settings-tabs,
+  .settings-container .tabs-content,
+  .settings-container .settings-tab
+) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
 }
 
 /* Candidate cards remain readable on the solid-black dark directory. */

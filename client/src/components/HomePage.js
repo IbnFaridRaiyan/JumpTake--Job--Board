@@ -155,6 +155,7 @@ const normalizeCandidateProfile = (profile) => {
 
 const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const [activeSection, setActiveSection] = useState('job-feed');
+    const [portalDockState, setPortalDockState] = useState('closed');
     const [openedSections, setOpenedSections] = useState(() => ['job-feed']);
     const [titleAnimationReplayKey, setTitleAnimationReplayKey] = useState(0);
     const [sectionErrorResetKey, setSectionErrorResetKey] = useState(0);
@@ -1060,7 +1061,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     }
 
     return (
-        <div className={`home-page ${appMode === 'dark' ? 'portal-modern' : ''}`.trim()}>
+        <div className={`home-page ${appMode === 'dark' ? 'portal-modern ' : ''}portal-dock-${portalDockState}`.trim()}>
             <div className="dashboard-header candidate-dashboard-header">
                 <div className="portal-header-ai-action">
                     <PortalAiButton onClick={openPortalAssistant} />
@@ -1117,6 +1118,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     secondaryItems={candidateSecondaryNavItems}
                     onLogout={handleLogout}
                     mobileSectionOpen={mobileSectionVisible}
+                    onStateChange={setPortalDockState}
                 />
 
                 <main ref={mobilePanelRef} className={`main-content mobile-dashboard-section-panel mobile-section-${activeSection} ${mobileSectionVisible ? 'is-open' : ''}`}>

@@ -56,6 +56,7 @@ const isMobileViewport = () => (
 
 const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     const [employer, setEmployer] = useState(null);
+    const [portalDockState, setPortalDockState] = useState('closed');
     const [loading, setLoading] = useState(true);
     const [activeSection, setActiveSection] = useState('home-feed');
     const [openedSections, setOpenedSections] = useState(() => ['home-feed']);
@@ -827,7 +828,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     }
 
     return (
-        <div className={`home-page ${appMode === 'dark' ? 'portal-modern' : ''}`.trim()}>
+        <div className={`home-page ${appMode === 'dark' ? 'portal-modern ' : ''}portal-dock-${portalDockState}`.trim()}>
             <div className="dashboard-header employer-dashboard-header">
                 <div className="portal-header-ai-action">
                     <PortalAiButton onClick={openPortalAssistant} />
@@ -852,6 +853,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                     secondaryItems={employerSecondaryNavItems}
                     onLogout={handleLogout}
                     mobileSectionOpen={mobileSectionVisible}
+                    onStateChange={setPortalDockState}
                 />
 
                 <main ref={mobilePanelRef} className={`main-content mobile-dashboard-section-panel mobile-section-${activeSection} ${mobileSectionVisible ? 'is-open' : ''}`}>

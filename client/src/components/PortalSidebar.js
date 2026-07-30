@@ -32,11 +32,16 @@ const PortalIcon = ({ name = 'dashboard' }) => (
 const PortalSidebar = ({
     primaryItems = [],
     secondaryItems = [],
-    onLogout
+    onLogout,
+    onStateChange
 }) => {
     const [expanded, setExpanded] = useState(false);
     const [hidden, setHidden] = useState(false);
     const touchStartRef = useRef(null);
+
+    useEffect(() => {
+        onStateChange?.(hidden ? 'hidden' : expanded ? 'open' : 'closed');
+    }, [expanded, hidden, onStateChange]);
 
     useEffect(() => {
         const mobileQuery = window.matchMedia('(max-width: 768px)');
@@ -75,10 +80,10 @@ const PortalSidebar = ({
 
         const distanceX = touch.clientX - start.x;
         const distanceY = touch.clientY - start.y;
-        const isIntentionalLeftSwipe = distanceX < -48
-            && Math.abs(distanceX) > Math.abs(distanceY) * 1.2;
+        const isIntentionalDownSwipe = distanceY > 48
+            && Math.abs(distanceY) > Math.abs(distanceX) * 1.15;
 
-        if (isIntentionalLeftSwipe) {
+        if (isIntentionalDownSwipe) {
             setExpanded(false);
             setHidden(true);
         }
@@ -120,7 +125,7 @@ const PortalSidebar = ({
                 aria-hidden={!hidden}
                 tabIndex={hidden ? 0 : -1}
             >
-                &gt;
+                <span aria-hidden="true">^</span>
             </button>
             <aside
                 className={`sidebar vertical-sidebar portal-vertical-sidebar portal-uiverse-sidebar ${expanded ? 'is-expanded' : 'is-collapsed'} ${hidden ? 'is-hidden' : ''}`}
@@ -129,19 +134,33 @@ const PortalSidebar = ({
             >
                 <nav className="portal-sidebar-nav" aria-label="Portal navigation">
                     <article className="portal-uiverse-rail">
-                        <label className="menu-icon portal-sidebar-menu-icon" aria-label="Toggle portal navigation">
-                            <input
-                                type="checkbox"
-                                checked={expanded}
-                                onChange={(event) => {
-                                    setHidden(false);
-                                    setExpanded(event.target.checked);
+                        <div className="portal-dock-controls">
+                            <label className="menu-icon portal-sidebar-menu-icon" aria-label="Toggle portal navigation">
+                                <input
+                                    type="checkbox"
+                                    checked={expanded}
+                                    onChange={(event) => {
+                                        setHidden(false);
+                                        setExpanded(event.target.checked);
+                                    }}
+                                />
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </label>
+                            <button
+                                type="button"
+                                className="portal-dock-hide"
+                                onClick={() => {
+                                    setExpanded(false);
+                                    setHidden(true);
                                 }}
-                            />
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </label>
+                                aria-label="Hide navigation below the screen"
+                                title="Hide navigation"
+                            >
+                                <span aria-hidden="true">⌄</span>
+                            </button>
+                        </div>
                         <ul className="sidebar__list list--primary">
                             {primaryItems.map(renderItem)}
                         </ul>

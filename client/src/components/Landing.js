@@ -4,11 +4,47 @@ import ProfileAvatar from './ProfileAvatar';
 import defaultJobPostAvatar from './media/default-job-post-avatar.png';
 import darkThemeLogo from './media/logo4.png';
 import lightThemeLogo from './media/jumptake-logo-main-light.png';
+import networkAvatar01 from './media/public-avatars/avatar-network-01.jpg';
+import networkAvatar02 from './media/public-avatars/avatar-network-02.jpg';
+import networkAvatar03 from './media/public-avatars/avatar-network-03.jpg';
+import networkAvatar04 from './media/public-avatars/avatar-network-04.jpg';
+import stepAvatar01 from './media/public-avatars/avatar-step-01-cutout.png';
+import stepAvatar02 from './media/public-avatars/avatar-step-02-cutout.png';
+import stepAvatar03 from './media/public-avatars/avatar-step-03-cutout.png';
+import stepAvatar04 from './media/public-avatars/avatar-step-04-cutout.png';
+import stepDrawingPath from './media/public-avatars/step-drawing-path.png';
+import stepDrawingPresence from './media/public-avatars/step-drawing-presence.png';
+import stepDrawingAi from './media/public-avatars/step-drawing-ai.png';
+import stepDrawingConnect from './media/public-avatars/step-drawing-connect.png';
 import { apiUrl } from '../utils/apiUrl';
+import {
+    buildPublicDocumentModel,
+    downloadPublicDocumentDocx,
+    downloadPublicDocumentPdf,
+    downloadPublicDocumentTxt
+} from '../utils/publicDocumentExport';
 import '../styles/public-home.css';
 import '../styles/public-home-light.css';
 
 const PUBLIC_HOME_THEME_KEY = 'jumptakePublicHomeTheme';
+const PUBLIC_NETWORK_AVATARS = [
+    networkAvatar01,
+    networkAvatar02,
+    networkAvatar03,
+    networkAvatar04
+];
+const PUBLIC_STEP_AVATARS = [
+    stepAvatar03,
+    stepAvatar02,
+    stepAvatar01,
+    stepAvatar04
+];
+const PUBLIC_STEP_DRAWINGS = [
+    stepDrawingPath,
+    stepDrawingPresence,
+    stepDrawingAi,
+    stepDrawingConnect
+];
 
 const getInitialPublicHomeTheme = () => {
     if (typeof window === 'undefined') {
@@ -29,27 +65,42 @@ const getInitialPublicHomeTheme = () => {
 
 const EDITOR_TEMPLATES = {
     resume: `YOUR NAME
-City, Country · email@example.com · +00 000 000 000
+City, Country | email@example.com | +00 000 000 000 | linkedin.com/in/your-name
 
 PROFESSIONAL SUMMARY
-Write a focused two-to-three sentence summary of your experience, strengths, and the value you bring.
+Write a focused two-to-three sentence summary tailored to your target role. State your experience, strongest relevant skills, and the value you can deliver.
 
-EXPERIENCE
-Role Title — Company
-Month Year – Present
-• Describe a measurable result you delivered.
-• Show the skill you used and the outcome it created.
+CORE SKILLS
+Relevant Skill | Technical Skill | Communication | Problem Solving | Teamwork
+
+PROFESSIONAL EXPERIENCE
+Role Title | Company | City, Country
+Month Year - Present
+• Start with a strong action verb and describe a measurable result.
+• Show the skill you used, the work you completed, and its outcome.
 
 EDUCATION
-Qualification — Institution
+Qualification | Institution | Year
 
-SKILLS
-Add your most relevant technical and professional skills.`,
-    cover: `Dear Hiring Team,
+CERTIFICATIONS
+Certification | Issuing Organisation | Year`,
+    cover: `Your Name
+City, Country | email@example.com | +00 000 000 000
 
-I am writing to apply for the role at your organisation. My experience in [your field] and strength in [relevant skill] would allow me to contribute quickly and thoughtfully.
+[Date]
+Hiring Manager
+Company Name
+Company Address
 
-In my recent work, I [describe a relevant achievement]. This experience strengthened my ability to [relevant capability], while delivering [result].
+Subject: Application for [Role Title]
+
+Dear Hiring Manager,
+
+I am writing to apply for the [Role Title] position at [Company Name]. My experience in [your field] and strength in [relevant skill] would allow me to contribute quickly and thoughtfully.
+
+In my recent work, I [describe a relevant achievement with a measurable result]. This experience strengthened my ability to [relevant capability] while delivering [result].
+
+I am particularly interested in this opportunity because [connect your motivation to the organisation, team, or role]. I would bring [two or three relevant strengths] and a practical commitment to [important outcome].
 
 I would welcome the opportunity to discuss how my background can support your team.
 
@@ -57,21 +108,33 @@ Kind regards,
 Your Name`,
     description: `ROLE TITLE
 
-About the opportunity
-Introduce the team, mission, and impact of this role.
+ABOUT THE OPPORTUNITY
+Introduce the company, team, mission, and impact of this role in a clear paragraph.
 
-What you will do
+KEY RESPONSIBILITIES
 • Own meaningful work from idea to delivery.
 • Collaborate with colleagues across the organisation.
 • Improve outcomes for customers and the wider team.
 
-What you will bring
+ESSENTIAL REQUIREMENTS
 • Relevant experience and practical judgement.
 • Clear communication and a collaborative mindset.
 • Curiosity, ownership, and care for quality.
 
-What we offer
-Add salary, location, flexibility, and benefits.`
+SALARY AND BENEFITS
+Add the salary range, benefits, development support, and leave entitlement.
+
+LOCATION AND WORKING PATTERN
+Add the location, remote or hybrid expectations, schedule, and employment type.
+
+HOW TO APPLY
+Explain the application process, closing date, and any required documents.`
+};
+
+const EDITOR_AI_INSTRUCTIONS = {
+    resume: `Create a polished ATS-friendly resume in plain text. Use a single-column structure and these standard headings where relevant: PROFESSIONAL SUMMARY, CORE SKILLS, PROFESSIONAL EXPERIENCE, EDUCATION, CERTIFICATIONS, PROJECTS, and ACHIEVEMENTS. Start with the candidate name and one contact line. Use concise impact-focused bullet points beginning with action verbs. Keep factual placeholders in square brackets when details are missing. Do not use tables, columns, markdown markers, code fences, decorative symbols, or commentary.`,
+    cover: `Create a polished professional cover letter in plain text. Include sender details, date, recipient details, a subject line, professional salutation, a focused opening paragraph, two evidence-based body paragraphs, a concise closing paragraph, and a professional sign-off. Keep factual placeholders in square brackets when details are missing. Do not use markdown, code fences, or commentary.`,
+    description: `Create a complete, inclusive, professional job description in plain text. Start with the role title and use clear standard headings: ABOUT THE OPPORTUNITY, KEY RESPONSIBILITIES, ESSENTIAL REQUIREMENTS, PREFERRED QUALIFICATIONS, SALARY AND BENEFITS, LOCATION AND WORKING PATTERN, and HOW TO APPLY. Use concise bullet points and retain factual placeholders where details are missing. Do not use markdown, code fences, or commentary.`
 };
 
 const Icon = ({ name, className = '' }) => {
@@ -166,6 +229,51 @@ const Icon = ({ name, className = '' }) => {
     );
 };
 
+const PublicDocumentPreview = ({ model, editable = false, editorRef, onInput, onBlur }) => (
+    <article
+        ref={editorRef}
+        className={`jt-public-document-preview is-${model.mode}${editable ? ' is-editable' : ''}`}
+        contentEditable={editable}
+        suppressContentEditableWarning={editable}
+        role={editable ? 'textbox' : undefined}
+        aria-multiline={editable ? 'true' : undefined}
+        aria-label={editable ? `Edit ${model.mode === 'cover' ? 'cover letter' : model.mode === 'description' ? 'job description' : 'resume'}` : undefined}
+        spellCheck={editable ? 'true' : undefined}
+        onInput={onInput}
+        onBlur={onBlur}
+    >
+        {model.title || model.contact ? (
+            <header className="jt-public-document-header">
+                {model.title ? <h1>{model.title}</h1> : null}
+                {model.contact ? <p>{model.contact}</p> : null}
+            </header>
+        ) : null}
+        <div className="jt-public-document-body">
+            {model.blocks.map((block, index) => {
+                if (block.type === 'heading') {
+                    return <h2 key={`${block.type}-${index}`}>{block.text}</h2>;
+                }
+                if (block.type === 'bullet') {
+                    return (
+                        <p className="jt-public-document-bullet" key={`${block.type}-${index}`}>
+                            <span className="jt-public-document-bullet-marker">• </span>
+                            {block.text}
+                        </p>
+                    );
+                }
+                return (
+                    <p
+                        className={block.emphasis ? 'is-emphasis' : ''}
+                        key={`${block.type}-${index}`}
+                    >
+                        {block.text}
+                    </p>
+                );
+            })}
+        </div>
+    </article>
+);
+
 const formatDate = (value) => {
     const date = new Date(value || Date.now());
     return Number.isNaN(date.getTime())
@@ -233,7 +341,7 @@ const openAuth = (mode = 'login') => {
     window.location.hash = nextHash;
 };
 
-const Landing = () => {
+const Landing = ({ onThemeChange }) => {
     const [homeTheme, setHomeTheme] = useState(getInitialPublicHomeTheme);
     const [jobs, setJobs] = useState([]);
     const [workNews, setWorkNews] = useState([]);
@@ -259,23 +367,32 @@ const Landing = () => {
     const [editorTypingProgress, setEditorTypingProgress] = useState(0);
     const [editorPopupOpen, setEditorPopupOpen] = useState(false);
     const [editorNotice, setEditorNotice] = useState('Your draft stays editable in this browser.');
+    const [editorExporting, setEditorExporting] = useState('');
     const assistantInputRef = useRef(null);
     const assistantMessagesRef = useRef(null);
     const editorTypingTimerRef = useRef(null);
+    const editorSurfaceRef = useRef(null);
+    const editorDraftRef = useRef(EDITOR_TEMPLATES.resume);
     const activeLogo = homeTheme === 'light' ? lightThemeLogo : darkThemeLogo;
     const editorDocumentLabel = editorMode === 'cover'
         ? 'Cover letter'
         : editorMode === 'description'
             ? 'Job description'
             : 'Resume';
+    const editorDocumentModel = useMemo(
+        () => buildPublicDocumentModel(editorText, editorMode),
+        [editorMode, editorText]
+    );
 
     useEffect(() => {
         try {
             localStorage.setItem(PUBLIC_HOME_THEME_KEY, homeTheme);
+            localStorage.setItem('jumptakeAppMode', homeTheme);
         } catch (error) {
             // The selected theme still applies for this visit when storage is unavailable.
         }
 
+        onThemeChange?.(homeTheme);
         document.documentElement.setAttribute('data-public-home-theme', homeTheme);
         document.body.setAttribute('data-public-home-theme', homeTheme);
 
@@ -283,7 +400,11 @@ const Landing = () => {
             document.documentElement.removeAttribute('data-public-home-theme');
             document.body.removeAttribute('data-public-home-theme');
         };
-    }, [homeTheme]);
+    }, [homeTheme, onThemeChange]);
+
+    useEffect(() => {
+        editorDraftRef.current = editorText;
+    }, [editorText]);
 
     useEffect(() => {
         let cancelled = false;
@@ -487,6 +608,7 @@ const Landing = () => {
     };
 
     const changeEditorMode = (nextMode) => {
+        editorDraftRef.current = EDITOR_TEMPLATES[nextMode];
         setEditorMode(nextMode);
         setEditorText(EDITOR_TEMPLATES[nextMode]);
         setEditorTypingProgress(0);
@@ -508,13 +630,16 @@ const Landing = () => {
 
         const chunkSize = Math.max(1, Math.ceil(draft.length / 150));
         let cursor = 0;
+        editorDraftRef.current = '';
         setEditorText('');
         setEditorTyping(true);
         setEditorTypingProgress(0);
 
         const writeNextChunk = () => {
             cursor = Math.min(draft.length, cursor + chunkSize);
-            setEditorText(draft.slice(0, cursor));
+            const typedDraft = draft.slice(0, cursor);
+            editorDraftRef.current = typedDraft;
+            setEditorText(typedDraft);
             setEditorTypingProgress(Math.round((cursor / draft.length) * 100));
 
             if (cursor >= draft.length) {
@@ -539,7 +664,14 @@ const Landing = () => {
         setEditorTyping(false);
         setEditorTypingProgress(0);
         setEditorNotice('JumpTake AI is shaping your draft…');
-        const prompt = `Rewrite the following ${editorDocumentLabel.toLowerCase()} into a polished, modern, editable draft. Keep factual placeholders when facts are missing and return only the finished document.\n\n${editorText}`;
+        const currentDraft = String(
+            editorSurfaceRef.current
+                ? editorSurfaceRef.current.innerText
+                : editorDraftRef.current ?? editorText
+        ).trim();
+        editorDraftRef.current = currentDraft;
+        setEditorText(currentDraft);
+        const prompt = `${EDITOR_AI_INSTRUCTIONS[editorMode]}\n\nRewrite the following ${editorDocumentLabel.toLowerCase()} and return only the finished document:\n\n${currentDraft}`;
 
         try {
             const response = await fetch(apiUrl('/api/public-assistant'), {
@@ -555,7 +687,7 @@ const Landing = () => {
                         workspace: {
                             mode: editorMode,
                             title: editorDocumentLabel,
-                            currentText: editorText
+                            currentText: currentDraft
                         }
                     }
                 })
@@ -564,7 +696,7 @@ const Landing = () => {
             if (!response.ok) {
                 throw new Error(data.error || 'AI editing is unavailable right now.');
             }
-            await typeDocumentDraft(data.answer || editorText);
+            await typeDocumentDraft(data.answer || currentDraft);
             setEditorNotice('AI polish complete. Review the details before using your draft.');
         } catch (error) {
             setEditorNotice(error.message || 'AI editing is reconnecting. Your draft is safe.');
@@ -574,23 +706,52 @@ const Landing = () => {
     };
 
     const copyDocument = async () => {
+        const currentDraft = String(
+            editorSurfaceRef.current
+                ? editorSurfaceRef.current.innerText
+                : editorDraftRef.current ?? editorText
+        ).trim();
+        editorDraftRef.current = currentDraft;
+        setEditorText(currentDraft);
         try {
-            await navigator.clipboard.writeText(editorText);
+            await navigator.clipboard.writeText(currentDraft);
             setEditorNotice('Copied to your clipboard.');
         } catch (error) {
             setEditorNotice('Select the text and copy it from the editor.');
         }
     };
 
-    const downloadDocument = () => {
-        const blob = new Blob([editorText], { type: 'text/plain;charset=utf-8' });
-        const href = URL.createObjectURL(blob);
-        const anchor = document.createElement('a');
-        anchor.href = href;
-        anchor.download = `jumptake-${editorMode}-draft.txt`;
-        anchor.click();
-        URL.revokeObjectURL(href);
-        setEditorNotice('Draft downloaded.');
+    const downloadDocument = async (format = 'txt') => {
+        if (editorExporting) {
+            return;
+        }
+
+        const normalizedFormat = ['pdf', 'docx', 'txt'].includes(format) ? format : 'txt';
+        const currentDraft = String(
+            editorSurfaceRef.current
+                ? editorSurfaceRef.current.innerText
+                : editorDraftRef.current ?? editorText
+        ).trim();
+        const currentDocumentModel = buildPublicDocumentModel(currentDraft, editorMode);
+        editorDraftRef.current = currentDraft;
+        setEditorText(currentDraft);
+        setEditorExporting(normalizedFormat);
+        setEditorNotice(`Preparing ${normalizedFormat.toUpperCase()} download…`);
+
+        try {
+            if (normalizedFormat === 'pdf') {
+                downloadPublicDocumentPdf(currentDocumentModel);
+            } else if (normalizedFormat === 'docx') {
+                await downloadPublicDocumentDocx(currentDocumentModel);
+            } else {
+                downloadPublicDocumentTxt(currentDocumentModel);
+            }
+            setEditorNotice(`${editorDocumentLabel} downloaded as ${normalizedFormat.toUpperCase()}.`);
+        } catch {
+            setEditorNotice(`Could not create the ${normalizedFormat.toUpperCase()} file. Please try again.`);
+        } finally {
+            setEditorExporting('');
+        }
     };
 
     const scrollTo = (id) => {
@@ -660,10 +821,11 @@ const Landing = () => {
                         </div>
                         <div className="jt-hero-proof">
                             <div className="jt-avatar-stack" aria-hidden="true">
-                                <span>RM</span>
-                                <span>AK</span>
-                                <span>JS</span>
-                                <span>+</span>
+                                {PUBLIC_NETWORK_AVATARS.map((avatar, index) => (
+                                    <span key={avatar}>
+                                        <img src={avatar} alt="" data-avatar-number={index + 1} />
+                                    </span>
+                                ))}
                             </div>
                             <p><strong>One growing network.</strong> Candidates, teams, opportunities, and conversations together.</p>
                         </div>
@@ -1080,7 +1242,7 @@ const Landing = () => {
                                 <strong>{editorDocumentLabel} draft</strong>
                                 <div className="jt-editor-tools">
                                     <button type="button" onClick={copyDocument} title="Copy draft"><Icon name="copy" /></button>
-                                    <button type="button" onClick={downloadDocument} title="Download draft"><Icon name="download" /></button>
+                                    <button type="button" onClick={() => downloadDocument('txt')} title="Download TXT draft"><Icon name="download" /></button>
                                 </div>
                             </div>
                             <textarea
@@ -1170,22 +1332,63 @@ const Landing = () => {
                                         <span className="jt-window-dot" />
                                         <span className="jt-window-dot" />
                                     </div>
-                                    <strong>{editorDocumentLabel} · editable draft</strong>
-                                    <div>
-                                        <button type="button" onClick={copyDocument} title="Copy draft"><Icon name="copy" /></button>
-                                        <button type="button" onClick={downloadDocument} title="Download draft"><Icon name="download" /></button>
+                                    <strong>{editorDocumentLabel} · edit directly in the preview</strong>
+                                    <div className="jt-ai-editor-export-actions">
+                                        <button type="button" onClick={copyDocument} title="Copy source text">
+                                            <Icon name="copy" />
+                                            <span>Copy</span>
+                                        </button>
+                                        {['pdf', 'docx', 'txt'].map((format) => (
+                                            <button
+                                                type="button"
+                                                key={format}
+                                                onClick={() => downloadDocument(format)}
+                                                disabled={Boolean(editorExporting) || editorLoading}
+                                                title={`Download ${format.toUpperCase()}`}
+                                            >
+                                                <Icon name="download" />
+                                                <span>{editorExporting === format ? 'Preparing…' : format.toUpperCase()}</span>
+                                            </button>
+                                        ))}
                                     </div>
                                 </div>
-                                <div className={`jt-ai-editor-paper${editorTyping ? ' is-typing' : ''}`}>
-                                    <textarea
-                                        value={editorText}
-                                        onChange={(event) => setEditorText(event.target.value)}
-                                        aria-label={`Editable ${editorDocumentLabel.toLowerCase()}`}
-                                        readOnly={editorLoading}
-                                        spellCheck="true"
-                                    />
-                                    {editorTyping ? <span className="jt-ai-editor-caret" aria-hidden="true" /> : null}
-                                </div>
+                                <section className="jt-ai-editor-document-shell" aria-label={`Editable formatted ${editorDocumentLabel.toLowerCase()}`}>
+                                    <header>
+                                        <div>
+                                            <strong>Editable document preview</strong>
+                                            <span>
+                                                {editorMode === 'resume'
+                                                    ? 'Edit this single-column ATS-readable resume directly.'
+                                                    : editorMode === 'cover'
+                                                        ? 'Edit this professional business letter directly.'
+                                                        : 'Edit this structured, portal-ready job document directly.'}
+                                            </span>
+                                        </div>
+                                        <span className={`jt-ai-editor-format-badge${editorDocumentModel.atsReady ? ' is-ready' : ''}`}>
+                                            {editorMode === 'resume'
+                                                ? editorDocumentModel.atsReady
+                                                    ? 'ATS-ready'
+                                                    : `${editorDocumentModel.atsSectionCount}/4 ATS sections`
+                                                : 'Print-ready'}
+                                        </span>
+                                    </header>
+                                    <div className={`jt-ai-editor-preview-scroll${editorTyping ? ' is-typing' : ''}`}>
+                                        <PublicDocumentPreview
+                                            model={editorDocumentModel}
+                                            editable={!editorLoading}
+                                            editorRef={editorSurfaceRef}
+                                            onInput={(event) => {
+                                                editorDraftRef.current = event.currentTarget.innerText;
+                                            }}
+                                            onBlur={(event) => {
+                                                const nextText = event.currentTarget.innerText.trim();
+                                                editorDraftRef.current = nextText;
+                                                setEditorText(nextText);
+                                            }}
+                                        />
+                                        {editorTyping ? <span className="jt-ai-editor-caret" aria-hidden="true" /> : null}
+                                    </div>
+                                </section>
                             </div>
 
                             <footer className="jt-ai-editor-dialog-footer">
@@ -1223,10 +1426,17 @@ const Landing = () => {
                             ['02', 'Build your presence', 'Create a profile, add your story, or shape your company and hiring identity.'],
                             ['03', 'Let AI guide the work', 'Improve documents, discover relevant opportunities, and navigate the platform faster.'],
                             ['04', 'Connect and move forward', 'Apply, assess, message, follow updates, and turn a profile into a real relationship.']
-                        ].map(([number, title, copy]) => (
+                        ].map(([number, title, copy], index) => (
                             <article className="jt-step-card jt-reveal" key={number}>
                                 <span>{number}</span>
-                                <div className="jt-step-icon"><Icon name={number === '01' ? 'people' : number === '02' ? 'document' : number === '03' ? 'spark' : 'arrow'} /></div>
+                                <div className="jt-step-visuals" aria-hidden="true">
+                                    <div className="jt-step-avatar">
+                                        <img src={PUBLIC_STEP_AVATARS[index]} alt="" />
+                                    </div>
+                                    <div className="jt-step-drawing">
+                                        <img src={PUBLIC_STEP_DRAWINGS[index]} alt="" />
+                                    </div>
+                                </div>
                                 <h3>{title}</h3>
                                 <p>{copy}</p>
                             </article>

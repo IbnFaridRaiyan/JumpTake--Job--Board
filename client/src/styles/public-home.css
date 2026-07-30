@@ -2680,6 +2680,107 @@
   }
 }
 
+/* One-surface public document editor: the formatted page is the editor. */
+body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-document-shell {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-top: 0 !important;
+  border-radius: 0 0 17px 17px !important;
+  background: #111111 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-document-shell > header {
+  min-height: 52px !important;
+  padding: 9px 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  background: #090909 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-document-shell > header > div {
+  min-width: 0 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-document-shell > header strong {
+  display: block !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 0.68rem !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-document-shell > header span:not(.jt-ai-editor-format-badge) {
+  display: block !important;
+  margin-top: 2px !important;
+  color: rgba(255, 255, 255, 0.58) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.58) !important;
+  font-size: 0.56rem !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-document-shell .jt-ai-editor-preview-scroll {
+  position: relative !important;
+  min-height: 0 !important;
+  padding: clamp(12px, 2vw, 24px) !important;
+  overflow: auto !important;
+  background: #111111 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-document-preview.is-editable {
+  cursor: text !important;
+  caret-color: #111111 !important;
+  outline: 0 !important;
+  transition: box-shadow 180ms ease, transform 180ms ease !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-document-preview.is-editable:focus {
+  box-shadow:
+    0 0 0 3px rgba(114, 214, 194, 0.35),
+    0 18px 52px rgba(0, 0, 0, 0.38) !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-document-preview.is-editable ::selection {
+  color: #111111 !important;
+  background: rgba(114, 214, 194, 0.34) !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-document-preview .jt-public-document-header,
+body[data-public-home-theme] #root .jt-public-home .jt-public-document-preview .jt-public-document-header:is(:hover, :focus, :focus-within) {
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-preview-scroll.is-typing .jt-public-document-preview {
+  box-shadow:
+    0 0 0 3px rgba(114, 214, 194, 0.28),
+    0 18px 52px rgba(0, 0, 0, 0.38) !important;
+}
+
+@media (max-width: 760px) {
+  body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-document-shell {
+    min-height: 0 !important;
+    border-radius: 0 0 14px 14px !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-document-shell > header {
+    align-items: flex-start !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-document-shell .jt-ai-editor-preview-scroll {
+    min-height: 520px !important;
+    padding: 8px !important;
+  }
+}
+
 @media (max-width: 410px) {
   .jt-brand {
     width: 94px;
@@ -4113,5 +4214,672 @@ body[data-public-home-theme] #root .jt-public-home .jt-final-mark {
     width: 7px !important;
     height: 7px !important;
     box-shadow: 0 0 0 3px rgba(24, 183, 164, 0.13) !important;
+  }
+}
+
+/* Dark public chrome and View Role dialog use solid black surfaces. */
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark :is(
+  .jt-home-header,
+  .jt-home-footer
+) {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-job-modal-backdrop {
+  background: rgba(0, 0, 0, 0.88) !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark :is(
+  .jt-job-modal,
+  .jt-job-modal-company,
+  .jt-job-modal-body,
+  .jt-job-modal-actions
+) {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark :is(
+  .jt-job-modal-company h2,
+  .jt-job-modal-company h3,
+  .jt-job-modal-company span,
+  .jt-job-modal-company p,
+  .jt-job-modal-body h3,
+  .jt-job-modal-body p,
+  .jt-job-modal-body li
+) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-modal-close,
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-modal-close:is(:hover, :focus, :focus-visible, :active) {
+  border-color: rgba(255, 255, 255, 0.24) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: none !important;
+}
+
+/* Original cartoon people replace the letter balls and generic step glyphs. */
+body[data-public-home-theme] #root .jt-public-home .jt-avatar-stack {
+  align-items: center !important;
+  padding-left: 0.55rem !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-avatar-stack > span {
+  box-sizing: border-box !important;
+  display: block !important;
+  width: 2.55rem !important;
+  min-width: 2.55rem !important;
+  max-width: 2.55rem !important;
+  height: 2.55rem !important;
+  min-height: 2.55rem !important;
+  max-height: 2.55rem !important;
+  margin-left: -0.55rem !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 2px solid #f4efe5 !important;
+  border-radius: 50% !important;
+  background: #f4efe5 !important;
+  box-shadow: 0 0.2rem 0.55rem rgba(0, 0, 0, 0.13) !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-avatar-stack > span > img {
+  display: block !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: inherit !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  transform: scale(1.08) !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-step-visuals {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 0 !important;
+  width: 100% !important;
+  margin: 1.8rem 0 1.15rem !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-step-avatar,
+body[data-public-home-theme] #root .jt-public-home .jt-step-drawing {
+  box-sizing: border-box !important;
+  display: block !important;
+  flex: 0 0 auto !important;
+  width: 5.1rem !important;
+  min-width: 5.1rem !important;
+  max-width: 5.1rem !important;
+  height: 5.1rem !important;
+  min-height: 5.1rem !important;
+  max-height: 5.1rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-step-drawing {
+  width: 9.3rem !important;
+  min-width: 9.3rem !important;
+  max-width: 9.3rem !important;
+  height: 9.3rem !important;
+  min-height: 9.3rem !important;
+  max-height: 9.3rem !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home :is(
+  .jt-step-avatar,
+  .jt-step-drawing
+) > img {
+  display: block !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  transform: none !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-step-drawing > img {
+  filter: none !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-step-drawing > img {
+  filter: invert(1) !important;
+}
+
+@media (max-width: 760px) {
+  body[data-public-home-theme] #root .jt-public-home .jt-step-visuals {
+    gap: 0.45rem !important;
+    margin: 1.35rem 0 0.9rem !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-step-avatar {
+    width: 4.4rem !important;
+    min-width: 4.4rem !important;
+    max-width: 4.4rem !important;
+    height: 4.4rem !important;
+    min-height: 4.4rem !important;
+    max-height: 4.4rem !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-step-drawing {
+    width: 8rem !important;
+    min-width: 8rem !important;
+    max-width: 8rem !important;
+    height: 8rem !important;
+    min-height: 8rem !important;
+    max-height: 8rem !important;
+  }
+}
+
+/* The public AI conversation occupies and blurs the entire viewport. */
+body[data-public-home-theme] #root .jt-public-home .jt-ai-section.is-conversation-open {
+  z-index: 19980 !important;
+}
+
+body.jt-public-ai-modal-open #root .jt-public-home {
+  overflow: visible !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-ai-conversation-scrim {
+  position: fixed !important;
+  z-index: 19990 !important;
+  inset: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: rgba(0, 0, 0, 0.64) !important;
+  background-color: rgba(0, 0, 0, 0.64) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(18px) saturate(0.72) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(0.72) !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-chat-shell.is-popout {
+  position: fixed !important;
+  z-index: 19991 !important;
+  inset: clamp(18px, 5vh, 64px) clamp(18px, 8vw, 160px) !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-chat-shell.is-popout,
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-chat-shell.is-popout .jt-chat-header,
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-chat-shell.is-popout .jt-chat-messages {
+  color: #ffffff !important;
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-chat-shell.is-popout {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-chat-shell.is-popout .jt-chat-message.is-assistant {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+@media (max-width: 760px) {
+  body[data-public-home-theme] #root .jt-public-home .jt-chat-shell.is-popout {
+    inset: 10px !important;
+  }
+}
+
+/* Portal-quality public document editing and ATS-friendly preview. */
+body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-dialog {
+  width: min(1420px, 100%) !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-workspace {
+  padding: clamp(10px, 1.5vw, 18px) !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-workspace-toolbar {
+  grid-template-columns: auto minmax(150px, 1fr) auto !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-workspace-toolbar > strong {
+  justify-self: start !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-export-actions {
+  min-width: 0 !important;
+  justify-content: flex-end !important;
+  gap: 6px !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-workspace-toolbar .jt-ai-editor-export-actions > button {
+  width: auto !important;
+  min-width: 0 !important;
+  height: 34px !important;
+  padding: 0 10px !important;
+  display: inline-flex !important;
+  grid-template-columns: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  white-space: nowrap !important;
+  font-size: 0.61rem !important;
+  font-weight: 800 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-workspace-toolbar .jt-ai-editor-export-actions > button .jt-icon {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-workspace-toolbar .jt-ai-editor-export-actions > button:disabled {
+  cursor: wait !important;
+  opacity: 0.55 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-layout {
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-columns: minmax(280px, 0.72fr) minmax(430px, 1.28fr) !important;
+  gap: 12px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-top: 0 !important;
+  border-radius: 0 0 17px 17px !important;
+  background: #000000 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home :is(
+  .jt-ai-editor-source,
+  .jt-ai-editor-preview-shell
+) {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  overflow: hidden !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home :is(
+  .jt-ai-editor-source,
+  .jt-ai-editor-preview-shell
+) > header {
+  min-height: 52px !important;
+  padding: 9px 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background: #090909 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home :is(
+  .jt-ai-editor-source,
+  .jt-ai-editor-preview-shell
+) > header > div {
+  min-width: 0 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home :is(
+  .jt-ai-editor-source,
+  .jt-ai-editor-preview-shell
+) > header strong {
+  display: block !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 0.68rem !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home :is(
+  .jt-ai-editor-source,
+  .jt-ai-editor-preview-shell
+) > header span {
+  display: block !important;
+  margin-top: 2px !important;
+  color: rgba(255, 255, 255, 0.58) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.58) !important;
+  font-size: 0.56rem !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-format-badge {
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  padding: 6px 9px !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 999px !important;
+  color: rgba(255, 255, 255, 0.72) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.72) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  font-size: 0.55rem !important;
+  font-weight: 800 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-format-badge.is-ready {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-color: rgba(114, 214, 194, 0.45) !important;
+  background: rgba(114, 214, 194, 0.14) !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-source .jt-ai-editor-paper {
+  min-height: 0 !important;
+  padding: 10px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #111111 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-source .jt-ai-editor-paper textarea {
+  width: 100% !important;
+  min-height: 100% !important;
+  height: 100% !important;
+  padding: clamp(24px, 3.2vw, 42px) !important;
+  border: 0 !important;
+  border-radius: 3px !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  background: #ffffff !important;
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.34) !important;
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 0.72rem !important;
+  line-height: 1.58 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-preview-scroll {
+  min-height: 0 !important;
+  padding: clamp(10px, 1.5vw, 18px) !important;
+  overflow: auto !important;
+  background: #111111 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-document-preview {
+  width: min(100%, 760px) !important;
+  min-height: 960px !important;
+  margin: 0 auto !important;
+  padding: 52px 58px 58px !important;
+  color: #111111 !important;
+  background: #ffffff !important;
+  box-shadow: 0 18px 52px rgba(0, 0, 0, 0.38) !important;
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 10.5px !important;
+  line-height: 1.42 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-document-header {
+  margin-bottom: 20px !important;
+  padding-bottom: 11px !important;
+  border-bottom: 1.5px solid #111111 !important;
+  text-align: center !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-document-header h1 {
+  margin: 0 !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 25px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.01em !important;
+  line-height: 1.08 !important;
+  text-transform: uppercase !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-document-header p {
+  margin: 6px 0 0 !important;
+  color: #222222 !important;
+  -webkit-text-fill-color: #222222 !important;
+  font-size: 9.5px !important;
+  line-height: 1.35 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-document-body h2 {
+  margin: 15px 0 7px !important;
+  padding-bottom: 3px !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  border-bottom: 1px solid #555555 !important;
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.055em !important;
+  line-height: 1.2 !important;
+  text-transform: uppercase !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-document-body p {
+  margin: 0 0 8px !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  font-size: 10.5px !important;
+  line-height: 1.46 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-document-body p.is-emphasis {
+  margin-top: 13px !important;
+  font-weight: 700 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-document-bullet {
+  position: relative !important;
+  padding-left: 15px !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-document-bullet::before {
+  display: none !important;
+  content: none !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-document-bullet-marker {
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-document-preview.is-cover {
+  padding-top: 68px !important;
+  font-family: Georgia, "Times New Roman", serif !important;
+  font-size: 11px !important;
+  line-height: 1.55 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-document-preview.is-cover .jt-public-document-body p {
+  margin-bottom: 17px !important;
+  font-family: Georgia, "Times New Roman", serif !important;
+  font-size: 11px !important;
+  line-height: 1.55 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-document-preview.is-description .jt-public-document-header {
+  text-align: left !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark :is(
+  .jt-ai-editor-dialog,
+  .jt-ai-editor-dialog-header,
+  .jt-ai-editor-mode-tabs,
+  .jt-ai-editor-workspace,
+  .jt-ai-editor-workspace-toolbar,
+  .jt-ai-editor-dialog-footer
+) {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+@media (max-width: 760px) {
+  body[data-public-home-theme] #root .jt-public-home .jt-hero-actions {
+    width: 100% !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 7px !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-hero-actions :is(
+    .jt-primary-button,
+    .jt-secondary-button
+  ) {
+    min-width: 0 !important;
+    min-height: 42px !important;
+    flex: 1 1 0 !important;
+    padding: 9px 8px !important;
+    gap: 6px !important;
+    border-radius: 11px !important;
+    white-space: nowrap !important;
+    font-size: clamp(0.58rem, 2.8vw, 0.68rem) !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-hero-actions .jt-icon {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-workspace {
+    overflow: auto !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-workspace-toolbar {
+    position: sticky !important;
+    z-index: 3 !important;
+    top: 0 !important;
+    grid-template-columns: auto minmax(0, 1fr) !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-workspace-toolbar > strong {
+    display: none !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-export-actions {
+    overflow-x: auto !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-workspace-toolbar .jt-ai-editor-export-actions > button {
+    height: 32px !important;
+    padding: 0 8px !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-layout {
+    display: block !important;
+    overflow: visible !important;
+    border-radius: 0 0 14px 14px !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-source {
+    height: 360px !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-preview-shell {
+    height: 540px !important;
+    border-top: 10px solid #000000 !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-public-document-preview {
+    width: 100% !important;
+    min-height: 760px !important;
+    padding: 36px 30px 42px !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-dialog-footer {
+    min-height: 86px !important;
+  }
+}
+
+/* Final public navigation, footer direction, and step-avatar sizing. */
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-pill-button,
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-pill-button:is(:hover, :focus, :focus-visible, :active) {
+  border-color: #6fa88a !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background: #6fa88a !important;
+  background-color: #6fa88a !important;
+  background-image: none !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-pill-button :is(.jt-icon, svg, path) {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-footer-top {
+  grid-template-columns: minmax(0, 1.25fr) minmax(260px, 0.75fr) !important;
+  align-items: start !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-footer-links {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-footer-brand {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  justify-self: end !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  text-align: right !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-footer-brand p {
+  text-align: right !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-step-avatar {
+  position: relative !important;
+  z-index: 2 !important;
+  transform: scale(2.5) !important;
+  transform-origin: center !important;
+}
+
+@media (max-width: 760px) {
+  body[data-public-home-theme] #root .jt-public-home .jt-footer-top {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-footer-links {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    justify-self: stretch !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-footer-brand {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    justify-self: end !important;
+    width: min(100%, 340px) !important;
+    margin-left: auto !important;
   }
 }

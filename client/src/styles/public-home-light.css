@@ -595,6 +595,31 @@
   }
 }
 
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-document-shell {
+  border-color: #d8c5a8 !important;
+  background: #e9decc !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-document-shell > header {
+  color: #2b1720 !important;
+  border-bottom-color: #d8c5a8 !important;
+  background: #f7efe2 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-document-shell > header strong {
+  color: #2b1720 !important;
+  -webkit-text-fill-color: #2b1720 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-document-shell > header span:not(.jt-ai-editor-format-badge) {
+  color: #7b5963 !important;
+  -webkit-text-fill-color: #7b5963 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-document-shell .jt-ai-editor-preview-scroll {
+  background: #e9decc !important;
+}
+
 body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-final-mark {
   border: 0 !important;
   border-radius: 0 !important;
@@ -655,6 +680,101 @@ body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-card
   ) {
     color: #4b1f2e !important;
     -webkit-text-fill-color: #4b1f2e !important;
+  }
+}
+
+/* View Role close control stays compact at the dialog's top-right in both themes. */
+body[data-public-home-theme] #root .jt-public-home .jt-job-modal > button.jt-modal-close,
+body[data-public-home-theme] #root .jt-public-home .jt-job-modal > button.jt-modal-close:is(:hover, :focus, :focus-visible, :active) {
+  position: absolute !important;
+  inset: 0.75rem 0.75rem auto auto !important;
+  top: 0.75rem !important;
+  right: 0.75rem !important;
+  bottom: auto !important;
+  left: auto !important;
+  z-index: 12 !important;
+  display: grid !important;
+  place-items: center !important;
+  flex: 0 0 2.15rem !important;
+  box-sizing: border-box !important;
+  width: 2.15rem !important;
+  min-width: 2.15rem !important;
+  max-width: 2.15rem !important;
+  height: 2.15rem !important;
+  min-height: 2.15rem !important;
+  max-height: 2.15rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0.68rem !important;
+  font-size: 1.3rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  transform: none !important;
+}
+
+@media (max-width: 760px) {
+  body[data-public-home-theme] #root .jt-public-home .jt-job-modal > button.jt-modal-close,
+  body[data-public-home-theme] #root .jt-public-home .jt-job-modal > button.jt-modal-close:is(:hover, :focus, :focus-visible, :active) {
+    inset: 0.62rem 0.62rem auto auto !important;
+    top: 0.62rem !important;
+    right: 0.62rem !important;
+    width: 2rem !important;
+    min-width: 2rem !important;
+    max-width: 2rem !important;
+    height: 2rem !important;
+    min-height: 2rem !important;
+    max-height: 2rem !important;
+    border-radius: 0.62rem !important;
+  }
+}
+
+/* View Role company logos remain fully visible instead of being edge-cropped. */
+body[data-public-home-theme] #root .jt-public-home .jt-job-modal-company .jt-company-avatar.is-large {
+  box-sizing: border-box !important;
+  display: grid !important;
+  place-items: center !important;
+  flex: 0 0 3.25rem !important;
+  width: 3.25rem !important;
+  min-width: 3.25rem !important;
+  max-width: 3.25rem !important;
+  height: 3.25rem !important;
+  min-height: 3.25rem !important;
+  max-height: 3.25rem !important;
+  padding: 0.18rem !important;
+  overflow: hidden !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-job-modal-company .jt-company-avatar.is-large .profile-avatar-image {
+  display: block !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+  object-fit: contain !important;
+  object-position: center !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-modal-body :is(
+  h3,
+  p,
+  li
+) {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+@media (max-width: 760px) {
+  body[data-public-home-theme] #root .jt-public-home .jt-job-modal-company .jt-company-avatar.is-large {
+    flex-basis: 2.875rem !important;
+    width: 2.875rem !important;
+    min-width: 2.875rem !important;
+    max-width: 2.875rem !important;
+    height: 2.875rem !important;
+    min-height: 2.875rem !important;
+    max-height: 2.875rem !important;
   }
 }
 
@@ -2501,4 +2621,139 @@ body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-card
     color: #4b1f2e !important;
     -webkit-text-fill-color: #4b1f2e !important;
   }
+}
+
+/* Absolute-final requested light section surfaces. */
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-card,
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-news-card {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-card:is(:hover, :focus-within),
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-news-card:is(:hover, :focus-within) {
+  background: #fff3e2 !important;
+  background-color: #fff3e2 !important;
+  background-image: none !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-news-section {
+  background: #ded8ce !important;
+  background-color: #ded8ce !important;
+  background-image: none !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-platform-section .jt-feature-card,
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-platform-section .jt-feature-card:is(
+  .is-large,
+  .is-wide,
+  :hover,
+  :focus-within
+) {
+  border: 0 !important;
+  border-color: transparent !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/* Final requested light surfaces. */
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-final-mark,
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-final-mark > img {
+  border: 0 !important;
+  border-color: transparent !important;
+  outline: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-jobs-section .jt-job-card,
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-news-section .jt-news-card {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-jobs-section .jt-job-card:is(:hover, :focus-within),
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-news-section .jt-news-card:is(:hover, :focus-within) {
+  background: #fff3e2 !important;
+  background-color: #fff3e2 !important;
+  background-image: none !important;
+}
+
+/* Light public document editor keeps the portal-style preview on paper. */
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-layout {
+  border-color: #d8c5a8 !important;
+  background: #eadfce !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light :is(
+  .jt-ai-editor-source,
+  .jt-ai-editor-preview-shell
+) > header {
+  color: #4b1f2e !important;
+  border-color: #d8c5a8 !important;
+  background: #fffaf1 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light :is(
+  .jt-ai-editor-source,
+  .jt-ai-editor-preview-shell
+) > header strong {
+  color: #4b1f2e !important;
+  -webkit-text-fill-color: #4b1f2e !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light :is(
+  .jt-ai-editor-source,
+  .jt-ai-editor-preview-shell
+) > header span {
+  color: #7b5963 !important;
+  -webkit-text-fill-color: #7b5963 !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-format-badge {
+  color: #6d3d4b !important;
+  -webkit-text-fill-color: #6d3d4b !important;
+  border-color: #d8c5a8 !important;
+  background: #f2eadc !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-format-badge.is-ready {
+  color: #7f1d32 !important;
+  -webkit-text-fill-color: #7f1d32 !important;
+  border-color: rgba(127, 29, 50, 0.34) !important;
+  background: rgba(184, 90, 109, 0.1) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light :is(
+  .jt-ai-editor-source .jt-ai-editor-paper,
+  .jt-ai-editor-preview-scroll
+) {
+  background: #e9decc !important;
+}
+
+@media (max-width: 760px) {
+  body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-ai-editor-preview-shell {
+    border-top-color: #d8c5a8 !important;
+  }
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-pill-button,
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-pill-button:is(:hover, :focus, :focus-visible, :active) {
+  border-color: #b85a6d !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background: #b85a6d !important;
+  background-color: #b85a6d !important;
+  background-image: none !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-pill-button :is(.jt-icon, svg, path) {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
 }

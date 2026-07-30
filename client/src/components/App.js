@@ -11,9 +11,11 @@ const AdminPanel = lazy(() => import('./AdminPanel'));
 const SocialAuthComplete = lazy(() => import('./SocialAuthComplete'));
 
 const APP_MODE_STORAGE_KEY = 'jumptakeAppMode';
+const PUBLIC_HOME_THEME_KEY = 'jumptakePublicHomeTheme';
 const COOKIE_CONSENT_STORAGE_KEY = 'jumptakeCookieConsent';
 const ADMIN_PANEL_PATH = process.env.REACT_APP_ADMIN_PANEL_PATH || '/jt-owner-console-9x4k2-admin';
 const PORTAL_THEME_PATHS = ['/home', '/employer-dashboard'];
+const PUBLIC_THEME_PATHS = ['/', '/job-seeker', '/company', '/reset-password', '/social-auth-complete'];
 
 const getInitialAppMode = () => {
   if (typeof window === 'undefined') {
@@ -21,7 +23,10 @@ const getInitialAppMode = () => {
   }
 
   try {
-    const savedMode = localStorage.getItem(APP_MODE_STORAGE_KEY);
+    const publicHomeMode = localStorage.getItem(PUBLIC_HOME_THEME_KEY);
+    const savedMode = publicHomeMode === 'dark' || publicHomeMode === 'light'
+      ? publicHomeMode
+      : localStorage.getItem(APP_MODE_STORAGE_KEY);
     return savedMode === 'dark' ? 'dark' : 'light';
   } catch (error) {
     return 'light';
@@ -83,6 +88,7 @@ const AppRoutes = ({ appMode, setAppMode }) => {
 
     try {
       localStorage.setItem(APP_MODE_STORAGE_KEY, activeMode);
+      localStorage.setItem(PUBLIC_HOME_THEME_KEY, activeMode);
     } catch (error) {
       // The selected mode still applies for this session when storage is unavailable.
     }
@@ -92,18 +98,27 @@ const AppRoutes = ({ appMode, setAppMode }) => {
     if (isPortalRoute) {
       document.documentElement.setAttribute('data-theme', activeMode);
       document.body.setAttribute('data-theme', activeMode);
+      document.documentElement.removeAttribute('data-public-home-theme');
+      document.body.removeAttribute('data-public-home-theme');
       return;
     }
 
     document.documentElement.removeAttribute('data-theme');
     document.body.removeAttribute('data-theme');
+    if (PUBLIC_THEME_PATHS.includes(location.pathname)) {
+      document.documentElement.setAttribute('data-public-home-theme', activeMode);
+      document.body.setAttribute('data-public-home-theme', activeMode);
+    } else {
+      document.documentElement.removeAttribute('data-public-home-theme');
+      document.body.removeAttribute('data-public-home-theme');
+    }
   }, [appMode, location.pathname, setAppMode]);
 
   return (
     <div className="app-container">
       <Suspense fallback={<RouteLoadingFallback />}>
         <Routes>
-          <Route path="/" element={<Landing />} />
+          <Route path="/" element={<Landing onThemeChange={setAppMode} />} />
           <Route path="/job-seeker" element={<JobSeeker />} />
           <Route path="/company" element={<Company />} />
           <Route path="/home" element={<HomePage appMode={appMode} onAppModeChange={setAppMode} />} />

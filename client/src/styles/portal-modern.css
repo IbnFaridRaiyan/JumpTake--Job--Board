@@ -4134,85 +4134,6 @@ html body #root .home-page .portal-sidebar-reopen {
     gap: 0.18rem !important;
   }
 
-  html[data-theme="dark"] body[data-theme="dark"] :is(
-    #root .home-page.portal-modern .portal-home-feed,
-    #root .home-page.portal-modern .tailor-profile-section,
-    .portal-profile-detail-backdrop
-  ) .portal-social-post-card .portal-post-comments {
-    display: grid !important;
-    gap: 0.46rem !important;
-    margin-top: 0.48rem !important;
-    padding: 0 !important;
-    border: 0 !important;
-    box-shadow: none !important;
-  }
-
-  html[data-theme="dark"] body[data-theme="dark"] :is(
-    #root .home-page.portal-modern .portal-home-feed,
-    #root .home-page.portal-modern .tailor-profile-section,
-    .portal-profile-detail-backdrop
-  ) .portal-social-post-card .portal-post-comments .portal-comment-item {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 0.46rem !important;
-    width: 100% !important;
-    min-height: 1.18rem !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    text-align: left !important;
-    box-shadow: none !important;
-  }
-
-  html[data-theme="dark"] body[data-theme="dark"] :is(
-    #root .home-page.portal-modern .portal-home-feed,
-    #root .home-page.portal-modern .tailor-profile-section,
-    .portal-profile-detail-backdrop
-  ) .portal-social-post-card .portal-post-comments .portal-comment-item p {
-    display: inline-flex !important;
-    flex: 1 1 auto !important;
-    flex-flow: row wrap !important;
-    align-items: baseline !important;
-    justify-content: flex-start !important;
-    gap: 0.12rem !important;
-    width: auto !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    color: #f5f5f5 !important;
-    -webkit-text-fill-color: #f5f5f5 !important;
-    font-size: 0.78rem !important;
-    line-height: 1.25 !important;
-    text-align: left !important;
-    white-space: normal !important;
-    overflow-wrap: anywhere !important;
-  }
-
-  html[data-theme="dark"] body[data-theme="dark"] :is(
-    #root .home-page.portal-modern .portal-home-feed,
-    #root .home-page.portal-modern .tailor-profile-section,
-    .portal-profile-detail-backdrop
-  ) .portal-social-post-card .portal-post-comments :is(.portal-comment-name, .portal-author-name-button) {
-    color: #ffffff !important;
-    -webkit-text-fill-color: #ffffff !important;
-    text-align: left !important;
-  }
-
-  html[data-theme="dark"] body[data-theme="dark"] :is(
-    .portal-post-detail-backdrop,
-    .portal-profile-detail-backdrop
-  ) :is(
-    .portal-comment-line,
-    .portal-comment-copy,
-    .portal-comment-author-inline,
-    .portal-comment-name,
-    .portal-author-name-button
-  ) {
-    color: #f5f5f5 !important;
-    -webkit-text-fill-color: #f5f5f5 !important;
-  }
 }
 
 @media (max-width: 768px) {
@@ -5331,77 +5252,6 @@ html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :
   padding: 0 !important;
 }
 
-/* Comments inherit the light feed layout, with only dark-mode type recolored. */
-html[data-theme="dark"] body[data-theme="dark"] :is(
-  #root .home-page.portal-modern,
-  .portal-post-detail-backdrop,
-  .portal-profile-detail-backdrop
-) .portal-post-comments {
-  display: grid !important;
-  gap: 0.45rem !important;
-  margin-top: 0.85rem !important;
-  padding: 0 !important;
-  border: 0 !important;
-  background: transparent !important;
-  background-color: transparent !important;
-  background-image: none !important;
-  box-shadow: none !important;
-}
-
-html[data-theme="dark"] body[data-theme="dark"] :is(
-  #root .home-page.portal-modern,
-  .portal-post-detail-backdrop,
-  .portal-profile-detail-backdrop
-) .portal-post-comments .portal-comment-item {
-  display: grid !important;
-  grid-template-columns: auto minmax(0, 1fr) !important;
-  align-items: start !important;
-  gap: 0.42rem !important;
-  width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-html[data-theme="dark"] body[data-theme="dark"] :is(
-  #root .home-page.portal-modern,
-  .portal-post-detail-backdrop,
-  .portal-profile-detail-backdrop
-) .portal-post-comments .portal-comment-item .portal-comment-avatar {
-  box-sizing: border-box !important;
-  display: grid !important;
-  place-items: center !important;
-  width: 1.65rem !important;
-  min-width: 1.65rem !important;
-  height: 1.65rem !important;
-  min-height: 1.65rem !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  overflow: hidden !important;
-  border: 0 !important;
-  border-radius: 999px !important;
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-html[data-theme="dark"] body[data-theme="dark"] :is(
-  #root .home-page.portal-modern,
-  .portal-post-detail-backdrop,
-  .portal-profile-detail-backdrop
-) .portal-post-comments .portal-comment-item :is(
-  p,
-  .portal-comment-name,
-  .portal-author-name-button
-) {
-  margin: 0 !important;
-  padding: 0 !important;
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-  text-align: left !important;
-}
-
 @media (max-width: 768px) {
   html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
     .candidate-bookmarked-container,
@@ -5459,94 +5309,6 @@ html[data-theme="dark"] body[data-theme="dark"] :is(
     max-width: calc(100% - 0.8rem) !important;
   }
 
-  html[data-theme="dark"] body[data-theme="dark"] :is(
-    #root .home-page.portal-modern,
-    .portal-post-detail-backdrop,
-    .portal-profile-detail-backdrop
-  ) .portal-post-comments {
-    gap: 0.46rem !important;
-    margin-top: 0.48rem !important;
-  }
-
-  html[data-theme="dark"] body[data-theme="dark"] :is(
-    #root .home-page.portal-modern,
-    .portal-post-detail-backdrop,
-    .portal-profile-detail-backdrop
-  ) .portal-post-comments .portal-comment-item {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 0.42rem !important;
-    min-height: 1.05rem !important;
-  }
-
-  html[data-theme="dark"] body[data-theme="dark"] :is(
-    #root .home-page.portal-modern,
-    .portal-post-detail-backdrop,
-    .portal-profile-detail-backdrop
-  ) .portal-post-comments .portal-comment-item .portal-comment-avatar {
-    all: unset !important;
-    box-sizing: border-box !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    flex: 0 0 1.05rem !important;
-    width: 1.05rem !important;
-    min-width: 1.05rem !important;
-    max-width: 1.05rem !important;
-    height: 1.05rem !important;
-    min-height: 1.05rem !important;
-    max-height: 1.05rem !important;
-    overflow: hidden !important;
-    border-radius: 999px !important;
-    background: transparent !important;
-    cursor: pointer !important;
-    line-height: 0 !important;
-  }
-
-  html[data-theme="dark"] body[data-theme="dark"] :is(
-    #root .home-page.portal-modern,
-    .portal-post-detail-backdrop,
-    .portal-profile-detail-backdrop
-  ) .portal-post-comments .portal-comment-item .portal-comment-avatar :is(
-    img,
-    .profile-avatar,
-    .profile-avatar-image,
-    .portal-default-profile-icon
-  ) {
-    display: block !important;
-    flex: 0 0 100% !important;
-    width: 100% !important;
-    min-width: 100% !important;
-    max-width: 100% !important;
-    height: 100% !important;
-    min-height: 100% !important;
-    max-height: 100% !important;
-    border-radius: 999px !important;
-    object-fit: cover !important;
-  }
-
-  html[data-theme="dark"] body[data-theme="dark"] :is(
-    #root .home-page.portal-modern,
-    .portal-post-detail-backdrop,
-    .portal-profile-detail-backdrop
-  ) .portal-post-comments .portal-comment-item p {
-    display: inline !important;
-    flex: 1 1 auto !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    color: #ffffff !important;
-    -webkit-text-fill-color: #ffffff !important;
-    font-size: 0.78rem !important;
-    font-weight: 760 !important;
-    line-height: 1.25 !important;
-    text-align: left !important;
-    white-space: normal !important;
-    overflow-wrap: anywhere !important;
-  }
 }
 /*
  * Two-state mobile dock: fully open or completely hidden.
@@ -6165,4 +5927,443 @@ html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-defau
     0 0 0 68px rgba(104, 20, 33, 0.035) !important;
   animation: pm-orbit 18s linear infinite !important;
   pointer-events: none !important;
+}
+
+/*
+ * Feed/profile dark-mode consolidation.
+ * Geometry comes from the shared light-mode components; this section only
+ * controls theme contrast and the small layout corrections shared by both
+ * portal modes.
+ */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern .portal-home-feed.is-feed-at-top > .portal-home-tabs {
+  background: rgba(5, 5, 5, 0.9) !important;
+  background-color: rgba(5, 5, 5, 0.9) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 0.22rem 0.7rem rgba(0, 0, 0, 0.18) !important;
+  backdrop-filter: blur(2px) saturate(1.01) !important;
+  -webkit-backdrop-filter: blur(2px) saturate(1.01) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  #root .home-page.portal-modern .portal-home-feed,
+  #root .home-page.portal-modern .tailor-profile-section,
+  .portal-post-detail-backdrop,
+  .portal-profile-detail-backdrop
+) :is(
+  .portal-post-author-name,
+  .portal-author-name-button,
+  .portal-post-body,
+  .portal-post-detail-body,
+  .portal-comment-line,
+  .portal-comment-copy,
+  .portal-comment-author-inline,
+  .portal-comment-name,
+  .portal-social-post-header > p,
+  .portal-post-title-block > p
+) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  #root .home-page.portal-modern .portal-home-feed,
+  #root .home-page.portal-modern .tailor-profile-section,
+  .portal-post-detail-backdrop,
+  .portal-profile-detail-backdrop
+) :is(.portal-comment-item > p, .portal-comment-line) {
+  display: block !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 400 !important;
+  text-align: left !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  #root .home-page.portal-modern .portal-home-feed,
+  #root .home-page.portal-modern .tailor-profile-section,
+  .portal-post-detail-backdrop,
+  .portal-profile-detail-backdrop
+) :is(.portal-comment-name, .portal-comment-author-inline, .portal-comment-copy) {
+  display: inline !important;
+  width: auto !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  vertical-align: baseline !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  #root .home-page.portal-modern .tailor-profile-card,
+  .portal-profile-detail-backdrop .portal-profile-detail-card
+) :is(
+  .tailor-profile-name,
+  .tailor-profile-bio,
+  .portal-profile-detail-bio,
+  .tailor-stat-value
+) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  #root .home-page.portal-modern .tailor-profile-section,
+  .portal-profile-detail-backdrop
+) :is(.profile-details-summary > div, .profile-details-section) {
+  border: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  #root .home-page.portal-modern .tailor-profile-section,
+  .portal-profile-detail-backdrop
+) :is(
+  .profile-details-summary span,
+  .profile-details-section p,
+  .profile-details-section li
+) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  #root .home-page.portal-modern .tailor-profile-posts,
+  .portal-profile-detail-backdrop .portal-profile-detail-posts
+) {
+  border: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html body :is(
+  #root .home-page .tailor-profile-card,
+  .portal-profile-detail-backdrop .portal-profile-detail-card
+) .tailor-social-links .tailor-social-btn {
+  box-sizing: border-box !important;
+  flex: 0 0 2rem !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 2rem !important;
+  min-width: 2rem !important;
+  max-width: 2rem !important;
+  height: 2rem !important;
+  min-height: 2rem !important;
+  max-height: 2rem !important;
+  aspect-ratio: 1 / 1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 50% !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-header {
+  display: grid !important;
+  grid-template-columns: 3rem minmax(0, 1fr) auto !important;
+  align-items: start !important;
+  column-gap: 0.62rem !important;
+  row-gap: 0 !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-author-open-button.portal-post-avatar {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  width: 3rem !important;
+  min-width: 3rem !important;
+  max-width: 3rem !important;
+  height: 3rem !important;
+  min-height: 3rem !important;
+  max-height: 3rem !important;
+  margin: 0 !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-title-block {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  align-self: center !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transform: none !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-title-block .portal-post-author-name {
+  max-width: 100% !important;
+  margin: 0 0 0.14rem !important;
+  overflow: hidden !important;
+  line-height: 1.12 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-post-header-actions {
+  grid-column: 3 !important;
+  grid-row: 1 !important;
+  align-self: start !important;
+  justify-self: end !important;
+  margin: 0 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-job-modal-backdrop {
+  z-index: 12000 !important;
+  background: rgba(0, 0, 0, 0.86) !important;
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-job-modal {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background: #080808 !important;
+  background-color: #080808 !important;
+  background-image: none !important;
+  box-shadow: 0 1.5rem 5rem rgba(0, 0, 0, 0.68) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-job-modal :is(
+  h3,
+  h4,
+  p,
+  li,
+  strong,
+  .portal-job-meta-value,
+  .portal-candidate-job-stat,
+  .portal-job-modal-title-block
+) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-job-modal :is(
+  .portal-job-modal-section,
+  .portal-candidate-job-skills,
+  .application-workspace
+) {
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  background: #101010 !important;
+  background-color: #101010 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-job-modal :is(
+  .portal-job-meta-icons,
+  .portal-job-meta-chip,
+  .portal-job-meta-chip *,
+  .portal-candidate-job-skills,
+  .portal-candidate-job-skills strong,
+  .portal-candidate-job-skills span
+) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-job-modal .portal-candidate-job-skills span {
+  border-color: rgba(214, 106, 125, 0.34) !important;
+  background: #241117 !important;
+  background-color: #241117 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-job-modal .portal-job-modal-actions .portal-view-job-button {
+  border-color: #8a303d !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background: #5b1118 !important;
+  background-color: #5b1118 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-job-modal .portal-job-modal-actions .portal-view-job-button:disabled {
+  border-color: rgba(255, 255, 255, 0.28) !important;
+  color: rgba(255, 255, 255, 0.72) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.72) !important;
+  background: #24181a !important;
+  background-color: #24181a !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar > .portal-sidebar-nav {
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    padding: 0 10px 0 5px !important;
+    align-items: center !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar .portal-dock-controls {
+    align-self: center !important;
+    transform: none !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar :is(
+    .sidebar__list,
+    .list--secondary
+  ) {
+    height: 48px !important;
+    min-height: 48px !important;
+    max-height: 48px !important;
+    margin-top: auto !important;
+    margin-bottom: auto !important;
+    align-self: center !important;
+    transform: translateY(1px) !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar .sidebar__item,
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar:is(
+    .is-expanded,
+    .is-collapsed
+  ) button.sidebar__link {
+    height: 48px !important;
+    min-height: 48px !important;
+    max-height: 48px !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar:is(
+    .is-expanded,
+    .is-collapsed
+  ) button.sidebar__link {
+    top: auto !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    justify-content: center !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar:is(
+    .is-expanded,
+    .is-collapsed
+  ) button.sidebar__link > .text {
+    flex: 0 0 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar:is(
+    .is-expanded,
+    .is-collapsed
+  ) button.sidebar__link > .nav-notification-dot {
+    box-sizing: border-box !important;
+    position: absolute !important;
+    top: 5px !important;
+    right: auto !important;
+    left: calc(50% + 5px) !important;
+    z-index: 3 !important;
+    width: 8px !important;
+    min-width: 8px !important;
+    max-width: 8px !important;
+    height: 8px !important;
+    min-height: 8px !important;
+    max-height: 8px !important;
+    margin: 0 !important;
+    border: 1.5px solid #000000 !important;
+    border-radius: 50% !important;
+    background: #fb7185 !important;
+    box-shadow: 0 0 0 2px rgba(251, 113, 133, 0.16) !important;
+    transform: none !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .floating-messenger:not(.is-open) {
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    pointer-events: none !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .floating-messenger:not(.is-open) .floating-messenger-trigger {
+    pointer-events: auto !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-social-post-header {
+    grid-template-columns: 2.65rem minmax(0, 1fr) auto !important;
+    column-gap: 0.5rem !important;
+  }
+
+  html body .portal-profile-detail-backdrop .portal-profile-detail-posts .portal-author-open-button.portal-post-avatar {
+    width: 2.65rem !important;
+    min-width: 2.65rem !important;
+    max-width: 2.65rem !important;
+    height: 2.65rem !important;
+    min-height: 2.65rem !important;
+    max-height: 2.65rem !important;
+  }
+
+  html body .portal-job-modal-backdrop {
+    box-sizing: border-box !important;
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 12000 !important;
+    display: block !important;
+    width: 100vw !important;
+    min-width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: 100dvh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  html body .portal-job-modal-backdrop > .portal-job-modal {
+    box-sizing: border-box !important;
+    width: 100vw !important;
+    min-width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: 100dvh !important;
+    margin: 0 !important;
+    padding:
+      calc(env(safe-area-inset-top, 0px) + 1.1rem)
+      1rem
+      calc(env(safe-area-inset-bottom, 0px) + 1.4rem) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    overscroll-behavior: contain !important;
+  }
+
+  html body .portal-job-modal > .portal-job-modal-x-close,
+  html body .portal-job-modal > .portal-job-modal-x-close:is(:hover, :focus, :focus-visible, :active) {
+    position: sticky !important;
+    top: calc(env(safe-area-inset-top, 0px) + 0.2rem) !important;
+    right: 0 !important;
+    z-index: 4 !important;
+    float: right !important;
+  }
+
+  html body .portal-job-modal .portal-job-modal-header {
+    clear: both !important;
+    padding-top: 0.35rem !important;
+  }
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .friend-invitations-section :is(
+  .friend-add-candidate-actions,
+  .friend-invitation-actions
+) > button.secondary-button,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .friend-invitations-section :is(
+  .friend-add-candidate-actions,
+  .friend-invitation-actions
+) > button.secondary-button:is(:hover, :focus, :focus-visible, :active) {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
 }

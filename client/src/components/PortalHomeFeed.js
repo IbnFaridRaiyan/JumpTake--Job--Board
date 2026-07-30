@@ -1204,6 +1204,7 @@ const PortalHomeFeed = ({
     const [feedLoading, setFeedLoading] = useState(false);
     const [feedError, setFeedError] = useState('');
     const [tabsHidden, setTabsHidden] = useState(false);
+    const [feedAtTop, setFeedAtTop] = useState(true);
     const [composerText, setComposerText] = useState('');
     const [composerMedia, setComposerMedia] = useState(null);
     const [composerAudience, setComposerAudience] = useState('everyone');
@@ -2061,6 +2062,7 @@ const PortalHomeFeed = ({
             const shouldHideTabs = nextScrollTop > tabsHideThreshold;
             tabsHiddenRef.current = shouldHideTabs;
             setTabsHidden(shouldHideTabs);
+            setFeedAtTop(nextScrollTop <= 12);
             feedScrollRestoreFrameRef.current = null;
         });
 
@@ -4363,6 +4365,7 @@ const PortalHomeFeed = ({
         const nextScrollTop = event.currentTarget.scrollTop;
         rememberFeedScrollPosition(activeTab, nextScrollTop);
         updateFeedTabsVisibility(nextScrollTop);
+        setFeedAtTop(nextScrollTop <= 12);
     }, [activeTab, rememberFeedScrollPosition, updateFeedTabsVisibility]);
 
     const cancelMobileFeedTouchScroll = useCallback(() => {
@@ -7264,7 +7267,7 @@ const PortalHomeFeed = ({
     const ownCompanyPosts = workNewsPosts.filter((post) => String(post.authorId) === viewerId);
     return (
         <div
-            className={`portal-home-feed portal-home-feed-${mode} ${tabsHidden ? 'is-tabs-hidden' : ''}`}
+            className={`portal-home-feed portal-home-feed-${mode} ${tabsHidden ? 'is-tabs-hidden' : ''} ${feedAtTop ? 'is-feed-at-top' : 'is-feed-scrolled'}`}
         >
             {feedError ? <div className="notification-message error">{feedError}</div> : null}
             <div className="portal-home-tabs" aria-label={`${mode} home sections`}>

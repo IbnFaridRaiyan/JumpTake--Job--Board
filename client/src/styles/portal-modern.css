@@ -62,15 +62,6 @@ html body #root > .app-container > .home-page {
   --portal-dock-clearance: 90px;
 }
 
-html body #root > .app-container > .home-page.portal-dock-open {
-  --portal-dock-height: 108px;
-  --portal-dock-clearance: 132px;
-}
-
-html body #root > .app-container > .home-page.portal-dock-hidden {
-  --portal-dock-clearance: 18px;
-}
-
 html body #root > .app-container > .home-page > .dashboard-container,
 html body #root > .app-container > .home-page > .dashboard-container.mobile-section-open {
   box-sizing: border-box !important;
@@ -552,15 +543,6 @@ html[data-theme="dark"] body[data-theme="dark"] #root > .app-container > .home-p
     --portal-dock-bottom: 8px;
     --portal-dock-height: 62px;
     --portal-dock-clearance: 80px;
-  }
-
-  html body #root > .app-container > .home-page.portal-dock-open {
-    --portal-dock-height: 102px;
-    --portal-dock-clearance: 120px;
-  }
-
-  html body #root > .app-container > .home-page.portal-dock-hidden {
-    --portal-dock-clearance: 12px;
   }
 
   html body #root > .app-container > .home-page > .dashboard-container,
@@ -4500,15 +4482,6 @@ html[data-theme="dark"] body[data-theme="dark"] #root > .app-container > .home-p
     --portal-dock-clearance: 84px;
   }
 
-  html body #root > .app-container > .home-page.portal-dock-open {
-    --portal-dock-height: 116px;
-    --portal-dock-clearance: 136px;
-  }
-
-  html body #root > .app-container > .home-page.portal-dock-hidden {
-    --portal-dock-clearance: 12px;
-  }
-
   html body #root > .app-container > .home-page > .dashboard-container,
   html body #root > .app-container > .home-page > .dashboard-container.mobile-section-open {
     width: calc(100% - 8px) !important;
@@ -4678,15 +4651,6 @@ html[data-theme="dark"] body[data-theme="dark"] #root > .app-container > .home-p
     --portal-dock-bottom: 6px;
     --portal-dock-height: 58px;
     --portal-dock-clearance: 76px;
-  }
-
-  html[data-theme] body[data-theme] #root > .app-container > .home-page.portal-dock-open {
-    --portal-dock-height: 68px;
-    --portal-dock-clearance: 86px;
-  }
-
-  html[data-theme] body[data-theme] #root > .app-container > .home-page.portal-dock-hidden {
-    --portal-dock-clearance: 10px;
   }
 
   html[data-theme] body[data-theme] #root > .app-container > .home-page:is(
@@ -5066,4 +5030,1088 @@ html[data-theme="dark"] body[data-theme="dark"] #root > .app-container > .home-p
     opacity: 1 !important;
     transform: none !important;
   }
+}
+
+/* Last-write dark parity for portal sections that still inherit light cards. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .resume-playground-tabs,
+  .resume-playground-panel,
+  .resume-playground-choice-card,
+  .resume-playground-open-session,
+  .resume-playground-ai-tailor-panel,
+  .resume-playground-ai-photo-panel,
+  .resume-playground-document-prompt,
+  .resume-playground-template-card,
+  .resume-playground-saved-card,
+  .resume-playground-editor-shell,
+  .resume-playground-editor-topbar,
+  .resume-playground-toolbar-shell,
+  .resume-playground-toolbar,
+  .resume-playground-toolbar-row,
+  .resume-playground-toolbar-row-fixed,
+  .resume-playground-toolbar-row-scroll,
+  .resume-playground-ats-panel,
+  .resume-playground-ats-score-card,
+  .resume-playground-signature-card,
+  .applications-hub-nav,
+  .applications-hub-panel,
+  .applications-hub-panel > .applications-container,
+  .applications-hub-panel .applications-list,
+  .applications-hub-panel :is(.fresh-application-card, .application-card),
+  .friend-invitations-shell,
+  .friend-invitation-tabs,
+  .friend-invitation-panel,
+  .friend-add-panel,
+  .friend-search-directory,
+  .friend-search-popover,
+  .friend-add-results,
+  .friend-add-candidate-card,
+  .friend-invitation-card,
+  .friend-outgoing-row,
+  .candidate-community-intro,
+  .talent-pool-controls,
+  .candidate-directory-search-card,
+  .candidate-directory-results,
+  .candidate-list,
+  .candidate-list-row,
+  .bookmarks-hub-nav,
+  .bookmarks-hub-panel,
+  .bookmarks-hub-panel :is(
+    .talent-pool-container,
+    .applications-container,
+    .saved-posts-section,
+    .saved-posts-list,
+    .saved-post-card,
+    .bookmarked-job-card
+  )
+) {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .applications-hub-container,
+  .friend-invitations-section,
+  .talent-pool-container,
+  .bookmarks-hub-container,
+  .resume-playground-section
+) :is(
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  li,
+  label,
+  small,
+  strong,
+  time,
+  .empty-info,
+  .candidate-name,
+  .candidate-email,
+  .candidate-match-summary,
+  .candidate-jumptake-meta,
+  .friend-invitation-copy,
+  .friend-add-candidate-copy,
+  .application-job-summary,
+  .application-message-preview,
+  .resume-playground-saved-copy,
+  .resume-playground-saved-source
+) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .applications-hub-container,
+  .friend-invitations-section,
+  .talent-pool-container,
+  .bookmarks-hub-container
+) :is(span, a, button),
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .resume-playground-tabs,
+  .resume-playground-panel,
+  .resume-playground-choice-card,
+  .resume-playground-open-session,
+  .resume-playground-ai-tailor-panel,
+  .resume-playground-ai-photo-panel,
+  .resume-playground-document-prompt,
+  .resume-playground-template-card,
+  .resume-playground-saved-copy,
+  .resume-playground-editor-topbar,
+  .resume-playground-toolbar-shell,
+  .resume-playground-ats-panel,
+  .resume-playground-ats-score-card,
+  .resume-playground-signature-card
+) :is(span, a, button) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .applications-hub-tab,
+  .bookmarks-hub-tab,
+  .friend-invitation-tab,
+  .resume-playground-tabs > button
+) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .applications-hub-tab.active,
+  .bookmarks-hub-tab.active,
+  .friend-invitation-tab.is-active,
+  .resume-playground-tabs > button.is-active
+) {
+  border-color: rgba(255, 255, 255, 0.28) !important;
+  background: #171717 !important;
+  background-color: #171717 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .applications-hub-tab-icon,
+  .bookmarks-hub-tab-icon,
+  .friend-invitation-tab-icon,
+  .resume-playground-tab-icon
+),
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .applications-hub-tab-icon,
+  .bookmarks-hub-tab-icon,
+  .resume-playground-tab-icon
+) :is(svg, path) {
+  color: #ffffff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+/* Keep bookmark profile cards identical to light mode, with a black palette. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .candidate-bookmarked-container,
+  .bookmarked-talents-container
+) .candidates-grid {
+  align-items: stretch !important;
+  justify-items: center !important;
+  gap: 1rem !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .candidate-bookmarked-container,
+  .bookmarked-talents-container
+) .candidate-card.uiverse-profile-card {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+  max-width: 160px !important;
+  height: 206px !important;
+  min-height: 206px !important;
+  max-height: 206px !important;
+  padding: 0 0.7rem 2.35rem !important;
+  overflow: hidden !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 12px !important;
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .candidate-bookmarked-container,
+  .bookmarked-talents-container
+) .candidate-card.uiverse-profile-card::before {
+  flex: 0 0 auto !important;
+  width: 62% !important;
+  height: 6px !important;
+  min-height: 6px !important;
+  margin: 0 auto 0.68rem !important;
+  border-radius: 0 0 10px 10px !important;
+  background: rgba(255, 255, 255, 0.24) !important;
+  background-color: rgba(255, 255, 255, 0.24) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .candidate-bookmarked-container,
+  .bookmarked-talents-container
+) .uiverse-profile-card :is(.profileimage, .candidate-avatar.profileimage) {
+  flex: 0 0 auto !important;
+  width: 58px !important;
+  min-width: 58px !important;
+  max-width: 58px !important;
+  height: 58px !important;
+  min-height: 58px !important;
+  max-height: 58px !important;
+  margin: 0.18rem auto 0.78rem !important;
+  overflow: hidden !important;
+  border-radius: 50% !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .candidate-bookmarked-container,
+  .bookmarked-talents-container
+) .uiverse-profile-card .candidate-info {
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.1rem !important;
+  width: 100% !important;
+  min-height: 2.55rem !important;
+  margin: 0.12rem 0 0 !important;
+  padding: 0 !important;
+  text-align: center !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .candidate-bookmarked-container,
+  .bookmarked-talents-container
+) .uiverse-profile-card :is(.candidate-name.Name, .candidate-name) {
+  width: 100% !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  font-size: 0.82rem !important;
+  line-height: 1.08 !important;
+  text-align: center !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .candidate-bookmarked-container,
+  .bookmarked-talents-container
+) .uiverse-profile-card :is(
+  .candidate-email,
+  .candidate-match-summary,
+  .candidate-jumptake-meta
+) {
+  width: 100% !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  font-size: 0.54rem !important;
+  line-height: 1.05 !important;
+  text-align: center !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .candidate-bookmarked-container,
+  .bookmarked-talents-container
+) .uiverse-profile-card .candidate-card-socialbar.socialbar {
+  position: absolute !important;
+  right: auto !important;
+  bottom: 0.72rem !important;
+  left: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-wrap: nowrap !important;
+  gap: 0.34rem !important;
+  width: max-content !important;
+  min-width: 0 !important;
+  max-width: calc(100% - 1.1rem) !important;
+  min-height: 1.24rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: translateX(-50%) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .candidate-bookmarked-container,
+  .bookmarked-talents-container
+) .uiverse-profile-card :is(
+  .candidate-name,
+  .candidate-email,
+  .candidate-match-summary,
+  .candidate-jumptake-meta,
+  .candidate-card-action,
+  .candidate-card-action svg,
+  .candidate-card-action path
+) {
+  color: #ffffff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .candidate-bookmarked-container,
+  .bookmarked-talents-container
+) .uiverse-profile-card .candidate-card-socialbar.socialbar :is(
+  .candidate-card-action,
+  .candidate-like-button,
+  .candidate-add-friend-button,
+  .talent-bookmark-button,
+  .bookmark-star-button
+) {
+  flex: 0 0 auto !important;
+  width: 1.1rem !important;
+  min-width: 1.1rem !important;
+  max-width: 1.38rem !important;
+  height: 1.1rem !important;
+  min-height: 1.1rem !important;
+  max-height: 1.1rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Comments inherit the light feed layout, with only dark-mode type recolored. */
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  #root .home-page.portal-modern,
+  .portal-post-detail-backdrop,
+  .portal-profile-detail-backdrop
+) .portal-post-comments {
+  display: grid !important;
+  gap: 0.45rem !important;
+  margin-top: 0.85rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  #root .home-page.portal-modern,
+  .portal-post-detail-backdrop,
+  .portal-profile-detail-backdrop
+) .portal-post-comments .portal-comment-item {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) !important;
+  align-items: start !important;
+  gap: 0.42rem !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  #root .home-page.portal-modern,
+  .portal-post-detail-backdrop,
+  .portal-profile-detail-backdrop
+) .portal-post-comments .portal-comment-item .portal-comment-avatar {
+  box-sizing: border-box !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 1.65rem !important;
+  min-width: 1.65rem !important;
+  height: 1.65rem !important;
+  min-height: 1.65rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  #root .home-page.portal-modern,
+  .portal-post-detail-backdrop,
+  .portal-profile-detail-backdrop
+) .portal-post-comments .portal-comment-item :is(
+  p,
+  .portal-comment-name,
+  .portal-author-name-button
+) {
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-align: left !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+    .candidate-bookmarked-container,
+    .bookmarked-talents-container
+  ) .candidates-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.7rem !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+    .candidate-bookmarked-container,
+    .bookmarked-talents-container
+  ) .candidate-card.uiverse-profile-card {
+    max-width: 132px !important;
+    height: 178px !important;
+    min-height: 178px !important;
+    max-height: 178px !important;
+    padding: 0 0.48rem 2.15rem !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+    .candidate-bookmarked-container,
+    .bookmarked-talents-container
+  ) .uiverse-profile-card :is(.profileimage, .candidate-avatar.profileimage) {
+    width: 52px !important;
+    min-width: 52px !important;
+    max-width: 52px !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    max-height: 52px !important;
+    margin: 0.16rem auto 0.62rem !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+    .candidate-bookmarked-container,
+    .bookmarked-talents-container
+  ) .uiverse-profile-card .candidate-info {
+    min-height: 2.32rem !important;
+    margin-top: 0.08rem !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+    .candidate-bookmarked-container,
+    .bookmarked-talents-container
+  ) .uiverse-profile-card :is(.candidate-name.Name, .candidate-name) {
+    font-size: 0.72rem !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+    .candidate-bookmarked-container,
+    .bookmarked-talents-container
+  ) .uiverse-profile-card .candidate-card-socialbar.socialbar {
+    bottom: 0.62rem !important;
+    gap: 0.28rem !important;
+    max-width: calc(100% - 0.8rem) !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] :is(
+    #root .home-page.portal-modern,
+    .portal-post-detail-backdrop,
+    .portal-profile-detail-backdrop
+  ) .portal-post-comments {
+    gap: 0.46rem !important;
+    margin-top: 0.48rem !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] :is(
+    #root .home-page.portal-modern,
+    .portal-post-detail-backdrop,
+    .portal-profile-detail-backdrop
+  ) .portal-post-comments .portal-comment-item {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 0.42rem !important;
+    min-height: 1.05rem !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] :is(
+    #root .home-page.portal-modern,
+    .portal-post-detail-backdrop,
+    .portal-profile-detail-backdrop
+  ) .portal-post-comments .portal-comment-item .portal-comment-avatar {
+    all: unset !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 1.05rem !important;
+    width: 1.05rem !important;
+    min-width: 1.05rem !important;
+    max-width: 1.05rem !important;
+    height: 1.05rem !important;
+    min-height: 1.05rem !important;
+    max-height: 1.05rem !important;
+    overflow: hidden !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    cursor: pointer !important;
+    line-height: 0 !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] :is(
+    #root .home-page.portal-modern,
+    .portal-post-detail-backdrop,
+    .portal-profile-detail-backdrop
+  ) .portal-post-comments .portal-comment-item .portal-comment-avatar :is(
+    img,
+    .profile-avatar,
+    .profile-avatar-image,
+    .portal-default-profile-icon
+  ) {
+    display: block !important;
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    border-radius: 999px !important;
+    object-fit: cover !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] :is(
+    #root .home-page.portal-modern,
+    .portal-post-detail-backdrop,
+    .portal-profile-detail-backdrop
+  ) .portal-post-comments .portal-comment-item p {
+    display: inline !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    font-size: 0.78rem !important;
+    font-weight: 760 !important;
+    line-height: 1.25 !important;
+    text-align: left !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+}
+/*
+ * Two-state mobile dock: fully open or completely hidden.
+ * Manual swiping remains native and smooth without scroll snapping.
+ */
+@media (max-width: 768px) {
+  html[data-theme] body[data-theme] #root > .app-container > .home-page:is(
+    .portal-dock-open,
+    .portal-dock-closed,
+    .portal-dock-hidden
+  ) {
+    --portal-dock-bottom: 3px !important;
+    --portal-dock-height: 58px !important;
+    --portal-dock-clearance: 72px !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page > .dashboard-header {
+    flex: 0 0 auto !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page > .dashboard-container,
+  html[data-theme] body[data-theme] #root > .app-container > .home-page > .dashboard-container.mobile-section-open {
+    flex: 1 1 auto !important;
+    width: calc(100% - 8px) !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 4px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page > .dashboard-container > .main-content,
+  html[data-theme] body[data-theme] #root > .app-container > .home-page > .dashboard-container > .main-content.mobile-dashboard-section-panel,
+  html[data-theme] body[data-theme] #root > .app-container > .home-page > .dashboard-container > .main-content.mobile-dashboard-section-panel.is-open {
+    position: relative !important;
+    inset: auto !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    margin: 0 !important;
+    padding-right: 0.35rem !important;
+    padding-bottom: calc(var(--portal-dock-clearance) + 0.75rem) !important;
+    padding-left: 0.35rem !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-x: none !important;
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+    transition: none !important;
+  }
+
+  /* Remove the archived left-rail reservation from Candidates. */
+  html[data-theme] body[data-theme] #root > .app-container > .home-page > .dashboard-container > .main-content.mobile-section-view-candidates,
+  html[data-theme] body[data-theme] #root > .app-container > .home-page > .dashboard-container > .main-content.mobile-section-view-candidates.is-open,
+  html[data-theme] body[data-theme] #root > .app-container > .home-page:is(
+    .portal-dock-open,
+    .portal-dock-hidden
+  ) > .dashboard-container.mobile-section-open > .main-content.mobile-dashboard-section-panel.mobile-section-view-candidates.is-open {
+    inset: auto !important;
+    right: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding-right: 0.35rem !important;
+    padding-left: 0.35rem !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.portal-vertical-sidebar:is(
+    .is-expanded,
+    .is-collapsed
+  ) {
+    inset: auto auto var(--portal-dock-bottom) 50% !important;
+    width: calc(100vw - 12px) !important;
+    min-width: 0 !important;
+    max-width: calc(100vw - 12px) !important;
+    height: var(--portal-dock-height) !important;
+    min-height: var(--portal-dock-height) !important;
+    max-height: var(--portal-dock-height) !important;
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translate3d(-50%, 0, 0) !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page.portal-dock-hidden > .dashboard-container > aside.portal-uiverse-sidebar.portal-vertical-sidebar.is-hidden {
+    pointer-events: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translate3d(-50%, calc(100% + 24px), 0) !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+    box-sizing: border-box !important;
+    padding: 2px 10px 1px 5px !important;
+    display: flex !important;
+    flex-flow: row nowrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 3px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-behavior: smooth !important;
+    scroll-snap-type: none !important;
+    scroll-padding-inline: 0 !important;
+    overscroll-behavior-x: auto !important;
+    overscroll-behavior-y: none !important;
+    touch-action: pan-x !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page:is(
+    .portal-dock-open,
+    .portal-dock-closed,
+    .portal-dock-hidden
+  ) > .dashboard-container > .portal-uiverse-sidebar .portal-uiverse-rail .portal-dock-controls > .portal-sidebar-menu-icon {
+    display: none !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar .portal-dock-controls {
+    position: static !important;
+    z-index: 4 !important;
+    left: auto !important;
+    flex: 0 0 34px !important;
+    width: 34px !important;
+    min-width: 34px !important;
+    max-width: 34px !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    max-height: 52px !important;
+    margin: 0 5px 0 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    align-self: center !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar .portal-dock-hide,
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar .portal-dock-hide:is(:hover, :focus, :focus-visible, :active) {
+    position: static !important;
+    z-index: 5 !important;
+    align-self: center !important;
+    flex: 0 0 30px !important;
+    width: 30px !important;
+    min-width: 30px !important;
+    max-width: 30px !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    max-height: 52px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    pointer-events: auto !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar .portal-dock-hide > span {
+    margin: 0 !important;
+    font-size: 0 !important;
+    line-height: 1 !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar .portal-dock-hide > span::before {
+    content: "\2304" !important;
+    display: block !important;
+    font-size: 1.15rem !important;
+    line-height: 1 !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar :is(.sidebar__list, .list--secondary) {
+    flex: 0 0 auto !important;
+    width: max-content !important;
+    min-width: max-content !important;
+    max-width: none !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    max-height: 52px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-flow: row nowrap !important;
+    align-items: center !important;
+    gap: 3px !important;
+    overflow: visible !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar .list--secondary {
+    padding-right: 10px !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar .sidebar__item {
+    height: 52px !important;
+    min-height: 52px !important;
+    max-height: 52px !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar:is(
+    .is-expanded,
+    .is-collapsed
+  ) button.sidebar__link {
+    position: relative !important;
+    z-index: 2 !important;
+    flex: 0 0 74px !important;
+    width: 74px !important;
+    min-width: 74px !important;
+    max-width: 74px !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    max-height: 52px !important;
+    margin: 0 !important;
+    padding: 3px 1px 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 1px !important;
+    overflow: hidden !important;
+    pointer-events: auto !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar:is(
+    .is-expanded,
+    .is-collapsed
+  ) .sidebar__link .text {
+    position: static !important;
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 70px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    clip: auto !important;
+    white-space: nowrap !important;
+    font-size: 0.54rem !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    text-overflow: ellipsis !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar .list--secondary > .sidebar__item:last-child,
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-uiverse-sidebar .list--secondary > .sidebar__item:last-child > button {
+    z-index: 6 !important;
+    pointer-events: auto !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page .portal-sidebar-reopen.is-visible {
+    position: fixed !important;
+    z-index: 7901 !important;
+    inset: auto auto 3px 50% !important;
+    display: grid !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: translate3d(-50%, 0, 0) !important;
+  }
+}
+
+/* Desktop keeps the established theme-specific page-title alignment. */
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(
+  .dashboard-section-title,
+  .mobile-section-panel-header
+) {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: flex-end !important;
+  width: 100% !important;
+  text-align: right !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(
+  .dashboard-section-title,
+  .mobile-section-panel-header
+) h2 {
+  width: auto !important;
+  margin-right: 0 !important;
+  margin-left: auto !important;
+  text-align: right !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .dashboard-section-title,
+  .mobile-section-panel-header
+) {
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
+}
+
+/* Every mobile page title starts at the far top-left. */
+@media (max-width: 768px) {
+  html[data-theme] body[data-theme] #root > .app-container > .home-page:is(
+    .portal-dock-open,
+    .portal-dock-closed,
+    .portal-dock-hidden
+  ) > .dashboard-container.mobile-section-open :is(
+    .mobile-dashboard-section-panel.is-open,
+    .mobile-job-management-section-panel.is-open
+  ) > .mobile-section-panel-header,
+  html[data-theme] body[data-theme] #root > .app-container > .home-page:is(
+    .portal-dock-open,
+    .portal-dock-closed,
+    .portal-dock-hidden
+  ) .dashboard-section-title {
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    text-align: left !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page:is(
+    .portal-dock-open,
+    .portal-dock-closed,
+    .portal-dock-hidden
+  ) > .dashboard-container.mobile-section-open :is(
+    .mobile-dashboard-section-panel.is-open,
+    .mobile-job-management-section-panel.is-open
+  ) > .mobile-section-panel-header > h2,
+  html[data-theme] body[data-theme] #root > .app-container > .home-page:is(
+    .portal-dock-open,
+    .portal-dock-closed,
+    .portal-dock-hidden
+  ) .dashboard-section-title > h2 {
+    right: auto !important;
+    left: auto !important;
+    width: auto !important;
+    flex: 0 0 auto !important;
+    order: -1 !important;
+    margin-right: auto !important;
+    margin-left: 0 !important;
+    transform-origin: left center !important;
+    text-align: left !important;
+  }
+
+  html[data-theme] body[data-theme] #root > .app-container > .home-page:is(
+    .portal-dock-open,
+    .portal-dock-closed,
+    .portal-dock-hidden
+  ) > .dashboard-container.mobile-section-open :is(
+    .mobile-dashboard-section-panel.is-open,
+    .mobile-job-management-section-panel.is-open
+  ) > .mobile-section-panel-header > .back-button {
+    flex: 0 0 auto !important;
+    order: 1 !important;
+    margin-right: 0 !important;
+    margin-left: auto !important;
+  }
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .dashboard-section-title,
+  .mobile-section-panel-header
+) h2 {
+  margin-right: auto !important;
+  margin-left: 0 !important;
+  text-align: left !important;
+}
+
+/* Dark home feed keeps a visible gap below the portal header at every size. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern .main-content:is(
+  .mobile-section-job-feed,
+  .mobile-section-home-feed
+) .portal-home-feed-scroll {
+  padding-top: 0.7rem !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme="dark"] body[data-theme="dark"] #root > .app-container > .home-page.portal-modern .main-content:is(
+    .mobile-section-job-feed,
+    .mobile-section-home-feed
+  ) .portal-home-feed > .portal-home-feed-scroll {
+    padding-top: 4.45rem !important;
+  }
+}
+
+/* Candidate cards remain readable on the solid-black dark directory. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern .candidate-view-candidates :is(
+  .candidate-card,
+  .candidate-list-row
+) :is(
+  h2,
+  h3,
+  h4,
+  p,
+  span,
+  small,
+  strong,
+  label,
+  .candidate-name,
+  .candidate-email,
+  .candidate-match-summary,
+  .candidate-jumptake-meta
+) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Resume Playground keeps the three light-mode action palettes in dark mode. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-scratch,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-scratch:is(:hover, :focus, :focus-visible, :active) {
+  border: 1px solid rgba(102, 143, 113, 0.38) !important;
+  background: #dfeee3 !important;
+  background-color: #dfeee3 !important;
+  color: #3a1821 !important;
+  -webkit-text-fill-color: #3a1821 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-upload,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-upload:is(:hover, :focus, :focus-visible, :active) {
+  border: 1px solid rgba(169, 126, 31, 0.34) !important;
+  background: #fff1bd !important;
+  background-color: #fff1bd !important;
+  color: #2f241b !important;
+  -webkit-text-fill-color: #2f241b !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-ai-tailor,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-ai-tailor:is(:hover, :focus, :focus-visible, :active) {
+  border: 1px solid rgba(90, 38, 16, 0.34) !important;
+  background: #a84e24 !important;
+  background-color: #a84e24 !important;
+  color: #fffaf3 !important;
+  -webkit-text-fill-color: #fffaf3 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern .resume-playground-panel button.resume-playground-choice-card:is(
+  .resume-playground-choice-scratch,
+  .resume-playground-choice-upload
+) * {
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern .resume-playground-panel button.resume-playground-choice-card.resume-playground-choice-ai-tailor * {
+  color: #fffaf3 !important;
+  -webkit-text-fill-color: #fffaf3 !important;
+}
+
+/* Blocks cards and hidden-post rows are solid black in dark mode. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .blocks-manager-card,
+  .blocks-manager-row,
+  .blocks-manager-hidden-post-row
+) {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern :is(
+  .blocks-manager-card,
+  .blocks-manager-row,
+  .blocks-manager-hidden-post-row
+) :is(h3, p, span, strong, small) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Bring the dark candidate-workspace orbit into the light dashboard. */
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-default-landing.is-candidate {
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-default-landing.is-candidate::after {
+  content: "" !important;
+  position: absolute !important;
+  right: -70px !important;
+  bottom: -90px !important;
+  width: 260px !important;
+  height: 260px !important;
+  display: block !important;
+  border: 1px solid rgba(104, 20, 33, 0.34) !important;
+  border-radius: 50% !important;
+  background: rgba(104, 20, 33, 0.05) !important;
+  box-shadow:
+    0 0 0 34px rgba(104, 20, 33, 0.07),
+    0 0 0 68px rgba(104, 20, 33, 0.035) !important;
+  animation: pm-orbit 18s linear infinite !important;
+  pointer-events: none !important;
 }

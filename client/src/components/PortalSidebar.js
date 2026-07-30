@@ -29,13 +29,18 @@ const PortalIcon = ({ name = 'dashboard' }) => (
     </svg>
 );
 
+const isMobilePortalViewport = () => (
+    typeof window !== 'undefined'
+    && window.matchMedia('(max-width: 768px)').matches
+);
+
 const PortalSidebar = ({
     primaryItems = [],
     secondaryItems = [],
     onLogout,
     onStateChange
 }) => {
-    const [expanded, setExpanded] = useState(false);
+    const [expanded, setExpanded] = useState(isMobilePortalViewport);
     const [hidden, setHidden] = useState(false);
     const touchStartRef = useRef(null);
 
@@ -46,11 +51,13 @@ const PortalSidebar = ({
     useEffect(() => {
         const mobileQuery = window.matchMedia('(max-width: 768px)');
         const handleViewportChange = (event) => {
-            if (!event.matches) {
-                setHidden(false);
-            }
+            setHidden(false);
+            setExpanded(event.matches);
         };
 
+        if (mobileQuery.matches) {
+            setExpanded(true);
+        }
         mobileQuery.addEventListener?.('change', handleViewportChange);
         return () => mobileQuery.removeEventListener?.('change', handleViewportChange);
     }, []);
@@ -97,7 +104,9 @@ const PortalSidebar = ({
                 data-tooltip={item.label}
                 data-tour-id={`nav-${item.id}`}
                 onClick={() => {
-                    setExpanded(false);
+                    if (!isMobilePortalViewport()) {
+                        setExpanded(false);
+                    }
                     item.onClick?.();
                 }}
                 aria-current={item.active ? 'page' : undefined}
@@ -118,7 +127,7 @@ const PortalSidebar = ({
                 type="button"
                 className={`portal-sidebar-reopen ${hidden ? 'is-visible' : ''}`}
                 onClick={() => {
-                    setExpanded(false);
+                    setExpanded(true);
                     setHidden(false);
                 }}
                 aria-label="Show navigation"
@@ -172,7 +181,9 @@ const PortalSidebar = ({
                                     className="sidebar__link is-danger"
                                     data-tooltip="Log Out"
                                     onClick={() => {
-                                        setExpanded(false);
+                                        if (!isMobilePortalViewport()) {
+                                            setExpanded(false);
+                                        }
                                         onLogout?.();
                                     }}
                                     aria-label="Log Out"

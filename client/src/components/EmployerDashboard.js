@@ -857,12 +857,12 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                 />
 
                 <main ref={mobilePanelRef} className={`main-content mobile-dashboard-section-panel mobile-section-${activeSection} ${mobileSectionVisible ? 'is-open' : ''}`}>
-                    {showSectionTitle && (
+                    {showSectionTitle && !isMobileViewport() && (
                         <div className="dashboard-section-title">
                             <h2><span key={`desktop-${activeSection}-${titleAnimationReplayKey}`} className="portal-title-jello-text">{sectionTitles[activeSection] || 'Dashboard Section'}</span></h2>
                         </div>
                     )}
-                    {showSectionTitle && mobileSectionVisible && (
+                    {showSectionTitle && mobileSectionVisible && isMobileViewport() && (
                         <div className="mobile-section-panel-header">
                             <button type="button" className="back-button" onClick={goToPreviousSection}>
                                 {activeSection === 'manage-jobs' && isManagingEmployerJob ? 'Back to Manage Jobs' : 'Back'}

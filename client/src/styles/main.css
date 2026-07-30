@@ -34664,16 +34664,6 @@ html[data-theme="light"] .home-page .dashboard-section-title {
     min-height: 2.24rem !important;
   }
 
-  .home-page .main-content,
-  .home-page .mobile-dashboard-section-panel,
-  .home-page .mobile-dashboard-section-panel.is-open,
-  .home-page .mobile-job-management-section-panel,
-  .home-page .mobile-job-management-section-panel.is-open,
-  .home-page .dashboard-container.mobile-section-open .mobile-dashboard-section-panel.is-open,
-  .home-page .dashboard-container.mobile-section-open .mobile-job-management-section-panel.is-open {
-    padding-left: 3.25rem !important;
-  }
-
   .home-page .dashboard-section-title,
   .home-page .main-content > .dashboard-section-title,
   .home-page .mobile-dashboard-section-panel > .dashboard-section-title {
@@ -34759,15 +34749,6 @@ html[data-theme="light"] .home-page .dashboard-section-title {
     height: 1.05rem !important;
   }
 
-  .home-page .main-content,
-  .home-page .mobile-dashboard-section-panel,
-  .home-page .mobile-dashboard-section-panel.is-open,
-  .home-page .mobile-job-management-section-panel,
-  .home-page .mobile-job-management-section-panel.is-open,
-  .home-page .dashboard-container.mobile-section-open .mobile-dashboard-section-panel.is-open,
-  .home-page .dashboard-container.mobile-section-open .mobile-job-management-section-panel.is-open {
-    padding-left: 3.08rem !important;
-  }
 }
 
 /* Uiverse-style portal sidebar rail: black shell, white icons, existing portal actions. */
@@ -35355,7 +35336,6 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
   .home-page .dashboard-container.mobile-section-open {
     width: 100% !important;
     min-height: calc(100dvh - 7.5rem) !important;
-    padding-left: 3.25rem !important;
   }
 
   .home-page .portal-uiverse-sidebar,
@@ -83391,21 +83371,6 @@ html body #root .home-page .portal-uiverse-sidebar :is(.sidebar__list, .sidebar_
     padding-top: 0.35rem !important;
   }
 
-  html body #root .home-page .main-content.mobile-dashboard-section-panel.is-open,
-  html body #root .home-page .mobile-job-management-section-panel.is-open {
-    position: absolute !important;
-    inset: 0.2rem 0.25rem 0 3.55rem !important;
-    top: 0.2rem !important;
-    right: 0.25rem !important;
-    bottom: 0 !important;
-    left: 3.55rem !important;
-    width: auto !important;
-    max-width: none !important;
-    height: auto !important;
-    min-height: 0 !important;
-    margin: 0 !important;
-  }
-
   html body #root .home-page .dashboard-container.mobile-section-open .main-content.mobile-dashboard-section-panel.is-open > .dashboard-section-title {
     display: none !important;
   }
@@ -83669,18 +83634,8 @@ html body .floating-messenger.is-open > .floating-messenger-panel.is-mobile-chat
 
 }
 
-/* Mobile Candidates containment and a subtle left shift for animated page titles. */
+/* Mobile Candidates containment. */
 @media (max-width: 768px) {
-  html body #root .home-page .dashboard-container.mobile-section-open > .main-content.mobile-dashboard-section-panel.mobile-section-view-candidates.is-open,
-  html[data-theme="light"] body[data-theme="light"] #root .home-page .dashboard-container.mobile-section-open > .main-content.mobile-dashboard-section-panel.mobile-section-view-candidates.is-open {
-    box-sizing: border-box !important;
-    width: auto !important;
-    min-width: 0 !important;
-    max-width: none !important;
-    right: 0.25rem !important;
-    overflow-x: hidden !important;
-  }
-
   html body #root .home-page .main-content.mobile-section-view-candidates.is-open > .portal-section-transition-shell,
   html[data-theme="light"] body[data-theme="light"] #root .home-page .main-content.mobile-section-view-candidates.is-open > .portal-section-transition-shell,
   html body #root .home-page .main-content.mobile-section-view-candidates.is-open .talent-pool-container.candidate-view-candidates,
@@ -83719,12 +83674,6 @@ html body .floating-messenger.is-open > .floating-messenger-panel.is-mobile-chat
     box-sizing: border-box !important;
     min-width: 0 !important;
     max-width: 100% !important;
-  }
-
-  html body #root .home-page .dashboard-container.mobile-section-open :is(.mobile-dashboard-section-panel.is-open, .mobile-job-management-section-panel.is-open) > .mobile-section-panel-header h2,
-  html[data-theme="light"] body[data-theme="light"] #root .home-page .dashboard-container.mobile-section-open :is(.mobile-dashboard-section-panel.is-open, .mobile-job-management-section-panel.is-open) > .mobile-section-panel-header h2 {
-    margin-left: auto !important;
-    margin-right: -0.72rem !important;
   }
 }
 
@@ -90043,16 +89992,6 @@ html body #root .home-page .portal-section-transition-shell[data-section="view-c
 }
 
 @media (max-width: 768px) {
-  html body #root .home-page > .dashboard-container.mobile-section-open > .main-content.mobile-dashboard-section-panel.mobile-section-view-candidates.is-open,
-  html[data-theme="light"] body[data-theme="light"] #root .home-page > .dashboard-container.mobile-section-open > .main-content.mobile-dashboard-section-panel.mobile-section-view-candidates.is-open {
-    left: 3.32rem !important;
-    right: 0.08rem !important;
-    width: auto !important;
-    max-width: none !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-  }
-
   html body #root .home-page .main-content.mobile-section-view-candidates.is-open > .portal-section-transition-shell[data-section="view-candidates"],
   html body #root .home-page .main-content.mobile-section-view-candidates.is-open .talent-pool-container.candidate-view-candidates {
     width: 100% !important;

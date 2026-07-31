@@ -2757,3 +2757,58 @@ body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-pill-but
   color: #ffffff !important;
   stroke: #ffffff !important;
 }
+
+/* Final public-home header treatment: translucent in both themes and devices. */
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-home-header {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background:
+    linear-gradient(135deg, rgba(4, 9, 15, 0.48), rgba(2, 7, 12, 0.28)) !important;
+  background-color: transparent !important;
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(18px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(135%) !important;
+  transition: transform 220ms ease, opacity 180ms ease !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-home-header {
+  border-color: rgba(127, 29, 50, 0.14) !important;
+  background:
+    linear-gradient(135deg, rgba(255, 248, 236, 0.56), rgba(247, 236, 239, 0.38)) !important;
+  background-color: transparent !important;
+  box-shadow:
+    0 13px 32px rgba(75, 31, 46, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.48) !important;
+  backdrop-filter: blur(17px) saturate(130%) !important;
+  -webkit-backdrop-filter: blur(17px) saturate(130%) !important;
+  transition: transform 220ms ease, opacity 180ms ease !important;
+}
+
+@media (max-width: 760px) {
+  body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-home-header {
+    background:
+      linear-gradient(135deg, rgba(7, 11, 16, 0.38), rgba(19, 25, 31, 0.22)) !important;
+    box-shadow:
+      0 12px 28px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+    backdrop-filter: blur(16px) saturate(125%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(125%) !important;
+  }
+
+  body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-home-header {
+    background:
+      linear-gradient(135deg, rgba(255, 248, 236, 0.44), rgba(247, 236, 239, 0.28)) !important;
+    box-shadow:
+      0 11px 26px rgba(75, 31, 46, 0.07),
+      inset 0 1px 0 rgba(255, 255, 255, 0.42) !important;
+    backdrop-filter: blur(15px) saturate(122%) !important;
+    -webkit-backdrop-filter: blur(15px) saturate(122%) !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-home-header.is-mobile-scroll-hidden {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translate(-50%, calc(-100% - 18px)) !important;
+  }
+}

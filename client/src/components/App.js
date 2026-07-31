@@ -19,17 +19,28 @@ const PUBLIC_THEME_PATHS = ['/', '/job-seeker', '/company', '/reset-password', '
 
 const getInitialAppMode = () => {
   if (typeof window === 'undefined') {
-    return 'light';
+    return 'dark';
   }
 
   try {
+    const isPublicHome = window.location.pathname === '/';
+    const previewTheme = new URLSearchParams(window.location.search).get('theme');
     const publicHomeMode = localStorage.getItem(PUBLIC_HOME_THEME_KEY);
-    const savedMode = publicHomeMode === 'dark' || publicHomeMode === 'light'
-      ? publicHomeMode
-      : localStorage.getItem(APP_MODE_STORAGE_KEY);
+
+    if (isPublicHome) {
+      if (previewTheme === 'dark' || previewTheme === 'light') {
+        return previewTheme;
+      }
+
+      return publicHomeMode === 'dark' || publicHomeMode === 'light'
+        ? publicHomeMode
+        : 'dark';
+    }
+
+    const savedMode = localStorage.getItem(APP_MODE_STORAGE_KEY);
     return savedMode === 'dark' ? 'dark' : 'light';
   } catch (error) {
-    return 'light';
+    return window.location.pathname === '/' ? 'dark' : 'light';
   }
 };
 

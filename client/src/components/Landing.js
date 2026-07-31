@@ -3,7 +3,8 @@ import PublicLandingNav from './PublicLandingNav';
 import ProfileAvatar from './ProfileAvatar';
 import defaultJobPostAvatar from './media/default-job-post-avatar.png';
 import darkThemeLogo from './media/logo4.png';
-import lightThemeLogo from './media/jumptake-logo-main-light.png';
+// Keep the public light theme on the same mark used by the portal's light mode.
+import lightThemeLogo from './media/jumptake-logo-9.png';
 import networkAvatar01 from './media/public-avatars/avatar-network-01.jpg';
 import networkAvatar02 from './media/public-avatars/avatar-network-02.jpg';
 import networkAvatar03 from './media/public-avatars/avatar-network-03.jpg';

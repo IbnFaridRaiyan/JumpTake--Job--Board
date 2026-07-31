@@ -5,7 +5,8 @@ import ProfileAvatar from './ProfileAvatar';
 import SocialAuthButtons from './SocialAuthButtons';
 import defaultJobPostAvatar from './media/default-job-post-avatar.png';
 import logoDark from './media/logo4.png';
-import logoLight from './media/jumptake-logo-main-light.png';
+// Match the portal light-mode logo anywhere the public landing dialogs show branding.
+import logoLight from './media/jumptake-logo-9.png';
 import { sendPasswordResetEmail, validateEmailAddress } from '../utils/emailVerification';
 import { persistCandidateSession, persistEmployerSession } from '../utils/authStorage';
 

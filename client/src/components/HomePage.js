@@ -1038,7 +1038,9 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         }
     };
 
-    const showSectionTitle = !['home', 'job-feed', 'dashboard'].includes(activeSection);
+    // Progress Check renders its own animated title inside the analytics panel.
+    // Do not add the shared section-title pill above it.
+    const showSectionTitle = !['home', 'job-feed', 'dashboard', 'progress-check'].includes(activeSection);
 
     if (loading && !jobSeekerData) {
         return (

@@ -803,7 +803,8 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         }
     };
 
-    const showSectionTitle = !['home', 'home-feed', 'dashboard'].includes(activeSection);
+    // The analytics dashboard renders its own animated title inside the panel.
+    const showSectionTitle = !['home', 'home-feed', 'dashboard', 'application-tracking'].includes(activeSection);
 
     if (loading) {
         return (

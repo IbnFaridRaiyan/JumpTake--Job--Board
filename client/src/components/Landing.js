@@ -344,7 +344,6 @@ const openAuth = (mode = 'login') => {
 
 const Landing = ({ onThemeChange }) => {
     const [homeTheme, setHomeTheme] = useState(getInitialPublicHomeTheme);
-    const [isMobileHeaderHidden, setIsMobileHeaderHidden] = useState(false);
     const [jobs, setJobs] = useState([]);
     const [workNews, setWorkNews] = useState([]);
     const [contentLoading, setContentLoading] = useState(true);
@@ -403,33 +402,6 @@ const Landing = ({ onThemeChange }) => {
             document.body.removeAttribute('data-public-home-theme');
         };
     }, [homeTheme, onThemeChange]);
-
-    useEffect(() => {
-        let previousScrollY = window.scrollY;
-
-        const handleScroll = () => {
-            const currentScrollY = Math.max(window.scrollY, 0);
-            const isMobile = window.matchMedia('(max-width: 760px)').matches;
-
-            if (!isMobile || currentScrollY <= 16) {
-                setIsMobileHeaderHidden(false);
-            } else if (currentScrollY - previousScrollY > 4) {
-                setIsMobileHeaderHidden(true);
-            } else if (previousScrollY - currentScrollY > 4) {
-                setIsMobileHeaderHidden(false);
-            }
-
-            previousScrollY = currentScrollY;
-        };
-
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        window.addEventListener('resize', handleScroll);
-
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-            window.removeEventListener('resize', handleScroll);
-        };
-    }, []);
 
     useEffect(() => {
         editorDraftRef.current = editorText;
@@ -791,7 +763,7 @@ const Landing = ({ onThemeChange }) => {
         <div className={`jt-public-home is-${homeTheme}`} data-public-theme={homeTheme}>
             <PublicLandingNav />
 
-            <header className={`jt-home-header${isMobileHeaderHidden ? ' is-mobile-scroll-hidden' : ''}`}>
+            <header className="jt-home-header">
                 <a className="jt-brand" href="#top" aria-label="JumpTake home">
                     <img src={activeLogo} alt="JumpTake" />
                 </a>

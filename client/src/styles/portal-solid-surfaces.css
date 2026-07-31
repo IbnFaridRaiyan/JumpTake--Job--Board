@@ -1,0 +1,91 @@
+/* Solid dark workspace surfaces for every portal section. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page > .dashboard-container > .main-content,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page > .dashboard-container > .main-content.mobile-dashboard-section-panel.is-open {
+  background: #050505 !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  border-radius: 1.25rem !important;
+  color: #f7f1ea !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-section-transition-shell > :is(
+  .portal-home-feed,
+  .notifications-page,
+  .talent-pool-container,
+  .friend-invitations-section,
+  .applications-container,
+  .interested-job-suggestion-section,
+  .resume-playground-section,
+  .blocks-manager-section,
+  .about-jumptake-section,
+  .settings-container,
+  .progress-dashboard
+) {
+  background: #080808 !important;
+  background-color: #080808 !important;
+  background-image: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 1.2rem !important;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.38) !important;
+  color: #f7f1ea !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-section-transition-shell > :is(
+  .portal-home-feed,
+  .notifications-page,
+  .talent-pool-container,
+  .friend-invitations-section,
+  .applications-container,
+  .interested-job-suggestion-section,
+  .resume-playground-section,
+  .blocks-manager-section,
+  .about-jumptake-section,
+  .settings-container,
+  .progress-dashboard
+) :is(h1, h2, h3, h4, p, label, li, span) {
+  color: #f7f1ea !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-section-transition-shell > .portal-home-feed :is(.portal-home-feed-scroll, .portal-home-tab-panel),
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-section-transition-shell > :is(.notifications-page, .talent-pool-container, .friend-invitations-section, .applications-container, .interested-job-suggestion-section, .resume-playground-section, .blocks-manager-section, .about-jumptake-section, .settings-container) > :is(.tabs-content, .settings-tab) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-section-transition-shell > :is(
+  .notifications-page,
+  .talent-pool-container,
+  .friend-invitations-section,
+  .applications-container,
+  .interested-job-suggestion-section,
+  .resume-playground-section,
+  .blocks-manager-section,
+  .about-jumptake-section,
+  .settings-container
+) :is(.notification-row, .candidate-card, .friend-invitation-card, .friend-outgoing-row, .application-card, .fresh-application-card, .bookmarked-job-card, .settings-card, .notification-card, .interested-job-card, .blocks-manager-card, .about-guide-grid article) {
+  background: #101010 !important;
+  background-color: #101010 !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #f7f1ea !important;
+}
+
+/* The dashboard greeting remains text-only: no fill below “Start your JumpTake day”. */
+html body #root .home-page .portal-default-hero {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Restore the expressive display face for the animated Activities word. */
+html body #root .home-page .notifications-page .notifications-activities-word {
+  display: inline-block !important;
+  font-family: "Chewy", "Lexend", system-ui, sans-serif !important;
+  font-size: 1.38em !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  line-height: 1 !important;
+  animation: jumptake-activities-loop 7.5s infinite both !important;
+}

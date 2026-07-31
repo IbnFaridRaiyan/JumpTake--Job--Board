@@ -8299,3 +8299,120 @@ html body #root .home-page .main-content:has(.progress-dashboard) > .mobile-sect
     letter-spacing: -0.045em;
   }
 }
+
+/* Dark Tailor Profile and My Feed actions are standalone icons, never rectangular controls. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .tailor-profile-section,
+  .portal-home-tab-panel-my-feed
+) .portal-social-post-card .portal-post-icon-rail {
+  border: 0 !important;
+  border-color: transparent !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .tailor-profile-section,
+  .portal-home-tab-panel-my-feed
+) .portal-social-post-card .portal-post-action-row :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle
+),
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .tailor-profile-section,
+  .portal-home-tab-panel-my-feed
+) .portal-social-post-card .portal-post-action-row :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle
+):is(:hover, :focus, :focus-visible, :active, .active, .has-reaction) {
+  border: 0 !important;
+  border-color: transparent !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/*
+ * Feed top navigation motion: keep the existing scroll-triggered behavior,
+ * but give the bar a slower, soft "bubble" settle when it leaves and returns.
+ * The slight overshoot in the easing makes the re-entry feel buoyant without
+ * moving the surrounding feed or changing the hide/show threshold.
+ */
+.portal-home-feed > .portal-home-tabs,
+.portal-home-tabs,
+html body #root .home-page.portal-modern .portal-home-feed > .portal-home-tabs {
+  will-change: transform, opacity, max-height, margin, padding !important;
+  transition:
+    transform 0.96s cubic-bezier(0.34, 1.22, 0.64, 1),
+    opacity 0.82s ease-in-out,
+    max-height 0.96s cubic-bezier(0.34, 1.22, 0.64, 1),
+    margin 0.96s cubic-bezier(0.34, 1.22, 0.64, 1),
+    padding 0.96s cubic-bezier(0.34, 1.22, 0.64, 1) !important;
+}
+
+.portal-home-feed.is-tabs-hidden > .portal-home-tabs {
+  transform: translateY(-1.65rem) scale(0.975) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+html body #root .home-page.portal-modern .portal-home-feed.is-tabs-hidden > .portal-home-tabs {
+  transform: translateY(-1.65rem) scale(0.975) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal-home-feed > .portal-home-tabs,
+  .portal-home-tabs,
+  html body #root .home-page.portal-modern .portal-home-feed > .portal-home-tabs {
+    transition-duration: 0.2s !important;
+  }
+}
+
+/*
+ * Bottom dock motion: a slower, soft spring for the existing mobile dock
+ * open/hidden states. Positioning and pointer-event behavior stay unchanged;
+ * only the visual settle is eased so the dock feels gently buoyant.
+ */
+@media (max-width: 768px) {
+  html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.portal-vertical-sidebar:is(.is-expanded, .is-collapsed),
+  html[data-theme] body[data-theme] #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.portal-vertical-sidebar:is(.is-expanded, .is-collapsed) {
+    transform: translate3d(-50%, 0, 0) scale(1) !important;
+    transform-origin: center bottom !important;
+    will-change: transform, opacity !important;
+    transition:
+      transform 1.02s cubic-bezier(0.34, 1.22, 0.64, 1),
+      opacity 0.86s ease-in-out,
+      visibility 0s linear 0s !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.portal-vertical-sidebar.is-hidden:is(.is-expanded, .is-collapsed),
+  html[data-theme] body[data-theme] #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.portal-vertical-sidebar.is-hidden:is(.is-expanded, .is-collapsed) {
+    transform: translate3d(-50%, calc(100% + 24px), 0) scale(0.975) !important;
+    transform-origin: center bottom !important;
+    will-change: transform, opacity !important;
+    transition:
+      transform 1.02s cubic-bezier(0.34, 1.22, 0.64, 1),
+      opacity 0.86s ease-in-out,
+      visibility 0s linear 1.02s !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (max-width: 768px) {
+  html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.portal-vertical-sidebar:is(.is-expanded, .is-collapsed),
+  html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.portal-vertical-sidebar.is-hidden:is(.is-expanded, .is-collapsed),
+  html[data-theme] body[data-theme] #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.portal-vertical-sidebar:is(.is-expanded, .is-collapsed),
+  html[data-theme] body[data-theme] #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.portal-vertical-sidebar.is-hidden:is(.is-expanded, .is-collapsed) {
+    transition-duration: 0.2s !important;
+  }
+}

@@ -5216,11 +5216,6 @@ const PortalHomeFeed = ({
                                 </span>
                             </div>
                         </div>
-                        {options.profilePreview && (
-                            <div className="portal-post-reach-row">
-                                {renderReachButton(post, postKey, 'portal-feed-reach-wrap', true)}
-                            </div>
-                        )}
                         {postBodyText && (
                             <div className={`portal-post-body-wrap ${isLongPostBody && !isPostBodyExpanded ? 'is-collapsed' : 'is-expanded'}`}>
                                 <p className="portal-post-body">{postBodyText}</p>
@@ -5307,71 +5302,73 @@ const PortalHomeFeed = ({
                                 </ul>
                             )}
                             <div className="portal-post-action-row">
-                                {!options.profilePreview && renderReachButton(post, postKey, 'portal-feed-reach-wrap')}
-                                <button
-                                    type="button"
-                                    className={`portal-reaction-trigger ${selectedReaction ? `has-reaction reaction-${selectedReaction.toLowerCase()}` : ''}`}
-                                    onClick={() => {
-                                        setOpenReactionPostId((openId) => (openId === postKey ? '' : postKey));
-                                        closeCommentComposer();
-                                        setOpenSharePostId('');
-                                        setOpenOptionsPostId('');
-                                        closeReachInsight();
-                                        setAnimatingReactionKey('');
-                                    }}
-                                    aria-expanded={isReactionMenuOpen}
-                                    aria-label="Choose reaction"
-                                >
-                                    {selectedReaction ? (
-                                        <ReactionIcon name={selectedReaction} />
-                                    ) : (
-                                        <>
-                                            <img className="portal-reaction-trigger-png" src={reactionButtonIcon} alt="" />
-                                            <LightReactionSmileIcon />
-                                        </>
-                                    )}
-                                </button>
-                                {reactionTotal > 0 && (
-                                    <span className="portal-reaction-trigger-count" aria-label={`${reactionTotal} reactions`}>
-                                        {formatCompactCount(reactionTotal)}
-                                    </span>
-                                )}
-                                <button
-                                    type="button"
-                                    className={`portal-comment-toggle ${hasViewerComment ? 'active' : ''}`}
-                                    onClick={() => toggleCommentComposer(postKey)}
-                                    aria-expanded={isCommentOpen}
-                                    aria-label="Comment"
-                                    title="Comment"
-                                >
-                                    <ReactionIcon name="Comment" />
-                                </button>
-                                {commentTotal > 0 && (
-                                    <span className="portal-comment-trigger-count" aria-label={`${commentTotal} comments`}>
-                                        {formatCompactCount(commentTotal)}
-                                    </span>
-                                )}
-                                <button
-                                    type="button"
-                                    className={`portal-share-toggle ${isShareOpen ? 'active' : ''}`}
-                                    onClick={(event) => toggleSharePicker(event, postKey)}
-                                    aria-expanded={isShareOpen}
-                                    aria-label="Share post"
-                                    title="Share"
-                                >
-                                    <SharePostIcon />
-                                </button>
-                                {canDeletePost && (
+                                <span className="portal-post-icon-rail">
                                     <button
                                         type="button"
-                                        className="portal-post-delete-toggle"
-                                        onClick={() => handleDeletePost(key, post)}
-                                        aria-label="Delete post"
-                                        title="Delete post"
+                                        className={`portal-reaction-trigger ${selectedReaction ? `has-reaction reaction-${selectedReaction.toLowerCase()}` : ''}`}
+                                        onClick={() => {
+                                            setOpenReactionPostId((openId) => (openId === postKey ? '' : postKey));
+                                            closeCommentComposer();
+                                            setOpenSharePostId('');
+                                            setOpenOptionsPostId('');
+                                            closeReachInsight();
+                                            setAnimatingReactionKey('');
+                                        }}
+                                        aria-expanded={isReactionMenuOpen}
+                                        aria-label="Choose reaction"
                                     >
-                                        <DeletePostIcon />
+                                        {selectedReaction ? (
+                                            <ReactionIcon name={selectedReaction} />
+                                        ) : (
+                                            <>
+                                                <img className="portal-reaction-trigger-png" src={reactionButtonIcon} alt="" />
+                                                <LightReactionSmileIcon />
+                                            </>
+                                        )}
                                     </button>
-                                )}
+                                    {reactionTotal > 0 && (
+                                        <span className="portal-reaction-trigger-count" aria-label={`${reactionTotal} reactions`}>
+                                            {formatCompactCount(reactionTotal)}
+                                        </span>
+                                    )}
+                                    <button
+                                        type="button"
+                                        className={`portal-comment-toggle ${hasViewerComment ? 'active' : ''}`}
+                                        onClick={() => toggleCommentComposer(postKey)}
+                                        aria-expanded={isCommentOpen}
+                                        aria-label="Comment"
+                                        title="Comment"
+                                    >
+                                        <ReactionIcon name="Comment" />
+                                    </button>
+                                    {commentTotal > 0 && (
+                                        <span className="portal-comment-trigger-count" aria-label={`${commentTotal} comments`}>
+                                            {formatCompactCount(commentTotal)}
+                                        </span>
+                                    )}
+                                    <button
+                                        type="button"
+                                        className={`portal-share-toggle ${isShareOpen ? 'active' : ''}`}
+                                        onClick={(event) => toggleSharePicker(event, postKey)}
+                                        aria-expanded={isShareOpen}
+                                        aria-label="Share post"
+                                        title="Share"
+                                    >
+                                        <SharePostIcon />
+                                    </button>
+                                    {canDeletePost && (
+                                        <button
+                                            type="button"
+                                            className="portal-post-delete-toggle"
+                                            onClick={() => handleDeletePost(key, post)}
+                                            aria-label="Delete post"
+                                            title="Delete post"
+                                        >
+                                            <DeletePostIcon />
+                                        </button>
+                                    )}
+                                </span>
+                                {renderReachButton(post, postKey, 'portal-feed-reach-wrap', options.profilePreview)}
                                 {isShareOpen && renderSharePicker(key, post)}
                             </div>
                         </div>
@@ -7308,7 +7305,7 @@ const PortalHomeFeed = ({
                 className="portal-home-feed-scroll"
                 onScroll={handleFeedScroll}
             >
-                <div key={activeTab} className="portal-home-tab-panel">
+                <div key={activeTab} className={`portal-home-tab-panel portal-home-tab-panel-${activeTab}`}>
                     {feedLoading ? (
                         <PortalPageSkeleton compact label="Loading posts" />
                     ) : (

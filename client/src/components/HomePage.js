@@ -15,6 +15,7 @@ import Inbox from './Inbox';
 import ResumePlayground from './ResumePlayground';
 import PortalHomeFeed from './PortalHomeFeed';
 import PortalDefaultLanding from './PortalDefaultLanding';
+import { writePortalDataCache } from '../utils/portalDataCache';
 import PortalAiButton from './PortalAiButton';
 import BlocksManager from './BlocksManager';
 import { clearBrowserAccountState } from '../utils/authStorage';
@@ -553,6 +554,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             }
 
             const threads = await response.json();
+            writePortalDataCache(`candidate-inbox:${userId}`, Array.isArray(threads) ? threads : []);
             const seenAt = Number(localStorage.getItem('jumptakeCandidateInboxSeenAt') || 0);
             const unseenCount = (Array.isArray(threads) ? threads : []).filter((thread) => {
                 const lastMessage = thread.messages?.[thread.messages.length - 1];

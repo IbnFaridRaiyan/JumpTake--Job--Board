@@ -9,12 +9,17 @@ import TalentPool from './TalentPool';
 import MessageCompanyProfileModal from './MessageCompanyProfileModal';
 import { apiUrl } from '../utils/apiUrl';
 import confirmAction from '../utils/confirmAction';
-import PortalPageSkeleton from './PortalPageSkeleton';
+import { readPortalDataCache, writePortalDataCache } from '../utils/portalDataCache';
 
 const stripHtml = (html = '') => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 const hasMessageContent = (html = '') => stripHtml(html).length > 0 || /<img\b/i.test(html);
 const PENDING_INBOX_CONTACT_KEY = 'jumptakePendingInboxContact';
 const MESSAGE_MENU_ANIMATION_MS = 180;
+const getInboxCacheKey = ({ mode, companyId, userId }) => (
+    mode === 'employer'
+        ? `employer-inbox:${companyId || ''}`
+        : `candidate-inbox:${userId || ''}`
+);
 
 const formatDateTime = (dateString) => {
     if (!dateString) {
@@ -31,11 +36,15 @@ const formatDateTime = (dateString) => {
 };
 
 const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
-    const [threads, setThreads] = useState([]);
+    const cacheKey = getInboxCacheKey({ mode, companyId, userId });
+    const cachedThreads = readPortalDataCache(cacheKey);
+    const [threads, setThreads] = useState(() => (
+        Array.isArray(cachedThreads) ? cachedThreads : []
+    ));
     const [selectedThread, setSelectedThread] = useState(null);
     const [pendingContact, setPendingContact] = useState(null);
     const [replyHtml, setReplyHtml] = useState('');
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(() => !Array.isArray(cachedThreads));
     const [sending, setSending] = useState(false);
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
@@ -99,6 +108,8 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
         const endpoint = isEmployer
             ? `/api/messages/company/${companyId}`
             : `/api/messages/user/${userId}`;
+        const requestCacheKey = getInboxCacheKey({ mode, companyId, userId });
+        const requestCachedThreads = readPortalDataCache(requestCacheKey);
 
         if ((isEmployer && !companyId) || (!isEmployer && !userId)) {
             setThreads([]);
@@ -106,7 +117,12 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
             return;
         }
 
-        setLoading(true);
+        if (Array.isArray(requestCachedThreads)) {
+            setThreads(requestCachedThreads);
+            setLoading(false);
+        } else {
+            setLoading(true);
+        }
         setError('');
 
         try {
@@ -124,6 +140,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
             const data = await response.json();
             const nextThreads = Array.isArray(data) ? data : [];
             setThreads(nextThreads);
+            writePortalDataCache(requestCacheKey, nextThreads);
 
             const nextPendingContact = readPendingInboxContact();
             if (nextPendingContact?.userId || nextPendingContact?.candidateId) {
@@ -620,7 +637,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
     }
 
     return (
-        <div className="inbox-container messenger-inbox">
+        <div className="inbox-container messenger-inbox" aria-busy={loading}>
             <div className="manage-jobs-header">
                 <h2><span className="portal-title-jello-text">Messages</span></h2>
             </div>
@@ -665,14 +682,12 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
 
             {activeTab === 'settings' ? <MessageSettings mode={mode} companyId={companyId} /> : null}
 
-            {!['compose', 'settings'].includes(activeTab) && (loading ? (
-                <PortalPageSkeleton compact label="Loading messages" />
-            ) : visibleThreads.length === 0 ? (
+            {!['compose', 'settings'].includes(activeTab) && (!loading && visibleThreads.length === 0 ? (
                 <div className="no-jobs-message">
                     <h3>No {activeTab === 'new' ? 'messages' : activeTab === 'blocked' ? 'blocked contacts' : activeTab} here</h3>
                     <p>{activeTab === 'requests' ? 'Introductory messages from people outside your friends list will appear here.' : activeTab === 'blocked' ? 'Contacts blocked only in Messages will appear here.' : 'Conversations for this section will appear here.'}</p>
                 </div>
-            ) : (
+            ) : visibleThreads.length > 0 ? (
                 <div className="inbox-thread-list messenger-thread-list">
                     {visibleThreads.map((thread) => {
                         const lastMessage = thread.messages?.[thread.messages.length - 1];
@@ -719,7 +734,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                         );
                     })}
                 </div>
-            ))}
+            ) : null)}
 
             <div className="page-footer-actions">
                 <button className="back-button" onClick={onFooterBack || onBack}>Back</button>

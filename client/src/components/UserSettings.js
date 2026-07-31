@@ -300,7 +300,7 @@ const UserSettings = ({ user, onLogout, appMode, onAppModeChange }) => {
                     </div>
                     <button 
                         type="submit" 
-                        className="settings-button primary"
+                        className="settings-button primary settings-compact-submit"
                         disabled={isSubmitting}
                     >
                         {isSubmitting ? 'Updating...' : 'Update Email'}
@@ -346,7 +346,7 @@ const UserSettings = ({ user, onLogout, appMode, onAppModeChange }) => {
                     </div>
                     <button 
                         type="submit" 
-                        className="settings-button primary"
+                        className="settings-button primary settings-compact-submit"
                         disabled={isSubmitting}
                     >
                         {isSubmitting ? 'Updating...' : 'Update Password'}
@@ -396,7 +396,7 @@ const UserSettings = ({ user, onLogout, appMode, onAppModeChange }) => {
                     </div>
                     <button 
                         type="submit" 
-                        className="settings-button primary"
+                        className="settings-button primary settings-compact-submit"
                         disabled={isSubmitting}
                     >
                         {isSubmitting ? 'Updating...' : 'Update Password'}

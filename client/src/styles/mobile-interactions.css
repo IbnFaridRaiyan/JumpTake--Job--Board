@@ -151,3 +151,25 @@ html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .ta
     padding: 0.65rem 0.72rem !important;
   }
 }
+
+/* Candidates already has the large introduction title; remove its duplicate title row surface. */
+html body #root .home-page .talent-pool-container.candidate-view-candidates .talent-pool-header,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .talent-pool-header:is(:hover, :focus, :focus-within) {
+  justify-content: flex-end !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .talent-pool-container.candidate-view-candidates .talent-pool-header::before,
+html body #root .home-page .talent-pool-container.candidate-view-candidates .talent-pool-header::after {
+  content: none !important;
+  display: none !important;
+}
+
+html body #root .home-page .talent-pool-container.candidate-view-candidates .talent-pool-header > h2 {
+  display: none !important;
+}

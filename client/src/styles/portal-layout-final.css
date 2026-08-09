@@ -9,6 +9,39 @@ html:not([data-theme="dark"]) {
   --resume-editor-toolbar-ink: #0b0f14;
 }
 
+/* Light discovery/profile feeds use the same Inter typography system as the
+   dark portal. This changes type only—theme colors and layout stay intact. */
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-tab-panel:is(
+  .portal-home-tab-panel-work-news,
+  .portal-home-tab-panel-job-posts,
+  .portal-home-tab-panel-talent-stories,
+  .portal-home-tab-panel-create-story,
+  .portal-home-tab-panel-my-feed
+),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-tab-panel:is(
+  .portal-home-tab-panel-work-news,
+  .portal-home-tab-panel-job-posts,
+  .portal-home-tab-panel-talent-stories,
+  .portal-home-tab-panel-create-story,
+  .portal-home-tab-panel-my-feed
+) *,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-home-tab-panel:is(
+  .portal-home-tab-panel-work-news,
+  .portal-home-tab-panel-job-posts,
+  .portal-home-tab-panel-talent-stories,
+  .portal-home-tab-panel-create-story,
+  .portal-home-tab-panel-my-feed
+),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-home-tab-panel:is(
+  .portal-home-tab-panel-work-news,
+  .portal-home-tab-panel-job-posts,
+  .portal-home-tab-panel-talent-stories,
+  .portal-home-tab-panel-create-story,
+  .portal-home-tab-panel-my-feed
+) * {
+  font-family: Inter, "Aptos", "Segoe UI", Roboto, Arial, sans-serif !important;
+}
+
 /* Country picker remains compact while long country lists scroll internally. */
 html body #root .home-page .portal-job-country-menu {
   max-height: min(19rem, 55vh) !important;

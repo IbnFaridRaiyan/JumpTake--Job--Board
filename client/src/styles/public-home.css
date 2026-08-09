@@ -523,6 +523,17 @@
   animation: jt-float 6s ease-in-out infinite;
 }
 
+.jt-floating-job-content,
+.jt-floating-job-match {
+  animation: jt-role-swap 420ms cubic-bezier(.2, .8, .2, 1) both;
+}
+
+@keyframes jt-role-swap {
+  0% { opacity: 0; transform: translateY(9px) scale(.97); }
+  58% { opacity: 1; transform: translateY(-2px) scale(1.025); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 .jt-floating-resume {
   right: -30px;
   bottom: 92px;

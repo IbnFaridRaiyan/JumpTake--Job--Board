@@ -387,6 +387,15 @@ const getPublicJobCountry = (location = '') => {
     return parts.length > 1 && finalPart.length > 2 ? finalPart : '';
 };
 
+const PUBLIC_FEATURED_ROLE_FALLBACKS = [
+    { _id: 'featured-uk', title: 'Product Designer', companyName: 'Northstar Studio', location: 'London, United Kingdom' },
+    { _id: 'featured-us', title: 'Software Engineer', companyName: 'Brightline Labs', location: 'New York, United States' },
+    { _id: 'featured-canada', title: 'Data Analyst', companyName: 'Maple Works', location: 'Toronto, Canada' },
+    { _id: 'featured-germany', title: 'Product Manager', companyName: 'Neue Systems', location: 'Berlin, Germany' },
+    { _id: 'featured-australia', title: 'UX Researcher', companyName: 'Harbour Digital', location: 'Sydney, Australia' },
+    { _id: 'featured-singapore', title: 'Growth Strategist', companyName: 'Meridian Group', location: 'Singapore, Singapore' }
+];
+
 const openAuth = (mode = 'login') => {
     if (typeof window === 'undefined') {
         return;
@@ -403,6 +412,7 @@ const openAuth = (mode = 'login') => {
 const Landing = ({ onThemeChange }) => {
     const [homeTheme, setHomeTheme] = useState(getInitialPublicHomeTheme);
     const [jobs, setJobs] = useState([]);
+    const [featuredJobIndex, setFeaturedJobIndex] = useState(0);
     const [workNews, setWorkNews] = useState([]);
     const [contentLoading, setContentLoading] = useState(true);
     const [contentError, setContentError] = useState('');
@@ -516,6 +526,28 @@ const Landing = ({ onThemeChange }) => {
             cancelled = true;
         };
     }, []);
+
+    const featuredRoleJobs = useMemo(() => {
+        const countryJobs = new Map();
+        [...jobs, ...PUBLIC_FEATURED_ROLE_FALLBACKS].forEach((job) => {
+            const country = getPublicJobCountry(job.location);
+            if (country && !countryJobs.has(country)) countryJobs.set(country, job);
+        });
+        return [...countryJobs.values()];
+    }, [jobs]);
+
+    useEffect(() => {
+        if (featuredRoleJobs.length < 2) {
+            setFeaturedJobIndex(0);
+            return undefined;
+        }
+
+        const rotationTimer = window.setInterval(() => {
+            setFeaturedJobIndex((index) => (index + 1) % featuredRoleJobs.length);
+        }, 4000);
+
+        return () => window.clearInterval(rotationTimer);
+    }, [featuredRoleJobs.length]);
 
     useEffect(() => {
         const revealItems = document.querySelectorAll('.jt-reveal');
@@ -938,12 +970,12 @@ const Landing = ({ onThemeChange }) => {
 
                         <article className="jt-floating-card jt-floating-job">
                             <div className="jt-mini-logo"><Icon name="briefcase" /></div>
-                            <div>
+                            <div key={featuredRoleJobs[featuredJobIndex % Math.max(featuredRoleJobs.length, 1)]?._id || featuredJobIndex} className="jt-floating-job-content">
                                 <span>Role matched</span>
-                                <strong>{jobs[0]?.title || 'Product Designer'}</strong>
-                                <small>{jobs[0]?.company?.name || 'A growing team'} · {jobs[0]?.location || 'Flexible'}</small>
+                                <strong>{featuredRoleJobs[featuredJobIndex % Math.max(featuredRoleJobs.length, 1)]?.title || 'Product Designer'}</strong>
+                                <small>{featuredRoleJobs[featuredJobIndex % Math.max(featuredRoleJobs.length, 1)]?.company?.name || featuredRoleJobs[featuredJobIndex % Math.max(featuredRoleJobs.length, 1)]?.companyName || 'A growing team'} · {featuredRoleJobs[featuredJobIndex % Math.max(featuredRoleJobs.length, 1)]?.location || 'Flexible'}</small>
                             </div>
-                            <b>92%</b>
+                            <b key={`match-${featuredJobIndex}`} className="jt-floating-job-match">{90 + (featuredJobIndex % 9)}%</b>
                         </article>
 
                         <article className="jt-floating-card jt-floating-resume">

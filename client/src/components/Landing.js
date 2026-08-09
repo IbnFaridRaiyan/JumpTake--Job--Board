@@ -533,7 +533,12 @@ const Landing = ({ onThemeChange }) => {
             const country = getPublicJobCountry(job.location);
             if (country && !countryJobs.has(country)) countryJobs.set(country, job);
         });
-        return [...countryJobs.values()];
+        return [...countryJobs.entries()]
+            .sort(([countryA], [countryB]) => {
+                const priority = (country) => country === 'United Kingdom' ? 0 : country.toLowerCase() === 'bangladesh' ? 2 : 1;
+                return priority(countryA) - priority(countryB);
+            })
+            .map(([, job]) => job);
     }, [jobs]);
 
     useEffect(() => {

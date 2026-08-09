@@ -1,0 +1,36 @@
+/* Loaded last so legacy avatar scale rules cannot enlarge the footer-adjacent cards again. */
+body[data-public-home-theme] #root .jt-public-home .jt-step-avatar {
+  transform: scale(2.12) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home .jt-public-pricing {
+  background: rgba(255, 250, 243, .88) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home .jt-public-price-card {
+  background: #fff !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home .jt-public-pricing {
+  background: rgba(10, 12, 13, .9) !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home .jt-public-price-card {
+  background: #101213 !important;
+}
+
+body[data-public-home-theme="dark"] #root .home-page.portal-modern .pricing-page .pricing-card .pricing-popular,
+body[data-public-home-theme="dark"] #root .portal-modern .pricing-page .pricing-popular,
+#root .home-page.portal-modern .pricing-page .pricing-popular {
+  border: 1px solid rgba(255, 157, 91, .34) !important;
+  background: #6f260b !important;
+  background-image: none !important;
+  color: #fff4eb !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 760px) {
+  body[data-public-home-theme] #root .jt-public-home .jt-step-avatar {
+    transform: scale(1.85) !important;
+  }
+}

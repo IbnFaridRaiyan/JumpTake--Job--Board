@@ -21,6 +21,7 @@ import { clearBrowserAccountState } from '../utils/authStorage';
 import JOB_INTEREST_OPTIONS from '../utils/jobInterestOptions';
 import GuidedPortalTour from './GuidedPortalTour';
 import PortalPageSkeleton from './PortalPageSkeleton';
+import Pricing from './Pricing';
 
 const CANDIDATE_SECTION_IDS = new Set([
     'dashboard',
@@ -46,7 +47,8 @@ const CANDIDATE_SECTION_IDS = new Set([
     'about-jumptake',
     'progress-check',
     'blocks',
-    'settings'
+    'settings',
+    'pricing'
 ]);
 
 const CANDIDATE_SECTION_STORAGE_KEY = 'jumptakeCandidateSection';
@@ -284,7 +286,8 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         'about-jumptake': 'About JumpTake',
         'progress-check': 'Progress Check',
         blocks: 'Blocks',
-        settings: 'Settings'
+        settings: 'Settings',
+        pricing: 'Pricing'
     };
 
     useEffect(() => {
@@ -749,8 +752,13 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             }
         };
 
+        const handleOpenPricing = () => openSection('pricing');
         window.addEventListener('jumptake-ai-open-section', handleAiOpenSection);
-        return () => window.removeEventListener('jumptake-ai-open-section', handleAiOpenSection);
+        window.addEventListener('jumptake-open-pricing', handleOpenPricing);
+        return () => {
+            window.removeEventListener('jumptake-ai-open-section', handleAiOpenSection);
+            window.removeEventListener('jumptake-open-pricing', handleOpenPricing);
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeSection, mobileSectionVisible, user?.id]);
 
@@ -768,7 +776,8 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         { id: 'bookmarks', label: 'Bookmarks', icon: 'star' },
         { id: 'interested-jobs', label: 'Job Preferences', icon: 'briefcase' },
         { id: 'resume-playground', label: 'Create', icon: 'draft' },
-        { id: 'blocks', label: 'Blocks', icon: 'block' }
+        { id: 'blocks', label: 'Blocks', icon: 'block' },
+        { id: 'pricing', label: 'Pricing', icon: 'pricing' }
     ].map((item) => ({
         ...item,
         active: item.id === 'applications'
@@ -1031,6 +1040,8 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     appMode={appMode}
                     onAppModeChange={onAppModeChange}
                 />;
+            case 'pricing':
+                return <Pricing mode="candidate" />;
             default:
                 return <PortalHomeFeed
                     mode="candidate"

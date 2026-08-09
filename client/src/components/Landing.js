@@ -27,6 +27,7 @@ import {
 import '../styles/public-home.css';
 import '../styles/public-home-dark-tools.css';
 import '../styles/public-home-light.css';
+import '../styles/public-home-pricing-final.css';
 
 const PUBLIC_HOME_THEME_KEY = 'jumptakePublicHomeTheme';
 const PUBLIC_NETWORK_AVATARS = [
@@ -1573,6 +1574,28 @@ const Landing = ({ onThemeChange }) => {
                                 <p>{copy}</p>
                             </article>
                         ))}
+                    </div>
+                </section>
+
+                <section className="jt-public-pricing" id="pricing">
+                    <div className="jt-public-pricing-copy jt-reveal">
+                        <span className="jt-kicker">Choose your momentum</span>
+                        <h2>Start free. <em>Stand out</em> when you are ready.</h2>
+                        <p>Unlock more JumpTake AI conversations and priority visibility across Talent Stories and employer talent searches.</p>
+                    </div>
+                    <div className="jt-public-pricing-grid">
+                        <article className="jt-public-price-card jt-reveal">
+                            <span>Basic</span><h3>Free</h3><p>3 AI messages and all the essentials to get moving.</p>
+                            <button type="button" onClick={() => openAuth('register')}>Start free <Icon name="arrow" /></button>
+                        </article>
+                        <article className="jt-public-price-card is-premium jt-reveal">
+                            <i>Most popular</i><span>Premium</span><h3>£5<small>/month</small></h3><p>50 AI messages daily plus Stand Out priority placement.</p>
+                            <button type="button" onClick={() => openAuth('register')}>Choose Premium <Icon name="arrow" /></button>
+                        </article>
+                        <article className="jt-public-price-card is-extreme jt-reveal">
+                            <span>Extreme</span><h3>£12<small>/month</small></h3><p>Unlimited AI messages and maximum profile visibility.</p>
+                            <button type="button" onClick={() => openAuth('register')}>Go Extreme <Icon name="arrow" /></button>
+                        </article>
                     </div>
                 </section>
 

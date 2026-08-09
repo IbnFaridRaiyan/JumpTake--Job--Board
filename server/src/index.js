@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const apiRoutes = require('./routes/api');
+const billingController = require('./controllers/billingController');
 connectDB();
 
 const app = express();
@@ -24,6 +25,8 @@ app.use(cors(
     : {}
 ));
 
+// Stripe signature verification requires the untouched request body.
+app.post('/api/billing/webhook', express.raw({ type: 'application/json' }), billingController.handleWebhook);
 
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));

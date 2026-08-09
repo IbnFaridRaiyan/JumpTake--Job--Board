@@ -1,6 +1,7 @@
 const FeedPost = require('../models/FeedPost');
 const { createNotification } = require('./notificationController');
 const { getAuthenticatedPayload } = require('../utils/candidateAuth');
+const User = require('../models/User');
 
 const VALID_TYPES = new Set(['work-news', 'talent-story']);
 const VALID_AUDIENCES = new Set(['everyone', 'friends', 'only-me']);
@@ -79,6 +80,18 @@ const getFeedPosts = async (req, res) => {
         }
 
         const posts = await FeedPost.find(query).sort({ createdAt: -1 }).limit(200);
+        if (query.type === 'talent-story') {
+            const candidateIds = [...new Set(posts.filter((post) => post.authorType === 'candidate').map((post) => String(post.authorId)))];
+            const featuredUsers = await User.find({
+                _id: { $in: candidateIds },
+                'membership.plan': { $in: ['premium', 'extreme'] },
+                'membership.status': { $in: ['active', 'trialing'] },
+                'membership.standOutEnabled': true
+            }).select('_id');
+            const featuredIds = new Set(featuredUsers.map((user) => String(user._id)));
+            posts.sort((a, b) => Number(featuredIds.has(String(b.authorId))) - Number(featuredIds.has(String(a.authorId))) || new Date(b.createdAt) - new Date(a.createdAt));
+            return res.status(200).json(posts.map((post) => ({ ...serializePost(post), standOut: featuredIds.has(String(post.authorId)) })));
+        }
         return res.status(200).json(posts.map(serializePost));
     } catch (error) {
         return res.status(500).json({

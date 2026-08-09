@@ -49,10 +49,27 @@ Set these in Render:
 - `JWT_SECRET` = a strong random secret
 - `GEMINI_API_KEY` = your Gemini API key
 - `NODE_ENV` = `production`
+- `STRIPE_SECRET_KEY` = the Stripe secret API key (`sk_test_...` while testing)
+- `STRIPE_WEBHOOK_SECRET` = the signing secret for the Render webhook endpoint (`whsec_...`)
+- `STRIPE_PREMIUM_PRICE_ID` = the recurring £5/month Premium Stripe Price ID
+- `STRIPE_EXTREME_PRICE_ID` = the recurring £12/month Extreme Stripe Price ID
 
 Optional:
 
 - `CLIENT_URL` = only set this if you later split frontend and backend across different domains
+
+### 5. Configure Stripe subscriptions
+
+1. In Stripe Product catalogue, create **JumpTake Premium** with a recurring GBP price of **£5 monthly**.
+2. Create **JumpTake Extreme** with a recurring GBP price of **£12 monthly**.
+3. Copy each `price_...` identifier into the matching Render environment variable above.
+4. In Stripe Workbench/Webhooks, add `https://YOUR-RENDER-DOMAIN/api/billing/webhook`.
+5. Subscribe it to `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`, and `customer.subscription.deleted`.
+6. Copy that endpoint's `whsec_...` signing secret into `STRIPE_WEBHOOK_SECRET`.
+7. Add payout bank details only in Stripe Dashboard under payout/bank settings; never place bank details in Render or this repository.
+8. Redeploy the Render service after saving the environment variables.
+
+Leave `REACT_APP_API_URL` unset for this single-service deployment. If it points at a static frontend or an older service, `/api/billing/checkout` returns HTML rather than the required JSON response.
 
 ## Why This Works On Other Devices
 

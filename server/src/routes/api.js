@@ -19,6 +19,7 @@ const savedPostController = require('../controllers/savedPostController');
 const jobInvitationController = require('../controllers/jobInvitationController');
 const candidateNetworkController = require('../controllers/candidateNetworkController');
 const publicAssistantController = require('../controllers/publicAssistantController');
+const billingController = require('../controllers/billingController');
 const socialAuthController = require('../controllers/socialAuthController');
 const adminRoutes = require('./admin');
 const User = require('../models/User');
@@ -28,6 +29,11 @@ const { getAuthenticatedPayload } = require('../utils/candidateAuth');
 
 router.use('/admin', adminRoutes);
 router.post('/public-assistant', publicAssistantController.askPublicAssistant);
+router.get('/billing/membership', billingController.getMembership);
+router.post('/billing/checkout', billingController.createCheckout);
+router.post('/billing/portal', billingController.createPortal);
+router.put('/billing/stand-out', billingController.setStandOut);
+router.post('/billing/redeem', billingController.redeemCode);
 router.post('/public-assistant/document-samples', (req, res, next) => {
     try {
         getAuthenticatedPayload(req);
@@ -144,16 +150,21 @@ router.get('/job-seekers', async (req, res) => {
             return res.status(403).json({ error: 'The full candidate directory is available only to employers' });
         }
         const jobSeekers = await JobSeeker.find()
-            .populate('user', 'jumptakeId')
+            .populate('user', 'jumptakeId membership.plan membership.status membership.standOutEnabled')
             .sort({ createdAt: -1 });
-        res.json(jobSeekers.map((candidate) => {
+        const serializedCandidates = jobSeekers.map((candidate) => {
             const serialized = candidate.toObject();
+            const standOut = ['premium', 'extreme'].includes(candidate.user?.membership?.plan)
+                && ['active', 'trialing'].includes(candidate.user?.membership?.status)
+                && candidate.user?.membership?.standOutEnabled === true;
             return {
                 ...serialized,
                 user: candidate.user?._id || candidate.user || null,
-                jumptakeId: candidate.user?.jumptakeId || null
+                jumptakeId: candidate.user?.jumptakeId || null,
+                standOut
             };
-        }));
+        }).sort((a, b) => Number(b.standOut) - Number(a.standOut) || new Date(b.createdAt) - new Date(a.createdAt));
+        res.json(serializedCandidates);
     } catch (error) {
         res.status(error.status || 500).json({ error: error.message });
     }

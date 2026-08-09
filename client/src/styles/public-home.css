@@ -2923,6 +2923,143 @@
   }
 }
 
+/* Public membership showcase between the process and final brand callout. */
+body[data-public-home-theme] #root .jt-public-home .jt-public-pricing {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 1rem auto 5rem;
+  padding: clamp(1.5rem, 4vw, 3.4rem);
+  border: 1px solid var(--jt-line);
+  border-radius: 32px;
+  background: color-mix(in srgb, var(--jt-panel) 92%, transparent);
+  box-shadow: var(--jt-shadow);
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-pricing-copy {
+  max-width: 760px;
+  margin-bottom: 2rem;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-pricing-copy h2 {
+  margin: .65rem 0 .8rem;
+  font-size: clamp(2.25rem, 5vw, 4.8rem);
+  line-height: .96;
+  letter-spacing: -.055em;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-pricing-copy h2 em {
+  color: var(--jt-teal);
+  font-style: normal;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-pricing-copy p {
+  max-width: 650px;
+  color: var(--jt-muted);
+  font-size: 1.02rem;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-price-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 270px;
+  padding: 1.5rem;
+  border: 1px solid var(--jt-line);
+  border-radius: 22px;
+  background: var(--jt-card);
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-price-card > span {
+  font-size: .74rem;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-price-card h3 {
+  margin: .85rem 0 .4rem;
+  font-size: 2.8rem;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-price-card h3 small {
+  font-size: .78rem;
+  color: var(--jt-muted);
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-price-card p {
+  color: var(--jt-muted);
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-price-card button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .7rem;
+  width: 100%;
+  margin-top: auto;
+  padding: .9rem 1rem;
+  border: 0;
+  border-radius: 13px;
+  background: var(--jt-teal);
+  color: #071310;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-price-card.is-premium button {
+  background: var(--jt-lime);
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-price-card.is-extreme button {
+  background: #94405a;
+  color: #fff;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-public-price-card > i {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: .38rem .6rem;
+  border-radius: 999px;
+  background: #9d3f12;
+  color: #fff4e9;
+  font-size: .62rem;
+  font-style: normal;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+/* The cutout people should remain bold without overpowering the cards. */
+body[data-public-home-theme] #root .jt-public-home .jt-step-avatar {
+  transform: scale(2.12) !important;
+}
+
+@media (max-width: 760px) {
+  body[data-public-home-theme] #root .jt-public-home .jt-public-pricing {
+    width: calc(100% - 1rem);
+    margin-bottom: 3rem;
+    padding: 1.15rem;
+    border-radius: 24px;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-public-pricing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-public-price-card {
+    min-height: 240px;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-step-avatar {
+    transform: scale(1.85) !important;
+  }
+}
+
 /* One-surface public document editor: the formatted page is the editor. */
 body[data-public-home-theme] #root .jt-public-home .jt-ai-editor-document-shell {
   min-width: 0 !important;

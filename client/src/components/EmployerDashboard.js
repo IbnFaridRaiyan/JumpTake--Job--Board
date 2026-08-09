@@ -21,6 +21,7 @@ import SavedPosts from './SavedPosts';
 import { clearBrowserAccountState } from '../utils/authStorage';
 import GuidedPortalTour from './GuidedPortalTour';
 import PortalPageSkeleton from './PortalPageSkeleton';
+import Pricing from './Pricing';
 
 const EMPLOYER_SECTION_IDS = new Set([
     'inbox',
@@ -42,7 +43,8 @@ const EMPLOYER_SECTION_IDS = new Set([
     'company-profile',
     'about-jumptake',
     'application-tracking',
-    'settings'
+    'settings',
+    'pricing'
 ]);
 
 const EMPLOYER_SECTION_STORAGE_KEY = 'jumptakeEmployerSection';
@@ -127,7 +129,8 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         'company-profile': 'Company Profile',
         'about-jumptake': 'About JumpTake',
         'application-tracking': 'Application Tracking System',
-        settings: 'Settings'
+        settings: 'Settings',
+        pricing: 'Pricing'
     };
 
     useEffect(() => {
@@ -442,8 +445,13 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
             }
         };
 
+        const handleOpenPricing = () => openSection('pricing');
         window.addEventListener('jumptake-ai-open-section', handleAiOpenSection);
-        return () => window.removeEventListener('jumptake-ai-open-section', handleAiOpenSection);
+        window.addEventListener('jumptake-open-pricing', handleOpenPricing);
+        return () => {
+            window.removeEventListener('jumptake-ai-open-section', handleAiOpenSection);
+            window.removeEventListener('jumptake-open-pricing', handleOpenPricing);
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeSection, mobileSectionVisible, employer?.companyId]);
 
@@ -462,7 +470,8 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         { id: 'bookmarked-talents', label: 'Bookmarked Talents', icon: 'star' },
         { id: 'saved-posts', label: 'Saved Posts', icon: 'star' },
         { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 },
-        { id: 'create-document', label: 'Create Document', icon: 'profile' }
+        { id: 'create-document', label: 'Create Document', icon: 'profile' },
+        { id: 'pricing', label: 'Pricing', icon: 'pricing' }
     ].map((item) => ({
         ...item,
         active: activeSection === item.id,
@@ -687,6 +696,8 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                     appMode={appMode}
                     onAppModeChange={onAppModeChange}
                 />;
+            case 'pricing':
+                return <Pricing mode="employer" />;
             default:
                 return (
                     <div className="dashboard-content">

@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { getAccountFromRequest, consumeAiMessage } = require('../utils/membership');
 
 const SITE_GUIDE = `
 JumpTake is a two-sided job platform.
@@ -1604,6 +1605,21 @@ const askPublicAssistant = async (req, res) => {
 
   if (!message) {
     return res.status(400).json({ error: 'Please enter a question.' });
+  }
+
+  // Portal conversations are authenticated and quota-controlled server-side.
+  // The public homepage demo remains available without an account token.
+  if (String(req.headers.authorization || '').startsWith('Bearer ')) {
+    try {
+      const { account } = await getAccountFromRequest(req);
+      await consumeAiMessage(account);
+    } catch (error) {
+      return res.status(error.status || 500).json({
+        error: error.message,
+        code: error.code,
+        membership: error.entitlement
+      });
+    }
   }
 
   let action = inferAction(message, context);

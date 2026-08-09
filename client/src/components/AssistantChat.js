@@ -200,9 +200,13 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
 
         try {
             const resolvedContext = typeof context === 'function' ? context() : context;
+            const token = localStorage.getItem('token') || localStorage.getItem('employerToken');
             const response = await fetch(apiUrl('/api/public-assistant'), {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { Authorization: `Bearer ${token}` } : {})
+                },
                 body: JSON.stringify({
                     message: question,
                     history: assistantMessages.slice(-8).map(({ role, text }) => ({ role, text })),
@@ -211,6 +215,9 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
             });
             const data = await response.json();
             if (!response.ok) {
+                if (data.code === 'AI_PLAN_LIMIT_REACHED') {
+                    window.dispatchEvent(new CustomEvent('jumptake-open-pricing'));
+                }
                 throw new Error(data.error || 'JumpTake assistant is unavailable.');
             }
             setAssistantMessages((messages) => [...messages, { role: 'assistant', text: data.answer, time: formatAssistantTime() }]);

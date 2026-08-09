@@ -97,6 +97,18 @@ const UserSchema = new mongoose.Schema({
       type: Boolean,
       default: true
     }
+  },
+  membership: {
+    plan: { type: String, enum: ['basic', 'premium', 'extreme'], default: 'basic' },
+    status: { type: String, default: 'active' },
+    stripeCustomerId: { type: String, default: '', index: true },
+    stripeSubscriptionId: { type: String, default: '', index: true },
+    currentPeriodEnd: { type: Date, default: null },
+    cancelAtPeriodEnd: { type: Boolean, default: false },
+    standOutEnabled: { type: Boolean, default: false },
+    basicMessagesUsed: { type: Number, default: 0 },
+    aiUsageDay: { type: String, default: '' },
+    aiMessagesUsed: { type: Number, default: 0 }
   }
 }, { timestamps: true });
 

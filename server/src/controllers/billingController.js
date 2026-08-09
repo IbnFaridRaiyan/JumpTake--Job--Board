@@ -28,8 +28,9 @@ const appUrl = (req) => {
 
 const pricingReturnUrl = (req, accountType, state = '') => {
   const portal = accountType === 'employer' ? 'employer' : 'candidate';
+  const portalPath = accountType === 'employer' ? '/employer-dashboard' : '/home';
   const query = state ? `?billing=${encodeURIComponent(state)}` : '';
-  return `${appUrl(req)}/${query}#${portal}:pricing`;
+  return `${appUrl(req)}${portalPath}${query}#${portal}:pricing`;
 };
 
 const requireStripe = () => {
@@ -89,7 +90,7 @@ exports.createCheckout = async (req, res) => {
       mode: isDemo ? 'payment' : 'subscription', customer: customerId,
       line_items: [{ price: priceIds[plan], quantity: 1 }],
       allow_promotion_codes: true,
-      success_url: `${appUrl(req)}/?billing=success&session_id={CHECKOUT_SESSION_ID}#${accountType === 'employer' ? 'employer' : 'candidate'}:pricing`,
+      success_url: `${appUrl(req)}${accountType === 'employer' ? '/employer-dashboard' : '/home'}?billing=success&session_id={CHECKOUT_SESSION_ID}#${accountType === 'employer' ? 'employer' : 'candidate'}:pricing`,
       cancel_url: pricingReturnUrl(req, accountType, 'cancelled'),
       ...(isDemo
         ? { payment_intent_data: { metadata: { plan, accountId: String(account._id), accountType } } }

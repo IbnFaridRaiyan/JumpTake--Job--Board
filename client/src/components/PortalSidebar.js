@@ -93,12 +93,29 @@ const PortalSidebar = ({
 
         const html = document.documentElement;
         const body = document.body;
+        const scrollY = window.scrollY;
+        const previousHtmlOverflow = html.style.overflow;
+        const previousBodyOverflow = body.style.overflow;
+        const previousBodyPosition = body.style.position;
+        const previousBodyTop = body.style.top;
+        const previousBodyWidth = body.style.width;
         html.classList.add('portal-menu-scroll-locked');
         body.classList.add('portal-menu-scroll-locked');
+        html.style.overflow = 'hidden';
+        body.style.overflow = 'hidden';
+        body.style.position = 'fixed';
+        body.style.top = `-${scrollY}px`;
+        body.style.width = '100%';
 
         return () => {
             html.classList.remove('portal-menu-scroll-locked');
             body.classList.remove('portal-menu-scroll-locked');
+            html.style.overflow = previousHtmlOverflow;
+            body.style.overflow = previousBodyOverflow;
+            body.style.position = previousBodyPosition;
+            body.style.top = previousBodyTop;
+            body.style.width = previousBodyWidth;
+            window.scrollTo({ top: scrollY, behavior: 'auto' });
         };
     }, [menuOpen]);
 

@@ -152,6 +152,109 @@ html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .ta
   }
 }
 
+/* Dark bookmark empty states must not inherit the shared light icon tile. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .bookmarks-hub-container,
+  .candidate-bookmarked-container,
+  .bookmarked-talents-container,
+  .bookmarked-jobs-container,
+  .saved-posts-section
+) :is(.no-candidates, .no-jobs-message, .portal-feed-empty):not(:has(.empty-state-image))::before {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background-color: #101010 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4f4f4' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 5h16l2 10v4H2v-4L4 5Z'/%3E%3Cpath d='M2 15h6l1.5 2h5L16 15h6'/%3E%3Cpath d='M9 9h6'/%3E%3C/svg%3E") !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .bookmarks-hub-container,
+  .candidate-bookmarked-container,
+  .bookmarked-talents-container,
+  .bookmarked-jobs-container,
+  .saved-posts-section
+) :is(.no-candidates, .no-jobs-message, .portal-feed-empty) > .empty-state-image {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background: #101010 !important;
+  background-color: #101010 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #f4f4f4 !important;
+}
+
+/* Give every dark post action rail protected space so no control is edge-clipped. */
+html[data-theme="dark"] body[data-theme="dark"] #root :is(
+  .portal-home-feed,
+  .portal-profile-detail-backdrop,
+  .candidate-profile-popup,
+  .tailor-profile-section,
+  .saved-posts-section,
+  .portal-post-detail-modal
+) :is(.portal-social-post-card, .portal-profile-preview-post-card, .candidate-profile-home-post-card, .saved-post-card) .portal-post-action-cluster {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding-inline: 0.28rem !important;
+  overflow: visible !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root :is(
+  .portal-home-feed,
+  .portal-profile-detail-backdrop,
+  .candidate-profile-popup,
+  .tailor-profile-section,
+  .saved-posts-section,
+  .portal-post-detail-modal
+) :is(.portal-social-post-card, .portal-profile-preview-post-card, .candidate-profile-home-post-card, .saved-post-card) .portal-post-action-row {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding-inline: 0.12rem !important;
+  overflow: visible !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root :is(
+  .portal-home-feed,
+  .portal-profile-detail-backdrop,
+  .candidate-profile-popup,
+  .tailor-profile-section,
+  .saved-posts-section,
+  .portal-post-detail-modal
+) .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle):not(.active):not(.has-reaction) {
+  flex-shrink: 0 !important;
+  visibility: visible !important;
+  overflow: visible !important;
+  opacity: 1 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root :is(
+  .portal-home-feed,
+  .portal-profile-detail-backdrop,
+  .candidate-profile-popup,
+  .tailor-profile-section,
+  .saved-posts-section,
+  .portal-post-detail-modal
+) .portal-post-action-row :is(.portal-reaction-trigger, .portal-comment-toggle, .portal-share-toggle) :is(svg, path) {
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: currentColor !important;
+  stroke: currentColor !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme="dark"] body[data-theme="dark"] #root :is(
+    .portal-home-feed,
+    .portal-profile-detail-backdrop,
+    .candidate-profile-popup,
+    .tailor-profile-section,
+    .saved-posts-section,
+    .portal-post-detail-modal
+  ) :is(.portal-social-post-card, .portal-profile-preview-post-card, .candidate-profile-home-post-card, .saved-post-card) .portal-post-action-cluster {
+    padding-inline: 0.38rem !important;
+  }
+}
+
 /* Candidates already has the large introduction title; remove its duplicate title row surface. */
 html body #root .home-page .talent-pool-container.candidate-view-candidates .talent-pool-header,
 html body #root .home-page .talent-pool-container.candidate-view-candidates .talent-pool-header:is(:hover, :focus, :focus-within) {
@@ -172,4 +275,127 @@ html body #root .home-page .talent-pool-container.candidate-view-candidates .tal
 
 html body #root .home-page .talent-pool-container.candidate-view-candidates .talent-pool-header > h2 {
   display: none !important;
+}
+
+/* Typography geometry is theme-independent: dark mode is the layout baseline. */
+html body #root .home-page .portal-feed-introduction,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-feed-introduction {
+  width: min(100%, 72rem) !important;
+  margin: 0 auto 1.35rem !important;
+  padding: 0.25rem clamp(0.25rem, 1.5vw, 1rem) 0 !important;
+  font-family: "Lexend", "Inter", sans-serif !important;
+}
+
+html body #root .home-page .portal-feed-introduction > span,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-feed-introduction > span {
+  margin-bottom: 0.45rem !important;
+  font-family: "Lexend", "Inter", sans-serif !important;
+  font-size: clamp(0.68rem, 0.65rem + 0.15vw, 0.78rem) !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.17em !important;
+}
+
+html body #root .home-page .portal-feed-introduction h1,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-feed-introduction h1 {
+  max-width: 18ch !important;
+  margin: 0 !important;
+  font-family: "Lexend", "Inter", sans-serif !important;
+  font-size: clamp(1.75rem, 1.3rem + 2vw, 3.5rem) !important;
+  font-weight: 780 !important;
+  line-height: 0.98 !important;
+  letter-spacing: -0.055em !important;
+}
+
+html body #root .home-page .portal-feed-introduction > p,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-feed-introduction > p {
+  max-width: 44rem !important;
+  margin: 0.75rem 0 0 !important;
+  font-family: "Lexend", "Inter", sans-serif !important;
+  font-size: clamp(0.88rem, 0.84rem + 0.2vw, 1rem) !important;
+  font-weight: 500 !important;
+  line-height: 1.55 !important;
+}
+
+/* Light keywords deliberately avoid every green and pale-maroon variant. */
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-feed-keyword-color-0 { --portal-feed-keyword-color: #6f1d32 !important; }
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-feed-keyword-color-1 { --portal-feed-keyword-color: #a13d2d !important; }
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-feed-keyword-color-2 { --portal-feed-keyword-color: #243b65 !important; }
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-feed-keyword-color-3 { --portal-feed-keyword-color: #8a4b12 !important; }
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-feed-keyword-color-4 { --portal-feed-keyword-color: #571426 !important; }
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-feed-keyword-color-5 { --portal-feed-keyword-color: #71304b !important; }
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-feed-keyword-color-6 { --portal-feed-keyword-color: #3c315f !important; }
+
+/* Deepen only the maroon keyword family in dark mode. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-feed-keyword-color-4 { --portal-feed-keyword-color: #b85f78 !important; }
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-feed-keyword-color-5 { --portal-feed-keyword-color: #c66d86 !important; }
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-feed-keyword-color-6 { --portal-feed-keyword-color: #a64e68 !important; }
+
+/* Light Notifications uses the same face and weight system as dark mode. */
+html[data-theme="light"] body[data-theme="light"] #root .home-page .notifications-page,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .notifications-page :is(h1, h2, h3, h4, p, span, time, button, strong, small) {
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .notifications-page .notification-row :is(h3, p, time, .notification-action, .notification-action span) {
+  font-family: "Inter", "Aptos", "Segoe UI", sans-serif !important;
+}
+
+/* Remove the legacy light-only Share Tech override from the entire Notifications page. */
+html[data-theme="light"] body[data-theme="light"] #root .home-page .notifications-page,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .notifications-page * {
+  font-family: "Inter", "Aptos", "Segoe UI", sans-serif !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .main-content.mobile-section-notifications > :is(
+  .dashboard-section-title,
+  .mobile-section-panel-header
+),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .main-content.mobile-section-notifications > :is(
+  .dashboard-section-title,
+  .mobile-section-panel-header
+) * {
+  font-family: "Inter", "Aptos", "Segoe UI", sans-serif !important;
+}
+
+/* Activities intentionally retains the same display accent used in dark mode. */
+html[data-theme="light"] body[data-theme="light"] #root .home-page .notifications-page .notifications-activities-word {
+  font-family: "Chewy", "Lexend", system-ui, sans-serif !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .home-page .portal-feed-introduction,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-feed-introduction {
+    margin: 0 auto 1rem !important;
+    padding: 0 0.15rem !important;
+  }
+
+  html body #root .home-page .portal-feed-introduction h1,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-feed-introduction h1 {
+    max-width: 15ch !important;
+    font-size: clamp(2.05rem, 9.4vw, 2.75rem) !important;
+    line-height: 0.96 !important;
+  }
+
+  html body #root .home-page .portal-feed-introduction > p,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-feed-introduction > p {
+    font-size: 0.98rem !important;
+  }
+
+  /* Match the dark Candidates canvas width in light mobile mode. */
+  html[data-theme="light"] body[data-theme="light"] #root .home-page > .dashboard-container > .main-content.mobile-section-view-candidates,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page > .dashboard-container > .main-content.mobile-section-view-candidates.is-open {
+    width: calc(100% + 0.7rem) !important;
+    max-width: calc(100% + 0.7rem) !important;
+    margin-left: -0.35rem !important;
+    margin-right: -0.35rem !important;
+    padding-inline: 0 !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-section-transition-shell[data-section="view-candidates"] > .talent-pool-container.candidate-view-candidates {
+    width: 100% !important;
+    max-width: none !important;
+    padding-inline: 0.08rem !important;
+  }
 }

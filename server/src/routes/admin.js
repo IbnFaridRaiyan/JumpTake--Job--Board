@@ -135,10 +135,24 @@ const COLLECTIONS = {
     summaryFields: ['recipientType', 'recipientId', 'title', 'section', 'read', 'createdAt']
   },
   feedPosts: {
-    label: 'Feed Posts',
+    label: 'All Feed Posts',
     model: FeedPost,
     searchFields: ['type', 'body', 'authorId', 'authorType', 'authorName', 'source', 'sourceTitle'],
     summaryFields: ['type', 'authorName', 'authorType', 'audience', 'reach', 'source', 'createdAt']
+  },
+  workNewsPosts: {
+    label: 'Work News Posts',
+    model: FeedPost,
+    baseQuery: { type: 'work-news' },
+    searchFields: ['body', 'authorId', 'authorName', 'source', 'sourceTitle'],
+    summaryFields: ['type', 'authorName', 'authorType', 'audience', 'reach', 'source', 'createdAt']
+  },
+  talentStoryPosts: {
+    label: 'Talent Stories / Talent Pool Posts',
+    model: FeedPost,
+    baseQuery: { type: 'talent-story' },
+    searchFields: ['body', 'authorId', 'authorName'],
+    summaryFields: ['type', 'authorName', 'authorType', 'audience', 'reach', 'createdAt']
   }
 };
 
@@ -605,6 +619,95 @@ const createFallbackAdminAssistantPlan = (message) => {
   };
 };
 
+const ADMIN_ASSISTANT_MAX_DRAFTS = 100;
+const ADMIN_ASSISTANT_DRAFT_BATCH_SIZE = 10;
+
+const getRequestedDraftCount = (message, isDraftRequest) => {
+  if (!isDraftRequest) return 0;
+  const text = String(message || '');
+  const explicit = text.match(/\b(\d{1,3})\s+(?:new\s+|latest\s+|recent\s+)?(?:work\s*news\s+|company\s+|social\s+|feed\s+|job\s+)?(?:post\s+)?drafts?\b/i)
+    || text.match(/\b(?:make|create|generate|prepare|fill|draft|collect|find)\s+(\d{1,3})\b/i)
+    || text.match(/\b(\d{1,3})\s+(?:jobs?|posts?|updates?|roles?)\b/i);
+  if (explicit?.[1]) {
+    return Math.min(ADMIN_ASSISTANT_MAX_DRAFTS, Math.max(1, Number(explicit[1])));
+  }
+  return /\b(?:drafts|jobs|posts|updates|roles)\b/i.test(text) ? 5 : 1;
+};
+
+const createDraftBatchPrompt = ({ basePrompt, kind, count, batchNumber, totalBatches }) => `${basePrompt}
+
+Draft batch instruction (mandatory):
+- This is batch ${batchNumber} of ${totalBatches}.
+- Return exactly ${count} distinct ${kind === 'job' ? 'jobDrafts' : 'workNewsDrafts'} in the JSON array.
+- Return an empty ${kind === 'job' ? 'workNewsDrafts' : 'jobDrafts'} array.
+- Do not collapse the drafts into jobForm, companyForm, a summary, or a single example.
+- Every array item must be a complete, separately editable draft using the schema above.
+- Keep descriptions concise enough to return all ${count} items.
+- The admin will review, edit, and manually publish them; do not publish anything.`;
+
+const generateAdminDraftBatches = async ({ prompt, kind, requestedCount, useWebSearch, seedDrafts = [] }) => {
+  const drafts = Array.isArray(seedDrafts) ? seedDrafts.slice(0, requestedCount) : [];
+  const remaining = requestedCount - drafts.length;
+  if (remaining <= 0) return drafts;
+
+  const batchSizes = [];
+  for (let left = remaining; left > 0; left -= ADMIN_ASSISTANT_DRAFT_BATCH_SIZE) {
+    batchSizes.push(Math.min(ADMIN_ASSISTANT_DRAFT_BATCH_SIZE, left));
+  }
+
+  const results = await Promise.all(batchSizes.map(async (count, index) => {
+    try {
+      const batchPrompt = createDraftBatchPrompt({
+        basePrompt: prompt,
+        kind,
+        count,
+        batchNumber: index + 1,
+        totalBatches: batchSizes.length
+      });
+      const text = await askAdminOpenAI(batchPrompt, { useWebSearch });
+      const parsed = parseJsonObjectFromText(text) || {};
+      const rows = kind === 'job' ? parsed.jobDrafts : parsed.workNewsDrafts;
+      return Array.isArray(rows) ? rows.slice(0, count) : [];
+    } catch (error) {
+      console.warn(`[ADMIN ASSISTANT] ${kind} draft batch ${index + 1} failed:`, error.message);
+      return [];
+    }
+  }));
+
+  drafts.push(...results.flat());
+
+  // If a model returned fewer rows than explicitly requested, ask only for the
+  // missing rows once more instead of silently showing a partial draft set.
+  const stillMissing = requestedCount - drafts.length;
+  if (stillMissing > 0) {
+    const retryResults = await Promise.all(Array.from(
+      { length: Math.ceil(stillMissing / ADMIN_ASSISTANT_DRAFT_BATCH_SIZE) },
+      async (_, index) => {
+        const count = Math.min(ADMIN_ASSISTANT_DRAFT_BATCH_SIZE, stillMissing - (index * ADMIN_ASSISTANT_DRAFT_BATCH_SIZE));
+        const retryPrompt = createDraftBatchPrompt({
+          basePrompt: prompt,
+          kind,
+          count,
+          batchNumber: index + 1,
+          totalBatches: Math.ceil(stillMissing / ADMIN_ASSISTANT_DRAFT_BATCH_SIZE)
+        });
+        try {
+          const text = await askAdminOpenAI(`${retryPrompt}\nThis is a retry for missing drafts. Return the full exact array now.`, { useWebSearch });
+          const parsed = parseJsonObjectFromText(text) || {};
+          const rows = kind === 'job' ? parsed.jobDrafts : parsed.workNewsDrafts;
+          return Array.isArray(rows) ? rows.slice(0, count) : [];
+        } catch (error) {
+          console.warn(`[ADMIN ASSISTANT] ${kind} retry batch ${index + 1} failed:`, error.message);
+          return [];
+        }
+      }
+    ));
+    drafts.push(...retryResults.flat());
+  }
+
+  return drafts.slice(0, requestedCount);
+};
+
 const createAdminAssistantPrompt = ({ message, companyForm, jobForm }) => `You are JumpTake Admin AI. Convert the admin request into JSON that fills admin panel forms.
 
 Return only valid JSON with this shape:
@@ -797,7 +900,7 @@ router.get('/summary', async (req, res) => {
       Object.entries(COLLECTIONS).map(async ([key, config]) => ({
         key,
         label: config.label,
-        count: await config.model.countDocuments()
+        count: await config.model.countDocuments(config.baseQuery || {})
       }))
     );
 
@@ -812,7 +915,11 @@ router.get('/collections/:collection', async (req, res) => {
     const config = getCollectionConfig(req.params.collection);
     const page = Math.max(Number(req.query.page) || 1, 1);
     const limit = Math.min(Math.max(Number(req.query.limit) || 1000, 1), 5000);
-    const query = getSearchQuery(config, req.query.q);
+    const searchQuery = getSearchQuery(config, req.query.q);
+    const query = {
+      ...(config.baseQuery || {}),
+      ...searchQuery
+    };
     const skip = (page - 1) * limit;
 
     const [items, total] = await Promise.all([
@@ -1025,14 +1132,39 @@ router.post('/assistant', async (req, res) => {
     const wantsCompanyInfo = /\b(company|business|employer|website|industry|founded|address|headquarters|details|profile)\b/.test(lowerMessage);
     const wantsWebJobs = /\b(latest|recent|web|online|search|find|collect|gradcracker|rate\s*my\s*placement|ratemyplacement|linkedin)\b/.test(lowerMessage)
       && /\b(job|jobs|role|roles|placement|graduate|internship)\b/.test(lowerMessage);
-    const wantsWorkNewsDrafts = /\b(work\s*news|company updates?|linkedin updates?|feed posts?|company posts?|news posts?)\b/.test(lowerMessage)
+    const wantsJobDrafts = /\b(job|jobs|role|roles|position|positions|vacancy|vacancies|placement|graduate|internship)\b/.test(lowerMessage)
+      && /\b(draft|drafts|post|posts|create|make|generate|prepare|fill|collect|find)\b/.test(lowerMessage);
+    const wantsGenericPostDrafts = !wantsJobDrafts
+      && /\b(post drafts?|social posts?|feed posts?|posts?)\b/.test(lowerMessage)
+      && /\b(draft|drafts|create|make|generate|prepare|fill)\b/.test(lowerMessage);
+    const wantsWorkNewsDrafts = (wantsGenericPostDrafts || /\b(work\s*news|company updates?|linkedin updates?|feed posts?|company posts?|news posts?)\b/.test(lowerMessage))
       && /\b(draft|drafts|post|posts|create|make|generate|from web|live web|latest|recent|search|find|collect|linkedin|companies?)\b/.test(lowerMessage);
+    const requestedJobDraftCount = getRequestedDraftCount(message, wantsJobDrafts || wantsWebJobs);
+    const requestedWorkNewsDraftCount = getRequestedDraftCount(message, wantsWorkNewsDrafts);
     const hasMissingCompanyDetails = !companyForm.industry || !companyForm.headquarters || !companyForm.website || !companyForm.founded || !companyForm.description;
     const useWebSearch = process.env.OPENAI_ENABLE_WEB_SEARCH !== 'false' && (wantsWebJobs || wantsWorkNewsDrafts || (wantsCompanyInfo && hasMissingCompanyDetails));
-    let aiText = await askAdminOpenAI(prompt, { useWebSearch });
+    const initialDraftKind = requestedJobDraftCount ? 'job' : requestedWorkNewsDraftCount ? 'work-news' : '';
+    const initialDraftCount = requestedJobDraftCount || requestedWorkNewsDraftCount;
+    const initialPrompt = initialDraftKind
+      ? createDraftBatchPrompt({
+        basePrompt: prompt,
+        kind: initialDraftKind,
+        count: Math.min(ADMIN_ASSISTANT_DRAFT_BATCH_SIZE, initialDraftCount),
+        batchNumber: 1,
+        totalBatches: Math.ceil(initialDraftCount / ADMIN_ASSISTANT_DRAFT_BATCH_SIZE)
+      })
+      : prompt;
+    let aiText = await askAdminOpenAI(initialPrompt, { useWebSearch });
     let parsed = parseJsonObjectFromText(aiText) || createFallbackAdminAssistantPlan(message);
-    let jobDrafts = Array.isArray(parsed.jobDrafts) ? parsed.jobDrafts.slice(0, 20) : [];
-    let workNewsDrafts = Array.isArray(parsed.workNewsDrafts) ? parsed.workNewsDrafts.slice(0, 20) : [];
+    let jobDrafts = Array.isArray(parsed.jobDrafts) ? parsed.jobDrafts.slice(0, requestedJobDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS) : [];
+    let workNewsDrafts = Array.isArray(parsed.workNewsDrafts) ? parsed.workNewsDrafts.slice(0, requestedWorkNewsDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS) : [];
+
+    if (requestedJobDraftCount > 1 && !jobDrafts.length && parsed.jobForm && Object.keys(parsed.jobForm).length) {
+      jobDrafts = [parsed.jobForm];
+    }
+    if (requestedWorkNewsDraftCount > 0 && parsed.workNewsDraft && typeof parsed.workNewsDraft === 'object') {
+      workNewsDrafts = [...workNewsDrafts, parsed.workNewsDraft];
+    }
 
     if (wantsWebJobs && useWebSearch && !jobDrafts.length && looksLikeWebJobRefusal(`${parsed.reply || ''} ${aiText || ''}`)) {
       const retryPrompt = `${prompt}
@@ -1045,7 +1177,7 @@ Strict retry:
 - If fewer than the requested number are found, return the reliable ones you found.`;
       aiText = await askAdminOpenAI(retryPrompt, { useWebSearch: true });
       parsed = parseJsonObjectFromText(aiText) || parsed;
-      jobDrafts = Array.isArray(parsed.jobDrafts) ? parsed.jobDrafts.slice(0, 20) : [];
+      jobDrafts = Array.isArray(parsed.jobDrafts) ? parsed.jobDrafts.slice(0, requestedJobDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS) : [];
     }
 
     if (wantsWorkNewsDrafts && useWebSearch && !workNewsDrafts.length && looksLikeWebWorkNewsRefusal(`${parsed.reply || ''} ${aiText || ''}`)) {
@@ -1059,7 +1191,27 @@ Strict retry:
 - If fewer than the requested number are found, return the reliable ones you found.`;
       aiText = await askAdminOpenAI(retryPrompt, { useWebSearch: true });
       parsed = parseJsonObjectFromText(aiText) || parsed;
-      workNewsDrafts = Array.isArray(parsed.workNewsDrafts) ? parsed.workNewsDrafts.slice(0, 20) : [];
+      workNewsDrafts = Array.isArray(parsed.workNewsDrafts) ? parsed.workNewsDrafts.slice(0, requestedWorkNewsDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS) : [];
+    }
+
+    if (requestedJobDraftCount > jobDrafts.length) {
+      jobDrafts = await generateAdminDraftBatches({
+        prompt,
+        kind: 'job',
+        requestedCount: requestedJobDraftCount,
+        useWebSearch,
+        seedDrafts: jobDrafts
+      });
+    }
+
+    if (requestedWorkNewsDraftCount > workNewsDrafts.length) {
+      workNewsDrafts = await generateAdminDraftBatches({
+        prompt,
+        kind: 'work-news',
+        requestedCount: requestedWorkNewsDraftCount,
+        useWebSearch,
+        seedDrafts: workNewsDrafts
+      });
     }
 
     if (wantsWebJobs && !jobDrafts.length && looksLikeWebJobRefusal(`${parsed.reply || ''} ${aiText || ''}`)) {
@@ -1071,7 +1223,11 @@ Strict retry:
     }
 
     res.json({
-      reply: String(parsed.reply || 'I filled what I could. Review the form before creating the record.'),
+      reply: requestedJobDraftCount
+        ? `${jobDrafts.length} job draft${jobDrafts.length === 1 ? '' : 's'} ready. Review, edit, and post each one when approved.`
+        : requestedWorkNewsDraftCount
+          ? `${workNewsDrafts.length} post draft${workNewsDrafts.length === 1 ? '' : 's'} ready. Review, edit, and post each one when approved.`
+          : String(parsed.reply || 'I filled what I could. Review the form before creating the record.'),
       action: parsed.action || 'reply',
       companyForm: parsed.companyForm && typeof parsed.companyForm === 'object' ? parsed.companyForm : {},
       jobForm: parsed.jobForm && typeof parsed.jobForm === 'object' ? parsed.jobForm : {},

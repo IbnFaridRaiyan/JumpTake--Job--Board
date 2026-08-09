@@ -15,7 +15,7 @@ const Pricing = ({ mode = 'candidate' }) => {
   const [notice, setNotice] = useState('');
   const [code, setCode] = useState('');
   const [clockNow, setClockNow] = useState(Date.now());
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem(mode === 'employer' ? 'employerToken' : 'token');
   const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
 
   const readResponse = async (response) => {

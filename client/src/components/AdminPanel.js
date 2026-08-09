@@ -6,6 +6,7 @@ import confirmAction from '../utils/confirmAction';
 
 const API_BASE = process.env.REACT_APP_API_URL || '';
 const ADMIN_KEY_STORAGE = 'jumptakeAdminKey';
+const FEED_POST_COLLECTIONS = new Set(['feedPosts', 'workNewsPosts', 'talentStoryPosts']);
 
 const emptyCompanyForm = {
   name: '',
@@ -273,9 +274,12 @@ const AdminPanel = () => {
   };
 
   const handleDelete = async (id) => {
+    const deletingFeedPost = FEED_POST_COLLECTIONS.has(selectedCollection);
     const confirmed = await confirmAction({
-      title: 'Delete record?',
-      message: 'Delete this record and its related data permanently?'
+      title: deletingFeedPost ? 'Delete post?' : 'Delete record?',
+      message: deletingFeedPost
+        ? 'Delete this post and every comment and reaction attached to it permanently?'
+        : 'Delete this record and its related data permanently?'
     });
 
     if (!confirmed) {
@@ -288,7 +292,7 @@ const AdminPanel = () => {
         method: 'DELETE'
       });
       await Promise.all([loadSummary(), loadCollection()]);
-      setMessage('Record deleted.');
+      setMessage(deletingFeedPost ? 'Post deleted.' : 'Record deleted.');
     } catch (error) {
       setMessage(error.message);
     }
@@ -371,7 +375,7 @@ const AdminPanel = () => {
         })
       });
       setWorkNewsPostForm({ ...emptyWorkNewsPostForm });
-      setSelectedCollection('feedPosts');
+      setSelectedCollection('workNewsPosts');
       setPage(1);
       await Promise.all([loadSummary(), loadCollection()]);
       setMessage('Work News post created.');
@@ -474,11 +478,17 @@ const AdminPanel = () => {
       }
 
       if (Array.isArray(data.jobDrafts) && data.jobDrafts.length) {
-        setAdminJobDrafts(data.jobDrafts.map((draft, index) => normalizeJobDraft(draft, index)));
+        setAdminJobDrafts((current) => [
+          ...current,
+          ...data.jobDrafts.map((draft, index) => normalizeJobDraft(draft, current.length + index))
+        ]);
       }
 
       if (Array.isArray(data.workNewsDrafts) && data.workNewsDrafts.length) {
-        setAdminWorkNewsDrafts(data.workNewsDrafts.map((draft, index) => normalizeWorkNewsDraft(draft, index)));
+        setAdminWorkNewsDrafts((current) => [
+          ...current,
+          ...data.workNewsDrafts.map((draft, index) => normalizeWorkNewsDraft(draft, current.length + index))
+        ]);
       }
 
       setAdminAssistantMessages((current) => [
@@ -613,7 +623,7 @@ const AdminPanel = () => {
         })
       });
       removeAdminWorkNewsDraft(draft.id, true);
-      setSelectedCollection('feedPosts');
+      setSelectedCollection('workNewsPosts');
       setPage(1);
       await Promise.all([loadSummary(), loadCollection()]);
       setMessage(`Work News posted: ${draft.companyName || 'Company update'}`);
@@ -1190,7 +1200,7 @@ const AdminPanel = () => {
               <article className="admin-record-card" key={item._id}>
                 <div className="admin-record-card-header">
                   <div>
-                    <h3>{item.title || item.name || item.email || item.username || item._id}</h3>
+                    <h3>{item.title || item.name || item.email || item.username || item.authorName || item.sourceTitle || item._id}</h3>
                     <p>{item._id}</p>
                   </div>
                   <button
@@ -1220,7 +1230,7 @@ const AdminPanel = () => {
                       </React.Fragment>
                     ))}
                 </dl>
-                {selectedCollection === 'feedPosts' && Array.isArray(item.comments) && item.comments.length ? (
+                {FEED_POST_COLLECTIONS.has(selectedCollection) && Array.isArray(item.comments) && item.comments.length ? (
                   <div className="admin-comment-tools">
                     <h4>Comments</h4>
                     {item.comments.map((comment, index) => {

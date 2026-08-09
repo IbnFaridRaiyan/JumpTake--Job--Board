@@ -33,7 +33,14 @@ html.portal-menu-scroll-locked body.portal-menu-scroll-locked {
 }
 
 html.portal-menu-scroll-locked body.portal-menu-scroll-locked #root
-  .home-page :is(main.main-content, .portal-home-feed-scroll) {
+  .home-page :is(
+    .dashboard-container,
+    main.main-content,
+    .portal-section-transition-shell,
+    .portal-home-feed,
+    .portal-home-feed-scroll,
+    .mobile-dashboard-section-panel
+  ) {
   overflow: hidden !important;
   overscroll-behavior: none !important;
   touch-action: none !important;

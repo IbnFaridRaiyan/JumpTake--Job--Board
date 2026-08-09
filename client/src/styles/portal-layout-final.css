@@ -9,6 +9,125 @@ html:not([data-theme="dark"]) {
   --resume-editor-toolbar-ink: #0b0f14;
 }
 
+/* Country picker remains compact while long country lists scroll internally. */
+html body #root .home-page .portal-job-country-menu {
+  max-height: min(19rem, 55vh) !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  scrollbar-width: thin !important;
+}
+
+.portal-job-location-consent-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 30000 !important;
+  display: grid !important;
+  place-items: center !important;
+  box-sizing: border-box !important;
+  padding: 1rem !important;
+  background: rgba(0, 0, 0, 0.42) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+.portal-job-location-consent {
+  box-sizing: border-box !important;
+  width: min(100%, 30rem) !important;
+  max-height: calc(100dvh - 2rem) !important;
+  padding: clamp(1.25rem, 4vw, 2rem) !important;
+  overflow-y: auto !important;
+  border-radius: 1.35rem !important;
+  text-align: center !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-job-location-consent {
+  color: #f7f7f5 !important;
+  background: #070707 !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 0 28px 75px rgba(0, 0, 0, 0.65) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-job-location-consent,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-job-location-consent {
+  color: #291820 !important;
+  background: #fffaf2 !important;
+  border: 1px solid rgba(91, 47, 61, 0.18) !important;
+  box-shadow: 0 28px 75px rgba(60, 37, 42, 0.28) !important;
+}
+
+.portal-job-location-icon {
+  display: grid !important;
+  place-items: center !important;
+  width: 3rem !important;
+  height: 3rem !important;
+  margin: 0 auto 0.8rem !important;
+  border-radius: 50% !important;
+  background: #b8e986 !important;
+  color: #07120d !important;
+  font-size: 1.65rem !important;
+  font-weight: 900 !important;
+}
+
+.portal-job-location-eyebrow {
+  margin: 0 0 0.4rem !important;
+  color: #69bda7 !important;
+  font-size: 0.72rem !important;
+  font-weight: 850 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+}
+
+.portal-job-location-consent h2 {
+  margin: 0 0 0.7rem !important;
+  color: inherit !important;
+  font: 800 clamp(1.5rem, 5vw, 2.1rem)/1.08 "Lexend", "Inter", sans-serif !important;
+}
+
+.portal-job-location-consent > p:not(.portal-job-location-eyebrow) {
+  margin: 0 auto 1.1rem !important;
+  color: inherit !important;
+  opacity: 0.78 !important;
+  font-size: 0.94rem !important;
+  line-height: 1.55 !important;
+}
+
+.portal-job-location-error {
+  margin: 0 0 0.85rem !important;
+  padding: 0.7rem !important;
+  border-radius: 0.7rem !important;
+  background: rgba(207, 69, 88, 0.14) !important;
+  color: #e56f82 !important;
+  font-size: 0.82rem !important;
+}
+
+.portal-job-location-actions {
+  display: grid !important;
+  gap: 0.58rem !important;
+}
+
+.portal-job-location-actions button {
+  min-height: 2.85rem !important;
+  padding: 0.65rem 1rem !important;
+  border: 1px solid currentColor !important;
+  border-radius: 0.8rem !important;
+  background: transparent !important;
+  color: inherit !important;
+  font: 750 0.88rem/1 "Lexend", "Inter", sans-serif !important;
+}
+
+.portal-job-location-actions button.is-primary {
+  border-color: #7fb8a5 !important;
+  background: #7fb8a5 !important;
+  color: #07120d !important;
+}
+
+.portal-job-location-actions button.is-text {
+  min-height: 2.2rem !important;
+  border-color: transparent !important;
+  opacity: 0.72 !important;
+}
+
 /* Desktop portals use the document as the single scroll owner. Legacy portal
    panels used viewport heights and hidden overflow, which clipped long pages
    such as Notifications, Progress Check, My Posts, and other secondary pages. */

@@ -13,6 +13,10 @@ import './styles/floating-messenger-redesign.css';
 import './styles/messenger-final-canvas.css';
 import './styles/settings-final-state.css';
 import './styles/portal-layout-final.css';
+import './styles/mobile-interactions.css';
+import { installMobileInteractionFeedback } from './utils/mobileHaptics';
+
+installMobileInteractionFeedback();
 
 ReactDOM.render(
   <React.StrictMode>

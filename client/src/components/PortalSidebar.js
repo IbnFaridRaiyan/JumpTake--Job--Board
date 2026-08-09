@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import portalLogoDark from './media/logo4.png';
 import portalLogoLight from './media/jumptake-logo-9.png';
@@ -56,17 +56,31 @@ const PortalSidebar = ({
     onSettings
 }) => {
     const [menuOpen, setMenuOpen] = useState(false);
+    const [menuClosing, setMenuClosing] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const [pageQuery, setPageQuery] = useState('');
     const [portalTarget, setPortalTarget] = useState(null);
+    const closeTimerRef = useRef(null);
+
+    const closePortalMenu = useCallback(() => {
+        if (!menuOpen || menuClosing) return;
+        setMenuClosing(true);
+        window.clearTimeout(closeTimerRef.current);
+        closeTimerRef.current = window.setTimeout(() => {
+            setMenuOpen(false);
+            setMenuClosing(false);
+        }, 220);
+    }, [menuOpen, menuClosing]);
 
     useEffect(() => {
         const closeOnEscape = (event) => {
-            if (event.key === 'Escape') setMenuOpen(false);
+            if (event.key === 'Escape') closePortalMenu();
         };
         window.addEventListener('keydown', closeOnEscape);
         return () => window.removeEventListener('keydown', closeOnEscape);
-    }, []);
+    }, [closePortalMenu]);
+
+    useEffect(() => () => window.clearTimeout(closeTimerRef.current), []);
 
     useEffect(() => {
         setPortalTarget(document.querySelector('#root > .app-container'));
@@ -104,7 +118,7 @@ const PortalSidebar = ({
                 type="button"
                 className={`portal-public-nav-link ${item.active ? 'is-active' : ''}`}
                 onClick={() => {
-                    setMenuOpen(false);
+                    closePortalMenu();
                     setSearchOpen(false);
                     setPageQuery('');
                     item.onClick?.();
@@ -122,7 +136,7 @@ const PortalSidebar = ({
     );
 
     const navigation = (
-        <header id="portal-public-header" className={`portal-public-header ${menuOpen ? 'is-menu-open' : ''}`} aria-label="JumpTake portal navigation">
+        <header id="portal-public-header" className={`portal-public-header ${menuOpen ? 'is-menu-open' : ''} ${menuClosing ? 'is-menu-closing' : ''}`} aria-label="JumpTake portal navigation">
             <div className="portal-public-header-top">
                 <div className="portal-public-brand">
                     <img src={appMode === 'dark' ? portalLogoDark : portalLogoLight} alt="JumpTake" />
@@ -159,7 +173,13 @@ const PortalSidebar = ({
                         onClick={() => {
                             setSearchOpen(false);
                             setPageQuery('');
-                            setMenuOpen((open) => !open);
+                            if (menuOpen) {
+                                closePortalMenu();
+                            } else {
+                                window.clearTimeout(closeTimerRef.current);
+                                setMenuClosing(false);
+                                setMenuOpen(true);
+                            }
                         }}
                         aria-label={menuOpen ? 'Close portal menu' : 'Open portal menu'}
                         aria-expanded={menuOpen}
@@ -173,7 +193,7 @@ const PortalSidebar = ({
             </div>
             {menuOpen ? (
                 <>
-                    <button className="portal-public-menu-backdrop" type="button" onClick={() => setMenuOpen(false)} aria-label="Close portal menu" />
+                    <button className="portal-public-menu-backdrop" type="button" onClick={closePortalMenu} aria-label="Close portal menu" />
                     <nav id="portal-public-menu" className="portal-public-menu" aria-label="Portal pages">
                         {searchOpen ? (
                             <label className="portal-public-page-search">

@@ -1,0 +1,217 @@
+/* Final dark desktop portal system. Mobile styles are intentionally untouched. */
+@media (min-width: 769px) {
+  html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header),
+  html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header) #root,
+  html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header) #root > .app-container,
+  html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header) #root > .app-container > .home-page {
+    min-height: 100%;
+    background: #000 !important;
+    background-color: #000 !important;
+    background-image: none !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header.portal-public-header {
+    box-sizing: border-box !important;
+    top: 0.75rem !important;
+    right: max(1rem, calc((100vw - 1440px) / 2)) !important;
+    left: max(1rem, calc((100vw - 1440px) / 2)) !important;
+    width: auto !important;
+    max-width: 1440px !important;
+    min-height: 4.5rem !important;
+    padding: 0.65rem 1.1rem !important;
+    border: 1px solid rgba(255,255,255,.16) !important;
+    border-radius: 1.15rem !important;
+    background: rgba(7,9,11,.62) !important;
+    box-shadow: 0 18px 48px rgba(0,0,0,.34), inset 0 1px rgba(255,255,255,.055) !important;
+    backdrop-filter: blur(24px) saturate(125%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(125%) !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-public-header-top {
+    min-height: 3.1rem !important;
+    gap: 1.25rem !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-public-brand img {
+    display: block !important;
+    width: auto !important;
+    height: 3rem !important;
+    max-width: 9.2rem !important;
+    object-fit: contain !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-public-utilities {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.82rem !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-public-utilities > button {
+    flex: 0 0 2.4rem !important;
+    width: 2.4rem !important;
+    min-width: 2.4rem !important;
+    height: 2.4rem !important;
+    min-height: 2.4rem !important;
+    padding: 0.38rem !important;
+    border: 0 !important;
+    border-radius: 0.65rem !important;
+    background: transparent !important;
+    color: #f7f8f8 !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-public-utilities > button:is(:hover,:focus-visible) {
+    background: rgba(255,255,255,.08) !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-public-menu {
+    box-sizing: border-box !important;
+    top: calc(100% + 0.7rem) !important;
+    right: 0 !important;
+    width: min(46rem, calc(100vw - 2rem)) !important;
+    max-width: 46rem !important;
+    max-height: calc(100vh - 7rem) !important;
+    padding: 0.85rem !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    border: 1px solid rgba(255,255,255,.16) !important;
+    border-radius: 1rem !important;
+    background: #050505 !important;
+    box-shadow: 0 26px 70px rgba(0,0,0,.58) !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-public-menu > ul {
+    box-sizing: border-box !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    align-items: stretch !important;
+    gap: 0.45rem !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-public-menu > ul + ul {
+    margin-top: 0.6rem !important;
+    padding-top: 0.6rem !important;
+    border-top: 1px solid rgba(255,255,255,.1) !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-public-nav-item {
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-public-nav-link {
+    box-sizing: border-box !important;
+    display: grid !important;
+    grid-template-columns: 1.3rem minmax(0,1fr) auto !important;
+    align-items: center !important;
+    gap: 0.7rem !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 3rem !important;
+    margin: 0 !important;
+    padding: 0.65rem 0.8rem !important;
+    border: 1px solid transparent !important;
+    border-radius: 0.72rem !important;
+    background: transparent !important;
+    color: #f5f5f4 !important;
+    text-align: left !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-public-nav-link > span {
+    display: block !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    font-size: 0.88rem !important;
+    line-height: 1.2 !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-public-nav-link > svg {
+    width: 1.2rem !important;
+    height: 1.2rem !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-public-nav-link:is(:hover,:focus-visible,.is-active) {
+    border-color: rgba(255,255,255,.13) !important;
+    background: #151515 !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root > .app-container > .home-page > .dashboard-container {
+    box-sizing: border-box !important;
+    width: min(100%, 1490px) !important;
+    min-height: 100vh !important;
+    margin: 0 auto !important;
+    padding: 6.4rem clamp(1.25rem,2.5vw,2.2rem) 3rem !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page main.main-content {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 1440px !important;
+    min-height: calc(100vh - 7rem) !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page .dashboard-section-title {
+    box-sizing: border-box !important;
+    margin: 0 0 1rem !important;
+    padding: 0 !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page .dashboard-section-title h2 {
+    margin: 0 !important;
+    color: #fff !important;
+    font-size: clamp(1.45rem,2vw,2rem) !important;
+    line-height: 1.1 !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-section-transition-shell[data-section] {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+    .portal-social-post-card,.portal-candidate-job-card,.notification-row,.candidate-list-row,
+    .application-card,.fresh-application-card,.settings-card,.profile-details-card,
+    .friend-invitation-card,.friend-add-candidate-card,.bookmarked-job-card
+  ) {
+    box-sizing: border-box !important;
+    border-color: rgba(255,255,255,.15) !important;
+    background-color: #0b0b0b !important;
+    box-shadow: 0 12px 32px rgba(0,0,0,.2) !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+    .notifications-list,.candidate-list,.applications-list,.friend-add-results,
+    .admin-records,.portal-social-list,.portal-candidate-job-list
+  ) {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    gap: 0.85rem !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(input,textarea,select) {
+    box-sizing: border-box !important;
+  }
+}

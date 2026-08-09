@@ -14,6 +14,8 @@ import './styles/messenger-final-canvas.css';
 import './styles/settings-final-state.css';
 import './styles/portal-layout-final.css';
 import './styles/mobile-interactions.css';
+import './styles/portal-desktop-dark.css';
+import './styles/portal-desktop-light.css';
 import { installMobileInteractionFeedback } from './utils/mobileHaptics';
 
 installMobileInteractionFeedback();

@@ -631,15 +631,18 @@ const getDeletedItemLabel = (document) => String(
   || 'Deleted item'
 );
 
-const ADMIN_ASSISTANT_MAX_DRAFTS = 100;
+const ADMIN_ASSISTANT_MAX_DRAFTS = Math.max(
+  100,
+  Math.min(Number(process.env.ADMIN_ASSISTANT_MAX_DRAFTS) || 1000, 5000)
+);
 const ADMIN_ASSISTANT_DRAFT_BATCH_SIZE = 10;
 
 const getRequestedDraftCount = (message, isDraftRequest) => {
   if (!isDraftRequest) return 0;
   const text = String(message || '');
-  const explicit = text.match(/\b(\d{1,3})\s+(?:new\s+|latest\s+|recent\s+)?(?:work\s*news\s+|company\s+|social\s+|feed\s+|job\s+)?(?:post\s+)?drafts?\b/i)
-    || text.match(/\b(?:make|create|generate|prepare|fill|draft|collect|find)\s+(\d{1,3})\b/i)
-    || text.match(/\b(\d{1,3})\s+(?:jobs?|posts?|updates?|roles?)\b/i);
+  const explicit = text.match(/\b(\d{1,5})\s+(?:new\s+|latest\s+|recent\s+)?(?:work\s*news\s+|company\s+|social\s+|feed\s+|job\s+)?(?:post\s+)?(?:drafts?|creations?|items?|posts?|updates?|stories?|jobs?)\b/i)
+    || text.match(/\b(?:make|create|creation|generate|generation|prepare|fill|draft|collect|find)\s+(\d{1,5})\b/i)
+    || text.match(/\b(\d{1,5})\s+(?:jobs?|posts?|updates?|roles?|stories?)\b/i);
   if (explicit?.[1]) {
     return Math.min(ADMIN_ASSISTANT_MAX_DRAFTS, Math.max(1, Number(explicit[1])));
   }
@@ -688,10 +691,10 @@ const generateAdminDraftBatches = async ({ prompt, kind, requestedCount, useWebS
 
   drafts.push(...results.flat());
 
-  // If a model returned fewer rows than explicitly requested, ask only for the
-  // missing rows once more instead of silently showing a partial draft set.
-  const stillMissing = requestedCount - drafts.length;
-  if (stillMissing > 0) {
+  // Models occasionally under-fill large JSON arrays. Retry only the missing
+  // portion in small batches so an explicit quantity remains authoritative.
+  for (let retryRound = 1; retryRound <= 3 && drafts.length < requestedCount; retryRound += 1) {
+    const stillMissing = requestedCount - drafts.length;
     const retryResults = await Promise.all(Array.from(
       { length: Math.ceil(stillMissing / ADMIN_ASSISTANT_DRAFT_BATCH_SIZE) },
       async (_, index) => {
@@ -704,7 +707,7 @@ const generateAdminDraftBatches = async ({ prompt, kind, requestedCount, useWebS
           totalBatches: Math.ceil(stillMissing / ADMIN_ASSISTANT_DRAFT_BATCH_SIZE)
         });
         try {
-          const text = await askAdminOpenAI(`${retryPrompt}\nThis is a retry for missing drafts. Return the full exact array now.`, { useWebSearch });
+          const text = await askAdminOpenAI(`${retryPrompt}\nThis is retry round ${retryRound} for missing drafts. Return the full exact array now.`, { useWebSearch });
           const parsed = parseJsonObjectFromText(text) || {};
           const rows = kind === 'job' ? parsed.jobDrafts : parsed.workNewsDrafts;
           return Array.isArray(rows) ? rows.slice(0, count) : [];
@@ -1200,10 +1203,10 @@ router.post('/assistant', async (req, res) => {
     const wantsWebJobs = /\b(latest|recent|web|online|search|find|collect|gradcracker|rate\s*my\s*placement|ratemyplacement|linkedin)\b/.test(lowerMessage)
       && /\b(job|jobs|role|roles|placement|graduate|internship)\b/.test(lowerMessage);
     const wantsJobDrafts = /\b(job|jobs|role|roles|position|positions|vacancy|vacancies|placement|graduate|internship)\b/.test(lowerMessage)
-      && /\b(draft|drafts|post|posts|create|make|generate|prepare|fill|collect|find)\b/.test(lowerMessage);
+      && /\b(draft|drafts|post|posts|create|creates|creation|creations|make|generate|generation|prepare|fill|collect|find)\b/.test(lowerMessage);
     const wantsGenericPostDrafts = !wantsJobDrafts
-      && /\b(post drafts?|social posts?|feed posts?|posts?)\b/.test(lowerMessage)
-      && /\b(draft|drafts|create|make|generate|prepare|fill)\b/.test(lowerMessage);
+      && /\b(post drafts?|post creations?|social posts?|feed posts?|posts?|stories?)\b/.test(lowerMessage)
+      && /\b(draft|drafts|create|creates|creation|creations|make|generate|generation|prepare|fill)\b/.test(lowerMessage);
     const wantsWorkNewsDrafts = (wantsGenericPostDrafts || /\b(work\s*news|company updates?|linkedin updates?|feed posts?|company posts?|news posts?)\b/.test(lowerMessage))
       && /\b(draft|drafts|post|posts|create|make|generate|from web|live web|latest|recent|search|find|collect|linkedin|companies?)\b/.test(lowerMessage);
     const requestedJobDraftCount = getRequestedDraftCount(message, wantsJobDrafts || wantsWebJobs);

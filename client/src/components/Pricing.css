@@ -5,6 +5,10 @@
 .pricing-notice{margin:0 auto 22px;max-width:760px;padding:13px 16px;border-radius:12px;background:rgba(142,187,165,.15);text-align:center}.pricing-payment-note,.pricing-code{margin-top:18px;border:1px solid var(--price-line);border-radius:18px;padding:18px 20px;background:var(--price-card);display:flex;justify-content:space-between;gap:18px;align-items:center}.pricing-payment-note span,.pricing-code span{display:block;opacity:.68}.pricing-code label{display:flex;gap:8px}.pricing-code input{min-width:210px;border:1px solid var(--price-line);border-radius:12px;padding:12px;background:transparent;color:inherit;font-weight:800;letter-spacing:.08em}
 body[data-public-home-theme="light"] .pricing-page .pricing-hero,
 body[data-public-home-theme="light"] .pricing-page .pricing-hero :is(h1,p,span,em){background:transparent!important;background-image:none!important}
+html[data-theme="light"] body[data-theme="light"] #root .home-page .pricing-page .pricing-hero,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .pricing-page .pricing-hero :is(h1,p,span,em),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .pricing-page .pricing-hero,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .pricing-page .pricing-hero :is(h1,p,span,em){border:0!important;background:transparent!important;background-color:transparent!important;background-image:none!important;box-shadow:none!important}
 body[data-public-home-theme="light"] .pricing-page .pricing-card:not(.is-current)>button{color:#fff;background:linear-gradient(135deg,#7f2949,#b84f70);box-shadow:0 9px 22px rgba(127,41,73,.23)}
 body[data-public-home-theme="light"] .pricing-page .pricing-card.is-featured>button{color:#13231e;background:linear-gradient(135deg,#bdea68,#75c9a8);box-shadow:0 9px 22px rgba(72,158,128,.24)}
 .portal-modern .pricing-page .pricing-card .pricing-popular,

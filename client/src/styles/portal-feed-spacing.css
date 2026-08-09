@@ -46,8 +46,8 @@
 .portal-feed-keyword-color-1 { --portal-feed-keyword-color: #0f9f91; }
 .portal-feed-keyword-color-2 { --portal-feed-keyword-color: #9bcf72; }
 .portal-feed-keyword-color-3 { --portal-feed-keyword-color: #447a52; }
-.portal-feed-keyword-color-4 { --portal-feed-keyword-color: #542232; }
-.portal-feed-keyword-color-5 { --portal-feed-keyword-color: #8f344f; }
+.portal-feed-keyword-color-4 { --portal-feed-keyword-color: #d8899f; }
+.portal-feed-keyword-color-5 { --portal-feed-keyword-color: #e3a0b3; }
 .portal-feed-keyword-color-6 { --portal-feed-keyword-color: #c16f87; }
 
 @keyframes portal-feed-keyword-jump {

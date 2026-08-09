@@ -2184,8 +2184,42 @@ const TalentPool = ({
         return renderSelectedCandidateModal();
     }
 
+    const candidateIntroduction = (() => {
+        const now = new Date();
+        const timeSlot = now.getHours() < 12 ? 0 : now.getHours() < 18 ? 1 : 2;
+        const seedText = `${mode}:${currentUserId || companyId || 'jumptake'}:${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}:${timeSlot}`;
+        const seed = Array.from(seedText).reduce((hash, character) => ((hash * 31) + character.charCodeAt(0)) >>> 0, 2166136261);
+        const candidateCopy = [
+            ['Meet the', 'people', 'who could shape your next chapter.', 'Discover experience, ambition, and voices worth bringing into your network.'],
+            ['Find the', 'talent', 'ready to make meaningful progress.', 'Look beyond a profile and meet the potential behind every next move.'],
+            ['Build a', 'network', 'that moves opportunity forward.', 'Connect with people whose skills, perspective, and momentum complement your own.'],
+            ['Discover', 'voices', 'worth remembering.', 'Every career has a direction, a story, and something valuable to contribute.'],
+            ['See the', 'potential', 'behind the profile.', 'Find candidates and collaborators ready to learn, contribute, and grow.'],
+            ['Turn new', 'connections', 'into shared momentum.', 'Meet people who can open ideas, opportunities, and meaningful conversations.']
+        ];
+        const employerCopy = [
+            ['Meet the', 'talent', 'your next team has been waiting for.', 'Discover candidates whose experience, ambition, and potential deserve a closer look.'],
+            ['Find the', 'people', 'who can move your mission forward.', 'Explore distinctive profiles and connect with candidates ready to contribute.'],
+            ['Build with', 'potential', 'that stands ready to grow.', 'Find the skills, stories, and perspectives that can strengthen your team.'],
+            ['Discover your', 'next hire', 'before everyone else does.', 'Search a living talent network built around people, progress, and possibility.'],
+            ['Great teams begin with', 'connection', 'not just credentials.', 'Look beyond the résumé and meet the person who could change what comes next.'],
+            ['Bring the right', 'voices', 'into the room.', 'Find candidates whose experience and ideas can add something genuinely new.']
+        ];
+        const selected = (mode === 'employer' ? employerCopy : candidateCopy)[seed % candidateCopy.length];
+        return { lead: selected[0], keyword: selected[1], tail: selected[2], description: selected[3], color: seed % 7 };
+    })();
+
     return (
         <div ref={talentPoolRef} className={`talent-pool-container ${mode === 'candidate' ? 'candidate-view-candidates' : ''}`}>
+            <header className="portal-feed-introduction candidate-directory-introduction">
+                <span>{mode === 'candidate' ? 'Candidates' : 'Talent Pool'}</span>
+                <h1>
+                    {candidateIntroduction.lead}{' '}
+                    <em className={`portal-feed-keyword portal-feed-keyword-color-${candidateIntroduction.color}`}>{candidateIntroduction.keyword}</em>{' '}
+                    {candidateIntroduction.tail}
+                </h1>
+                <p>{candidateIntroduction.description}</p>
+            </header>
             <div className="talent-pool-header">
                 <h2>{mode === 'candidate' ? 'Candidates' : 'Talent Pool'}</h2>
                 {mode === 'employer' && (

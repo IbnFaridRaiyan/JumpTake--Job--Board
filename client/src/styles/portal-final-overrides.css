@@ -1,0 +1,1655 @@
+/* Final cascade: loaded after every portal and messenger stylesheet. */
+
+/* Light review dialogs use the light portal palette, including the backdrop. */
+html[data-theme="light"] body[data-theme="light"] .portal-job-review-backdrop,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-job-review-backdrop,
+body[data-public-home-theme="light"] #root .jt-job-review-backdrop {
+  background: rgba(74, 45, 51, 0.2) !important;
+  backdrop-filter: blur(10px) saturate(0.92) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(0.92) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-job-review-modal,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-job-review-modal,
+body[data-public-home-theme="light"] #root .jt-job-review-dialog {
+  background: #fff8ec !important;
+  background-color: #fff8ec !important;
+  background-image: none !important;
+  border-color: rgba(127, 29, 50, 0.24) !important;
+  box-shadow: 0 1.5rem 4rem rgba(76, 42, 49, 0.24) !important;
+  color: #4a2230 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-job-review-modal :is(h2, h3, p, label, span),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-job-review-modal :is(h2, h3, p, label, span),
+body[data-public-home-theme="light"] #root .jt-job-review-dialog :is(h2, h3, p, label, span) {
+  color: #4a2230 !important;
+  -webkit-text-fill-color: #4a2230 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-job-review-modal textarea,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-job-review-modal textarea,
+body[data-public-home-theme="light"] #root .jt-job-review-dialog textarea {
+  background: #fffdf9 !important;
+  border-color: rgba(127, 29, 50, 0.24) !important;
+  color: #4a2230 !important;
+  -webkit-text-fill-color: #4a2230 !important;
+  caret-color: #7f1d32 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-job-review-star:not(.active),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-job-review-star:not(.active) {
+  color: rgba(74, 34, 48, 0.38) !important;
+  -webkit-text-fill-color: rgba(74, 34, 48, 0.38) !important;
+}
+
+/* The portal navigation is always a floating top rail; never a bottom dock. */
+html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar,
+html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.sidebar,
+html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.is-expanded,
+html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.is-collapsed {
+  position: fixed !important;
+  inset: 0.6rem max(0.65rem, calc((100vw - 92rem) / 2)) auto max(0.65rem, calc((100vw - 92rem) / 2)) !important;
+  top: 0.6rem !important;
+  right: max(0.65rem, calc((100vw - 92rem) / 2)) !important;
+  bottom: auto !important;
+  left: max(0.65rem, calc((100vw - 92rem) / 2)) !important;
+  z-index: 1000000 !important;
+  width: auto !important;
+  max-width: none !important;
+  height: 5.1rem !important;
+  min-height: 5.1rem !important;
+  max-height: 5.1rem !important;
+  margin: 0 !important;
+  transform: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+html body #root .home-page .portal-uiverse-sidebar .portal-sidebar-nav,
+html body #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 5.1rem !important;
+  min-height: 5.1rem !important;
+  max-height: 5.1rem !important;
+}
+
+html body #root .home-page .portal-uiverse-sidebar > nav.portal-sidebar-nav,
+html body #root .home-page .portal-uiverse-sidebar .portal-sidebar-nav {
+  position: relative !important;
+  inset: auto !important;
+  top: 0 !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: 0 !important;
+  margin: 0 !important;
+  transform: none !important;
+}
+
+html body #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+  position: relative !important;
+  inset: auto !important;
+  top: 0 !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: 0 !important;
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  align-items: stretch !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+
+html body #root .home-page .portal-uiverse-sidebar .portal-nav-brand {
+  position: sticky !important;
+  top: 0 !important;
+  left: 0 !important;
+  z-index: 100 !important;
+  order: -10 !important;
+  display: flex !important;
+  flex: 0 0 7rem !important;
+  align-self: stretch !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 7rem !important;
+  min-width: 7rem !important;
+  max-width: 7rem !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0.45rem 0.75rem !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  pointer-events: auto !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-nav-brand,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-nav-brand {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-nav-brand {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .portal-uiverse-sidebar .portal-nav-brand-logo {
+  display: none !important;
+  width: 5.25rem !important;
+  max-width: 5.25rem !important;
+  height: auto !important;
+  max-height: 3.65rem !important;
+  object-fit: contain !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-nav-brand-logo.is-light-logo,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-nav-brand-logo.is-light-logo,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-nav-brand-logo.is-dark-logo {
+  display: block !important;
+}
+
+html body #root .home-page .portal-uiverse-sidebar .portal-dock-controls,
+html body #root .home-page .portal-dock-hide,
+html body #root .home-page .portal-sidebar-reopen {
+  display: none !important;
+}
+
+html body #root > .app-container > .home-page > .dashboard-container {
+  padding-top: 6.35rem !important;
+}
+
+@media (max-width: 768px) {
+  html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar,
+  html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.sidebar,
+  html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.is-expanded,
+  html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.is-collapsed {
+    inset: 0.45rem 0.45rem auto 0.45rem !important;
+    top: 0.45rem !important;
+    right: 0.45rem !important;
+    bottom: auto !important;
+    left: 0.45rem !important;
+    height: 4.8rem !important;
+    min-height: 4.8rem !important;
+    max-height: 4.8rem !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .portal-sidebar-nav,
+  html body #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+    height: 4.8rem !important;
+    min-height: 4.8rem !important;
+    max-height: 4.8rem !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar > nav.portal-sidebar-nav,
+  html body #root .home-page .portal-uiverse-sidebar .portal-sidebar-nav,
+  html body #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+    position: relative !important;
+    inset: auto !important;
+    top: 0 !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: 0 !important;
+    transform: none !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .portal-nav-brand {
+    position: sticky !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 100 !important;
+    display: flex !important;
+    flex: 0 0 5.2rem !important;
+    width: 5.2rem !important;
+    min-width: 5.2rem !important;
+    max-width: 5.2rem !important;
+    height: 100% !important;
+    padding: 0.35rem 0.5rem !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .portal-nav-brand-logo {
+    width: 4.1rem !important;
+    max-width: 4.1rem !important;
+    max-height: 3.45rem !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container {
+    padding-top: 5.7rem !important;
+  }
+}
+
+/* Absolute final authority for the isolated portal header. */
+html body #root #portal-public-header.portal-public-header {
+  grid-template-rows: 2.72rem 2.8rem !important;
+  height: 5.7rem !important;
+  min-height: 5.7rem !important;
+  max-height: 5.7rem !important;
+  padding: 0.08rem 0.65rem 0.16rem !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header.portal-public-header {
+  color: #ffffff !important;
+  background: rgba(8, 17, 31, 0.58) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 0 18px 50px rgba(2, 8, 17, 0.22) !important;
+  backdrop-filter: blur(28px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(145%) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root #portal-public-header.portal-public-header,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header.portal-public-header {
+  color: #34141d !important;
+  background: rgba(255, 255, 255, 0.62) !important;
+  border: 1px solid rgba(16, 24, 39, 0.12) !important;
+  box-shadow: 0 18px 55px rgba(31, 51, 72, 0.1) !important;
+  backdrop-filter: blur(28px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(135%) !important;
+}
+
+html body #root #portal-public-header .portal-public-utilities,
+html body #root #portal-public-header .portal-public-utilities::before,
+html body #root #portal-public-header .portal-public-utilities::after,
+html body #root #portal-public-header .portal-public-utilities > button,
+html body #root #portal-public-header .portal-public-utilities > button::before,
+html body #root #portal-public-header .portal-public-utilities > button::after,
+html body #root #portal-public-header .portal-public-utilities > button:is(:hover, :focus, :focus-visible, :active) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-color: transparent !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html body #root #portal-public-header .portal-public-utilities::before,
+html body #root #portal-public-header .portal-public-utilities::after,
+html body #root #portal-public-header .portal-public-utilities > button::before,
+html body #root #portal-public-header .portal-public-utilities > button::after {
+  content: none !important;
+  display: none !important;
+}
+
+html body #root #portal-public-header .portal-public-utilities {
+  top: 0.4rem !important;
+  gap: 0.78rem !important;
+}
+
+html body #root #portal-public-header .portal-public-utilities > button {
+  width: 1.65rem !important;
+  min-width: 1.65rem !important;
+  max-width: 1.65rem !important;
+  height: 1.65rem !important;
+  min-height: 1.65rem !important;
+  max-height: 1.65rem !important;
+  padding: 0 !important;
+}
+
+html body #root #portal-public-header .portal-public-utilities svg {
+  width: 1.34rem !important;
+  height: 1.34rem !important;
+}
+
+html body #root #portal-public-header .portal-public-links-scroll {
+  align-items: center !important;
+  height: 2.7rem !important;
+  margin-top: -0.42rem !important;
+  padding: 0 0 0.28rem !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html body #root #portal-public-header .portal-public-links-scroll > ul,
+html body #root #portal-public-header .portal-public-nav-item,
+html body #root #portal-public-header .portal-public-nav-link {
+  height: 2.48rem !important;
+  min-height: 2.48rem !important;
+  max-height: 2.48rem !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html body #root #portal-public-header .portal-public-nav-link {
+  min-width: 6rem !important;
+  padding: 0.22rem 0.72rem 0.34rem !important;
+  gap: 0.62rem !important;
+}
+
+html body #root #portal-public-header .portal-public-nav-link svg {
+  width: 1.42rem !important;
+  height: 1.42rem !important;
+}
+
+html body #root #portal-public-header .portal-public-nav-link > span {
+  font-size: 0.86rem !important;
+  font-weight: 760 !important;
+  line-height: 1 !important;
+}
+
+html body #root > .app-container > .home-page > .dashboard-container {
+  padding-top: 6.65rem !important;
+}
+
+@media (max-width: 768px) {
+  html body #root #portal-public-header.portal-public-header {
+    inset: 0.42rem 0.42rem auto !important;
+    grid-template-rows: 2.62rem 2.72rem !important;
+    height: 5.5rem !important;
+    min-height: 5.5rem !important;
+    max-height: 5.5rem !important;
+    padding-inline: 0.48rem !important;
+  }
+
+  html body #root #portal-public-header .portal-public-links-scroll {
+    height: 2.62rem !important;
+    margin-top: -0.38rem !important;
+  }
+
+  html body #root #portal-public-header .portal-public-nav-link {
+    min-width: 5.45rem !important;
+    padding-inline: 0.55rem !important;
+    gap: 0.52rem !important;
+  }
+
+  html body #root #portal-public-header .portal-public-nav-link svg {
+    width: 1.28rem !important;
+    height: 1.28rem !important;
+  }
+
+  html body #root #portal-public-header .portal-public-nav-link > span {
+    font-size: 0.76rem !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container {
+    padding-top: 6.35rem !important;
+  }
+}
+
+/* Exact public-homepage glass and a clean, unclipped navigation rail. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-public-header {
+  color: #ffffff !important;
+  background: rgba(8, 17, 31, 0.92) !important;
+  border: 1px solid rgba(255, 255, 255, 0.13) !important;
+  box-shadow: 0 18px 50px rgba(2, 8, 17, 0.28) !important;
+  backdrop-filter: blur(22px) !important;
+  -webkit-backdrop-filter: blur(22px) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-public-header,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-public-header {
+  color: #34141d !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  border: 1px solid rgba(16, 24, 39, 0.1) !important;
+  box-shadow: 0 18px 55px rgba(31, 51, 72, 0.12) !important;
+  backdrop-filter: blur(22px) !important;
+  -webkit-backdrop-filter: blur(22px) !important;
+}
+
+html body #root .home-page .portal-public-links-scroll,
+html body #root .home-page .portal-public-links-scroll > ul,
+html body #root .home-page .portal-public-nav-item,
+html body #root .home-page .portal-public-nav-link,
+html body #root .home-page .portal-public-nav-link:is(:hover, :focus, :focus-visible, :active, .is-active) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .portal-public-links-scroll {
+  top: auto !important;
+  align-items: center !important;
+  height: 2.42rem !important;
+  margin-top: -0.14rem !important;
+  padding-top: 0 !important;
+  padding-bottom: 0.14rem !important;
+}
+
+html body #root .home-page .portal-public-links-scroll > ul,
+html body #root .home-page .portal-public-nav-item,
+html body #root .home-page .portal-public-nav-link {
+  height: 2.25rem !important;
+  min-height: 2.25rem !important;
+  max-height: 2.25rem !important;
+}
+
+html body #root .home-page .portal-public-nav-link {
+  align-self: center !important;
+  padding-top: 0.2rem !important;
+  padding-bottom: 0.2rem !important;
+  line-height: 1 !important;
+}
+
+html body #root .home-page .portal-public-nav-link.is-active {
+  color: #c45e73 !important;
+}
+
+html body #root .home-page .portal-public-nav-link.is-active::after {
+  content: '' !important;
+  position: absolute !important;
+  right: 0.55rem !important;
+  bottom: 0.03rem !important;
+  left: 0.55rem !important;
+  height: 2px !important;
+  border-radius: 999px !important;
+  background: currentColor !important;
+}
+
+html body #root .home-page .portal-public-utilities button,
+html body #root .home-page .portal-public-utilities button:is(:hover, :focus, :focus-visible, :active) {
+  color: inherit !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .portal-public-theme-icon {
+  width: 1.05rem !important;
+  height: 1.05rem !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.8 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+/* ULTIMATE PORTAL LAYOUT RESET — keep this block last. */
+html body #root #portal-public-header.portal-public-header {
+  position: fixed !important;
+  top: 0.42rem !important;
+  right: 0.65rem !important;
+  bottom: auto !important;
+  left: 0.65rem !important;
+  z-index: 1000000 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+html body #root #portal-public-header.portal-public-header::before,
+html body #root #portal-public-header.portal-public-header::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header.portal-public-header {
+  background: rgba(8, 17, 31, 0.46) !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  backdrop-filter: blur(28px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(140%) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root #portal-public-header.portal-public-header,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header.portal-public-header {
+  background: rgba(255, 255, 255, 0.56) !important;
+  background-image: none !important;
+  border-color: rgba(52, 20, 29, 0.12) !important;
+  backdrop-filter: blur(28px) saturate(130%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(130%) !important;
+}
+
+@media (max-width: 0px) {
+  html body #root #portal-public-header.portal-public-header {
+    top: 0.42rem !important;
+    right: 0.42rem !important;
+    left: 0.42rem !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container:has(#portal-public-header) {
+    box-sizing: border-box !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: 100dvh !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    overflow: hidden !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container:has(#portal-public-header) > main.main-content {
+    box-sizing: border-box !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: 100dvh !important;
+    margin-top: 0 !important;
+    padding-top: 5.25rem !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container > main:is(
+    .mobile-section-job-feed,
+    .mobile-section-home-feed,
+    .mobile-section-work-news,
+    .mobile-section-job-posts,
+    .mobile-section-talent-stories,
+    .mobile-section-tailor-profile,
+    .mobile-section-my-feed
+  ) {
+    padding-top: 0 !important;
+    overflow-y: hidden !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container > main:is(
+    .mobile-section-job-feed,
+    .mobile-section-home-feed,
+    .mobile-section-work-news,
+    .mobile-section-job-posts,
+    .mobile-section-talent-stories,
+    .mobile-section-tailor-profile,
+    .mobile-section-my-feed
+  ) :is(.portal-section-transition-shell.is-active-portal-section, .portal-home-feed) {
+    box-sizing: border-box !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    overflow: hidden !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container > main:is(
+    .mobile-section-job-feed,
+    .mobile-section-home-feed,
+    .mobile-section-work-news,
+    .mobile-section-job-posts,
+    .mobile-section-talent-stories,
+    .mobile-section-tailor-profile,
+    .mobile-section-my-feed
+  ) .portal-home-feed-scroll {
+    box-sizing: border-box !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    margin-top: 0 !important;
+    padding-top: 4.82rem !important;
+    padding-bottom: 2rem !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+
+/* Compact portal header with an on-demand navigation menu. */
+html body #root #portal-public-header.portal-public-header {
+  display: block !important;
+  height: 4.35rem !important;
+  min-height: 4.35rem !important;
+  max-height: 4.35rem !important;
+  padding: 0.45rem 0.8rem !important;
+  overflow: visible !important;
+}
+
+html body #root #portal-public-header .portal-public-header-top {
+  position: relative !important;
+  z-index: 5 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+html body #root #portal-public-header .portal-public-links-scroll {
+  display: none !important;
+}
+
+html body #root #portal-public-header .portal-public-utilities {
+  position: static !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.85rem !important;
+}
+
+html body #root #portal-public-header .portal-public-menu-toggle {
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.24rem !important;
+}
+
+html body #root #portal-public-header .portal-public-menu-toggle > span {
+  display: block !important;
+  width: 1.28rem !important;
+  height: 2px !important;
+  border-radius: 999px !important;
+  background: currentColor !important;
+  transition: transform 180ms ease, opacity 150ms ease !important;
+}
+
+html body #root #portal-public-header .portal-public-menu-toggle.is-open > span:nth-child(1) {
+  transform: translateY(0.36rem) rotate(45deg) !important;
+}
+
+html body #root #portal-public-header .portal-public-menu-toggle.is-open > span:nth-child(2) {
+  opacity: 0 !important;
+}
+
+html body #root #portal-public-header .portal-public-menu-toggle.is-open > span:nth-child(3) {
+  transform: translateY(-0.36rem) rotate(-45deg) !important;
+}
+
+html body #root #portal-public-header .portal-public-menu-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  padding: 0 !important;
+  background: rgba(3, 7, 14, 0.22) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  backdrop-filter: blur(3px) !important;
+  -webkit-backdrop-filter: blur(3px) !important;
+}
+
+html body #root #portal-public-header .portal-public-menu {
+  position: absolute !important;
+  top: calc(100% + 0.65rem) !important;
+  right: 0 !important;
+  left: 0 !important;
+  z-index: 4 !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 0.7rem !important;
+  max-height: min(72vh, 39rem) !important;
+  padding: 0.8rem !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  border-radius: 1.25rem !important;
+  animation: portal-menu-enter 180ms ease-out both !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-public-menu {
+  color: #fff !important;
+  background: rgba(8, 17, 31, 0.86) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 24px 65px rgba(0, 0, 0, 0.42) !important;
+  backdrop-filter: blur(28px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(145%) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root #portal-public-header .portal-public-menu,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header .portal-public-menu {
+  color: #34141d !important;
+  background: rgba(255, 252, 247, 0.9) !important;
+  border: 1px solid rgba(71, 40, 48, 0.12) !important;
+  box-shadow: 0 24px 65px rgba(77, 48, 56, 0.18) !important;
+  backdrop-filter: blur(28px) saturate(130%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(130%) !important;
+}
+
+html body #root #portal-public-header .portal-public-menu > ul {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  align-content: start !important;
+  gap: 0.48rem !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+html body #root #portal-public-header .portal-public-page-search {
+  grid-column: 1 / -1 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.7rem !important;
+  min-height: 3.15rem !important;
+  padding: 0 0.9rem !important;
+  border-radius: 0.9rem !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-public-page-search {
+  color: rgba(255, 255, 255, 0.72) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root #portal-public-header .portal-public-page-search,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header .portal-public-page-search {
+  color: rgba(52, 20, 29, 0.68) !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  border: 1px solid rgba(71, 40, 48, 0.13) !important;
+}
+
+html body #root #portal-public-header .portal-public-page-search > svg {
+  flex: 0 0 auto !important;
+  width: 1.12rem !important;
+  height: 1.12rem !important;
+}
+
+html body #root #portal-public-header .portal-public-page-search > input {
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 2.7rem !important;
+  padding: 0 !important;
+  color: inherit !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  font: inherit !important;
+}
+
+html body #root #portal-public-header .portal-public-menu .portal-public-nav-item,
+html body #root #portal-public-header .portal-public-menu .portal-public-nav-link {
+  width: 100% !important;
+  height: auto !important;
+  min-height: 3.25rem !important;
+  max-height: none !important;
+}
+
+html body #root #portal-public-header .portal-public-menu .portal-public-nav-link {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  min-width: 0 !important;
+  padding: 0.7rem 0.78rem !important;
+  gap: 0.72rem !important;
+  color: inherit !important;
+  text-align: left !important;
+  border-radius: 0.85rem !important;
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-public-menu .portal-public-nav-link:is(:hover, :focus-visible, .is-active) {
+  background: rgba(255, 255, 255, 0.09) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root #portal-public-header .portal-public-menu .portal-public-nav-link:is(:hover, :focus-visible, .is-active),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header .portal-public-menu .portal-public-nav-link:is(:hover, :focus-visible, .is-active) {
+  background: rgba(141, 77, 94, 0.1) !important;
+}
+
+html body #root #portal-public-header .portal-public-menu .portal-public-nav-link.is-active {
+  color: #c45e73 !important;
+}
+
+html body #root #portal-public-header .portal-public-menu .portal-public-nav-link.is-active::after {
+  content: none !important;
+}
+
+html body #root #portal-public-header .portal-public-menu .portal-public-nav-link svg {
+  flex: 0 0 auto !important;
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+}
+
+html body #root #portal-public-header .portal-public-menu .portal-public-nav-link > span {
+  font-size: 0.82rem !important;
+  font-weight: 720 !important;
+  line-height: 1.15 !important;
+}
+
+html body #root > .app-container > .home-page > .dashboard-container:has(#portal-public-header) {
+  padding-top: 5.4rem !important;
+}
+
+html:has(#portal-public-header),
+html body #root .home-page main.main-content {
+  scroll-padding-top: 5.4rem !important;
+}
+
+@keyframes portal-menu-enter {
+  from { opacity: 0; transform: translateY(-0.5rem) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 768px) {
+  html body #root #portal-public-header.portal-public-header {
+    height: 4.25rem !important;
+    min-height: 4.25rem !important;
+    max-height: 4.25rem !important;
+    padding: 0.38rem 0.62rem !important;
+  }
+
+  html body #root #portal-public-header .portal-public-menu {
+    grid-template-columns: 1fr !important;
+    max-height: calc(100dvh - 5.8rem) !important;
+    padding: 0.65rem !important;
+    gap: 0.48rem !important;
+  }
+
+  html body #root #portal-public-header .portal-public-menu > ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  html body #root #portal-public-header .portal-public-menu .portal-public-nav-link {
+    min-height: 3rem !important;
+    padding: 0.62rem !important;
+    gap: 0.58rem !important;
+  }
+
+  html body #root #portal-public-header .portal-public-menu .portal-public-nav-link > span {
+    font-size: 0.75rem !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container:has(#portal-public-header) {
+    padding-top: 5.5rem !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container:has(> main:is(
+    .mobile-section-job-feed,
+    .mobile-section-home-feed,
+    .mobile-section-work-news,
+    .mobile-section-job-posts,
+    .mobile-section-talent-stories,
+    .mobile-section-tailor-profile,
+    .mobile-section-my-feed
+  )) {
+    padding-top: 0 !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container > main:is(
+    .mobile-section-job-feed,
+    .mobile-section-home-feed,
+    .mobile-section-work-news,
+    .mobile-section-job-posts,
+    .mobile-section-talent-stories,
+    .mobile-section-tailor-profile,
+    .mobile-section-my-feed
+  ) {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container > main:is(
+    .mobile-section-job-feed,
+    .mobile-section-home-feed,
+    .mobile-section-work-news,
+    .mobile-section-job-posts,
+    .mobile-section-talent-stories,
+    .mobile-section-tailor-profile,
+    .mobile-section-my-feed
+  ) > .portal-section-transition-shell.is-active-portal-section {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container > main:is(
+    .mobile-section-job-feed,
+    .mobile-section-home-feed,
+    .mobile-section-work-news,
+    .mobile-section-job-posts,
+    .mobile-section-talent-stories,
+    .mobile-section-tailor-profile,
+    .mobile-section-my-feed
+  ) .portal-home-feed,
+  html body #root > .app-container > .home-page > .dashboard-container > main:is(
+    .mobile-section-job-feed,
+    .mobile-section-home-feed,
+    .mobile-section-work-news,
+    .mobile-section-job-posts,
+    .mobile-section-talent-stories,
+    .mobile-section-tailor-profile,
+    .mobile-section-my-feed
+  ) .portal-home-feed-scroll {
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container > main:is(
+    .mobile-section-job-feed,
+    .mobile-section-home-feed,
+    .mobile-section-work-news,
+    .mobile-section-job-posts,
+    .mobile-section-talent-stories,
+    .mobile-section-tailor-profile,
+    .mobile-section-my-feed
+  ) .portal-home-feed-scroll {
+    box-sizing: border-box !important;
+    padding-top: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+
+  html:has(#portal-public-header),
+  html body #root .home-page main.main-content {
+    scroll-padding-top: 5.5rem !important;
+  }
+}
+
+/* Keep portal job logos and heading copy in separate, aligned columns. */
+html body #root .home-page .portal-public-job-card .portal-candidate-job-header {
+  display: grid !important;
+  grid-template-columns: 3.35rem minmax(0, 1fr) !important;
+  align-items: start !important;
+  column-gap: 0.9rem !important;
+  width: 100% !important;
+}
+
+html body #root .home-page .portal-public-job-card .portal-candidate-job-header > div:last-child {
+  min-width: 0 !important;
+  width: 100% !important;
+  padding-top: 0.08rem !important;
+}
+
+html body #root .home-page .portal-public-job-card .portal-job-company-avatar {
+  grid-column: 1 !important;
+  align-self: start !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+
+html body #root .home-page .portal-public-job-card .portal-candidate-job-header :is(p, h3) {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  overflow-wrap: anywhere !important;
+}
+
+html body #root .home-page .portal-public-job-card .portal-candidate-job-header h3 {
+  display: -webkit-box !important;
+  white-space: normal !important;
+  text-overflow: ellipsis !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 2 !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .home-page .portal-public-job-card .portal-candidate-job-header {
+    grid-template-columns: 3rem minmax(0, 1fr) !important;
+    column-gap: 0.7rem !important;
+    padding-right: 1.8rem !important;
+  }
+
+  html body #root .home-page .portal-public-job-card .portal-job-company-avatar,
+  html body #root .home-page .portal-public-job-card .portal-job-company-avatar img {
+    width: 3rem !important;
+    min-width: 3rem !important;
+    height: 3rem !important;
+  }
+
+  html body #root .home-page .portal-public-job-card .portal-candidate-job-header h3 {
+    font-size: 1.05rem !important;
+    line-height: 1.12 !important;
+  }
+}
+
+/* Dark portals use a plain black canvas with no decorative grid or gradient. */
+html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header),
+html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header) #root,
+html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header) #root > .app-container,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page:has(#portal-public-header) {
+  background: #000 !important;
+  background-color: #000 !important;
+  background-image: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page:has(#portal-public-header)::before,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page:has(#portal-public-header)::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+}
+
+/* Keep the portal header as an independent floating glass layer. */
+html body #root #portal-public-header.portal-public-header {
+  position: fixed !important;
+  top: 0.42rem !important;
+  right: 0.65rem !important;
+  bottom: auto !important;
+  left: 0.65rem !important;
+  z-index: 1000000 !important;
+  margin: 0 !important;
+  isolation: isolate !important;
+}
+
+html body #root > .app-container > .home-page > .dashboard-container:has(#portal-public-header),
+html body #root > .app-container > .home-page > .dashboard-container:has(#portal-public-header) > main.main-content {
+  overflow-x: hidden !important;
+}
+
+@media (max-width: 768px) {
+  html body #root #portal-public-header.portal-public-header {
+    top: 0.42rem !important;
+    right: 0.42rem !important;
+    left: 0.42rem !important;
+  }
+}
+
+/* Final glass palette and document-scrolling behavior for both portals. */
+html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header.portal-public-header {
+  background: rgba(8, 17, 31, 0.58) !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 0 18px 50px rgba(2, 8, 17, 0.22) !important;
+  backdrop-filter: blur(28px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(145%) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root #portal-public-header.portal-public-header,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header.portal-public-header {
+  background: rgba(255, 255, 255, 0.62) !important;
+  border-color: rgba(16, 24, 39, 0.12) !important;
+  box-shadow: 0 18px 55px rgba(31, 51, 72, 0.1) !important;
+  backdrop-filter: blur(28px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(135%) !important;
+}
+
+
+/* FINAL sizing and public-home glass polish. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-public-header {
+  background: rgba(8, 17, 31, 0.92) !important;
+  background-color: rgba(8, 17, 31, 0.92) !important;
+  background-image: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.13) !important;
+  box-shadow: 0 18px 50px rgba(2, 8, 17, 0.28) !important;
+  backdrop-filter: blur(22px) saturate(1.08) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(1.08) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-public-header,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-public-header {
+  background: rgba(255, 255, 255, 0.94) !important;
+  background-color: rgba(255, 255, 255, 0.94) !important;
+  background-image: none !important;
+  border: 1px solid rgba(16, 24, 39, 0.1) !important;
+  box-shadow: 0 18px 55px rgba(31, 51, 72, 0.12) !important;
+  backdrop-filter: blur(22px) saturate(1.08) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(1.08) !important;
+}
+
+html body #root .home-page .portal-public-header::before,
+html body #root .home-page .portal-public-header::after {
+  content: none !important;
+  display: none !important;
+}
+
+html body #root .home-page .portal-public-utilities,
+html body #root .home-page .portal-public-utilities::before,
+html body #root .home-page .portal-public-utilities::after,
+html body #root .home-page .portal-public-utilities button,
+html body #root .home-page .portal-public-utilities button::before,
+html body #root .home-page .portal-public-utilities button::after,
+html body #root .home-page .portal-public-utilities button:is(:hover, :focus, :focus-visible, :active) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-color: transparent !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html body #root .home-page .portal-public-utilities::before,
+html body #root .home-page .portal-public-utilities::after,
+html body #root .home-page .portal-public-utilities button::before,
+html body #root .home-page .portal-public-utilities button::after {
+  content: none !important;
+  display: none !important;
+}
+
+html body #root .home-page .portal-public-utilities {
+  gap: 0.65rem !important;
+}
+
+html body #root .home-page .portal-public-utilities button {
+  width: 1.65rem !important;
+  min-width: 1.65rem !important;
+  height: 1.65rem !important;
+  padding: 0 !important;
+}
+
+html body #root .home-page .portal-public-utilities svg,
+html body #root .home-page .portal-public-theme-icon {
+  width: 1.22rem !important;
+  height: 1.22rem !important;
+}
+
+html body #root .home-page .portal-public-links-scroll {
+  height: 2.5rem !important;
+  margin-top: -0.3rem !important;
+  padding-bottom: 0.22rem !important;
+}
+
+html body #root .home-page .portal-public-links-scroll > ul,
+html body #root .home-page .portal-public-nav-item,
+html body #root .home-page .portal-public-nav-link {
+  height: 2.34rem !important;
+  min-height: 2.34rem !important;
+  max-height: 2.34rem !important;
+}
+
+html body #root .home-page .portal-public-nav-link {
+  min-width: 5.35rem !important;
+  padding: 0.18rem 0.65rem 0.28rem !important;
+  gap: 0.52rem !important;
+}
+
+html body #root .home-page .portal-public-nav-link svg {
+  width: 1.2rem !important;
+  height: 1.2rem !important;
+}
+
+html body #root .home-page .portal-public-nav-link > span {
+  font-size: 0.78rem !important;
+  font-weight: 750 !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .home-page .portal-public-links-scroll {
+    margin-top: -0.34rem !important;
+  }
+
+  html body #root .home-page .portal-public-nav-link {
+    min-width: 5rem !important;
+    padding-inline: 0.52rem !important;
+    gap: 0.46rem !important;
+  }
+
+  html body #root .home-page .portal-public-nav-link svg {
+    width: 1.12rem !important;
+    height: 1.12rem !important;
+  }
+
+  html body #root .home-page .portal-public-nav-link > span {
+    font-size: 0.69rem !important;
+  }
+}
+
+html body #root .home-page .portal-public-utilities button:hover {
+  transform: rotate(7deg) !important;
+}
+
+/* Clean portal header: isolated from all legacy sidebar/dock selectors. */
+html body #root .home-page .portal-public-header {
+  position: fixed !important;
+  inset: 0.55rem max(0.65rem, calc((100vw - 92rem) / 2)) auto !important;
+  z-index: 1000000 !important;
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-rows: 2.65rem 2.65rem !important;
+  width: auto !important;
+  height: 5.45rem !important;
+  margin: 0 !important;
+  padding: 0.1rem 0.55rem 0.15rem !important;
+  overflow: hidden !important;
+  border-radius: 1.2rem !important;
+  transform: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-public-header,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-public-header {
+  color: #4a2230 !important;
+  background: rgba(255, 248, 236, 0.94) !important;
+  border: 1px solid rgba(127, 29, 50, 0.22) !important;
+  box-shadow: 0 0.8rem 2rem rgba(72, 43, 50, 0.15) !important;
+  backdrop-filter: blur(20px) saturate(1.18) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.18) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-public-header {
+  color: #f7f1ea !important;
+  background: rgba(4, 7, 8, 0.94) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 0.9rem 2.2rem rgba(0, 0, 0, 0.48) !important;
+  backdrop-filter: blur(21px) saturate(1.28) !important;
+  -webkit-backdrop-filter: blur(21px) saturate(1.28) !important;
+}
+
+html body #root .home-page .portal-public-header-top {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  min-width: 0 !important;
+}
+
+html body #root .home-page .portal-public-brand {
+  display: flex !important;
+  align-items: center !important;
+  width: 5.4rem !important;
+  height: 2.45rem !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .portal-public-brand img {
+  display: block !important;
+  width: 4.55rem !important;
+  max-width: 4.55rem !important;
+  height: auto !important;
+  max-height: 2.35rem !important;
+  object-fit: contain !important;
+}
+
+html body #root .home-page .portal-public-utilities {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+}
+
+html body #root .home-page .portal-public-utilities button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 2.1rem !important;
+  min-width: 2.1rem !important;
+  height: 2.1rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0.65rem !important;
+  cursor: pointer !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-public-utilities button,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-public-utilities button {
+  color: #4a2230 !important;
+  background: rgba(255, 255, 255, 0.58) !important;
+  border: 1px solid rgba(127, 29, 50, 0.2) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-public-utilities button {
+  color: #f7f1ea !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+html body #root .home-page .portal-public-utilities svg,
+html body #root .home-page .portal-public-nav-link svg {
+  width: 1rem !important;
+  height: 1rem !important;
+  flex: 0 0 auto !important;
+  fill: currentColor !important;
+}
+
+html body #root .home-page .portal-public-links-scroll {
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  align-items: stretch !important;
+  gap: 0.12rem !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 2.55rem !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
+  -webkit-overflow-scrolling: touch !important;
+  scroll-snap-type: x proximity !important;
+}
+
+html body #root .home-page .portal-public-links-scroll::-webkit-scrollbar {
+  display: none !important;
+}
+
+html body #root .home-page .portal-public-links-scroll > ul {
+  display: flex !important;
+  flex: 0 0 auto !important;
+  flex-flow: row nowrap !important;
+  align-items: stretch !important;
+  gap: 0.12rem !important;
+  width: max-content !important;
+  min-width: max-content !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+html body #root .home-page .portal-public-nav-item {
+  position: relative !important;
+  flex: 0 0 auto !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+  scroll-snap-align: start !important;
+}
+
+html body #root .home-page .portal-public-nav-link {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 4.8rem !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0.3rem 0.55rem !important;
+  gap: 0.35rem !important;
+  border: 0 !important;
+  border-radius: 0.65rem !important;
+  background: transparent !important;
+  color: inherit !important;
+  cursor: pointer !important;
+  font: inherit !important;
+  white-space: nowrap !important;
+}
+
+html body #root .home-page .portal-public-nav-link > span {
+  font-size: 0.69rem !important;
+  font-weight: 750 !important;
+  line-height: 1 !important;
+}
+
+html body #root .home-page .portal-public-nav-link.is-active {
+  background: rgba(184, 90, 109, 0.15) !important;
+  color: #c45e73 !important;
+}
+
+html body #root .home-page .portal-public-nav-link .nav-notification-dot {
+  position: absolute !important;
+  top: 0.28rem !important;
+  right: 0.28rem !important;
+}
+
+html body #root > .app-container > .home-page > .dashboard-container {
+  padding-top: 6.35rem !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .home-page .portal-public-header {
+    inset: 0.42rem 0.42rem auto !important;
+    grid-template-rows: 2.55rem 2.5rem !important;
+    height: 5.2rem !important;
+    padding-inline: 0.45rem !important;
+    border-radius: 1rem !important;
+  }
+
+  html body #root .home-page .portal-public-nav-link {
+    min-width: 4.45rem !important;
+    padding-inline: 0.42rem !important;
+  }
+
+  html body #root .home-page .portal-public-nav-link > span {
+    font-size: 0.6rem !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container {
+    padding-top: 5.95rem !important;
+  }
+}
+
+/* Public-homepage header composition for both portal navigation systems. */
+html body #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+  position: relative !important;
+  display: block !important;
+  height: 5.45rem !important;
+  min-height: 5.45rem !important;
+  max-height: 5.45rem !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 1.15rem !important;
+}
+
+html body #root .home-page .portal-uiverse-sidebar .portal-nav-brand {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  z-index: 10 !important;
+  display: flex !important;
+  width: 5.55rem !important;
+  min-width: 5.55rem !important;
+  max-width: 5.55rem !important;
+  height: 2.8rem !important;
+  padding: 0.28rem 0.65rem !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .portal-uiverse-sidebar .portal-nav-brand-logo {
+  width: 4.4rem !important;
+  max-width: 4.4rem !important;
+  max-height: 2.35rem !important;
+}
+
+html body #root .home-page .portal-uiverse-sidebar .portal-nav-utilities {
+  position: absolute !important;
+  top: 0.34rem !important;
+  right: 0.45rem !important;
+  z-index: 12 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 0.35rem !important;
+  height: 2.15rem !important;
+}
+
+html body #root .home-page .portal-uiverse-sidebar .portal-nav-utility-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 2.05rem !important;
+  min-width: 2.05rem !important;
+  height: 2.05rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0.65rem !important;
+  cursor: pointer !important;
+}
+
+html body #root .home-page .portal-uiverse-sidebar .portal-nav-utility-button svg {
+  width: 1rem !important;
+  height: 1rem !important;
+  fill: currentColor !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-nav-utility-button,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-nav-utility-button {
+  color: #4a2230 !important;
+  background: rgba(255, 255, 255, 0.58) !important;
+  border: 1px solid rgba(127, 29, 50, 0.2) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-nav-utility-button {
+  color: #f7f1ea !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+html body #root .home-page .portal-uiverse-sidebar .portal-nav-links-scroll {
+  position: absolute !important;
+  inset: 2.65rem 0 0 0 !important;
+  z-index: 5 !important;
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  align-items: stretch !important;
+  gap: 0.1rem !important;
+  width: 100% !important;
+  height: 2.8rem !important;
+  padding: 0 0.4rem !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
+  -webkit-overflow-scrolling: touch !important;
+  scroll-snap-type: x proximity !important;
+}
+
+html body #root .home-page .portal-uiverse-sidebar .portal-nav-links-scroll::-webkit-scrollbar {
+  display: none !important;
+}
+
+html body #root .home-page .portal-uiverse-sidebar .portal-nav-links-scroll > .sidebar__list {
+  position: static !important;
+  display: flex !important;
+  flex: 0 0 auto !important;
+  flex-flow: row nowrap !important;
+  align-items: stretch !important;
+  width: max-content !important;
+  min-width: max-content !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 0.12rem !important;
+  overflow: visible !important;
+}
+
+html body #root .home-page .portal-uiverse-sidebar .portal-nav-links-scroll .sidebar__item {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: 4.7rem !important;
+  height: 100% !important;
+}
+
+html body #root .home-page .portal-uiverse-sidebar .portal-nav-links-scroll .sidebar__link {
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 100% !important;
+  height: 100% !important;
+  padding: 0.25rem 0.55rem !important;
+  gap: 0.35rem !important;
+  border-radius: 0.65rem !important;
+}
+
+html body #root .home-page .portal-uiverse-sidebar .portal-nav-links-scroll .sidebar__link .icon {
+  order: 1 !important;
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+}
+
+html body #root .home-page .portal-uiverse-sidebar .portal-nav-links-scroll .sidebar__link .text {
+  order: 2 !important;
+  display: block !important;
+  max-width: none !important;
+  overflow: visible !important;
+  font-size: 0.68rem !important;
+  line-height: 1 !important;
+  text-overflow: clip !important;
+  white-space: nowrap !important;
+}
+
+html body #root > .app-container > .home-page > .dashboard-container {
+  padding-top: 6.35rem !important;
+}
+
+@media (max-width: 768px) {
+  html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar,
+  html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.sidebar,
+  html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.is-expanded,
+  html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.is-collapsed,
+  html body #root .home-page .portal-uiverse-sidebar .portal-sidebar-nav,
+  html body #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+    height: 5.45rem !important;
+    min-height: 5.45rem !important;
+    max-height: 5.45rem !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .portal-nav-links-scroll .sidebar__link {
+    padding-inline: 0.42rem !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .portal-nav-links-scroll .sidebar__link .text {
+    font-size: 0.61rem !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container {
+    padding-top: 6.2rem !important;
+  }
+}
+
+/* FINAL portal header palette and rail alignment. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-public-header {
+  color: #ffffff !important;
+  background: rgba(8, 17, 31, 0.92) !important;
+  border-color: rgba(255, 255, 255, 0.13) !important;
+  box-shadow: 0 18px 50px rgba(2, 8, 17, 0.28) !important;
+  backdrop-filter: blur(22px) !important;
+  -webkit-backdrop-filter: blur(22px) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-public-header,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-public-header {
+  color: #34141d !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  border-color: rgba(16, 24, 39, 0.1) !important;
+  box-shadow: 0 18px 55px rgba(31, 51, 72, 0.12) !important;
+  backdrop-filter: blur(22px) !important;
+  -webkit-backdrop-filter: blur(22px) !important;
+}
+
+html body #root .home-page .portal-public-links-scroll,
+html body #root .home-page .portal-public-links-scroll > ul,
+html body #root .home-page .portal-public-nav-item,
+html body #root .home-page .portal-public-nav-link,
+html body #root .home-page .portal-public-nav-link:is(:hover, :focus, :focus-visible, :active, .is-active) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .portal-public-links-scroll {
+  align-items: center !important;
+  height: 2.42rem !important;
+  margin-top: -0.14rem !important;
+  padding-top: 0 !important;
+  padding-bottom: 0.14rem !important;
+}
+
+html body #root .home-page .portal-public-links-scroll > ul,
+html body #root .home-page .portal-public-nav-item,
+html body #root .home-page .portal-public-nav-link {
+  height: 2.25rem !important;
+  min-height: 2.25rem !important;
+  max-height: 2.25rem !important;
+}
+
+html body #root .home-page .portal-public-nav-link {
+  align-self: center !important;
+  padding-block: 0.2rem !important;
+}
+
+html body #root .home-page .portal-public-nav-link.is-active {
+  color: #c45e73 !important;
+}
+
+html body #root .home-page .portal-public-nav-link.is-active::after {
+  content: '' !important;
+  position: absolute !important;
+  right: 0.55rem !important;
+  bottom: 0.03rem !important;
+  left: 0.55rem !important;
+  height: 2px !important;
+  border-radius: 999px !important;
+  background: currentColor !important;
+}
+
+html body #root .home-page .portal-public-utilities button,
+html body #root .home-page .portal-public-utilities button:is(:hover, :focus, :focus-visible, :active) {
+  color: inherit !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .portal-public-theme-icon {
+  width: 1.05rem !important;
+  height: 1.05rem !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.8 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}

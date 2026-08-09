@@ -760,22 +760,10 @@ const statIconPaths = {
 };
 
 const jobMetaIconPaths = {
-    jobNumber: 'M11 8h2V6h-2zM0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm8.5.5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0zM2 5.5a.5.5 0 0 0 .5.5H6a.5.5 0 0 0 0-1H2.5a.5.5 0 0 0-.5.5M2.5 7a.5.5 0 0 0 0 1H6a.5.5 0 0 0 0-1zM2 9.5a.5.5 0 0 0 .5.5H6a.5.5 0 0 0 0-1H2.5a.5.5 0 0 0-.5.5',
-    location: 'M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6',
-    jobType: tabIconPaths['work-news'],
-    salary: 'M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2 1a1 1 0 0 0 1-1h10a1 1 0 0 0 1 1v6a1 1 0 0 0-1 1H3a1 1 0 0 0-1-1zm6 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6'
-};
-
-const utilityIconPaths = {
-    starFill: 'M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z',
-    chevronDoubleLeft: [
-        'M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0',
-        'M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0'
-    ],
-    chevronDoubleRight: [
-        'M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708',
-        'M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708'
-    ]
+    jobNumber: 'M5 1h2L6.6 4h3L10 1h2l-.4 3H14v2h-2.7l-.5 4H14v2h-3.5l-.4 3h-2l.4-3h-3L5 15H3l.4-3H1v-2h2.7l.5-4H1V4h3.5zm.2 5-.5 4h3l.5-4z',
+    location: 'M8 0a6 6 0 0 0-6 6c0 4.7 6 10 6 10s6-5.3 6-10a6 6 0 0 0-6-6m0 8.5A2.5 2.5 0 1 1 8 3a2.5 2.5 0 0 1 0 5.5',
+    jobType: 'M6 1h4a2 2 0 0 1 2 2v1h2a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2V3a2 2 0 0 1 2-2m0 3h4V3H6zm-4 2v2h12V6zm0 4v3h12v-3z',
+    salary: 'M2 3h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2m0 2v7h12V5zm6 1.25A2.75 2.75 0 1 1 8 11.75 2.75 2.75 0 0 1 8 6.25M3 6h1.5v1.5H3zm8.5 3H13v1.5h-1.5z'
 };
 
 const ReactionIcon = ({ name }) => (
@@ -1090,6 +1078,7 @@ const normalizeHomeJobForDisplay = (job, index = 0) => {
         jobField: getJobField(source),
         salary: asDisplayText(source?.salary, ''),
         applicationLink: asDisplayText(source?.applicationLink, asDisplayText(source?.applyLink, asDisplayText(source?.externalApplyLink, ''))),
+        applicationDeadline: source?.applicationDeadline || source?.deadline || source?.closingDate || null,
         jobNumber: asDisplayText(source?.jobNumber, asDisplayText(source?.reference, 'Not assigned')),
         description: asDisplayText(source?.description, asDisplayText(source?.summary, asDisplayText(source?.about, 'No description added.'))),
         skills,
@@ -1164,7 +1153,10 @@ const PortalHomeFeed = ({
     companyData,
     jobs = [],
     switchSection,
-    onRefresh
+    onRefresh,
+    onTabChange,
+    initialTab,
+    hideTabs = false
 }) => {
     const safeJobs = useMemo(
         () => (Array.isArray(jobs)
@@ -1197,7 +1189,7 @@ const PortalHomeFeed = ({
         { id: 'my-job-posts', label: 'My Jobs' }
     ];
     const tabs = mode === 'employer' ? employerTabs : candidateTabs;
-    const defaultTab = mode === 'employer' ? 'talent-stories' : 'work-news';
+    const defaultTab = initialTab || (mode === 'employer' ? 'talent-stories' : 'work-news');
     const [activeTab, setActiveTab] = useState(defaultTab);
     const [workNewsPosts, setWorkNewsPosts] = useState([]);
     const [talentStories, setTalentStories] = useState([]);
@@ -1271,9 +1263,10 @@ const PortalHomeFeed = ({
     const [selectedJobMode, setSelectedJobMode] = useState(mode);
     const [applyingHomeJobId, setApplyingHomeJobId] = useState('');
     const [appliedHomeJobIds, setAppliedHomeJobIds] = useState([]);
-    const [bookmarkedHomeJobIds, setBookmarkedHomeJobIds] = useState([]);
+    const [, setBookmarkedHomeJobIds] = useState([]);
     const [jobActionMessage, setJobActionMessage] = useState('');
     const [jobPage, setJobPage] = useState(1);
+    const [homeJobSearch, setHomeJobSearch] = useState('');
     const [homeJobCountryFilter, setHomeJobCountryFilter] = useState('');
     const [countryMenuOpen, setCountryMenuOpen] = useState(false);
     const [homeJobLocationFilter, setHomeJobLocationFilter] = useState('');
@@ -1365,6 +1358,10 @@ const PortalHomeFeed = ({
     useEffect(() => {
         setActiveTab(defaultTab);
     }, [defaultTab]);
+
+    useEffect(() => {
+        onTabChange?.(activeTab);
+    }, [activeTab, onTabChange]);
 
     useEffect(() => {
         let active = true;
@@ -1777,6 +1774,7 @@ const PortalHomeFeed = ({
         const countryFilter = homeJobCountryFilter.trim().toLowerCase();
         const typeFilter = homeJobTypeFilter.trim().toLowerCase();
         const fieldFilter = homeJobFieldFilter.trim().toLowerCase();
+        const searchFilter = homeJobSearch.trim().toLowerCase();
         const visibleJobs = safeJobs.filter((job) => {
             const companyKey = String(job?.companyId || job?.company?._id || job?.companyName || '');
             return !companyKey || !blockedFeedAuthors.includes(companyKey);
@@ -1786,8 +1784,18 @@ const PortalHomeFeed = ({
             const matchesLocation = !locationFilter || asDisplayText(job.location).trim().toLowerCase() === locationFilter;
             const matchesType = !typeFilter || asDisplayText(job.jobType).trim().toLowerCase() === typeFilter;
             const matchesField = !fieldFilter || asDisplayText(job.jobField || getJobField(job)).trim().toLowerCase() === fieldFilter;
+            const searchText = [
+                job.title,
+                job.company?.name,
+                job.companyName,
+                job.location,
+                job.description,
+                ...(Array.isArray(job.skills) ? job.skills : []),
+                ...(Array.isArray(job.requirements) ? job.requirements : [])
+            ].map((value) => asDisplayText(value)).join(' ').toLowerCase();
+            const matchesSearch = !searchFilter || searchText.includes(searchFilter);
 
-            return matchesCountry && matchesLocation && matchesType && matchesField;
+            return matchesCountry && matchesLocation && matchesType && matchesField && matchesSearch;
         });
         const sortedJobs = [...filteredJobs];
 
@@ -1798,7 +1806,7 @@ const PortalHomeFeed = ({
         }
 
         return sortedJobs;
-    }, [safeJobs, homeJobCountryFilter, homeJobLocationFilter, homeJobSalarySort, homeJobTypeFilter, homeJobFieldFilter, blockedFeedAuthors]);
+    }, [safeJobs, homeJobSearch, homeJobCountryFilter, homeJobLocationFilter, homeJobSalarySort, homeJobTypeFilter, homeJobFieldFilter, blockedFeedAuthors]);
 
     useEffect(() => {
         setJobPage(1);
@@ -3253,17 +3261,6 @@ const PortalHomeFeed = ({
         return normalizeJobApplications(job).some((application) => getApplicationUserId(application) === viewerId);
     };
 
-    const isHomeJobBookmarked = (job) => {
-        const possibleIds = [
-            String(job?._id || ''),
-            String(job?.id || ''),
-            String(job?.jobNumber || ''),
-            getJobKey(job)
-        ].filter(Boolean);
-
-        return possibleIds.some((id) => bookmarkedHomeJobIds.includes(id));
-    };
-
     const getHomeJobLikeEntry = (job) => {
         const key = getJobKey(job);
         const entry = homeJobLikeMap[key];
@@ -3458,66 +3455,6 @@ const PortalHomeFeed = ({
 
             return nextMap;
         });
-    };
-
-    const handleToggleHomeJobBookmark = async (job, event) => {
-        event?.stopPropagation();
-
-        const userId = currentUser?.id || currentUser?._id || currentUser?.userId;
-        const jobId = job?._id || job?.id;
-
-        if (!userId || !jobId) {
-            setJobActionMessage('Please log in again before bookmarking this job.');
-            return;
-        }
-
-        const normalizedJobId = String(jobId);
-        const alreadyBookmarked = isHomeJobBookmarked(job);
-
-        if (alreadyBookmarked) {
-            const confirmed = await confirmAction({
-                title: 'Remove bookmark?',
-                message: 'Remove this job from your bookmarks?'
-            });
-            if (!confirmed) {
-                return;
-            }
-        }
-
-        setBookmarkedHomeJobIds((previousIds) => (
-            alreadyBookmarked
-                ? previousIds.filter((id) => id !== normalizedJobId)
-                : [...new Set([...previousIds, normalizedJobId])]
-        ));
-
-        try {
-            const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
-            const response = await fetch(
-                alreadyBookmarked
-                    ? apiUrl(`/api/job-bookmarks/user/${userId}/job/${jobId}`)
-                    : apiUrl('/api/job-bookmarks'),
-                {
-                    method: alreadyBookmarked ? 'DELETE' : 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...(token ? { Authorization: `Bearer ${token}` } : {})
-                    },
-                    ...(alreadyBookmarked ? {} : { body: JSON.stringify({ userId, jobId }) })
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error('Bookmark request failed');
-            }
-        } catch (error) {
-            console.error('Error updating home job bookmark:', error);
-            setBookmarkedHomeJobIds((previousIds) => (
-                alreadyBookmarked
-                    ? [...new Set([...previousIds, normalizedJobId])]
-                    : previousIds.filter((id) => id !== normalizedJobId)
-            ));
-            setJobActionMessage('Could not update this bookmark. Please try again.');
-        }
     };
 
     const openApplicationWorkspace = (job, event) => {
@@ -5702,7 +5639,7 @@ const PortalHomeFeed = ({
                 <span>{asDisplayText(job.jobType, 'Job type not set')}</span>
             </span>
             <span className="portal-job-meta-chip">
-                <span className="portal-job-salary-symbol" aria-hidden="true">£</span>
+                <SimpleIcon path={jobMetaIconPaths.salary} />
                 <span>{formatSalary(job.salary)}</span>
             </span>
         </div>
@@ -5714,6 +5651,20 @@ const PortalHomeFeed = ({
 
         return (
             <div className="portal-candidate-job-list">
+                {safeJobs.length > 0 && (
+                    <label className="portal-job-search-field">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="11" cy="11" r="6.5" />
+                            <path d="m16 16 4.25 4.25" />
+                        </svg>
+                        <input
+                            type="search"
+                            value={homeJobSearch}
+                            onChange={(event) => setHomeJobSearch(event.target.value)}
+                            placeholder="Search roles, skills, companies, or locations"
+                        />
+                    </label>
+                )}
                 {safeJobs.length > 0 && (
                     <div className="portal-job-filter-bar" aria-label="Filter job posts">
                         <label>
@@ -5817,26 +5768,17 @@ const PortalHomeFeed = ({
                 ) : filteredHomeJobs.length === 0 ? (
                     <div className="portal-feed-empty">No job posts match those filters.</div>
                 ) : visibleJobs.map((job, index) => {
-                const applications = normalizeJobApplications(job);
                 const key = getJobKey(job) || `job-${pageStart + index}`;
                 const jobSkills = Array.isArray(job.skills) ? job.skills : [];
                 const jobRequirements = Array.isArray(job.requirements) ? job.requirements : [];
                 const displaySkills = (jobSkills.length ? jobSkills : jobRequirements).slice(0, 3);
-                const fit = calculateCandidateFit(job, profileData);
-                const bookmarked = isHomeJobBookmarked(job);
                 const jobReviewCount = getHomeJobReviews(job).length;
                 const viewerJobReview = getViewerHomeJobReview(job);
-                const statItems = [
-                    { key: 'reach', label: 'reach', value: Number(jobReachMap[key] || job.reach || 0) || 0 },
-                    { key: 'applicants', label: 'applicants', value: Number(job.applicationCount || applications.length || 0) || 0 },
-                    { key: 'hired', label: 'hired', value: countApplicationsByStatus(job, ['hired']) },
-                    { key: 'fit', label: 'fit for you', value: `${fit}%` }
-                ];
 
                 return (
                     <article
                         key={key}
-                        className="portal-candidate-job-card"
+                        className="portal-candidate-job-card portal-public-job-card"
                         data-job-id={key}
                         role="button"
                         tabIndex={0}
@@ -5875,8 +5817,8 @@ const PortalHomeFeed = ({
                                 <img src={job.companyLogo || defaultJobPostAvatar} alt={job.companyName || 'Job post'} loading="lazy" decoding="async" />
                             </div>
                             <div>
-                                <h3>{job.title}</h3>
                                 <p>{job.companyName}</p>
+                                <h3>{job.title}</h3>
                             </div>
                         </div>
 
@@ -5893,91 +5835,49 @@ const PortalHomeFeed = ({
                             </div>
                         )}
 
-                        <div className="portal-candidate-job-stats">
-                            {statItems.map((item) => (
-                                <span key={item.key} className={`portal-candidate-job-stat portal-candidate-job-stat-${item.key}`}>
-                                    <strong>{item.value}</strong>
-                                    {item.label}
-                                </span>
-                            ))}
-                        </div>
-
-                        <div className="portal-candidate-job-action-row">
-                            <div className="job-post-action-reactions" aria-label="Job reactions">
+                        <div className="portal-public-job-social-actions" aria-label="Job actions">
                                 <button
                                     type="button"
-                                    className={`job-post-reaction-button job-post-like-reaction reaction-like ${isHomeJobLiked(job) ? 'active' : ''}`}
+                                    className={isHomeJobLiked(job) ? 'active' : ''}
                                     onClick={(event) => handleToggleHomeJobLike(job, event)}
                                     aria-pressed={isHomeJobLiked(job)}
-                                    aria-label="Like job post"
-                                    title="Like"
                                 >
                                     <ReactionIcon name="Like" />
-                                    <ReactionTooltip>Like</ReactionTooltip>
+                                    <span>Like{getHomeJobLikeCount(job) > 0 ? ` · ${formatCompactCount(getHomeJobLikeCount(job))}` : ''}</span>
                                 </button>
-                                {getHomeJobLikeCount(job) > 0 && (
-                                    <span className="job-post-action-count" aria-label={`${getHomeJobLikeCount(job)} likes`}>
-                                        {formatCompactCount(getHomeJobLikeCount(job))}
-                                    </span>
-                                )}
                                 <button
                                     type="button"
-                                    className={`job-post-reaction-button job-post-bookmark-reaction reaction-bookmark ${bookmarked ? 'active' : ''}`}
-                                    onClick={(event) => handleToggleHomeJobBookmark(job, event)}
-                                    aria-pressed={bookmarked}
-                                    aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark job'}
-                                    title={bookmarked ? 'Remove bookmark' : 'Bookmark job'}
-                                >
-                                    <SimpleIcon path={utilityIconPaths.starFill} />
-                                    <ReactionTooltip>{bookmarked ? 'Remove bookmark' : 'Bookmark'}</ReactionTooltip>
-                                </button>
-                                {bookmarked && (
-                                    <span className="job-post-action-count" aria-label="1 bookmark">1</span>
-                                )}
-                                <button
-                                    type="button"
-                                    className={`job-post-reaction-button job-post-review-reaction ${viewerJobReview ? 'active' : ''}`}
+                                    className={viewerJobReview ? 'active' : ''}
                                     onClick={(event) => openJobReviewModal(job, event)}
                                     aria-label="Write job review"
-                                    title="Review job"
                                 >
                                     <ReactionIcon name="Comment" />
-                                    <ReactionTooltip>Review</ReactionTooltip>
+                                    <span>Review{jobReviewCount > 0 ? ` · ${formatCompactCount(jobReviewCount)}` : ''}</span>
                                 </button>
-                                {jobReviewCount > 0 && (
-                                    <span className="job-post-action-count" aria-label={`${jobReviewCount} job reviews`}>
-                                        {formatCompactCount(jobReviewCount)}
-                                    </span>
-                                )}
                                 <button
                                     type="button"
-                                    className="job-post-reaction-button job-post-share-reaction"
                                     onClick={(event) => handleCopyJobShare(job, event)}
                                     aria-label="Share job post"
-                                    title="Share"
                                 >
                                     <SharePostIcon />
-                                    <ReactionTooltip>Share</ReactionTooltip>
+                                    <span>Share</span>
                                 </button>
+                        </div>
+
+                        <div className="portal-public-job-footer">
+                            <div>
+                                <span>Posted {safeDateLabel(job.createdAt)}</span>
+                                <span>Deadline {job.applicationDeadline || job.deadline || job.closingDate ? safeDateLabel(job.applicationDeadline || job.deadline || job.closingDate) : 'Not specified'}</span>
                             </div>
                             <button
                                 type="button"
-                                className="portal-view-job-button sky-apply-button"
-                                onClick={(event) => openApplicationWorkspace(job, event)}
-                                disabled={applyingHomeJobId === key || hasAppliedToJob(job)}
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    openJobModal(job, 'candidate');
+                                }}
                             >
-                                <span className="portal-apply-button-shaky-text">
-                                    {hasAppliedToJob(job)
-                                        ? 'Applied'
-                                        : applyingHomeJobId === key
-                                            ? 'Applying...'
-                                            : 'Apply Now'}
-                                </span>
+                                View role <span aria-hidden="true">→</span>
                             </button>
-                        </div>
-
-                        <div className="portal-candidate-job-footer">
-                            <span className="portal-candidate-job-posted-date">Posted: {safeDateLabel(job.createdAt)}</span>
                         </div>
                     </article>
                 );
@@ -7267,7 +7167,7 @@ const PortalHomeFeed = ({
             className={`portal-home-feed portal-home-feed-${mode} ${tabsHidden ? 'is-tabs-hidden' : ''} ${feedAtTop ? 'is-feed-at-top' : 'is-feed-scrolled'}`}
         >
             {feedError ? <div className="notification-message error">{feedError}</div> : null}
-            <div className="portal-home-tabs" aria-label={`${mode} home sections`}>
+            {!hideTabs && <div className="portal-home-tabs" aria-label={`${mode} home sections`}>
                 {tabs.map((tab) => {
                     const tabPath = mode === 'candidate' && tab.id === 'talent-stories'
                         ? tabIconPaths['candidate-talent-stories']
@@ -7298,7 +7198,7 @@ const PortalHomeFeed = ({
                         </button>
                     );
                 })}
-            </div>
+            </div>}
 
             <div
                 ref={feedScrollerRef}

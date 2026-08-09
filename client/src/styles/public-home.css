@@ -827,8 +827,45 @@
 .jt-job-toolbar {
   margin-bottom: 25px;
   display: grid;
-  grid-template-columns: 1fr 210px;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 430px);
   gap: 12px;
+}
+
+.jt-public-job-filters {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.jt-compact-filter-field {
+  min-width: 0;
+  min-height: 58px;
+  padding: 7px 13px;
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  border: 1px solid var(--jt-line);
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.jt-compact-filter-field span {
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.jt-compact-filter-field select {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: 0.75rem;
+  font-weight: 750;
+  cursor: pointer;
 }
 
 .jt-search-field,
@@ -987,6 +1024,34 @@
   font-size: 0.62rem;
 }
 
+.jt-public-job-meta {
+  margin: 2px 0 16px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
+}
+
+.jt-public-job-meta > span {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #5d6877;
+  font-size: 0.68rem;
+  line-height: 1.3;
+}
+
+.jt-public-job-meta .jt-icon {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+}
+
+.jt-public-job-meta b {
+  font: inherit;
+  font-weight: 800;
+}
+
 .jt-job-card > p {
   margin: 17px 0;
   display: -webkit-box;
@@ -1018,6 +1083,16 @@
   padding-top: 19px;
   justify-content: space-between;
   border-top: 1px solid var(--jt-line);
+}
+
+.jt-job-card-dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+
+.jt-job-card-dates span {
+  font-size: 0.64rem;
 }
 
 .jt-job-social-actions {
@@ -2164,6 +2239,95 @@
   backdrop-filter: blur(10px);
 }
 
+.jt-job-modal-meta {
+  margin: 0;
+  padding: 15px 24px;
+  border-bottom: 1px solid var(--jt-line);
+}
+
+.jt-job-review-backdrop {
+  position: fixed;
+  z-index: 20020;
+  inset: 0;
+  padding: 20px;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.76);
+  backdrop-filter: blur(14px);
+}
+
+.jt-job-review-dialog {
+  position: relative;
+  width: min(560px, 100%);
+  padding: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 24px;
+  color: #ffffff;
+  background: #0d1112;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
+}
+
+.jt-job-review-dialog h2 {
+  margin: 8px 0 4px;
+  color: #ffffff;
+}
+
+.jt-job-review-dialog > p {
+  margin: 0 0 22px;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.jt-job-review-dialog label {
+  display: grid;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.jt-job-review-dialog textarea {
+  width: 100%;
+  resize: vertical;
+  padding: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 13px;
+  outline: 0;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+  font: inherit;
+}
+
+.jt-public-review-rating {
+  margin: 18px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.jt-public-review-rating > span {
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.jt-public-review-rating button {
+  padding: 2px;
+  border: 0;
+  color: rgba(255, 255, 255, 0.3);
+  background: transparent;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.jt-public-review-rating button.active {
+  color: var(--jt-lime);
+}
+
+.jt-public-review-submit {
+  width: 100%;
+  justify-content: center;
+}
+
 .jt-skeleton {
   position: relative;
   overflow: hidden;
@@ -2184,21 +2348,84 @@
   background: rgba(255, 255, 255, 0.06) !important;
 }
 
-/* Exact dark-mode contrast rules. Keep these isolated from the light theme. */
-.jt-public-home.is-dark .jt-search-field,
-.jt-public-home.is-dark .jt-select-field,
-.jt-public-home.is-dark .jt-search-field input,
-.jt-public-home.is-dark .jt-select-field select {
-  color: #000000 !important;
-  background: #ffffff !important;
-  color-scheme: light;
+/* Match job-post loading placeholders to the Work News dark loading surface. */
+.jt-public-home.is-dark .jt-job-card.jt-skeleton {
+  min-height: 220px;
+  border-color: rgba(255, 255, 255, 0.11) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.13) !important;
 }
 
-.jt-public-home.is-dark .jt-search-field input::placeholder,
+.jt-public-home.is-dark .jt-job-card.jt-skeleton::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+}
+
+/* Reuse the Work News empty-state surface for job feed status messages. */
+.jt-public-home.is-dark .jt-content-message.is-dark,
+.jt-public-home.is-dark .jt-empty-state.is-dark {
+  color: rgba(255, 255, 255, 0.58) !important;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+.jt-public-home.is-dark .jt-empty-state.is-dark h3 {
+  color: #ffffff !important;
+}
+
+/* Exact dark-mode contrast rules. Keep these isolated from the light theme. */
+.jt-public-home.is-dark .jt-search-field,
+.jt-public-home.is-dark .jt-select-field {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.jt-public-home.is-dark .jt-compact-filter-field {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+.jt-public-home.is-dark .jt-compact-filter-field span {
+  color: rgba(255, 255, 255, 0.52) !important;
+}
+
+.jt-public-home.is-dark .jt-compact-filter-field select {
+  color: #ffffff !important;
+  background: transparent !important;
+  color-scheme: dark;
+}
+
+.jt-public-home.is-dark .jt-compact-filter-field option {
+  color: #ffffff;
+  background: #101313;
+}
+
+.jt-public-home.is-dark .jt-search-field input,
+.jt-public-home.is-dark .jt-select-field select {
+  color: #ffffff !important;
+  background: transparent !important;
+  color-scheme: dark;
+}
+
+.jt-public-home.is-dark .jt-search-field .jt-icon {
+  color: var(--jt-teal) !important;
+}
+
+.jt-public-home.is-dark .jt-search-field input::placeholder {
+  color: rgba(255, 255, 255, 0.56) !important;
+}
+
 .jt-public-home.is-dark .jt-select-field span,
-.jt-public-home.is-dark .jt-select-field select,
+.jt-public-home.is-dark .jt-select-field select {
+  color: #ffffff !important;
+}
+
 .jt-public-home.is-dark .jt-select-field select option {
-  color: #000000 !important;
+  color: #ffffff !important;
+  background: #101313 !important;
 }
 
 .jt-public-home.is-dark .jt-job-meta span {
@@ -2206,10 +2433,26 @@
   background: #eef2f0;
 }
 
-.jt-public-home.is-dark .jt-section-cta,
-.jt-public-home.is-dark .jt-section-cta p,
+.jt-public-home.is-dark .jt-public-job-meta > span,
+.jt-public-home.is-dark .jt-public-job-meta .jt-icon {
+  color: rgba(255, 255, 255, 0.78) !important;
+}
+
+.jt-public-home.is-dark .jt-section-cta {
+  color: rgba(255, 255, 255, 0.7) !important;
+  border-color: rgba(255, 255, 255, 0.11) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.14);
+}
+
+.jt-public-home.is-dark .jt-section-cta p {
+  color: rgba(255, 255, 255, 0.7) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.7) !important;
+}
+
 .jt-public-home.is-dark .jt-section-cta strong {
-  color: #000000 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
 }
 
 .jt-reveal {
@@ -3418,7 +3661,7 @@ body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-eyebrow .j
 }
 
 body[data-public-home-theme] #root .jt-public-home .jt-job-toolbar {
-  grid-template-columns: minmax(0, 1fr) 182px !important;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 430px) !important;
   gap: 10px !important;
   margin-bottom: 20px !important;
 }
@@ -3456,8 +3699,13 @@ body[data-public-home-theme] #root .jt-public-home .jt-select-field span {
 }
 
 body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-jobs-section .jt-section-cta :is(p, strong) {
-  color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-jobs-section .jt-section-cta strong {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
 }
 
 body[data-public-home-theme] #root .jt-public-home .jt-chat-shell.is-docked {
@@ -3495,6 +3743,25 @@ body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-final-cta 
 @media (max-width: 760px) {
   body[data-public-home-theme] #root .jt-public-home .jt-job-toolbar {
     grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-public-job-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-compact-filter-field {
+    min-height: 48px !important;
+    padding: 6px 10px !important;
+    border-radius: 13px !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-compact-filter-field span {
+    font-size: 0.5rem !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-compact-filter-field select {
+    font-size: 0.68rem !important;
   }
 
   body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-final-cta {

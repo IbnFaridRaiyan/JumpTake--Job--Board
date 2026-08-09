@@ -10,7 +10,6 @@ import TalentPool from './TalentPool';
 import MessageCompanyProfileModal from './MessageCompanyProfileModal';
 import { apiUrl } from '../utils/apiUrl';
 import confirmAction from '../utils/confirmAction';
-import PortalPageSkeleton from './PortalPageSkeleton';
 
 const stripHtml = (html = '') => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 const hasMessageContent = (html = '') => stripHtml(html).length > 0 || /<img\b/i.test(html);
@@ -1149,7 +1148,9 @@ const FloatingMessenger = ({
                                 ) : activeTab === 'settings' ? (
                                     <MessageSettings mode={mode} companyId={companyId} />
                                 ) : loading ? (
-                                    <PortalPageSkeleton compact label="Loading messages" />
+                                    <div className="floating-messenger-empty floating-messenger-loading-state">
+                                        <p>Loading messages…</p>
+                                    </div>
                                 ) : visibleThreads.length === 0 ? (
                                     <div className="floating-messenger-empty message-workspace-empty-state">
                                         <div className="empty-state-image" aria-hidden="true">

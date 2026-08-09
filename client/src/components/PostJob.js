@@ -21,6 +21,7 @@ const PostJob = ({ companyId, onJobPosted, onCancel, onFooterBack }) => {
         description: '',
         location: '',
         salary: '',
+        applicationDeadline: '',
         applicationLink: '',
         jobType: 'Full-time',
         requirements: '',
@@ -80,6 +81,7 @@ const PostJob = ({ companyId, onJobPosted, onCancel, onFooterBack }) => {
                     companyId: companyId,
                     location: formData.location,
                     salary: formData.salary,
+                    applicationDeadline: formData.applicationDeadline || null,
                     applicationLink: formData.applicationLink,
                     jobType: formData.jobType,
                     requirements,
@@ -103,6 +105,7 @@ const PostJob = ({ companyId, onJobPosted, onCancel, onFooterBack }) => {
                 description: '',
                 location: '',
                 salary: '',
+                applicationDeadline: '',
                 applicationLink: '',
                 jobType: 'Full-time',
                 requirements: '',
@@ -213,6 +216,18 @@ const PostJob = ({ companyId, onJobPosted, onCancel, onFooterBack }) => {
                                     className="form-control"
                                 />
                             </div>
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="applicationDeadline">Application deadline (optional)</label>
+                            <input
+                                type="date"
+                                id="applicationDeadline"
+                                name="applicationDeadline"
+                                value={formData.applicationDeadline}
+                                onChange={handleChange}
+                                className="form-control"
+                            />
                         </div>
 
                         <div className="form-group">

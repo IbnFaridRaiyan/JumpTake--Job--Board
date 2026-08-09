@@ -1,0 +1,357 @@
+/* Final feed surface and spacing only. Do not change height or overflow here. */
+.portal-navbar-portal-host {
+  display: contents !important;
+}
+
+html body #root #portal-public-header.portal-public-header {
+  position: fixed !important;
+  top: 0.42rem !important;
+  right: 0.65rem !important;
+  bottom: auto !important;
+  left: 0.65rem !important;
+  z-index: 1000000 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html body #root #portal-public-header .portal-public-header-top,
+html body #root #portal-public-header .portal-public-brand,
+html body #root #portal-public-header .portal-public-utilities {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html body #root #portal-public-header.portal-public-header::before,
+html body #root #portal-public-header.portal-public-header::after {
+  content: none !important;
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  html body #root #portal-public-header.portal-public-header {
+    top: 0.42rem !important;
+    right: 0.42rem !important;
+    left: 0.42rem !important;
+  }
+}
+
+/* Non-feed pages start below the fixed navbar. Feed pages remain untouched. */
+html body #root > .app-container > .home-page > .dashboard-container > main.main-content > .portal-section-transition-shell.is-active-portal-section:not(:is(
+  [data-section="home"],
+  [data-section="job-feed"],
+  [data-section="home-feed"],
+  [data-section="work-news"],
+  [data-section="job-posts"],
+  [data-section="talent-stories"],
+  [data-section="tailor-profile"],
+  [data-section="my-feed"]
+)) {
+  box-sizing: border-box !important;
+  margin-top: 0 !important;
+  padding-top: 5.15rem !important;
+}
+
+html body #root > .app-container > .home-page > .dashboard-container > main.main-content:has(> .portal-section-transition-shell.is-active-portal-section:not(:is(
+  [data-section="home"],
+  [data-section="job-feed"],
+  [data-section="home-feed"],
+  [data-section="work-news"],
+  [data-section="job-posts"],
+  [data-section="talent-stories"],
+  [data-section="tailor-profile"],
+  [data-section="my-feed"]
+))) > :is(.dashboard-section-title, .mobile-section-panel-header) {
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  margin-top: 5.15rem !important;
+  margin-bottom: 0.65rem !important;
+}
+
+html body #root > .app-container > .home-page > .dashboard-container > main.main-content:has(> :is(.dashboard-section-title, .mobile-section-panel-header)) > .portal-section-transition-shell.is-active-portal-section:not(:is(
+  [data-section="home"],
+  [data-section="job-feed"],
+  [data-section="home-feed"],
+  [data-section="work-news"],
+  [data-section="job-posts"],
+  [data-section="talent-stories"],
+  [data-section="tailor-profile"],
+  [data-section="my-feed"]
+)) {
+  padding-top: 0 !important;
+}
+
+@media (max-width: 768px) {
+  html body #root > .app-container > .home-page > .dashboard-container > main.main-content > .portal-section-transition-shell.is-active-portal-section:not(:is(
+    [data-section="home"],
+    [data-section="job-feed"],
+    [data-section="home-feed"],
+    [data-section="work-news"],
+    [data-section="job-posts"],
+    [data-section="talent-stories"],
+    [data-section="tailor-profile"],
+    [data-section="my-feed"]
+  )) {
+    padding-top: 4.95rem !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container > main.main-content:has(> .portal-section-transition-shell.is-active-portal-section:not(:is(
+    [data-section="home"],
+    [data-section="job-feed"],
+    [data-section="home-feed"],
+    [data-section="work-news"],
+    [data-section="job-posts"],
+    [data-section="talent-stories"],
+    [data-section="tailor-profile"],
+    [data-section="my-feed"]
+  ))) > :is(.dashboard-section-title, .mobile-section-panel-header) {
+    margin-top: 4.95rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container > main.main-content:has(> :is(.dashboard-section-title, .mobile-section-panel-header)) > .portal-section-transition-shell.is-active-portal-section:not(:is(
+    [data-section="home"],
+    [data-section="job-feed"],
+    [data-section="home-feed"],
+    [data-section="work-news"],
+    [data-section="job-posts"],
+    [data-section="talent-stories"],
+    [data-section="tailor-profile"],
+    [data-section="my-feed"]
+  )) {
+    padding-top: 0 !important;
+  }
+}
+
+/* Lighter glass only for the light-mode fixed navbar. */
+html[data-theme="light"] body[data-theme="light"] #root #portal-public-header.portal-public-header,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header.portal-public-header {
+  background: rgba(255, 255, 255, 0.38) !important;
+  background-color: rgba(255, 255, 255, 0.38) !important;
+  backdrop-filter: blur(24px) saturate(125%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(125%) !important;
+}
+
+/* Hamburger options drop down from the right with an opaque theme surface. */
+html body #root #portal-public-header .portal-public-menu {
+  top: calc(100% + 0.5rem) !important;
+  right: 0 !important;
+  left: auto !important;
+  width: min(92vw, 34rem) !important;
+  max-width: 34rem !important;
+  transform-origin: top right !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-public-menu {
+  background: #000 !important;
+  background-color: #000 !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root #portal-public-header .portal-public-menu,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header .portal-public-menu {
+  background: #fff8ec !important;
+  background-color: #fff8ec !important;
+  background-image: none !important;
+  border-color: rgba(71, 40, 48, 0.16) !important;
+}
+
+@media (max-width: 768px) {
+  html body #root #portal-public-header .portal-public-menu {
+    right: 0 !important;
+    left: auto !important;
+    width: calc(100vw - 0.84rem) !important;
+    max-width: calc(100vw - 0.84rem) !important;
+  }
+}
+
+/* Slightly lower starting position for these five feed pages only. */
+html body #root > .app-container > .home-page > .dashboard-container > main.main-content > .portal-section-transition-shell.is-active-portal-section:is(
+  [data-section="work-news"],
+  [data-section="talent-stories"],
+  [data-section="job-posts"],
+  [data-section="tailor-profile"],
+  [data-section="my-feed"]
+) {
+  margin-top: 0.65rem !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root > .app-container > .home-page > .dashboard-container > main.main-content > .portal-section-transition-shell.is-active-portal-section:is(
+  [data-section="work-news"],
+  [data-section="talent-stories"],
+  [data-section="job-posts"],
+  [data-section="tailor-profile"],
+  [data-section="my-feed"]
+),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root > .app-container > .home-page > .dashboard-container > main.main-content > .portal-section-transition-shell.is-active-portal-section:is(
+  [data-section="work-news"],
+  [data-section="talent-stories"],
+  [data-section="job-posts"],
+  [data-section="tailor-profile"],
+  [data-section="my-feed"]
+) {
+  position: relative !important;
+  top: 0.65rem !important;
+  margin-top: 0 !important;
+}
+
+/* Dark portal canvas: solid black with no grid or gradient layers. */
+html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header),
+html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header) #root,
+html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header) #root > .app-container,
+html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header) #root > .app-container > .home-page,
+html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header) #root .home-page > .dashboard-container,
+html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header) #root .home-page main.main-content,
+html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header) #root .home-page .portal-section-transition-shell.is-active-portal-section {
+  background: #000 !important;
+  background-color: #000 !important;
+  background-image: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header)::before,
+html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header)::after,
+html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header) #root > .app-container::before,
+html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header) #root > .app-container::after,
+html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header) #root .home-page::before,
+html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header) #root .home-page::after,
+html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header) #root .home-page > .dashboard-container::before,
+html[data-theme="dark"] body[data-theme="dark"]:has(#portal-public-header) #root .home-page > .dashboard-container::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  background-image: none !important;
+}
+
+/*
+ * Keep the floating portal navigation above normal page content, but below every
+ * dialog.  The old million-level value prevented modal backdrops from covering
+ * and blurring the navigation.
+ */
+html body #root #portal-public-header.portal-public-header {
+  z-index: 9000 !important;
+}
+
+/* One consistent top layer for portal/public dialogs, previews, and composers. */
+html body :is(
+  .modal-overlay,
+  .terms-modal-overlay,
+  .public-landing-modal-backdrop,
+  .jt-ai-editor-overlay,
+  .jt-job-modal-backdrop,
+  .jt-job-review-backdrop,
+  .job-preview-overlay,
+  .application-workspace-overlay,
+  .portal-reach-insight-backdrop,
+  .portal-reaction-stats-backdrop,
+  .portal-comment-row-backdrop,
+  .portal-comment-modal-backdrop,
+  .portal-job-modal-backdrop,
+  .portal-job-review-backdrop,
+  .portal-create-story-backdrop,
+  .portal-post-detail-backdrop,
+  .portal-profile-detail-backdrop,
+  .portal-image-preview-backdrop
+) {
+  z-index: 20000 !important;
+  backdrop-filter: blur(12px) saturate(0.88) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(0.88) !important;
+}
+
+html body > .floating-messenger.is-open {
+  z-index: 21000 !important;
+}
+
+html body > .floating-messenger.is-open > .floating-messenger-backdrop {
+  backdrop-filter: blur(12px) saturate(0.88) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(0.88) !important;
+}
+
+/* The dark messenger must never inherit the cream/light dialog surfaces. */
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  .floating-messenger-panel,
+  .floating-messenger-shell,
+  .floating-messenger-contacts,
+  .floating-messenger-header,
+  .floating-messenger-contact-body,
+  .floating-messenger-contact-list,
+  .floating-messenger-chat,
+  .floating-messenger-chat-bar,
+  .floating-messenger-messages,
+  .floating-messenger-input,
+  .floating-messenger-chat-empty
+) {
+  background: #000 !important;
+  background-color: #000 !important;
+  background-image: none !important;
+  color: #fff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  .floating-messenger-input input,
+  .floating-messenger-input textarea,
+  .floating-messenger-header input,
+  .floating-messenger-contacts input
+) {
+  background: #0b0b0b !important;
+  background-color: #0b0b0b !important;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+/* Dark message category rail: remove the inherited light/off-white palette. */
+html[data-theme="dark"] body[data-theme="dark"] .floating-messenger .message-workspace-nav,
+html[data-theme="dark"] body[data-theme="dark"] .floating-messenger .message-workspace-nav.is-compact {
+  background: #000 !important;
+  background-color: #000 !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  scrollbar-color: rgba(255, 255, 255, 0.28) transparent !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .floating-messenger .message-workspace-tab,
+html[data-theme="dark"] body[data-theme="dark"] .floating-messenger .message-workspace-tab:is(:hover, :focus, :focus-visible) {
+  background: #000 !important;
+  background-color: #000 !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .floating-messenger .message-workspace-tab > span,
+html[data-theme="dark"] body[data-theme="dark"] .floating-messenger .message-workspace-tab svg {
+  color: #fff !important;
+  fill: currentColor !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .floating-messenger .message-workspace-tab.is-active,
+html[data-theme="dark"] body[data-theme="dark"] .floating-messenger .message-workspace-tab.is-active:is(:hover, :focus, :focus-visible) {
+  background: rgba(104, 20, 33, 0.5) !important;
+  background-color: rgba(104, 20, 33, 0.5) !important;
+  border-color: rgba(201, 115, 137, 0.72) !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .floating-messenger .message-workspace-tab > small {
+  background: #681421 !important;
+  background-color: #681421 !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}

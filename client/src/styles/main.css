@@ -83677,6 +83677,61 @@ html body .floating-messenger.is-open > .floating-messenger-panel.is-mobile-chat
   }
 }
 
+.portal-job-search-field {
+  width: 100% !important;
+  min-height: 2.8rem !important;
+  margin: 0 0 0.75rem !important;
+  padding: 0 0.85rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.65rem !important;
+  border: 1px solid rgba(99, 192, 184, 0.25) !important;
+  border-radius: 0.8rem !important;
+  background: rgba(255, 255, 255, 0.055) !important;
+}
+
+.portal-job-search-field svg {
+  width: 1.05rem !important;
+  height: 1.05rem !important;
+  flex: 0 0 auto !important;
+  fill: none !important;
+  stroke: #63c0b8 !important;
+  stroke-width: 1.8 !important;
+  stroke-linecap: round !important;
+}
+
+.portal-job-search-field input {
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 2.65rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  color: #ffffff !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-size: 0.8rem !important;
+}
+
+.portal-job-search-field input::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-search-field {
+  border-color: rgba(127, 29, 50, 0.2) !important;
+  background: #fffaf1 !important;
+  box-shadow: 0 8px 22px rgba(86, 66, 37, 0.07) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-search-field input {
+  color: #34141d !important;
+  background: transparent !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-search-field input::placeholder {
+  color: #85747a !important;
+}
+
 /* Final mobile shell height and shared Applications/Bookmarks/Friends navigation. */
 @media (max-width: 768px) {
   html body #root .home-page .dashboard-container.mobile-section-open > :is(.mobile-dashboard-section-panel.is-open, .mobile-job-management-section-panel.is-open),
@@ -90443,4 +90498,260 @@ body[data-public-home-theme="light"] :is(.public-auth-card, .public-auth-form-sh
   caret-color: #2b1720 !important;
   -webkit-box-shadow: 0 0 0 1000px #fffaf1 inset !important;
   box-shadow: 0 0 0 1000px #fffaf1 inset !important;
+}
+
+/* Final portal job metadata icon contrast across desktop and mobile. */
+html[data-theme="dark"] body[data-theme="dark"] #root .portal-job-meta-chip svg,
+html[data-theme="dark"] body[data-theme="dark"] #root .portal-job-meta-chip svg path {
+  color: #f4fffb !important;
+  fill: #f4fffb !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .portal-job-meta-chip svg,
+html[data-theme="light"] body[data-theme="light"] #root .portal-job-meta-chip svg path {
+  color: #172033 !important;
+  fill: #172033 !important;
+}
+
+/* Public-card parity for candidate portal Job Posts. */
+html body #root .home-page .portal-public-job-card {
+  width: 100% !important;
+  min-height: 0 !important;
+  margin: 0 0 1rem !important;
+  padding: 1.55rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1rem !important;
+  border: 1px solid rgba(99, 192, 184, 0.34) !important;
+  border-radius: 1.5rem !important;
+  color: #ffffff !important;
+  background: #000000 !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease !important;
+}
+
+html body #root .home-page .portal-public-job-card:is(:hover, :focus-visible) {
+  outline: none !important;
+  transform: translateY(-2px) !important;
+  border-color: rgba(99, 192, 184, 0.66) !important;
+  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.24) !important;
+}
+
+html body #root .home-page .portal-public-job-card .portal-candidate-job-header {
+  padding: 0 2.2rem 0 0 !important;
+  align-items: flex-start !important;
+  gap: 0.85rem !important;
+}
+
+html body #root .home-page .portal-public-job-card .portal-job-company-avatar,
+html body #root .home-page .portal-public-job-card .portal-job-company-avatar img {
+  width: 3.35rem !important;
+  min-width: 3.35rem !important;
+  height: 3.35rem !important;
+  border-radius: 0.9rem !important;
+}
+
+html body #root .home-page .portal-public-job-card .portal-candidate-job-header p {
+  margin: 0 0 0.35rem !important;
+  color: #63c0b8 !important;
+  -webkit-text-fill-color: #63c0b8 !important;
+  font-size: 0.72rem !important;
+  font-weight: 850 !important;
+}
+
+html body #root .home-page .portal-public-job-card .portal-candidate-job-header h3 {
+  margin: 0 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: clamp(1.25rem, 2.1vw, 1.7rem) !important;
+  line-height: 1.08 !important;
+}
+
+html body #root .home-page .portal-public-job-card .portal-job-meta-icons.compact {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 0.55rem 1rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+
+html body #root .home-page .portal-public-job-card .portal-job-meta-chip,
+html body #root .home-page .portal-public-job-card .portal-job-meta-chip > span {
+  color: rgba(255, 255, 255, 0.78) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.78) !important;
+  font-size: 0.7rem !important;
+}
+
+html body #root .home-page .portal-public-job-card .portal-job-meta-chip svg,
+html body #root .home-page .portal-public-job-card .portal-job-meta-chip svg path {
+  color: #f4fffb !important;
+  fill: #f4fffb !important;
+}
+
+html body #root .home-page .portal-public-job-card .portal-candidate-job-description {
+  margin: 0 !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 0.8rem !important;
+  line-height: 1.7 !important;
+}
+
+html body #root .home-page .portal-public-job-card .portal-candidate-job-skills {
+  gap: 0.45rem !important;
+}
+
+html body #root .home-page .portal-public-job-card .portal-candidate-job-skills strong {
+  display: none !important;
+}
+
+html body #root .home-page .portal-public-job-card .portal-candidate-job-skills span {
+  padding: 0.38rem 0.65rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.11) !important;
+  border-radius: 0.55rem !important;
+  color: rgba(255, 255, 255, 0.78) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.78) !important;
+  background: rgba(255, 255, 255, 0.055) !important;
+}
+
+html body #root .home-page .portal-public-job-social-actions {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.11) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.11) !important;
+}
+
+html body #root .home-page .portal-public-job-social-actions button {
+  min-width: 0 !important;
+  padding: 0.8rem 0.35rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.4rem !important;
+  border: 0 !important;
+  color: rgba(255, 255, 255, 0.62) !important;
+  background: transparent !important;
+  font-size: 0.7rem !important;
+  font-weight: 750 !important;
+  cursor: pointer !important;
+}
+
+html body #root .home-page .portal-public-job-social-actions button:is(:hover, .active) {
+  color: #63c0b8 !important;
+  background: rgba(99, 192, 184, 0.07) !important;
+}
+
+html body #root .home-page .portal-public-job-social-actions svg {
+  width: 0.95rem !important;
+  height: 0.95rem !important;
+}
+
+html body #root .home-page .portal-public-job-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 1rem !important;
+}
+
+html body #root .home-page .portal-public-job-footer > div {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.25rem 1rem !important;
+}
+
+html body #root .home-page .portal-public-job-footer span {
+  color: rgba(255, 255, 255, 0.54) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.54) !important;
+  font-size: 0.66rem !important;
+}
+
+html body #root .home-page .portal-public-job-footer > button {
+  padding: 0.5rem 0 !important;
+  border: 0 !important;
+  color: #ffffff !important;
+  background: transparent !important;
+  font-size: 0.7rem !important;
+  font-weight: 850 !important;
+  cursor: pointer !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-public-job-card {
+  color: #34141d !important;
+  border-color: rgba(216, 197, 168, 0.92) !important;
+  background: #fffaf1 !important;
+  box-shadow: 0 16px 38px rgba(86, 66, 37, 0.08) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-public-job-card .portal-candidate-job-header h3,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-public-job-card .portal-job-meta-chip,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-public-job-card .portal-job-meta-chip > span,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-public-job-card .portal-candidate-job-description,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-public-job-card .portal-public-job-footer > button {
+  color: #34141d !important;
+  -webkit-text-fill-color: #34141d !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-public-job-card .portal-candidate-job-header p,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-public-job-card .portal-public-job-social-actions button:is(:hover, .active) {
+  color: #7f1d32 !important;
+  -webkit-text-fill-color: #7f1d32 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-public-job-card .portal-job-meta-chip svg,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-public-job-card .portal-job-meta-chip svg path {
+  color: #34141d !important;
+  fill: #34141d !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-public-job-card .portal-candidate-job-skills span {
+  color: #5f4b52 !important;
+  -webkit-text-fill-color: #5f4b52 !important;
+  border-color: rgba(127, 29, 50, 0.16) !important;
+  background: #f7ecef !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-public-job-social-actions {
+  border-color: rgba(127, 29, 50, 0.13) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-public-job-social-actions button,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-public-job-footer span {
+  color: #74666b !important;
+  -webkit-text-fill-color: #74666b !important;
+}
+
+/* Portal job preview follows the same clean card surface as the public preview. */
+html body .portal-job-modal {
+  border: 1px solid rgba(99, 192, 184, 0.28) !important;
+  border-radius: 1.4rem !important;
+  color: #ffffff !important;
+  background: #0d1112 !important;
+  box-shadow: 0 32px 100px rgba(0, 0, 0, 0.5) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-job-modal {
+  color: #34141d !important;
+  border-color: #d8c5a8 !important;
+  background: #fffaf1 !important;
+  box-shadow: 0 32px 90px rgba(86, 66, 37, 0.23) !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .home-page .portal-public-job-card {
+    padding: 1.15rem !important;
+    gap: 0.8rem !important;
+    border-radius: 1.2rem !important;
+  }
+
+  html body #root .home-page .portal-public-job-card .portal-job-meta-icons.compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  html body #root .home-page .portal-public-job-social-actions button {
+    font-size: 0.61rem !important;
+  }
+
+  html body #root .home-page .portal-public-job-footer {
+    align-items: flex-end !important;
+  }
 }

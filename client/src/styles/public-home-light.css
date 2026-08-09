@@ -29,6 +29,24 @@
   box-shadow: 0 18px 55px rgba(31, 51, 72, 0.12);
 }
 
+.jt-public-home.is-light .jt-compact-filter-field {
+  color: var(--jt-light-ink);
+  border-color: var(--jt-light-line);
+  background: var(--jt-light-card);
+  box-shadow: 0 8px 20px rgba(86, 66, 37, 0.06);
+}
+
+.jt-public-home.is-light .jt-compact-filter-field span {
+  color: var(--jt-light-muted);
+}
+
+.jt-public-home.is-light .jt-compact-filter-field select,
+.jt-public-home.is-light .jt-compact-filter-field option {
+  color: var(--jt-light-ink);
+  background-color: var(--jt-light-card);
+  color-scheme: light;
+}
+
 .jt-public-home.is-light .jt-header-links {
   background: #f5ecee;
 }
@@ -2270,6 +2288,33 @@ body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-home-foo
   background: linear-gradient(180deg, #fff8ec 0%, #f2eadc 100%) !important;
 }
 
+/* Registration terms dialog: override the shared dark modal on public light mode. */
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .terms-modal-overlay {
+  background: rgba(86, 66, 37, 0.36) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .terms-modal {
+  color: var(--jt-light-ink) !important;
+  border-color: rgba(216, 197, 168, 0.92) !important;
+  background: var(--jt-light-card) !important;
+  background-color: var(--jt-light-card) !important;
+  background-image: none !important;
+  box-shadow: 0 28px 80px rgba(86, 66, 37, 0.24) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .terms-modal-header {
+  border-bottom-color: rgba(216, 197, 168, 0.82) !important;
+  background: var(--jt-light-panel) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .terms-modal :is(h2, h3, p) {
+  color: var(--jt-light-ink) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .terms-modal-close {
+  color: var(--jt-light-teal-dark) !important;
+}
+
 body[data-public-home-theme="light"] #root .jt-public-home.is-light :is(
   .jt-hero,
   .jt-home-header,
@@ -2808,4 +2853,88 @@ body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-home-hea
     -webkit-backdrop-filter: blur(15px) saturate(122%) !important;
   }
 
+}
+
+/* Expanded footer terms must never inherit the application's dark article skin. */
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-terms-grid > article {
+  padding: 14px !important;
+  border: 1px solid rgba(216, 197, 168, 0.72) !important;
+  border-radius: 12px !important;
+  color: var(--jt-light-ink) !important;
+  background: var(--jt-light-raised) !important;
+  background-color: var(--jt-light-raised) !important;
+  background-image: none !important;
+  box-shadow: 0 8px 22px rgba(86, 66, 37, 0.06) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-terms-grid > article > strong {
+  color: var(--jt-light-ink) !important;
+  -webkit-text-fill-color: var(--jt-light-ink) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-terms-grid > article > p {
+  color: var(--jt-light-copy) !important;
+  -webkit-text-fill-color: var(--jt-light-copy) !important;
+}
+
+/* Final light filter ownership: prevent shared dark form rules leaking in. */
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-compact-filter-field {
+  color: var(--jt-light-ink) !important;
+  border-color: rgba(216, 197, 168, 0.92) !important;
+  background: var(--jt-light-card) !important;
+  background-color: var(--jt-light-card) !important;
+  background-image: none !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-compact-filter-field span {
+  color: var(--jt-light-muted) !important;
+  -webkit-text-fill-color: var(--jt-light-muted) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-compact-filter-field select,
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-compact-filter-field option {
+  color: var(--jt-light-ink) !important;
+  -webkit-text-fill-color: var(--jt-light-ink) !important;
+  background: var(--jt-light-card) !important;
+  background-color: var(--jt-light-card) !important;
+  color-scheme: light !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-public-job-meta > span,
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-public-job-meta .jt-icon {
+  color: var(--jt-light-ink) !important;
+  -webkit-text-fill-color: var(--jt-light-ink) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-review-backdrop {
+  background: rgba(86, 66, 37, 0.36) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-review-dialog {
+  color: var(--jt-light-ink) !important;
+  border-color: var(--jt-light-line) !important;
+  background: var(--jt-light-card) !important;
+  box-shadow: 0 30px 90px rgba(86, 66, 37, 0.22) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-review-dialog :is(h2, label, .jt-public-review-rating > span) {
+  color: var(--jt-light-ink) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-review-dialog > p {
+  color: var(--jt-light-copy) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-job-review-dialog textarea {
+  color: var(--jt-light-ink) !important;
+  border-color: var(--jt-light-line) !important;
+  background: var(--jt-light-panel) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-public-review-rating button {
+  color: rgba(52, 20, 29, 0.28) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-public-review-rating button.active {
+  color: var(--jt-light-teal) !important;
 }

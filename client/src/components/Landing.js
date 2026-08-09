@@ -146,6 +146,20 @@ const Icon = ({ name, className = '' }) => {
                 <path d="m16 16 4.25 4.25" />
             </>
         ),
+        hash: <path d="M9 3 7 21M17 3l-2 18M4 9h17M3 15h17" />,
+        pin: (
+            <>
+                <path d="M12 21s6-5.35 6-11a6 6 0 1 0-12 0c0 5.65 6 11 6 11Z" />
+                <circle cx="12" cy="10" r="2" />
+            </>
+        ),
+        salary: (
+            <>
+                <rect x="3" y="6" width="18" height="12" rx="2" />
+                <circle cx="12" cy="12" r="3" />
+                <path d="M7 9H6v1M17 15h1v-1" />
+            </>
+        ),
         arrow: <path d="M5 12h14m-5-5 5 5-5 5" />,
         spark: (
             <>
@@ -282,6 +296,15 @@ const formatDate = (value) => {
         : date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 };
 
+const getJobDeadline = (job = {}) => (
+    job.applicationDeadline || job.deadline || job.closingDate || job.expiresAt || ''
+);
+
+const formatJobDeadline = (job = {}) => {
+    const deadline = getJobDeadline(job);
+    return deadline ? formatDate(deadline) : 'Not specified';
+};
+
 const formatSalary = (salary) => {
     if (!salary) {
         return 'Salary shared during process';
@@ -329,6 +352,39 @@ const reactionCount = (reactions) => {
     }, 0);
 };
 
+const PUBLIC_US_STATE_CODES = new Set([
+    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'IA',
+    'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO',
+    'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK',
+    'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VT', 'WA', 'WI',
+    'WV', 'WY', 'DC'
+]);
+
+const getPublicJobCountry = (location = '') => {
+    const text = String(location || '').trim();
+    if (!text) return '';
+
+    const knownCountries = [
+        ['United Kingdom', /\b(united kingdom|uk|u\.k\.|england|scotland|wales|northern ireland)\b/i],
+        ['United States', /\b(united states|usa|u\.s\.a\.|u\.s\.)\b/i],
+        ['Canada', /\bcanada\b/i],
+        ['India', /\bindia\b/i],
+        ['Australia', /\baustralia\b/i],
+        ['Germany', /\bgermany\b/i],
+        ['France', /\bfrance\b/i],
+        ['Ireland', /\bireland\b/i],
+        ['Singapore', /\bsingapore\b/i],
+        ['United Arab Emirates', /\b(united arab emirates|uae)\b/i]
+    ];
+    const knownCountry = knownCountries.find(([, pattern]) => pattern.test(text));
+    if (knownCountry) return knownCountry[0];
+
+    const parts = text.split(',').map((part) => part.trim()).filter(Boolean);
+    const finalPart = parts[parts.length - 1] || '';
+    if (PUBLIC_US_STATE_CODES.has(finalPart.toUpperCase())) return 'United States';
+    return parts.length > 1 && finalPart.length > 2 ? finalPart : '';
+};
+
 const openAuth = (mode = 'login') => {
     if (typeof window === 'undefined') {
         return;
@@ -349,8 +405,14 @@ const Landing = ({ onThemeChange }) => {
     const [contentLoading, setContentLoading] = useState(true);
     const [contentError, setContentError] = useState('');
     const [jobSearch, setJobSearch] = useState('');
-    const [jobType, setJobType] = useState('All roles');
+    const [jobType, setJobType] = useState('');
+    const [jobCountry, setJobCountry] = useState('');
+    const [jobField, setJobField] = useState('');
+    const [jobSalarySort, setJobSalarySort] = useState('');
     const [selectedJob, setSelectedJob] = useState(null);
+    const [reviewingJob, setReviewingJob] = useState(null);
+    const [jobReviewDraft, setJobReviewDraft] = useState('');
+    const [jobReviewRating, setJobReviewRating] = useState(0);
     const [gateMessage, setGateMessage] = useState('');
     const [assistantInput, setAssistantInput] = useState('');
     const [assistantMessages, setAssistantMessages] = useState([
@@ -474,7 +536,7 @@ const Landing = ({ onThemeChange }) => {
     }, [jobs.length, workNews.length]);
 
     useEffect(() => {
-        if (!selectedJob) {
+        if (!selectedJob && !reviewingJob) {
             return undefined;
         }
 
@@ -483,6 +545,7 @@ const Landing = ({ onThemeChange }) => {
         const closeOnEscape = (event) => {
             if (event.key === 'Escape') {
                 setSelectedJob(null);
+                setReviewingJob(null);
             }
         };
         window.addEventListener('keydown', closeOnEscape);
@@ -491,7 +554,7 @@ const Landing = ({ onThemeChange }) => {
             document.body.style.overflow = previousOverflow;
             window.removeEventListener('keydown', closeOnEscape);
         };
-    }, [selectedJob]);
+    }, [reviewingJob, selectedJob]);
 
     useEffect(() => {
         const messages = assistantMessagesRef.current;
@@ -540,13 +603,27 @@ const Landing = ({ onThemeChange }) => {
     }, []);
 
     const jobTypes = useMemo(() => (
-        ['All roles', ...new Set(jobs.map((job) => job.jobType).filter(Boolean))]
+        [...new Set(jobs.map((job) => job.jobType).filter(Boolean))].sort((a, b) => a.localeCompare(b))
+    ), [jobs]);
+
+    const jobCountries = useMemo(() => (
+        [...new Set(jobs.map((job) => getPublicJobCountry(job.location)).filter(Boolean))]
+            .sort((a, b) => a.localeCompare(b))
+    ), [jobs]);
+
+    const jobFields = useMemo(() => (
+        [...new Set(jobs.map((job) => (
+            job.jobField || job.field || job.category || job.industry || job.company?.industry || ''
+        )).filter(Boolean))].sort((a, b) => a.localeCompare(b))
     ), [jobs]);
 
     const visibleJobs = useMemo(() => {
         const normalizedSearch = jobSearch.trim().toLowerCase();
-        return jobs.filter((job) => {
-            const matchesType = jobType === 'All roles' || job.jobType === jobType;
+        const filteredJobs = jobs.filter((job) => {
+            const matchesType = !jobType || job.jobType === jobType;
+            const matchesCountry = !jobCountry || getPublicJobCountry(job.location) === jobCountry;
+            const resolvedField = job.jobField || job.field || job.category || job.industry || job.company?.industry || '';
+            const matchesField = !jobField || resolvedField === jobField;
             const haystack = [
                 job.title,
                 job.company?.name,
@@ -554,9 +631,26 @@ const Landing = ({ onThemeChange }) => {
                 job.description,
                 ...(Array.isArray(job.skills) ? job.skills : [])
             ].join(' ').toLowerCase();
-            return matchesType && (!normalizedSearch || haystack.includes(normalizedSearch));
-        }).slice(0, 8);
-    }, [jobSearch, jobType, jobs]);
+            return matchesType && matchesCountry && matchesField && (!normalizedSearch || haystack.includes(normalizedSearch));
+        });
+
+        if (jobSalarySort) {
+            const salaryValue = (job) => {
+                const values = String(job.salary || '').match(/\d[\d,]*/g) || [];
+                const numbers = values.map((value) => Number(value.replace(/,/g, ''))).filter(Number.isFinite);
+                return numbers.length ? numbers.reduce((total, value) => total + value, 0) / numbers.length : null;
+            };
+            filteredJobs.sort((firstJob, secondJob) => {
+                const firstSalary = salaryValue(firstJob);
+                const secondSalary = salaryValue(secondJob);
+                return jobSalarySort === 'salary-high'
+                    ? (secondSalary ?? -Infinity) - (firstSalary ?? -Infinity)
+                    : (firstSalary ?? Infinity) - (secondSalary ?? Infinity);
+            });
+        }
+
+        return filteredJobs.slice(0, 8);
+    }, [jobCountry, jobField, jobSalarySort, jobSearch, jobType, jobs]);
 
     const requireAccount = (message) => {
         setGateMessage(message);
@@ -959,15 +1053,40 @@ const Landing = ({ onThemeChange }) => {
                                 placeholder="Search roles, skills, companies, or locations"
                             />
                         </label>
-                        <label className="jt-select-field">
-                            <span>Type</span>
-                            <select value={jobType} onChange={(event) => setJobType(event.target.value)}>
-                                {jobTypes.map((type) => <option key={type}>{type}</option>)}
-                            </select>
-                        </label>
+                        <div className="jt-public-job-filters" aria-label="Filter public jobs">
+                            <label className="jt-compact-filter-field">
+                                <span>Country</span>
+                                <select value={jobCountry} onChange={(event) => setJobCountry(event.target.value)}>
+                                    <option value="">Select country</option>
+                                    {jobCountries.map((country) => <option key={country} value={country}>{country}</option>)}
+                                </select>
+                            </label>
+                            <label className="jt-compact-filter-field">
+                                <span>Job type</span>
+                                <select value={jobType} onChange={(event) => setJobType(event.target.value)}>
+                                    <option value="">All job types</option>
+                                    {jobTypes.map((type) => <option key={type} value={type}>{type}</option>)}
+                                </select>
+                            </label>
+                            <label className="jt-compact-filter-field">
+                                <span>Job field</span>
+                                <select value={jobField} onChange={(event) => setJobField(event.target.value)}>
+                                    <option value="">All job fields</option>
+                                    {jobFields.map((field) => <option key={field} value={field}>{field}</option>)}
+                                </select>
+                            </label>
+                            <label className="jt-compact-filter-field">
+                                <span>Salary</span>
+                                <select value={jobSalarySort} onChange={(event) => setJobSalarySort(event.target.value)}>
+                                    <option value="">Default order</option>
+                                    <option value="salary-high">Highest salary</option>
+                                    <option value="salary-low">Lowest salary</option>
+                                </select>
+                            </label>
+                        </div>
                     </div>
 
-                    {contentError ? <p className="jt-content-message">{contentError}</p> : null}
+                    {contentError ? <p className="jt-content-message is-dark">{contentError}</p> : null}
 
                     <div className="jt-job-grid">
                         {contentLoading
@@ -982,13 +1101,14 @@ const Landing = ({ onThemeChange }) => {
                                             imageClassName="profile-avatar-image"
                                             alt={`${job.company?.name || 'Company'} logo`}
                                         />
-                                        <span className="jt-job-type">{job.jobType || 'Full-time'}</span>
                                     </div>
                                     <div className="jt-job-company">{job.company?.name || 'JumpTake company'}</div>
                                     <h3>{job.title}</h3>
-                                    <div className="jt-job-meta">
-                                        <span>{job.location || 'Location flexible'}</span>
-                                        <span>{formatSalary(job.salary)}</span>
+                                    <div className="jt-public-job-meta" aria-label="Job details">
+                                        <span><Icon name="hash" /><b>Job</b> {job.jobNumber || 'Pending'}</span>
+                                        <span><Icon name="pin" />{job.location || 'Location flexible'}</span>
+                                        <span><Icon name="briefcase" />{job.jobType || 'Job type not set'}</span>
+                                        <span><Icon name="salary" />{formatSalary(job.salary)}</span>
                                     </div>
                                     <p>{job.description}</p>
                                     <div className="jt-job-skills">
@@ -1001,9 +1121,16 @@ const Landing = ({ onThemeChange }) => {
                                             <Icon name="heart" />
                                             Like
                                         </button>
-                                        <button type="button" onClick={() => requireAccount('Log in to comment on this job post.')}>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setReviewingJob(job);
+                                                setJobReviewDraft('');
+                                                setJobReviewRating(0);
+                                            }}
+                                        >
                                             <Icon name="comment" />
-                                            Comment
+                                            Review
                                         </button>
                                         <button type="button" onClick={() => requireAccount('Log in to share this job with your network.')}>
                                             <Icon name="share" />
@@ -1011,7 +1138,10 @@ const Landing = ({ onThemeChange }) => {
                                         </button>
                                     </div>
                                     <div className="jt-job-card-footer">
-                                        <span>{formatDate(job.createdAt)}</span>
+                                        <div className="jt-job-card-dates">
+                                            <span>Posted {formatDate(job.createdAt)}</span>
+                                            <span>Deadline {formatJobDeadline(job)}</span>
+                                        </div>
                                         <button type="button" onClick={() => setSelectedJob(job)}>
                                             View role
                                             <Icon name="arrow" />
@@ -1022,7 +1152,7 @@ const Landing = ({ onThemeChange }) => {
                     </div>
 
                     {!contentLoading && !visibleJobs.length ? (
-                        <div className="jt-empty-state">
+                        <div className="jt-empty-state is-dark">
                             <Icon name="search" />
                             <h3>No exact matches yet</h3>
                             <p>Try a wider search or choose another role type.</p>
@@ -1540,8 +1670,13 @@ const Landing = ({ onThemeChange }) => {
                             <div>
                                 <span>{selectedJob.company?.name || 'JumpTake company'}</span>
                                 <h2>{selectedJob.title}</h2>
-                                <p>{selectedJob.location || 'Location flexible'} · {selectedJob.jobType || 'Full-time'} · {formatSalary(selectedJob.salary)}</p>
                             </div>
+                        </div>
+                        <div className="jt-public-job-meta jt-job-modal-meta" aria-label="Job details">
+                            <span><Icon name="hash" /><b>Job</b> {selectedJob.jobNumber || 'Pending'}</span>
+                            <span><Icon name="pin" />{selectedJob.location || 'Location flexible'}</span>
+                            <span><Icon name="briefcase" />{selectedJob.jobType || 'Job type not set'}</span>
+                            <span><Icon name="salary" />{formatSalary(selectedJob.salary)}</span>
                         </div>
                         <div className="jt-job-modal-body">
                             <h3>About the role</h3>
@@ -1571,6 +1706,31 @@ const Landing = ({ onThemeChange }) => {
                                 <Icon name="arrow" />
                             </button>
                         </div>
+                    </section>
+                </div>
+            ) : null}
+            {reviewingJob ? (
+                <div className="jt-job-review-backdrop" role="presentation" onMouseDown={() => setReviewingJob(null)}>
+                    <section className="jt-job-review-dialog" role="dialog" aria-modal="true" aria-label={`Review ${reviewingJob.title}`} onMouseDown={(event) => event.stopPropagation()}>
+                        <button type="button" className="jt-modal-close" onClick={() => setReviewingJob(null)} aria-label="Close review">×</button>
+                        <span className="jt-kicker">Job review</span>
+                        <h2>Review this role</h2>
+                        <p>{reviewingJob.title} · {reviewingJob.company?.name || 'JumpTake company'}</p>
+                        <label>
+                            <span>Your review</span>
+                            <textarea value={jobReviewDraft} onChange={(event) => setJobReviewDraft(event.target.value)} rows="5" placeholder="Share your thoughts about this job post..." />
+                        </label>
+                        <div className="jt-public-review-rating" role="radiogroup" aria-label="Rate job">
+                            <span>Rate job</span>
+                            <div>
+                                {[1, 2, 3, 4, 5].map((rating) => (
+                                    <button key={rating} type="button" className={jobReviewRating >= rating ? 'active' : ''} onClick={() => setJobReviewRating(rating)} aria-label={`${rating} stars`}>★</button>
+                                ))}
+                            </div>
+                        </div>
+                        <button type="button" className="jt-primary-button jt-public-review-submit" onClick={() => requireAccount('Log in or create an account to save your job review.')}>
+                            Continue to save review <Icon name="arrow" />
+                        </button>
                     </section>
                 </div>
             ) : null}

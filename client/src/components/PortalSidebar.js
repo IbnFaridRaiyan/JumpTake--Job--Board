@@ -1,26 +1,28 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
+import portalLogoDark from './media/logo4.png';
+import portalLogoLight from './media/jumptake-logo-9.png';
 
 const ICON_PATHS = {
     home: 'M12 2.5 2 11v10h7v-6h6v6h7V11L12 2.5Zm0 2.63 8 6.8V19h-3v-6H7v6H4v-7.07l8-6.8Z',
     dashboard: 'M3 13h8V3H3v10Zm0 8h8v-6H3v6Zm10 0h8V11h-8v10Zm0-18v6h8V3h-8Z',
-    briefcase: 'M10 6V5a3 3 0 0 1 3-3h2a3 3 0 0 1 3 3v1h3a2 2 0 0 1 2 2v4.5a4 4 0 0 1-2 3.46V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4.04A4 4 0 0 1 1 12.5V8a2 2 0 0 1 2-2h7Zm2 0h4V5a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v1Zm9 9.72A4 4 0 0 1 20 16H4a4 4 0 0 1-1-.28V20h18v-4.28ZM3 8v4.5A1.5 1.5 0 0 0 4.5 14h15a1.5 1.5 0 0 0 1.5-1.5V8H3Z',
-    inbox: 'M4 4h16l3 7v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-7l3-7Zm1.35 2-1.7 4H8a1 1 0 0 1 .92.6 3.37 3.37 0 0 0 6.16 0A1 1 0 0 1 16 10h4.35l-1.7-4H5.35ZM3 12v6h18v-6h-4.42a5.36 5.36 0 0 1-9.16 0H3Z',
-    bell: 'M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22Zm7-6v-5a7 7 0 1 0-14 0v5l-2 2v1h18v-1l-2-2Zm-2 1H7v-6a5 5 0 1 1 10 0v6Z',
+    briefcase: 'M10 6V5a3 3 0 0 1 3-3h2a3 3 0 0 1 3 3v1h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5Zm2 0h4V5a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v1Z',
+    inbox: 'M4 4h16l3 7v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-7l3-7Zm1.35 2-1.7 4H8a1 1 0 0 1 .92.6 3.37 3.37 0 0 0 6.16 0A1 1 0 0 1 16 10h4.35l-1.7-4H5.35Z',
+    bell: 'M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22Zm7-6v-5a7 7 0 1 0-14 0v5l-2 2v1h18v-1l-2-2Z',
     star: 'm12 2 3.1 6.28 6.9 1-5 4.87 1.18 6.87L12 17.77l-6.18 3.25L7 14.15 2 9.28l6.9-1L12 2Z',
-    send: 'M2 21 23 3l-7 20-4-9-10-3Zm5.5-10.2 5.2 1.8 1.9 4.5 3.7-10.5-10.8 4.2Z',
-    // Keep Create visually identical to the Resume Playground shortcut on the dashboard.
-    draft: 'M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z',
-    users: 'M16 11a4 4 0 1 0-3.46-6A4 4 0 1 0 8 11a6 6 0 0 0-6 6v2h12v-2a5.98 5.98 0 0 0-1.08-3.44A5 5 0 0 1 20 18v1h2v-1a7 7 0 0 0-6-7Zm-8-2a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm4 8H4a4 4 0 0 1 8 0Zm4-8a2 2 0 1 1 0-4 2 2 0 0 1 0 4Z',
+    draft: 'M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828z',
+    users: 'M16 11a4 4 0 1 0-3.46-6A4 4 0 1 0 8 11a6 6 0 0 0-6 6v2h12v-2a5.98 5.98 0 0 0-1.08-3.44A5 5 0 0 1 20 18v1h2v-1a7 7 0 0 0-6-7Z',
     'user-plus': 'M15 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.42 0-8 2.24-8 5v1h10.1A6.9 6.9 0 0 1 17 19c0-1.85.72-3.54 1.9-4.8A11.7 11.7 0 0 0 15 14Zm6-3V8h-2v3h-3v2h3v3h2v-3h3v-2h-3Z',
-    user: 'M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z',
     chart: 'M4 19h16v2H2V3h2v16Zm3-2V9h3v8H7Zm5 0V5h3v12h-3Zm5 0v-6h3v6h-3Z',
     settings: 'M19.43 12.98c.04-.32.07-.65.07-.98s-.02-.66-.07-.98l2.11-1.65-2-3.46-2.49 1a7.28 7.28 0 0 0-1.69-.98L15 3h-4l-.36 2.93c-.6.23-1.17.56-1.69.98l-2.49-1-2 3.46 2.11 1.65c-.04.32-.07.65-.07.98s.02.66.07.98l-2.11 1.65 2 3.46 2.49-1c.52.4 1.09.73 1.69.98L11 21h4l.36-2.93c.6-.25 1.17-.58 1.69-.98l2.49 1 2-3.46-2.11-1.65ZM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Z',
-    info: 'M11 10h2v7h-2v-7Zm0-3h2v2h-2V7Zm1-5a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z',
+    info: 'M11 10h2v7h-2v-7Zm0-3h2v2h-2V7Zm1-5a10 10 0 1 0 0 20 10 10 0 0 0 0-20Z',
     logout: 'M10 17v-3H3v-4h7V7l5 5-5 5Zm2-15h8v20h-8v-2h6V4h-6V2Z',
     assessment: 'M5 3h14v18H5V3Zm2 2v14h10V5H7Zm2 2h6v2H9V7Zm0 4h6v2H9v-2Zm0 4h4v2H9v-2Z',
     profile: 'M4 4h16v16H4V4Zm2 2v12h12V6H6Zm2 2h8v2H8V8Zm0 3h8v2H8v-2Zm0 3h5v2H8v-2Z',
-    heart: 'M12 21s-8-4.6-8-11a4.8 4.8 0 0 1 8-3.58A4.8 4.8 0 0 1 20 10c0 6.4-8 11-8 11Z',
-    block: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20ZM4 12a8 8 0 0 1 12.9-6.3L5.7 16.9A7.96 7.96 0 0 1 4 12Zm8 8a7.96 7.96 0 0 1-4.9-1.7L18.3 7.1A8 8 0 0 1 12 20Z'
+    block: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20ZM4 12a8 8 0 0 1 12.9-6.3L5.7 16.9A7.96 7.96 0 0 1 4 12Zm8 8a7.96 7.96 0 0 1-4.9-1.7L18.3 7.1A8 8 0 0 1 12 20Z',
+    sun: 'M12 4V1h2v3h-2Zm0 19v-3h2v3h-2ZM4 13H1v-2h3v2Zm19 0h-3v-2h3v2ZM13 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Z',
+    moon: 'M20.7 15.1A8.3 8.3 0 0 1 8.9 3.3 9 9 0 1 0 20.7 15.1Z',
+    search: 'M10.5 3a7.5 7.5 0 1 0 4.68 13.36L20.82 22 22 20.82l-5.64-5.64A7.5 7.5 0 0 0 10.5 3Zm0 2a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11Z'
 };
 
 const PortalIcon = ({ name = 'dashboard' }) => (
@@ -29,175 +31,169 @@ const PortalIcon = ({ name = 'dashboard' }) => (
     </svg>
 );
 
-const isMobilePortalViewport = () => (
-    typeof window !== 'undefined'
-    && window.matchMedia('(max-width: 768px)').matches
+const PortalThemeIcon = ({ mode }) => (
+    <svg className="portal-public-theme-icon" viewBox="0 0 24 24" aria-hidden="true">
+        {mode === 'dark' ? (
+            <>
+                <circle cx="12" cy="12" r="4" />
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41" />
+            </>
+        ) : (
+            <path d="M20.3 15.2A8.5 8.5 0 0 1 8.8 3.7 8.5 8.5 0 1 0 20.3 15.2Z" />
+        )}
+    </svg>
 );
 
 const PortalSidebar = ({
     primaryItems = [],
     secondaryItems = [],
     onLogout,
-    onStateChange
+    appMode = 'dark',
+    onAppModeChange,
+    onSettings
 }) => {
-    const [expanded, setExpanded] = useState(isMobilePortalViewport);
-    const [hidden, setHidden] = useState(false);
-    const touchStartRef = useRef(null);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [searchOpen, setSearchOpen] = useState(false);
+    const [pageQuery, setPageQuery] = useState('');
+    const [portalTarget, setPortalTarget] = useState(null);
 
     useEffect(() => {
-        onStateChange?.(hidden ? 'hidden' : expanded ? 'open' : 'closed');
-    }, [expanded, hidden, onStateChange]);
-
-    useEffect(() => {
-        const mobileQuery = window.matchMedia('(max-width: 768px)');
-        const handleViewportChange = (event) => {
-            setHidden(false);
-            setExpanded(event.matches);
+        const closeOnEscape = (event) => {
+            if (event.key === 'Escape') setMenuOpen(false);
         };
-
-        if (mobileQuery.matches) {
-            setExpanded(true);
-        }
-        mobileQuery.addEventListener?.('change', handleViewportChange);
-        return () => mobileQuery.removeEventListener?.('change', handleViewportChange);
+        window.addEventListener('keydown', closeOnEscape);
+        return () => window.removeEventListener('keydown', closeOnEscape);
     }, []);
 
-    const handleTouchStart = (event) => {
-        if (!window.matchMedia('(max-width: 768px)').matches) {
-            return;
-        }
+    useEffect(() => {
+        setPortalTarget(document.querySelector('#root > .app-container'));
+    }, []);
 
-        const touch = event.changedTouches?.[0];
-        if (touch) {
-            touchStartRef.current = {
-                x: touch.clientX,
-                y: touch.clientY
-            };
-        }
+    const resetPageScroll = () => {
+        window.requestAnimationFrame(() => {
+            window.scrollTo({ top: 0, behavior: 'auto' });
+            document.querySelector('.home-page main.main-content')?.scrollTo({ top: 0, behavior: 'auto' });
+        });
     };
 
-    const handleTouchEnd = (event) => {
-        const start = touchStartRef.current;
-        const touch = event.changedTouches?.[0];
-        touchStartRef.current = null;
-
-        if (!start || !touch || !window.matchMedia('(max-width: 768px)').matches) {
-            return;
-        }
-
-        const distanceX = touch.clientX - start.x;
-        const distanceY = touch.clientY - start.y;
-        const isIntentionalDownSwipe = distanceY > 48
-            && Math.abs(distanceY) > Math.abs(distanceX) * 1.15;
-
-        if (isIntentionalDownSwipe) {
-            setHidden(true);
-        }
-    };
+    const visiblePrimaryItems = primaryItems.filter((item) => item.label.toLowerCase().includes(pageQuery.trim().toLowerCase()));
+    const visibleSecondaryItems = secondaryItems.filter((item) => item.label.toLowerCase().includes(pageQuery.trim().toLowerCase()));
 
     const renderItem = (item) => (
-        <li key={item.id || item.label} className="sidebar__item">
+        <li key={item.id || item.label} className="portal-public-nav-item">
             <button
                 type="button"
-                className={`sidebar__link ${item.active ? 'is-active' : ''} ${item.danger ? 'is-danger' : ''}`}
-                data-tooltip={item.label}
-                data-tour-id={`nav-${item.id}`}
+                className={`portal-public-nav-link ${item.active ? 'is-active' : ''}`}
                 onClick={() => {
-                    if (!isMobilePortalViewport()) {
-                        setExpanded(false);
-                    }
+                    setMenuOpen(false);
+                    setSearchOpen(false);
+                    setPageQuery('');
                     item.onClick?.();
+                    resetPageScroll();
                 }}
                 aria-current={item.active ? 'page' : undefined}
                 aria-label={item.label}
+                title={item.label}
             >
-                <span className="icon">
-                    <PortalIcon name={item.icon} />
-                </span>
-                <span className="text">{item.label}</span>
-                {item.notification ? <span className="nav-notification-dot" /> : null}
+                <PortalIcon name={item.icon} />
+                <span>{item.label}</span>
+                {item.notification ? <i className="nav-notification-dot" /> : null}
             </button>
         </li>
     );
 
-    return (
-        <>
-            <button
-                type="button"
-                className={`portal-sidebar-reopen ${hidden ? 'is-visible' : ''}`}
-                onClick={() => {
-                    setExpanded(true);
-                    setHidden(false);
-                }}
-                aria-label="Show navigation"
-                aria-hidden={!hidden}
-                tabIndex={hidden ? 0 : -1}
-            >
-                <span aria-hidden="true">^</span>
-            </button>
-            <aside
-                className={`sidebar vertical-sidebar portal-vertical-sidebar portal-uiverse-sidebar ${expanded ? 'is-expanded' : 'is-collapsed'} ${hidden ? 'is-hidden' : ''}`}
-                onTouchStart={handleTouchStart}
-                onTouchEnd={handleTouchEnd}
-            >
-                <nav className="portal-sidebar-nav" aria-label="Portal navigation">
-                    <article className="portal-uiverse-rail">
-                        <div className="portal-dock-controls">
-                            <label className="menu-icon portal-sidebar-menu-icon" aria-label="Toggle portal navigation">
+    const navigation = (
+        <header id="portal-public-header" className={`portal-public-header ${menuOpen ? 'is-menu-open' : ''}`} aria-label="JumpTake portal navigation">
+            <div className="portal-public-header-top">
+                <div className="portal-public-brand">
+                    <img src={appMode === 'dark' ? portalLogoDark : portalLogoLight} alt="JumpTake" />
+                </div>
+                <div className="portal-public-utilities">
+                    <button
+                        type="button"
+                        onClick={() => onAppModeChange?.(appMode === 'dark' ? 'light' : 'dark')}
+                        aria-label={`Switch to ${appMode === 'dark' ? 'light' : 'dark'} mode`}
+                        title={`Switch to ${appMode === 'dark' ? 'light' : 'dark'} mode`}
+                    >
+                        <PortalThemeIcon mode={appMode} />
+                    </button>
+                    <button
+                        type="button"
+                        className="portal-public-search-toggle"
+                        onClick={() => {
+                            setPageQuery('');
+                            setSearchOpen(true);
+                            setMenuOpen(true);
+                        }}
+                        aria-label="Search portal pages"
+                        title="Search"
+                    >
+                        <PortalIcon name="search" />
+                    </button>
+                    <button type="button" onClick={() => { setMenuOpen(false); onSettings?.(); }} aria-label="Settings" title="Settings">
+                        <PortalIcon name="settings" />
+                    </button>
+                    <button
+                        type="button"
+                        className={`portal-public-menu-toggle ${menuOpen ? 'is-open' : ''}`}
+                        onClick={() => {
+                            setSearchOpen(false);
+                            setPageQuery('');
+                            setMenuOpen((open) => !open);
+                        }}
+                        aria-label={menuOpen ? 'Close portal menu' : 'Open portal menu'}
+                        aria-expanded={menuOpen}
+                        aria-controls="portal-public-menu"
+                    >
+                        <span />
+                        <span />
+                        <span />
+                    </button>
+                </div>
+            </div>
+            {menuOpen ? (
+                <>
+                    <button className="portal-public-menu-backdrop" type="button" onClick={() => setMenuOpen(false)} aria-label="Close portal menu" />
+                    <nav id="portal-public-menu" className="portal-public-menu" aria-label="Portal pages">
+                        {searchOpen ? (
+                            <label className="portal-public-page-search">
+                                <PortalIcon name="search" />
                                 <input
-                                    type="checkbox"
-                                    checked={expanded}
-                                    onChange={(event) => {
-                                        setHidden(false);
-                                        setExpanded(event.target.checked);
-                                    }}
+                                    type="search"
+                                    value={pageQuery}
+                                    onChange={(event) => setPageQuery(event.target.value)}
+                                    placeholder="Search portal pages"
+                                    autoFocus
                                 />
-                                <span></span>
-                                <span></span>
-                                <span></span>
                             </label>
-                            <button
-                                type="button"
-                                className="portal-dock-hide"
-                                onClick={() => {
-                                    setHidden(true);
-                                }}
-                                aria-label="Hide navigation below the screen"
-                                title="Hide navigation"
-                            >
-                                <span aria-hidden="true">⌄</span>
-                            </button>
-                        </div>
-                        <ul className="sidebar__list list--primary">
-                            {primaryItems.map(renderItem)}
-                        </ul>
-                        <ul className="sidebar__list list--secondary">
-                            {secondaryItems.map(renderItem)}
-                            <li className="sidebar__item">
+                        ) : null}
+                        <ul>{visiblePrimaryItems.map(renderItem)}</ul>
+                        <ul>
+                            {visibleSecondaryItems.map(renderItem)}
+                            <li className="portal-public-nav-item">
                                 <button
                                     type="button"
-                                    className="sidebar__link is-danger"
-                                    data-tooltip="Log Out"
-                                    onClick={() => {
-                                        if (!isMobilePortalViewport()) {
-                                            setExpanded(false);
-                                        }
-                                        onLogout?.();
-                                    }}
+                                    className="portal-public-nav-link is-danger"
+                                    onClick={() => { setMenuOpen(false); setSearchOpen(false); setPageQuery(''); onLogout?.(); }}
                                     aria-label="Log Out"
                                 >
-                                    <span className="icon">
-                                        <PortalIcon name="logout" />
-                                    </span>
-                                    <span className="text">Log Out</span>
+                                    <PortalIcon name="logout" />
+                                    <span>Log Out</span>
                                 </button>
                             </li>
                         </ul>
-                    </article>
-                </nav>
-            </aside>
-        </>
+                    </nav>
+                </>
+            ) : null}
+        </header>
     );
+
+    return portalTarget
+        ? ReactDOM.createPortal(
+            <div className="home-page portal-navbar-portal-host">{navigation}</div>,
+            portalTarget
+        )
+        : navigation;
 };
 
 export default PortalSidebar;

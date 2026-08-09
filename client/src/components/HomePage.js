@@ -16,11 +16,8 @@ import ResumePlayground from './ResumePlayground';
 import PortalHomeFeed from './PortalHomeFeed';
 import PortalDefaultLanding from './PortalDefaultLanding';
 import { writePortalDataCache } from '../utils/portalDataCache';
-import PortalAiButton from './PortalAiButton';
 import BlocksManager from './BlocksManager';
 import { clearBrowserAccountState } from '../utils/authStorage';
-import dashboardLogoLight from './media/jumptake-logo-9.png';
-import dashboardLogoDark from './media/jumptake-logo-dark-maroon.png';
 import JOB_INTEREST_OPTIONS from '../utils/jobInterestOptions';
 import GuidedPortalTour from './GuidedPortalTour';
 import PortalPageSkeleton from './PortalPageSkeleton';
@@ -30,6 +27,11 @@ const CANDIDATE_SECTION_IDS = new Set([
     'dashboard',
     'inbox',
     'job-feed',
+    'work-news',
+    'job-posts',
+    'talent-stories',
+    'tailor-profile',
+    'my-feed',
     'notifications',
     'view-candidates',
     'friend-invitations',
@@ -182,7 +184,6 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const displayEmail = typeof user?.email === 'string' ? user.email : '';
     const displayName = displayEmail.includes('@') ? displayEmail.split('@')[0] : (displayEmail || 'User');
     const displayInitial = displayName ? displayName.charAt(0).toUpperCase() : 'U';
-    const dashboardLogo = appMode === 'dark' ? dashboardLogoDark : dashboardLogoLight;
     const safeJobs = useMemo(() => normalizeJobsResponse(jobs), [jobs]);
 
     useEffect(() => {
@@ -266,6 +267,11 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         dashboard: 'Dashboard',
         inbox: 'Inbox',
         'job-feed': 'Home',
+        'work-news': 'Work News',
+        'job-posts': 'Job Posts',
+        'talent-stories': 'Talent Stories',
+        'tailor-profile': 'Tailor Profile',
+        'my-feed': 'My Feed',
         applications: 'My Applications',
         assessments: 'My Assessments',
         'video-interviews': 'Video Interviews',
@@ -732,14 +738,6 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         switchSection(nextSection);
     };
 
-    const openPortalAssistant = () => {
-        setPendingInboxCount(0);
-        localStorage.setItem('jumptakeCandidateInboxSeenAt', String(Date.now()));
-        window.dispatchEvent(new CustomEvent('jumptake-open-candidate-messenger', {
-            detail: { assistant: true }
-        }));
-    };
-
     useEffect(() => {
         if (typeof window === 'undefined') {
             return undefined;
@@ -762,6 +760,11 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
 
     const candidatePrimaryNavItems = [
         { id: 'job-feed', label: 'Home', icon: 'home' },
+        { id: 'work-news', label: 'Work News', icon: 'briefcase', mobileOnly: true },
+        { id: 'job-posts', label: 'Job Posts', icon: 'profile', mobileOnly: true },
+        { id: 'talent-stories', label: 'Talent Stories', icon: 'users', mobileOnly: true },
+        { id: 'tailor-profile', label: 'Tailor Profile', icon: 'draft', mobileOnly: true },
+        { id: 'my-feed', label: 'My Feed', icon: 'inbox', mobileOnly: true },
         { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
         { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 },
         { id: 'view-candidates', label: 'Candidates', icon: 'users' },
@@ -916,7 +919,32 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     jobs={safeJobs}
                     switchSection={switchSection}
                     onRefresh={refreshData}
+                    initialTab="work-news"
+                    hideTabs
                 />;
+            case 'work-news':
+            case 'job-posts':
+            case 'talent-stories':
+            case 'tailor-profile':
+            case 'my-feed': {
+                const tabBySection = {
+                    'work-news': 'work-news',
+                    'job-posts': 'job-posts',
+                    'talent-stories': 'talent-stories',
+                    'tailor-profile': 'create-story',
+                    'my-feed': 'my-feed'
+                };
+                return <PortalHomeFeed
+                    mode="candidate"
+                    currentUser={user}
+                    profileData={jobSeekerData}
+                    jobs={safeJobs}
+                    switchSection={switchSection}
+                    onRefresh={refreshData}
+                    initialTab={tabBySection[section]}
+                    hideTabs
+                />;
+            }
             case 'dashboard':
                 return <PortalDefaultLanding
                     mode="candidate"
@@ -1040,24 +1068,21 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
 
     // Progress Check renders its own animated title inside the analytics panel.
     // Do not add the shared section-title pill above it.
-    const showSectionTitle = !['home', 'job-feed', 'dashboard', 'progress-check'].includes(activeSection);
+    const showSectionTitle = ![
+        'home',
+        'job-feed',
+        'work-news',
+        'job-posts',
+        'talent-stories',
+        'tailor-profile',
+        'my-feed',
+        'dashboard',
+        'progress-check'
+    ].includes(activeSection);
 
     if (loading && !jobSeekerData) {
         return (
             <div className={`loading-container ${appMode === 'dark' ? 'portal-modern' : ''}`.trim()}>
-                <div className="dashboard-header candidate-dashboard-header">
-                    <div className="portal-header-ai-action">
-                        <PortalAiButton onClick={openPortalAssistant} />
-                    </div>
-                    <div className="portal-dashboard-identity candidate-dashboard-identity">
-                        <div
-                            className="dashboard-logo-button dashboard-logo-static"
-                            aria-label="JumpTake"
-                        >
-                            <img src={dashboardLogo} alt="JumpTake Logo" className="candidate-dashboard-logo" />
-                        </div>
-                    </div>
-                </div>
                 <PortalPageSkeleton label="Loading your dashboard" />
             </div>
         );
@@ -1065,20 +1090,6 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
 
     return (
         <div className={`home-page ${appMode === 'dark' ? 'portal-modern ' : ''}portal-dock-open`.trim()}>
-            <div className="dashboard-header candidate-dashboard-header">
-                <div className="portal-header-ai-action">
-                    <PortalAiButton onClick={openPortalAssistant} />
-                </div>
-                <div className="portal-dashboard-identity candidate-dashboard-identity">
-                    <div
-                        className="dashboard-logo-button dashboard-logo-static"
-                        aria-label="JumpTake"
-                    >
-                        <img src={dashboardLogo} alt="JumpTake Logo" className="candidate-dashboard-logo" />
-                    </div>
-                </div>
-            </div>
-
             {showInterestPopup && (
                 <div className="modal-overlay">
                     <div className="job-interest-modal">
@@ -1112,18 +1123,20 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             )}
 
             <div className={`dashboard-container ${mobileSectionVisible ? 'mobile-section-open' : ''}`}>
-                <PortalSidebar
-                    userName={displayName}
-                    userSubtitle={displayEmail}
-                    userInitial={displayInitial}
-                    userImage={jobSeekerData?.profileImage || ''}
-                    primaryItems={candidatePrimaryNavItems}
-                    secondaryItems={candidateSecondaryNavItems}
-                    onLogout={handleLogout}
-                    mobileSectionOpen={mobileSectionVisible}
-                />
-
                 <main ref={mobilePanelRef} className={`main-content mobile-dashboard-section-panel mobile-section-${activeSection} ${mobileSectionVisible ? 'is-open' : ''}`}>
+                    <PortalSidebar
+                        userName={displayName}
+                        userSubtitle={displayEmail}
+                        userInitial={displayInitial}
+                        userImage={jobSeekerData?.profileImage || ''}
+                        primaryItems={candidatePrimaryNavItems}
+                        secondaryItems={candidateSecondaryNavItems}
+                        onLogout={handleLogout}
+                        appMode={appMode}
+                        onAppModeChange={onAppModeChange}
+                        onSettings={() => openSection('settings')}
+                        mobileSectionOpen={mobileSectionVisible}
+                    />
                     {showSectionTitle && !isMobileViewport() && (
                         <div className="dashboard-section-title">
                             <h2><span key={`desktop-${activeSection}-${titleAnimationReplayKey}`} className="portal-title-jello-text">{sectionTitles[activeSection] || 'Dashboard Section'}</span></h2>

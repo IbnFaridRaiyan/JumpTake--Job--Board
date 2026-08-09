@@ -1,0 +1,207 @@
+/* Remove the portal-only top chrome and let each section begin at the canvas top. */
+html body #root > .app-container > :is(.home-page, .loading-container) > .dashboard-header,
+html body #root .home-page > .dashboard-header,
+html body #root .loading-container > .dashboard-header {
+  display: none !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html body #root > .app-container > .home-page > .dashboard-container,
+html body #root > .app-container > .home-page > .dashboard-container.mobile-section-open {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+html body #root > .app-container > .home-page > .dashboard-container > .main-content,
+html body #root > .app-container > .home-page > .dashboard-container.mobile-section-open > .main-content.mobile-dashboard-section-panel.is-open {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Dark-mode desktop has a more specific archived padding rule; override it. */
+html[data-theme="dark"] body[data-theme="dark"] #root > .app-container > .home-page.portal-modern > .dashboard-container > .main-content,
+html[data-theme="dark"] body[data-theme="dark"] #root > .app-container > .home-page.portal-modern > .dashboard-container.mobile-section-open > .main-content.mobile-dashboard-section-panel.is-open {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/*
+ * Light-mode section titles belong to the page content, just like their
+ * dark-mode counterparts.  The legacy light rules made the title wrapper a
+ * small floating card at the edge of the viewport; keep the animated pill,
+ * but put its wrapper back into normal document flow.  Home, Dashboard and
+ * Progress Check do not render/use these shared wrappers, so they remain
+ * untouched.
+ */
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(
+  .dashboard-section-title,
+  .mobile-section-panel-header
+),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page :is(
+  .dashboard-section-title,
+  .mobile-section-panel-header
+) {
+  position: relative !important;
+  inset: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 3.3rem !important;
+  margin: 0 0 0.6rem !important;
+  padding: 0 0.1rem !important;
+  gap: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transform: none !important;
+  text-align: left !important;
+  z-index: auto !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(
+  .dashboard-section-title,
+  .mobile-section-panel-header
+) h2,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page :is(
+  .dashboard-section-title,
+  .mobile-section-panel-header
+) h2 {
+  width: auto !important;
+  max-width: 100% !important;
+  margin: 0 auto 0 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: inherit !important;
+  text-align: left !important;
+  white-space: nowrap !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(
+  .dashboard-section-title,
+  .mobile-section-panel-header
+) h2 .portal-title-jello-text,
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(
+  .dashboard-section-title,
+  .mobile-section-panel-header
+) h2:hover .portal-title-jello-text,
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(
+  .dashboard-section-title,
+  .mobile-section-panel-header
+) h2:focus-within .portal-title-jello-text,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page :is(
+  .dashboard-section-title,
+  .mobile-section-panel-header
+) h2 .portal-title-jello-text,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page :is(
+  .dashboard-section-title,
+  .mobile-section-panel-header
+) h2:hover .portal-title-jello-text,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page :is(
+  .dashboard-section-title,
+  .mobile-section-panel-header
+) h2:focus-within .portal-title-jello-text {
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  max-width: min(100%, 34rem) !important;
+  padding: 0.38rem 1.05rem !important;
+  border: 1px solid rgba(127, 29, 50, 0.24) !important;
+  border-radius: 999px !important;
+  background: rgba(255, 248, 236, 0.92) !important;
+  background-color: rgba(255, 248, 236, 0.92) !important;
+  background-image: none !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92), 0 0.28rem 0.75rem rgba(86, 66, 37, 0.12) !important;
+  color: #3f1d2b !important;
+  -webkit-text-fill-color: #3f1d2b !important;
+  font-family: 'Boogaloo', 'Arial Narrow', Arial, sans-serif !important;
+  font-size: clamp(1.16rem, 2.05vw, 1.48rem) !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.01em !important;
+  line-height: 1.05 !important;
+  text-align: center !important;
+  transform-origin: center !important;
+  animation: jumptake-activities-loop 7.5s infinite both !important;
+  backdrop-filter: blur(13px) saturate(1.18) !important;
+  -webkit-backdrop-filter: blur(13px) saturate(1.18) !important;
+  will-change: transform !important;
+}
+
+/* Mobile headers have a back button, but the title itself stays in the same
+ * in-flow left-aligned rail instead of becoming a sticky/floating card. */
+@media (max-width: 768px) {
+  html[data-theme="light"] body[data-theme="light"] #root .home-page :is(
+    .mobile-section-panel-header
+  ),
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page :is(
+    .mobile-section-panel-header
+  ) {
+    top: auto !important;
+    bottom: auto !important;
+    position: relative !important;
+    min-height: 3.3rem !important;
+    margin: 0 0 0.6rem !important;
+    padding: 0 0.1rem !important;
+    overflow: visible !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root .home-page :is(
+    .mobile-section-panel-header
+  ) > .back-button,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page :is(
+    .mobile-section-panel-header
+  ) > .back-button {
+    order: 2 !important;
+    margin-left: auto !important;
+    margin-right: 0 !important;
+  }
+}
+
+/* Progress Check owns its internal heading and must not receive the shared
+ * animated section-title wrapper treatment above. */
+html[data-theme="light"] body[data-theme="light"] #root .home-page .main-content.mobile-section-progress-check > :is(
+  .dashboard-section-title,
+  .mobile-section-panel-header
+),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .main-content.mobile-section-progress-check > :is(
+  .dashboard-section-title,
+  .mobile-section-panel-header
+),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .main-content:has(.progress-dashboard) > :is(
+  .dashboard-section-title,
+  .mobile-section-panel-header
+),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .main-content:has(.progress-dashboard) > :is(
+  .dashboard-section-title,
+  .mobile-section-panel-header
+) {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}

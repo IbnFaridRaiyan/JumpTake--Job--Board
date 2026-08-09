@@ -1,0 +1,508 @@
+/* Theme-specific finishing pass for settings, collections and shared menus. */
+
+/* Settings: active Security/Notifications labels remain readable on dark tabs. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .settings-container .tabs-header .tab-button.active,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .settings-container .tabs-header .tab-button.active span {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .settings-container .tabs-header .tab-button.active .tab-icon,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .settings-container .tabs-header .tab-button.active .tab-icon::before,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .settings-container .tabs-header .tab-button.active .tab-icon::after {
+  color: #000 !important;
+  background-color: #000 !important;
+  border-color: #000 !important;
+}
+
+/* Blocks: black rounded cards, transparent row/name/button containers and
+ * black icon-backed empty states in dark mode. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .blocks-manager-card,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .blocks-manager-card-wide,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .blocks-manager-card > .blocks-empty {
+  background: #000 !important;
+  background-color: #000 !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  border-radius: 1rem !important;
+  color: #f5f5f5 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .blocks-manager-row,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .blocks-manager-row > span,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .blocks-manager-row .blocks-manager-actions {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .blocks-manager-card h3,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .blocks-manager-row strong {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .blocks-manager-row small,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .blocks-empty {
+  color: rgba(255, 255, 255, 0.72) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.72) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .blocks-manager-card > .blocks-empty::before,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .blocks-manager-card > .blocks-empty > .empty-state-image,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .blocks-manager-card > .blocks-empty > .empty-state-image svg {
+  background-color: #000 !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .blocks-manager-card > .blocks-empty::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 5h16l2 10v4H2v-4L4 5Z'/%3E%3Cpath d='M2 15h6l1.5 2h5L16 15h6'/%3E%3Cpath d='M9 9h6'/%3E%3C/svg%3E") !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: 2.55rem 2.55rem !important;
+}
+
+/* Create/Edit Resume and Saved Resume empty panels. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .resume-playground-empty,
+  .resume-playground-choice-grid,
+  .resume-playground-panel
+) {
+  border-radius: 1rem !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .resume-playground-empty {
+  background: #000 !important;
+  background-color: #000 !important;
+  background-image: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  color: rgba(255, 255, 255, 0.76) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.76) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .resume-playground-empty::before,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .resume-playground-empty > .empty-state-image {
+  background-color: #000 !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+}
+
+html body #root .home-page .resume-playground-edit-upload-button {
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  min-height: 2.15rem !important;
+  padding: 0.45rem 0.8rem !important;
+  font-size: 0.72rem !important;
+}
+
+/* Job Preferences: a readable, responsive selection grid rather than tiny
+ * cramped pills. */
+html body #root .home-page .interested-job-suggestion-section .interested-job-card {
+  padding: clamp(1rem, 2.3vw, 1.6rem) !important;
+  border-radius: 1.2rem !important;
+}
+
+html body #root .home-page .interested-job-suggestion-section .job-interest-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr)) !important;
+  align-items: stretch !important;
+  gap: 0.62rem !important;
+  width: 100% !important;
+  margin: 1rem 0 1.25rem !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+html body #root .home-page .interested-job-suggestion-section .job-interest-grid > button,
+html body #root .home-page .interested-job-suggestion-section .job-interest-grid > button:is(:hover, :focus, :focus-visible, :active, .selected) {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 2.72rem !important;
+  margin: 0 !important;
+  padding: 0.62rem 0.78rem 0.62rem 2.05rem !important;
+  border: 1px solid rgba(104, 20, 33, 0.2) !important;
+  border-radius: 0.78rem !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  color: #3f1d2b !important;
+  font-size: 0.74rem !important;
+  font-weight: 700 !important;
+  line-height: 1.15 !important;
+  text-align: left !important;
+  white-space: normal !important;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, background 180ms ease !important;
+}
+
+html body #root .home-page .interested-job-suggestion-section .job-interest-grid > button::before {
+  position: absolute !important;
+  left: 0.72rem !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 0.9rem !important;
+  height: 0.9rem !important;
+  border: 1px solid currentColor !important;
+  border-radius: 0.28rem !important;
+  content: '' !important;
+  color: currentColor !important;
+}
+
+html body #root .home-page .interested-job-suggestion-section .job-interest-grid > button:is(:hover, :focus-visible) {
+  transform: translateY(-1px) !important;
+  border-color: #a45168 !important;
+  box-shadow: 0 0.45rem 1rem rgba(104, 20, 33, 0.12) !important;
+}
+
+html body #root .home-page .interested-job-suggestion-section .job-interest-grid > button.selected {
+  border-color: #681421 !important;
+  background: linear-gradient(135deg, #681421, #a45168) !important;
+  color: #fff !important;
+  box-shadow: 0 0.45rem 1rem rgba(104, 20, 33, 0.2) !important;
+}
+
+html body #root .home-page .interested-job-suggestion-section .job-interest-grid > button.selected::before {
+  border-color: #fff !important;
+  background: #fff !important;
+  box-shadow: inset 0 0 0 0.2rem #8b3c55 !important;
+}
+
+html body #root .home-page .interested-job-suggestion-section .assessment-footer-actions .settings-button.primary {
+  width: auto !important;
+  min-width: 8.8rem !important;
+  max-width: max-content !important;
+  min-height: 2.35rem !important;
+  padding: 0.5rem 0.9rem !important;
+  font-size: 0.74rem !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .interested-job-suggestion-section .interested-job-card {
+  background: linear-gradient(145deg, #050505, #111) !important;
+  background-color: #050505 !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.35) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .interested-job-suggestion-section .job-interest-grid > button,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .interested-job-suggestion-section .job-interest-grid > button:is(:hover, :focus, :focus-visible, :active) {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background: #111 !important;
+  color: #fff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .interested-job-suggestion-section .job-interest-grid > button.selected {
+  border-color: #d66a7d !important;
+  background: linear-gradient(135deg, #8d334b, #d66a7d) !important;
+  color: #fff !important;
+}
+
+/* Bookmarked candidates: modern cards in both themes. */
+html body #root .home-page .candidate-bookmarked-container .candidate-card.uiverse-profile-card {
+  overflow: hidden !important;
+  border-radius: 1.15rem !important;
+  border: 1px solid rgba(104, 20, 33, 0.2) !important;
+  background: linear-gradient(145deg, #fffdf9, #f7ecef) !important;
+  box-shadow: 0 0.8rem 1.8rem rgba(75, 48, 36, 0.12) !important;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease !important;
+}
+
+html body #root .home-page .candidate-bookmarked-container .candidate-card.uiverse-profile-card:hover {
+  transform: translateY(-3px) !important;
+  border-color: rgba(164, 81, 104, 0.58) !important;
+  box-shadow: 0 1.15rem 2.2rem rgba(75, 48, 36, 0.18) !important;
+}
+
+html body #root .home-page .candidate-bookmarked-container .candidate-card .candidate-name,
+html body #root .home-page .candidate-bookmarked-container .candidate-card .candidate-info {
+  color: #3f1d2b !important;
+}
+
+html body #root .home-page .candidate-bookmarked-container .candidate-card .candidate-card-socialbar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.42rem !important;
+  padding: 0.35rem !important;
+  border-radius: 0.8rem !important;
+  background: rgba(255, 255, 255, 0.58) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .candidate-bookmarked-container .candidate-card.uiverse-profile-card {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background: linear-gradient(145deg, #050505, #151515) !important;
+  box-shadow: 0 1rem 2.2rem rgba(0, 0, 0, 0.42) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .candidate-bookmarked-container .candidate-card .candidate-name,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .candidate-bookmarked-container .candidate-card .candidate-info,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .candidate-bookmarked-container .candidate-card .candidate-email {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .candidate-bookmarked-container .candidate-card .candidate-card-socialbar {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Saved posts: dark-mode Open/View Post labels are black as requested. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .saved-posts-section .saved-post-open-button,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .saved-posts-section .saved-post-open-button:is(:hover, :focus, :focus-visible, :active) {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+}
+
+/* Shared job filters, country pickers and post three-dot menus use one
+ * compact theme-aware surface style. */
+html body #root .home-page :is(
+  .portal-job-filter-bar,
+  .advanced-filters,
+  .portal-job-country-row
+) {
+  border-radius: 1rem !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(
+  .portal-job-filter-bar,
+  .advanced-filters,
+  .portal-job-country-row
+) {
+  border: 1px solid rgba(104, 20, 33, 0.14) !important;
+  background: rgba(255, 253, 249, 0.88) !important;
+  background-color: rgba(255, 253, 249, 0.88) !important;
+  box-shadow: 0 0.5rem 1.2rem rgba(75, 48, 36, 0.08) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .portal-job-filter-bar,
+  .advanced-filters,
+  .portal-job-country-row
+) {
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  background: #050505 !important;
+  background-color: #050505 !important;
+  box-shadow: 0 0.6rem 1.35rem rgba(0, 0, 0, 0.35) !important;
+}
+
+html body #root .home-page :is(
+  .portal-job-filter-bar label select,
+  .filter-group select,
+  .filter-group input,
+  .portal-job-country-button
+) {
+  min-height: 2.35rem !important;
+  border: 1px solid rgba(104, 20, 33, 0.22) !important;
+  border-radius: 0.72rem !important;
+  background: #fffdf9 !important;
+  color: #3f1d2b !important;
+  box-shadow: 0 0.25rem 0.7rem rgba(75, 48, 36, 0.08) !important;
+}
+
+html body #root .home-page .portal-job-country-button {
+  width: auto !important;
+  min-width: 8.2rem !important;
+  padding: 0.5rem 0.8rem !important;
+  text-align: left !important;
+}
+
+html body #root .home-page :is(
+  .portal-job-country-menu,
+  .portal-post-options-menu,
+  .portal-post-options-menu-inline,
+  .portal-job-options-menu
+) {
+  overflow: hidden !important;
+  border: 1px solid rgba(104, 20, 33, 0.2) !important;
+  border-radius: 0.85rem !important;
+  background: #fffdf9 !important;
+  box-shadow: 0 1rem 2.2rem rgba(36, 18, 22, 0.2) !important;
+}
+
+html body #root .home-page :is(
+  .portal-job-country-menu button,
+  .portal-job-country-menu span,
+  .portal-post-options-menu button,
+  .portal-post-options-menu-inline button,
+  .portal-job-options-menu button
+) {
+  min-height: 2.3rem !important;
+  padding: 0.58rem 0.8rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #3f1d2b !important;
+  text-align: left !important;
+}
+
+html body #root .home-page :is(
+  .portal-job-country-menu button:hover,
+  .portal-job-country-menu button.active,
+  .portal-post-options-menu button:hover,
+  .portal-post-options-menu button:focus-visible,
+  .portal-post-options-menu-inline button:hover,
+  .portal-post-options-menu-inline button:focus-visible,
+  .portal-job-options-menu button:hover,
+  .portal-job-options-menu button:focus-visible
+) {
+  background: rgba(164, 81, 104, 0.12) !important;
+  color: #681421 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .portal-job-filter-bar label select,
+  .filter-group select,
+  .filter-group input,
+  .portal-job-country-button
+) {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  background: #0b0b0b !important;
+  color: #fff !important;
+  box-shadow: 0 0.3rem 0.8rem rgba(0, 0, 0, 0.34) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .portal-job-country-menu,
+  .portal-post-options-menu,
+  .portal-post-options-menu-inline,
+  .portal-job-options-menu
+) {
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  background: #050505 !important;
+  box-shadow: 0 1.1rem 2.4rem rgba(0, 0, 0, 0.55) !important;
+}
+
+/* Floating post menus are portalled directly under <body>, so they need the
+ * same theme treatment outside the #root scope as well. */
+html[data-theme="light"] body[data-theme="light"] :is(
+  .portal-post-options-menu-floating,
+  .portal-post-options-menu,
+  .portal-post-options-menu-inline,
+  .portal-job-options-menu
+) {
+  overflow: hidden !important;
+  border: 1px solid rgba(104, 20, 33, 0.2) !important;
+  border-radius: 0.85rem !important;
+  background: #fffdf9 !important;
+  box-shadow: 0 1rem 2.2rem rgba(36, 18, 22, 0.2) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] :is(
+  .portal-post-options-menu-floating,
+  .portal-post-options-menu,
+  .portal-post-options-menu-inline,
+  .portal-job-options-menu
+) button {
+  min-height: 2.3rem !important;
+  padding: 0.58rem 0.8rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #3f1d2b !important;
+  text-align: left !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] :is(
+  .portal-post-options-menu-floating,
+  .portal-post-options-menu,
+  .portal-post-options-menu-inline,
+  .portal-job-options-menu
+) button:is(:hover, :focus-visible) {
+  background: rgba(164, 81, 104, 0.12) !important;
+  color: #681421 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  .portal-post-options-menu-floating,
+  .portal-post-options-menu,
+  .portal-post-options-menu-inline,
+  .portal-job-options-menu
+) {
+  overflow: hidden !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 0.85rem !important;
+  background: #050505 !important;
+  box-shadow: 0 1.1rem 2.4rem rgba(0, 0, 0, 0.55) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  .portal-post-options-menu-floating,
+  .portal-post-options-menu,
+  .portal-post-options-menu-inline,
+  .portal-job-options-menu
+) button {
+  min-height: 2.3rem !important;
+  padding: 0.58rem 0.8rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  text-align: left !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  .portal-post-options-menu-floating,
+  .portal-post-options-menu,
+  .portal-post-options-menu-inline,
+  .portal-job-options-menu
+) button:is(:hover, :focus-visible) {
+  background: rgba(214, 106, 125, 0.18) !important;
+  color: #fff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .portal-job-country-menu button,
+  .portal-job-country-menu span,
+  .portal-post-options-menu button,
+  .portal-post-options-menu-inline button,
+  .portal-job-options-menu button
+) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .portal-job-country-menu button:hover,
+  .portal-job-country-menu button.active,
+  .portal-post-options-menu button:hover,
+  .portal-post-options-menu button:focus-visible,
+  .portal-post-options-menu-inline button:hover,
+  .portal-post-options-menu-inline button:focus-visible,
+  .portal-job-options-menu button:hover,
+  .portal-job-options-menu button:focus-visible
+) {
+  background: rgba(214, 106, 125, 0.18) !important;
+  color: #fff !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .home-page .interested-job-suggestion-section .job-interest-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.5rem !important;
+  }
+
+  html body #root .home-page .interested-job-suggestion-section .job-interest-grid > button {
+    min-height: 2.6rem !important;
+    padding-inline: 0.55rem 0.42rem !important;
+    padding-left: 1.7rem !important;
+    font-size: 0.66rem !important;
+  }
+
+  html body #root .home-page .interested-job-suggestion-section .job-interest-grid > button::before {
+    left: 0.55rem !important;
+  }
+
+  html body #root .home-page .interested-job-suggestion-section .assessment-footer-actions .settings-button.primary {
+    min-width: 8rem !important;
+  }
+}
+
+@media (max-width: 420px) {
+  html body #root .home-page .interested-job-suggestion-section .job-interest-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

@@ -17,11 +17,8 @@ import Inbox from './Inbox';
 import ResumePlayground from './ResumePlayground';
 import PortalHomeFeed from './PortalHomeFeed';
 import PortalDefaultLanding from './PortalDefaultLanding';
-import PortalAiButton from './PortalAiButton';
 import SavedPosts from './SavedPosts';
 import { clearBrowserAccountState } from '../utils/authStorage';
-import dashboardLogoLight from './media/jumptake-logo-9.png';
-import dashboardLogoDark from './media/jumptake-logo-dark-maroon.png';
 import GuidedPortalTour from './GuidedPortalTour';
 import PortalPageSkeleton from './PortalPageSkeleton';
 
@@ -69,10 +66,10 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     const [pendingInboxCount, setPendingInboxCount] = useState(0);
     const [pendingNotificationCount, setPendingNotificationCount] = useState(0);
     const [mobileSectionVisible, setMobileSectionVisible] = useState(() => isMobileViewport());
+    const [homeFeedTab, setHomeFeedTab] = useState('talent-stories');
     const [isManagingEmployerJob, setIsManagingEmployerJob] = useState(false);
     const mobilePanelRef = useRef(null);
     const navigate = useNavigate();
-    const dashboardLogo = appMode === 'dark' ? dashboardLogoDark : dashboardLogoLight;
 
     useEffect(() => {
         setOpenedSections((currentSections) => (
@@ -425,14 +422,6 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         switchSection(nextSection);
     };
 
-    const openPortalAssistant = () => {
-        setPendingInboxCount(0);
-        localStorage.setItem('jumptakeEmployerInboxSeenAt', String(Date.now()));
-        window.dispatchEvent(new CustomEvent('jumptake-open-employer-messenger', {
-            detail: { assistant: true }
-        }));
-    };
-
     useEffect(() => {
         if (typeof window === 'undefined') {
             return undefined;
@@ -453,8 +442,23 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeSection, mobileSectionVisible, employer?.companyId]);
 
+    const openEmployerHomeTab = (tab) => {
+        const request = { mode: 'employer', tab };
+        setHomeFeedTab(tab);
+        sessionStorage.setItem('jumptakeHomeFeedRequest', JSON.stringify(request));
+        openSection('home-feed');
+        window.requestAnimationFrame(() => {
+            window.dispatchEvent(new CustomEvent('jumptake-home-feed-request', { detail: request }));
+        });
+    };
+
     const employerPrimaryNavItems = [
         { id: 'home-feed', label: 'Home', icon: 'home' },
+        { id: 'home-talent-stories', label: 'Talent Stories', icon: 'users', mobileOnly: true, feedTab: 'talent-stories' },
+        { id: 'home-work-news', label: 'Work News', icon: 'briefcase', mobileOnly: true, feedTab: 'work-news' },
+        { id: 'home-create-post', label: 'Create Post', icon: 'draft', mobileOnly: true, feedTab: 'create-post' },
+        { id: 'home-my-news', label: 'My News', icon: 'inbox', mobileOnly: true, feedTab: 'my-company-posts' },
+        { id: 'home-my-jobs', label: 'My Jobs', icon: 'profile', mobileOnly: true, feedTab: 'my-job-posts' },
         { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
         { id: 'post-job', label: 'Post a Job', icon: 'briefcase' },
         { id: 'manage-jobs', label: 'Manage Jobs', icon: 'briefcase' },
@@ -467,8 +471,10 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         { id: 'create-document', label: 'Create Document', icon: 'profile' }
     ].map((item) => ({
         ...item,
-        active: item.id === 'home-feed' ? ['home', 'home-feed'].includes(activeSection) : activeSection === item.id,
-        onClick: () => openSection(item.id)
+        active: item.feedTab
+            ? ['home', 'home-feed'].includes(activeSection) && homeFeedTab === item.feedTab
+            : item.id === 'home-feed' ? ['home', 'home-feed'].includes(activeSection) : activeSection === item.id,
+        onClick: () => item.feedTab ? openEmployerHomeTab(item.feedTab) : openSection(item.id)
     }));
 
     const employerSecondaryNavItems = [
@@ -562,6 +568,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                     jobs={jobs}
                     switchSection={switchSection}
                     onRefresh={refreshJobs}
+                    onTabChange={setHomeFeedTab}
                 />;
             case 'dashboard':
                 return <PortalDefaultLanding
@@ -809,19 +816,6 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     if (loading) {
         return (
             <div className={`loading-container ${appMode === 'dark' ? 'portal-modern' : ''}`.trim()}>
-                <div className="dashboard-header employer-dashboard-header">
-                    <div className="portal-header-ai-action">
-                        <PortalAiButton onClick={openPortalAssistant} />
-                    </div>
-                    <div className="portal-dashboard-identity employer-dashboard-identity">
-                        <div
-                            className="dashboard-logo-button dashboard-logo-static"
-                            aria-label="JumpTake"
-                        >
-                            <img src={dashboardLogo} alt="JumpTake" className="employer-dashboard-logo" />
-                        </div>
-                    </div>
-                </div>
                 <PortalPageSkeleton label="Loading your dashboard" />
             </div>
         );
@@ -829,33 +823,21 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
 
     return (
         <div className={`home-page ${appMode === 'dark' ? 'portal-modern ' : ''}portal-dock-open`.trim()}>
-            <div className="dashboard-header employer-dashboard-header">
-                <div className="portal-header-ai-action">
-                    <PortalAiButton onClick={openPortalAssistant} />
-                </div>
-                <div className="portal-dashboard-identity employer-dashboard-identity">
-                    <div
-                        className="dashboard-logo-button dashboard-logo-static"
-                        aria-label="JumpTake"
-                    >
-                        <img src={dashboardLogo} alt="JumpTake" className="employer-dashboard-logo" />
-                    </div>
-                </div>
-            </div>
-
             <div className={`dashboard-container ${mobileSectionVisible ? 'mobile-section-open' : ''}`}>
-                <PortalSidebar
-                    userName={employer?.companyName || 'Company'}
-                    userSubtitle={employer?.username || ''}
-                    userInitial={(employer?.companyName || 'C').charAt(0).toUpperCase()}
-                    userImage={companyData?.logo || ''}
-                    primaryItems={employerPrimaryNavItems}
-                    secondaryItems={employerSecondaryNavItems}
-                    onLogout={handleLogout}
-                    mobileSectionOpen={mobileSectionVisible}
-                />
-
                 <main ref={mobilePanelRef} className={`main-content mobile-dashboard-section-panel mobile-section-${activeSection} ${mobileSectionVisible ? 'is-open' : ''}`}>
+                    <PortalSidebar
+                        userName={employer?.companyName || 'Company'}
+                        userSubtitle={employer?.username || ''}
+                        userInitial={(employer?.companyName || 'C').charAt(0).toUpperCase()}
+                        userImage={companyData?.logo || ''}
+                        primaryItems={employerPrimaryNavItems}
+                        secondaryItems={employerSecondaryNavItems}
+                        onLogout={handleLogout}
+                        appMode={appMode}
+                        onAppModeChange={onAppModeChange}
+                        onSettings={() => openSection('settings')}
+                        mobileSectionOpen={mobileSectionVisible}
+                    />
                     {showSectionTitle && !isMobileViewport() && (
                         <div className="dashboard-section-title">
                             <h2><span key={`desktop-${activeSection}-${titleAnimationReplayKey}`} className="portal-title-jello-text">{sectionTitles[activeSection] || 'Dashboard Section'}</span></h2>

@@ -6,6 +6,7 @@ const EditJob = ({ job, onCancel, onJobUpdated }) => {
         description: job.description || '',
         location: job.location || '',
         salary: job.salary || '',
+        applicationDeadline: job.applicationDeadline ? new Date(job.applicationDeadline).toISOString().slice(0, 10) : '',
         applicationLink: job.applicationLink || '',
         jobType: job.jobType || 'Full-time',
         requirements: job.requirements ? job.requirements.join('\n') : '',
@@ -64,6 +65,7 @@ const EditJob = ({ job, onCancel, onJobUpdated }) => {
                     description: formData.description,
                     location: formData.location,
                     salary: formData.salary,
+                    applicationDeadline: formData.applicationDeadline || null,
                     applicationLink: formData.applicationLink,
                     jobType: formData.jobType,
                     requirements,
@@ -158,6 +160,18 @@ const EditJob = ({ job, onCancel, onJobUpdated }) => {
                             className="form-control"
                         />
                     </div>
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="applicationDeadline">Application deadline (optional)</label>
+                    <input
+                        type="date"
+                        id="applicationDeadline"
+                        name="applicationDeadline"
+                        value={formData.applicationDeadline}
+                        onChange={handleChange}
+                        className="form-control"
+                    />
                 </div>
 
                 <div className="form-group">

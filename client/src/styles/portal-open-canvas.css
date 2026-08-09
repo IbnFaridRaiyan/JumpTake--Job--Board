@@ -1,0 +1,498 @@
+/*
+ * Borderless candidate/employer page canvas.
+ * Remove only stacked page backgrounds; navigation and content cards retain
+ * their component styling.
+ */
+html body #root .home-page .portal-uiverse-sidebar .is-mobile-only-nav-item {
+  display: none !important;
+}
+
+html body #root .home-page .portal-nav-brand,
+html body #root .home-page .portal-dock-hide,
+html body #root .home-page .portal-sidebar-reopen {
+  display: none !important;
+}
+
+/* The former bottom/side dock becomes the same floating top rail on desktop. */
+@media (min-width: 769px) {
+  html body #root .home-page .portal-uiverse-sidebar .is-mobile-only-nav-item {
+    display: list-item !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar,
+  html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.sidebar,
+  html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.is-expanded,
+  html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.is-collapsed {
+    position: fixed !important;
+    top: 0.65rem !important;
+    right: max(1rem, calc((100vw - 92rem) / 2)) !important;
+    bottom: auto !important;
+    left: max(1rem, calc((100vw - 92rem) / 2)) !important;
+    z-index: 100000 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 5.1rem !important;
+    min-height: 5.1rem !important;
+    max-height: 5.1rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .portal-sidebar-nav,
+  html body #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 5.1rem !important;
+    min-height: 5.1rem !important;
+    max-height: 5.1rem !important;
+    margin: 0 !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+    position: relative !important;
+    display: flex !important;
+    flex-flow: row nowrap !important;
+    align-items: stretch !important;
+    gap: 0 !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding: 0 0.55rem 0 0 !important;
+    border-radius: 1.35rem !important;
+    scrollbar-width: thin !important;
+    scroll-snap-type: x proximity !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+    border: 1px solid rgba(127, 29, 50, 0.22) !important;
+    background: rgba(255, 248, 236, 0.92) !important;
+    box-shadow: 0 0.9rem 2.5rem rgba(67, 35, 44, 0.16) !important;
+    backdrop-filter: blur(22px) saturate(1.18) !important;
+    -webkit-backdrop-filter: blur(22px) saturate(1.18) !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    background: rgba(7, 10, 10, 0.9) !important;
+    box-shadow: 0 1rem 2.6rem rgba(0, 0, 0, 0.48) !important;
+    backdrop-filter: blur(23px) saturate(1.28) !important;
+    -webkit-backdrop-filter: blur(23px) saturate(1.28) !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .portal-nav-brand {
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 4 !important;
+    display: flex !important;
+    flex: 0 0 7rem !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 7rem !important;
+    padding: 0.45rem 0.8rem !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-nav-brand,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-nav-brand {
+    background: rgba(255, 248, 236, 0.97) !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-nav-brand {
+    background: rgba(7, 10, 10, 0.97) !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .portal-nav-brand-logo {
+    display: none !important;
+    width: 5.35rem !important;
+    height: auto !important;
+    object-fit: contain !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-nav-brand-logo.is-light-logo,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-nav-brand-logo.is-light-logo,
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-nav-brand-logo.is-dark-logo {
+    display: block !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .portal-dock-controls {
+    display: none !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .sidebar__list {
+    position: static !important;
+    display: flex !important;
+    flex: 0 0 auto !important;
+    flex-flow: row nowrap !important;
+    align-items: stretch !important;
+    gap: 0.2rem !important;
+    width: max-content !important;
+    min-width: max-content !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0.35rem 0 !important;
+    overflow: visible !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .sidebar__item {
+    flex: 0 0 6rem !important;
+    width: 6rem !important;
+    min-width: 6rem !important;
+    height: 100% !important;
+    scroll-snap-align: start !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .sidebar__link {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0.3rem !important;
+    gap: 0.22rem !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .sidebar__link .text {
+    display: block !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    font-size: 0.72rem !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container {
+    padding-top: 6.35rem !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container > main.main-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+}
+
+/* Review dialogs always sit above feed cards and soften the page behind. */
+html body .portal-job-review-backdrop,
+html body > .portal-job-review-backdrop,
+html body #root .jt-job-review-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483000 !important;
+  background: rgba(5, 5, 7, 0.58) !important;
+  backdrop-filter: blur(10px) saturate(0.82) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(0.82) !important;
+  isolation: isolate !important;
+}
+
+html body .portal-job-review-modal,
+html body #root .jt-job-review-dialog {
+  position: relative !important;
+  z-index: 2147483001 !important;
+}
+
+html body #root > .app-container > .home-page > .dashboard-container > main.main-content,
+html body #root > .app-container > .home-page > .dashboard-container.mobile-section-open > main.main-content,
+html body #root > .app-container > .home-page main.main-content > .portal-section-transition-shell,
+html body #root > .app-container > .home-page main.main-content > .portal-section-transition-shell.is-active-portal-section,
+html body #root > .app-container > .home-page main.main-content > .portal-section-transition-shell.is-cached-portal-section,
+html body #root > .app-container > .home-page main.main-content > .portal-section-transition-shell > :is(
+  .portal-home-feed,
+  .notifications-page,
+  .notifications-container,
+  .candidate-feed-container,
+  .talent-pool-container,
+  .candidate-bookmarked-container,
+  .friend-invitations-section,
+  .friend-invitations-container,
+  .applications-container,
+  .interested-job-suggestion-section,
+  .resume-playground-section,
+  .blocks-manager-section,
+  .about-jumptake-section,
+  .settings-container,
+  .employer-settings-container,
+  .progress-dashboard,
+  .post-job-container,
+  .edit-job-container,
+  .job-management-container,
+  .performance-analytics,
+  .performance-analytics-container
+),
+html body #root > .app-container > .home-page main.main-content :is(
+  .portal-home-feed-scroll,
+  .portal-home-tab-panel,
+  .notifications-list,
+  .friend-invitation-panel,
+  .applications-hub-panel,
+  .bookmarks-hub-panel,
+  .about-jumptake-content,
+  .post-job-content
+) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-color: transparent !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html body #root > .app-container > .home-page main.main-content::before,
+html body #root > .app-container > .home-page main.main-content::after,
+html body #root > .app-container > .home-page main.main-content > .portal-section-transition-shell::before,
+html body #root > .app-container > .home-page main.main-content > .portal-section-transition-shell::after {
+  content: none !important;
+  display: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .home-page .portal-uiverse-sidebar .is-mobile-only-nav-item {
+    display: list-item !important;
+  }
+
+  /* Persistent floating top navigation with a fixed brand and scrollable links. */
+  html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar,
+  html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.sidebar,
+  html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.is-expanded,
+  html body #root > .app-container > .home-page > .dashboard-container > aside.portal-uiverse-sidebar.is-collapsed {
+    position: fixed !important;
+    top: 0.55rem !important;
+    right: 0.55rem !important;
+    bottom: auto !important;
+    left: 0.55rem !important;
+    z-index: 100000 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 4.8rem !important;
+    min-height: 4.8rem !important;
+    max-height: 4.8rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .portal-sidebar-nav,
+  html body #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 4.8rem !important;
+    min-height: 4.8rem !important;
+    max-height: 4.8rem !important;
+    margin: 0 !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+    position: relative !important;
+    display: flex !important;
+    flex-flow: row nowrap !important;
+    align-items: stretch !important;
+    gap: 0 !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding: 0 0.35rem 0 0 !important;
+    border-radius: 1.15rem !important;
+    scrollbar-width: thin !important;
+    scroll-snap-type: x proximity !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+    border: 1px solid rgba(127, 29, 50, 0.22) !important;
+    background: rgba(255, 248, 236, 0.92) !important;
+    box-shadow: 0 0.8rem 2.1rem rgba(67, 35, 44, 0.16) !important;
+    backdrop-filter: blur(20px) saturate(1.18) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(1.18) !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-uiverse-sidebar .portal-uiverse-rail {
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    background: rgba(7, 10, 10, 0.9) !important;
+    box-shadow: 0 0.9rem 2.2rem rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(21px) saturate(1.28) !important;
+    -webkit-backdrop-filter: blur(21px) saturate(1.28) !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .portal-nav-brand {
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 4 !important;
+    display: flex !important;
+    flex: 0 0 5.15rem !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 5.15rem !important;
+    padding: 0.4rem 0.55rem !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-uiverse-sidebar .portal-nav-brand {
+    background: rgba(255, 248, 236, 0.97) !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-uiverse-sidebar .portal-nav-brand {
+    background: rgba(7, 10, 10, 0.97) !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .portal-nav-brand-logo {
+    display: none !important;
+    width: 4.05rem !important;
+    max-width: 4.05rem !important;
+    height: auto !important;
+    object-fit: contain !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-nav-brand-logo.is-light-logo,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-nav-brand-logo.is-light-logo,
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-nav-brand-logo.is-dark-logo {
+    display: block !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .portal-dock-controls {
+    display: none !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .sidebar__list {
+    position: static !important;
+    display: flex !important;
+    flex: 0 0 auto !important;
+    flex-flow: row nowrap !important;
+    align-items: stretch !important;
+    gap: 0.12rem !important;
+    width: max-content !important;
+    min-width: max-content !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0.3rem 0 !important;
+    overflow: visible !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .sidebar__item {
+    display: list-item !important;
+    flex: 0 0 4.65rem !important;
+    width: 4.65rem !important;
+    min-width: 4.65rem !important;
+    height: 100% !important;
+    scroll-snap-align: start !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .sidebar__link {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    padding: 0.25rem 0.2rem !important;
+    gap: 0.18rem !important;
+  }
+
+  html body #root .home-page .portal-uiverse-sidebar .sidebar__link .text {
+    display: block !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    font-size: 0.6rem !important;
+    line-height: 1.05 !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container {
+    padding-top: 5.8rem !important;
+  }
+
+  /* Feed sections now live in the main bottom dock on mobile. */
+  html body #root > .app-container > .home-page .portal-home-feed > .portal-home-tabs {
+    display: none !important;
+  }
+
+  html body #root > .app-container > .home-page .portal-home-feed > .portal-home-feed-scroll {
+    padding-top: 0.35rem !important;
+  }
+
+  /* Screenshot 11: full-height rounded shell enclosing the entire portal. */
+  html body #root > .app-container > .home-page > .dashboard-container,
+  html body #root > .app-container > .home-page > .dashboard-container.mobile-section-open,
+  html[data-theme="light"] body[data-theme="light"] #root > .app-container > .home-page > .dashboard-container,
+  html[data-theme="dark"] body[data-theme="dark"] #root > .app-container > .home-page > .dashboard-container {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    border-color: transparent !important;
+    border-radius: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container::before,
+  html body #root > .app-container > .home-page > .dashboard-container::after {
+    content: none !important;
+    display: none !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container > main.main-content,
+  html body #root > .app-container > .home-page > .dashboard-container.mobile-section-open > main.main-content.mobile-dashboard-section-panel.is-open,
+  html body #root > .app-container > .home-page main.main-content > .portal-section-transition-shell,
+  html body #root > .app-container > .home-page main.main-content > .portal-section-transition-shell > * {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Home must grow with its feed instead of being clipped to a nested 100%. */
+  html body #root > .app-container > .home-page {
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+  }
+
+  html body #root > .app-container > .home-page > .dashboard-container,
+  html body #root > .app-container > .home-page > .dashboard-container.mobile-section-open,
+  html body #root > .app-container > .home-page > .dashboard-container > main.main-content:has(.portal-home-feed),
+  html body #root > .app-container > .home-page > .dashboard-container.mobile-section-open > main.main-content.is-open:has(.portal-home-feed),
+  html body #root > .app-container > .home-page main.main-content:has(.portal-home-feed) > .portal-section-transition-shell.is-active-portal-section,
+  html body #root > .app-container > .home-page main.main-content:has(.portal-home-feed) .portal-home-feed,
+  html body #root > .app-container > .home-page main.main-content:has(.portal-home-feed) .portal-home-feed > .portal-home-feed-scroll,
+  html body #root > .app-container > .home-page main.main-content:has(.portal-home-feed) .portal-home-feed-scroll > .portal-home-tab-panel {
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  html body #root > .app-container > .home-page main.main-content:has(.portal-home-feed) .portal-home-feed > .portal-home-feed-scroll {
+    padding-bottom: 2rem !important;
+  }
+}

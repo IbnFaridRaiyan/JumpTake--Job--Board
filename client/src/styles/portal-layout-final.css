@@ -9,6 +9,40 @@ html:not([data-theme="dark"]) {
   --resume-editor-toolbar-ink: #0b0f14;
 }
 
+/* Desktop portals use the document as the single scroll owner. Legacy portal
+   panels used viewport heights and hidden overflow, which clipped long pages
+   such as Notifications, Progress Check, My Posts, and other secondary pages. */
+@media (min-width: 769px) {
+  html:not(.portal-menu-scroll-locked),
+  html:not(.portal-menu-scroll-locked) body:not(.portal-menu-scroll-locked) {
+    height: auto !important;
+    min-height: 100% !important;
+    max-height: none !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: auto !important;
+  }
+
+  html:not(.portal-menu-scroll-locked) body:not(.portal-menu-scroll-locked) #root,
+  html:not(.portal-menu-scroll-locked) body:not(.portal-menu-scroll-locked) #root > .app-container,
+  html:not(.portal-menu-scroll-locked) body:not(.portal-menu-scroll-locked) #root > .app-container > .home-page,
+  html:not(.portal-menu-scroll-locked) body:not(.portal-menu-scroll-locked) #root .home-page > .dashboard-container,
+  html:not(.portal-menu-scroll-locked) body:not(.portal-menu-scroll-locked) #root .home-page main.main-content,
+  html:not(.portal-menu-scroll-locked) body:not(.portal-menu-scroll-locked) #root .home-page .portal-section-transition-shell.is-active-portal-section {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    overscroll-behavior: auto !important;
+    touch-action: auto !important;
+  }
+
+  html:not(.portal-menu-scroll-locked) body:not(.portal-menu-scroll-locked) #root .home-page > .dashboard-container,
+  html:not(.portal-menu-scroll-locked) body:not(.portal-menu-scroll-locked) #root .home-page main.main-content {
+    min-height: 100vh !important;
+  }
+}
+
 /* Work News companies and Talent Stories authors stay bold without the
    synthetic 900-weight rendering that made the names look overly heavy. */
 html body #root .home-page .portal-home-tab-panel:is(
@@ -52,6 +86,32 @@ html.portal-menu-scroll-locked body.portal-menu-scroll-locked #root
   overflow-y: auto !important;
   overscroll-behavior: contain !important;
   touch-action: pan-y !important;
+}
+
+@media (max-width: 768px) {
+  html.portal-menu-scroll-locked,
+  html.portal-menu-scroll-locked body.portal-menu-scroll-locked {
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+    touch-action: none !important;
+  }
+
+  html.portal-menu-scroll-locked body.portal-menu-scroll-locked #root,
+  html.portal-menu-scroll-locked body.portal-menu-scroll-locked #root > .app-container,
+  html.portal-menu-scroll-locked body.portal-menu-scroll-locked #root .home-page,
+  html.portal-menu-scroll-locked body.portal-menu-scroll-locked #root .dashboard-container,
+  html.portal-menu-scroll-locked body.portal-menu-scroll-locked #root main.main-content {
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+    touch-action: none !important;
+  }
+
+  html.portal-menu-scroll-locked body.portal-menu-scroll-locked #root
+    #portal-public-header .portal-public-menu {
+    overflow-y: auto !important;
+    touch-action: pan-y !important;
+  }
 }
 
 /* Hamburger page links use the same editorial type and ink as the feed

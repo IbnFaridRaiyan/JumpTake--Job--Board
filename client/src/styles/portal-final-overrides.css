@@ -650,18 +650,40 @@ html body #root #portal-public-header .portal-public-menu-toggle.is-open > span:
   transform: translateY(-0.36rem) rotate(-45deg) !important;
 }
 
-html body #root #portal-public-header .portal-public-menu-backdrop {
+html body #root .portal-public-menu-backdrop {
   position: fixed !important;
   inset: 0 !important;
-  z-index: 2 !important;
+  z-index: 9998 !important;
   width: 100vw !important;
   height: 100dvh !important;
   padding: 0 !important;
-  background: rgba(3, 7, 14, 0.22) !important;
+  background: rgba(3, 7, 14, 0.2) !important;
   border: 0 !important;
   border-radius: 0 !important;
-  backdrop-filter: blur(3px) !important;
-  -webkit-backdrop-filter: blur(3px) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html body #root #portal-public-header.portal-public-header {
+  z-index: 9999 !important;
+  filter: none !important;
+}
+
+/* Blur only the portal canvas. Applying backdrop-filter to a viewport-sized
+   fixed element can also blur later fixed layers on mobile Chromium/WebKit. */
+html.portal-menu-scroll-locked body.portal-menu-scroll-locked #root
+  > .app-container > .home-page > .dashboard-container,
+html.portal-menu-scroll-locked body.portal-menu-scroll-locked #root
+  > .app-container > .home-page > .floating-messenger,
+html.portal-menu-scroll-locked body.portal-menu-scroll-locked #root
+  > .app-container > .home-page > .guided-portal-tour {
+  filter: blur(8px) !important;
+  transition: filter 180ms ease !important;
+}
+
+html.portal-menu-scroll-locked body.portal-menu-scroll-locked #root
+  :is(#portal-public-header, #portal-public-header *, .portal-public-menu, .portal-public-menu *) {
+  filter: none !important;
 }
 
 html body #root #portal-public-header .portal-public-menu {

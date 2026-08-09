@@ -153,6 +153,10 @@ const PortalSidebar = ({
     );
 
     const navigation = (
+        <>
+        {menuOpen ? (
+            <button className="portal-public-menu-backdrop" type="button" onClick={closePortalMenu} aria-label="Close portal menu" />
+        ) : null}
         <header id="portal-public-header" className={`portal-public-header ${menuOpen ? 'is-menu-open' : ''} ${menuClosing ? 'is-menu-closing' : ''}`} aria-label="JumpTake portal navigation">
             <div className="portal-public-header-top">
                 <div className="portal-public-brand">
@@ -209,8 +213,6 @@ const PortalSidebar = ({
                 </div>
             </div>
             {menuOpen ? (
-                <>
-                    <button className="portal-public-menu-backdrop" type="button" onClick={closePortalMenu} aria-label="Close portal menu" />
                     <nav id="portal-public-menu" className="portal-public-menu" aria-label="Portal pages">
                         {searchOpen ? (
                             <label className="portal-public-page-search">
@@ -240,9 +242,9 @@ const PortalSidebar = ({
                             </li>
                         </ul>
                     </nav>
-                </>
             ) : null}
         </header>
+        </>
     );
 
     return portalTarget

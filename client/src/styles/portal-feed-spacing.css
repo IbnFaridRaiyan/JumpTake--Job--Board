@@ -243,6 +243,67 @@ html[data-theme="light"] body[data-theme="light"] :is(
   background-image: none !important;
 }
 
+/* Mobile portal scroll repair: the viewport scrolls; portal shells never lock it. */
+@media (max-width: 768px) {
+  html:has(#portal-public-header) {
+    position: static !important;
+    height: auto !important;
+    min-height: 100% !important;
+    max-height: none !important;
+    overflow-x: clip !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: auto !important;
+    touch-action: pan-y !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  html body:has(#portal-public-header) {
+    position: static !important;
+    height: auto !important;
+    min-height: 100svh !important;
+    max-height: none !important;
+    overflow-x: clip !important;
+    overflow-y: visible !important;
+    overscroll-behavior-y: auto !important;
+    touch-action: pan-y !important;
+  }
+
+  html body:has(#portal-public-header) :is(
+    #root,
+    #root > .app-container,
+    #root > .app-container > .home-page,
+    #root .home-page > .dashboard-container,
+    #root .home-page main.main-content
+  ) {
+    height: auto !important;
+    min-height: 100svh !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+    overscroll-behavior-y: auto !important;
+    touch-action: pan-y !important;
+  }
+}
+
+/* Light feed pages use the exact same physical start margin as dark mode. */
+html[data-theme="light"] body[data-theme="light"] #root > .app-container > .home-page > .dashboard-container > main.main-content > .portal-section-transition-shell.is-active-portal-section:is(
+  [data-section="work-news"],
+  [data-section="talent-stories"],
+  [data-section="job-posts"],
+  [data-section="tailor-profile"],
+  [data-section="my-feed"]
+),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root > .app-container > .home-page > .dashboard-container > main.main-content > .portal-section-transition-shell.is-active-portal-section:is(
+  [data-section="work-news"],
+  [data-section="talent-stories"],
+  [data-section="job-posts"],
+  [data-section="tailor-profile"],
+  [data-section="my-feed"]
+) {
+  position: relative !important;
+  top: auto !important;
+  margin-top: 0.65rem !important;
+}
+
 /* Non-feed pages start below the fixed navbar. Feed pages remain untouched. */
 html body #root > .app-container > .home-page > .dashboard-container > main.main-content > .portal-section-transition-shell.is-active-portal-section:not(:is(
   [data-section="home"],

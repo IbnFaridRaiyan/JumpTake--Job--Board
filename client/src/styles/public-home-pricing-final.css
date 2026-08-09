@@ -11,6 +11,19 @@ body[data-public-home-theme="light"] #root .jt-public-home .jt-public-price-card
   background: #fff !important;
 }
 
+body[data-public-home-theme="light"] #root .jt-public-home .jt-public-pricing-copy h2 em {
+  color: #b85a6d !important;
+  -webkit-text-fill-color: #b85a6d !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home .jt-public-price-card.is-extreme button,
+body[data-public-home-theme="light"] #root .jt-public-home .jt-public-price-card.is-extreme button :is(span, svg, path) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
 body[data-public-home-theme="dark"] #root .jt-public-home .jt-public-pricing {
   background: rgba(10, 12, 13, .9) !important;
 }

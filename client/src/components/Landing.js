@@ -408,7 +408,7 @@ const Landing = ({ onThemeChange }) => {
     const [contentError, setContentError] = useState('');
     const [jobSearch, setJobSearch] = useState('');
     const [jobType, setJobType] = useState('');
-    const [jobCountry, setJobCountry] = useState('');
+    const [jobCountry, setJobCountry] = useState('United Kingdom');
     const [jobField, setJobField] = useState('');
     const [jobSalarySort, setJobSalarySort] = useState('');
     const [selectedJob, setSelectedJob] = useState(null);

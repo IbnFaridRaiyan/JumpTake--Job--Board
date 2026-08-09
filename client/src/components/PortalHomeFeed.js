@@ -1270,8 +1270,6 @@ const PortalHomeFeed = ({
     const [homeJobCountryFilter, setHomeJobCountryFilter] = useState('');
     const [countryMenuOpen, setCountryMenuOpen] = useState(false);
     const [jobLocationPromptOpen, setJobLocationPromptOpen] = useState(false);
-    const [jobLocationLoading, setJobLocationLoading] = useState(false);
-    const [jobLocationError, setJobLocationError] = useState('');
     const [homeJobLocationFilter, setHomeJobLocationFilter] = useState('');
     const [homeJobSalarySort, setHomeJobSalarySort] = useState('');
     const [homeJobTypeFilter, setHomeJobTypeFilter] = useState('');
@@ -1745,60 +1743,27 @@ const PortalHomeFeed = ({
     ), [safeJobs]);
 
     useEffect(() => {
-        if (activeTab !== 'job-posts' || typeof window === 'undefined') return;
-        const promptKey = `jumptakeJobLocationPrompt:${mode}:${viewerId || 'guest'}`;
-        if (window.localStorage.getItem(promptKey)) return;
-        window.localStorage.setItem(promptKey, 'shown');
-        setJobLocationError('');
-        setJobLocationPromptOpen(true);
-    }, [activeTab, mode, viewerId]);
-
-    const closeJobLocationPrompt = () => {
-        setJobLocationPromptOpen(false);
-        setJobLocationLoading(false);
-        setJobLocationError('');
-    };
-
-    const selectDetectedJobCountry = async () => {
-        if (!navigator.geolocation) {
-            setJobLocationError('Location is not supported by this browser. Please choose a country manually.');
+        if (activeTab !== 'job-posts' || !availableHomeJobCountries.length || typeof window === 'undefined') return;
+        const promptKey = `jumptakeJobCountryPromptV2:${mode}:${viewerId || 'guest'}`;
+        const countryKey = `jumptakeJobCountry:${mode}:${viewerId || 'guest'}`;
+        const savedCountry = window.localStorage.getItem(countryKey);
+        if (savedCountry) {
+            setHomeJobCountryFilter(savedCountry);
             return;
         }
+        if (window.localStorage.getItem(promptKey)) return;
+        window.localStorage.setItem(promptKey, 'shown');
+        setJobLocationPromptOpen(true);
+    }, [activeTab, availableHomeJobCountries.length, mode, viewerId]);
 
-        setJobLocationLoading(true);
-        setJobLocationError('');
-        navigator.geolocation.getCurrentPosition(async ({ coords }) => {
-            try {
-                const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${encodeURIComponent(coords.latitude)}&longitude=${encodeURIComponent(coords.longitude)}&localityLanguage=en`);
-                if (!response.ok) throw new Error('Country lookup failed');
-                const location = await response.json();
-                const detectedCountry = asDisplayText(location.countryName || location.countryCode).trim();
-                if (!detectedCountry) throw new Error('Country was not found');
-
-                const normalized = detectedCountry.toLowerCase();
-                const aliases = {
-                    'united kingdom': ['uk', 'great britain', 'england', 'scotland', 'wales', 'northern ireland'],
-                    'united states': ['usa', 'us', 'united states of america']
-                };
-                const matchingCountry = availableHomeJobCountries.find((country) => {
-                    const candidate = country.toLowerCase();
-                    return candidate === normalized
-                        || aliases[normalized]?.includes(candidate)
-                        || aliases[candidate]?.includes(normalized);
-                });
-
-                setHomeJobCountryFilter(matchingCountry || detectedCountry);
-                setHomeJobLocationFilter('');
-                setJobPage(1);
-                closeJobLocationPrompt();
-            } catch (error) {
-                setJobLocationLoading(false);
-                setJobLocationError('We could not detect your country. Please choose it manually.');
-            }
-        }, () => {
-            setJobLocationLoading(false);
-            setJobLocationError('Location permission was not granted. You can choose a country manually.');
-        }, { enableHighAccuracy: false, timeout: 12000, maximumAge: 3600000 });
+    const selectInitialJobCountry = (country) => {
+        setHomeJobCountryFilter(country);
+        setHomeJobLocationFilter('');
+        setJobPage(1);
+        setJobLocationPromptOpen(false);
+        if (typeof window !== 'undefined') {
+            window.localStorage.setItem(`jumptakeJobCountry:${mode}:${viewerId || 'guest'}`, country);
+        }
     };
 
     const availableHomeJobLocations = useMemo(() => {
@@ -5782,6 +5747,9 @@ const PortalHomeFeed = ({
                                     setHomeJobTypeFilter('');
                                     setHomeJobFieldFilter('');
                                     setCountryMenuOpen(false);
+                                    if (typeof window !== 'undefined') {
+                                        window.localStorage.removeItem(`jumptakeJobCountry:${mode}:${viewerId || 'guest'}`);
+                                    }
                                 }}
                             >
                                 Clear filters
@@ -5812,6 +5780,9 @@ const PortalHomeFeed = ({
                                                 setHomeJobCountryFilter(country);
                                                 setHomeJobLocationFilter('');
                                                 setCountryMenuOpen(false);
+                                                if (typeof window !== 'undefined') {
+                                                    window.localStorage.setItem(`jumptakeJobCountry:${mode}:${viewerId || 'guest'}`, country);
+                                                }
                                             }}
                                             role="menuitem"
                                         >
@@ -7466,19 +7437,15 @@ const PortalHomeFeed = ({
                 <div className="portal-job-location-consent-backdrop" role="presentation">
                     <section className="portal-job-location-consent" role="dialog" aria-modal="true" aria-labelledby="portal-job-location-title">
                         <div className="portal-job-location-icon" aria-hidden="true">⌖</div>
-                        <p className="portal-job-location-eyebrow">Jobs near you</p>
-                        <h2 id="portal-job-location-title">Use your current country?</h2>
-                        <p>Allow JumpTake to detect your country and automatically show jobs available where you live. You can change the country filter at any time.</p>
-                        {jobLocationError ? <div className="portal-job-location-error" role="alert">{jobLocationError}</div> : null}
-                        <div className="portal-job-location-actions">
-                            <button type="button" className="is-primary" onClick={selectDetectedJobCountry} disabled={jobLocationLoading}>
-                                {jobLocationLoading ? 'Finding your country…' : 'Use my location'}
-                            </button>
-                            <button type="button" onClick={() => {
-                                closeJobLocationPrompt();
-                                setCountryMenuOpen(true);
-                            }}>Choose manually</button>
-                            <button type="button" className="is-text" onClick={closeJobLocationPrompt}>Not now</button>
+                        <p className="portal-job-location-eyebrow">Choose your job market</p>
+                        <h2 id="portal-job-location-title">Select a country to view jobs</h2>
+                        <p>These countries currently have job posts available. Choose one to filter the feed. You can change it later.</p>
+                        <div className="portal-job-location-country-list" role="menu" aria-label="Countries with available jobs">
+                            {availableHomeJobCountries.map((country) => (
+                                <button key={country} type="button" role="menuitem" onClick={() => selectInitialJobCountry(country)}>
+                                    <span>{country}</span><strong aria-hidden="true">→</strong>
+                                </button>
+                            ))}
                         </div>
                     </section>
                 </div>,

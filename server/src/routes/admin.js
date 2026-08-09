@@ -12,6 +12,7 @@ const CandidateConnection = require('../models/CandidateConnection');
 const CandidateLike = require('../models/CandidateLike');
 const Company = require('../models/Company');
 const DraftApplication = require('../models/DraftApplication');
+const DeletedItem = require('../models/DeletedItem');
 const Employer = require('../models/Employer');
 const FeedPost = require('../models/FeedPost');
 const Job = require('../models/Job');
@@ -619,6 +620,17 @@ const createFallbackAdminAssistantPlan = (message) => {
   };
 };
 
+const getDeletedItemLabel = (document) => String(
+  document?.title
+  || document?.name
+  || document?.email
+  || document?.username
+  || document?.authorName
+  || document?.sourceTitle
+  || document?._id
+  || 'Deleted item'
+);
+
 const ADMIN_ASSISTANT_MAX_DRAFTS = 100;
 const ADMIN_ASSISTANT_DRAFT_BATCH_SIZE = 10;
 
@@ -904,6 +916,12 @@ router.get('/summary', async (req, res) => {
       }))
     );
 
+    collections.push({
+      key: 'deletedItems',
+      label: 'Deleted Items',
+      count: await DeletedItem.countDocuments()
+    });
+
     res.json({ collections });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -912,6 +930,33 @@ router.get('/summary', async (req, res) => {
 
 router.get('/collections/:collection', async (req, res) => {
   try {
+    if (req.params.collection === 'deletedItems') {
+      const page = Math.max(Number(req.query.page) || 1, 1);
+      const limit = Math.min(Math.max(Number(req.query.limit) || 1000, 1), 5000);
+      const search = String(req.query.q || '').trim();
+      const query = search ? {
+        $or: [
+          { label: new RegExp(search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') },
+          { collection: new RegExp(search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') },
+          { originalId: new RegExp(search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') }
+        ]
+      } : {};
+      const skip = (page - 1) * limit;
+      const [items, total] = await Promise.all([
+        DeletedItem.find(query).sort({ deletedAt: -1 }).skip(skip).limit(limit),
+        DeletedItem.countDocuments(query)
+      ]);
+      return res.json({
+        collection: 'deletedItems',
+        label: 'Deleted Items',
+        page,
+        limit,
+        total,
+        totalPages: Math.max(Math.ceil(total / limit), 1),
+        items: items.map(serializeDocument)
+      });
+    }
+
     const config = getCollectionConfig(req.params.collection);
     const page = Math.max(Number(req.query.page) || 1, 1);
     const limit = Math.min(Math.max(Number(req.query.limit) || 1000, 1), 5000);
@@ -983,27 +1028,49 @@ router.delete('/collections/:collection/:id', async (req, res) => {
       return res.status(404).json({ error: 'Record not found' });
     }
 
-    if (collection === 'users') {
-      await deleteCandidateData({ userId: id, jobSeekerId: existing.jobSeekerId });
-    }
-
-    if (collection === 'jobSeekers') {
-      await deleteCandidateData({ userId: existing.user, jobSeekerId: id });
-    }
-
-    if (collection === 'jobs') {
-      await deleteJobData(id);
-    }
-
-    if (collection === 'companies') {
-      await deleteCompanyData(id);
-    }
+    await DeletedItem.create({
+      itemType: 'record',
+      collection,
+      originalId: String(existing._id),
+      label: getDeletedItemLabel(existing),
+      data: existing.toObject({ depopulate: true })
+    });
 
     await config.model.findByIdAndDelete(id);
 
-    res.json({ ok: true, deleted: id });
+    res.json({ ok: true, deleted: id, recoverable: true });
   } catch (error) {
     res.status(error.status || 500).json({ error: error.message });
+  }
+});
+
+router.post('/deleted-items/:id/restore', async (req, res) => {
+  try {
+    const deletedItem = await DeletedItem.findById(req.params.id);
+    if (!deletedItem) return res.status(404).json({ error: 'Deleted item not found' });
+
+    if (deletedItem.itemType === 'comment') {
+      const post = await FeedPost.findById(deletedItem.parentId);
+      if (!post) return res.status(409).json({ error: 'The original post no longer exists, so this comment cannot be restored.' });
+      const comments = Array.isArray(post.comments) ? [...post.comments] : [];
+      const alreadyExists = comments.some((comment) => String(comment?.id || comment?._id) === String(deletedItem.originalId));
+      if (alreadyExists) return res.status(409).json({ error: 'That comment has already been restored.' });
+      const restoreIndex = deletedItem.originalIndex >= 0 ? Math.min(deletedItem.originalIndex, comments.length) : comments.length;
+      comments.splice(restoreIndex, 0, deletedItem.data);
+      post.comments = comments;
+      post.markModified('comments');
+      await post.save();
+    } else {
+      const config = getCollectionConfig(deletedItem.collection);
+      const existing = await config.model.findById(deletedItem.originalId);
+      if (existing) return res.status(409).json({ error: 'That record already exists and cannot be restored twice.' });
+      await config.model.create(deletedItem.data);
+    }
+
+    await DeletedItem.findByIdAndDelete(deletedItem._id);
+    res.json({ ok: true, restored: deletedItem.originalId });
+  } catch (error) {
+    res.status(error.status || 500).json({ error: error.message || 'Could not restore deleted item' });
   }
 });
 
@@ -1250,13 +1317,26 @@ router.delete('/feed-posts/:postId/comments/:commentId', async (req, res) => {
     }
 
     const comments = Array.isArray(post.comments) ? post.comments : [];
+    const commentIndex = comments.findIndex((comment) => String(comment.id || comment._id) === String(commentId));
     const nextComments = comments.filter((comment) => String(comment.id || comment._id) !== String(commentId));
 
     if (nextComments.length === comments.length) {
       return res.status(404).json({ error: 'Comment not found' });
     }
 
+    const deletedComment = comments[commentIndex];
+    await DeletedItem.create({
+      itemType: 'comment',
+      collection: post.type === 'work-news' ? 'workNewsPosts' : 'talentStoryPosts',
+      originalId: String(commentId),
+      parentId: String(post._id),
+      originalIndex: commentIndex,
+      label: `Comment by ${String(deletedComment?.authorName || 'JumpTake user')}`,
+      data: deletedComment
+    });
+
     post.comments = nextComments;
+    post.markModified('comments');
     await post.save();
 
     res.json({ item: serializeDocument(post) });

@@ -527,6 +527,23 @@ const AdminPanel = () => {
     setAdminJobDrafts((current) => current.filter((draft) => draft.id !== draftId));
   };
 
+  const handleRestoreDeletedItem = async (id) => {
+    const confirmed = await confirmAction({
+      title: 'Restore item?',
+      message: 'Restore this item to its original section?'
+    });
+    if (!confirmed) return;
+
+    try {
+      setMessage('');
+      await adminFetch(`/deleted-items/${id}/restore`, { method: 'POST' });
+      await Promise.all([loadSummary(), loadCollection()]);
+      setMessage('Item restored successfully.');
+    } catch (error) {
+      setMessage(error.message);
+    }
+  };
+
   const updateAdminWorkNewsDraft = (draftId, field, value) => {
     setAdminWorkNewsDrafts((current) => current.map((draft) => (
       draft.id === draftId ? {
@@ -647,7 +664,7 @@ const AdminPanel = () => {
       await adminFetch(`/feed-posts/${postId}/comments/${commentId}`, {
         method: 'DELETE'
       });
-      await loadCollection();
+      await Promise.all([loadSummary(), loadCollection()]);
       setMessage('Comment deleted.');
     } catch (error) {
       setMessage(error.message);
@@ -1200,16 +1217,22 @@ const AdminPanel = () => {
               <article className="admin-record-card" key={item._id}>
                 <div className="admin-record-card-header">
                   <div>
-                    <h3>{item.title || item.name || item.email || item.username || item.authorName || item.sourceTitle || item._id}</h3>
-                    <p>{item._id}</p>
+                    <h3>{item.label || item.title || item.name || item.email || item.username || item.authorName || item.sourceTitle || item._id}</h3>
+                    <p>{selectedCollection === 'deletedItems' ? `${item.collection} · ${item.itemType}` : item._id}</p>
                   </div>
-                  <button
-                    type="button"
-                    className="admin-danger-button"
-                    onClick={() => handleDelete(item._id)}
-                  >
-                    Delete
-                  </button>
+                  {selectedCollection === 'deletedItems' ? (
+                    <button type="button" onClick={() => handleRestoreDeletedItem(item._id)}>
+                      Undo Delete
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="admin-danger-button"
+                      onClick={() => handleDelete(item._id)}
+                    >
+                      Delete
+                    </button>
+                  )}
                   {selectedCollection === 'jobs' ? (
                     <button
                       type="button"

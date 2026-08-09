@@ -5730,6 +5730,7 @@ const PortalHomeFeed = ({
                 )}
                 {safeJobs.length > 0 && (
                     <div className="portal-job-country-row">
+                        {renderFeedRefreshButton('Refresh Job Posts')}
                         <div className="portal-job-country-picker">
                             <button
                                 type="button"
@@ -6887,8 +6888,8 @@ const PortalHomeFeed = ({
         }
 
         const socialPlatforms = ['facebook', 'instagram', 'linkedin', 'github'];
-        const canMessage = mode === 'candidate' && !profile.isCurrentViewer && profile.type !== 'employer';
-        const canUseCandidateActions = canMessage;
+        const canMessage = !profile.isCurrentViewer && profile.type !== 'employer';
+        const canUseCandidateActions = mode === 'candidate' && canMessage;
         const profileCandidateId = profile.candidateId || profileCandidateLookup[profile.id]?._id || '';
         const isProfileBookmarked = profileCandidateId && bookmarkedProfileCandidateIds.includes(String(profileCandidateId));
         const isProfileLiked = profileCandidateId && likedProfileCandidateIds.includes(String(profileCandidateId));
@@ -7027,6 +7028,7 @@ const PortalHomeFeed = ({
                                     </div>
                             </div>
                         )}
+                        <div className="portal-profile-contact-rail">
                         <div className="tailor-social-links" aria-label={`${profile.name} social links`}>
                             {socialPlatforms.map((platform) => {
                                 const href = profile.socialLinks[platform];
@@ -7049,9 +7051,6 @@ const PortalHomeFeed = ({
                                 );
                             })}
                         </div>
-                        {profileActionMessage && (
-                            <p className="portal-profile-detail-action-message">{profileActionMessage}</p>
-                        )}
                         {canMessage && (
                             <button
                                 type="button"
@@ -7075,6 +7074,10 @@ const PortalHomeFeed = ({
                             >
                                 Message
                             </button>
+                        )}
+                        </div>
+                        {profileActionMessage && (
+                            <p className="portal-profile-detail-action-message">{profileActionMessage}</p>
                         )}
                         <div className="tailor-profile-stats">
                             <div className="tailor-stat-item">
@@ -7162,6 +7165,140 @@ const PortalHomeFeed = ({
 
     const ownTalentStories = talentStories.filter((post) => String(post.authorId) === viewerId);
     const ownCompanyPosts = workNewsPosts.filter((post) => String(post.authorId) === viewerId);
+    const feedIntroductions = {
+        'work-news': {
+            eyebrow: 'Work News',
+            leads: ['See how', 'Stay near', 'Follow where', 'Discover how', 'Watch as', 'Keep pace as', 'Look closer as', 'Step into how', 'Learn where', 'Explore how'],
+            keywords: ['work', 'teams', 'ideas', 'progress', 'industry', 'culture', 'business', 'innovation', 'momentum', 'leadership'],
+            tails: ['moves forward.', 'becomes tomorrow.', 'creates momentum.', 'changes the conversation.', 'shapes the next move.', 'turns ideas into impact.', 'builds what comes next.', 'opens new possibilities.', 'connects people and progress.', 'rewrites what is possible.'],
+            descriptions: [
+                'Follow company launches, team milestones, and the ideas shaping what comes next.',
+                'Catch the signals, decisions, and breakthroughs moving the working world forward.',
+                'Stay informed by the teams turning ambitious plans into visible progress.',
+                'See the launches, lessons, and leadership moves worth carrying into your work.',
+                'Find practical inspiration in the news defining tomorrow’s workplaces.',
+                'Keep up with the organizations building, changing, and moving with purpose.',
+                'Turn today’s company updates into context for your next smart move.',
+                'Meet the ideas and milestones creating fresh opportunities across industries.',
+                'Follow meaningful progress from the people and teams making it happen.',
+                'Know what is changing, why it matters, and where work may go next.'
+            ]
+        },
+        'talent-stories': {
+            eyebrow: 'Talent Stories',
+            leads: ['Real', 'Brave', 'Everyday', 'Human', 'Bold', 'Honest', 'Rising', 'Remarkable', 'Shared', 'Unscripted'],
+            keywords: ['careers', 'voices', 'journeys', 'people', 'lessons', 'dreams', 'turns', 'beginnings', 'breakthroughs', 'stories'],
+            tails: ['create lasting momentum.', 'can inspire your next move.', 'show what growth looks like.', 'make possibility feel closer.', 'turn experience into courage.', 'prove progress is personal.', 'begin with one brave step.', 'deserve to be discovered.', 'connect ambition with action.', 'move all of us forward.'],
+            descriptions: [
+                'Discover the people, lessons, and turning points behind meaningful progress.',
+                'Meet people building careers in their own voice and on their own terms.',
+                'Find honest lessons from the moments that changed someone’s direction.',
+                'Read the stories that make a difficult next step feel possible.',
+                'Celebrate lived experience, earned confidence, and progress worth sharing.',
+                'See how real people turned uncertainty into a clearer path forward.',
+                'Carry fresh courage from people who kept learning, trying, and growing.',
+                'Discover the choices and small wins behind meaningful career change.',
+                'Learn from voices that make ambition more human and success more honest.',
+                'Find perspective for your journey through someone else’s breakthrough.'
+            ]
+        },
+        'job-posts': {
+            eyebrow: 'Live Opportunities',
+            leads: ['Find the', 'Meet your', 'Search for', 'Step toward', 'Build your', 'Choose the', 'Discover the', 'Move into', 'Unlock your', 'Start your'],
+            keywords: ['role', 'team', 'opportunity', 'challenge', 'future', 'work', 'mission', 'career', 'chapter', 'momentum'],
+            tails: ['that moves you forward.', 'where your strengths matter.', 'built for your next move.', 'that makes growth real.', 'ready for what you bring.', 'where your ideas can travel.', 'that turns potential into progress.', 'worth showing up for.', 'that meets your ambition.', 'where the next chapter begins.'],
+            descriptions: [
+                'Explore fresh opportunities and connect your skills with teams ready to build.',
+                'Search with purpose and find work that values what you can bring.',
+                'Turn your experience into a conversation with a team moving forward.',
+                'Discover roles where your strengths can create visible, meaningful impact.',
+                'Your next opportunity may be one thoughtful search and one brave click away.',
+                'Find the people, mission, and challenge that make your next move worthwhile.',
+                'Explore openings designed for skills like yours and ambitions like yours.',
+                'Connect your potential with teams looking for their next difference-maker.',
+                'Move beyond another job search and toward work with real direction.',
+                'Start with the opportunity that feels right, then make it yours.'
+            ]
+        }
+    };
+    const introductionSeed = (() => {
+        const now = new Date();
+        const timeSlot = now.getHours() < 12 ? 0 : now.getHours() < 18 ? 1 : 2;
+        const identity = `${viewerId || mode || 'jumptake'}:${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}:${timeSlot}`;
+        return Array.from(identity).reduce((hash, character) => ((hash * 31) + character.charCodeAt(0)) >>> 0, 2166136261);
+    })();
+    const refreshVisibleFeed = async () => {
+        setFeedLoading(true);
+        setFeedError('');
+
+        try {
+            if (activeTab === 'job-posts') {
+                await Promise.resolve(onRefresh?.());
+                return;
+            }
+
+            const [workResponse, talentResponse] = await Promise.all([
+                fetch(apiUrl('/api/feed-posts?type=work-news')),
+                fetch(apiUrl('/api/feed-posts?type=talent-story'))
+            ]);
+
+            if (!workResponse.ok || !talentResponse.ok) {
+                throw new Error('Failed to refresh feed posts');
+            }
+
+            const [workPosts, talentPosts] = await Promise.all([
+                workResponse.json(),
+                talentResponse.json()
+            ]);
+            setWorkNewsPosts(Array.isArray(workPosts) ? workPosts : []);
+            setTalentStories(Array.isArray(talentPosts) ? talentPosts : []);
+        } catch (error) {
+            console.error('Error refreshing portal feed:', error);
+            setFeedError('Unable to refresh right now. Please try again shortly.');
+        } finally {
+            setFeedLoading(false);
+        }
+    };
+    const renderFeedRefreshButton = (label) => (
+        <button
+            type="button"
+            className="portal-feed-refresh-button"
+            onClick={refreshVisibleFeed}
+            disabled={feedLoading}
+            aria-label={label}
+            title={label}
+        >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20 11a8.1 8.1 0 1 0 .15 3.2" />
+                <path d="M20 4v7h-7" />
+            </svg>
+        </button>
+    );
+    const renderFeedIntroduction = (section) => {
+        const introduction = feedIntroductions[section];
+        if (!introduction) return null;
+
+        const sectionSeed = Array.from(section).reduce((hash, character) => hash + character.charCodeAt(0), introductionSeed);
+        const leadIndex = sectionSeed % introduction.leads.length;
+        const keywordIndex = Math.floor(sectionSeed / 10) % introduction.keywords.length;
+        const tailIndex = Math.floor(sectionSeed / 100) % introduction.tails.length;
+        const descriptionIndex = Math.floor(sectionSeed / 1000) % introduction.descriptions.length;
+        const colorIndex = sectionSeed % 7;
+
+        return (
+            <header className={`portal-feed-introduction portal-feed-introduction-${section}`}>
+                <span>{introduction.eyebrow}</span>
+                <h1>
+                    {introduction.leads[leadIndex]}{' '}
+                    <em className={`portal-feed-keyword portal-feed-keyword-color-${colorIndex}`}>
+                        {introduction.keywords[keywordIndex]}
+                    </em>{' '}
+                    {introduction.tails[tailIndex]}
+                </h1>
+                <p>{introduction.descriptions[descriptionIndex]}</p>
+            </header>
+        );
+    };
     return (
         <div
             className={`portal-home-feed portal-home-feed-${mode} ${tabsHidden ? 'is-tabs-hidden' : ''} ${feedAtTop ? 'is-feed-at-top' : 'is-feed-scrolled'}`}
@@ -7206,15 +7343,36 @@ const PortalHomeFeed = ({
                 onScroll={handleFeedScroll}
             >
                 <div key={activeTab} className={`portal-home-tab-panel portal-home-tab-panel-${activeTab}`}>
+                    {(activeTab === 'create-story' || activeTab === 'my-feed') && (
+                        <div
+                            className="portal-light-mobile-feed-clearance"
+                            aria-hidden="true"
+                        />
+                    )}
                     {feedLoading ? (
                         <PortalPageSkeleton compact label="Loading posts" />
                     ) : (
                         <>
-                            {activeTab === 'work-news' && renderPostList(workNewsPosts, WORK_NEWS_STORAGE_KEY, 'work')}
-                            {activeTab === 'job-posts' && renderCandidateJobPosts()}
+                            {activeTab === 'work-news' && (
+                                <>
+                                    {renderFeedIntroduction('work-news')}
+                                    <div className="portal-feed-section-actions portal-feed-section-actions-work-news">
+                                        {renderFeedRefreshButton('Refresh Work News')}
+                                    </div>
+                                    {renderPostList(workNewsPosts, WORK_NEWS_STORAGE_KEY, 'work')}
+                                </>
+                            )}
+                            {activeTab === 'job-posts' && (
+                                <>
+                                    {renderFeedIntroduction('job-posts')}
+                                    {renderCandidateJobPosts()}
+                                </>
+                            )}
                             {activeTab === 'talent-stories' && (
                                 <>
+                                    {renderFeedIntroduction('talent-stories')}
                                     <div className="portal-create-story-action-row">
+                                        {renderFeedRefreshButton('Refresh Talent Stories')}
                                         <button
                                             type="button"
                                             className="portal-create-story-button"

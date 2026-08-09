@@ -23,10 +23,8 @@ import GuidedPortalTour from './GuidedPortalTour';
 import PortalPageSkeleton from './PortalPageSkeleton';
 
 const CANDIDATE_SECTION_IDS = new Set([
-    'home',
     'dashboard',
     'inbox',
-    'job-feed',
     'work-news',
     'job-posts',
     'talent-stories',
@@ -56,7 +54,7 @@ const PROFILE_IMAGE_UPDATED_EVENT = 'jumptake-profile-image-updated';
 const CANDIDATE_SECTIONS_WITHOUT_BACK = new Set(['settings', 'view-candidates', 'interested-jobs', 'resume-playground']);
 
 const normalizeCandidateSection = (section) => (
-    ['home', 'profile'].includes(section) ? 'job-feed' : section
+    ['home', 'job-feed', 'profile'].includes(section) ? 'work-news' : section
 );
 
 const isMobileViewport = () => (
@@ -157,8 +155,8 @@ const normalizeCandidateProfile = (profile) => {
 };
 
 const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
-    const [activeSection, setActiveSection] = useState('job-feed');
-    const [openedSections, setOpenedSections] = useState(() => ['job-feed']);
+    const [activeSection, setActiveSection] = useState('work-news');
+    const [openedSections, setOpenedSections] = useState(() => ['work-news']);
     const [titleAnimationReplayKey, setTitleAnimationReplayKey] = useState(0);
     const [sectionErrorResetKey, setSectionErrorResetKey] = useState(0);
     const sectionHistoryRef = useRef([]);
@@ -263,10 +261,8 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     };
 
     const sectionTitles = {
-        home: 'Home',
         dashboard: 'Dashboard',
         inbox: 'Inbox',
-        'job-feed': 'Home',
         'work-news': 'Work News',
         'job-posts': 'Job Posts',
         'talent-stories': 'Talent Stories',
@@ -392,7 +388,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             }
         };
 
-        const initialSection = 'job-feed';
+        const initialSection = 'work-news';
         sessionStorage.setItem(CANDIDATE_SECTION_STORAGE_KEY, initialSection);
         sessionStorage.removeItem('jumptakeHomeFeedRequest');
         sessionStorage.removeItem('jumptakeCandidateJobSearch');
@@ -759,12 +755,11 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     }, [activeSection, mobileSectionVisible, user?.id]);
 
     const candidatePrimaryNavItems = [
-        { id: 'job-feed', label: 'Home', icon: 'home' },
-        { id: 'work-news', label: 'Work News', icon: 'briefcase', mobileOnly: true },
-        { id: 'job-posts', label: 'Job Posts', icon: 'profile', mobileOnly: true },
-        { id: 'talent-stories', label: 'Talent Stories', icon: 'users', mobileOnly: true },
-        { id: 'tailor-profile', label: 'Tailor Profile', icon: 'draft', mobileOnly: true },
-        { id: 'my-feed', label: 'My Feed', icon: 'inbox', mobileOnly: true },
+        { id: 'work-news', label: 'Work News', icon: 'briefcase' },
+        { id: 'job-posts', label: 'Job Posts', icon: 'profile' },
+        { id: 'talent-stories', label: 'Talent Stories', icon: 'users' },
+        { id: 'tailor-profile', label: 'Tailor Profile', icon: 'user-face' },
+        { id: 'my-feed', label: 'My Feed', icon: 'inbox' },
         { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
         { id: 'notifications', label: 'Notifications', icon: 'bell', notification: pendingNotificationCount > 0 },
         { id: 'view-candidates', label: 'Candidates', icon: 'users' },
@@ -776,9 +771,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         { id: 'blocks', label: 'Blocks', icon: 'block' }
     ].map((item) => ({
         ...item,
-        active: item.id === 'job-feed'
-            ? ['home', 'job-feed'].includes(activeSection)
-            : item.id === 'applications'
+        active: item.id === 'applications'
                 ? ['applications', 'assessments', 'video-interviews', 'draft-applications'].includes(activeSection)
                 : item.id === 'bookmarks'
                     ? ['bookmarks', 'bookmarked-candidates', 'bookmarked-jobs', 'saved-posts'].includes(activeSection)
@@ -832,7 +825,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
 
             sessionStorage.setItem('jumptakeHomeFeedRequest', JSON.stringify(homeFeedRequest));
             window.dispatchEvent(new CustomEvent('jumptake-home-feed-request', { detail: homeFeedRequest }));
-            openSection('job-feed');
+            openSection('job-posts');
             return;
         }
 
@@ -894,34 +887,18 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         }
 
         if (isMobileViewport()) {
-            updateActiveSection('job-feed');
+            updateActiveSection('work-news');
             setMobileSectionVisible(true);
             resetMobilePanelScroll();
             return;
         }
 
-        updateActiveSection('job-feed');
+        updateActiveSection('work-news');
         resetMobilePanelScroll();
     };
 
     const renderContent = (section = activeSection) => {
-        if (loading && section === 'home') {
-            return <PortalPageSkeleton compact label="Loading job listings" />;
-        }
-
         switch (section) {
-            case 'home':
-            case 'job-feed':
-                return <PortalHomeFeed
-                    mode="candidate"
-                    currentUser={user}
-                    profileData={jobSeekerData}
-                    jobs={safeJobs}
-                    switchSection={switchSection}
-                    onRefresh={refreshData}
-                    initialTab="work-news"
-                    hideTabs
-                />;
             case 'work-news':
             case 'job-posts':
             case 'talent-stories':
@@ -1069,8 +1046,6 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     // Progress Check renders its own animated title inside the analytics panel.
     // Do not add the shared section-title pill above it.
     const showSectionTitle = ![
-        'home',
-        'job-feed',
         'work-news',
         'job-posts',
         'talent-stories',
@@ -1161,7 +1136,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                             resetKey={`${section}:${sectionErrorResetKey}`}
                             onHome={() => {
                                 setSectionErrorResetKey((key) => key + 1);
-                                updateActiveSection('job-feed', { push: false });
+                                updateActiveSection('work-news', { push: false });
                                 setMobileSectionVisible(isMobileViewport());
                             }}
                         >

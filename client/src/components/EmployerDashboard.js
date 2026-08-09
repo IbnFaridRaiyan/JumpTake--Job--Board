@@ -23,9 +23,12 @@ import GuidedPortalTour from './GuidedPortalTour';
 import PortalPageSkeleton from './PortalPageSkeleton';
 
 const EMPLOYER_SECTION_IDS = new Set([
-    'home',
     'inbox',
-    'home-feed',
+    'talent-stories',
+    'work-news',
+    'create-post',
+    'my-company-posts',
+    'my-job-posts',
     'dashboard',
     'post-job',
     'manage-jobs',
@@ -44,7 +47,7 @@ const EMPLOYER_SECTION_IDS = new Set([
 
 const EMPLOYER_SECTION_STORAGE_KEY = 'jumptakeEmployerSection';
 
-const normalizeEmployerSection = (section) => section === 'home' ? 'home-feed' : section;
+const normalizeEmployerSection = (section) => ['home', 'home-feed'].includes(section) ? 'talent-stories' : section;
 
 const isMobileViewport = () => (
     typeof window !== 'undefined'
@@ -54,8 +57,8 @@ const isMobileViewport = () => (
 const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     const [employer, setEmployer] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [activeSection, setActiveSection] = useState('home-feed');
-    const [openedSections, setOpenedSections] = useState(() => ['home-feed']);
+    const [activeSection, setActiveSection] = useState('talent-stories');
+    const [openedSections, setOpenedSections] = useState(() => ['talent-stories']);
     const [titleAnimationReplayKey, setTitleAnimationReplayKey] = useState(0);
     const sectionHistoryRef = useRef([]);
     const manageJobsRef = useRef(null);
@@ -66,7 +69,6 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     const [pendingInboxCount, setPendingInboxCount] = useState(0);
     const [pendingNotificationCount, setPendingNotificationCount] = useState(0);
     const [mobileSectionVisible, setMobileSectionVisible] = useState(() => isMobileViewport());
-    const [homeFeedTab, setHomeFeedTab] = useState('talent-stories');
     const [isManagingEmployerJob, setIsManagingEmployerJob] = useState(false);
     const mobilePanelRef = useRef(null);
     const navigate = useNavigate();
@@ -106,9 +108,12 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     };
 
     const sectionTitles = {
-        home: 'Home',
         inbox: 'Inbox',
-        'home-feed': 'Home',
+        'talent-stories': 'Talent Stories',
+        'work-news': 'Work News',
+        'create-post': 'Create Post',
+        'my-company-posts': 'My News',
+        'my-job-posts': 'My Jobs',
         dashboard: 'Dashboard',
         'post-job': 'Post a Job',
         'manage-jobs': 'Manage Jobs',
@@ -201,7 +206,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
             }
         };
 
-        const initialSection = 'home-feed';
+        const initialSection = 'talent-stories';
         sessionStorage.setItem(EMPLOYER_SECTION_STORAGE_KEY, initialSection);
         sessionStorage.removeItem('jumptakeHomeFeedRequest');
         sessionStorage.removeItem('jumptakeEmployerJobSearch');
@@ -442,23 +447,12 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeSection, mobileSectionVisible, employer?.companyId]);
 
-    const openEmployerHomeTab = (tab) => {
-        const request = { mode: 'employer', tab };
-        setHomeFeedTab(tab);
-        sessionStorage.setItem('jumptakeHomeFeedRequest', JSON.stringify(request));
-        openSection('home-feed');
-        window.requestAnimationFrame(() => {
-            window.dispatchEvent(new CustomEvent('jumptake-home-feed-request', { detail: request }));
-        });
-    };
-
     const employerPrimaryNavItems = [
-        { id: 'home-feed', label: 'Home', icon: 'home' },
-        { id: 'home-talent-stories', label: 'Talent Stories', icon: 'users', mobileOnly: true, feedTab: 'talent-stories' },
-        { id: 'home-work-news', label: 'Work News', icon: 'briefcase', mobileOnly: true, feedTab: 'work-news' },
-        { id: 'home-create-post', label: 'Create Post', icon: 'draft', mobileOnly: true, feedTab: 'create-post' },
-        { id: 'home-my-news', label: 'My News', icon: 'inbox', mobileOnly: true, feedTab: 'my-company-posts' },
-        { id: 'home-my-jobs', label: 'My Jobs', icon: 'profile', mobileOnly: true, feedTab: 'my-job-posts' },
+        { id: 'talent-stories', label: 'Talent Stories', icon: 'users' },
+        { id: 'work-news', label: 'Work News', icon: 'briefcase' },
+        { id: 'create-post', label: 'Create Post', icon: 'draft' },
+        { id: 'my-company-posts', label: 'My News', icon: 'inbox' },
+        { id: 'my-job-posts', label: 'My Jobs', icon: 'profile' },
         { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
         { id: 'post-job', label: 'Post a Job', icon: 'briefcase' },
         { id: 'manage-jobs', label: 'Manage Jobs', icon: 'briefcase' },
@@ -471,10 +465,8 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         { id: 'create-document', label: 'Create Document', icon: 'profile' }
     ].map((item) => ({
         ...item,
-        active: item.feedTab
-            ? ['home', 'home-feed'].includes(activeSection) && homeFeedTab === item.feedTab
-            : item.id === 'home-feed' ? ['home', 'home-feed'].includes(activeSection) : activeSection === item.id,
-        onClick: () => item.feedTab ? openEmployerHomeTab(item.feedTab) : openSection(item.id)
+        active: activeSection === item.id,
+        onClick: () => openSection(item.id)
     }));
 
     const employerSecondaryNavItems = [
@@ -546,21 +538,31 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         }
 
         if (isMobileViewport()) {
-            updateActiveSection('home-feed');
+            updateActiveSection('talent-stories');
             setMobileSectionVisible(true);
             resetMobilePanelScroll();
             return;
         }
 
-        updateActiveSection('home-feed');
+        updateActiveSection('talent-stories');
         setIsManagingEmployerJob(false);
         resetMobilePanelScroll();
     };
 
     const renderContent = (section = activeSection) => {
         switch (section) {
-            case 'home':
-            case 'home-feed':
+            case 'talent-stories':
+            case 'work-news':
+            case 'create-post':
+            case 'my-company-posts':
+            case 'my-job-posts': {
+                const tabBySection = {
+                    'talent-stories': 'talent-stories',
+                    'work-news': 'work-news',
+                    'create-post': 'create-post',
+                    'my-company-posts': 'my-company-posts',
+                    'my-job-posts': 'my-job-posts'
+                };
                 return <PortalHomeFeed
                     mode="employer"
                     currentUser={employer}
@@ -568,8 +570,10 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                     jobs={jobs}
                     switchSection={switchSection}
                     onRefresh={refreshJobs}
-                    onTabChange={setHomeFeedTab}
+                    initialTab={tabBySection[section]}
+                    hideTabs
                 />;
+            }
             case 'dashboard':
                 return <PortalDefaultLanding
                     mode="employer"
@@ -811,7 +815,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     };
 
     // The analytics dashboard renders its own animated title inside the panel.
-    const showSectionTitle = !['home', 'home-feed', 'dashboard', 'application-tracking'].includes(activeSection);
+    const showSectionTitle = !['talent-stories', 'work-news', 'create-post', 'my-company-posts', 'my-job-posts', 'dashboard', 'application-tracking'].includes(activeSection);
 
     if (loading) {
         return (

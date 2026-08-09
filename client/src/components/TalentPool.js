@@ -2086,6 +2086,7 @@ const TalentPool = ({
                                         </div>
                             </div>
                         )}
+                        <div className="portal-profile-contact-rail">
                         <div className="tailor-social-links" aria-label={`${candidateName} social links`}>
                             {socialPlatforms.map((platform) => {
                                 const href = socialLinks[platform];
@@ -2108,11 +2109,6 @@ const TalentPool = ({
                                 );
                             })}
                         </div>
-                        {friendNotice && (
-                            <p className={`portal-profile-detail-action-message ${friendNotice.startsWith('Error:') ? 'is-error' : ''}`}>
-                                {friendNotice}
-                            </p>
-                        )}
                         <button
                             type="button"
                             className="portal-profile-detail-message"
@@ -2135,6 +2131,12 @@ const TalentPool = ({
                         >
                             Message
                         </button>
+                        </div>
+                        {friendNotice && (
+                            <p className={`portal-profile-detail-action-message ${friendNotice.startsWith('Error:') ? 'is-error' : ''}`}>
+                                {friendNotice}
+                            </p>
+                        )}
                         <div className="tailor-profile-stats">
                             <div className="tailor-stat-item">
                                 <div className="tailor-stat-value">{likeCount}</div>

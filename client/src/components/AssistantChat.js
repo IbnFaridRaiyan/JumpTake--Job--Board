@@ -18,12 +18,31 @@ const createInitialAssistantMessages = () => ([
     }
 ]);
 
-const AssistantChat = ({ title = 'Jumptake chat', className = '', storageKey = '', context = null, onAction }) => {
+const createConversationId = () => `ai-chat-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+const hasUserMessages = (messages = []) => messages.some((message) => message.role === 'user');
+const buildConversationTitle = (messages = []) => {
+    const firstQuestion = String(messages.find((message) => message.role === 'user')?.text || '')
+        .replace(/[^a-z0-9\s'-]/gi, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    if (!firstQuestion) return 'New AI chat';
+    const words = firstQuestion.split(' ').filter(Boolean).slice(0, 5);
+    const title = words.map((word, index) => (
+        index === 0 ? `${word.charAt(0).toUpperCase()}${word.slice(1)}` : word
+    )).join(' ');
+    return title.length > 46 ? `${title.slice(0, 43).trim()}…` : title;
+};
+
+const AssistantChat = ({ className = '', storageKey = '', context = null, onAction }) => {
     const [assistantInput, setAssistantInput] = useState('');
     const [assistantLoading, setAssistantLoading] = useState(false);
     const [assistantMessages, setAssistantMessages] = useState(createInitialAssistantMessages);
+    const [conversationId, setConversationId] = useState(createConversationId);
+    const [conversations, setConversations] = useState([]);
+    const [showSavedChats, setShowSavedChats] = useState(false);
     const messagesRef = useRef(null);
     const inputRef = useRef(null);
+    const conversationsStorageKey = `${storageKey}:conversations`;
 
     useEffect(() => {
         if (!storageKey || typeof window === 'undefined') {
@@ -32,20 +51,61 @@ const AssistantChat = ({ title = 'Jumptake chat', className = '', storageKey = '
         }
 
         try {
-            const storedMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
-            setAssistantMessages(Array.isArray(storedMessages) && storedMessages.length ? storedMessages : createInitialAssistantMessages());
+            const storedConversations = JSON.parse(localStorage.getItem(conversationsStorageKey) || '[]');
+            if (Array.isArray(storedConversations) && storedConversations.length) {
+                const sorted = [...storedConversations].sort((a, b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0));
+                setConversations(sorted);
+                setConversationId(sorted[0].id);
+                setAssistantMessages(Array.isArray(sorted[0].messages) ? sorted[0].messages : createInitialAssistantMessages());
+                return;
+            }
+
+            const legacyMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            if (Array.isArray(legacyMessages) && hasUserMessages(legacyMessages)) {
+                const migrated = {
+                    id: createConversationId(),
+                    title: buildConversationTitle(legacyMessages),
+                    messages: legacyMessages.slice(-80),
+                    updatedAt: Date.now()
+                };
+                setConversations([migrated]);
+                setConversationId(migrated.id);
+                setAssistantMessages(migrated.messages);
+            } else {
+                setConversations([]);
+                setConversationId(createConversationId());
+                setAssistantMessages(createInitialAssistantMessages());
+            }
         } catch (error) {
+            setConversations([]);
+            setConversationId(createConversationId());
             setAssistantMessages(createInitialAssistantMessages());
         }
-    }, [storageKey]);
+    }, [conversationsStorageKey, storageKey]);
 
     useEffect(() => {
         if (!storageKey || typeof window === 'undefined') {
             return;
         }
+        if (!hasUserMessages(assistantMessages)) return;
 
-        localStorage.setItem(storageKey, JSON.stringify(assistantMessages.slice(-80)));
-    }, [assistantMessages, storageKey]);
+        const nextConversation = {
+            id: conversationId,
+            title: buildConversationTitle(assistantMessages),
+            messages: assistantMessages.slice(-80),
+            updatedAt: Date.now()
+        };
+        setConversations((current) => [
+            nextConversation,
+            ...current.filter((conversation) => conversation.id !== conversationId)
+        ].slice(0, 40));
+    }, [assistantMessages, conversationId, storageKey]);
+
+    useEffect(() => {
+        if (!storageKey || typeof window === 'undefined') return;
+        localStorage.setItem(conversationsStorageKey, JSON.stringify(conversations));
+        localStorage.removeItem(storageKey);
+    }, [conversations, conversationsStorageKey, storageKey]);
 
     useEffect(() => {
         if (!messagesRef.current) {
@@ -82,12 +142,50 @@ const AssistantChat = ({ title = 'Jumptake chat', className = '', storageKey = '
     }, [className]);
 
     const clearAssistantChat = () => {
+        setConversations((current) => current.filter((conversation) => conversation.id !== conversationId));
+        setConversationId(createConversationId());
         setAssistantMessages(createInitialAssistantMessages());
         setAssistantInput('');
-        if (storageKey && typeof window !== 'undefined') {
-            localStorage.removeItem(storageKey);
+        setShowSavedChats(false);
+    };
+
+    const startNewChat = () => {
+        setConversationId(createConversationId());
+        setAssistantMessages(createInitialAssistantMessages());
+        setAssistantInput('');
+        setShowSavedChats(false);
+        window.requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
+    };
+
+    const openSavedChat = (conversation) => {
+        if (!conversation?.id || !Array.isArray(conversation.messages)) return;
+        setConversationId(conversation.id);
+        setAssistantMessages(conversation.messages);
+        setAssistantInput('');
+        setShowSavedChats(false);
+    };
+
+    const deleteSavedChat = (id) => {
+        setConversations((current) => current.filter((conversation) => conversation.id !== id));
+        if (id === conversationId) {
+            setConversationId(createConversationId());
+            setAssistantMessages(createInitialAssistantMessages());
+            setAssistantInput('');
         }
     };
+
+    useEffect(() => {
+        if (typeof window === 'undefined' || !className.includes('floating-messenger-assistant-chat')) return undefined;
+        const handleCommand = (event) => {
+            if (event?.detail?.storageKey !== storageKey) return;
+            const action = event?.detail?.action;
+            if (action === 'new') startNewChat();
+            if (action === 'clear') clearAssistantChat();
+            if (action === 'chats') setShowSavedChats(true);
+        };
+        window.addEventListener('jumptake-assistant-chat-command', handleCommand);
+        return () => window.removeEventListener('jumptake-assistant-chat-command', handleCommand);
+    });
 
     const askAssistant = async (event) => {
         event?.preventDefault();
@@ -128,20 +226,33 @@ const AssistantChat = ({ title = 'Jumptake chat', className = '', storageKey = '
 
     return (
         <div className={`public-ai-chat-card portal-ai-chat-card ${className}`}>
-            <div className="public-ai-chat-header portal-ai-chat-header-row">
-                <div className="public-ai-chat-brand">
-                    <p className="public-ai-chat-title">{title}</p>
-                </div>
-                <button
-                    type="button"
-                    className="portal-ai-clear-chat-button portal-ai-clear-chat-button-isolated"
-                    onClick={clearAssistantChat}
-                    disabled={assistantLoading}
-                >
-                    Clear chat
-                </button>
-            </div>
-            <ul ref={messagesRef} className="public-ai-chat-messages portal-ai-chat-messages">
+            {showSavedChats ? (
+                <section className="assistant-saved-chats" aria-label="Saved AI chats">
+                    <div className="assistant-saved-chats-heading">
+                        <div>
+                            <strong>Chats</strong>
+                            <span>Continue an earlier conversation</span>
+                        </div>
+                        <button type="button" onClick={() => setShowSavedChats(false)} aria-label="Close saved chats">×</button>
+                    </div>
+                    <div className="assistant-saved-chat-list">
+                        {conversations.length ? conversations.map((conversation) => (
+                            <article key={conversation.id} className={conversation.id === conversationId ? 'is-current' : ''}>
+                                <button type="button" className="assistant-saved-chat-open" onClick={() => openSavedChat(conversation)}>
+                                    <strong>{conversation.title}</strong>
+                                    <span>{new Date(conversation.updatedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span>
+                                </button>
+                                <button type="button" className="assistant-saved-chat-delete" onClick={() => deleteSavedChat(conversation.id)} aria-label={`Delete ${conversation.title}`}>×</button>
+                            </article>
+                        )) : (
+                            <div className="assistant-saved-chats-empty">
+                                <strong>No saved chats yet</strong>
+                                <span>Your chats are saved after you send the first message.</span>
+                            </div>
+                        )}
+                    </div>
+                </section>
+            ) : <ul ref={messagesRef} className="public-ai-chat-messages portal-ai-chat-messages">
                 {assistantMessages.map((message, index) => (
                     <li key={`${message.role}-${index}`} className={`public-ai-chat-row is-${message.role}`}>
                         <div className="public-ai-chat-time">{message.time}</div>
@@ -159,7 +270,7 @@ const AssistantChat = ({ title = 'Jumptake chat', className = '', storageKey = '
                         </div>
                     </li>
                 ) : null}
-            </ul>
+            </ul>}
             <form className="public-ai-chat-reply" onSubmit={askAssistant}>
                 <div className="public-ai-reply-row portal-ai-reply-row-aligned">
                     <div className="public-ai-reply-field">

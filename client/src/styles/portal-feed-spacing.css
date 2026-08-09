@@ -3,6 +3,260 @@
   display: contents !important;
 }
 
+/* Public-homepage-inspired editorial introductions for the three discovery feeds. */
+.portal-feed-introduction {
+  width: min(100%, 72rem);
+  margin: 0 auto 1.35rem;
+  padding: 0.25rem clamp(0.25rem, 1.5vw, 1rem) 0;
+  color: var(--text-primary, #291820);
+}
+
+.portal-feed-introduction > span {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: var(--accent-color, #a94f68);
+  font-size: clamp(0.68rem, 0.65rem + 0.15vw, 0.78rem);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+.portal-feed-introduction h1 {
+  max-width: 18ch;
+  margin: 0;
+  color: inherit;
+  font-family: "Lexend", "Inter", sans-serif;
+  font-size: clamp(1.75rem, 1.3rem + 2vw, 3.5rem);
+  font-weight: 780;
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+
+.portal-feed-keyword {
+  display: inline-block;
+  color: var(--portal-feed-keyword-color);
+  font-style: normal;
+  animation: portal-feed-keyword-jump 5.4s cubic-bezier(0.22, 0.8, 0.28, 1) infinite;
+  transform-origin: 50% 100%;
+  will-change: transform;
+}
+
+.portal-feed-keyword-color-0 { --portal-feed-keyword-color: #164e43; }
+.portal-feed-keyword-color-1 { --portal-feed-keyword-color: #0f9f91; }
+.portal-feed-keyword-color-2 { --portal-feed-keyword-color: #9bcf72; }
+.portal-feed-keyword-color-3 { --portal-feed-keyword-color: #447a52; }
+.portal-feed-keyword-color-4 { --portal-feed-keyword-color: #542232; }
+.portal-feed-keyword-color-5 { --portal-feed-keyword-color: #8f344f; }
+.portal-feed-keyword-color-6 { --portal-feed-keyword-color: #c16f87; }
+
+@keyframes portal-feed-keyword-jump {
+  0%, 72%, 100% { transform: translate3d(0, 0, 0) rotate(0); }
+  77% { transform: translate3d(0, -0.2em, 0) rotate(-1.5deg); }
+  81% { transform: translate3d(0, 0.035em, 0) rotate(0.8deg); }
+  85% { transform: translate3d(0, -0.08em, 0) rotate(-0.35deg); }
+  89% { transform: translate3d(0, 0, 0) rotate(0); }
+}
+
+.portal-feed-introduction p {
+  max-width: 44rem;
+  margin: 0.75rem 0 0;
+  color: var(--text-secondary, #694c57);
+  font-size: clamp(0.88rem, 0.84rem + 0.2vw, 1rem);
+  font-weight: 500;
+  line-height: 1.55;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-feed-introduction {
+  color: #f7f6f3;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-feed-introduction > span {
+  color: #67c9bc;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-feed-introduction p {
+  color: rgba(247, 246, 243, 0.7);
+}
+
+@media (max-width: 768px) {
+  .portal-feed-introduction {
+    margin-bottom: 1rem;
+    padding: 0 0.15rem;
+  }
+
+  .portal-feed-introduction h1 {
+    max-width: 15ch;
+    font-size: clamp(2.05rem, 9.4vw, 2.75rem);
+    line-height: 0.96;
+  }
+
+  .portal-feed-introduction p {
+    font-size: 0.98rem;
+  }
+}
+
+/* Active Settings glyphs use explicit masks. This removes the legacy icon
+   background that rendered Account as a solid black square. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .settings-container,
+  .employer-settings-container
+) .tabs-header .tab-button.active .tab-icon {
+  display: block !important;
+  width: 1.15rem !important;
+  height: 1.15rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background-color: #000 !important;
+  background-image: none !important;
+  background-repeat: no-repeat !important;
+  box-shadow: none !important;
+  filter: none !important;
+  -webkit-mask-position: center !important;
+  mask-position: center !important;
+  -webkit-mask-repeat: no-repeat !important;
+  mask-repeat: no-repeat !important;
+  -webkit-mask-size: contain !important;
+  mask-size: contain !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .settings-container,
+  .employer-settings-container
+) .tabs-header .tab-button.active .account-icon {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='7' r='4' fill='black'/%3E%3Cpath d='M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2z' fill='black'/%3E%3C/svg%3E") !important;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='7' r='4' fill='black'/%3E%3Cpath d='M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2z' fill='black'/%3E%3C/svg%3E") !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .settings-container,
+  .employer-settings-container
+) .tabs-header .tab-button.active .security-icon {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10V7a5 5 0 0 1 10 0v3h1a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-7a3 3 0 0 1 3-3h1zm2 0h6V7a3 3 0 0 0-6 0v3zm-3 2a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7a1 1 0 0 0-1-1H6z' fill='black'/%3E%3C/svg%3E") !important;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10V7a5 5 0 0 1 10 0v3h1a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-7a3 3 0 0 1 3-3h1zm2 0h6V7a3 3 0 0 0-6 0v3zm-3 2a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7a1 1 0 0 0-1-1H6z' fill='black'/%3E%3C/svg%3E") !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .settings-container,
+  .employer-settings-container
+) .tabs-header .tab-button.active .notifications-icon {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2a6 6 0 0 0-6 6c0 5-2.5 7.5-3 8h18c-.5-.5-3-3-3-8a6 6 0 0 0-6-6zm-3 17a3 3 0 0 0 6 0H9z' fill='black'/%3E%3C/svg%3E") !important;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2a6 6 0 0 0-6 6c0 5-2.5 7.5-3 8h18c-.5-.5-3-3-3-8a6 6 0 0 0-6-6zm-3 17a3 3 0 0 0 6 0H9z' fill='black'/%3E%3C/svg%3E") !important;
+}
+
+
+/* Absolute final dark profile text and Message visibility across both portals. */
+:is(html[data-theme="dark"] body, body[data-theme="dark"]) :is(
+  .portal-profile-detail-backdrop .portal-profile-detail-card,
+  #root .candidate-profile-popup,
+  .candidate-profile-popup
+) :is(
+  .profile-details-card h3,
+  .profile-details-section h4,
+  .profile-details-summary strong,
+  .profile-details-summary > div > strong,
+  .tailor-profile-name,
+  .tailor-profile-title
+) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+}
+
+:is(html[data-theme="dark"] body, body[data-theme="dark"]) :is(
+  .portal-profile-detail-backdrop .portal-profile-detail-card,
+  #root .candidate-profile-popup,
+  .candidate-profile-popup
+) button.portal-profile-detail-message,
+:is(html[data-theme="dark"] body, body[data-theme="dark"]) :is(
+  .portal-profile-detail-backdrop .portal-profile-detail-card,
+  #root .candidate-profile-popup,
+  .candidate-profile-popup
+) button.portal-profile-detail-message:is(:hover, :focus, :focus-visible, :active) {
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  visibility: visible !important;
+  align-items: center !important;
+  justify-content: center !important;
+  opacity: 1 !important;
+  width: 8.5rem !important;
+  min-width: 8.5rem !important;
+  max-width: 8.5rem !important;
+  height: 2.35rem !important;
+  min-height: 2.35rem !important;
+  max-height: 2.35rem !important;
+  margin: 0.3rem auto 0.65rem !important;
+  padding: 0 1rem !important;
+  border: 1px solid #275b96 !important;
+  border-radius: 0.58rem !important;
+  background: #123d73 !important;
+  background-color: #123d73 !important;
+  background-image: none !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  font-size: 1rem !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+}
+
+/* Final feed-intro paint layer: keep keyword ink and light canvases theme-correct. */
+html body #root .home-page .portal-feed-introduction h1 > .portal-feed-keyword {
+  color: var(--portal-feed-keyword-color) !important;
+  -webkit-text-fill-color: var(--portal-feed-keyword-color) !important;
+  opacity: 1 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-tab-panel:is(
+  .portal-home-tab-panel-work-news,
+  .portal-home-tab-panel-talent-stories,
+  .portal-home-tab-panel-job-posts
+),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-tab-panel:is(
+  .portal-home-tab-panel-work-news,
+  .portal-home-tab-panel-talent-stories,
+  .portal-home-tab-panel-job-posts
+) > :is(.portal-feed-introduction, .portal-social-list, .portal-candidate-job-list),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-home-tab-panel:is(
+  .portal-home-tab-panel-work-news,
+  .portal-home-tab-panel-talent-stories,
+  .portal-home-tab-panel-job-posts
+),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-home-tab-panel:is(
+  .portal-home-tab-panel-work-news,
+  .portal-home-tab-panel-talent-stories,
+  .portal-home-tab-panel-job-posts
+) > :is(.portal-feed-introduction, .portal-social-list, .portal-candidate-job-list) {
+  background: #f4eadc !important;
+  background-color: #f4eadc !important;
+  background-image: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-feed-introduction,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-feed-introduction {
+  color: #291820 !important;
+  -webkit-text-fill-color: #291820 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-feed-introduction > span,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-feed-introduction > p,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-feed-introduction > span,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-feed-introduction > p {
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-feed-introduction h1 > .portal-feed-keyword,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-feed-introduction h1 > .portal-feed-keyword {
+  color: var(--portal-feed-keyword-color) !important;
+  -webkit-text-fill-color: var(--portal-feed-keyword-color) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal-feed-keyword {
+    animation: none;
+  }
+}
+
 html body #root #portal-public-header.portal-public-header {
   position: fixed !important;
   top: 0.42rem !important;
@@ -28,6 +282,77 @@ html body #root #portal-public-header .portal-public-utilities {
   background-image: none !important;
   border: 0 !important;
   box-shadow: none !important;
+}
+
+/* Final portal glass: visibly lighter transparency in both portal themes. */
+html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header.portal-public-header {
+  background: rgba(7, 14, 18, 0.28) !important;
+  background-color: rgba(7, 14, 18, 0.28) !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.13) !important;
+  box-shadow: 0 12px 38px rgba(0, 0, 0, 0.16) !important;
+  backdrop-filter: blur(28px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(120%) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root #portal-public-header.portal-public-header,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header.portal-public-header {
+  background: rgba(255, 250, 244, 0.22) !important;
+  background-color: rgba(255, 250, 244, 0.22) !important;
+  background-image: none !important;
+  border-color: rgba(52, 20, 29, 0.12) !important;
+  box-shadow: 0 12px 38px rgba(49, 27, 34, 0.08) !important;
+  backdrop-filter: blur(28px) saturate(118%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(118%) !important;
+}
+
+/* Final refresh treatment: glyph only, with no circular control surface. */
+html body #root .home-page .portal-feed-refresh-button,
+html body #root .home-page .portal-feed-refresh-button:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+html body #root .home-page .portal-feed-refresh-button :is(svg, path) {
+  color: #fff !important;
+  stroke: #fff !important;
+}
+
+/* Light and dark feed introductions share exactly the same mobile rhythm. */
+@media (max-width: 768px) {
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-tab-panel:is(
+    .portal-home-tab-panel-work-news,
+    .portal-home-tab-panel-talent-stories,
+    .portal-home-tab-panel-job-posts
+  ) > .portal-feed-introduction,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-home-tab-panel:is(
+    .portal-home-tab-panel-work-news,
+    .portal-home-tab-panel-talent-stories,
+    .portal-home-tab-panel-job-posts
+  ) > .portal-feed-introduction,
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-home-tab-panel:is(
+    .portal-home-tab-panel-work-news,
+    .portal-home-tab-panel-talent-stories,
+    .portal-home-tab-panel-job-posts
+  ) > .portal-feed-introduction {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  html body #root .home-page .portal-feed-introduction h1 {
+    line-height: 0.95 !important;
+  }
+
+  html body #root .home-page .portal-feed-introduction > p {
+    line-height: 1.58 !important;
+  }
 }
 
 html body #root #portal-public-header.portal-public-header::before,
@@ -694,5 +1019,1417 @@ html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open :i
     position: relative !important;
     top: auto !important;
     margin-top: 0.65rem !important;
+  }
+}
+
+/* Dark login: replace the legacy maroon identity with JumpTake green. */
+html[data-theme="dark"] body[data-theme="dark"] .modal-overlay .login-modal,
+body[data-public-home-theme="dark"] .modal-overlay .login-modal,
+body[data-public-home-theme="dark"] .public-auth-card:not(.is-register),
+body[data-public-home-theme="dark"] .public-auth-card:not(.is-register) .public-auth-form-shell {
+  background: #071713 !important;
+  background-color: #071713 !important;
+  background-image: none !important;
+  border-color: rgba(77, 196, 164, 0.38) !important;
+  color: #f1fff9 !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.48), inset 0 0 0 1px rgba(96, 211, 179, 0.08) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .login-modal .login-header h2,
+html[data-theme="dark"] body[data-theme="dark"] .login-modal .modal-brand,
+body[data-public-home-theme="dark"] :is(.public-auth-heading, .public-auth-card:not(.is-register) .public-auth-kicker) {
+  color: #6ed5b8 !important;
+  -webkit-text-fill-color: #6ed5b8 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .login-modal :is(label, p, .login-link-button, .login-signup, .login-signup *),
+body[data-public-home-theme="dark"] .public-auth-card:not(.is-register) :is(label, p, .public-auth-link, .public-auth-secondary-link) {
+  color: #d7eee6 !important;
+  -webkit-text-fill-color: #d7eee6 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .login-modal :is(.login-input, .login-input:focus),
+body[data-public-home-theme="dark"] .public-auth-card:not(.is-register) :is(.public-auth-input, .public-auth-input:focus) {
+  border-color: rgba(91, 207, 175, 0.34) !important;
+  background: #102a23 !important;
+  background-color: #102a23 !important;
+  color: #f4fff9 !important;
+  -webkit-text-fill-color: #f4fff9 !important;
+  caret-color: #79dfc2 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .login-modal .login-submit-button,
+body[data-public-home-theme="dark"] .public-auth-card:not(.is-register) .public-auth-submit {
+  border-color: #62cbae !important;
+  background: #4fbd9f !important;
+  background-color: #4fbd9f !important;
+  background-image: none !important;
+  color: #04110d !important;
+  -webkit-text-fill-color: #04110d !important;
+  box-shadow: 0 10px 24px rgba(62, 174, 144, 0.22) !important;
+}
+
+body[data-public-home-theme="dark"] .public-auth-card:not(.is-register) .public-auth-submit::before,
+body[data-public-home-theme="dark"] .public-auth-card:not(.is-register) .public-auth-submit::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .login-modal :is(.login-modal-close, .close-button),
+body[data-public-home-theme="dark"] .public-auth-card:not(.is-register) .public-auth-arrow-button {
+  color: #dffff5 !important;
+  -webkit-text-fill-color: #dffff5 !important;
+}
+
+/* Mobile feed typography is intentionally larger, with the keyword as its focal beat. */
+@media (max-width: 768px) {
+  html body #root .home-page .portal-feed-introduction > span {
+    font-size: 0.76rem !important;
+    line-height: 1.25 !important;
+  }
+
+  html body #root .home-page .portal-feed-introduction h1 {
+    max-width: 14ch !important;
+    font-size: clamp(2rem, 9.2vw, 2.75rem) !important;
+    line-height: 0.95 !important;
+  }
+
+  html body #root .home-page .portal-feed-introduction h1 > .portal-feed-keyword {
+    font-size: clamp(2.714rem, 12.5vw, 3.717rem) !important;
+    line-height: 0.82 !important;
+  }
+
+  html body #root .home-page .portal-feed-introduction > p {
+    max-width: 34rem !important;
+    font-size: 0.98rem !important;
+    line-height: 1.58 !important;
+  }
+}
+
+/* Compact, theme-aware refresh controls for the three discovery feeds. */
+.portal-feed-section-actions,
+.portal-create-story-action-row,
+.portal-job-country-row {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.portal-feed-section-actions {
+  justify-content: flex-end !important;
+  margin: -0.35rem 0 0.65rem !important;
+}
+
+.portal-create-story-action-row {
+  justify-content: flex-end !important;
+  gap: 0.55rem !important;
+}
+
+.portal-job-country-row {
+  justify-content: flex-end !important;
+  gap: 0.55rem !important;
+}
+
+.portal-feed-refresh-button,
+.portal-feed-refresh-button:is(:hover, :focus, :focus-visible, :active) {
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 2.35rem !important;
+  width: 2.35rem !important;
+  min-width: 2.35rem !important;
+  height: 2.35rem !important;
+  min-height: 2.35rem !important;
+  padding: 0 !important;
+  border: 1px solid currentColor !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #6f243b !important;
+  -webkit-text-fill-color: #6f243b !important;
+}
+
+.portal-feed-refresh-button svg {
+  width: 1.08rem !important;
+  height: 1.08rem !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 2 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+.portal-feed-refresh-button:disabled {
+  cursor: wait !important;
+  opacity: 0.55 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-feed-refresh-button {
+  color: #73d5bb !important;
+  -webkit-text-fill-color: #73d5bb !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-tab-panel:is(
+  .portal-home-tab-panel-work-news,
+  .portal-home-tab-panel-talent-stories,
+  .portal-home-tab-panel-job-posts
+),
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-tab-panel:is(
+  .portal-home-tab-panel-work-news,
+  .portal-home-tab-panel-talent-stories,
+  .portal-home-tab-panel-job-posts
+) > :is(.portal-feed-introduction, .portal-social-list, .portal-candidate-job-list),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-home-tab-panel:is(
+  .portal-home-tab-panel-work-news,
+  .portal-home-tab-panel-talent-stories,
+  .portal-home-tab-panel-job-posts
+),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-home-tab-panel:is(
+  .portal-home-tab-panel-work-news,
+  .portal-home-tab-panel-talent-stories,
+  .portal-home-tab-panel-job-posts
+) > :is(.portal-feed-introduction, .portal-social-list, .portal-candidate-job-list) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Absolute final refresh/intro alignment overrides. */
+html body #root .home-page button.portal-feed-refresh-button,
+html body #root .home-page button.portal-feed-refresh-button:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+html body #root .home-page button.portal-feed-refresh-button :is(svg, path) {
+  color: #fff !important;
+  fill: none !important;
+  stroke: #fff !important;
+}
+
+@media (max-width: 768px) {
+  html body #root .home-page .portal-home-tab-panel:is(
+    .portal-home-tab-panel-work-news,
+    .portal-home-tab-panel-talent-stories,
+    .portal-home-tab-panel-job-posts
+  ) > .portal-feed-introduction {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+}
+
+/* Unified profile-popup palette across feeds, mentions, candidates and bookmarks. */
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  .portal-profile-detail-backdrop .portal-profile-detail-card,
+  #root .candidate-profile-popup
+) :is(.tailor-profile-name, .tailor-profile-title, h1, h2, h3, h4, .profile-details-summary strong) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  .portal-profile-detail-backdrop .portal-profile-detail-card,
+  #root .candidate-profile-popup
+) :is(.portal-profile-more-action, .candidate-popup-options-button, .portal-post-options-button),
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  .portal-profile-detail-backdrop .portal-profile-detail-card,
+  #root .candidate-profile-popup
+) :is(.portal-profile-more-action, .candidate-popup-options-button, .portal-post-options-button):is(:hover, :focus, :focus-visible, :active, [aria-expanded="true"]) {
+  border: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  .portal-profile-detail-backdrop .portal-profile-detail-card,
+  #root .candidate-profile-popup
+) :is(.portal-profile-more-action, .candidate-popup-options-button, .portal-post-options-button) :is(svg, path, circle) {
+  color: #fff !important;
+  fill: #fff !important;
+  stroke: #fff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-profile-detail-backdrop .portal-profile-detail-card button.portal-profile-detail-message,
+html[data-theme="dark"] body[data-theme="dark"] .portal-profile-detail-backdrop .portal-profile-detail-card button.portal-profile-detail-message:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="dark"] body[data-theme="dark"] #root .candidate-profile-popup button.portal-profile-detail-message,
+html[data-theme="dark"] body[data-theme="dark"] #root .candidate-profile-popup button.portal-profile-detail-message:is(:hover, :focus, :focus-visible, :active) {
+  background: #123d73 !important;
+  background-color: #123d73 !important;
+  background-image: none !important;
+  border-color: #21558f !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  font-size: 1rem !important;
+  font-weight: 850 !important;
+  letter-spacing: 0.015em !important;
+  box-shadow: 0 10px 24px rgba(18, 61, 115, 0.3) !important;
+}
+
+/* Social links are bare theme-colored marks, never grey circular chips. */
+html body :is(
+  .portal-profile-detail-backdrop .portal-profile-detail-card,
+  #root .candidate-profile-popup
+) .tailor-social-links .tailor-social-btn:is(.facebook, .instagram, .linkedin, .github),
+html body :is(
+  .portal-profile-detail-backdrop .portal-profile-detail-card,
+  #root .candidate-profile-popup
+) .tailor-social-links .tailor-social-btn:is(.facebook, .instagram, .linkedin, .github):is(:hover, :focus, :focus-visible, :active) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  .portal-profile-detail-backdrop .portal-profile-detail-card,
+  #root .candidate-profile-popup
+) .tailor-social-links .tailor-social-btn:is(.facebook, .instagram, .linkedin, .github) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] :is(
+  .portal-profile-detail-backdrop .portal-profile-detail-card,
+  #root .candidate-profile-popup
+) .tailor-social-links .tailor-social-btn:is(.facebook, .instagram, .linkedin, .github),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) :is(
+  .portal-profile-detail-backdrop .portal-profile-detail-card,
+  #root .candidate-profile-popup
+) .tailor-social-links .tailor-social-btn:is(.facebook, .instagram, .linkedin, .github) {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+}
+
+html body :is(
+  .portal-profile-detail-backdrop .portal-profile-detail-card,
+  #root .candidate-profile-popup
+) .tailor-social-links .tailor-social-btn:is(.facebook, .instagram, .linkedin, .github) :is(svg, path) {
+  color: currentColor !important;
+  fill: currentColor !important;
+  stroke: none !important;
+}
+
+/* Light-mobile feed clearance belongs to the page shell, not the typography. */
+@media (max-width: 768px) {
+  html[data-theme="light"] body[data-theme="light"] #root > .app-container > .home-page > .dashboard-container > main.main-content > .portal-section-transition-shell.is-active-portal-section:is(
+    [data-section="work-news"],
+    [data-section="talent-stories"],
+    [data-section="job-posts"]
+  ),
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root > .app-container > .home-page > .dashboard-container > main.main-content > .portal-section-transition-shell.is-active-portal-section:is(
+    [data-section="work-news"],
+    [data-section="talent-stories"],
+    [data-section="job-posts"]
+  ) {
+    box-sizing: border-box !important;
+    top: auto !important;
+    margin-top: 0 !important;
+    padding-top: 5.25rem !important;
+  }
+}
+
+/* EOF lock: dark profile labels and Message button must beat legacy popup rules. */
+:is(html[data-theme="dark"] body, body[data-theme="dark"]) :is(
+  .portal-profile-detail-backdrop .portal-profile-detail-card,
+  #root .candidate-profile-popup,
+  .candidate-profile-popup
+) :is(.profile-details-card h3, .profile-details-section h4, .profile-details-summary strong, .tailor-profile-name, .tailor-profile-title) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+}
+
+:is(html[data-theme="dark"] body, body[data-theme="dark"]) :is(
+  .portal-profile-detail-backdrop .portal-profile-detail-card,
+  #root .candidate-profile-popup,
+  .candidate-profile-popup
+) button.portal-profile-detail-message,
+:is(html[data-theme="dark"] body, body[data-theme="dark"]) :is(
+  .portal-profile-detail-backdrop .portal-profile-detail-card,
+  #root .candidate-profile-popup,
+  .candidate-profile-popup
+) button.portal-profile-detail-message:is(:hover, :focus, :focus-visible, :active) {
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  visibility: visible !important;
+  align-items: center !important;
+  justify-content: center !important;
+  opacity: 1 !important;
+  width: 8.5rem !important;
+  min-width: 8.5rem !important;
+  max-width: 8.5rem !important;
+  height: 2.35rem !important;
+  min-height: 2.35rem !important;
+  max-height: 2.35rem !important;
+  margin: 0.3rem auto 0.65rem !important;
+  padding: 0 1rem !important;
+  border: 1px solid #275b96 !important;
+  border-radius: 0.58rem !important;
+  background: #123d73 !important;
+  background-color: #123d73 !important;
+  background-image: none !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  font-size: 1rem !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+}
+
+/* Screenshot 32 final: exact body-mounted profile popup targets. */
+html[data-theme="dark"] body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card .profile-details-card :is(
+  .profile-details-summary > div > strong,
+  .profile-details-section > h4,
+  .profile-details-card-header h3
+),
+body[data-theme="dark"] .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card .profile-details-card :is(
+  .profile-details-summary > div > strong,
+  .profile-details-section > h4,
+  .profile-details-card-header h3
+) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+/* Social row and Message form one centered mobile stack in either theme. */
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card .tailor-social-links {
+  justify-content: center !important;
+  width: 100% !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+}
+
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > button.portal-profile-detail-message,
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > button.portal-profile-detail-message:is(:hover, :focus, :focus-visible, :active) {
+  position: relative !important;
+  left: auto !important;
+  right: auto !important;
+  align-self: center !important;
+  justify-self: center !important;
+  place-self: center !important;
+  display: flex !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+  transform: none !important;
+}
+
+/* Light refresh glyphs are maroon; dark glyphs remain white. */
+html[data-theme="light"] body[data-theme="light"] #root .home-page button.portal-feed-refresh-button,
+html[data-theme="light"] body[data-theme="light"] #root .home-page button.portal-feed-refresh-button:is(:hover, :focus, :focus-visible, :active, :disabled),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page button.portal-feed-refresh-button,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page button.portal-feed-refresh-button:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  color: #681421 !important;
+  -webkit-text-fill-color: #681421 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page button.portal-feed-refresh-button :is(svg, path),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page button.portal-feed-refresh-button :is(svg, path) {
+  color: #681421 !important;
+  stroke: #681421 !important;
+}
+
+/* Remove the long light country/refresh row pill without changing either control. */
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-candidate-job-list > .portal-job-country-row,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-candidate-job-list > .portal-job-country-row {
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/* Light profile Message button: visible, full-sized and centered below social links. */
+html[data-theme="light"] body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > button.portal-profile-detail-message,
+html[data-theme="light"] body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > button.portal-profile-detail-message:is(:hover, :focus, :focus-visible, :active),
+body[data-theme="light"] .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > button.portal-profile-detail-message,
+body[data-theme="light"] .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > button.portal-profile-detail-message:is(:hover, :focus, :focus-visible, :active),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > button.portal-profile-detail-message,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > button.portal-profile-detail-message:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  display: flex !important;
+  visibility: visible !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+  justify-self: center !important;
+  place-self: center !important;
+  opacity: 1 !important;
+  width: 8.5rem !important;
+  min-width: 8.5rem !important;
+  max-width: 8.5rem !important;
+  height: 2.35rem !important;
+  min-height: 2.35rem !important;
+  max-height: 2.35rem !important;
+  margin: 0.3rem auto 0.65rem !important;
+  padding: 0 1rem !important;
+  border: 1px solid #9b4960 !important;
+  border-radius: 0.58rem !important;
+  background: #7d3044 !important;
+  background-color: #7d3044 !important;
+  background-image: none !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  box-shadow: 0 9px 22px rgba(125, 48, 68, 0.18) !important;
+  font-size: 1rem !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+  letter-spacing: 0.015em !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  transform: none !important;
+}
+
+/* Profile contact rail: social marks and Message share one aligned row. */
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .portal-profile-contact-rail {
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-wrap: nowrap !important;
+  gap: clamp(0.8rem, 3vw, 1.35rem) !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0.35rem auto 0.7rem !important;
+  padding: 0 !important;
+}
+
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .portal-profile-contact-rail > .tailor-social-links {
+  display: inline-flex !important;
+  flex: 0 1 auto !important;
+  justify-content: center !important;
+  gap: 0.55rem !important;
+  width: auto !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .portal-profile-contact-rail > button.portal-profile-detail-message,
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .portal-profile-contact-rail > button.portal-profile-detail-message:is(:hover, :focus, :focus-visible, :active) {
+  position: static !important;
+  flex: 0 0 auto !important;
+  align-self: center !important;
+  width: 8.5rem !important;
+  min-width: 8.5rem !important;
+  max-width: 8.5rem !important;
+  height: 2.35rem !important;
+  min-height: 2.35rem !important;
+  max-height: 2.35rem !important;
+  margin: 0 !important;
+  transform: none !important;
+}
+
+@media (max-width: 420px) {
+  html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .portal-profile-contact-rail {
+    gap: 0.7rem !important;
+  }
+
+  html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .portal-profile-contact-rail > .tailor-social-links {
+    gap: 0.38rem !important;
+  }
+
+  html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .portal-profile-contact-rail > button.portal-profile-detail-message {
+    width: 7.5rem !important;
+    min-width: 7.5rem !important;
+    max-width: 7.5rem !important;
+  }
+}
+
+/* Light Settings uses the portal cream canvas instead of a white page sheet. */
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(
+  .portal-section-transition-shell[data-section="settings"],
+  .settings-container,
+  .employer-settings-container,
+  .settings-container > .settings-tabs,
+  .employer-settings-container > .settings-tabs,
+  .settings-container .tabs-content,
+  .employer-settings-container .tabs-content,
+  .settings-container .settings-tab,
+  .employer-settings-container .settings-tab,
+  .employer-settings-stack
+),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page :is(
+  .portal-section-transition-shell[data-section="settings"],
+  .settings-container,
+  .employer-settings-container,
+  .settings-container > .settings-tabs,
+  .employer-settings-container > .settings-tabs,
+  .settings-container .tabs-content,
+  .employer-settings-container .tabs-content,
+  .settings-container .settings-tab,
+  .employer-settings-container .settings-tab,
+  .employer-settings-stack
+) {
+  background: #f4eadc !important;
+  background-color: #f4eadc !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(
+  .settings-container,
+  .employer-settings-container,
+  .settings-tabs,
+  .tabs-content,
+  .settings-tab,
+  .employer-settings-stack
+)::before,
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(
+  .settings-container,
+  .employer-settings-container,
+  .settings-tabs,
+  .tabs-content,
+  .settings-tab,
+  .employer-settings-stack
+)::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+}
+
+/* Light profile contact rail parity; dark mode intentionally untouched. */
+html[data-theme="light"] body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .portal-profile-contact-rail,
+body[data-theme="light"] .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .portal-profile-contact-rail,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .portal-profile-contact-rail {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-wrap: nowrap !important;
+  gap: 0.8rem !important;
+  width: 100% !important;
+  margin: 0.35rem auto 0.7rem !important;
+}
+
+html[data-theme="light"] body .portal-profile-detail-backdrop .portal-profile-contact-rail > .tailor-social-links,
+body[data-theme="light"] .portal-profile-detail-backdrop .portal-profile-contact-rail > .tailor-social-links,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-profile-detail-backdrop .portal-profile-contact-rail > .tailor-social-links {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 1 auto !important;
+  gap: 0.4rem !important;
+  width: auto !important;
+  margin: 0 !important;
+}
+
+html[data-theme="light"] body .portal-profile-detail-backdrop .portal-profile-contact-rail > .tailor-social-links .tailor-social-btn:is(.facebook, .instagram, .linkedin, .github),
+body[data-theme="light"] .portal-profile-detail-backdrop .portal-profile-contact-rail > .tailor-social-links .tailor-social-btn:is(.facebook, .instagram, .linkedin, .github),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-profile-detail-backdrop .portal-profile-contact-rail > .tailor-social-links .tailor-social-btn:is(.facebook, .instagram, .linkedin, .github) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 1.8rem !important;
+  width: 1.8rem !important;
+  min-width: 1.8rem !important;
+  max-width: 1.8rem !important;
+  height: 1.8rem !important;
+  min-height: 1.8rem !important;
+  max-height: 1.8rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+}
+
+html[data-theme="light"] body .portal-profile-detail-backdrop .portal-profile-contact-rail > .tailor-social-links .tailor-social-btn :is(svg, path),
+body[data-theme="light"] .portal-profile-detail-backdrop .portal-profile-contact-rail > .tailor-social-links .tailor-social-btn :is(svg, path),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-profile-detail-backdrop .portal-profile-contact-rail > .tailor-social-links .tailor-social-btn :is(svg, path) {
+  width: 1.08rem !important;
+  height: 1.08rem !important;
+  color: #000 !important;
+  fill: #000 !important;
+}
+
+html[data-theme="light"] body .portal-profile-detail-backdrop .portal-profile-contact-rail > button.portal-profile-detail-message,
+html[data-theme="light"] body .portal-profile-detail-backdrop .portal-profile-contact-rail > button.portal-profile-detail-message:is(:hover, :focus, :focus-visible, :active),
+body[data-theme="light"] .portal-profile-detail-backdrop .portal-profile-contact-rail > button.portal-profile-detail-message,
+body[data-theme="light"] .portal-profile-detail-backdrop .portal-profile-contact-rail > button.portal-profile-detail-message:is(:hover, :focus, :focus-visible, :active),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-profile-detail-backdrop .portal-profile-contact-rail > button.portal-profile-detail-message,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-profile-detail-backdrop .portal-profile-contact-rail > button.portal-profile-detail-message:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  visibility: visible !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 7.5rem !important;
+  width: 7.5rem !important;
+  min-width: 7.5rem !important;
+  max-width: 7.5rem !important;
+  height: 2.35rem !important;
+  min-height: 2.35rem !important;
+  max-height: 2.35rem !important;
+  margin: 0 !important;
+  padding: 0 0.8rem !important;
+  border: 1px solid #9b4960 !important;
+  border-radius: 0.58rem !important;
+  background: #7d3044 !important;
+  background-color: #7d3044 !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  box-shadow: 0 8px 18px rgba(125, 48, 68, 0.16) !important;
+  font-size: 1rem !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  opacity: 1 !important;
+}
+
+/* Profile actions are always visible as a second rail; the overflow trigger is removed. */
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .tailor-profile-image { order: 0 !important; }
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .tailor-profile-info { order: 1 !important; }
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .portal-profile-contact-rail { order: 2 !important; }
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .portal-profile-card-actions { order: 3 !important; }
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .portal-profile-detail-action-message { order: 4 !important; }
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .tailor-profile-stats { order: 5 !important; }
+
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card .portal-profile-card-actions > .portal-profile-more-action,
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card .portal-profile-card-actions > .portal-profile-more-action:is(:hover, :focus, :focus-visible, :active) {
+  display: none !important;
+}
+
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .portal-profile-card-actions,
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .portal-profile-card-actions.is-open {
+  position: relative !important;
+  inset: auto !important;
+  z-index: 3 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  margin: 0 auto 0.7rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card .portal-profile-actions-dropdown,
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card .portal-profile-card-actions.is-open .portal-profile-actions-dropdown {
+  position: relative !important;
+  inset: auto !important;
+  z-index: 1 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: clamp(0.7rem, 4vw, 1.15rem) !important;
+  width: auto !important;
+  margin: 0 auto !important;
+  padding: 0.35rem 0.55rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: none !important;
+}
+
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-card-action,
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-card-action:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  box-sizing: border-box !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 2.15rem !important;
+  width: 2.15rem !important;
+  min-width: 2.15rem !important;
+  max-width: 2.15rem !important;
+  height: 2.15rem !important;
+  min-height: 2.15rem !important;
+  max-height: 2.15rem !important;
+  margin: 0 !important;
+  padding: 0.48rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-card-action :is(svg, path) {
+  width: 1.15rem !important;
+  height: 1.15rem !important;
+  color: currentColor !important;
+  fill: currentColor !important;
+  stroke: none !important;
+}
+
+/* Inactive action ink follows the popup theme. */
+html[data-theme="dark"] body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-card-action:not(.active):not(.is-friend):not(.is-pending),
+body[data-theme="dark"] .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-card-action:not(.active):not(.is-friend):not(.is-pending) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+html[data-theme="light"] body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-card-action:not(.active):not(.is-friend):not(.is-pending),
+body[data-theme="light"] .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-card-action:not(.active):not(.is-friend):not(.is-pending),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-card-action:not(.active):not(.is-friend):not(.is-pending) {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+}
+
+/* Preserve established active-state colors. */
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > .portal-profile-friend-action:is(.is-friend, .is-pending) {
+  color: #2e8b57 !important;
+  -webkit-text-fill-color: #2e8b57 !important;
+}
+
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > .portal-profile-like-action.active {
+  color: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
+}
+
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > .portal-profile-bookmark-action.active {
+  color: #d99a00 !important;
+  -webkit-text-fill-color: #d99a00 !important;
+}
+
+@media (max-width: 420px) {
+  html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card .portal-profile-actions-dropdown {
+    gap: 0.7rem !important;
+  }
+}
+
+/* Compact light-only contact rail so every control stays inside narrow profiles. */
+@media (max-width: 768px) {
+  html[data-theme="light"] body .portal-profile-detail-backdrop .portal-profile-contact-rail,
+  body[data-theme="light"] .portal-profile-detail-backdrop .portal-profile-contact-rail,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-profile-detail-backdrop .portal-profile-contact-rail {
+    gap: 0.5rem !important;
+    padding-inline: 0.15rem !important;
+  }
+
+  html[data-theme="light"] body .portal-profile-detail-backdrop .portal-profile-contact-rail > .tailor-social-links,
+  body[data-theme="light"] .portal-profile-detail-backdrop .portal-profile-contact-rail > .tailor-social-links,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-profile-detail-backdrop .portal-profile-contact-rail > .tailor-social-links {
+    gap: 0.22rem !important;
+  }
+
+  html[data-theme="light"] body .portal-profile-detail-backdrop .portal-profile-contact-rail > .tailor-social-links .tailor-social-btn:is(.facebook, .instagram, .linkedin, .github),
+  body[data-theme="light"] .portal-profile-detail-backdrop .portal-profile-contact-rail > .tailor-social-links .tailor-social-btn:is(.facebook, .instagram, .linkedin, .github),
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-profile-detail-backdrop .portal-profile-contact-rail > .tailor-social-links .tailor-social-btn:is(.facebook, .instagram, .linkedin, .github) {
+    flex-basis: 1.55rem !important;
+    width: 1.55rem !important;
+    min-width: 1.55rem !important;
+    max-width: 1.55rem !important;
+    height: 1.55rem !important;
+    min-height: 1.55rem !important;
+    max-height: 1.55rem !important;
+  }
+
+  html[data-theme="light"] body .portal-profile-detail-backdrop .portal-profile-contact-rail > button.portal-profile-detail-message,
+  body[data-theme="light"] .portal-profile-detail-backdrop .portal-profile-contact-rail > button.portal-profile-detail-message,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-profile-detail-backdrop .portal-profile-contact-rail > button.portal-profile-detail-message {
+    flex-basis: 5.8rem !important;
+    width: 5.8rem !important;
+    min-width: 5.8rem !important;
+    max-width: 5.8rem !important;
+    height: 2.05rem !important;
+    min-height: 2.05rem !important;
+    max-height: 2.05rem !important;
+    padding: 0 0.55rem !important;
+    font-size: 0.86rem !important;
+  }
+}
+
+/* Screenshot 33 hard lock: compact light Message and bare pending-friend icon. */
+@media (max-width: 768px) {
+  html[data-theme="light"] body[data-theme="light"] .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .portal-profile-contact-rail > button.portal-profile-detail-message,
+  html[data-theme="light"] body[data-theme="light"] .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .portal-profile-contact-rail > button.portal-profile-detail-message:is(:hover, :focus, :focus-visible, :active),
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .portal-profile-contact-rail > button.portal-profile-detail-message,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-detail-card > .portal-profile-contact-rail > button.portal-profile-detail-message:is(:hover, :focus, :focus-visible, :active) {
+    position: static !important;
+    inset: auto !important;
+    display: inline-flex !important;
+    flex: 0 0 5.25rem !important;
+    flex-grow: 0 !important;
+    flex-shrink: 0 !important;
+    align-self: center !important;
+    justify-self: center !important;
+    width: 5.25rem !important;
+    min-width: 5.25rem !important;
+    max-width: 5.25rem !important;
+    inline-size: 5.25rem !important;
+    min-inline-size: 5.25rem !important;
+    max-inline-size: 5.25rem !important;
+    height: 1.9rem !important;
+    min-height: 1.9rem !important;
+    max-height: 1.9rem !important;
+    block-size: 1.9rem !important;
+    min-block-size: 1.9rem !important;
+    max-block-size: 1.9rem !important;
+    margin: 0 !important;
+    padding: 0 0.45rem !important;
+    font-size: 0.78rem !important;
+    line-height: 1 !important;
+    transform: none !important;
+  }
+}
+
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-card-action,
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-card-action:is(:hover, :focus, :focus-visible, :active, :disabled, .active, .is-friend, .is-pending) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-card-action::before,
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-card-action::after,
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-friend-action.is-pending::before,
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-friend-action.is-pending::after {
+  display: none !important;
+  content: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-friend-action.is-pending :is(svg, path) {
+  color: #2e8b57 !important;
+  fill: #2e8b57 !important;
+  stroke: none !important;
+  opacity: 1 !important;
+}
+
+/* Profile popup action rail: double-size glyphs in both themes. */
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-card-action,
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-card-action:is(:hover, :focus, :focus-visible, :active, :disabled, .active, .is-friend, .is-pending) {
+  flex: 0 0 3.1rem !important;
+  width: 3.1rem !important;
+  min-width: 3.1rem !important;
+  max-width: 3.1rem !important;
+  height: 3.1rem !important;
+  min-height: 3.1rem !important;
+  max-height: 3.1rem !important;
+  padding: 0.48rem !important;
+}
+
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-card-action :is(svg, img, .candidate-popup-inline-icon),
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-card-action :is(svg, img, .candidate-popup-inline-icon) :is(path, circle) {
+  width: 2.1rem !important;
+  min-width: 2.1rem !important;
+  max-width: 2.1rem !important;
+  height: 2.1rem !important;
+  min-height: 2.1rem !important;
+  max-height: 2.1rem !important;
+}
+
+@media (max-width: 420px) {
+  html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown,
+  html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-card-actions.is-open .portal-profile-actions-dropdown {
+    gap: 0.35rem !important;
+    padding-inline: 0.15rem !important;
+  }
+}
+
+/* Public login dark mode: neutral solid-black workspace, no green or maroon surfaces. */
+body[data-public-home-theme="dark"] :is(
+  .public-auth-card:not(.is-register),
+  .public-auth-card:not(.is-register) .public-auth-form-shell,
+  .public-auth-card:not(.is-register) .public-auth-form
+) {
+  background: #000 !important;
+  background-color: #000 !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+
+body[data-public-home-theme="dark"] .public-auth-card:not(.is-register) :is(
+  .public-auth-heading,
+  .public-auth-kicker,
+  label,
+  p,
+  strong,
+  small,
+  .public-auth-link,
+  .public-auth-secondary-link
+) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+body[data-public-home-theme="dark"] .public-auth-card:not(.is-register) :is(
+  .public-auth-field,
+  .public-auth-input,
+  .public-auth-input:focus,
+  .public-auth-input:hover
+) {
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  background: #0b0b0b !important;
+  background-color: #0b0b0b !important;
+  background-image: none !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  caret-color: #fff !important;
+  box-shadow: none !important;
+}
+
+body[data-public-home-theme="dark"] .public-auth-card:not(.is-register) .public-auth-input::placeholder {
+  color: rgba(255, 255, 255, 0.54) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.54) !important;
+}
+
+body[data-public-home-theme="dark"] .public-auth-card:not(.is-register) :is(
+  .public-auth-field-icon,
+  .public-auth-social-button,
+  .public-auth-arrow-button
+) {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  background: #101010 !important;
+  background-color: #101010 !important;
+  background-image: none !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  box-shadow: none !important;
+}
+
+body[data-public-home-theme="dark"] .public-auth-card:not(.is-register) :is(
+  .public-auth-field-icon,
+  .public-auth-social-button,
+  .public-auth-arrow-button
+) :is(svg, path, circle) {
+  color: #fff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+/* Compact Login action in both public-home themes. */
+body[data-public-home-theme] .public-auth-card:not(.is-register) .public-auth-submit,
+body[data-public-home-theme] .public-auth-card:not(.is-register) .public-auth-submit:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  align-self: center !important;
+  width: 8rem !important;
+  min-width: 8rem !important;
+  max-width: 8rem !important;
+  height: 2.35rem !important;
+  min-height: 2.35rem !important;
+  max-height: 2.35rem !important;
+  margin: 0.65rem auto !important;
+  padding: 0 1rem !important;
+  font-size: 0.78rem !important;
+}
+
+body[data-public-home-theme="dark"] .public-auth-card:not(.is-register) .public-auth-submit,
+body[data-public-home-theme="dark"] .public-auth-card:not(.is-register) .public-auth-submit:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  background: #151515 !important;
+  background-color: #151515 !important;
+  background-image: none !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  box-shadow: none !important;
+}
+
+body[data-public-home-theme="dark"] .public-auth-card:not(.is-register) .public-auth-submit::before,
+body[data-public-home-theme="dark"] .public-auth-card:not(.is-register) .public-auth-submit::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+}
+
+/* Stable mobile login geometry: keyboard focus must not shrink or recenter the card. */
+@media (max-width: 768px) {
+  body[data-public-home-theme] .public-landing-modal-backdrop:has(.public-auth-card:not(.is-register)) {
+    position: fixed !important;
+    inset: 0 !important;
+    display: block !important;
+    overflow: auto !important;
+  }
+
+  body[data-public-home-theme] .public-auth-card:not(.is-register) {
+    position: fixed !important;
+    top: max(0.75rem, calc((100svh - 40.5rem) / 2)) !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: 50% !important;
+    box-sizing: border-box !important;
+    width: min(23rem, calc(100vw - 1.5rem)) !important;
+    min-width: min(23rem, calc(100vw - 1.5rem)) !important;
+    max-width: min(23rem, calc(100vw - 1.5rem)) !important;
+    height: 40.5rem !important;
+    min-height: 40.5rem !important;
+    max-height: 40.5rem !important;
+    margin: 0 !important;
+    overflow-y: auto !important;
+    transform: translateX(-50%) !important;
+    transform-origin: top center !important;
+  }
+}
+
+/* Auth Back control is a bare arrow in both themes. */
+body[data-public-home-theme] .public-auth-card .public-auth-arrow-button,
+body[data-public-home-theme] .public-auth-card .public-auth-arrow-button:is(:hover, :focus, :focus-visible, :active) {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 2rem !important;
+  min-width: 2rem !important;
+  max-width: 2rem !important;
+  height: 2rem !important;
+  min-height: 2rem !important;
+  max-height: 2rem !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+body[data-public-home-theme] .public-auth-card .public-auth-arrow-button::before,
+body[data-public-home-theme] .public-auth-card .public-auth-arrow-button::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/* Join JumpTake inherits the same neutral black dark-auth system. */
+body[data-public-home-theme="dark"] :is(
+  .public-auth-card.is-register,
+  .public-auth-card.is-register .public-auth-form-shell,
+  .public-auth-card.is-register .public-auth-form,
+  .public-auth-card.is-register .public-auth-choice-stack
+) {
+  background: #000 !important;
+  background-color: #000 !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+
+body[data-public-home-theme="dark"] .public-auth-card.is-register :is(h1, h2, h3, h4, p, span, strong, small, label, .public-auth-heading, .public-auth-kicker) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+body[data-public-home-theme="dark"] .public-auth-card.is-register :is(
+  .public-auth-field,
+  .public-auth-input,
+  .public-auth-input:hover,
+  .public-auth-input:focus,
+  input,
+  select,
+  textarea
+) {
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  background: #0b0b0b !important;
+  background-color: #0b0b0b !important;
+  background-image: none !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  caret-color: #fff !important;
+  box-shadow: none !important;
+}
+
+body[data-public-home-theme="dark"] .public-auth-card.is-register :is(button, .public-auth-social-button, .public-auth-submit) {
+  border-color: rgba(255, 255, 255, 0.24) !important;
+  background: #121212 !important;
+  background-color: #121212 !important;
+  background-image: none !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  box-shadow: none !important;
+}
+
+body[data-public-home-theme="dark"] .public-auth-card.is-register .public-auth-arrow-button {
+  border: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Auth surfaces do not jump, scale or wobble on tap/focus. */
+body[data-public-home-theme] :is(.public-auth-card, .public-auth-form-shell, .public-auth-form),
+body[data-public-home-theme] :is(.public-auth-card, .public-auth-form-shell, .public-auth-form):is(:hover, :focus, :focus-within, :active) {
+  animation: none !important;
+  transition: none !important;
+  scale: 1 !important;
+  rotate: 0deg !important;
+}
+
+@media (min-width: 769px) {
+  body[data-public-home-theme] :is(.public-auth-card, .public-auth-form-shell, .public-auth-form),
+  body[data-public-home-theme] :is(.public-auth-card, .public-auth-form-shell, .public-auth-form):is(:hover, :focus, :focus-within, :active) {
+    transform: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  body[data-public-home-theme] .public-auth-card :is(input, select, textarea, .public-auth-input) {
+    font-size: 16px !important;
+  }
+
+  body[data-public-home-theme] .public-auth-card,
+  body[data-public-home-theme] .public-auth-card:is(:hover, :focus, :focus-within, :active) {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  body[data-public-home-theme] .public-auth-card:not(.is-register),
+  body[data-public-home-theme] .public-auth-card:not(.is-register):is(:hover, :focus, :focus-within, :active) {
+    transform: translateX(-50%) !important;
+  }
+
+  body[data-public-home-theme] .public-auth-card :is(.public-auth-form-shell, .public-auth-form),
+  body[data-public-home-theme] .public-auth-card :is(.public-auth-form-shell, .public-auth-form):is(:hover, :focus, :focus-within, :active) {
+    transform: none !important;
+  }
+}
+
+/* Profile popup controls: keep the four action glyphs prominent without
+   overpowering the contact rail. Applies identically to both themes. */
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-card-action,
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-card-action:is(:hover, :focus, :focus-visible, :active, :disabled, .active, .is-friend, .is-pending) {
+  flex-basis: 2.65rem !important;
+  width: 2.65rem !important;
+  min-width: 2.65rem !important;
+  max-width: 2.65rem !important;
+  height: 2.65rem !important;
+  min-height: 2.65rem !important;
+  max-height: 2.65rem !important;
+  padding: 0.5rem !important;
+}
+
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-card-action :is(svg, img, .candidate-popup-inline-icon),
+html body .portal-profile-detail-backdrop article.portal-profile-detail-modal .portal-profile-actions-dropdown > button.portal-profile-card-action :is(svg, img, .candidate-popup-inline-icon) :is(path, circle) {
+  width: 1.55rem !important;
+  min-width: 1.55rem !important;
+  max-width: 1.55rem !important;
+  height: 1.55rem !important;
+  min-height: 1.55rem !important;
+  max-height: 1.55rem !important;
+}
+
+/* Chromium/WebKit paints remembered credentials above ordinary backgrounds.
+   Force that paint layer to remain black throughout every autofill state. */
+body[data-public-home-theme="dark"] .public-auth-card :is(.public-auth-field, .public-auth-input),
+body[data-public-home-theme="dark"] .public-auth-card :is(.public-auth-field, .public-auth-input):is(:hover, :focus, :focus-visible, :active) {
+  background-color: #0b0b0b !important;
+  background-image: none !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  caret-color: #fff !important;
+}
+
+body[data-public-home-theme="dark"] .public-auth-card .public-auth-input:-webkit-autofill,
+body[data-public-home-theme="dark"] .public-auth-card .public-auth-input:-webkit-autofill:is(:hover, :focus, :focus-visible, :active) {
+  -webkit-text-fill-color: #fff !important;
+  caret-color: #fff !important;
+  -webkit-box-shadow: 0 0 0 1000px #0b0b0b inset !important;
+  box-shadow: 0 0 0 1000px #0b0b0b inset !important;
+  border-color: transparent !important;
+  background-color: #0b0b0b !important;
+  background-image: none !important;
+  transition: background-color 99999s ease-out 0s !important;
+}
+
+/* Final auth close-control reset. `all` removes the legacy full-width footer
+   button tile that otherwise survives in dark mode. */
+body[data-public-home-theme] .public-auth-card .public-auth-form-shell > button.public-auth-arrow-button,
+body[data-public-home-theme] .public-auth-card .public-auth-form-shell > button.public-auth-arrow-button:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  align-self: center !important;
+  justify-self: center !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 2rem !important;
+  height: 2rem !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: inherit !important;
+  cursor: pointer !important;
+}
+
+body[data-public-home-theme] .public-auth-card .public-auth-form-shell > button.public-auth-arrow-button :is(svg, path) {
+  width: 1rem !important;
+  height: 1rem !important;
+  margin: 0 !important;
+  fill: currentColor !important;
+  stroke: none !important;
+}
+
+/* Put the job-card destination action at the far-right footer edge. */
+html body #root .home-page .portal-public-job-footer > button,
+html body #root .home-page .portal-public-job-footer > button:is(:hover, :focus, :focus-visible, :active) {
+  flex: 0 0 auto !important;
+  margin-right: -0.4rem !important;
+  margin-left: auto !important;
+  text-align: right !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-job-card-footer > button,
+body[data-public-home-theme] #root .jt-public-home .jt-job-card-footer > button:is(:hover, :focus, :focus-visible, :active) {
+  flex: 0 0 auto !important;
+  margin-right: -0.35rem !important;
+  margin-left: auto !important;
+  text-align: right !important;
+}
+
+/* Dark profile previews: engagement totals remain readable on black cards. */
+html[data-theme="dark"] body[data-theme="dark"] .portal-profile-detail-backdrop :is(
+  .portal-reaction-trigger-count,
+  .portal-comment-trigger-count,
+  .portal-share-trigger-count,
+  .portal-reaction-count,
+  .portal-comment-count,
+  .reaction-count,
+  .comment-count,
+  .profile-post-reach-pill,
+  .candidate-popup-reach-button
+),
+html[data-theme="dark"] body[data-theme="dark"] .portal-profile-detail-backdrop :is(
+  .portal-reaction-trigger-count,
+  .portal-comment-trigger-count,
+  .portal-share-trigger-count,
+  .portal-reaction-count,
+  .portal-comment-count,
+  .reaction-count,
+  .comment-count,
+  .profile-post-reach-pill,
+  .candidate-popup-reach-button
+) :is(span, strong, small) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-profile-detail-backdrop .portal-post-action-row :is(
+  [aria-label$=" reactions"],
+  [aria-label$=" comments"]
+) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+/* Final dark Settings tabs: a single crisp active state in both portals. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .settings-container,
+  .employer-settings-container
+) .tabs-header .tab-button {
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background: #090909 !important;
+  background-color: #090909 !important;
+  background-image: none !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .settings-container,
+  .employer-settings-container
+) .tabs-header .tab-button.active,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .settings-container,
+  .employer-settings-container
+) .tabs-header .tab-button.active:is(:hover, :focus, :focus-visible, :active) {
+  border-color: #fff !important;
+  background: #fff !important;
+  background-color: #fff !important;
+  background-image: none !important;
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .settings-container,
+  .employer-settings-container
+) .tabs-header .tab-button.active :is(.tab-icon, span, svg, path) {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  opacity: 1 !important;
+  filter: brightness(0) saturate(100%) !important;
+}
+
+/* Mobile job dates stay on one horizontal line and retain usable width. */
+@media (max-width: 768px) {
+  html body #root .home-page .portal-public-job-footer {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: 0.45rem !important;
+    width: 100% !important;
+  }
+
+  html body #root .home-page .portal-public-job-footer > div {
+    display: flex !important;
+    flex-flow: row nowrap !important;
+    align-items: center !important;
+    gap: 0.3rem 0.7rem !important;
+    min-width: 0 !important;
+    width: auto !important;
+  }
+
+  html body #root .home-page .portal-public-job-footer > div > span {
+    display: inline-block !important;
+    min-width: 0 !important;
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+    overflow-wrap: normal !important;
+    font-size: clamp(0.52rem, 2.2vw, 0.62rem) !important;
+  }
+
+  html body #root .home-page .portal-public-job-footer > button {
+    justify-self: end !important;
+    margin-left: 0 !important;
+    margin-right: -0.3rem !important;
+    white-space: nowrap !important;
   }
 }

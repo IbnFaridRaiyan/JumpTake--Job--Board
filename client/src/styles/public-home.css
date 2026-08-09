@@ -5149,4 +5149,35 @@ body[data-public-home-theme] #root .jt-public-home .jt-step-avatar {
     width: min(100%, 340px) !important;
     margin-left: auto !important;
   }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-job-card-footer {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: 0.45rem !important;
+    width: 100% !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-job-card-dates {
+    display: flex !important;
+    flex-flow: row nowrap !important;
+    align-items: center !important;
+    gap: 0.7rem !important;
+    min-width: 0 !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-job-card-dates > span {
+    display: inline-block !important;
+    min-width: 0 !important;
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+    overflow-wrap: normal !important;
+    font-size: clamp(0.52rem, 2.2vw, 0.62rem) !important;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-job-card-footer > button {
+    justify-self: end !important;
+    margin-left: 0 !important;
+    white-space: nowrap !important;
+  }
 }

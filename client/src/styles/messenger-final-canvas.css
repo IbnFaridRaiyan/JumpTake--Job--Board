@@ -1,0 +1,70 @@
+/* Loaded after the messenger redesign so legacy nested-card rules cannot win. */
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-chat:has(.floating-messenger-assistant-chat) {
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #f7f3ec !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-chat > .floating-messenger-assistant-chat {
+  box-sizing: border-box !important;
+  align-self: stretch !important;
+  justify-self: stretch !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  width: calc(100% - 1.1rem) !important;
+  height: calc(100% - 1.1rem) !important;
+  margin: 0.55rem !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  border-radius: 1rem !important;
+  background: #f7f3ec !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-chat > .floating-messenger-assistant-chat :is(
+  .public-ai-chat-messages,
+  .portal-ai-chat-messages,
+  .public-ai-chat-reply,
+  .assistant-saved-chats
+) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/* Light AI composer uses a deeper warm input surface for clear separation. */
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-reply-field,
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-reply-field textarea {
+  background: #ded4c7 !important;
+  background-color: #ded4c7 !important;
+  background-image: none !important;
+}
+
+/* Compact AI send control in both themes. */
+html body > .floating-messenger.is-open .floating-messenger-assistant-chat .portal-ai-reply-row-aligned {
+  grid-template-columns: minmax(0, 1fr) 1.65rem !important;
+  gap: 0.28rem !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button,
+html body > .floating-messenger.is-open .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  box-sizing: border-box !important;
+  width: 1.65rem !important;
+  min-width: 1.65rem !important;
+  max-width: 1.65rem !important;
+  height: 1.65rem !important;
+  min-height: 1.65rem !important;
+  max-height: 1.65rem !important;
+  padding: 0 !important;
+  border-radius: 0.45rem !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-assistant-chat .public-ai-chat-reply .public-ai-send-button svg {
+  width: 0.76rem !important;
+  height: 0.76rem !important;
+}

@@ -563,6 +563,199 @@ html body > .floating-messenger.is-open :is(.floating-messenger-mobile-back, .fl
   }
 }
 
+/* Flat messenger canvas: the panel is the only rounded container. */
+html body > .floating-messenger.is-open {
+  --msg-panel: #f7f3ec;
+  --msg-sidebar: #f7f3ec;
+  --msg-surface: #f7f3ec;
+  --msg-surface-raised: #f7f3ec;
+  --msg-surface-hover: #f7f3ec;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open {
+  --msg-panel: #000;
+  --msg-sidebar: #000;
+  --msg-surface: #000;
+  --msg-surface-raised: #000;
+  --msg-surface-hover: #050505;
+}
+
+html body > .floating-messenger.is-open > .floating-messenger-panel {
+  background: var(--msg-panel) !important;
+  background-image: none !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-shell {
+  gap: 0 !important;
+  padding: 0 !important;
+  background: var(--msg-panel) !important;
+}
+
+html body > .floating-messenger.is-open :is(
+  .floating-messenger-contacts,
+  .floating-messenger-chat,
+  .floating-messenger-contact-body,
+  .floating-messenger-header,
+  .floating-messenger-chat-bar,
+  .floating-messenger-input,
+  .message-workspace-nav.is-compact,
+  .floating-messenger-assistant-chat,
+  .floating-messenger-assistant-chat .portal-ai-chat-card,
+  .floating-messenger-assistant-chat .public-ai-chat-card,
+  .assistant-saved-chats,
+  .assistant-saved-chats-heading
+) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: var(--msg-panel) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-contact-body,
+html body > .floating-messenger.is-open .floating-messenger-assistant-chat {
+  margin: 0 !important;
+}
+
+html body > .floating-messenger.is-open .message-workspace-tab,
+html body > .floating-messenger.is-open .message-workspace-tab:is(:hover, :focus, :focus-visible, .is-active),
+html body > .floating-messenger.is-open .floating-messenger-contact,
+html body > .floating-messenger.is-open .floating-messenger-contact:is(:hover, :focus, :focus-visible, .is-active) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-input :is(.rich-message-editor-messagebox, .messageBox) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html body > .floating-messenger.is-open .assistant-saved-chat-list > article {
+  border-radius: 0 !important;
+}
+
+/* Final light assistant canvas: one rounded surface with all four corners. */
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-chat:has(.floating-messenger-assistant-chat) {
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #f7f3ec !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-chat > .floating-messenger-assistant-chat {
+  box-sizing: border-box !important;
+  align-self: stretch !important;
+  justify-self: stretch !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  width: calc(100% - 1.1rem) !important;
+  height: calc(100% - 1.1rem) !important;
+  margin: 0.55rem !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  border-radius: 1rem !important;
+  background: #f7f3ec !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-chat > .floating-messenger-assistant-chat :is(
+  .public-ai-chat-messages,
+  .portal-ai-chat-messages,
+  .public-ai-chat-reply,
+  .assistant-saved-chats
+) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/* Winning light assistant layer: a single inset conversation surface. */
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-chat:has(.floating-messenger-assistant-chat) {
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #f7f3ec !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-chat > .floating-messenger-assistant-chat {
+  box-sizing: border-box !important;
+  align-self: stretch !important;
+  justify-self: stretch !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  width: calc(100% - 1.1rem) !important;
+  height: calc(100% - 1.1rem) !important;
+  margin: 0.55rem !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  border-radius: 1rem !important;
+  background: #f7f3ec !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-chat > .floating-messenger-assistant-chat :is(
+  .public-ai-chat-messages,
+  .portal-ai-chat-messages,
+  .public-ai-chat-reply,
+  .assistant-saved-chats
+) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/* Light assistant conversation: one visible rounded canvas, with no duplicate
+   off-white card behind it. */
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-chat:has(.floating-messenger-assistant-chat) {
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #f7f3ec !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-assistant-chat {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  width: calc(100% - 1.1rem) !important;
+  height: calc(100% - 1.1rem) !important;
+  margin: 0.55rem !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  border-radius: 1rem !important;
+  background: #f7f3ec !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-assistant-chat :is(
+  .public-ai-chat-messages,
+  .portal-ai-chat-messages,
+  .public-ai-chat-reply,
+  .assistant-saved-chats
+) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
 /* Final conversation identity header: avatar, name, status, then actions. */
 html body > .floating-messenger.is-open .floating-messenger-chat-bar > .floating-messenger-chat-head {
   box-sizing: border-box !important;
@@ -752,4 +945,399 @@ html body > .floating-messenger.is-open .floating-messenger-assistant-chat .port
   display: flex !important;
   align-items: center !important;
   justify-content: flex-end !important;
+}
+
+/* AI chat header actions. */
+html body > .floating-messenger.is-open :is(.assistant-new-chat-button, .assistant-chat-options-trigger),
+html body > .floating-messenger.is-open :is(.assistant-new-chat-button, .assistant-chat-options-trigger):is(:hover, :focus, :focus-visible, :active) {
+  display: grid !important;
+  place-items: center !important;
+  width: 2.1rem !important;
+  min-width: 2.1rem !important;
+  height: 2.1rem !important;
+  min-height: 2.1rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--msg-text) !important;
+  -webkit-text-fill-color: var(--msg-text) !important;
+}
+
+html body > .floating-messenger.is-open .assistant-new-chat-button > span {
+  font-size: 1.5rem !important;
+  line-height: 1 !important;
+}
+
+html body > .floating-messenger.is-open .assistant-chat-options-trigger > span {
+  font-size: 0.78rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+}
+
+html body > .floating-messenger.is-open .assistant-chat-options {
+  position: relative !important;
+  z-index: 40 !important;
+}
+
+html body > .floating-messenger.is-open .assistant-chat-options-menu {
+  position: absolute !important;
+  top: calc(100% + 0.35rem) !important;
+  right: 0 !important;
+  z-index: 41 !important;
+  display: grid !important;
+  gap: 0.2rem !important;
+  width: 9.25rem !important;
+  padding: 0.38rem !important;
+  border: 1px solid var(--msg-border) !important;
+  border-radius: 0.72rem !important;
+  background: var(--msg-surface-raised) !important;
+  box-shadow: var(--msg-small-shadow) !important;
+}
+
+html body > .floating-messenger.is-open .assistant-chat-options-menu > button,
+html body > .floating-messenger.is-open .assistant-chat-options-menu > button:is(:hover, :focus, :focus-visible, :active) {
+  width: 100% !important;
+  min-height: 2.2rem !important;
+  padding: 0.45rem 0.58rem !important;
+  border: 0 !important;
+  border-radius: 0.48rem !important;
+  background: transparent !important;
+  color: var(--msg-text) !important;
+  -webkit-text-fill-color: var(--msg-text) !important;
+  font-size: 0.72rem !important;
+  font-weight: 720 !important;
+  text-align: left !important;
+}
+
+html body > .floating-messenger.is-open .assistant-chat-options-menu > button:hover {
+  background: var(--msg-accent-soft) !important;
+  color: var(--msg-accent) !important;
+  -webkit-text-fill-color: var(--msg-accent) !important;
+}
+
+/* The removed inner AI title row leaves no blank strip. */
+html body > .floating-messenger.is-open .floating-messenger-assistant-chat > .portal-ai-chat-header-row {
+  display: none !important;
+}
+
+/* Saved AI conversations. */
+html body > .floating-messenger.is-open .assistant-saved-chats {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  padding: 0.85rem !important;
+  overflow: hidden !important;
+  background: var(--msg-surface) !important;
+  color: var(--msg-text) !important;
+}
+
+html body > .floating-messenger.is-open .assistant-saved-chats-heading {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 0.75rem !important;
+  padding: 0.15rem 0.1rem 0.75rem !important;
+  border-bottom: 1px solid var(--msg-border) !important;
+}
+
+html body > .floating-messenger.is-open .assistant-saved-chats-heading > div {
+  display: grid !important;
+  gap: 0.12rem !important;
+}
+
+html body > .floating-messenger.is-open .assistant-saved-chats-heading strong {
+  color: var(--msg-text) !important;
+  -webkit-text-fill-color: var(--msg-text) !important;
+  font-size: 1rem !important;
+}
+
+html body > .floating-messenger.is-open .assistant-saved-chats-heading span,
+html body > .floating-messenger.is-open .assistant-saved-chat-open span {
+  color: var(--msg-muted) !important;
+  -webkit-text-fill-color: var(--msg-muted) !important;
+  font-size: 0.62rem !important;
+}
+
+html body > .floating-messenger.is-open .assistant-saved-chats-heading > button,
+html body > .floating-messenger.is-open .assistant-saved-chats-heading > button:is(:hover, :focus, :focus-visible, :active) {
+  width: 2rem !important;
+  height: 2rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--msg-text) !important;
+  -webkit-text-fill-color: var(--msg-text) !important;
+  font-size: 1.2rem !important;
+}
+
+html body > .floating-messenger.is-open .assistant-saved-chat-list {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  gap: 0.45rem !important;
+  min-height: 0 !important;
+  padding-top: 0.65rem !important;
+  overflow-y: auto !important;
+}
+
+html body > .floating-messenger.is-open .assistant-saved-chat-list > article {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 2rem !important;
+  align-items: center !important;
+  gap: 0.3rem !important;
+  border: 1px solid var(--msg-border) !important;
+  border-radius: 0.75rem !important;
+  background: var(--msg-surface-raised) !important;
+}
+
+/* The assistant identity uses true black in light mode only. */
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open
+  .floating-messenger-chat:has(.floating-messenger-assistant-chat)
+  .floating-messenger-chat-bar .floating-messenger-chat-copy > strong {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+  opacity: 1 !important;
+}
+
+html body > .floating-messenger.is-open .assistant-saved-chat-list > article.is-current {
+  border-color: var(--msg-border-strong) !important;
+  box-shadow: inset 3px 0 0 var(--msg-accent) !important;
+}
+
+html body > .floating-messenger.is-open .assistant-saved-chat-open,
+html body > .floating-messenger.is-open .assistant-saved-chat-open:is(:hover, :focus, :focus-visible, :active) {
+  display: grid !important;
+  gap: 0.16rem !important;
+  min-width: 0 !important;
+  padding: 0.68rem 0.72rem !important;
+  border: 0 !important;
+  background: transparent !important;
+  text-align: left !important;
+}
+
+html body > .floating-messenger.is-open .assistant-saved-chat-open strong {
+  overflow: hidden !important;
+  color: var(--msg-text) !important;
+  -webkit-text-fill-color: var(--msg-text) !important;
+  font-size: 0.76rem !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body > .floating-messenger.is-open .assistant-saved-chat-delete,
+html body > .floating-messenger.is-open .assistant-saved-chat-delete:is(:hover, :focus, :focus-visible, :active) {
+  width: 1.8rem !important;
+  height: 1.8rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  color: var(--msg-muted) !important;
+  -webkit-text-fill-color: var(--msg-muted) !important;
+  font-size: 1rem !important;
+}
+
+html body > .floating-messenger.is-open .assistant-saved-chat-delete:hover {
+  color: var(--msg-accent) !important;
+  -webkit-text-fill-color: var(--msg-accent) !important;
+}
+
+html body > .floating-messenger.is-open .assistant-saved-chats-empty {
+  display: grid !important;
+  place-items: center !important;
+  align-content: center !important;
+  gap: 0.25rem !important;
+  min-height: 12rem !important;
+  color: var(--msg-muted) !important;
+  text-align: center !important;
+}
+
+html body > .floating-messenger.is-open .assistant-saved-chats-empty strong {
+  color: var(--msg-text) !important;
+  -webkit-text-fill-color: var(--msg-text) !important;
+}
+
+/* Final AI header icon rail: three equal, bare controls. */
+html body > .floating-messenger.is-open .floating-messenger-chat-actions {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 0.24rem !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-chat-actions :is(
+  .assistant-new-chat-button,
+  .assistant-chat-options-trigger,
+  .floating-messenger-mobile-back
+),
+html body > .floating-messenger.is-open .floating-messenger-chat-actions :is(
+  .assistant-new-chat-button,
+  .assistant-chat-options-trigger,
+  .floating-messenger-mobile-back
+):is(:hover, :focus, :focus-visible, :active) {
+  display: grid !important;
+  place-items: center !important;
+  width: 2rem !important;
+  min-width: 2rem !important;
+  max-width: 2rem !important;
+  height: 2rem !important;
+  min-height: 2rem !important;
+  max-height: 2rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  color: var(--msg-text) !important;
+  -webkit-text-fill-color: var(--msg-text) !important;
+}
+
+html body > .floating-messenger.is-open .assistant-new-chat-button > span,
+html body > .floating-messenger.is-open .assistant-chat-options-trigger > span,
+html body > .floating-messenger.is-open .floating-messenger-mobile-back {
+  display: block !important;
+  width: auto !important;
+  white-space: nowrap !important;
+  font-size: 1.35rem !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+  letter-spacing: 0 !important;
+  transform: none !important;
+}
+
+html body > .floating-messenger.is-open .assistant-chat-options-trigger > span {
+  font-size: 1.55rem !important;
+  transform: translateY(-0.12rem) !important;
+}
+
+/* Rounded assistant canvas and saved-chat surfaces. */
+html body > .floating-messenger.is-open .floating-messenger-assistant-chat {
+  margin: 0.55rem !important;
+  overflow: hidden !important;
+  border: 1px solid var(--msg-border) !important;
+  border-radius: 0.95rem !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-assistant-chat :is(
+  .public-ai-chat-messages,
+  .public-ai-chat-reply,
+  .assistant-saved-chats
+) {
+  background-clip: padding-box !important;
+}
+
+html body > .floating-messenger.is-open .assistant-saved-chats {
+  position: relative !important;
+  border-radius: 0.9rem !important;
+}
+
+html body > .floating-messenger.is-open .assistant-saved-chats-heading {
+  padding-right: 2.5rem !important;
+  border-radius: 0.72rem 0.72rem 0 0 !important;
+}
+
+html body > .floating-messenger.is-open .assistant-saved-chats-heading > button,
+html body > .floating-messenger.is-open .assistant-saved-chats-heading > button:is(:hover, :focus, :focus-visible, :active) {
+  position: absolute !important;
+  top: 0.42rem !important;
+  right: 0.42rem !important;
+  z-index: 3 !important;
+  margin: 0 !important;
+}
+
+html body > .floating-messenger.is-open .assistant-saved-chat-list > article {
+  overflow: hidden !important;
+  border-radius: 0.78rem !important;
+}
+
+/* Keep the closed mobile messenger launcher at the bottom edge of the viewport. */
+@media (max-width: 768px) {
+  html body > .floating-messenger:not(.is-open),
+  html body > .floating-messenger:not(.is-open) > .floating-messenger-trigger {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 0 !important;
+  }
+}
+
+/* Final flat messenger lock: only the outside panel keeps rounded corners. */
+html body > .floating-messenger.is-open {
+  --msg-panel: #f7f3ec;
+  --msg-sidebar: #f7f3ec;
+  --msg-surface: #f7f3ec;
+  --msg-surface-raised: #f7f3ec;
+  --msg-surface-hover: #f7f3ec;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open {
+  --msg-panel: #000;
+  --msg-sidebar: #000;
+  --msg-surface: #000;
+  --msg-surface-raised: #000;
+  --msg-surface-hover: #050505;
+}
+
+html body > .floating-messenger.is-open > .floating-messenger-panel {
+  background: var(--msg-panel) !important;
+  background-image: none !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-shell {
+  gap: 0 !important;
+  padding: 0 !important;
+  background: var(--msg-panel) !important;
+}
+
+html body > .floating-messenger.is-open :is(
+  .floating-messenger-contacts,
+  .floating-messenger-chat,
+  .floating-messenger-contact-body,
+  .floating-messenger-header,
+  .floating-messenger-chat-bar,
+  .floating-messenger-input,
+  .message-workspace-nav.is-compact,
+  .floating-messenger-assistant-chat,
+  .floating-messenger-assistant-chat .portal-ai-chat-card,
+  .floating-messenger-assistant-chat .public-ai-chat-card,
+  .assistant-saved-chats,
+  .assistant-saved-chats-heading
+) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: var(--msg-panel) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html body > .floating-messenger.is-open :is(.floating-messenger-contact-body, .floating-messenger-assistant-chat) {
+  margin: 0 !important;
+}
+
+html body > .floating-messenger.is-open .message-workspace-tab,
+html body > .floating-messenger.is-open .message-workspace-tab:is(:hover, :focus, :focus-visible, .is-active),
+html body > .floating-messenger.is-open .floating-messenger-contact,
+html body > .floating-messenger.is-open .floating-messenger-contact:is(:hover, :focus, :focus-visible, .is-active) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-input :is(.rich-message-editor-messagebox, .messageBox) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html body > .floating-messenger.is-open .assistant-saved-chat-list > article {
+  border-radius: 0 !important;
 }

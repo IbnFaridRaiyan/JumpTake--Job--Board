@@ -10,6 +10,9 @@ import './styles/portal-open-canvas.css';
 import './styles/portal-final-overrides.css';
 import './styles/portal-feed-spacing.css';
 import './styles/floating-messenger-redesign.css';
+import './styles/messenger-final-canvas.css';
+import './styles/settings-final-state.css';
+import './styles/portal-layout-final.css';
 
 ReactDOM.render(
   <React.StrictMode>

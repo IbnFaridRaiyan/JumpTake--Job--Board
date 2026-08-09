@@ -241,6 +241,7 @@ const FloatingMessenger = ({
     const [activeTab, setActiveTab] = useState('new');
     const [openThreadMenuId, setOpenThreadMenuId] = useState('');
     const [closingThreadMenuId, setClosingThreadMenuId] = useState('');
+    const [assistantMenuOpen, setAssistantMenuOpen] = useState(false);
     const [selectedProfile, setSelectedProfile] = useState(null);
     const [selectedCompanyProfile, setSelectedCompanyProfile] = useState(null);
     const [triggerTone, setTriggerTone] = useState('maroon');
@@ -277,6 +278,13 @@ const FloatingMessenger = ({
 
     const assistantSelected = selectedThreadId === ASSISTANT_THREAD_ID;
     const selectedThread = assistantSelected ? null : (threads.find((thread) => thread._id === selectedThreadId) || null);
+
+    const sendAssistantCommand = (action) => {
+        window.dispatchEvent(new CustomEvent('jumptake-assistant-chat-command', {
+            detail: { action, storageKey: assistantStorageKey }
+        }));
+        setAssistantMenuOpen(false);
+    };
 
     useEffect(() => {
         selectedThreadIdRef.current = selectedThreadId;
@@ -642,6 +650,7 @@ const FloatingMessenger = ({
         setReplyHtml('');
         setMessage('');
         setError('');
+        setAssistantMenuOpen(false);
         assistantDirectOpenRef.current = false;
     }, []);
 
@@ -1222,6 +1231,32 @@ const FloatingMessenger = ({
                                         </div>
                                         {isMobileView ? (
                                             <div className="floating-messenger-chat-actions">
+                                                <button
+                                                    type="button"
+                                                    className="assistant-new-chat-button"
+                                                    onClick={() => sendAssistantCommand('new')}
+                                                    aria-label="Start a new AI chat"
+                                                    title="New chat"
+                                                >
+                                                    <span aria-hidden="true">+</span>
+                                                </button>
+                                                <div className={`assistant-chat-options ${assistantMenuOpen ? 'is-open' : ''}`}>
+                                                    <button
+                                                        type="button"
+                                                        className="assistant-chat-options-trigger"
+                                                        onClick={() => setAssistantMenuOpen((value) => !value)}
+                                                        aria-label="AI chat options"
+                                                        aria-expanded={assistantMenuOpen}
+                                                    >
+                                                        <span aria-hidden="true">⋯</span>
+                                                    </button>
+                                                    {assistantMenuOpen ? (
+                                                        <div className="assistant-chat-options-menu" role="menu">
+                                                            <button type="button" onClick={() => sendAssistantCommand('chats')}>Chats</button>
+                                                            <button type="button" onClick={() => sendAssistantCommand('clear')}>Clear chat</button>
+                                                        </div>
+                                                    ) : null}
+                                                </div>
                                                 <button
                                                     type="button"
                                                     className="floating-messenger-mobile-back"

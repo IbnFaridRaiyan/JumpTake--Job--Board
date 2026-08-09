@@ -1,0 +1,255 @@
+/* Final mobile page rhythm beneath the fixed floating portal navbar. */
+@media (max-width: 768px) {
+  /* Tailor Profile and My Feed do not render the promotional introduction
+     used by the other feeds. A real flow spacer keeps their first content
+     below the fixed navbar in light mode and scrolls away with the page. */
+  .portal-light-mobile-feed-clearance {
+    display: none;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root .home-page
+    .portal-section-transition-shell:is(
+      [data-section="tailor-profile"],
+      [data-section="my-feed"]
+    ).is-active-portal-section .portal-light-mobile-feed-clearance,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page
+    .portal-section-transition-shell:is(
+      [data-section="tailor-profile"],
+      [data-section="my-feed"]
+    ).is-active-portal-section .portal-light-mobile-feed-clearance {
+    display: block !important;
+    flex: 0 0 4.85rem !important;
+    width: 100% !important;
+    height: 4.85rem !important;
+    min-height: 4.85rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    pointer-events: none !important;
+  }
+
+  html body #root .home-page .main-content > .portal-section-transition-shell.is-active-portal-section {
+    box-sizing: border-box !important;
+    padding-top: 0.55rem !important;
+  }
+
+  /* Discovery feeds get top clearance while keeping controls close to copy. */
+  html body #root .home-page .portal-section-transition-shell[data-section]:is(
+    [data-section="work-news"],
+    [data-section="talent-stories"],
+    [data-section="job-posts"]
+  ) .portal-feed-introduction {
+    margin-top: 0.3rem !important;
+    margin-bottom: 0.55rem !important;
+    padding-top: 0 !important;
+  }
+
+  /* Give dark discovery typography a little breathing room below the fixed
+     floating navbar without moving cards or controls independently. */
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page
+    .portal-section-transition-shell[data-section]:is(
+      [data-section="work-news"],
+      [data-section="talent-stories"],
+      [data-section="job-posts"]
+    ).is-active-portal-section .portal-feed-introduction {
+    margin-top: 0.85rem !important;
+  }
+
+  html body #root .home-page .portal-section-transition-shell[data-section]:is(
+    [data-section="work-news"],
+    [data-section="talent-stories"],
+    [data-section="job-posts"]
+  ) :is(.portal-feed-section-actions, .portal-create-story-action-row, .portal-job-country-row) {
+    margin-top: 0 !important;
+    margin-bottom: 0.55rem !important;
+  }
+
+  /* The two candidate light pages previously started behind the navbar. */
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-section-transition-shell:is(
+    [data-section="tailor-profile"],
+    [data-section="my-feed"]
+  ).is-active-portal-section {
+    padding-top: 1rem !important;
+  }
+
+  /* These feeds own a full-height internal scroller, so spacing on the outer
+     section is otherwise swallowed by that layout. Offset the real content
+     panels in light mode to match their correctly positioned dark variants. */
+  html[data-theme="light"] body[data-theme="light"] #root .home-page
+    .portal-section-transition-shell[data-section="tailor-profile"].is-active-portal-section
+    .portal-home-tab-panel-create-story > .tailor-profile-section,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page
+    .portal-section-transition-shell[data-section="my-feed"].is-active-portal-section
+    .portal-home-tab-panel-my-feed {
+    box-sizing: border-box !important;
+    position: relative !important;
+    top: auto !important;
+    margin-top: 0 !important;
+    padding-top: 1.15rem !important;
+  }
+
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page
+    .portal-section-transition-shell[data-section="tailor-profile"].is-active-portal-section
+    .portal-home-tab-panel-create-story > .tailor-profile-section,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page
+    .portal-section-transition-shell[data-section="my-feed"].is-active-portal-section
+    .portal-home-tab-panel-my-feed {
+    box-sizing: border-box !important;
+    position: relative !important;
+    top: auto !important;
+    margin-top: 0 !important;
+    padding-top: 1.15rem !important;
+  }
+}
+
+/* Lock light editorial typography to the same type system used by the dark
+   feed introductions. This prevents light-theme heading rules from swapping
+   in a different face or changing its rhythm. */
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-feed-introduction h1,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-feed-introduction h1 {
+  font-family: "Lexend", "Inter", sans-serif !important;
+  font-weight: 780 !important;
+  line-height: 0.95 !important;
+  letter-spacing: -0.055em !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-feed-introduction > :is(span, p),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-feed-introduction > :is(span, p) {
+  font-family: Inter, "Aptos", "Segoe UI", Roboto, Arial, sans-serif !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-feed-introduction h1 > .portal-feed-keyword,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-feed-introduction h1 > .portal-feed-keyword {
+  font-family: inherit !important;
+  font-weight: inherit !important;
+  letter-spacing: inherit !important;
+}
+
+/* Dark Tailor Profile controls: orange Cover, white add glyph, bare socials. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-section-transition-shell[data-section="tailor-profile"] .tailor-cover-upload,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-section-transition-shell[data-section="tailor-profile"] .tailor-cover-upload:is(:hover, :focus, :focus-visible, :active) {
+  border: 0 !important;
+  background: #c65d00 !important;
+  background-color: #c65d00 !important;
+  background-image: none !important;
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-section-transition-shell[data-section="tailor-profile"] .tailor-photo-add,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-section-transition-shell[data-section="tailor-profile"] .tailor-photo-add:is(:hover, :focus, :focus-visible, :active) {
+  border: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-section-transition-shell[data-section="tailor-profile"] .tailor-social-btn,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-section-transition-shell[data-section="tailor-profile"] .tailor-social-btn:is(:hover, :focus, :focus-visible, :active) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-section-transition-shell[data-section="tailor-profile"] .tailor-social-btn :is(svg, path) {
+  color: #fff !important;
+  fill: #fff !important;
+  stroke: currentColor !important;
+  opacity: 1 !important;
+}
+
+/* Tailor Profile details: Education, Experience and Skills sit directly on
+   the profile details canvas without separate white/grey tiles. */
+html body #root .home-page .portal-section-transition-shell[data-section="tailor-profile"] .tailor-profile-details-card :is(
+  .profile-details-summary > div,
+  .profile-details-section
+) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/* Theme the complete Education / Experience / Skills preview as one clean
+   surface. This removes the inherited maroon/green tint from its parent. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page
+  .portal-section-transition-shell[data-section="tailor-profile"]
+  :is(
+    .tailor-profile-details-card,
+    .tailor-profile-details-card .profile-details-summary,
+    .tailor-profile-details-card .profile-details-summary > div,
+    .tailor-profile-details-card .profile-details-section
+  ) {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background: #000 !important;
+  background-color: #000 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page
+  .portal-section-transition-shell[data-section="tailor-profile"]
+  :is(
+    .tailor-profile-details-card,
+    .tailor-profile-details-card .profile-details-summary,
+    .tailor-profile-details-card .profile-details-summary > div,
+    .tailor-profile-details-card .profile-details-section
+  ),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page
+  .portal-section-transition-shell[data-section="tailor-profile"]
+  :is(
+    .tailor-profile-details-card,
+    .tailor-profile-details-card .profile-details-summary,
+    .tailor-profile-details-card .profile-details-summary > div,
+    .tailor-profile-details-card .profile-details-section
+  ) {
+  border-color: rgba(112, 83, 52, 0.22) !important;
+  background: #fff !important;
+  background-color: #fff !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/* Dark Tailor Profile post creator mirrors the light layout: a bare plus at
+   the far edge of the posts header, never centred in the page. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page
+  .portal-section-transition-shell[data-section="tailor-profile"]
+  .tailor-profile-posts-header {
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page
+  .portal-section-transition-shell[data-section="tailor-profile"]
+  .tailor-profile-post-create,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page
+  .portal-section-transition-shell[data-section="tailor-profile"]
+  .tailor-profile-post-create:is(:hover, :focus, :focus-visible, :active) {
+  position: static !important;
+  inset: auto !important;
+  flex: 0 0 1.45rem !important;
+  margin: 0 0 0 auto !important;
+  border: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  box-shadow: none !important;
+  transform: none !important;
+}

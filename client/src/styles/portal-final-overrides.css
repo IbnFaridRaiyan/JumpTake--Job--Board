@@ -650,14 +650,15 @@ html body #root #portal-public-header .portal-public-menu-toggle.is-open > span:
   transform: translateY(-0.36rem) rotate(-45deg) !important;
 }
 
-html body #root .portal-public-menu-backdrop {
+html body #root #portal-public-header .portal-public-menu-backdrop {
   position: fixed !important;
   inset: 0 !important;
-  z-index: 9998 !important;
+  z-index: 2 !important;
   width: 100vw !important;
   height: 100dvh !important;
   padding: 0 !important;
-  background: rgba(3, 7, 14, 0.2) !important;
+  background: transparent !important;
+  background-color: transparent !important;
   border: 0 !important;
   border-radius: 0 !important;
   backdrop-filter: none !important;
@@ -671,13 +672,17 @@ html body #root #portal-public-header.portal-public-header {
 
 /* Blur only the portal canvas. Applying backdrop-filter to a viewport-sized
    fixed element can also blur later fixed layers on mobile Chromium/WebKit. */
-html.portal-menu-scroll-locked body.portal-menu-scroll-locked #root
-  > .app-container > .home-page > .dashboard-container,
-html.portal-menu-scroll-locked body.portal-menu-scroll-locked #root
-  > .app-container > .home-page > .floating-messenger,
-html.portal-menu-scroll-locked body.portal-menu-scroll-locked #root
-  > .app-container > .home-page > .guided-portal-tour {
-  filter: blur(8px) !important;
+html[data-theme="dark"].portal-menu-scroll-locked body[data-theme="dark"].portal-menu-scroll-locked #root
+  .home-page main.main-content > :is(.dashboard-section-title, .mobile-section-panel-header, .portal-section-transition-shell.is-active-portal-section) {
+  filter: blur(4px) brightness(0.5) !important;
+  transition: filter 180ms ease !important;
+}
+
+html[data-theme="light"].portal-menu-scroll-locked body[data-theme="light"].portal-menu-scroll-locked #root
+  .home-page main.main-content > :is(.dashboard-section-title, .mobile-section-panel-header, .portal-section-transition-shell.is-active-portal-section),
+html:not([data-theme="dark"]).portal-menu-scroll-locked body:not([data-theme="dark"]).portal-menu-scroll-locked #root
+  .home-page main.main-content > :is(.dashboard-section-title, .mobile-section-panel-header, .portal-section-transition-shell.is-active-portal-section) {
+  filter: blur(3px) brightness(0.72) !important;
   transition: filter 180ms ease !important;
 }
 

@@ -107,7 +107,16 @@ const PortalSidebar = ({
         body.style.top = `-${scrollY}px`;
         body.style.width = '100%';
 
+        const stopBackgroundScroll = (event) => {
+            if (event.target instanceof Element && event.target.closest('#portal-public-menu')) return;
+            event.preventDefault();
+        };
+        document.addEventListener('touchmove', stopBackgroundScroll, { passive: false, capture: true });
+        document.addEventListener('wheel', stopBackgroundScroll, { passive: false, capture: true });
+
         return () => {
+            document.removeEventListener('touchmove', stopBackgroundScroll, { capture: true });
+            document.removeEventListener('wheel', stopBackgroundScroll, { capture: true });
             html.classList.remove('portal-menu-scroll-locked');
             body.classList.remove('portal-menu-scroll-locked');
             html.style.overflow = previousHtmlOverflow;
@@ -154,9 +163,6 @@ const PortalSidebar = ({
 
     const navigation = (
         <>
-        {menuOpen ? (
-            <button className="portal-public-menu-backdrop" type="button" onClick={closePortalMenu} aria-label="Close portal menu" />
-        ) : null}
         <header id="portal-public-header" className={`portal-public-header ${menuOpen ? 'is-menu-open' : ''} ${menuClosing ? 'is-menu-closing' : ''}`} aria-label="JumpTake portal navigation">
             <div className="portal-public-header-top">
                 <div className="portal-public-brand">
@@ -213,6 +219,8 @@ const PortalSidebar = ({
                 </div>
             </div>
             {menuOpen ? (
+                <>
+                    <button className="portal-public-menu-backdrop" type="button" onClick={closePortalMenu} aria-label="Close portal menu" />
                     <nav id="portal-public-menu" className="portal-public-menu" aria-label="Portal pages">
                         {searchOpen ? (
                             <label className="portal-public-page-search">
@@ -242,6 +250,7 @@ const PortalSidebar = ({
                             </li>
                         </ul>
                     </nav>
+                </>
             ) : null}
         </header>
         </>

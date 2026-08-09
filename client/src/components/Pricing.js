@@ -14,6 +14,7 @@ const Pricing = ({ mode = 'candidate' }) => {
   const [busy, setBusy] = useState('');
   const [notice, setNotice] = useState('');
   const [code, setCode] = useState('');
+  const [clockNow, setClockNow] = useState(Date.now());
   const token = localStorage.getItem('token');
   const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
 
@@ -37,6 +38,46 @@ const Pricing = ({ mode = 'candidate' }) => {
   };
 
   useEffect(() => { loadMembership(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (membership?.plan !== 'demo-premium' || !membership.currentPeriodEnd) return undefined;
+    let refreshedAfterExpiry = false;
+    const timer = window.setInterval(() => {
+      const nextNow = Date.now();
+      setClockNow(nextNow);
+      if (!refreshedAfterExpiry && nextNow >= new Date(membership.currentPeriodEnd).getTime()) {
+        refreshedAfterExpiry = true;
+        window.clearInterval(timer);
+        loadMembership();
+      }
+    }, 1000);
+    return () => window.clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [membership?.plan, membership?.currentPeriodEnd]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const billingState = params.get('billing');
+    if (billingState === 'cancelled') {
+      setNotice('Checkout was cancelled. Your plan has not changed.');
+    }
+    if (billingState !== 'success') return undefined;
+
+    setNotice('Payment received. Activating your plan…');
+    let checks = 0;
+    const timer = window.setInterval(async () => {
+      checks += 1;
+      await loadMembership();
+      if (checks >= 6) {
+        window.clearInterval(timer);
+        setNotice('Payment completed. Your membership status is shown above.');
+      }
+    }, 1200);
+
+    window.history.replaceState(null, '', `${window.location.pathname}${window.location.hash}`);
+    return () => window.clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const openCheckout = async (plan) => {
     setBusy(plan); setNotice('');
@@ -71,6 +112,11 @@ const Pricing = ({ mode = 'candidate' }) => {
   };
 
   const currentPlan = membership?.plan || 'basic';
+  const demoMillisecondsRemaining = currentPlan === 'demo-premium' && membership?.currentPeriodEnd
+    ? Math.max(0, new Date(membership.currentPeriodEnd).getTime() - clockNow)
+    : 0;
+  const demoMinutes = Math.floor(demoMillisecondsRemaining / 60000);
+  const demoSeconds = Math.floor((demoMillisecondsRemaining % 60000) / 1000);
   return <section className={`pricing-page pricing-page-${mode}`}>
     <header className="pricing-hero">
       <span className="pricing-eyebrow">JUMPTAKE MEMBERSHIP</span>
@@ -78,6 +124,13 @@ const Pricing = ({ mode = 'candidate' }) => {
       <p>More AI support, more visibility, and more ways to get discovered.</p>
     </header>
     {notice ? <div className="pricing-notice" role="status">{notice}</div> : null}
+    {currentPlan === 'demo-premium' ? <div className="pricing-demo-countdown" role="timer" aria-live="polite">
+      <div><span>DEMO PREMIUM ACTIVE</span><strong>Your Premium access is live</strong></div>
+      <div className="pricing-demo-clock" aria-label={`${demoMinutes} minutes and ${demoSeconds} seconds remaining`}>
+        <strong>{String(demoMinutes).padStart(2, '0')}:{String(demoSeconds).padStart(2, '0')}</strong>
+        <span>remaining</span>
+      </div>
+    </div> : null}
     <div className="pricing-grid">
       {PLANS.map((plan) => <article key={plan.id} className={`pricing-card ${plan.featured ? 'is-featured' : ''} ${currentPlan === plan.id ? 'is-current' : ''}`}>
         {plan.featured ? <span className="pricing-popular">MOST POPULAR</span> : null}

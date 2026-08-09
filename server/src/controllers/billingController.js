@@ -11,7 +11,26 @@ const priceIds = {
   premium: process.env.STRIPE_PREMIUM_PRICE_ID,
   extreme: process.env.STRIPE_EXTREME_PRICE_ID
 };
-const appUrl = () => String(process.env.CLIENT_URL || process.env.APP_URL || 'http://localhost:3000').replace(/\/$/, '');
+const configuredAppUrl = () => String(process.env.CLIENT_URL || process.env.APP_URL || '').replace(/\/$/, '');
+
+const appUrl = (req) => {
+  const requestOrigin = String(req.get('origin') || '').trim();
+  if (/^https?:\/\/[^/]+$/i.test(requestOrigin)) return requestOrigin.replace(/\/$/, '');
+
+  const forwardedHost = String(req.get('x-forwarded-host') || req.get('host') || '').split(',')[0].trim();
+  const forwardedProto = String(req.get('x-forwarded-proto') || req.protocol || 'https').split(',')[0].trim();
+  if (forwardedHost && /^[a-z0-9.-]+(?::\d+)?$/i.test(forwardedHost) && /^https?$/i.test(forwardedProto)) {
+    return `${forwardedProto}://${forwardedHost}`;
+  }
+
+  return configuredAppUrl() || 'http://localhost:3000';
+};
+
+const pricingReturnUrl = (req, accountType, state = '') => {
+  const portal = accountType === 'employer' ? 'employer' : 'candidate';
+  const query = state ? `?billing=${encodeURIComponent(state)}` : '';
+  return `${appUrl(req)}/${query}#${portal}:pricing`;
+};
 
 const requireStripe = () => {
   if (!stripe) { const error = new Error('Payments are not configured yet.'); error.status = 503; throw error; }
@@ -70,8 +89,8 @@ exports.createCheckout = async (req, res) => {
       mode: isDemo ? 'payment' : 'subscription', customer: customerId,
       line_items: [{ price: priceIds[plan], quantity: 1 }],
       allow_promotion_codes: true,
-      success_url: `${appUrl()}/?billing=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${appUrl()}/?billing=cancelled`,
+      success_url: `${appUrl(req)}/?billing=success&session_id={CHECKOUT_SESSION_ID}#${accountType === 'employer' ? 'employer' : 'candidate'}:pricing`,
+      cancel_url: pricingReturnUrl(req, accountType, 'cancelled'),
       ...(isDemo
         ? { payment_intent_data: { metadata: { plan, accountId: String(account._id), accountType } } }
         : { subscription_data: { metadata: { plan, accountId: String(account._id), accountType } } }),
@@ -85,7 +104,8 @@ exports.createPortal = async (req, res) => {
   try {
     const { account } = await getAccountFromRequest(req);
     if (!account.membership?.stripeCustomerId) return res.status(400).json({ error: 'No billing account exists yet.' });
-    const session = await requireStripe().billingPortal.sessions.create({ customer: account.membership.stripeCustomerId, return_url: appUrl() });
+    const accountType = account.companyId ? 'employer' : 'candidate';
+    const session = await requireStripe().billingPortal.sessions.create({ customer: account.membership.stripeCustomerId, return_url: pricingReturnUrl(req, accountType) });
     res.json({ url: session.url });
   } catch (error) { res.status(error.status || 500).json({ error: error.message }); }
 };

@@ -61,3 +61,93 @@
     animation: none !important;
   }
 }
+/* Dark job cards: keep the options trigger and opened menu on a true black surface. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-home-feed .portal-candidate-job-card .portal-post-options-button,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-home-feed .portal-candidate-job-card .portal-post-options-button:is(:hover, :focus, :focus-visible, :active, [aria-expanded="true"]) {
+  background: #000 !important;
+  background-color: #000 !important;
+  background-image: none !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-home-feed .portal-candidate-job-card .portal-post-options-button svg,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-home-feed .portal-candidate-job-card .portal-post-options-button svg * {
+  color: #fff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-home-feed .portal-candidate-job-card :is(.portal-job-options-menu, .portal-post-options-menu, .portal-post-options-menu-inline) {
+  background: #000 !important;
+  background-color: #000 !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  color: #fff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-home-feed .portal-candidate-job-card :is(.portal-job-options-menu, .portal-post-options-menu, .portal-post-options-menu-inline) button,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-home-feed .portal-candidate-job-card :is(.portal-job-options-menu, .portal-post-options-menu, .portal-post-options-menu-inline) button:is(:hover, :focus, :focus-visible, :active) {
+  background: #000 !important;
+  background-color: #000 !important;
+  background-image: none !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+/* Candidates: the light introduction is typography only, without a dark panel. */
+html[data-theme="light"] body[data-theme="light"] #root .home-page .talent-pool-container.candidate-view-candidates .candidate-directory-introduction,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .talent-pool-container.candidate-view-candidates .candidate-directory-introduction {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #291820 !important;
+  -webkit-text-fill-color: #291820 !important;
+}
+
+@media (max-width: 768px) {
+  /* Keep the Candidates heading/action strip compact in both themes. */
+  html body #root .home-page .talent-pool-container.candidate-view-candidates .talent-pool-header {
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 0.55rem !important;
+    min-height: 0 !important;
+    margin: 0.55rem 0 0.65rem !important;
+    padding: 0.45rem 0.55rem !important;
+  }
+
+  html body #root .home-page .talent-pool-container.candidate-view-candidates .talent-pool-header h2 {
+    margin: 0 !important;
+    font-size: 0.96rem !important;
+    line-height: 1.1 !important;
+  }
+
+  html body #root .home-page .talent-pool-container.candidate-view-candidates .talent-pool-header-actions {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+
+  html body #root .home-page .talent-pool-container.candidate-view-candidates .add-friends-button,
+  html body #root .home-page .talent-pool-container.candidate-view-candidates .add-friends-button:is(:hover, :focus, :focus-visible, :active) {
+    box-sizing: border-box !important;
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 1.9rem !important;
+    margin: 0 !important;
+    padding: 0.32rem 0.68rem !important;
+    font-size: 0.7rem !important;
+    line-height: 1 !important;
+  }
+
+  html body #root .home-page .talent-pool-container.candidate-view-candidates .add-friend-panel {
+    gap: 0.55rem !important;
+    margin-bottom: 0.7rem !important;
+    padding: 0.65rem 0.72rem !important;
+  }
+}

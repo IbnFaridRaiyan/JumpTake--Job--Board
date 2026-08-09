@@ -71,6 +71,22 @@ const PortalSidebar = ({
         setPortalTarget(document.querySelector('#root > .app-container'));
     }, []);
 
+    useEffect(() => {
+        if (!menuOpen || typeof document === 'undefined') {
+            return undefined;
+        }
+
+        const html = document.documentElement;
+        const body = document.body;
+        html.classList.add('portal-menu-scroll-locked');
+        body.classList.add('portal-menu-scroll-locked');
+
+        return () => {
+            html.classList.remove('portal-menu-scroll-locked');
+            body.classList.remove('portal-menu-scroll-locked');
+        };
+    }, [menuOpen]);
+
     const resetPageScroll = () => {
         window.requestAnimationFrame(() => {
             window.scrollTo({ top: 0, behavior: 'auto' });

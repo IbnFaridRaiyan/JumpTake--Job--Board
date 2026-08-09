@@ -75955,8 +75955,8 @@ html body #root .resume-playground-editor-shell .resume-playground-toolbar butto
 html body #root .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-tool-button,
 html body #root .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-icon-button,
 html body #root .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-tool-button {
-  color: #0b0f14 !important;
-  -webkit-text-fill-color: #0b0f14 !important;
+  color: var(--resume-editor-toolbar-ink, #0b0f14) !important;
+  -webkit-text-fill-color: var(--resume-editor-toolbar-ink, #0b0f14) !important;
   font-weight: 950 !important;
   font-variation-settings: "wght" 950 !important;
   text-shadow: none !important;
@@ -76004,8 +76004,8 @@ html body #root .resume-playground-editor-mobile-overlay .resume-playground-tool
 
 html body #root .resume-playground-editor-shell .resume-playground-toolbar :is(.resume-playground-select, .resume-playground-color-picker),
 html body #root .resume-playground-editor-mobile-overlay .resume-playground-toolbar :is(.resume-playground-select, .resume-playground-color-picker) {
-  color: #0b0f14 !important;
-  -webkit-text-fill-color: #0b0f14 !important;
+  color: var(--resume-editor-toolbar-ink, #0b0f14) !important;
+  -webkit-text-fill-color: var(--resume-editor-toolbar-ink, #0b0f14) !important;
   font-weight: 900 !important;
   font-variation-settings: "wght" 900 !important;
 }
@@ -76082,8 +76082,8 @@ html body .resume-playground-editor-mobile-overlay .resume-playground-toolbar bu
 html body .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-tool-button,
 html body .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-icon-button,
 html body .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-tool-button {
-  color: #0b0f14 !important;
-  -webkit-text-fill-color: #0b0f14 !important;
+  color: var(--resume-editor-toolbar-ink, #0b0f14) !important;
+  -webkit-text-fill-color: var(--resume-editor-toolbar-ink, #0b0f14) !important;
   font-weight: 950 !important;
   font-variation-settings: "wght" 950 !important;
   text-shadow: none !important;
@@ -76121,16 +76121,16 @@ html body .resume-playground-editor-shell .resume-playground-toolbar button.resu
 
 html body .resume-playground-editor-mobile-overlay .resume-playground-toolbar button.resume-playground-icon-button:not(.resume-playground-icon-undo):not(.resume-playground-icon-redo) > span,
 html body .resume-playground-editor-shell .resume-playground-toolbar button.resume-playground-icon-button:not(.resume-playground-icon-undo):not(.resume-playground-icon-redo) > span {
-  color: #0b0f14 !important;
-  -webkit-text-fill-color: #0b0f14 !important;
+  color: var(--resume-editor-toolbar-ink, #0b0f14) !important;
+  -webkit-text-fill-color: var(--resume-editor-toolbar-ink, #0b0f14) !important;
   font-weight: 950 !important;
   font-variation-settings: "wght" 950 !important;
 }
 
 html body .resume-playground-editor-mobile-overlay .resume-playground-toolbar :is(.resume-playground-select, .resume-playground-color-picker),
 html body .resume-playground-editor-shell .resume-playground-toolbar :is(.resume-playground-select, .resume-playground-color-picker) {
-  color: #0b0f14 !important;
-  -webkit-text-fill-color: #0b0f14 !important;
+  color: var(--resume-editor-toolbar-ink, #0b0f14) !important;
+  -webkit-text-fill-color: var(--resume-editor-toolbar-ink, #0b0f14) !important;
   font-weight: 900 !important;
   font-variation-settings: "wght" 900 !important;
 }

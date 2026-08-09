@@ -60,6 +60,28 @@ body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-chat-messa
   background-color: #87c9b5 !important;
 }
 
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark
+  .jt-ai-prompt-list > button,
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark
+  .jt-ai-prompt-list > button:is(:hover, :focus, :focus-visible, :active) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background: #000 !important;
+  background-color: #000 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark
+  .jt-ai-prompt-list > button .jt-icon,
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark
+  .jt-ai-prompt-list > button .jt-icon :is(svg, path) {
+  color: #a8e3bd !important;
+  stroke: #a8e3bd !important;
+  -webkit-text-fill-color: #a8e3bd !important;
+}
+
 body[data-public-home-theme="dark"] #root .jt-public-home.is-dark :is(
   .jt-editor-shell,
   .jt-editor-sidebar,

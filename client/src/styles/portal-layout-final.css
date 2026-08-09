@@ -1,4 +1,110 @@
 /* Final mobile page rhythm beneath the fixed floating portal navbar. */
+html[data-theme="dark"],
+html[data-theme="dark"] body[data-theme="dark"] {
+  --resume-editor-toolbar-ink: #fff;
+}
+
+html[data-theme="light"],
+html:not([data-theme="dark"]) {
+  --resume-editor-toolbar-ink: #0b0f14;
+}
+
+/* Work News companies and Talent Stories authors stay bold without the
+   synthetic 900-weight rendering that made the names look overly heavy. */
+html body #root .home-page .portal-home-tab-panel:is(
+  .portal-home-tab-panel-work-news,
+  .portal-home-tab-panel-talent-stories
+) .portal-social-post-header :is(
+  h3.portal-post-author-name,
+  .portal-post-author-name,
+  .portal-author-name-button
+) {
+  font-weight: 700 !important;
+  font-variation-settings: "wght" 700 !important;
+  text-shadow: none !important;
+}
+
+/* Freeze the underlying portal canvas whenever the hamburger page menu is
+   expanded. The dropdown retains its own overflow for long navigation lists. */
+html.portal-menu-scroll-locked,
+html.portal-menu-scroll-locked body.portal-menu-scroll-locked {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+}
+
+html.portal-menu-scroll-locked body.portal-menu-scroll-locked #root
+  .home-page :is(main.main-content, .portal-home-feed-scroll) {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+  touch-action: none !important;
+}
+
+html.portal-menu-scroll-locked body.portal-menu-scroll-locked #root
+  #portal-public-header .portal-public-menu {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  touch-action: pan-y !important;
+}
+
+/* Hamburger page links use the same editorial type and ink as the feed
+   typography instead of the legacy compact navigation font/color. */
+html body #root #portal-public-header .portal-public-menu .portal-public-nav-link,
+html body #root #portal-public-header .portal-public-menu .portal-public-nav-link > span {
+  font-family: "Lexend", "Inter", sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header
+  .portal-public-menu .portal-public-nav-link,
+html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header
+  .portal-public-menu .portal-public-nav-link:is(:hover, :focus, :focus-visible, :active, .is-active),
+html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header
+  .portal-public-menu .portal-public-nav-link > span {
+  color: #f7f6f3 !important;
+  -webkit-text-fill-color: #f7f6f3 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root #portal-public-header
+  .portal-public-menu .portal-public-nav-link,
+html[data-theme="light"] body[data-theme="light"] #root #portal-public-header
+  .portal-public-menu .portal-public-nav-link:is(:hover, :focus, :focus-visible, :active, .is-active),
+html[data-theme="light"] body[data-theme="light"] #root #portal-public-header
+  .portal-public-menu .portal-public-nav-link > span,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header
+  .portal-public-menu .portal-public-nav-link,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header
+  .portal-public-menu .portal-public-nav-link:is(:hover, :focus, :focus-visible, :active, .is-active),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header
+  .portal-public-menu .portal-public-nav-link > span {
+  color: #291820 !important;
+  -webkit-text-fill-color: #291820 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  .resume-playground-editor-shell,
+  .resume-playground-editor-mobile-overlay
+) .resume-playground-toolbar :is(
+  .resume-playground-tool-button,
+  .resume-playground-icon-button,
+  .resume-playground-select,
+  .resume-playground-color-picker
+),
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  .resume-playground-editor-shell,
+  .resume-playground-editor-mobile-overlay
+) .resume-playground-toolbar :is(
+  .resume-playground-tool-button,
+  .resume-playground-icon-button,
+  .resume-playground-select,
+  .resume-playground-color-picker
+) :is(span, svg, path) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  stroke: currentColor !important;
+}
+
 @media (max-width: 768px) {
   /* The old bottom navigation no longer renders, but portal-dock-open remains
      on both portal roots. Remove its invisible 72px reservation. */

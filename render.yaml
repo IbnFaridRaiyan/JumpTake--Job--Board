@@ -20,6 +20,8 @@ services:
         sync: false
       - key: STRIPE_WEBHOOK_SECRET
         sync: false
+      - key: STRIPE_DEMO_PREMIUM_PRICE_ID
+        sync: false
       - key: STRIPE_PREMIUM_PRICE_ID
         sync: false
       - key: STRIPE_EXTREME_PRICE_ID

@@ -4,6 +4,7 @@ import './Pricing.css';
 
 const PLANS = [
   { id: 'basic', name: 'Basic', price: 'Free', strap: 'Start your next move', features: ['3 JumpTake AI messages', 'Public jobs and talent stories', 'Core candidate and employer tools'] },
+  { id: 'demo-premium', name: 'Demo Premium', price: '£0.30', cadence: '/30 min', strap: 'Try the Premium momentum', features: ['Premium access for 30 minutes', '50 JumpTake AI messages', 'Stand Out priority placement', 'One-time payment — no subscription'] },
   { id: 'premium', name: 'Premium', price: '£5', cadence: '/month', strap: 'Move with more momentum', featured: true, features: ['50 JumpTake AI messages every day', 'Stand Out placement', 'Priority visibility in Talent Stories and Talent Pool', 'Everything in Basic'] },
   { id: 'extreme', name: 'Extreme', price: '£12', cadence: '/month', strap: 'No limits. Maximum visibility.', features: ['Unlimited JumpTake AI messages', 'Stand Out placement', 'Priority visibility in Talent Stories and Talent Pool', 'Everything in Premium'] }
 ];
@@ -84,7 +85,7 @@ const Pricing = ({ mode = 'candidate' }) => {
         <ul>{plan.features.map((feature) => <li key={feature}><span>✓</span>{feature}</li>)}</ul>
         {currentPlan === plan.id ? <button type="button" disabled>Current plan</button>
           : plan.id === 'basic' ? <button type="button" onClick={manageBilling} disabled={busy === 'portal'}>Manage billing</button>
-            : <button type="button" onClick={() => openCheckout(plan.id)} disabled={Boolean(busy)}>{busy === plan.id ? 'Opening…' : `Choose ${plan.name}`}</button>}
+            : <button type="button" onClick={() => openCheckout(plan.id)} disabled={Boolean(busy)}>{busy === plan.id ? 'Opening…' : plan.id === 'demo-premium' ? 'Unlock for 30 minutes' : `Choose ${plan.name}`}</button>}
       </article>)}
     </div>
     <div className="pricing-payment-note"><strong>Secure checkout</strong><span>Pay by card, Apple Pay, or Google Pay when supported on your device.</span></div>

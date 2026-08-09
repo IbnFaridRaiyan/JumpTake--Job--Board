@@ -3015,6 +3015,11 @@ body[data-public-home-theme] #root .jt-public-home .jt-public-price-card.is-prem
   background: var(--jt-lime);
 }
 
+body[data-public-home-theme] #root .jt-public-home .jt-public-price-card.is-demo button {
+  background: #efb1c2;
+  color: #2b1019;
+}
+
 body[data-public-home-theme] #root .jt-public-home .jt-public-price-card.is-extreme button {
   background: #94405a;
   color: #fff;

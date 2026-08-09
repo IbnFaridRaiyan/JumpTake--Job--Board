@@ -84,9 +84,13 @@ const getFeedPosts = async (req, res) => {
             const candidateIds = [...new Set(posts.filter((post) => post.authorType === 'candidate').map((post) => String(post.authorId)))];
             const featuredUsers = await User.find({
                 _id: { $in: candidateIds },
-                'membership.plan': { $in: ['premium', 'extreme'] },
+                'membership.plan': { $in: ['demo-premium', 'premium', 'extreme'] },
                 'membership.status': { $in: ['active', 'trialing'] },
-                'membership.standOutEnabled': true
+                'membership.standOutEnabled': true,
+                $or: [
+                    { 'membership.plan': { $in: ['premium', 'extreme'] } },
+                    { 'membership.currentPeriodEnd': { $gt: new Date() } }
+                ]
             }).select('_id');
             const featuredIds = new Set(featuredUsers.map((user) => String(user._id)));
             posts.sort((a, b) => Number(featuredIds.has(String(b.authorId))) - Number(featuredIds.has(String(a.authorId))) || new Date(b.createdAt) - new Date(a.createdAt));

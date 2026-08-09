@@ -89,7 +89,7 @@ const EmployerSchema = new mongoose.Schema({
     default: Date.now
   },
   membership: {
-    plan: { type: String, enum: ['basic', 'premium', 'extreme'], default: 'basic' },
+    plan: { type: String, enum: ['basic', 'demo-premium', 'premium', 'extreme'], default: 'basic' },
     status: { type: String, default: 'active' },
     stripeCustomerId: { type: String, default: '', index: true },
     stripeSubscriptionId: { type: String, default: '', index: true },

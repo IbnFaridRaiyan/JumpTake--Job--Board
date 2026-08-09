@@ -51,6 +51,7 @@ Set these in Render:
 - `NODE_ENV` = `production`
 - `STRIPE_SECRET_KEY` = the Stripe secret API key (`sk_test_...` while testing)
 - `STRIPE_WEBHOOK_SECRET` = the signing secret for the Render webhook endpoint (`whsec_...`)
+- `STRIPE_DEMO_PREMIUM_PRICE_ID` = the one-time GBP 0.30 Demo Premium Stripe Price ID
 - `STRIPE_PREMIUM_PRICE_ID` = the recurring £5/month Premium Stripe Price ID
 - `STRIPE_EXTREME_PRICE_ID` = the recurring £12/month Extreme Stripe Price ID
 
@@ -58,7 +59,9 @@ Optional:
 
 - `CLIENT_URL` = only set this if you later split frontend and backend across different domains
 
-### 5. Configure Stripe subscriptions
+### 5. Configure Stripe payments
+
+Create **JumpTake Demo Premium** with a one-time GBP price of **0.30**, then copy its `price_...` ID to `STRIPE_DEMO_PREMIUM_PRICE_ID` in Render.
 
 1. In Stripe Product catalogue, create **JumpTake Premium** with a recurring GBP price of **£5 monthly**.
 2. Create **JumpTake Extreme** with a recurring GBP price of **£12 monthly**.

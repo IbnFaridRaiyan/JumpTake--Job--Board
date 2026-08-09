@@ -34,3 +34,9 @@ body[data-public-home-theme="dark"] #root .portal-modern .pricing-page .pricing-
     transform: scale(1.85) !important;
   }
 }
+
+@media (min-width: 761px) {
+  body[data-public-home-theme] #root .jt-public-home .jt-public-pricing-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}

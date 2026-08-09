@@ -6,7 +6,11 @@ const PlanCode = require('../models/PlanCode');
 const { getAccountFromRequest, normalizeMembership } = require('../utils/membership');
 
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
-const priceIds = { premium: process.env.STRIPE_PREMIUM_PRICE_ID, extreme: process.env.STRIPE_EXTREME_PRICE_ID };
+const priceIds = {
+  'demo-premium': process.env.STRIPE_DEMO_PREMIUM_PRICE_ID,
+  premium: process.env.STRIPE_PREMIUM_PRICE_ID,
+  extreme: process.env.STRIPE_EXTREME_PRICE_ID
+};
 const appUrl = () => String(process.env.CLIENT_URL || process.env.APP_URL || 'http://localhost:3000').replace(/\/$/, '');
 
 const requireStripe = () => {
@@ -43,8 +47,12 @@ exports.getMembership = async (req, res) => {
 exports.createCheckout = async (req, res) => {
   try {
     const plan = String(req.body?.plan || '');
-    if (!['premium', 'extreme'].includes(plan) || !priceIds[plan]) return res.status(400).json({ error: 'That plan is not configured.' });
+    if (!['demo-premium', 'premium', 'extreme'].includes(plan) || !priceIds[plan]) return res.status(400).json({ error: 'That plan is not configured.' });
     const { account, accountType } = await getAccountFromRequest(req);
+    const currentMembership = normalizeMembership(account);
+    if (plan === 'demo-premium' && ['premium', 'extreme'].includes(currentMembership.plan)) {
+      return res.status(400).json({ error: 'Your account already has a full paid membership.' });
+    }
     const client = requireStripe();
     let customerId = account.membership?.stripeCustomerId;
     if (!customerId) {
@@ -57,13 +65,16 @@ exports.createCheckout = async (req, res) => {
       account.membership.stripeCustomerId = customerId;
       await account.save();
     }
+    const isDemo = plan === 'demo-premium';
     const session = await client.checkout.sessions.create({
-      mode: 'subscription', customer: customerId,
+      mode: isDemo ? 'payment' : 'subscription', customer: customerId,
       line_items: [{ price: priceIds[plan], quantity: 1 }],
       allow_promotion_codes: true,
       success_url: `${appUrl()}/?billing=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appUrl()}/?billing=cancelled`,
-      subscription_data: { metadata: { plan, accountId: String(account._id), accountType } },
+      ...(isDemo
+        ? { payment_intent_data: { metadata: { plan, accountId: String(account._id), accountType } } }
+        : { subscription_data: { metadata: { plan, accountId: String(account._id), accountType } } }),
       metadata: { plan, accountId: String(account._id), accountType }
     });
     res.json({ url: session.url });
@@ -110,9 +121,25 @@ exports.handleWebhook = async (req, res) => {
   try {
     const event = requireStripe().webhooks.constructEvent(req.body, req.headers['stripe-signature'], process.env.STRIPE_WEBHOOK_SECRET);
     if (['customer.subscription.created', 'customer.subscription.updated', 'customer.subscription.deleted'].includes(event.type)) await applySubscription(event.data.object);
-    if (event.type === 'checkout.session.completed' && event.data.object.subscription) {
-      const subscription = await stripe.subscriptions.retrieve(event.data.object.subscription);
-      await applySubscription(subscription);
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object;
+      if (session.metadata?.plan === 'demo-premium' && session.payment_status === 'paid') {
+        const Model = session.metadata.accountType === 'employer' ? Employer : User;
+        const account = await Model.findById(session.metadata.accountId);
+        if (account) {
+          account.membership.plan = 'demo-premium';
+          account.membership.status = 'active';
+          account.membership.currentPeriodEnd = new Date(Date.now() + (30 * 60 * 1000));
+          account.membership.cancelAtPeriodEnd = false;
+          account.membership.standOutEnabled = true;
+          account.membership.aiUsageDay = new Date().toISOString().slice(0, 10);
+          account.membership.aiMessagesUsed = 0;
+          await account.save();
+        }
+      } else if (session.subscription) {
+        const subscription = await stripe.subscriptions.retrieve(session.subscription);
+        await applySubscription(subscription);
+      }
     }
     res.json({ received: true });
   } catch (error) { res.status(400).send(`Webhook error: ${error.message}`); }

@@ -150,11 +150,14 @@ router.get('/job-seekers', async (req, res) => {
             return res.status(403).json({ error: 'The full candidate directory is available only to employers' });
         }
         const jobSeekers = await JobSeeker.find()
-            .populate('user', 'jumptakeId membership.plan membership.status membership.standOutEnabled')
+            .populate('user', 'jumptakeId membership.plan membership.status membership.standOutEnabled membership.currentPeriodEnd')
             .sort({ createdAt: -1 });
         const serializedCandidates = jobSeekers.map((candidate) => {
             const serialized = candidate.toObject();
-            const standOut = ['premium', 'extreme'].includes(candidate.user?.membership?.plan)
+            const demoActive = candidate.user?.membership?.plan === 'demo-premium'
+                && candidate.user?.membership?.currentPeriodEnd
+                && new Date(candidate.user.membership.currentPeriodEnd) > new Date();
+            const standOut = (demoActive || ['premium', 'extreme'].includes(candidate.user?.membership?.plan))
                 && ['active', 'trialing'].includes(candidate.user?.membership?.status)
                 && candidate.user?.membership?.standOutEnabled === true;
             return {

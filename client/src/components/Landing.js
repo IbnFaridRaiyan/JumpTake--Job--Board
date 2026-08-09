@@ -1588,6 +1588,10 @@ const Landing = ({ onThemeChange }) => {
                             <span>Basic</span><h3>Free</h3><p>3 AI messages and all the essentials to get moving.</p>
                             <button type="button" onClick={() => openAuth('register')}>Start free <Icon name="arrow" /></button>
                         </article>
+                        <article className="jt-public-price-card is-demo jt-reveal">
+                            <span>Demo Premium</span><h3>£0.30<small>/30 min</small></h3><p>Try Premium AI limits and Stand Out visibility with one payment and no subscription.</p>
+                            <button type="button" onClick={() => openAuth('register')}>Try Premium <Icon name="arrow" /></button>
+                        </article>
                         <article className="jt-public-price-card is-premium jt-reveal">
                             <i>Most popular</i><span>Premium</span><h3>£5<small>/month</small></h3><p>50 AI messages daily plus Stand Out priority placement.</p>
                             <button type="button" onClick={() => openAuth('register')}>Choose Premium <Icon name="arrow" /></button>

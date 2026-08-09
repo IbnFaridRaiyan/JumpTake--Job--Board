@@ -1401,6 +1401,8 @@ const FloatingMessenger = ({
                             className="floating-message-glyph-fill"
                             d="M6.25 4.5h11.5A3.25 3.25 0 0 1 21 7.75v6.5a3.25 3.25 0 0 1-3.25 3.25h-5.2L7.2 21v-3.5h-.95A3.25 3.25 0 0 1 3 14.25v-6.5A3.25 3.25 0 0 1 6.25 4.5Z"
                         ></path>
+                        <path className="floating-message-glyph-detail" d="M7.25 9h9.5"></path>
+                        <path className="floating-message-glyph-detail" d="M7.25 13h6.5"></path>
                     </svg>
                     {unreadCount > 0 ? <span className="floating-messenger-badge">{unreadCount}</span> : null}
                 </button>

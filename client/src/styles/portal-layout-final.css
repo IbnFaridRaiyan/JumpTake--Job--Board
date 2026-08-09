@@ -119,6 +119,24 @@
   }
 
   html body #root > .app-container > .home-page > .floating-messenger:not(.is-open)
+    > .floating-messenger-trigger .floating-message-glyph-detail {
+    fill: none !important;
+    stroke-width: 1.7 !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root > .app-container > .home-page
+    > .floating-messenger:not(.is-open) > .floating-messenger-trigger .floating-message-glyph-detail,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root > .app-container > .home-page
+    > .floating-messenger:not(.is-open) > .floating-messenger-trigger .floating-message-glyph-detail {
+    stroke: #f4eadc !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root > .app-container > .home-page
+    > .floating-messenger:not(.is-open) > .floating-messenger-trigger .floating-message-glyph-detail {
+    stroke: #080808 !important;
+  }
+
+  html body #root > .app-container > .home-page > .floating-messenger:not(.is-open)
     > .floating-messenger-trigger::before,
   html body #root > .app-container > .home-page > .floating-messenger:not(.is-open)
     > .floating-messenger-trigger::after {

@@ -25,6 +25,7 @@ import {
     downloadPublicDocumentTxt
 } from '../utils/publicDocumentExport';
 import '../styles/public-home.css';
+import '../styles/public-home-dark-tools.css';
 import '../styles/public-home-light.css';
 
 const PUBLIC_HOME_THEME_KEY = 'jumptakePublicHomeTheme';

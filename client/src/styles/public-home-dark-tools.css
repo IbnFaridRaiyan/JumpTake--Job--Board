@@ -1,0 +1,137 @@
+/* Public homepage only: dark surfaces for JumpTake AI and Document Studio. */
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark {
+  --jt-dark-tool-canvas: #050606;
+  --jt-dark-tool-panel: #0a0c0c;
+  --jt-dark-tool-raised: #101313;
+  --jt-dark-tool-border: rgba(255, 255, 255, 0.14);
+  --jt-dark-tool-text: #f5f7f6;
+  --jt-dark-tool-muted: rgba(245, 247, 246, 0.68);
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark :is(
+  .jt-ai-section,
+  .jt-document-section
+) {
+  color: var(--jt-dark-tool-text) !important;
+  background: var(--jt-dark-tool-canvas) !important;
+  background-color: var(--jt-dark-tool-canvas) !important;
+  background-image: none !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark :is(
+  .jt-chat-shell,
+  .jt-chat-header,
+  .jt-chat-messages,
+  .jt-chat-form
+) {
+  color: var(--jt-dark-tool-text) !important;
+  border-color: var(--jt-dark-tool-border) !important;
+  background: var(--jt-dark-tool-panel) !important;
+  background-color: var(--jt-dark-tool-panel) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-chat-header :is(strong, span),
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-chat-form input,
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-chat-form input::placeholder {
+  color: var(--jt-dark-tool-text) !important;
+  -webkit-text-fill-color: var(--jt-dark-tool-text) !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-chat-form input {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-chat-message.is-assistant {
+  color: var(--jt-dark-tool-text) !important;
+  -webkit-text-fill-color: var(--jt-dark-tool-text) !important;
+  border: 1px solid var(--jt-dark-tool-border) !important;
+  background: var(--jt-dark-tool-raised) !important;
+  background-color: var(--jt-dark-tool-raised) !important;
+  box-shadow: none !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-chat-message.is-user {
+  color: #07110e !important;
+  -webkit-text-fill-color: #07110e !important;
+  background: #87c9b5 !important;
+  background-color: #87c9b5 !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark :is(
+  .jt-editor-shell,
+  .jt-editor-sidebar,
+  .jt-editor-main,
+  .jt-editor-toolbar,
+  .jt-editor-footer,
+  .jt-ai-editor-dialog,
+  .jt-ai-editor-dialog-header,
+  .jt-ai-editor-mode-tabs,
+  .jt-ai-editor-workspace,
+  .jt-ai-editor-workspace-toolbar,
+  .jt-ai-editor-layout,
+  .jt-ai-editor-source,
+  .jt-ai-editor-preview-shell,
+  .jt-ai-editor-dialog-footer
+) {
+  color: var(--jt-dark-tool-text) !important;
+  border-color: var(--jt-dark-tool-border) !important;
+  background: var(--jt-dark-tool-panel) !important;
+  background-color: var(--jt-dark-tool-panel) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark :is(
+  .jt-editor-main textarea,
+  .jt-ai-editor-paper,
+  .jt-ai-editor-paper textarea,
+  .jt-ai-editor-preview-scroll,
+  .jt-public-document-preview
+) {
+  color: var(--jt-dark-tool-text) !important;
+  -webkit-text-fill-color: var(--jt-dark-tool-text) !important;
+  caret-color: #87c9b5 !important;
+  border-color: var(--jt-dark-tool-border) !important;
+  background: var(--jt-dark-tool-raised) !important;
+  background-color: var(--jt-dark-tool-raised) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark :is(
+  .jt-editor-toolbar,
+  .jt-editor-footer,
+  .jt-ai-editor-workspace-toolbar,
+  .jt-ai-editor-source > header,
+  .jt-ai-editor-preview-shell > header
+) :is(strong, span, small, button, .jt-icon),
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-section-heading :is(h2, p, span) {
+  color: var(--jt-dark-tool-text) !important;
+  -webkit-text-fill-color: var(--jt-dark-tool-text) !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark :is(
+  .jt-editor-tools button,
+  .jt-ai-editor-mode-tabs button,
+  .jt-ai-editor-workspace-toolbar button,
+  .jt-ai-editor-secondary
+) {
+  color: var(--jt-dark-tool-text) !important;
+  border-color: var(--jt-dark-tool-border) !important;
+  background: var(--jt-dark-tool-raised) !important;
+  background-color: var(--jt-dark-tool-raised) !important;
+  background-image: none !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark :is(
+  .jt-editor-brand small,
+  .jt-editor-side-note span,
+  .jt-editor-footer > span,
+  .jt-ai-editor-dialog-footer > span
+) {
+  color: var(--jt-dark-tool-muted) !important;
+  -webkit-text-fill-color: var(--jt-dark-tool-muted) !important;
+}

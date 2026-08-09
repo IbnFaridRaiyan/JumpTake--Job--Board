@@ -1,5 +1,155 @@
 /* Final mobile page rhythm beneath the fixed floating portal navbar. */
 @media (max-width: 768px) {
+  /* The old bottom navigation no longer renders, but portal-dock-open remains
+     on both portal roots. Remove its invisible 72px reservation. */
+  html body #root > .app-container > .home-page.portal-dock-open {
+    --portal-dock-bottom: 0px !important;
+    --portal-dock-height: 0px !important;
+    --portal-dock-clearance: 0px !important;
+  }
+
+  html body #root > .app-container > .home-page.portal-dock-open
+    > .dashboard-container > main.main-content,
+  html body #root > .app-container > .home-page.portal-dock-open
+    > .dashboard-container > main.main-content.mobile-dashboard-section-panel,
+  html body #root > .app-container > .home-page.portal-dock-open
+    > .dashboard-container > main.main-content.mobile-dashboard-section-panel.is-open {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  html body #root > .app-container > .home-page.portal-dock-open
+    .portal-home-feed > .portal-home-feed-scroll {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* The closed launcher lives inside #root (only the open dialog portals to
+     body), so anchor this real element directly to the viewport bottom. */
+  html body #root > .app-container > .home-page > .floating-messenger:not(.is-open),
+  html body #root > .app-container > .home-page > .floating-messenger:not(.is-open)
+    > .floating-messenger-trigger {
+    position: fixed !important;
+    top: auto !important;
+    right: 0.55rem !important;
+    bottom: max(0px, env(safe-area-inset-bottom, 0px)) !important;
+    left: auto !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+
+  html body #root > .app-container > .home-page > .floating-messenger:not(.is-open) {
+    width: 2.65rem !important;
+    height: 2.65rem !important;
+    padding: 0 !important;
+    border: 0 !important;
+    outline: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+  }
+
+  html body #root > .app-container > .home-page > .floating-messenger:not(.is-open)
+    > .floating-messenger-trigger {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    display: grid !important;
+    place-items: center !important;
+    width: 2.65rem !important;
+    min-width: 2.65rem !important;
+    max-width: 2.65rem !important;
+    height: 2.65rem !important;
+    min-height: 2.65rem !important;
+    max-height: 2.65rem !important;
+    padding: 0 !important;
+    border: 0 !important;
+    outline: 0 !important;
+    border-radius: 50% !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root > .app-container > .home-page
+    > .floating-messenger:not(.is-open) > .floating-messenger-trigger,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root > .app-container > .home-page
+    > .floating-messenger:not(.is-open) > .floating-messenger-trigger {
+    border: 0 !important;
+    background: #f4eadc !important;
+    background-color: #f4eadc !important;
+    background-image: none !important;
+    color: #681421 !important;
+    -webkit-text-fill-color: #681421 !important;
+    box-shadow: 0 0.35rem 1rem rgba(74, 43, 52, 0.16) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root > .app-container > .home-page
+    > .floating-messenger:not(.is-open) > .floating-messenger-trigger {
+    border: 0 !important;
+    background: rgba(0, 0, 0, 0.68) !important;
+    background-color: rgba(0, 0, 0, 0.68) !important;
+    background-image: none !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+    box-shadow: 0 0.35rem 1rem rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root > .app-container > .home-page
+    > .floating-messenger:not(.is-open) > .floating-messenger-trigger :is(svg, path),
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root > .app-container > .home-page
+    > .floating-messenger:not(.is-open) > .floating-messenger-trigger :is(svg, path) {
+    color: #681421 !important;
+    stroke: #681421 !important;
+    filter: none !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root > .app-container > .home-page
+    > .floating-messenger:not(.is-open) > .floating-messenger-trigger :is(svg, path) {
+    color: #fff !important;
+    stroke: #fff !important;
+    filter: none !important;
+  }
+
+  html body #root > .app-container > .home-page > .floating-messenger:not(.is-open)
+    > .floating-messenger-trigger .floating-message-glyph-fill {
+    fill: currentColor !important;
+    stroke: none !important;
+  }
+
+  html body #root > .app-container > .home-page > .floating-messenger:not(.is-open)
+    > .floating-messenger-trigger::before,
+  html body #root > .app-container > .home-page > .floating-messenger:not(.is-open)
+    > .floating-messenger-trigger::after {
+    display: none !important;
+    content: none !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  html body #root > .app-container > .home-page > .floating-messenger:not(.is-open)::before,
+  html body #root > .app-container > .home-page > .floating-messenger:not(.is-open)::after {
+    display: none !important;
+    content: none !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  html body #root > .app-container > .home-page > .floating-messenger:not(.is-open)
+    > .floating-messenger-trigger > svg {
+    padding: 0 !important;
+    border: 0 !important;
+    outline: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+  }
+
   /* Tailor Profile and My Feed do not render the promotional introduction
      used by the other feeds. A real flow spacer keeps their first content
      below the fixed navbar in light mode and scrolls away with the page. */

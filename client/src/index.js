@@ -7,9 +7,9 @@ import './styles/portal-solid-surfaces.css';
 import './styles/portal-top-cleanup.css';
 import './styles/portal-visual-polish.css';
 import './styles/portal-open-canvas.css';
-import './styles/floating-messenger-modern.css';
 import './styles/portal-final-overrides.css';
 import './styles/portal-feed-spacing.css';
+import './styles/floating-messenger-redesign.css';
 
 ReactDOM.render(
   <React.StrictMode>

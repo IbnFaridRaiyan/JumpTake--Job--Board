@@ -1,0 +1,755 @@
+/* Floating messenger redesign — single final skin for candidate and employer portals. */
+
+html body > .floating-messenger {
+  --msg-accent: #9f4058;
+  --msg-accent-strong: #681421;
+  --msg-accent-soft: rgba(159, 64, 88, 0.14);
+  --msg-backdrop: rgba(19, 14, 17, 0.56);
+  --msg-panel: #eee7dd;
+  --msg-sidebar: #e4dbcf;
+  --msg-surface: #f8f3ec;
+  --msg-surface-raised: #fffdf9;
+  --msg-surface-hover: #ffffff;
+  --msg-border: rgba(74, 43, 52, 0.14);
+  --msg-border-strong: rgba(104, 20, 33, 0.28);
+  --msg-text: #24191d;
+  --msg-muted: #74666b;
+  --msg-shadow: 0 28px 80px rgba(46, 25, 31, 0.28);
+  --msg-small-shadow: 0 8px 22px rgba(50, 27, 34, 0.08);
+  z-index: 21000 !important;
+  pointer-events: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger {
+  --msg-accent: #d06a82;
+  --msg-accent-strong: #a43d57;
+  --msg-accent-soft: rgba(208, 106, 130, 0.14);
+  --msg-backdrop: rgba(0, 0, 0, 0.68);
+  --msg-panel: #050506;
+  --msg-sidebar: #09090b;
+  --msg-surface: #0e0e11;
+  --msg-surface-raised: #141417;
+  --msg-surface-hover: #19191d;
+  --msg-border: rgba(255, 255, 255, 0.11);
+  --msg-border-strong: rgba(208, 106, 130, 0.36);
+  --msg-text: #f7f7f8;
+  --msg-muted: #aaa7ae;
+  --msg-shadow: 0 30px 90px rgba(0, 0, 0, 0.72);
+  --msg-small-shadow: 0 10px 26px rgba(0, 0, 0, 0.28);
+}
+
+html body > .floating-messenger:not(.is-open) {
+  position: fixed !important;
+  top: auto !important;
+  right: 1rem !important;
+  bottom: calc(0.45rem + env(safe-area-inset-bottom, 0px)) !important;
+  left: auto !important;
+  width: 3.25rem !important;
+  height: 3.25rem !important;
+  pointer-events: none !important;
+}
+
+html body > .floating-messenger:not(.is-open) > .floating-messenger-trigger {
+  position: fixed !important;
+  right: 1rem !important;
+  bottom: calc(0.45rem + env(safe-area-inset-bottom, 0px)) !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 3.25rem !important;
+  min-width: 3.25rem !important;
+  max-width: 3.25rem !important;
+  height: 3.25rem !important;
+  min-height: 3.25rem !important;
+  max-height: 3.25rem !important;
+  padding: 0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.32) !important;
+  border-radius: 999px !important;
+  background: linear-gradient(145deg, #a94d65, #681421) !important;
+  color: #fff !important;
+  box-shadow: 0 14px 34px rgba(104, 20, 33, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+  filter: none !important;
+  pointer-events: auto !important;
+  transition: transform 180ms ease, box-shadow 180ms ease !important;
+}
+
+html body > .floating-messenger:not(.is-open) > .floating-messenger-trigger:is(:hover, :focus-visible) {
+  transform: translateY(-2px) scale(1.035) !important;
+  box-shadow: 0 18px 38px rgba(104, 20, 33, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.36) !important;
+}
+
+html body > .floating-messenger:not(.is-open) > .floating-messenger-trigger svg {
+  color: #fff !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  filter: none !important;
+}
+
+html body > .floating-messenger.is-open {
+  position: fixed !important;
+  inset: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  padding: clamp(0.75rem, 2.5vw, 1.75rem) !important;
+  isolation: isolate !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+html body > .floating-messenger.is-open > .floating-messenger-backdrop {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  display: block !important;
+  background: var(--msg-backdrop) !important;
+  backdrop-filter: blur(14px) saturate(0.82) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(0.82) !important;
+  pointer-events: auto !important;
+}
+
+html body > .floating-messenger.is-open > .floating-messenger-panel {
+  position: relative !important;
+  inset: auto !important;
+  z-index: 1 !important;
+  width: min(68rem, calc(100vw - 2rem)) !important;
+  max-width: 68rem !important;
+  height: min(44rem, calc(100dvh - 2rem)) !important;
+  max-height: 44rem !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid var(--msg-border) !important;
+  border-radius: 1.5rem !important;
+  background: var(--msg-panel) !important;
+  background-image: none !important;
+  box-shadow: var(--msg-shadow) !important;
+  color: var(--msg-text) !important;
+  pointer-events: auto !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-shell {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: minmax(18rem, 22rem) minmax(0, 1fr) !important;
+  gap: 0.65rem !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: 0.65rem !important;
+  background: var(--msg-panel) !important;
+  color: var(--msg-text) !important;
+}
+
+html body > .floating-messenger.is-open :is(.floating-messenger-contacts, .floating-messenger-chat) {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid var(--msg-border) !important;
+  border-radius: 1.05rem !important;
+  background: var(--msg-surface) !important;
+  color: var(--msg-text) !important;
+  box-shadow: none !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-contacts {
+  display: flex !important;
+  flex-direction: column !important;
+  border-right: 1px solid var(--msg-border) !important;
+  background: var(--msg-sidebar) !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-header {
+  display: flex !important;
+  align-items: center !important;
+  min-height: 4rem !important;
+  margin: 0 !important;
+  padding: 0.85rem 1rem !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--msg-border) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--msg-text) !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-title-pill {
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--msg-text) !important;
+  -webkit-text-fill-color: var(--msg-text) !important;
+  font-family: "Lexend", "Segoe UI", sans-serif !important;
+  font-size: 1.15rem !important;
+  font-weight: 850 !important;
+  letter-spacing: -0.025em !important;
+  animation: none !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-close {
+  display: grid !important;
+  place-items: center !important;
+  color: var(--msg-muted) !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+html body > .floating-messenger.is-open .message-workspace-nav.is-compact {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-auto-flow: column !important;
+  grid-auto-columns: minmax(4.65rem, 1fr) !important;
+  gap: 0.4rem !important;
+  min-height: 4.55rem !important;
+  max-height: 4.55rem !important;
+  margin: 0 !important;
+  padding: 0.48rem !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--msg-border) !important;
+  border-radius: 0 !important;
+  background: var(--msg-sidebar) !important;
+  scrollbar-width: thin !important;
+}
+
+html body > .floating-messenger.is-open .message-workspace-tab,
+html body > .floating-messenger.is-open .message-workspace-tab:is(:hover, :focus-visible) {
+  box-sizing: border-box !important;
+  display: grid !important;
+  place-items: center !important;
+  align-content: center !important;
+  gap: 0.2rem !important;
+  height: 3.55rem !important;
+  min-height: 3.55rem !important;
+  padding: 0.35rem 0.28rem !important;
+  border: 1px solid var(--msg-border) !important;
+  border-radius: 0.75rem !important;
+  background: var(--msg-surface-raised) !important;
+  color: var(--msg-muted) !important;
+  -webkit-text-fill-color: var(--msg-muted) !important;
+  box-shadow: none !important;
+}
+
+html body > .floating-messenger.is-open .message-workspace-tab.is-active,
+html body > .floating-messenger.is-open .message-workspace-tab.is-active:is(:hover, :focus-visible) {
+  border-color: var(--msg-border-strong) !important;
+  background: var(--msg-accent-soft) !important;
+  color: var(--msg-accent) !important;
+  -webkit-text-fill-color: var(--msg-accent) !important;
+  box-shadow: inset 0 0 0 1px var(--msg-accent-soft) !important;
+}
+
+html body > .floating-messenger.is-open .message-workspace-tab :is(svg, path) {
+  color: currentColor !important;
+  fill: currentColor !important;
+}
+
+html body > .floating-messenger.is-open .message-workspace-tab > span {
+  color: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+  font-size: 0.61rem !important;
+  font-weight: 780 !important;
+}
+
+html body > .floating-messenger.is-open .message-workspace-tab > small {
+  top: 0.22rem !important;
+  right: 0.25rem !important;
+  background: var(--msg-accent-strong) !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-contact-body {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  margin: 0.55rem !important;
+  overflow: hidden !important;
+  border: 1px solid var(--msg-border) !important;
+  border-radius: 0.85rem !important;
+  background: var(--msg-surface) !important;
+  box-shadow: none !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-contact-list {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  gap: 0.42rem !important;
+  min-height: 0 !important;
+  padding: 0.5rem !important;
+  overflow-y: auto !important;
+  background: transparent !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-contact {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: 2.55rem minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 0.62rem !important;
+  min-height: 4rem !important;
+  max-height: none !important;
+  padding: 0.58rem 0.62rem !important;
+  overflow: visible !important;
+  border: 1px solid var(--msg-border) !important;
+  border-radius: 0.8rem !important;
+  background: var(--msg-surface-raised) !important;
+  color: var(--msg-text) !important;
+  box-shadow: none !important;
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-contact:is(:hover, :focus-visible) {
+  transform: translateY(-1px) !important;
+  border-color: var(--msg-border-strong) !important;
+  background: var(--msg-surface-hover) !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-contact.is-active {
+  border-color: var(--msg-border-strong) !important;
+  background: var(--msg-accent-soft) !important;
+  box-shadow: inset 3px 0 0 var(--msg-accent) !important;
+}
+
+html body > .floating-messenger.is-open :is(.floating-messenger-contact-avatar, .floating-messenger-chat-avatar) {
+  width: 2.55rem !important;
+  height: 2.55rem !important;
+  border: 1px solid var(--msg-border-strong) !important;
+  background: var(--msg-surface-raised) !important;
+  color: var(--msg-accent) !important;
+}
+
+html body > .floating-messenger.is-open :is(.floating-messenger-contact-copy, .floating-messenger-chat-copy) {
+  min-width: 0 !important;
+}
+
+html body > .floating-messenger.is-open :is(.floating-messenger-contact-copy, .floating-messenger-chat-copy) strong {
+  color: var(--msg-text) !important;
+  -webkit-text-fill-color: var(--msg-text) !important;
+  font-size: 0.82rem !important;
+  font-weight: 800 !important;
+}
+
+html body > .floating-messenger.is-open :is(.floating-messenger-contact-copy, .floating-messenger-chat-copy) span,
+html body > .floating-messenger.is-open .floating-messenger-contact time {
+  color: var(--msg-muted) !important;
+  -webkit-text-fill-color: var(--msg-muted) !important;
+  font-size: 0.65rem !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-chat {
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) auto !important;
+  background: var(--msg-surface) !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-chat-bar {
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  min-height: 4.35rem !important;
+  padding: 0.78rem 1rem !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--msg-border) !important;
+  background: var(--msg-surface-raised) !important;
+  color: var(--msg-text) !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-chat-head {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.7rem !important;
+  min-width: 0 !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-messages {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.72rem !important;
+  min-height: 0 !important;
+  padding: 1rem !important;
+  overflow-y: auto !important;
+  background: var(--msg-surface) !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-message {
+  align-self: flex-start !important;
+  max-width: min(76%, 36rem) !important;
+  padding: 0.72rem 0.85rem !important;
+  border: 1px solid var(--msg-border) !important;
+  border-radius: 1rem 1rem 1rem 0.3rem !important;
+  background: var(--msg-surface-raised) !important;
+  color: var(--msg-text) !important;
+  box-shadow: var(--msg-small-shadow) !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-message.is-own {
+  align-self: flex-end !important;
+  border-color: transparent !important;
+  border-radius: 1rem 1rem 0.3rem 1rem !important;
+  background: linear-gradient(135deg, var(--msg-accent-strong), var(--msg-accent)) !important;
+  color: #fff !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-message :is(.floating-messenger-message-sender, .floating-messenger-message-body, .floating-messenger-message-body p, .floating-messenger-message-body li, .floating-messenger-message-body span, .floating-messenger-message-body strong, .floating-messenger-message-body em, .floating-messenger-message-meta span) {
+  color: var(--msg-text) !important;
+  -webkit-text-fill-color: var(--msg-text) !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-message.is-own :is(.floating-messenger-message-sender, .floating-messenger-message-body, .floating-messenger-message-body p, .floating-messenger-message-body li, .floating-messenger-message-body span, .floating-messenger-message-body strong, .floating-messenger-message-body em, .floating-messenger-message-meta span) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-input {
+  padding: 0.72rem !important;
+  border: 0 !important;
+  border-top: 1px solid var(--msg-border) !important;
+  background: var(--msg-surface-raised) !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-input :is(.rich-message-editor-messagebox, .messageBox) {
+  border: 1px solid var(--msg-border) !important;
+  border-radius: 0.9rem !important;
+  background: var(--msg-surface) !important;
+  box-shadow: none !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-input :is(.messageInput, .rich-message-input) {
+  color: var(--msg-text) !important;
+  -webkit-text-fill-color: var(--msg-text) !important;
+  background: transparent !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-input :is(.messageInput, .rich-message-input)::placeholder {
+  color: var(--msg-muted) !important;
+  -webkit-text-fill-color: var(--msg-muted) !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-input .sendButton {
+  border: 0 !important;
+  border-radius: 0.72rem !important;
+  background: var(--msg-accent-strong) !important;
+  color: #fff !important;
+}
+
+html body > .floating-messenger.is-open :is(.floating-messenger-empty, .message-workspace-empty-state) {
+  color: var(--msg-muted) !important;
+  background: transparent !important;
+}
+
+/* AI chat becomes part of the same workspace, without a nested legacy card. */
+html body > .floating-messenger.is-open .floating-messenger-assistant-chat,
+html body > .floating-messenger.is-open .floating-messenger-assistant-chat :is(.portal-ai-chat-card, .public-ai-chat-card) {
+  min-height: 0 !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: var(--msg-surface) !important;
+  color: var(--msg-text) !important;
+  box-shadow: none !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-assistant-chat :is(.public-ai-chat-header, .portal-ai-chat-header-row) {
+  padding: 0.62rem 0.85rem !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--msg-border) !important;
+  background: var(--msg-surface-raised) !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-assistant-chat .public-ai-chat-title {
+  color: var(--msg-text) !important;
+  -webkit-text-fill-color: var(--msg-text) !important;
+  font-weight: 850 !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-assistant-chat .public-ai-chat-messages {
+  min-height: 0 !important;
+  padding: 0.9rem !important;
+  overflow-y: auto !important;
+  background: var(--msg-surface) !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-assistant-chat .public-ai-chat-reply {
+  padding: 0.72rem !important;
+  border-top: 1px solid var(--msg-border) !important;
+  background: var(--msg-surface-raised) !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-assistant-chat .public-ai-reply-field {
+  border: 1px solid var(--msg-border) !important;
+  border-radius: 0.9rem !important;
+  background: var(--msg-surface) !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-assistant-chat .public-ai-reply-field textarea {
+  color: var(--msg-text) !important;
+  -webkit-text-fill-color: var(--msg-text) !important;
+  background: transparent !important;
+}
+
+html body > .floating-messenger.is-open :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back),
+html body > .floating-messenger.is-open :is(.floating-messenger-mobile-back, .floating-messenger-list-bottom-back):is(:hover, :focus-visible, :active) {
+  display: grid !important;
+  place-items: center !important;
+  width: 2.25rem !important;
+  min-width: 2.25rem !important;
+  height: 2.25rem !important;
+  min-height: 2.25rem !important;
+  padding: 0 !important;
+  border: 1px solid var(--msg-border) !important;
+  border-radius: 999px !important;
+  background: var(--msg-surface-raised) !important;
+  color: var(--msg-text) !important;
+  -webkit-text-fill-color: var(--msg-text) !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 768px) {
+  html body > .floating-messenger.is-open {
+    padding: 0.45rem !important;
+  }
+
+  html body > .floating-messenger.is-open > .floating-messenger-panel,
+  html body > .floating-messenger.is-open > .floating-messenger-panel.is-mobile,
+  html body > .floating-messenger.is-open > .floating-messenger-panel.is-mobile-thread-list,
+  html body > .floating-messenger.is-open > .floating-messenger-panel.is-mobile-chat-open {
+    width: calc(100vw - 0.9rem) !important;
+    max-width: 34rem !important;
+    height: calc(100dvh - 0.9rem) !important;
+    max-height: calc(100dvh - 0.9rem) !important;
+    border-radius: 1.2rem !important;
+  }
+
+  html body > .floating-messenger.is-open .floating-messenger-shell {
+    display: block !important;
+    padding: 0.45rem !important;
+  }
+
+  html body > .floating-messenger.is-open .floating-messenger-contacts,
+  html body > .floating-messenger.is-open .floating-messenger-chat {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0.9rem !important;
+  }
+
+  html body > .floating-messenger.is-open .floating-messenger-panel.is-mobile-thread-list .floating-messenger-chat,
+  html body > .floating-messenger.is-open .floating-messenger-panel.is-mobile-chat-open .floating-messenger-contacts {
+    display: none !important;
+  }
+
+  html body > .floating-messenger.is-open .message-workspace-nav.is-compact {
+    grid-auto-columns: minmax(4.75rem, 1fr) !important;
+  }
+
+  html body > .floating-messenger.is-open .floating-messenger-contact-body {
+    margin: 0.45rem !important;
+  }
+
+  html body > .floating-messenger.is-open .floating-messenger-chat-bar {
+    min-height: 4rem !important;
+    padding: 0.65rem 0.72rem !important;
+  }
+
+  html body > .floating-messenger.is-open .floating-messenger-message {
+    max-width: 86% !important;
+  }
+
+  html body > .floating-messenger.is-open .floating-messenger-list-bottom-back {
+    margin: 0.15rem auto 0.4rem !important;
+  }
+}
+
+/* Final conversation identity header: avatar, name, status, then actions. */
+html body > .floating-messenger.is-open .floating-messenger-chat-bar > .floating-messenger-chat-head {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: 2.55rem minmax(0, 1fr) !important;
+  align-items: center !important;
+  justify-content: start !important;
+  justify-self: stretch !important;
+  gap: 0.65rem !important;
+  width: auto !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-chat-bar .message-profile-avatar-button,
+html body > .floating-messenger.is-open .floating-messenger-chat-bar .floating-messenger-chat-avatar {
+  box-sizing: border-box !important;
+  display: grid !important;
+  place-items: center !important;
+  align-self: center !important;
+  width: 2.55rem !important;
+  min-width: 2.55rem !important;
+  max-width: 2.55rem !important;
+  height: 2.55rem !important;
+  min-height: 2.55rem !important;
+  max-height: 2.55rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transform: none !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-chat-bar .floating-messenger-chat-copy {
+  display: grid !important;
+  align-content: center !important;
+  justify-items: start !important;
+  gap: 0.14rem !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transform: none !important;
+  text-align: left !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-chat-bar .floating-messenger-chat-copy > strong {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  color: var(--msg-text) !important;
+  -webkit-text-fill-color: var(--msg-text) !important;
+  font-size: 0.88rem !important;
+  font-weight: 850 !important;
+  line-height: 1.15 !important;
+  text-align: left !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  opacity: 1 !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-chat-bar .floating-messenger-chat-copy > span {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  color: var(--msg-muted) !important;
+  -webkit-text-fill-color: var(--msg-muted) !important;
+  font-size: 0.64rem !important;
+  font-weight: 620 !important;
+  line-height: 1.2 !important;
+  text-align: left !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  opacity: 1 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-chat-bar .floating-messenger-chat-copy > strong {
+  color: #24191d !important;
+  -webkit-text-fill-color: #24191d !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-chat-bar .floating-messenger-chat-copy > span {
+  color: #74666b !important;
+  -webkit-text-fill-color: #74666b !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open .floating-messenger-chat-bar .floating-messenger-chat-copy > strong {
+  color: #f7f7f8 !important;
+  -webkit-text-fill-color: #f7f7f8 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open .floating-messenger-chat-bar .floating-messenger-chat-copy > span {
+  color: #aaa7ae !important;
+  -webkit-text-fill-color: #aaa7ae !important;
+}
+
+/* Default person avatars remain legible in both conversation list and header. */
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .chat-avatar-default {
+  border-color: rgba(104, 20, 33, 0.24) !important;
+  background: #fffdf9 !important;
+  color: #161216 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open .chat-avatar-default {
+  border-color: rgba(255, 255, 255, 0.28) !important;
+  background: #111114 !important;
+  color: #fff !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .chat-avatar-default .chat-avatar-icon {
+  width: 68% !important;
+  height: 68% !important;
+  color: #161216 !important;
+  fill: currentColor !important;
+  transform: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open .chat-avatar-default .chat-avatar-icon {
+  width: 68% !important;
+  height: 68% !important;
+  color: #fff !important;
+  fill: currentColor !important;
+  transform: none !important;
+}
+
+@media (max-width: 768px) {
+  html body > .floating-messenger.is-open .floating-messenger-chat-bar {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    gap: 0.55rem !important;
+  }
+
+  /* Swipeable category rail without a visible browser scrollbar. */
+  html body > .floating-messenger.is-open .message-workspace-nav.is-compact {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  html body > .floating-messenger.is-open .message-workspace-nav.is-compact::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+  }
+
+  /* Bottom list back action is a bare icon, never a pill. */
+  html body > .floating-messenger.is-open .floating-messenger-list-bottom-back,
+  html body > .floating-messenger.is-open .floating-messenger-list-bottom-back:is(:hover, :focus, :focus-visible, :active) {
+    width: 2rem !important;
+    min-width: 2rem !important;
+    max-width: 2rem !important;
+    height: 2rem !important;
+    min-height: 2rem !important;
+    max-height: 2rem !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    outline: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+    color: var(--msg-text) !important;
+    -webkit-text-fill-color: var(--msg-text) !important;
+  }
+}
+
+/* Light conversation header back control must stay visibly black. */
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-chat-actions .floating-messenger-mobile-back,
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-chat-actions .floating-messenger-mobile-back:is(:hover, :focus, :focus-visible, :active) {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+}
+
+/* The outer conversation header already identifies JumpTake AI. */
+html body > .floating-messenger.is-open .floating-messenger-assistant-chat .portal-ai-chat-header-row .public-ai-chat-brand {
+  display: none !important;
+}
+
+html body > .floating-messenger.is-open .floating-messenger-assistant-chat .portal-ai-chat-header-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+}

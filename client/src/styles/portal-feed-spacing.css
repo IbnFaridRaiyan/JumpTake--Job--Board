@@ -674,3 +674,25 @@ html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open :i
     overflow-x: clip !important;
   }
 }
+
+/* FINAL: light-mobile spacing for only the five requested feed pages. */
+@media (max-width: 768px) {
+  html[data-theme="light"] body[data-theme="light"] #root > .app-container > .home-page > .dashboard-container > main.main-content > .portal-section-transition-shell.is-active-portal-section:is(
+    [data-section="work-news"],
+    [data-section="talent-stories"],
+    [data-section="job-posts"],
+    [data-section="tailor-profile"],
+    [data-section="my-feed"]
+  ),
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root > .app-container > .home-page > .dashboard-container > main.main-content > .portal-section-transition-shell.is-active-portal-section:is(
+    [data-section="work-news"],
+    [data-section="talent-stories"],
+    [data-section="job-posts"],
+    [data-section="tailor-profile"],
+    [data-section="my-feed"]
+  ) {
+    position: relative !important;
+    top: auto !important;
+    margin-top: 0.65rem !important;
+  }
+}

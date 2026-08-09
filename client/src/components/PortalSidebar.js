@@ -50,6 +50,7 @@ const PortalSidebar = ({
     onLogout,
     appMode = 'dark',
     onAppModeChange,
+    onSearch,
     onSettings
 }) => {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -121,12 +122,13 @@ const PortalSidebar = ({
                         type="button"
                         className="portal-public-search-toggle"
                         onClick={() => {
+                            setMenuOpen(false);
+                            setSearchOpen(false);
                             setPageQuery('');
-                            setSearchOpen(true);
-                            setMenuOpen(true);
+                            onSearch?.();
                         }}
-                        aria-label="Search portal pages"
-                        title="Search"
+                        aria-label="Open JumpTake AI chat"
+                        title="JumpTake AI"
                     >
                         <PortalIcon name="search" />
                     </button>

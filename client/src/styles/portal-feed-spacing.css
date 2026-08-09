@@ -44,6 +44,205 @@ html body #root #portal-public-header.portal-public-header::after {
   }
 }
 
+/* The hamburger navigation is part of the navbar, not a modal popup. */
+html body #root #portal-public-header .portal-public-menu-backdrop,
+html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-public-menu-backdrop,
+html[data-theme="light"] body[data-theme="light"] #root #portal-public-header .portal-public-menu-backdrop {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+}
+
+html body #root #portal-public-header.is-menu-open,
+html body #root #portal-public-header.is-menu-open .portal-public-header-top,
+html body #root #portal-public-header.is-menu-open .portal-public-brand,
+html body #root #portal-public-header.is-menu-open .portal-public-utilities {
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+/* Keep the closed messenger launcher attached to the mobile viewport. */
+@media (max-width: 768px) {
+  html body > .floating-messenger:not(.is-open) {
+    position: fixed !important;
+    top: auto !important;
+    right: 0.8rem !important;
+    bottom: calc(0.25rem + env(safe-area-inset-bottom, 0px)) !important;
+    left: auto !important;
+    width: 3rem !important;
+    height: 3rem !important;
+    margin: 0 !important;
+    z-index: 8990 !important;
+    pointer-events: none !important;
+  }
+
+  html body > .floating-messenger:not(.is-open) > .floating-messenger-trigger {
+    position: fixed !important;
+    top: auto !important;
+    right: 0.8rem !important;
+    bottom: calc(0.25rem + env(safe-area-inset-bottom, 0px)) !important;
+    left: auto !important;
+    width: 3rem !important;
+    min-width: 3rem !important;
+    max-width: 3rem !important;
+    height: 3rem !important;
+    min-height: 3rem !important;
+    max-height: 3rem !important;
+    margin: 0 !important;
+    pointer-events: auto !important;
+  }
+}
+
+/* Dark resume/document editor toolbar: white tools and readable selectors. */
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  .resume-playground-editor-shell,
+  .resume-playground-editor-mobile-overlay
+) :is(
+  .resume-playground-toolbar-shell,
+  .resume-playground-toolbar,
+  .resume-playground-toolbar-row,
+  .resume-playground-toolbar-group
+) {
+  color: #fff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  .resume-playground-editor-shell,
+  .resume-playground-editor-mobile-overlay
+) .resume-playground-toolbar :is(
+  button.resume-playground-icon-button,
+  button.resume-playground-tool-button
+),
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  .resume-playground-editor-shell,
+  .resume-playground-editor-mobile-overlay
+) .resume-playground-toolbar :is(
+  button.resume-playground-icon-button,
+  button.resume-playground-tool-button
+):is(:hover, :focus, :focus-visible, :active) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  .resume-playground-editor-shell,
+  .resume-playground-editor-mobile-overlay
+) .resume-playground-toolbar :is(button, button > span, svg, path) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  .resume-playground-editor-shell,
+  .resume-playground-editor-mobile-overlay
+) .resume-playground-toolbar select.resume-playground-select {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  background-color: #0b0b0b !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color-scheme: dark !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] :is(
+  .resume-playground-editor-shell,
+  .resume-playground-editor-mobile-overlay
+) .resume-playground-toolbar select.resume-playground-select option {
+  color: #fff !important;
+  background: #0b0b0b !important;
+}
+
+/* Compact job-post search shared by the candidate and employer portals. */
+html body #root .home-page .portal-candidate-job-list > .portal-job-search-field {
+  box-sizing: border-box !important;
+  height: 2.2rem !important;
+  min-height: 2.2rem !important;
+  max-height: 2.2rem !important;
+  padding: 0 0.7rem !important;
+  gap: 0.52rem !important;
+  border-radius: 0.68rem !important;
+}
+
+html body #root .home-page .portal-candidate-job-list > .portal-job-search-field input {
+  box-sizing: border-box !important;
+  height: 2.05rem !important;
+  min-height: 2.05rem !important;
+  max-height: 2.05rem !important;
+  line-height: 2.05rem !important;
+}
+
+html body #root .home-page .portal-candidate-job-list > .portal-job-search-field svg {
+  width: 0.92rem !important;
+  height: 0.92rem !important;
+}
+
+/* Keep hamburger notification indicators attached to their button content. */
+html body #root #portal-public-header .portal-public-menu .portal-public-nav-link .nav-notification-dot {
+  position: static !important;
+  inset: auto !important;
+  flex: 0 0 0.45rem !important;
+  width: 0.45rem !important;
+  min-width: 0.45rem !important;
+  max-width: 0.45rem !important;
+  height: 0.45rem !important;
+  min-height: 0.45rem !important;
+  max-height: 0.45rem !important;
+  margin: 0 0 0 -0.15rem !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.14) !important;
+}
+
+/* JumpTake AI titles are black only on the light messenger surface. */
+html[data-theme="light"] body[data-theme="light"] :is(
+  .floating-messenger-assistant-chat .public-ai-chat-title,
+  .floating-messenger-chat:has(.floating-messenger-assistant-chat) .floating-messenger-chat-copy strong
+) {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+}
+
+/* Dark settings: active tabs are indicated by color, never a filled box. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .settings-container,
+  .employer-settings-container
+) .tab-button.active,
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .settings-container,
+  .employer-settings-container
+) .tab-button.active:is(:hover, :focus, :focus-visible, :active) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: #d8798e !important;
+  -webkit-text-fill-color: #d8798e !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .settings-container,
+  .employer-settings-container
+) .tab-button.active .tab-icon {
+  opacity: 1 !important;
+  filter: brightness(0) saturate(100%) invert(57%) sepia(23%) saturate(1175%) hue-rotate(296deg) brightness(97%) contrast(88%) !important;
+}
+
+/* Light assistant chat uses a deeper warm off-white instead of bright white. */
+html[data-theme="light"] body[data-theme="light"] :is(
+  .floating-messenger-chat:has(.floating-messenger-assistant-chat),
+  .floating-messenger-assistant-chat,
+  .floating-messenger-assistant-chat .public-ai-chat-card,
+  .floating-messenger-assistant-chat .portal-ai-chat-card,
+  .floating-messenger-assistant-chat .public-ai-chat-messages
+) {
+  background: #e7dfd3 !important;
+  background-color: #e7dfd3 !important;
+  background-image: none !important;
+}
+
 /* Non-feed pages start below the fixed navbar. Feed pages remain untouched. */
 html body #root > .app-container > .home-page > .dashboard-container > main.main-content > .portal-section-transition-shell.is-active-portal-section:not(:is(
   [data-section="home"],
@@ -354,4 +553,63 @@ html[data-theme="dark"] body[data-theme="dark"] .floating-messenger .message-wor
   background-color: #681421 !important;
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
+}
+
+/* Dark messenger navigation arrows remain visible on every black surface. */
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open :is(
+  .floating-messenger-mobile-back,
+  .floating-messenger-list-bottom-back
+),
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open :is(
+  .floating-messenger-mobile-back,
+  .floating-messenger-list-bottom-back
+):is(:hover, :focus, :focus-visible, :active) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open :is(
+  .floating-messenger-mobile-back,
+  .floating-messenger-list-bottom-back
+) :is(svg, path) {
+  color: #fff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+/*
+ * Mobile browser chrome collapses only for genuine document scrolling. Keep the
+ * portal wrappers out of the scroll chain so Safari/Chrome receive that scroll,
+ * while the fixed floating navigation remains independent of the document.
+ */
+@media (max-width: 768px) {
+  html:has(#portal-public-header),
+  html:has(#portal-public-header) body {
+    height: auto !important;
+    min-height: 100% !important;
+    max-height: none !important;
+    overflow-x: clip !important;
+    overflow-y: visible !important;
+    overscroll-behavior-y: auto !important;
+  }
+
+  html body:has(#portal-public-header) #root,
+  html body:has(#portal-public-header) #root > .app-container,
+  html body:has(#portal-public-header) #root > .app-container > .home-page,
+  html body:has(#portal-public-header) #root .home-page > .dashboard-container,
+  html body:has(#portal-public-header) #root .home-page main.main-content {
+    position: relative !important;
+    height: auto !important;
+    min-height: 100svh !important;
+    max-height: none !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    overscroll-behavior-y: auto !important;
+    touch-action: pan-y !important;
+  }
+
+  html body:has(#portal-public-header) #root > .app-container {
+    overflow-x: clip !important;
+  }
 }

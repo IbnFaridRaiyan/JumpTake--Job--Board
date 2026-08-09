@@ -835,6 +835,9 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                         onLogout={handleLogout}
                         appMode={appMode}
                         onAppModeChange={onAppModeChange}
+                        onSearch={() => window.dispatchEvent(new CustomEvent('jumptake-open-employer-messenger', {
+                            detail: { assistant: true }
+                        }))}
                         onSettings={() => openSection('settings')}
                         mobileSectionOpen={mobileSectionVisible}
                     />

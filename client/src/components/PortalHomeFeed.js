@@ -2786,6 +2786,11 @@ const PortalHomeFeed = ({
         const overlayMarkup = (
             <div
                 className={`portal-comment-row-backdrop ${isClosing ? 'is-closing' : ''}`}
+                ref={(node) => {
+                    if (node) {
+                        node.style.setProperty('z-index', '2147483647', 'important');
+                    }
+                }}
                 role="presentation"
                 onPointerDownCapture={absorbBackdropPress}
                 onTouchStartCapture={absorbBackdropPress}
@@ -6942,6 +6947,11 @@ const PortalHomeFeed = ({
         const modalMarkup = (
             <div
                 className={`portal-profile-detail-backdrop ${closingProfileDetailModal ? 'is-closing' : ''}`}
+                ref={(node) => {
+                    if (node) {
+                        node.style.setProperty('z-index', '2147483000', 'important');
+                    }
+                }}
                 role="presentation"
                 onPointerDownCapture={absorbBackdropPress}
                 onTouchStartCapture={absorbBackdropPress}

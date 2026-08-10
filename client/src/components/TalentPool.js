@@ -1874,6 +1874,11 @@ const TalentPool = ({
                 {isCommentOpen && typeof document !== 'undefined' && createPortal(
                     <div
                         className="portal-comment-modal-backdrop candidate-comment-modal-backdrop"
+                        ref={(node) => {
+                            if (node) {
+                                node.style.setProperty('z-index', '2147483647', 'important');
+                            }
+                        }}
                         role="presentation"
                         onClick={(event) => {
                             if (event.target === event.currentTarget) {
@@ -1973,6 +1978,11 @@ const TalentPool = ({
         const modalMarkup = (
             <div
                 className={`portal-profile-detail-backdrop ${closingProfileDetailModal ? 'is-closing' : ''}`}
+                ref={(node) => {
+                    if (node) {
+                        node.style.setProperty('z-index', '2147483000', 'important');
+                    }
+                }}
                 role="presentation"
                 onClick={(event) => {
                     if (event.target === event.currentTarget) {

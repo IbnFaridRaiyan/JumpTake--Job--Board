@@ -69,7 +69,7 @@ const PortalSidebar = ({
         closeTimerRef.current = window.setTimeout(() => {
             setMenuOpen(false);
             setMenuClosing(false);
-        }, 220);
+        }, 360);
     }, [menuOpen, menuClosing]);
 
     useEffect(() => {
@@ -191,7 +191,7 @@ const PortalSidebar = ({
                     >
                         <PortalIcon name="search" />
                     </button>
-                    <button type="button" onClick={() => { setMenuOpen(false); onSettings?.(); }} aria-label="Settings" title="Settings">
+                    <button type="button" onClick={() => { setMenuOpen(false); resetPageScroll(); onSettings?.(); }} aria-label="Settings" title="Settings">
                         <PortalIcon name="settings" />
                     </button>
                     <button

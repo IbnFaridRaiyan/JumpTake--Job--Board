@@ -230,6 +230,7 @@ const FloatingMessenger = ({
 }) => {
     const isEmployer = mode === 'employer';
     const [open, setOpen] = useState(false);
+    const [closing, setClosing] = useState(false);
     const [threads, setThreads] = useState([]);
     const [selectedThreadId, setSelectedThreadId] = useState('');
     const [pendingContact, setPendingContact] = useState(null);
@@ -255,6 +256,7 @@ const FloatingMessenger = ({
     const selectedThreadIdRef = useRef(selectedThreadId);
     const isMobileViewRef = useRef(isMobileView);
     const menuCloseTimerRef = useRef(null);
+    const messengerCloseTimerRef = useRef(null);
     const triggerRef = useRef(null);
     const openEventName = isEmployer ? 'jumptake-open-employer-messenger' : 'jumptake-open-candidate-messenger';
 
@@ -603,6 +605,8 @@ const FloatingMessenger = ({
                 : null;
             openAssistantOnNextLoadRef.current = shouldOpenAssistant;
             assistantDirectOpenRef.current = shouldOpenAssistant;
+            window.clearTimeout(messengerCloseTimerRef.current);
+            setClosing(false);
             setPendingContact(nextContact);
             setOpen(true);
             if (nextContact) {
@@ -622,6 +626,8 @@ const FloatingMessenger = ({
         return () => window.removeEventListener(openEventName, handleOpenEvent);
     }, [isMobileView, onSeen, openEventName]);
 
+    useEffect(() => () => window.clearTimeout(messengerCloseTimerRef.current), []);
+
     useEffect(() => {
         if (!message || /^write a message/i.test(message)) {
             return undefined;
@@ -635,6 +641,8 @@ const FloatingMessenger = ({
     }, [message]);
 
     const handleOpen = () => {
+        window.clearTimeout(messengerCloseTimerRef.current);
+        setClosing(false);
         assistantDirectOpenRef.current = false;
         setOpen(true);
         if (isMobileView) {
@@ -644,15 +652,21 @@ const FloatingMessenger = ({
     };
 
     const handleClose = useCallback(() => {
-        setOpen(false);
-        setSelectedThreadId('');
-        setPendingContact(null);
-        setReplyHtml('');
-        setMessage('');
-        setError('');
-        setAssistantMenuOpen(false);
-        assistantDirectOpenRef.current = false;
-    }, []);
+        if (closing) return;
+        setClosing(true);
+        window.clearTimeout(messengerCloseTimerRef.current);
+        messengerCloseTimerRef.current = window.setTimeout(() => {
+            setOpen(false);
+            setClosing(false);
+            setSelectedThreadId('');
+            setPendingContact(null);
+            setReplyHtml('');
+            setMessage('');
+            setError('');
+            setAssistantMenuOpen(false);
+            assistantDirectOpenRef.current = false;
+        }, 440);
+    }, [closing]);
 
     useEffect(() => {
         if (!open || typeof document === 'undefined') {
@@ -1094,7 +1108,7 @@ const FloatingMessenger = ({
     };
 
     const messengerMarkup = (
-        <div className={`floating-messenger ${open ? 'is-open' : ''} is-trigger-${triggerTone}`}>
+        <div className={`floating-messenger ${open ? 'is-open' : ''} ${closing ? 'is-closing' : ''} is-trigger-${triggerTone}`}>
             {open && (
                 <>
                     <div className="floating-messenger-backdrop" onClick={handleClose} aria-hidden="true" />

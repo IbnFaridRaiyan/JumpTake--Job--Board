@@ -67444,7 +67444,7 @@ body[data-theme="light"] #root .portal-home-feed .tailor-photo-reset,
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 0.34rem !important;
+  gap: 0.08rem !important;
   width: 100% !important;
   margin: -0.46rem 0 0.72rem !important;
 }
@@ -90754,4 +90754,119 @@ html[data-theme="light"] body[data-theme="light"] .portal-job-modal {
   html body #root .home-page .portal-public-job-footer {
     align-items: flex-end !important;
   }
+}
+
+/* Dark portal post cards: inactive action icons stay crisp white. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .portal-home-feed,
+  .portal-profile-detail-posts,
+  .tailor-profile-section,
+  .portal-post-detail-modal
+) .portal-post-action-row :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle
+):not(.active):not(.has-reaction),
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
+  .portal-home-feed,
+  .portal-profile-detail-posts,
+  .tailor-profile-section,
+  .portal-post-detail-modal
+) .portal-post-action-row :is(
+  .portal-reaction-trigger,
+  .portal-comment-toggle,
+  .portal-share-toggle,
+  .portal-post-delete-toggle
+):not(.active):not(.has-reaction) :is(svg, path, span, img) {
+  color: #ffffff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-public-job-social-actions button:not(.active),
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .portal-public-job-social-actions button:not(.active) :is(svg, path, span) {
+  color: #ffffff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Messenger closes with the same calm modal motion used when it opens. */
+html body .floating-messenger.is-open.is-closing {
+  pointer-events: none !important;
+}
+
+html body .floating-messenger.is-open.is-closing > .floating-messenger-backdrop {
+  animation: jumptake-messenger-backdrop-out 440ms ease both !important;
+}
+
+html body .floating-messenger.is-open.is-closing > .floating-messenger-panel {
+  animation: jumptake-messenger-panel-out 440ms cubic-bezier(0.4, 0, 0.2, 1) both !important;
+}
+
+@keyframes jumptake-messenger-backdrop-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes jumptake-messenger-panel-out {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(1rem) scale(0.975); }
+}
+
+/* Dark messenger empty states: every notice below the illustration is white. */
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open :is(
+  .floating-messenger-empty,
+  .message-workspace-empty-state
+),
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open :is(
+  .floating-messenger-empty,
+  .message-workspace-empty-state
+) :is(h1, h2, h3, h4, p, span, strong) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Dark messenger: settings and new-message workspace use true dark surfaces. */
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open :is(
+  .message-settings-panel,
+  .message-setting-row,
+  .new-message-contact
+) {
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #ffffff !important;
+  background: #080b10 !important;
+  background-color: #080b10 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open .message-setting-row {
+  background: #111722 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open :is(
+  .message-settings-panel,
+  .new-message-finder
+) :is(h1, h2, h3, h4, p, span, strong, small, label, .message-workspace-empty-copy) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open .new-message-id-form input,
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open .new-message-id-form input::placeholder {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background: #111722 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open .new-message-contact-avatar.chat-avatar-default {
+  color: #ffffff !important;
+  background: #000000 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open .message-setting-row > i {
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  background: #293241 !important;
 }

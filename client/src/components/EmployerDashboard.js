@@ -209,12 +209,31 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
             }
         };
 
-        const initialSection = 'talent-stories';
+        const hashValue = window.location.hash.replace(/^#/, '');
+        const [hashPortal, hashSection] = hashValue.split(':');
+        const savedSection = sessionStorage.getItem(EMPLOYER_SECTION_STORAGE_KEY);
+        const initialSection = hashPortal === 'employer' && EMPLOYER_SECTION_IDS.has(hashSection)
+            ? normalizeEmployerSection(hashSection)
+            : EMPLOYER_SECTION_IDS.has(savedSection)
+                ? normalizeEmployerSection(savedSection)
+                : 'talent-stories';
+
+        setTitleAnimationReplayKey((key) => key + 1);
+        setOpenedSections((currentSections) => (
+            currentSections.includes(initialSection)
+                ? currentSections
+                : [...currentSections, initialSection]
+        ));
+        setActiveSection(initialSection);
         sessionStorage.setItem(EMPLOYER_SECTION_STORAGE_KEY, initialSection);
         sessionStorage.removeItem('jumptakeHomeFeedRequest');
         sessionStorage.removeItem('jumptakeEmployerJobSearch');
         sessionStorage.removeItem('jumptakeEmployerTalentSearch');
-        window.history.replaceState(null, '', `#employer:${initialSection}`);
+        const initialHash = `#employer:${initialSection}`;
+        if (window.location.hash !== initialHash) {
+            // Preserve billing query parameters so the pricing screen can report a Stripe return.
+            window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}${initialHash}`);
+        }
         setMobileSectionVisible(isMobileViewport());
         window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
 

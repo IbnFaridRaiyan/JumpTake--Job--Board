@@ -39,6 +39,22 @@ const Pricing = ({ mode = 'candidate' }) => {
 
   useEffect(() => { loadMembership(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Stripe can return to an already-mounted portal page through browser history.
+  // Never retain a previous redirect's loading state and leave membership actions disabled.
+  useEffect(() => {
+    const clearBusyState = () => setBusy('');
+    const clearWhenVisible = () => {
+      if (document.visibilityState === 'visible') clearBusyState();
+    };
+
+    window.addEventListener('pageshow', clearBusyState);
+    document.addEventListener('visibilitychange', clearWhenVisible);
+    return () => {
+      window.removeEventListener('pageshow', clearBusyState);
+      document.removeEventListener('visibilitychange', clearWhenVisible);
+    };
+  }, []);
+
   useEffect(() => {
     if (membership?.plan !== 'demo-premium' || !membership.currentPeriodEnd) return undefined;
     let refreshedAfterExpiry = false;
@@ -86,7 +102,8 @@ const Pricing = ({ mode = 'candidate' }) => {
       const data = await readResponse(response);
       if (!response.ok) throw new Error(data.error);
       window.location.assign(data.url);
-    } catch (error) { setNotice(error.message || 'Checkout could not be opened.'); setBusy(''); }
+    } catch (error) { setNotice(error.message || 'Checkout could not be opened.'); }
+    finally { setBusy(''); }
   };
 
   const manageBilling = async () => {
@@ -96,7 +113,8 @@ const Pricing = ({ mode = 'candidate' }) => {
       const data = await readResponse(response);
       if (!response.ok) throw new Error(data.error);
       window.location.assign(data.url);
-    } catch (error) { setNotice(error.message || 'Billing management could not be opened.'); setBusy(''); }
+    } catch (error) { setNotice(error.message || 'Billing management could not be opened.'); }
+    finally { setBusy(''); }
   };
 
   const redeem = async (event) => {

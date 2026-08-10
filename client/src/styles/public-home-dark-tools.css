@@ -123,6 +123,24 @@ body[data-public-home-theme="dark"] #root .jt-public-home.is-dark :is(
   box-shadow: none !important;
 }
 
+/* The formatted document preview supplies its own ink colours.  Override
+   those descendants as well when its paper is rendered on the dark canvas. */
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-public-document-preview :is(
+  h1,
+  h2,
+  p,
+  span,
+  .jt-public-document-bullet-marker
+) {
+  color: var(--jt-dark-tool-text) !important;
+  -webkit-text-fill-color: var(--jt-dark-tool-text) !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-public-document-preview .jt-public-document-header,
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-public-document-preview .jt-public-document-body h2 {
+  border-color: rgba(245, 247, 246, 0.42) !important;
+}
+
 body[data-public-home-theme="dark"] #root .jt-public-home.is-dark :is(
   .jt-editor-toolbar,
   .jt-editor-footer,

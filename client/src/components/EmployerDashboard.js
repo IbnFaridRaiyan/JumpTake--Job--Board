@@ -599,6 +599,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                     switchSection={switchSection}
                     onRefresh={refreshJobs}
                     initialTab={tabBySection[section]}
+                    portalSection={section}
                     hideTabs
                 />;
             }

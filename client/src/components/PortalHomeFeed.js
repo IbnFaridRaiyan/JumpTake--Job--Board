@@ -1156,6 +1156,7 @@ const PortalHomeFeed = ({
     onRefresh,
     onTabChange,
     initialTab,
+    portalSection = '',
     hideTabs = false
 }) => {
     const safeJobs = useMemo(
@@ -1204,6 +1205,7 @@ const PortalHomeFeed = ({
     const [composerTagPickerOpen, setComposerTagPickerOpen] = useState(false);
     const [createStoryModalOpen, setCreateStoryModalOpen] = useState(false);
     const [createStoryAudienceOpen, setCreateStoryAudienceOpen] = useState(false);
+    const [publishingPost, setPublishingPost] = useState(false);
     const [commentDrafts, setCommentDrafts] = useState({});
     const [commentRotationTick, setCommentRotationTick] = useState(0);
     const [expandedPostBodies, setExpandedPostBodies] = useState({});
@@ -1290,6 +1292,7 @@ const PortalHomeFeed = ({
     const jobModalCloseTimerRef = useRef(null);
     const jobReviewCloseTimerRef = useRef(null);
     const createStoryCloseTimerRef = useRef(null);
+    const publishingPostRef = useRef(false);
     const postDetailCloseTimerRef = useRef(null);
     const profileDetailCloseTimerRef = useRef(null);
     const optionPointerOpenRef = useRef({ id: '', source: '', at: 0 });
@@ -3153,7 +3156,7 @@ const PortalHomeFeed = ({
 
     const handleCreatePost = async () => {
         const body = composerText.trim();
-        if (!body && !composerMedia) {
+        if (publishingPostRef.current || publishingPost || (!body && !composerMedia)) {
             return;
         }
 
@@ -3172,6 +3175,8 @@ const PortalHomeFeed = ({
             taggedUsers: composerTaggedUsers
         });
 
+        publishingPostRef.current = true;
+        setPublishingPost(true);
         try {
             const response = await fetch(apiUrl('/api/feed-posts'), {
                 method: 'POST',
@@ -3194,6 +3199,9 @@ const PortalHomeFeed = ({
             setComposerAudience('everyone');
             setComposerTaggedUsers([]);
             setComposerTagPickerOpen(false);
+            if (typeof window !== 'undefined') {
+                sessionStorage.removeItem('jumptakeFeedAiDraft');
+            }
             closeCreateStoryModal();
             setFeedError('');
             const destinationTab = isCompanyPost ? 'work-news' : 'talent-stories';
@@ -3213,6 +3221,9 @@ const PortalHomeFeed = ({
         } catch (error) {
             console.error('Could not publish live feed post:', error);
             setFeedError(error.message || 'Could not publish to the live MongoDB feed. Please try again.');
+        } finally {
+            publishingPostRef.current = false;
+            setPublishingPost(false);
         }
     };
 
@@ -3737,7 +3748,17 @@ const PortalHomeFeed = ({
             feedDraftTypingTimerRef.current = window.setTimeout(typeNextChunk, 260);
         };
 
+        const canHandleFeedDraft = !portalSection
+            || (mode === 'candidate' && portalSection === 'talent-stories')
+            || (mode === 'employer' && portalSection === 'create-post');
+
         const openFeedDraft = (draft = {}) => {
+            if (!canHandleFeedDraft) {
+                return;
+            }
+            if (typeof window !== 'undefined') {
+                sessionStorage.removeItem('jumptakeFeedAiDraft');
+            }
             if (draft.mode && draft.mode !== mode) {
                 return;
             }
@@ -3784,14 +3805,16 @@ const PortalHomeFeed = ({
                 sessionStorage.removeItem('jumptakeHomeFeedRequest');
             }
 
-            try {
-                const storedDraft = JSON.parse(sessionStorage.getItem('jumptakeFeedAiDraft') || 'null');
-                if (storedDraft) {
+            if (canHandleFeedDraft) {
+                try {
+                    const storedDraft = JSON.parse(sessionStorage.getItem('jumptakeFeedAiDraft') || 'null');
+                    if (storedDraft) {
+                        sessionStorage.removeItem('jumptakeFeedAiDraft');
+                        openFeedDraft(storedDraft);
+                    }
+                } catch (error) {
                     sessionStorage.removeItem('jumptakeFeedAiDraft');
-                    openFeedDraft(storedDraft);
                 }
-            } catch (error) {
-                sessionStorage.removeItem('jumptakeFeedAiDraft');
             }
         };
 
@@ -3811,7 +3834,7 @@ const PortalHomeFeed = ({
             window.removeEventListener('jumptake-home-feed-request', handleHomeFeedRequest);
             window.removeEventListener('jumptake-feed-ai-draft', handleFeedDraft);
         };
-    }, [defaultTab, mode, safeJobs]);
+    }, [defaultTab, mode, portalSection, safeJobs]);
 
     useEffect(() => {
         if (typeof window === 'undefined') {
@@ -5637,8 +5660,9 @@ const PortalHomeFeed = ({
                     type="button"
                     className={`settings-button primary portal-publish-button ${inModal ? 'portal-create-story-publish-button' : ''}`}
                     onClick={handleCreatePost}
+                    disabled={publishingPost}
                 >
-                    Publish
+                    {publishingPost ? 'Publishing...' : 'Publish'}
                 </button>
             </div>
         );

@@ -947,6 +947,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     switchSection={switchSection}
                     onRefresh={refreshData}
                     initialTab={tabBySection[section]}
+                    portalSection={section}
                     hideTabs
                 />;
             }

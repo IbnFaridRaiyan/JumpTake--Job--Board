@@ -788,7 +788,7 @@ const FloatingMessenger = ({
             setError('This conversation does not contain a candidate profile to tag.');
             return;
         }
-        storeAndOpenSection('job-feed', 'jumptakeFeedAiDraft', {
+        storeAndOpenSection('talent-stories', 'jumptakeFeedAiDraft', {
             mode: 'candidate', tab: 'create-story', openComposer: true, text: '', taggedUsers: [tag]
         }, 'jumptake-feed-ai-draft');
         setOpenThreadMenuId('');
@@ -958,9 +958,6 @@ const FloatingMessenger = ({
 
         if (eventName) {
             window.dispatchEvent(new CustomEvent(eventName, { detail: payload }));
-            window.setTimeout(() => {
-                window.dispatchEvent(new CustomEvent(eventName, { detail: payload }));
-            }, 180);
         }
     };
 
@@ -988,7 +985,7 @@ const FloatingMessenger = ({
         if (actionName.startsWith('open-section:')) {
             const section = actionName.split(':')[1];
             if (section === 'create-story' && !isEmployer) {
-                storeAndOpenSection('job-feed', 'jumptakeFeedAiDraft', {
+                storeAndOpenSection('talent-stories', 'jumptakeFeedAiDraft', {
                     mode: 'candidate',
                     tab: 'talent-stories',
                     openComposer: true,
@@ -1065,7 +1062,7 @@ const FloatingMessenger = ({
         }
 
         if (actionName === 'candidate-create-story' && !isEmployer) {
-            storeAndOpenSection('job-feed', 'jumptakeFeedAiDraft', {
+            storeAndOpenSection('talent-stories', 'jumptakeFeedAiDraft', {
                 mode: 'candidate',
                 tab: 'talent-stories',
                 openComposer: true,
@@ -1076,7 +1073,7 @@ const FloatingMessenger = ({
         }
 
         if (actionName === 'employer-create-post' && isEmployer) {
-            storeAndOpenSection('home-feed', 'jumptakeFeedAiDraft', {
+            storeAndOpenSection('create-post', 'jumptakeFeedAiDraft', {
                 mode: 'employer',
                 tab: 'create-post',
                 text: draftText

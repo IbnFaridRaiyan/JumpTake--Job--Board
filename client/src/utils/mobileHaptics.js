@@ -22,6 +22,15 @@ export const triggerMobileHaptic = (pattern = 10) => {
 export const installMobileInteractionFeedback = () => {
   if (typeof document === 'undefined') return () => {};
 
+  const visualViewport = window.visualViewport;
+  const syncMobileViewport = () => {
+    if (!visualViewport) return;
+    const visibleHeight = Math.round(visualViewport.height || window.innerHeight);
+    const keyboardOpen = window.innerHeight - visibleHeight > 120;
+    document.documentElement.style.setProperty('--jt-mobile-visible-height', `${visibleHeight}px`);
+    document.body.classList.toggle('jt-mobile-keyboard-open', keyboardOpen);
+  };
+
   const handleClick = (event) => {
     const target = event.target?.closest?.(INTERACTIVE_SELECTOR);
     if (!target || target.disabled || target.getAttribute('aria-disabled') === 'true') return;
@@ -35,5 +44,15 @@ export const installMobileInteractionFeedback = () => {
   };
 
   document.addEventListener('click', handleClick, true);
-  return () => document.removeEventListener('click', handleClick, true);
+  syncMobileViewport();
+  visualViewport?.addEventListener('resize', syncMobileViewport);
+  visualViewport?.addEventListener('scroll', syncMobileViewport);
+
+  return () => {
+    document.removeEventListener('click', handleClick, true);
+    visualViewport?.removeEventListener('resize', syncMobileViewport);
+    visualViewport?.removeEventListener('scroll', syncMobileViewport);
+    document.documentElement.style.removeProperty('--jt-mobile-visible-height');
+    document.body.classList.remove('jt-mobile-keyboard-open');
+  };
 };

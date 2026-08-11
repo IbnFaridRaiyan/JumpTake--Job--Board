@@ -65,11 +65,15 @@ const PortalSidebar = ({
     const closePortalMenu = useCallback(() => {
         if (!menuOpen || menuClosing) return;
         setMenuClosing(true);
+        // The menu can animate away while the canvas returns to focus immediately.
+        // Keeping this class until the timeout leaves the page blur visible too long.
+        document.documentElement.classList.remove('portal-menu-scroll-locked');
+        document.body.classList.remove('portal-menu-scroll-locked');
         window.clearTimeout(closeTimerRef.current);
         closeTimerRef.current = window.setTimeout(() => {
             setMenuOpen(false);
             setMenuClosing(false);
-        }, 360);
+        }, 180);
     }, [menuOpen, menuClosing]);
 
     useEffect(() => {

@@ -152,6 +152,36 @@ html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .ta
   }
 }
 
+/* Keep open chat panes inside the keyboard-safe mobile viewport. */
+@media (max-width: 768px) {
+  html body > .floating-messenger.is-open,
+  html body > .floating-messenger.is-open > .floating-messenger-panel,
+  html body > .floating-messenger.is-open > .floating-messenger-panel.is-mobile,
+  html body > .floating-messenger.is-open > .floating-messenger-panel.is-mobile-thread-list,
+  html body > .floating-messenger.is-open > .floating-messenger-panel.is-mobile-chat-open {
+    max-height: var(--jt-mobile-visible-height, 100dvh) !important;
+  }
+
+  html body > .floating-messenger.is-open {
+    height: var(--jt-mobile-visible-height, 100dvh) !important;
+  }
+
+  html body > .floating-messenger.is-open > .floating-messenger-panel,
+  html body > .floating-messenger.is-open > .floating-messenger-panel.is-mobile,
+  html body > .floating-messenger.is-open > .floating-messenger-panel.is-mobile-thread-list,
+  html body > .floating-messenger.is-open > .floating-messenger-panel.is-mobile-chat-open {
+    height: calc(var(--jt-mobile-visible-height, 100dvh) - 0.9rem) !important;
+  }
+
+  html body #root .home-page .portal-home-feed,
+  html body #root .home-page .portal-home-feed-scroll {
+    min-height: 0 !important;
+    overscroll-behavior-y: contain !important;
+    touch-action: pan-y !important;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 /* Dark bookmark empty states must not inherit the shared light icon tile. */
 html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(
   .bookmarks-hub-container,

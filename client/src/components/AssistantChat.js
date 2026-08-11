@@ -221,14 +221,24 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
                 throw new Error(data.error || 'JumpTake assistant is unavailable.');
             }
             setAssistantMessages((messages) => [...messages, { role: 'assistant', text: data.answer, time: formatAssistantTime() }]);
-            if (data.action && String(data.answer || '').trim().toLowerCase() !== 'error connecting') {
-                onAction?.(data.action, { answer: data.answer, question, context: resolvedContext });
+            if (String(data.answer || '').trim().toLowerCase() !== 'error connecting') {
+                onAction?.(data.action || '', { answer: data.answer, question, context: resolvedContext });
             }
         } catch (error) {
             setAssistantMessages((messages) => [...messages, { role: 'assistant', text: error.message, time: formatAssistantTime() }]);
         } finally {
             setAssistantLoading(false);
         }
+    };
+
+    const keepAssistantReplyInView = (event) => {
+        if (typeof window === 'undefined' || !window.matchMedia('(max-width: 768px)').matches) {
+            return;
+        }
+        const replyField = event.currentTarget;
+        window.requestAnimationFrame(() => {
+            replyField?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        });
     };
 
     return (
@@ -289,6 +299,7 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
                             rows={1}
                             enterKeyHint="enter"
                             placeholder="Ask JumpTake AI"
+                            onFocus={keepAssistantReplyInView}
                         />
                     </div>
                     <button type="submit" className="public-ai-send-button" disabled={assistantLoading || !assistantInput.trim()} aria-label="Send to JumpTake AI">

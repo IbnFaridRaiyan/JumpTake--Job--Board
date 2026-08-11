@@ -3184,6 +3184,11 @@ const PortalHomeFeed = ({
             }
 
             updatePosts(key, (posts) => [savedPost, ...posts]);
+            if (feedDraftTypingTimerRef.current) {
+                window.clearTimeout(feedDraftTypingTimerRef.current);
+                feedDraftTypingTimerRef.current = null;
+            }
+            feedDraftTypingTokenRef.current += 1;
             setComposerText('');
             setComposerMedia(null);
             setComposerAudience('everyone');
@@ -3191,7 +3196,20 @@ const PortalHomeFeed = ({
             setComposerTagPickerOpen(false);
             closeCreateStoryModal();
             setFeedError('');
-            setActiveTab(isCompanyPost ? 'my-company-posts' : 'my-feed');
+            const destinationTab = isCompanyPost ? 'work-news' : 'talent-stories';
+            // This component can be rendered inside a route-specific shell
+            // (for example, the Work News shell). Route through the parent so
+            // a candidate Talent Story never replaces that shell's content.
+            if (typeof switchSection === 'function') {
+                switchSection(destinationTab);
+            } else {
+                setActiveTab(destinationTab);
+            }
+            window.requestAnimationFrame(() => {
+                if (feedScrollerRef.current) {
+                    feedScrollerRef.current.scrollTop = 0;
+                }
+            });
         } catch (error) {
             console.error('Could not publish live feed post:', error);
             setFeedError(error.message || 'Could not publish to the live MongoDB feed. Please try again.');

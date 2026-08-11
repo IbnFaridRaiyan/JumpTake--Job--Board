@@ -149,12 +149,17 @@ const detectLocalAssistantAction = (message = '', context = {}) => {
     const activeSection = normalizeSearchText(context?.activeSection || '');
     const hasActionVerb = /\b(open|go to|show|start|create|make|write|draft|generate|compose|prepare)\b/.test(normalized);
     const wantsResumeDraft = portalMode !== 'employer'
-        && /\b(create|make|write|draft|generate|prepare)\b.{0,40}\b(resume|cv)\b|\b(resume|cv)\b.{0,32}\b(create|make|write|draft|generate|prepare)\b/.test(normalized);
+        && /\b(create|make|build|write|draft|generate|compose|prepare)\b.{0,40}\b(res+um[eé]?s?|cv)\b|\b(res+um[eé]?s?|cv)\b.{0,32}\b(create|make|build|write|draft|generate|compose|prepare)\b/.test(normalized);
     const wantsDocumentDraft = portalMode !== 'employer'
-        && /\b(create|make|write|draft|generate|prepare)\b.{0,40}\b(document|letter|memo|policy)\b|\b(document|letter|memo|policy)\b.{0,32}\b(create|make|write|draft|generate|prepare)\b/.test(normalized);
+        && /\b(create|make|build|write|draft|generate|compose|prepare)\b.{0,40}\b(document|documents|doc|cover letter|letter|memo|policy)\b|\b(document|documents|doc|cover letter|letter|memo|policy)\b.{0,32}\b(create|make|build|write|draft|generate|compose|prepare)\b/.test(normalized);
     const wantsStoryComposer = /\b(talent story|story|stories|talent post|feed post|post composer|create story|write story)\b/.test(normalized)
         && hasActionVerb
         && portalMode !== 'employer';
+    const isCandidateStoryWorkspace = portalMode !== 'employer'
+        && /\b(talent stor|tailor profile|my feed|job feed)\b/.test(activeSection);
+    const wantsContextualStoryComposer = isCandidateStoryWorkspace
+        && hasActionVerb
+        && /\b(post|story|share|update)\b/.test(normalized);
     const wantsEmployerPost = /\b(company post|work news|announcement|feed post|post composer|create post|write post)\b/.test(normalized)
         && hasActionVerb
         && portalMode === 'employer';
@@ -167,7 +172,7 @@ const detectLocalAssistantAction = (message = '', context = {}) => {
         return 'candidate-create-document';
     }
 
-    if (wantsStoryComposer || (portalMode !== 'employer' && activeSection === 'job feed' && /\b(write|draft|generate|compose)\b.*\bpost\b/.test(normalized))) {
+    if (wantsStoryComposer || wantsContextualStoryComposer || (portalMode !== 'employer' && activeSection === 'job feed' && /\b(write|draft|generate|compose)\b.*\bpost\b/.test(normalized))) {
         return 'candidate-create-story';
     }
 

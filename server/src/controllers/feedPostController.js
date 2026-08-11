@@ -44,6 +44,18 @@ const sanitizePostPayload = (body = {}) => {
         throw error;
     }
 
+    if (authorType === 'candidate' && type !== 'talent-story') {
+        const error = new Error('Candidate posts can only be published as Talent Stories');
+        error.status = 400;
+        throw error;
+    }
+
+    if (authorType === 'employer' && type !== 'work-news') {
+        const error = new Error('Employer posts can only be published as Work News');
+        error.status = 400;
+        throw error;
+    }
+
     return {
         type,
         body: String(body.body || '').trim().slice(0, 5000),
@@ -77,6 +89,7 @@ const getFeedPosts = async (req, res) => {
                 return res.status(400).json({ error: 'Unknown feed post type' });
             }
             query.type = req.query.type;
+            query.authorType = req.query.type === 'talent-story' ? 'candidate' : 'employer';
         }
 
         const posts = await FeedPost.find(query).sort({ createdAt: -1 }).limit(200);

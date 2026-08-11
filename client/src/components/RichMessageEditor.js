@@ -114,6 +114,16 @@ const RichMessageEditor = ({
         }
     };
 
+    const keepEditorInLocalViewport = () => {
+        syncToolbarState();
+        if (typeof window === 'undefined' || !window.matchMedia('(max-width: 768px)').matches) {
+            return;
+        }
+        window.requestAnimationFrame(() => {
+            editorRef.current?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        });
+    };
+
     return (
         <div className={`rich-message-editor ${messageBox ? 'rich-message-editor-messagebox' : ''}`}>
             {showToolbar && (
@@ -174,7 +184,7 @@ const RichMessageEditor = ({
                         aria-label={placeholder}
                         data-placeholder={placeholder}
                         onInput={() => onChange(editorRef.current?.innerHTML || '')}
-                        onFocus={syncToolbarState}
+                        onFocus={keepEditorInLocalViewport}
                         onKeyUp={syncToolbarState}
                         onMouseUp={syncToolbarState}
                         suppressContentEditableWarning
@@ -200,7 +210,7 @@ const RichMessageEditor = ({
                     aria-label={placeholder}
                     data-placeholder={placeholder}
                     onInput={() => onChange(editorRef.current?.innerHTML || '')}
-                    onFocus={syncToolbarState}
+                    onFocus={keepEditorInLocalViewport}
                     onKeyUp={syncToolbarState}
                     onMouseUp={syncToolbarState}
                     suppressContentEditableWarning

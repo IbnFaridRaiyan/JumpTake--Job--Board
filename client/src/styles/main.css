@@ -90870,3 +90870,41 @@ html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open .m
   border-color: rgba(255, 255, 255, 0.25) !important;
   background: #293241 !important;
 }
+
+/* Keep the new-message add control as a plain plus, without a pill or circle. */
+html body :is(.messenger-inbox, .floating-messenger) .new-message-id-toggle,
+html body :is(.messenger-inbox, .floating-messenger) .new-message-id-toggle:is(:hover, :focus, :focus-visible, :active) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #681421 !important;
+}
+
+html[data-theme="dark"] body :is(.messenger-inbox, .floating-messenger) .new-message-id-toggle,
+html[data-theme="dark"] body :is(.messenger-inbox, .floating-messenger) .new-message-id-toggle:is(:hover, :focus, :focus-visible, :active) {
+  color: #ffffff !important;
+}
+
+/* Candidate AI post composer: a larger, independently scrollable workspace. */
+.portal-create-story-backdrop {
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+}
+
+.portal-create-story-modal {
+  width: min(94vw, 46rem) !important;
+  max-height: 90dvh !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y !important;
+}
+
+.portal-create-story-modal .portal-post-composer textarea {
+  min-height: min(18rem, 42dvh) !important;
+  max-height: 48dvh !important;
+  overflow-y: auto !important;
+  resize: vertical !important;
+}

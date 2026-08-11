@@ -505,11 +505,12 @@ const inferAction = (message, context = {}) => {
     || /\b(create|make|open|start|set ?up|setup|get)\b.{0,24}\b(account|profile)\b/.test(normalized);
   const asksLogin = /\b(log ?in|login|sign ?in)\b/.test(normalized);
   const asksJobs = /\b(job feed|jobs feed|browse jobs|open jobs|show jobs|job posts|find jobs)\b/.test(normalized);
-  const asksResume = /\b(make|create|build|generate|write|draft)\b.{0,36}\b(resume|cv)\b/.test(normalized)
-    || /\b(resume|cv)\b.{0,24}\b(make|create|build|generate|write|draft)\b/.test(normalized);
+  const asksResume = /\b(make|create|build|generate|write|draft|compose|prepare)\b.{0,36}\b(res+um[eé]?s?|cv)\b/.test(normalized)
+    || /\b(res+um[eé]?s?|cv)\b.{0,24}\b(make|create|build|generate|write|draft|compose|prepare)\b/.test(normalized);
   const asksResumeFormat = /\b(format|style|design|align|fix|polish|make)\b.{0,44}\b(resume|cv)\b/.test(normalized)
     || (currentSection === 'resume-playground' && /\b(format|style|design|align|fix|polish|a4|template)\b/.test(normalized));
-  const asksDocument = /\b(make|create|build|generate|write|draft)\b.{0,36}\b(document|letter|offer letter|policy|memo)\b/.test(normalized);
+  const asksDocument = /\b(make|create|build|generate|write|draft|compose|prepare)\b.{0,36}\b(document|documents|doc|cover letter|offer letter|letter|policy|memo)\b/.test(normalized)
+    || /\b(document|documents|doc|cover letter|offer letter|letter|policy|memo)\b.{0,28}\b(make|create|build|generate|write|draft|compose|prepare)\b/.test(normalized);
   const asksDocumentFormat = /\b(format|style|design|align|fix|polish|make)\b.{0,44}\b(document|letter|memo|policy)\b/.test(normalized)
     || (['create-document', 'resume-playground'].includes(currentSection) && /\b(format|style|design|align|fix|polish|a4|template)\b/.test(normalized) && /\b(document|letter|memo|policy)\b/.test(normalized));
   const asksApply = /\b(apply|application)\b/.test(normalized) && /\b(job|role|position|posting)\b/.test(normalized);
@@ -518,6 +519,10 @@ const inferAction = (message, context = {}) => {
       /\b(create|make|write|draft|generate|compose|prepare)\b.{0,44}\b(talent story|story|stories|talent post|feed post|post composer|social post)\b/.test(normalized)
       || /\b(talent story|story|stories|talent post|feed post|post composer|social post)\b.{0,44}\b(create|make|write|draft|generate|compose|prepare)\b/.test(normalized)
     );
+  const asksContextualStory = portalMode !== 'employer'
+    && /\b(talent stor|tailor profile|my feed|job feed)\b/.test(currentSection)
+    && actionVerbPattern.test(normalized)
+    && /\b(post|story|share|update)\b/.test(normalized);
   const asksEmployerPost = actionVerbPattern.test(normalized)
     && (
       /\b(create|make|write|draft|generate|compose|prepare)\b.{0,44}\b(company post|work news|feed post|post|announcement)\b/.test(normalized)
@@ -533,7 +538,7 @@ const inferAction = (message, context = {}) => {
   if (asksResume) return 'candidate-create-resume';
   if (asksApply) return 'candidate-apply-job';
   if ((asksEmployerPost || asksStory) && portalMode === 'employer') return 'employer-create-post';
-  if (asksStory) return 'candidate-create-story';
+  if (asksStory || asksContextualStory) return 'candidate-create-story';
   if (asksAssessment) return 'employer-create-assessment';
   if (asksDocument) return portalMode === 'employer' ? 'employer-create-document' : 'candidate-create-document';
   if (sectionAction) return sectionAction;

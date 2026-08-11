@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from 'mammoth';
 import SimplifiedRegisterForm from './SimplifiedRegisterForm';
@@ -50,6 +51,7 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
     const [isDragging, setIsDragging] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [processedData, setProcessedData] = useState(null);
+    const [resumeProcessingNotice, setResumeProcessingNotice] = useState('');
     const [manualMode, setManualMode] = useState(false);
     const [manualProfile, setManualProfile] = useState(createEmptyManualProfile);
     const fileInputRef = useRef(null);
@@ -93,11 +95,13 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
     const processFile = async (file) => {
         setIsLoading(true);
         setMessage('Processing file...');
+        setResumeProcessingNotice('');
 
         try {
            
             if (!file.type.match('application/pdf|application/vnd.openxmlformats-officedocument.wordprocessingml.document|text/plain')) {
                 setMessage('Please upload a PDF, DOCX, or TXT file.');
+                setResumeProcessingNotice('');
                 setIsLoading(false);
                 return;
             }
@@ -105,10 +109,12 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
            
             const text = await parseFileToText(file);
             setResume(text);
-            setMessage('File parsed successfully! Click Submit to send to server.');
+            setResumeProcessingNotice('Please wait 10 to 20 seconds while your resume is processed. Your account form will open automatically when it is ready.');
+            await submitResumeText(text);
         } catch (error) {
             console.error('Error parsing file:', error);
             setMessage('Error parsing file. Please try again.');
+            setResumeProcessingNotice('');
         } finally {
             setIsLoading(false);
         }
@@ -170,6 +176,7 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
     const submitResumeText = async (resumeText) => {
         setIsLoading(true);
         setMessage('Processing your resume...');
+        setResumeProcessingNotice('Please wait 10 to 20 seconds while your resume is processed. Your account form will open automatically when it is ready.');
         
         try {
             const response = await fetch((process.env.REACT_APP_API_URL || '') + '/api/resume/parse', {
@@ -193,23 +200,16 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
             setProcessedData(data.data);
             setJobSeekerId(data.jobSeekerId);
             setMessage('Resume processed successfully!');
+            setResumeProcessingNotice('Resume processed successfully. Your account form is ready.');
             
         } catch (error) {
             console.error('Error submitting resume:', error);
             setMessage(`Error processing resume: ${error.message}`);
+            setResumeProcessingNotice('');
             setProcessedData(null);
         } finally {
             setIsLoading(false);
         }
-    };
-
-    const handleSubmit = async () => {
-        if (!resume) {
-            setMessage('Please upload a resume first');
-            return;
-        }
-        
-        await submitResumeText(resume);
     };
 
     const handleManualProfileChange = (event) => {
@@ -226,6 +226,7 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
         setProcessedData(null);
         setJobSeekerId(null);
         setMessage('');
+        setResumeProcessingNotice('');
     };
 
     const handleManualProfileSubmit = async (event) => {
@@ -244,6 +245,7 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
         setProcessedData(null);
         setJobSeekerId(null);
         setMessage('Saving your profile details...');
+        setResumeProcessingNotice('');
 
         try {
             const resumeText = buildManualResumeText(manualProfile);
@@ -294,6 +296,69 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
 
     const handleClick = () => {
         fileInputRef.current.click();
+    };
+
+    useEffect(() => {
+        if (!processedData || typeof document === 'undefined') {
+            return undefined;
+        }
+
+        const previousBodyOverflow = document.body.style.overflow;
+        const previousDocumentOverflow = document.documentElement.style.overflow;
+
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+
+        return () => {
+            document.body.style.overflow = previousBodyOverflow;
+            document.documentElement.style.overflow = previousDocumentOverflow;
+        };
+    }, [processedData]);
+
+    const renderAccountRegistrationModal = () => {
+        if (!processedData) {
+            return null;
+        }
+
+        const modalMarkup = (
+            <div className="resume-account-modal-backdrop" role="presentation">
+                <section
+                    className="simplified-registration resume-account-modal"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Create your JumpTake account"
+                >
+                    <button
+                        type="button"
+                        className="resume-account-modal-close"
+                        onClick={() => setProcessedData(null)}
+                        aria-label="Close account creation"
+                        title="Close"
+                    >
+                        &times;
+                    </button>
+                    <h3>Create Your Account</h3>
+                    <p className="registration-info">
+                        {manualMode
+                            ? 'Create an account using the information you entered. You only need to set a password.'
+                            : 'Create an account using the information extracted from your resume. You only need to set a password.'}
+                    </p>
+
+                    <SimplifiedRegisterForm
+                        jobSeekerId={jobSeekerId}
+                        initialName={processedData.name || ''}
+                        initialEmail={processedData.email || ''}
+                        onSuccess={() => {
+                            window.location.href = '/home';
+                        }}
+                    />
+                </section>
+            </div>
+        );
+
+        return typeof document !== 'undefined'
+            ? createPortal(modalMarkup, document.body)
+            : modalMarkup;
     };
 
     const renderProcessingLoader = () => (
@@ -362,16 +427,6 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
                             onClick={handleContinueWithoutResume}
                         >
                             Continue without resume
-                        </button>
-
-                        <div className="login-divider">OR</div>
-
-                        <button
-                            onClick={handleSubmit}
-                            disabled={!resume}
-                            className="submit-button"
-                        >
-                            Submit Resume
                         </button>
 
                         <button
@@ -536,6 +591,11 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
             )}
 
             {/* Resume preview */}
+            {resumeProcessingNotice && (
+                <p className="resume-processing-wait-note" role="status" aria-live="polite">
+                    {resumeProcessingNotice}
+                </p>
+            )}
             {resume && (
                 <div className="resume-preview">
                     <h3>Preview:</h3>
@@ -545,26 +605,7 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
                 </div>
             )}
             
-            {processedData && (
-                <div className="simplified-registration">
-                    <h3>Create Your Account</h3>
-                    <p className="registration-info">
-                        {manualMode
-                            ? 'Create an account using the information you entered. You only need to set a password.'
-                            : 'Create an account using the information extracted from your resume. You only need to set a password.'}
-                    </p>
-                    
-                    <SimplifiedRegisterForm 
-                        jobSeekerId={jobSeekerId}
-                        initialName={processedData.name || ''}
-                        initialEmail={processedData.email || ''}
-                        onSuccess={() => {
-                            
-                            window.location.href = '/home';
-                        }}
-                    />
-                </div>
-            )}
+            {renderAccountRegistrationModal()}
             
         
         </div>

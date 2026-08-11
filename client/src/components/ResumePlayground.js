@@ -1186,6 +1186,23 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
     }, [profileData]);
 
     useEffect(() => {
+        if (!tailorStep || typeof document === 'undefined') {
+            return undefined;
+        }
+
+        const previousBodyOverflow = document.body.style.overflow;
+        const previousDocumentOverflow = document.documentElement.style.overflow;
+
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+
+        return () => {
+            document.body.style.overflow = previousBodyOverflow;
+            document.documentElement.style.overflow = previousDocumentOverflow;
+        };
+    }, [tailorStep]);
+
+    useEffect(() => {
         try {
             const stored = localStorage.getItem(storageKey);
             const parsed = stored ? JSON.parse(stored) : [];
@@ -2871,6 +2888,137 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         </article>
     );
 
+    const renderTailorModal = () => {
+        if (!tailorStep) {
+            return null;
+        }
+
+        const closeTailorModal = () => {
+            setTailorStep('');
+            setTailorTemplates([]);
+        };
+
+        const modalMarkup = (
+            <div
+                className="resume-playground-ai-tailor-backdrop"
+                role="presentation"
+                onMouseDown={(event) => {
+                    if (event.target === event.currentTarget) {
+                        closeTailorModal();
+                    }
+                }}
+            >
+                <div
+                    className={`resume-playground-ai-tailor-panel resume-playground-ai-tailor-modal ${tailorTemplates.length > 0 ? 'is-sample-picker' : 'is-step-picker'}`}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label={tailorTemplates.length > 0 ? 'Choose an AI-generated sample' : 'Let AI tailor it'}
+                    onMouseDown={(event) => event.stopPropagation()}
+                >
+                    <div className="resume-playground-ai-tailor-header">
+                        <div>
+                            <h3>Let AI Tailor it?</h3>
+                            <p>
+                                {isDocumentMode
+                                    ? 'Describe what you need, generate 10 complete samples, then open your choice in the editor.'
+                                    : 'Choose a resume type, preview 10 generated styles, then open the one you like in the editor.'}
+                            </p>
+                        </div>
+                        <button
+                            type="button"
+                            className="resume-playground-tool-button resume-playground-ai-close-button"
+                            onClick={closeTailorModal}
+                        >
+                            Close
+                        </button>
+                    </div>
+
+                    {statusMessage && <div className="notification-message success">{statusMessage}</div>}
+                    {errorMessage && <div className="error-message">{errorMessage}</div>}
+
+                    {!isDocumentMode && tailorStep === 'choose' && (
+                        <div className="resume-playground-choice-grid resume-playground-ai-choice-grid">
+                            <button type="button" className="resume-playground-choice-card" onClick={() => generateTailorTemplates('ats')}>
+                                <strong>Tailor ATS Friendly Resume</strong>
+                                <span>Simple readable layouts with clear sections, bullets, contact details, skills, experience, and education.</span>
+                            </button>
+                            <button type="button" className="resume-playground-choice-card" onClick={handleGeneralTailorChoice}>
+                                <strong>General Resume</strong>
+                                <span>Designed resume templates with color blocks and an optional photo, built from your profile sections.</span>
+                            </button>
+                        </div>
+                    )}
+
+                    {!isDocumentMode && tailorStep === 'general-photo' && (
+                        <div className="resume-playground-ai-photo-panel">
+                            <h4>Add a photo to the general resume?</h4>
+                            <p>You can upload a photo for the template preview, or skip it and use a clean initial badge instead.</p>
+                            <div className="resume-playground-ai-photo-actions">
+                                <button
+                                    type="button"
+                                    className="settings-button primary resume-playground-ai-photo-upload-button"
+                                    onClick={() => aiPhotoInputRef.current?.click()}
+                                    disabled={tailorPhotoProcessing}
+                                >
+                                    {tailorPhotoProcessing ? 'Preparing Photo...' : 'Upload Photo'}
+                                </button>
+                                <button type="button" className="settings-button secondary resume-playground-ai-photo-skip-button" onClick={handleSkipTailorPhoto}>
+                                    Skip Photo
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {isDocumentMode && tailorStep === 'document-prompt' && (
+                        <form className="resume-playground-document-prompt" onSubmit={handleGenerateDocumentSamples}>
+                            <label htmlFor="resume-playground-document-description-modal">What document would you like to create?</label>
+                            <textarea
+                                id="resume-playground-document-description-modal"
+                                value={documentPrompt}
+                                onChange={(event) => setDocumentPrompt(event.target.value)}
+                                placeholder="For example: Write a professional resignation letter with a two-week notice, or write an acceptance letter for a new role."
+                                rows="5"
+                                maxLength="2000"
+                                disabled={documentGenerating}
+                            />
+                            <button type="submit" className="settings-button primary resume-playground-generate-documents-button" disabled={documentGenerating || !documentPrompt.trim()}>
+                                {documentGenerating ? 'Generating 10 Samples...' : 'Generate 10 Samples'}
+                            </button>
+                        </form>
+                    )}
+
+                    {tailorTemplates.length > 0 && (
+                        <div className="resume-playground-template-grid resume-playground-ai-template-grid">
+                            {tailorTemplates.map((template) => (
+                                <article className="resume-playground-template-card" key={template.id}>
+                                    <div className="resume-playground-template-preview">
+                                        <div
+                                            className="resume-playground-template-preview-scale"
+                                            dangerouslySetInnerHTML={{ __html: template.html }}
+                                        />
+                                    </div>
+                                    <div className="resume-playground-template-copy">
+                                        <h4>{template.label}</h4>
+                                        <p>{template.description}</p>
+                                    </div>
+                                    <div className="resume-playground-ai-template-actions">
+                                        <button type="button" className="settings-button primary resume-playground-use-style-button" onClick={() => handleUseTailorTemplate(template)}>
+                                            Use This Style
+                                        </button>
+                                    </div>
+                                </article>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+
+        return typeof document !== 'undefined'
+            ? createPortal(modalMarkup, document.body)
+            : modalMarkup;
+    };
+
     return (
         <div className="resume-playground-section">
             <div className={`resume-playground-tabs${allowDocumentMode ? ' has-four-tabs' : ''}`}>
@@ -3435,105 +3583,7 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
                                 </div>
                             )}
 
-                            {tailorStep && (
-                                <div className="resume-playground-ai-tailor-panel">
-                                    <div className="resume-playground-ai-tailor-header">
-                                        <div>
-                                            <h3>Let AI Tailor it?</h3>
-                                            <p>
-                                                {isDocumentMode
-                                                    ? 'Describe what you need, generate 10 complete samples, then open your choice in the editor.'
-                                                    : 'Choose a resume type, preview 10 generated styles, then open the one you like in the editor.'}
-                                            </p>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            className="resume-playground-tool-button resume-playground-ai-close-button"
-                                            onClick={() => {
-                                                setTailorStep('');
-                                                setTailorTemplates([]);
-                                            }}
-                                        >
-                                            Close
-                                        </button>
-                                    </div>
-
-                                    {!isDocumentMode && tailorStep === 'choose' && (
-                                        <div className="resume-playground-choice-grid resume-playground-ai-choice-grid">
-                                            <button type="button" className="resume-playground-choice-card" onClick={() => generateTailorTemplates('ats')}>
-                                                <strong>Tailor ATS Friendly Resume</strong>
-                                                <span>Simple readable layouts with clear sections, bullets, contact details, skills, experience, and education.</span>
-                                            </button>
-                                            <button type="button" className="resume-playground-choice-card" onClick={handleGeneralTailorChoice}>
-                                                <strong>General Resume</strong>
-                                                <span>Designed resume templates with color blocks and an optional photo, built from your profile sections.</span>
-                                            </button>
-                                        </div>
-                                    )}
-
-                                    {!isDocumentMode && tailorStep === 'general-photo' && (
-                                        <div className="resume-playground-ai-photo-panel">
-                                            <h4>Add a photo to the general resume?</h4>
-                                            <p>You can upload a photo for the template preview, or skip it and use a clean initial badge instead.</p>
-                                            <div className="resume-playground-ai-photo-actions">
-                                                <button
-                                                    type="button"
-                                                    className="settings-button primary resume-playground-ai-photo-upload-button"
-                                                    onClick={() => aiPhotoInputRef.current?.click()}
-                                                    disabled={tailorPhotoProcessing}
-                                                >
-                                                    {tailorPhotoProcessing ? 'Preparing Photo...' : 'Upload Photo'}
-                                                </button>
-                                                <button type="button" className="settings-button secondary resume-playground-ai-photo-skip-button" onClick={handleSkipTailorPhoto}>
-                                                    Skip Photo
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {isDocumentMode && tailorStep === 'document-prompt' && (
-                                        <form className="resume-playground-document-prompt" onSubmit={handleGenerateDocumentSamples}>
-                                            <label htmlFor="resume-playground-document-description">What document would you like to create?</label>
-                                            <textarea
-                                                id="resume-playground-document-description"
-                                                value={documentPrompt}
-                                                onChange={(event) => setDocumentPrompt(event.target.value)}
-                                                placeholder="For example: Write a professional resignation letter with a two-week notice, or write an acceptance letter for a new role."
-                                                rows="5"
-                                                maxLength="2000"
-                                                disabled={documentGenerating}
-                                            />
-                                            <button type="submit" className="settings-button primary resume-playground-generate-documents-button" disabled={documentGenerating || !documentPrompt.trim()}>
-                                                {documentGenerating ? 'Generating 10 Samples...' : 'Generate 10 Samples'}
-                                            </button>
-                                        </form>
-                                    )}
-
-                                    {tailorTemplates.length > 0 && (
-                                        <div className="resume-playground-template-grid resume-playground-ai-template-grid">
-                                            {tailorTemplates.map((template) => (
-                                                <article className="resume-playground-template-card" key={template.id}>
-                                                    <div className="resume-playground-template-preview">
-                                                        <div
-                                                            className="resume-playground-template-preview-scale"
-                                                            dangerouslySetInnerHTML={{ __html: template.html }}
-                                                        />
-                                                    </div>
-                                                    <div className="resume-playground-template-copy">
-                                                        <h4>{template.label}</h4>
-                                                        <p>{template.description}</p>
-                                                    </div>
-                                                    <div className="resume-playground-ai-template-actions">
-                                                        <button type="button" className="settings-button primary resume-playground-use-style-button" onClick={() => handleUseTailorTemplate(template)}>
-                                                            Use This Style
-                                                        </button>
-                                                    </div>
-                                                </article>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            )}
+                            {renderTailorModal()}
                         </div>
                     )}
 

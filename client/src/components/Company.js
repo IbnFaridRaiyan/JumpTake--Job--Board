@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import EmployerRegistration from './EmployerRegistration';
 
@@ -350,6 +351,62 @@ const Company = () => {
         setMessage('Search for another company.');
     };
 
+    useEffect(() => {
+        if (!showRegistration || typeof document === 'undefined') {
+            return undefined;
+        }
+
+        const previousBodyOverflow = document.body.style.overflow;
+        const previousDocumentOverflow = document.documentElement.style.overflow;
+
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+
+        return () => {
+            document.body.style.overflow = previousBodyOverflow;
+            document.documentElement.style.overflow = previousDocumentOverflow;
+        };
+    }, [showRegistration]);
+
+    const renderEmployerRegistrationModal = () => {
+        if (!showRegistration || !companyId) {
+            return null;
+        }
+
+        const modalMarkup = (
+            <div className="employer-registration-modal-backdrop" role="presentation">
+                <section
+                    className="employer-registration employer-registration-modal"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Create employer account"
+                >
+                    <button
+                        type="button"
+                        className="employer-registration-modal-close"
+                        onClick={() => setShowRegistration(false)}
+                        aria-label="Close employer account creation"
+                        title="Close"
+                    >
+                        &times;
+                    </button>
+                    <EmployerRegistration
+                        companyId={companyId}
+                        companyName={companyName}
+                        onComplete={() => {
+                            setShowRegistration(false);
+                            navigate('/#login');
+                        }}
+                    />
+                </section>
+            </div>
+        );
+
+        return typeof document !== 'undefined'
+            ? createPortal(modalMarkup, document.body)
+            : modalMarkup;
+    };
+
     return (
         <div className="company-page">
             <div className="company-container">
@@ -564,18 +621,7 @@ const Company = () => {
                     </div>
                 )}
                 
-                {showRegistration && companyId && (
-                    <div className="employer-registration">
-                        <EmployerRegistration 
-                            companyId={companyId} 
-                            companyName={companyName}
-                            onComplete={() => {
-                                setShowRegistration(false);
-                                navigate('/#login');
-                            }}
-                        />
-                    </div>
-                )}
+                {renderEmployerRegistrationModal()}
                 
                 {message && <div className={`message-container ${message.includes('Error') ? 'error' : message.includes('Success') ? 'success' : 'info'}`}>
                     <p className="message">{message}</p>

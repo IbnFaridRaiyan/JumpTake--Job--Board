@@ -117,7 +117,7 @@ const MyApplications = forwardRef(({
     const handleBrowseJobs = () => {
       
         if (switchSection) {
-            switchSection('job-feed');
+            switchSection('job-posts');
         }
     };
 

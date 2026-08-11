@@ -11,7 +11,8 @@ import reactionButtonIcon from './media/reaction.png';
 import defaultJobPostAvatar from './media/default-job-post-avatar.png';
 import defaultProfileMaleImage from './media/default-profile-male.png';
 import defaultProfileFemaleImage from './media/default-profile-female.png';
-import defaultTailorCoverImage from './media/default-tailor-cover.png';
+import defaultTailorCoverDarkImage from './media/default-tailor-cover-dark.png';
+import defaultTailorCoverLightImage from './media/default-tailor-cover-light.png';
 import PortalPageSkeleton from './PortalPageSkeleton';
 
 const WORK_NEWS_STORAGE_KEY = 'jumptakeWorkNewsPosts';
@@ -24,10 +25,20 @@ const TAILOR_PROFILE_STORAGE_PREFIX = 'jumptakeTailorProfile:';
 const CANDIDATE_PROFILE_RATING_PREFIX = 'jumptakeCandidateProfileRatings:';
 const PROFILE_IMAGE_UPDATED_EVENT = 'jumptake-profile-image-updated';
 const BLOCKED_FEED_AUTHORS_STORAGE_PREFIX = 'jumptakeBlockedFeedAuthors:';
-const HOME_JOB_PAGE_SIZE = 7;
+const HOME_JOB_PAGE_SIZE = 20;
 const MOBILE_FEED_TOUCH_SCROLL_RATIO = 1.13;
 const MOBILE_FEED_TOUCH_MAX_STEP = 168;
 const MOBILE_FEED_SCROLL_EASE = 0.48;
+const DEFAULT_TAILOR_COVER_STYLE = {
+    '--tailor-cover-image-dark': `url("${defaultTailorCoverDarkImage}")`,
+    '--tailor-cover-image-light': `url("${defaultTailorCoverLightImage}")`
+};
+
+const getTailorCoverStyle = (coverImage) => (
+    coverImage
+        ? { '--tailor-cover-image': `url("${coverImage}")` }
+        : DEFAULT_TAILOR_COVER_STYLE
+);
 const MOBILE_FEED_SCROLL_FRAME_MS = 1000 / 60;
 const MOBILE_FEED_SCROLL_MAX_FRAME_STEP = 86;
 const MOBILE_FEED_RELEASE_DRIFT_RATIO = 0.42;
@@ -1276,13 +1287,16 @@ const PortalHomeFeed = ({
     const [homeJobSalarySort, setHomeJobSalarySort] = useState('');
     const [homeJobTypeFilter, setHomeJobTypeFilter] = useState('');
     const [homeJobFieldFilter, setHomeJobFieldFilter] = useState('');
+    const [homeJobMatchedOnly, setHomeJobMatchedOnly] = useState(false);
     const [tailorProfile, setTailorProfile] = useState(() => readTailorProfileDraft('guest'));
     const [profileAvatarOverride, setProfileAvatarOverride] = useState('');
     const [activeTailorSocialEditor, setActiveTailorSocialEditor] = useState('');
+    const [tailorImageMenuOpen, setTailorImageMenuOpen] = useState('');
     const [activeDraftId, setActiveDraftId] = useState(null);
     const [savingApplicationDraft, setSavingApplicationDraft] = useState(false);
     const applicationCoverLetterInputRef = useRef(null);
     const applicationResumeInputRef = useRef(null);
+    const tailorCoverInputRef = useRef(null);
     const tailorProfileImageInputRef = useRef(null);
     const reactionTooltipTimerRef = useRef(null);
     const reactionCloseTimerRef = useRef(null);
@@ -1404,6 +1418,7 @@ const PortalHomeFeed = ({
     useEffect(() => {
         setTailorProfile(readTailorProfileDraft(viewerId));
         setActiveTailorSocialEditor('');
+        setTailorImageMenuOpen('');
     }, [viewerId]);
 
     useEffect(() => {
@@ -1798,6 +1813,8 @@ const PortalHomeFeed = ({
         )].sort((a, b) => a.localeCompare(b))
     ), [safeJobs]);
 
+    const getHomeJobFit = useCallback((job) => calculateCandidateFit(job, profileData), [profileData]);
+
     const filteredHomeJobs = useMemo(() => {
         const locationFilter = homeJobLocationFilter.trim().toLowerCase();
         const countryFilter = homeJobCountryFilter.trim().toLowerCase();
@@ -1823,8 +1840,10 @@ const PortalHomeFeed = ({
                 ...(Array.isArray(job.requirements) ? job.requirements : [])
             ].map((value) => asDisplayText(value)).join(' ').toLowerCase();
             const matchesSearch = !searchFilter || searchText.includes(searchFilter);
+            const fit = getHomeJobFit(job);
+            const matchesFit = !homeJobMatchedOnly || (fit >= 1 && fit <= 100);
 
-            return matchesCountry && matchesLocation && matchesType && matchesField && matchesSearch;
+            return matchesCountry && matchesLocation && matchesType && matchesField && matchesSearch && matchesFit;
         });
         const sortedJobs = [...filteredJobs];
 
@@ -1835,11 +1854,18 @@ const PortalHomeFeed = ({
         }
 
         return sortedJobs;
-    }, [safeJobs, homeJobSearch, homeJobCountryFilter, homeJobLocationFilter, homeJobSalarySort, homeJobTypeFilter, homeJobFieldFilter, blockedFeedAuthors]);
+    }, [safeJobs, homeJobSearch, homeJobCountryFilter, homeJobLocationFilter, homeJobSalarySort, homeJobTypeFilter, homeJobFieldFilter, homeJobMatchedOnly, blockedFeedAuthors, getHomeJobFit]);
 
     useEffect(() => {
         setJobPage(1);
-    }, [homeJobCountryFilter, homeJobLocationFilter, homeJobSalarySort, homeJobTypeFilter, homeJobFieldFilter]);
+    }, [homeJobSearch, homeJobCountryFilter, homeJobLocationFilter, homeJobSalarySort, homeJobTypeFilter, homeJobFieldFilter, homeJobMatchedOnly]);
+
+    useEffect(() => {
+        const totalPages = Math.max(1, Math.ceil(filteredHomeJobs.length / HOME_JOB_PAGE_SIZE));
+        if (jobPage > totalPages) {
+            setJobPage(totalPages);
+        }
+    }, [filteredHomeJobs.length, jobPage]);
 
     useEffect(() => {
         if (!homeJobCountryFilter) {
@@ -5719,8 +5745,10 @@ const PortalHomeFeed = ({
     );
 
     const renderCandidateJobPosts = () => {
-        const pageStart = 0;
-        const visibleJobs = filteredHomeJobs;
+        const totalJobPages = Math.max(1, Math.ceil(filteredHomeJobs.length / HOME_JOB_PAGE_SIZE));
+        const currentJobPage = Math.min(Math.max(1, jobPage), totalJobPages);
+        const pageStart = (currentJobPage - 1) * HOME_JOB_PAGE_SIZE;
+        const visibleJobs = filteredHomeJobs.slice(pageStart, pageStart + HOME_JOB_PAGE_SIZE);
 
         return (
             <div className="portal-candidate-job-list">
@@ -5783,7 +5811,7 @@ const PortalHomeFeed = ({
                                 ))}
                             </select>
                         </label>
-                        {(homeJobCountryFilter || homeJobLocationFilter || homeJobSalarySort || homeJobTypeFilter || homeJobFieldFilter) && (
+                        {(homeJobCountryFilter || homeJobLocationFilter || homeJobSalarySort || homeJobTypeFilter || homeJobFieldFilter || homeJobMatchedOnly) && (
                             <button
                                 type="button"
                                 className="portal-job-filter-clear"
@@ -5793,6 +5821,7 @@ const PortalHomeFeed = ({
                                     setHomeJobSalarySort('');
                                     setHomeJobTypeFilter('');
                                     setHomeJobFieldFilter('');
+                                    setHomeJobMatchedOnly(false);
                                     setCountryMenuOpen(false);
                                     if (typeof window !== 'undefined') {
                                         window.localStorage.removeItem(`jumptakeJobCountry:${mode}:${viewerId || 'guest'}`);
@@ -5807,39 +5836,49 @@ const PortalHomeFeed = ({
                 {safeJobs.length > 0 && (
                     <div className="portal-job-country-row">
                         {renderFeedRefreshButton('Refresh Job Posts')}
-                        <div className="portal-job-country-picker">
+                        <div className="portal-job-country-actions">
                             <button
                                 type="button"
-                                className="portal-job-country-button"
-                                onClick={() => setCountryMenuOpen((open) => !open)}
-                                aria-expanded={countryMenuOpen}
+                                className={`portal-job-country-button portal-job-match-button ${homeJobMatchedOnly ? 'active' : ''}`}
+                                onClick={() => setHomeJobMatchedOnly((active) => !active)}
+                                aria-pressed={homeJobMatchedOnly}
                             >
-                                {homeJobCountryFilter ? 'change country' : 'select country'}
+                                match
                             </button>
-                            {countryMenuOpen && (
-                                <div className="portal-job-country-menu" role="menu">
-                                    {availableHomeJobCountries.length ? availableHomeJobCountries.map((country) => (
-                                        <button
-                                            key={country}
-                                            type="button"
-                                            className={country === homeJobCountryFilter ? 'active' : ''}
-                                            onClick={() => {
-                                                setHomeJobCountryFilter(country);
-                                                setHomeJobLocationFilter('');
-                                                setCountryMenuOpen(false);
-                                                if (typeof window !== 'undefined') {
-                                                    window.localStorage.setItem(`jumptakeJobCountry:${mode}:${viewerId || 'guest'}`, country);
-                                                }
-                                            }}
-                                            role="menuitem"
-                                        >
-                                            {country}
-                                        </button>
-                                    )) : (
-                                        <span>No countries found</span>
-                                    )}
-                                </div>
-                            )}
+                            <div className="portal-job-country-picker">
+                                <button
+                                    type="button"
+                                    className="portal-job-country-button"
+                                    onClick={() => setCountryMenuOpen((open) => !open)}
+                                    aria-expanded={countryMenuOpen}
+                                >
+                                    {homeJobCountryFilter ? 'change country' : 'select country'}
+                                </button>
+                                {countryMenuOpen && (
+                                    <div className="portal-job-country-menu" role="menu">
+                                        {availableHomeJobCountries.length ? availableHomeJobCountries.map((country) => (
+                                            <button
+                                                key={country}
+                                                type="button"
+                                                className={country === homeJobCountryFilter ? 'active' : ''}
+                                                onClick={() => {
+                                                    setHomeJobCountryFilter(country);
+                                                    setHomeJobLocationFilter('');
+                                                    setCountryMenuOpen(false);
+                                                    if (typeof window !== 'undefined') {
+                                                        window.localStorage.setItem(`jumptakeJobCountry:${mode}:${viewerId || 'guest'}`, country);
+                                                    }
+                                                }}
+                                                role="menuitem"
+                                            >
+                                                {country}
+                                            </button>
+                                        )) : (
+                                            <span>No countries found</span>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 )}
@@ -5854,6 +5893,7 @@ const PortalHomeFeed = ({
                 const displaySkills = (jobSkills.length ? jobSkills : jobRequirements).slice(0, 3);
                 const jobReviewCount = getHomeJobReviews(job).length;
                 const viewerJobReview = getViewerHomeJobReview(job);
+                const jobFit = getHomeJobFit(job);
 
                 return (
                     <article
@@ -5906,14 +5946,22 @@ const PortalHomeFeed = ({
 
                         <p className="portal-candidate-job-description">{job.description}</p>
 
-                        {displaySkills.length > 0 && (
-                            <div className="portal-candidate-job-skills">
-                                <strong>Required skills:</strong>
-                                {displaySkills.slice(0, 8).map((skill, skillIndex) => (
-                                    <span key={`${key}-skill-${skillIndex}`}>{skill}</span>
-                                ))}
-                            </div>
-                        )}
+                        <div className="portal-candidate-job-skill-row">
+                            {displaySkills.length > 0 ? (
+                                <div className="portal-candidate-job-skills">
+                                    <strong>Required skills:</strong>
+                                    {displaySkills.slice(0, 8).map((skill, skillIndex) => (
+                                        <span key={`${key}-skill-${skillIndex}`}>{skill}</span>
+                                    ))}
+                                </div>
+                            ) : (
+                                <span className="portal-candidate-job-skill-empty">Skills not listed</span>
+                            )}
+                            <span className={`portal-job-fit-pill ${jobFit > 0 ? 'has-fit' : 'no-fit'}`} aria-label={`${jobFit}% fit for you`}>
+                                <strong>{jobFit}%</strong>
+                                <span>fit</span>
+                            </span>
+                        </div>
 
                         <div className="portal-public-job-social-actions" aria-label="Job actions">
                                 <button
@@ -5962,6 +6010,27 @@ const PortalHomeFeed = ({
                     </article>
                 );
                 })}
+                {filteredHomeJobs.length > HOME_JOB_PAGE_SIZE && (
+                    <nav className="portal-home-job-pagination" aria-label="Job posts pagination">
+                        <button
+                            type="button"
+                            onClick={() => setJobPage((page) => Math.max(1, page - 1))}
+                            disabled={currentJobPage <= 1}
+                            aria-label="Previous job posts page"
+                        >
+                            &lt;
+                        </button>
+                        <span>{currentJobPage} out of {totalJobPages}</span>
+                        <button
+                            type="button"
+                            onClick={() => setJobPage((page) => Math.min(totalJobPages, page + 1))}
+                            disabled={currentJobPage >= totalJobPages}
+                            aria-label="Next job posts page"
+                        >
+                            &gt;
+                        </button>
+                    </nav>
+                )}
 
             </div>
         );
@@ -6233,34 +6302,31 @@ const PortalHomeFeed = ({
                 onTouchStartCapture={absorbBackdropPress}
                 onClickCapture={(event) => closeFromBackdropClick(event, closeJobModal)}
             >
-                <article className="portal-job-modal" role="dialog" aria-modal="true" aria-label={`${selectedJob.title} job details`} onClick={(event) => event.stopPropagation()}>
-                    <span
-                        role="button"
-                        tabIndex={0}
-                        className="portal-job-modal-x-close"
+                <article className={`portal-job-modal portal-job-modal-redesign ${selectedJobMode === 'employer' ? 'is-employer-view' : 'is-candidate-view'}`} role="dialog" aria-modal="true" aria-label={`${selectedJob.title} job details`} onClick={(event) => event.stopPropagation()}>
+                    <button
+                        type="button"
+                        className="portal-job-modal-x-close portal-job-modal-close-button"
                         onClick={closeJobModal}
-                        onKeyDown={(event) => {
-                            if (event.key === 'Enter' || event.key === ' ') {
-                                event.preventDefault();
-                                closeJobModal();
-                            }
-                        }}
                         aria-label="Close job post"
                         title="Close"
                     >
                         &times;
-                    </span>
-                    <div className="portal-candidate-job-header portal-job-modal-header">
-                        <div className="portal-job-company-avatar">
+                    </button>
+
+                    <header className="portal-job-modal-hero">
+                        <div className="portal-job-modal-company-mark">
                             <img src={selectedJob.companyLogo || defaultJobPostAvatar} alt={selectedJob.companyName || 'Job post'} />
                         </div>
-                        <div className="portal-job-modal-title-block">
+                        <div className="portal-job-modal-heading">
+                            <span>{selectedJobMode === 'employer' ? 'Job post preview' : 'Role preview'}</span>
                             <h3>{selectedJob.title}</h3>
                             <p>{selectedJob.companyName}</p>
                         </div>
-                    </div>
+                    </header>
 
-                    {renderJobMeta(selectedJob)}
+                    <div className="portal-job-modal-meta-panel">
+                        {renderJobMeta(selectedJob)}
+                    </div>
 
                     <div className="portal-candidate-job-stats portal-job-modal-stats">
                         {statItems.map((item) => (
@@ -6272,33 +6338,39 @@ const PortalHomeFeed = ({
                         ))}
                     </div>
 
-                    <section className="portal-job-modal-section">
-                        <h4>Description</h4>
-                        <p>{asDisplayText(selectedJob.description, 'No description added.')}</p>
-                    </section>
-
-                    {modalSkills.length > 0 && (
-                        <section className="portal-job-modal-section">
-                            <h4>Skills</h4>
-                            <div className="portal-candidate-job-skills">
-                                <strong>Required skills:</strong>
-                                {modalSkills.map((skill, index) => (
-                                    <span key={`${key}-modal-skill-${index}`}>{skill}</span>
-                                ))}
-                            </div>
+                    <div className="portal-job-modal-content-grid">
+                        <section className="portal-job-modal-section portal-job-modal-description-panel">
+                            <span>Description</span>
+                            <h4>About the role</h4>
+                            <p>{asDisplayText(selectedJob.description, 'No description added.')}</p>
                         </section>
-                    )}
 
-                    {selectedJobRequirements.length > 0 && (
-                        <section className="portal-job-modal-section">
-                            <h4>Requirements</h4>
-                            <ul>
-                                {selectedJobRequirements.map((requirement, index) => (
-                                    <li key={`${key}-requirement-${index}`}>{requirement}</li>
-                                ))}
-                            </ul>
-                        </section>
-                    )}
+                        <aside className="portal-job-modal-side-panel" aria-label="Role skills and requirements">
+                            {modalSkills.length > 0 && (
+                                <section className="portal-job-modal-section portal-job-modal-skills-panel">
+                                    <span>Skills</span>
+                                    <h4>Required skills</h4>
+                                    <div className="portal-candidate-job-skills">
+                                        {modalSkills.map((skill, index) => (
+                                            <span key={`${key}-modal-skill-${index}`}>{skill}</span>
+                                        ))}
+                                    </div>
+                                </section>
+                            )}
+
+                            {selectedJobRequirements.length > 0 && (
+                                <section className="portal-job-modal-section portal-job-modal-requirements-panel">
+                                    <span>Requirements</span>
+                                    <h4>What they need</h4>
+                                    <ul>
+                                        {selectedJobRequirements.map((requirement, index) => (
+                                            <li key={`${key}-requirement-${index}`}>{requirement}</li>
+                                        ))}
+                                    </ul>
+                                </section>
+                            )}
+                        </aside>
+                    </div>
 
                     {jobActionMessage && (
                         <p className="portal-job-action-message">{jobActionMessage}</p>
@@ -6567,31 +6639,95 @@ const PortalHomeFeed = ({
         const ownPosts = talentStories.filter((post) => String(post.authorId) === viewerId);
         const likeCount = ownPosts.reduce((total, post) => total + (Number(post.reactions?.Like || 0) || 0), 0);
         const ratingSummary = readCandidateRatingSummary(viewerId);
-        const coverStyle = {
-            '--tailor-cover-image': `url("${tailorProfile.coverImage || defaultTailorCoverImage}")`
-        };
+        const coverStyle = getTailorCoverStyle(tailorProfile.coverImage);
         const socialPlatforms = ['facebook', 'instagram', 'linkedin', 'github'];
         const activeSocialLabel = activeTailorSocialEditor
             ? `${activeTailorSocialEditor.charAt(0).toUpperCase()}${activeTailorSocialEditor.slice(1)} profile link`
             : '';
         const displayAvatar = tailorProfile.profileImageRemoved ? '' : (authorAvatar || tailorProfile.profileImage);
         const canRemoveAvatar = Boolean(displayAvatar);
+        const canRemoveCover = Boolean(tailorProfile.coverImage);
+        const openTailorMediaInput = (type) => {
+            setTailorImageMenuOpen('');
+            const inputRef = type === 'cover' ? tailorCoverInputRef : tailorProfileImageInputRef;
+            window.setTimeout(() => inputRef.current?.click(), 0);
+        };
+        const tailorMediaActionModal = tailorImageMenuOpen ? (
+            <div
+                className="tailor-media-action-backdrop"
+                role="presentation"
+                onClick={() => setTailorImageMenuOpen('')}
+            >
+                <div
+                    className="tailor-media-action-sheet"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label={tailorImageMenuOpen === 'cover' ? 'Cover picture options' : 'Profile picture options'}
+                    onClick={(event) => event.stopPropagation()}
+                >
+                    <button
+                        type="button"
+                        className="tailor-media-action-close"
+                        onClick={() => setTailorImageMenuOpen('')}
+                        aria-label="Close picture options"
+                    >
+                        &times;
+                    </button>
+                    <h3>{tailorImageMenuOpen === 'cover' ? 'Cover picture' : 'Profile picture'}</h3>
+                    <button type="button" onClick={() => openTailorMediaInput(tailorImageMenuOpen)}>
+                        {tailorImageMenuOpen === 'cover' ? 'Add new cover picture' : 'Upload new profile picture'}
+                    </button>
+                    <button
+                        type="button"
+                        className="danger"
+                        onClick={() => {
+                            const menuType = tailorImageMenuOpen;
+                            setTailorImageMenuOpen('');
+                            if (menuType === 'cover') {
+                                handleTailorCoverRemove();
+                            } else {
+                                handleTailorProfileImageDelete();
+                            }
+                        }}
+                        disabled={tailorImageMenuOpen === 'cover' ? !canRemoveCover : !canRemoveAvatar}
+                    >
+                        {tailorImageMenuOpen === 'cover' ? 'Remove current cover picture' : 'Delete current profile picture'}
+                    </button>
+                </div>
+            </div>
+        ) : null;
 
         return (
             <section className="tailor-profile-section" aria-label="Tailor profile">
+                {tailorMediaActionModal && (
+                    typeof document !== 'undefined'
+                        ? createPortal(tailorMediaActionModal, document.body)
+                        : tailorMediaActionModal
+                )}
                 <div className="tailor-profile-card" style={coverStyle}>
-                    <div className="tailor-cover-controls">
-                        <label className="tailor-cover-upload" title="Upload cover picture">
-                            <span>Cover</span>
-                            <input type="file" accept="image/*" onChange={handleTailorCoverChange} />
-                        </label>
-                        {tailorProfile.coverImage && (
-                            <button type="button" className="tailor-cover-remove" onClick={handleTailorCoverRemove}>
-                                Remove
-                            </button>
-                        )}
-                    </div>
-                    <div className={`tailor-profile-image ${displayAvatar ? '' : 'has-default-profile-icon'}`}>
+                    <button
+                        type="button"
+                        className="tailor-cover-click-target"
+                        onClick={() => setTailorImageMenuOpen('cover')}
+                        aria-label="Open cover picture options"
+                        title="Cover picture options"
+                    >
+                        <span>Cover picture options</span>
+                    </button>
+                    <input
+                        ref={tailorCoverInputRef}
+                        className="tailor-media-hidden-input"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleTailorCoverChange}
+                    />
+                    <button
+                        type="button"
+                        className={`tailor-profile-image tailor-profile-image-button ${displayAvatar ? '' : 'has-default-profile-icon'}`}
+                        onClick={() => setTailorImageMenuOpen('avatar')}
+                        aria-label="Open profile picture options"
+                        title="Profile picture options"
+                    >
                         {displayAvatar ? (
                             <img src={displayAvatar} alt={fullName} />
                         ) : (
@@ -6599,35 +6735,14 @@ const PortalHomeFeed = ({
                                 <DefaultUserProfileImage gender={authorGender} />
                             </span>
                         )}
-                    </div>
-                    <div className="tailor-photo-actions" aria-label="Tailor profile picture actions">
-                        <button
-                            type="button"
-                            className="tailor-photo-icon-button tailor-photo-add"
-                            onClick={() => tailorProfileImageInputRef.current?.click()}
-                            aria-label="Upload profile picture"
-                            title="Upload profile picture"
-                        >
-                            +
-                        </button>
-                        {canRemoveAvatar && (
-                            <button
-                                type="button"
-                                className="tailor-photo-icon-button tailor-photo-delete"
-                                onClick={handleTailorProfileImageDelete}
-                                aria-label="Delete profile picture"
-                                title="Delete profile picture"
-                            >
-                                x
-                            </button>
-                        )}
-                        <input
-                            ref={tailorProfileImageInputRef}
-                            type="file"
-                            accept="image/*"
-                            onChange={handleTailorProfileImageChange}
-                        />
-                    </div>
+                    </button>
+                    <input
+                        ref={tailorProfileImageInputRef}
+                        className="tailor-media-hidden-input"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleTailorProfileImageChange}
+                    />
                     <div className="tailor-profile-info">
                         <p className="tailor-profile-name">{fullName}</p>
                         <div className="tailor-profile-title">{jumpTakeId}</div>
@@ -6983,9 +7098,7 @@ const PortalHomeFeed = ({
                 ? 'Cancel friend invitation'
                 : 'Add friend';
         const isFriendMenuOpen = openProfileFriendMenuId === String(profile.id || '');
-        const coverStyle = {
-            '--tailor-cover-image': `url("${profile.coverImage || defaultTailorCoverImage}")`
-        };
+        const coverStyle = getTailorCoverStyle(profile.coverImage);
         const modalMarkup = (
             <div
                 className={`portal-profile-detail-backdrop ${closingProfileDetailModal ? 'is-closing' : ''}`}

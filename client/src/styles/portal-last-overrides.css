@@ -1,0 +1,613 @@
+/* Final stylesheet loaded after every portal stylesheet.
+   This file is intentionally narrow and high-specificity so older mobile/theme
+   rules cannot pull these controls back into the wrong layer or color mode. */
+
+/* Job posts pagination: plain < and > controls with no pills/circles. */
+html body #root .home-page .portal-home-feed .portal-home-job-pagination,
+html body #root .home-page .portal-list-pagination,
+html body #root .home-page .mobile-list-pagination,
+html body #root .home-page .candidate-list-pagination,
+html body #root .home-page .job-feed-pagination {
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.48rem !important;
+  width: fit-content !important;
+  max-width: calc(100% - 1rem) !important;
+  margin: 0.9rem auto 1.2rem !important;
+  padding: 0.16rem 0.25rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html body #root .home-page .portal-home-feed .portal-home-job-pagination button,
+html body #root .home-page .portal-home-feed .portal-home-job-pagination button:is(:hover, :focus, :focus-visible, :active),
+html body #root .home-page .portal-list-pagination button,
+html body #root .home-page .portal-list-pagination button:is(:hover, :focus, :focus-visible, :active),
+html body #root .home-page .mobile-list-pagination button,
+html body #root .home-page .mobile-list-pagination button:is(:hover, :focus, :focus-visible, :active),
+html body #root .home-page .candidate-list-pagination button,
+html body #root .home-page .candidate-list-pagination button:is(:hover, :focus, :focus-visible, :active),
+html body #root .home-page .job-feed-pagination button,
+html body #root .home-page .job-feed-pagination button:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  width: auto !important;
+  min-width: 1.18rem !important;
+  max-width: none !important;
+  height: 1.35rem !important;
+  min-height: 1.35rem !important;
+  max-height: 1.35rem !important;
+  padding: 0 0.1rem !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #f7eef1 !important;
+  -webkit-text-fill-color: #f7eef1 !important;
+  font-family: inherit !important;
+  font-size: 1.14rem !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+  text-indent: 0 !important;
+  cursor: pointer !important;
+}
+
+html body #root .home-page .portal-home-feed .portal-home-job-pagination button::before,
+html body #root .home-page .portal-home-feed .portal-home-job-pagination button::after,
+html body #root .home-page .portal-list-pagination button::before,
+html body #root .home-page .portal-list-pagination button::after,
+html body #root .home-page .mobile-list-pagination button::before,
+html body #root .home-page .mobile-list-pagination button::after,
+html body #root .home-page .candidate-list-pagination button::before,
+html body #root .home-page .candidate-list-pagination button::after,
+html body #root .home-page .job-feed-pagination button::before,
+html body #root .home-page .job-feed-pagination button::after {
+  display: none !important;
+  content: none !important;
+}
+
+html body #root .home-page .portal-home-feed .portal-home-job-pagination button:disabled,
+html body #root .home-page .portal-list-pagination button:disabled,
+html body #root .home-page .mobile-list-pagination button:disabled,
+html body #root .home-page .candidate-list-pagination button:disabled,
+html body #root .home-page .job-feed-pagination button:disabled {
+  opacity: 0.42 !important;
+  cursor: default !important;
+}
+
+html body #root .home-page .portal-home-feed .portal-home-job-pagination span,
+html body #root .home-page .portal-list-pagination span,
+html body #root .home-page .mobile-list-pagination span,
+html body #root .home-page .candidate-list-pagination span,
+html body #root .home-page .job-feed-pagination span {
+  display: inline-block !important;
+  min-width: max-content !important;
+  width: auto !important;
+  margin: 0 !important;
+  color: rgba(255, 255, 255, 0.88) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.88) !important;
+  font-size: 0.78rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  letter-spacing: 0.01em !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.portal-home-job-pagination, .portal-list-pagination, .mobile-list-pagination, .candidate-list-pagination, .job-feed-pagination) button,
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.portal-home-job-pagination, .portal-list-pagination, .mobile-list-pagination, .candidate-list-pagination, .job-feed-pagination) button:is(:hover, :focus, :focus-visible, :active),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page :is(.portal-home-job-pagination, .portal-list-pagination, .mobile-list-pagination, .candidate-list-pagination, .job-feed-pagination) button,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page :is(.portal-home-job-pagination, .portal-list-pagination, .mobile-list-pagination, .candidate-list-pagination, .job-feed-pagination) button:is(:hover, :focus, :focus-visible, :active) {
+  color: #5c1f31 !important;
+  -webkit-text-fill-color: #5c1f31 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.portal-home-job-pagination, .portal-list-pagination, .mobile-list-pagination, .candidate-list-pagination, .job-feed-pagination) span,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page :is(.portal-home-job-pagination, .portal-list-pagination, .mobile-list-pagination, .candidate-list-pagination, .job-feed-pagination) span {
+  color: #34141d !important;
+  -webkit-text-fill-color: #34141d !important;
+}
+
+/* Profile/cover option sheets and job detail modal: close button belongs at the card corner. */
+html body .tailor-media-action-sheet,
+html body .portal-job-modal.portal-job-modal-redesign,
+html body .portal-job-modal {
+  position: relative !important;
+}
+
+html body .tailor-media-action-sheet > button.tailor-media-action-close,
+html body .tailor-media-action-sheet > button.tailor-media-action-close:is(:hover, :focus, :focus-visible, :active),
+html body .portal-job-modal > button.portal-job-modal-x-close,
+html body .portal-job-modal > button.portal-job-modal-x-close:is(:hover, :focus, :focus-visible, :active),
+html body .portal-job-modal.portal-job-modal-redesign > button.portal-job-modal-x-close.portal-job-modal-close-button,
+html body .portal-job-modal.portal-job-modal-redesign > button.portal-job-modal-x-close.portal-job-modal-close-button:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  position: absolute !important;
+  top: 0.68rem !important;
+  right: 0.78rem !important;
+  bottom: auto !important;
+  left: auto !important;
+  z-index: 120 !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 1.45rem !important;
+  min-width: 1.45rem !important;
+  max-width: 1.45rem !important;
+  height: 1.45rem !important;
+  min-height: 1.45rem !important;
+  max-height: 1.45rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-family: inherit !important;
+  font-size: 1.35rem !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  transform: none !important;
+  translate: none !important;
+  text-indent: 0 !important;
+  cursor: pointer !important;
+  overflow: visible !important;
+}
+
+html body .tailor-media-action-sheet > button.tailor-media-action-close::before,
+html body .tailor-media-action-sheet > button.tailor-media-action-close::after,
+html body .portal-job-modal > button.portal-job-modal-x-close::before,
+html body .portal-job-modal > button.portal-job-modal-x-close::after {
+  display: none !important;
+  content: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .tailor-media-action-sheet > button.tailor-media-action-close,
+html[data-theme="light"] body[data-theme="light"] .tailor-media-action-sheet > button.tailor-media-action-close:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body[data-theme="light"] .portal-job-modal > button.portal-job-modal-x-close,
+html[data-theme="light"] body[data-theme="light"] .portal-job-modal > button.portal-job-modal-x-close:is(:hover, :focus, :focus-visible, :active),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .tailor-media-action-sheet > button.tailor-media-action-close,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .tailor-media-action-sheet > button.tailor-media-action-close:is(:hover, :focus, :focus-visible, :active),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-job-modal > button.portal-job-modal-x-close,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-job-modal > button.portal-job-modal-x-close:is(:hover, :focus, :focus-visible, :active) {
+  color: #4f1d2a !important;
+  -webkit-text-fill-color: #4f1d2a !important;
+}
+
+@media (max-width: 768px) {
+  html body .tailor-media-action-sheet > button.tailor-media-action-close,
+  html body .tailor-media-action-sheet > button.tailor-media-action-close:is(:hover, :focus, :focus-visible, :active),
+  html body .portal-job-modal > button.portal-job-modal-x-close,
+  html body .portal-job-modal > button.portal-job-modal-x-close:is(:hover, :focus, :focus-visible, :active) {
+    top: 0.62rem !important;
+    right: 0.72rem !important;
+    left: auto !important;
+    transform: none !important;
+  }
+}
+
+/* Dark profile preview labels must stay readable. */
+html[data-theme="dark"] body[data-theme="dark"] #root .portal-profile-detail-backdrop .profile-details-card :is(.profile-details-summary strong, .profile-details-section h4),
+html[data-theme="dark"] body[data-theme="dark"] #root .portal-profile-detail-backdrop .tailor-profile-details-card :is(.profile-details-summary strong, .profile-details-section h4),
+html[data-theme="dark"] body[data-theme="dark"] #root .portal-profile-detail-modal :is(.profile-details-summary strong, .profile-details-section h4) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-shadow: none !important;
+}
+
+/* Dark post detail close X in work news / talent stories. */
+html[data-theme="dark"] body[data-theme="dark"] #root .portal-post-detail-modal .portal-post-detail-close,
+html[data-theme="dark"] body[data-theme="dark"] #root .portal-post-detail-modal .portal-post-detail-close:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="dark"] body[data-theme="dark"] #root .portal-reach-insight-popover > button.portal-reach-insight-close.portal-post-detail-close,
+html[data-theme="dark"] body[data-theme="dark"] #root .portal-reaction-stats-modal > button.portal-reaction-stats-close.portal-post-detail-close {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Job modal stats: maroon theme instead of green, with a brighter light-mode version. */
+html body #root .home-page .portal-job-modal-redesign .portal-job-modal-stats,
+html body .portal-job-modal-redesign .portal-job-modal-stats,
+html body .portal-job-modal .portal-candidate-job-stats.portal-job-modal-stats {
+  gap: 0.34rem !important;
+}
+
+html body #root .home-page .portal-job-modal-redesign .portal-candidate-job-stat,
+html body .portal-job-modal-redesign .portal-candidate-job-stat,
+html body .portal-job-modal .portal-candidate-job-stats.portal-job-modal-stats .portal-candidate-job-stat,
+html body .portal-job-modal .portal-candidate-job-stats.portal-job-modal-stats .portal-candidate-job-stat:is(:hover, :focus, :focus-visible, :active) {
+  position: relative !important;
+  isolation: isolate !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(255, 150, 174, 0.28) !important;
+  border-radius: 0.72rem !important;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255, 172, 193, 0.23), transparent 38%),
+    linear-gradient(135deg, rgba(118, 31, 52, 0.96), rgba(55, 15, 28, 0.98)) !important;
+  color: #fff7fa !important;
+  -webkit-text-fill-color: #fff7fa !important;
+  box-shadow: 0 12px 28px rgba(68, 14, 30, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+}
+
+html body #root .home-page .portal-job-modal-redesign .portal-candidate-job-stat::before,
+html body .portal-job-modal-redesign .portal-candidate-job-stat::before,
+html body .portal-job-modal .portal-candidate-job-stats.portal-job-modal-stats .portal-candidate-job-stat::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: -1 !important;
+  display: block !important;
+  background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.14) 46%, transparent 70%) !important;
+  opacity: 0.5 !important;
+  transform: translateX(-38%) !important;
+}
+
+html body #root .home-page .portal-job-modal-redesign .portal-candidate-job-stat :is(strong, span, svg, path),
+html body .portal-job-modal-redesign .portal-candidate-job-stat :is(strong, span, svg, path),
+html body .portal-job-modal .portal-candidate-job-stats.portal-job-modal-stats .portal-candidate-job-stat :is(strong, span, svg, path) {
+  color: #fff7fa !important;
+  -webkit-text-fill-color: #fff7fa !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html body #root .home-page .portal-job-modal-redesign .portal-candidate-job-stat-reach,
+html body .portal-job-modal-redesign .portal-candidate-job-stat-reach {
+  background:
+    radial-gradient(circle at 20% 10%, rgba(255, 196, 210, 0.25), transparent 38%),
+    linear-gradient(135deg, #8b2e49, #4c1225) !important;
+}
+
+html body #root .home-page .portal-job-modal-redesign .portal-candidate-job-stat-applicants,
+html body .portal-job-modal-redesign .portal-candidate-job-stat-applicants {
+  background:
+    radial-gradient(circle at 20% 10%, rgba(247, 158, 182, 0.22), transparent 38%),
+    linear-gradient(135deg, #75203a, #3d0c1c) !important;
+}
+
+html body #root .home-page .portal-job-modal-redesign .portal-candidate-job-stat-hired,
+html body .portal-job-modal-redesign .portal-candidate-job-stat-hired {
+  background:
+    radial-gradient(circle at 20% 10%, rgba(255, 184, 155, 0.22), transparent 38%),
+    linear-gradient(135deg, #641a31, #300815) !important;
+}
+
+html body #root .home-page .portal-job-modal-redesign .portal-candidate-job-stat-fit,
+html body .portal-job-modal-redesign .portal-candidate-job-stat-fit {
+  background:
+    radial-gradient(circle at 20% 10%, rgba(255, 221, 230, 0.28), transparent 38%),
+    linear-gradient(135deg, #9f3555, #541226) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-modal-redesign .portal-candidate-job-stat,
+html[data-theme="light"] body[data-theme="light"] .portal-job-modal-redesign .portal-candidate-job-stat,
+html[data-theme="light"] body[data-theme="light"] .portal-job-modal .portal-candidate-job-stats.portal-job-modal-stats .portal-candidate-job-stat,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-job-modal-redesign .portal-candidate-job-stat,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-job-modal-redesign .portal-candidate-job-stat,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-job-modal .portal-candidate-job-stats.portal-job-modal-stats .portal-candidate-job-stat {
+  border-color: rgba(127, 29, 50, 0.18) !important;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.72), transparent 40%),
+    linear-gradient(135deg, #ffd5df, #b85c73) !important;
+  color: #3b111f !important;
+  -webkit-text-fill-color: #3b111f !important;
+  box-shadow: 0 12px 26px rgba(127, 29, 50, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-modal-redesign .portal-candidate-job-stat :is(strong, span, svg, path),
+html[data-theme="light"] body[data-theme="light"] .portal-job-modal-redesign .portal-candidate-job-stat :is(strong, span, svg, path),
+html[data-theme="light"] body[data-theme="light"] .portal-job-modal .portal-candidate-job-stats.portal-job-modal-stats .portal-candidate-job-stat :is(strong, span, svg, path),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .home-page .portal-job-modal-redesign .portal-candidate-job-stat :is(strong, span, svg, path),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-job-modal-redesign .portal-candidate-job-stat :is(strong, span, svg, path),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-job-modal .portal-candidate-job-stats.portal-job-modal-stats .portal-candidate-job-stat :is(strong, span, svg, path) {
+  color: #3b111f !important;
+  -webkit-text-fill-color: #3b111f !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+/* Resume processing notice above the preview. */
+html body .resume-dropbox .resume-processing-wait-note {
+  box-sizing: border-box !important;
+  width: min(42rem, calc(100% - 1rem)) !important;
+  margin: 1rem auto 0.8rem !important;
+  padding: 0.78rem 0.92rem !important;
+  border: 1px solid rgba(255, 180, 200, 0.2) !important;
+  border-radius: 0.9rem !important;
+  background: rgba(10, 10, 10, 0.86) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 0.9rem !important;
+  font-weight: 850 !important;
+  line-height: 1.35 !important;
+  text-align: center !important;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.22) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .resume-dropbox .resume-processing-wait-note,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .resume-dropbox .resume-processing-wait-note {
+  border-color: rgba(127, 29, 50, 0.16) !important;
+  background: #fffaf3 !important;
+  color: #1c1115 !important;
+  -webkit-text-fill-color: #1c1115 !important;
+  box-shadow: 0 14px 32px rgba(92, 67, 50, 0.14) !important;
+}
+
+/* Account creation modals: centered on mobile and themed exactly by mode. */
+html body .resume-account-modal-backdrop,
+html body .employer-registration-modal-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483550 !important;
+  display: grid !important;
+  align-items: center !important;
+  justify-items: center !important;
+  place-items: center !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  padding: clamp(0.75rem, 3vw, 1.25rem) !important;
+  margin: 0 !important;
+  background: rgba(0, 0, 0, 0.72) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  overflow: hidden !important;
+}
+
+html body .resume-account-modal,
+html body .employer-registration-modal {
+  position: relative !important;
+  box-sizing: border-box !important;
+  width: min(42rem, calc(100vw - 1.5rem)) !important;
+  max-height: min(88vh, 48rem) !important;
+  max-height: min(88dvh, 48rem) !important;
+  margin: 0 !important;
+  padding: clamp(1.35rem, 2.4vw, 1.65rem) !important;
+  padding-top: clamp(1.8rem, 3vw, 2.1rem) !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 1.18rem !important;
+  background: #080808 !important;
+  background-color: #080808 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: 0 34px 94px rgba(0, 0, 0, 0.62) !important;
+}
+
+html body .resume-account-modal :is(h1, h2, h3, h4, h5, p, label, span, strong, small, div, button),
+html body .employer-registration-modal :is(h1, h2, h3, h4, h5, p, label, span, strong, small, div, button) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html body .resume-account-modal :is(input, textarea, select),
+html body .employer-registration-modal :is(input, textarea, select) {
+  box-sizing: border-box !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff !important;
+}
+
+html body .resume-account-modal :is(input, textarea, select)::placeholder,
+html body .employer-registration-modal :is(input, textarea, select)::placeholder {
+  color: rgba(255, 255, 255, 0.58) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.58) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .resume-account-modal,
+html[data-theme="light"] body[data-theme="light"] .employer-registration-modal,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .resume-account-modal,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .employer-registration-modal {
+  border-color: rgba(127, 29, 50, 0.14) !important;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  box-shadow: 0 30px 82px rgba(92, 67, 50, 0.24) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .resume-account-modal :is(h1, h2, h3, h4, h5, p, label, span, strong, small, div, button),
+html[data-theme="light"] body[data-theme="light"] .employer-registration-modal :is(h1, h2, h3, h4, h5, p, label, span, strong, small, div, button),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .resume-account-modal :is(h1, h2, h3, h4, h5, p, label, span, strong, small, div, button),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .employer-registration-modal :is(h1, h2, h3, h4, h5, p, label, span, strong, small, div, button) {
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .resume-account-modal :is(input, textarea, select),
+html[data-theme="light"] body[data-theme="light"] .employer-registration-modal :is(input, textarea, select),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .resume-account-modal :is(input, textarea, select),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .employer-registration-modal :is(input, textarea, select) {
+  border-color: rgba(17, 17, 17, 0.18) !important;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  caret-color: #111111 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .resume-account-modal :is(input, textarea, select)::placeholder,
+html[data-theme="light"] body[data-theme="light"] .employer-registration-modal :is(input, textarea, select)::placeholder,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .resume-account-modal :is(input, textarea, select)::placeholder,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .employer-registration-modal :is(input, textarea, select)::placeholder {
+  color: rgba(17, 17, 17, 0.48) !important;
+  -webkit-text-fill-color: rgba(17, 17, 17, 0.48) !important;
+}
+
+html body .resume-account-modal > button.resume-account-modal-close,
+html body .resume-account-modal > button.resume-account-modal-close:is(:hover, :focus, :focus-visible, :active),
+html body .employer-registration-modal > button.employer-registration-modal-close,
+html body .employer-registration-modal > button.employer-registration-modal-close:is(:hover, :focus, :focus-visible, :active) {
+  all: unset !important;
+  box-sizing: border-box !important;
+  position: absolute !important;
+  top: 0.7rem !important;
+  right: 0.82rem !important;
+  bottom: auto !important;
+  left: auto !important;
+  z-index: 20 !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  min-width: 1.5rem !important;
+  min-height: 1.5rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 1.45rem !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  transform: none !important;
+  translate: none !important;
+  cursor: pointer !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .resume-account-modal > button.resume-account-modal-close,
+html[data-theme="light"] body[data-theme="light"] .resume-account-modal > button.resume-account-modal-close:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body[data-theme="light"] .employer-registration-modal > button.employer-registration-modal-close,
+html[data-theme="light"] body[data-theme="light"] .employer-registration-modal > button.employer-registration-modal-close:is(:hover, :focus, :focus-visible, :active),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .resume-account-modal > button.resume-account-modal-close,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .resume-account-modal > button.resume-account-modal-close:is(:hover, :focus, :focus-visible, :active),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .employer-registration-modal > button.employer-registration-modal-close,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .employer-registration-modal > button.employer-registration-modal-close:is(:hover, :focus, :focus-visible, :active) {
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+}
+
+@media (max-width: 768px) {
+  html body .resume-account-modal-backdrop,
+  html body .employer-registration-modal-backdrop {
+    display: grid !important;
+    align-items: center !important;
+    justify-items: center !important;
+    place-items: center !important;
+    padding: 0.75rem !important;
+  }
+
+  html body .resume-account-modal,
+  html body .employer-registration-modal {
+    width: min(100%, calc(100vw - 1.5rem)) !important;
+    max-height: calc(100dvh - 1.5rem) !important;
+    border-radius: 1.08rem !important;
+    margin: 0 !important;
+  }
+}
+
+/* Terms checkbox: button closer to the visible tick, with inactive contrast per theme. */
+html body .resume-account-modal .terms-agreement,
+html body .employer-registration-modal .terms-agreement {
+  margin: 0.84rem 0 0.95rem !important;
+}
+
+html body .resume-account-modal .gl-checkbox,
+html body .employer-registration-modal .gl-checkbox {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.34rem !important;
+}
+
+html body .resume-account-modal .gl-checkbox__box,
+html body .employer-registration-modal .gl-checkbox__box {
+  flex: 0 0 1.15rem !important;
+  width: 1.15rem !important;
+  min-width: 1.15rem !important;
+  height: 1.15rem !important;
+  min-height: 1.15rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.78) !important;
+  border-radius: 0.32rem !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  color: rgba(255, 255, 255, 0.88) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.88) !important;
+  box-shadow: none !important;
+}
+
+html body .resume-account-modal .gl-checkbox__check,
+html body .employer-registration-modal .gl-checkbox__check {
+  color: currentColor !important;
+}
+
+html body .resume-account-modal .gl-checkbox__label,
+html body .employer-registration-modal .gl-checkbox__label {
+  display: inline-flex !important;
+  align-items: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body .resume-account-modal .terms-inline-button,
+html body .resume-account-modal .terms-inline-button:is(:hover, :focus, :focus-visible, :active),
+html body .employer-registration-modal .terms-inline-button,
+html body .employer-registration-modal .terms-inline-button:is(:hover, :focus, :focus-visible, :active) {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  color: #f5dce4 !important;
+  -webkit-text-fill-color: #f5dce4 !important;
+  font-weight: 900 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .resume-account-modal .gl-checkbox__box,
+html[data-theme="light"] body[data-theme="light"] .employer-registration-modal .gl-checkbox__box,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .resume-account-modal .gl-checkbox__box,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .employer-registration-modal .gl-checkbox__box {
+  border-color: rgba(17, 17, 17, 0.72) !important;
+  color: rgba(17, 17, 17, 0.86) !important;
+  -webkit-text-fill-color: rgba(17, 17, 17, 0.86) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .resume-account-modal .terms-inline-button,
+html[data-theme="light"] body[data-theme="light"] .resume-account-modal .terms-inline-button:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="light"] body[data-theme="light"] .employer-registration-modal .terms-inline-button,
+html[data-theme="light"] body[data-theme="light"] .employer-registration-modal .terms-inline-button:is(:hover, :focus, :focus-visible, :active),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .resume-account-modal .terms-inline-button,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .resume-account-modal .terms-inline-button:is(:hover, :focus, :focus-visible, :active),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .employer-registration-modal .terms-inline-button,
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) .employer-registration-modal .terms-inline-button:is(:hover, :focus, :focus-visible, :active) {
+  color: #4f1d2a !important;
+  -webkit-text-fill-color: #4f1d2a !important;
+}
+
+html body .resume-account-modal .gl-checkbox__input:checked ~ .gl-checkbox__box,
+html body .employer-registration-modal .gl-checkbox__input:checked ~ .gl-checkbox__box {
+  border-color: transparent !important;
+  background: linear-gradient(135deg, #f0b5c4, #8b2e49) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(240, 181, 196, 0.16) !important;
+}

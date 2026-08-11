@@ -1,7 +1,8 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import ProfileAvatar from './ProfileAvatar';
-import defaultTailorCoverImage from './media/default-tailor-cover.png';
+import defaultTailorCoverDarkImage from './media/default-tailor-cover-dark.png';
+import defaultTailorCoverLightImage from './media/default-tailor-cover-light.png';
 import defaultProfileMale from './media/default-profile-male.png';
 import defaultProfileFemale from './media/default-profile-female.png';
 import { apiUrl } from '../utils/apiUrl';
@@ -14,6 +15,16 @@ const WORK_NEWS_STORAGE_KEY = 'jumptakeWorkNewsPosts';
 const TALENT_STORIES_STORAGE_KEY = 'jumptakeTalentStoriesPosts';
 const CANDIDATE_REACH_VIEWED_STORAGE_PREFIX = 'jumptakeCandidateProfileReachViewed:';
 const POPUP_CLOSE_ANIMATION_MS = 260;
+const DEFAULT_TAILOR_COVER_STYLE = {
+    '--tailor-cover-image-dark': `url("${defaultTailorCoverDarkImage}")`,
+    '--tailor-cover-image-light': `url("${defaultTailorCoverLightImage}")`
+};
+
+const getTalentPoolCoverStyle = (coverImage) => (
+    coverImage
+        ? { '--tailor-cover-image': `url("${coverImage}")` }
+        : DEFAULT_TAILOR_COVER_STYLE
+);
 
 const lockCompactProfileReachPill = (node) => {
     if (!node) {
@@ -1969,9 +1980,7 @@ const TalentPool = ({
             linkedin: asCandidatePostText(selectedCandidate.linkedin || selectedCandidate.socialLinks?.linkedin),
             github: asCandidatePostText(selectedCandidate.github || selectedCandidate.socialLinks?.github)
         };
-        const coverStyle = {
-            '--tailor-cover-image': `url("${asCandidatePostText(selectedCandidate.coverImage, defaultTailorCoverImage)}")`
-        };
+        const coverStyle = getTalentPoolCoverStyle(asCandidatePostText(selectedCandidate.coverImage));
         const jumpTakeId = String(getCandidateJumpTakeId(selectedCandidate) || '@JumpTakeID');
         const formattedJumpTakeId = jumpTakeId.startsWith('@') ? jumpTakeId : `@${jumpTakeId}`;
 

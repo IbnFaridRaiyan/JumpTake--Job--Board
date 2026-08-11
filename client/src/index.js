@@ -17,6 +17,9 @@ import './styles/mobile-interactions.css';
 import './styles/portal-desktop-dark.css';
 import './styles/portal-desktop-light.css';
 import './styles/portal-last-overrides.css';
+import './styles/portal-widgets.css';
+import './styles/portal-widgets-light.css';
+import './styles/portal-widgets-dark.css';
 import { installMobileInteractionFeedback } from './utils/mobileHaptics';
 
 installMobileInteractionFeedback();

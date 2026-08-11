@@ -611,3 +611,99 @@ html body .employer-registration-modal .gl-checkbox__input:checked ~ .gl-checkbo
   -webkit-text-fill-color: #ffffff !important;
   box-shadow: 0 0 0 3px rgba(240, 181, 196, 0.16) !important;
 }
+
+/* Desktop nav glass: fixed floating bar. Transparent cream (light) /
+   transparent black (dark) with backdrop blur so page content scrolling
+   beneath the nav is seen blurred through it (same effect as the public
+   home page top navigation). */
+@media (min-width: 769px) {
+  html[data-theme="light"] body[data-theme="light"] #root #portal-public-header.portal-public-header {
+    background: rgba(255, 251, 245, 0.45) !important;
+    background-color: rgba(255, 251, 245, 0.45) !important;
+    background-image: none !important;
+    border-color: rgba(72, 42, 51, 0.18) !important;
+    box-shadow: 0 16px 42px rgba(80, 55, 43, 0.16) !important;
+    backdrop-filter: blur(22px) saturate(135%) !important;
+    -webkit-backdrop-filter: blur(22px) saturate(135%) !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header.portal-public-header {
+    background: rgba(0, 0, 0, 0.48) !important;
+    background-color: rgba(0, 0, 0, 0.48) !important;
+    background-image: none !important;
+    border-color: rgba(255, 255, 255, 0.16) !important;
+    box-shadow: 0 16px 42px rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(22px) saturate(135%) !important;
+    -webkit-backdrop-filter: blur(22px) saturate(135%) !important;
+  }
+}
+
+/* Neutral theme-agnostic scrollbars across every portal page. Replaces the
+   maroon (dark) and green (light) colored thumbs on all sides. */
+html[data-theme] body[data-theme] #root :is(
+  .portal-section-transition-shell,
+  .portal-home-feed,
+  .portal-home-feed-scroll,
+  .portal-home-tab-panel,
+  .main-content
+) {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(122, 130, 134, 0.45) transparent !important;
+}
+
+html[data-theme] body[data-theme] #root :is(
+  .portal-section-transition-shell,
+  .portal-home-feed,
+  .portal-home-feed-scroll,
+  .portal-home-tab-panel,
+  .main-content
+)::-webkit-scrollbar {
+  width: 0.45rem !important;
+  height: 0.45rem !important;
+}
+
+html[data-theme] body[data-theme] #root :is(
+  .portal-section-transition-shell,
+  .portal-home-feed,
+  .portal-home-feed-scroll,
+  .portal-home-tab-panel,
+  .main-content
+)::-webkit-scrollbar-thumb {
+  background: rgba(122, 130, 134, 0.45) !important;
+  border-radius: 999px !important;
+}
+
+html[data-theme] body[data-theme] #root :is(
+  .portal-section-transition-shell,
+  .portal-home-feed,
+  .portal-home-feed-scroll,
+  .portal-home-tab-panel,
+  .main-content
+)::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+/* Light desktop: use a clean cream canvas (no greenish/beige tint) and keep
+   the page content and widget surfaces transparent so the cream shows through. */
+@media (min-width: 769px) {
+  html[data-theme="light"] body[data-theme="light"] #root > .app-container > .home-page,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page > .dashboard-container > .main-content,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page :is(
+    .portal-home-feed,
+    .portal-home-feed-scroll,
+    .portal-home-tab-panel,
+    .portal-home-tab-panel :is(.portal-social-list, .portal-candidate-job-list),
+    .portal-feed-introduction
+  ) {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root > .app-container,
+  html[data-theme="light"] body[data-theme="light"] #root > .app-container > .home-page {
+    background: #f3ede3 !important;
+    background-color: #f3ede3 !important;
+    background-image: none !important;
+  }
+}

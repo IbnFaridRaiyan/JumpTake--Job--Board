@@ -1,0 +1,118 @@
+/* JumpTake portal side widgets — DARK theme only (desktop). */
+
+@media (min-width: 1900px) {
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget {
+    background: #0b0b0b !important;
+    background-color: #0b0b0b !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28) !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-header {
+    background: #000000 !important;
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+  }
+
+  /* Progress-check palette for the performance widget (maroon accent). */
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-performance {
+    --progress-accent: #d66a7d;
+    --progress-blue: #6f9aff;
+    --progress-purple: #ad88ff;
+    --progress-orange: #f0a24d;
+    --progress-line: rgba(255, 255, 255, 0.13);
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] .pw-metric,
+  html[data-theme="dark"] body[data-theme="dark"] .pw-donut-card,
+  html[data-theme="dark"] body[data-theme="dark"] .pw-trend-card,
+  html[data-theme="dark"] body[data-theme="dark"] .pw-overall-card,
+  html[data-theme="dark"] body[data-theme="dark"] .pw-extra-card {
+    border-color: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-last-used-scroll :is(p, span, small, h1, h2, h3, h4, strong),
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-performance :is(p, span, small, h1, h2, h3, h4, strong, label) {
+    color: #f7f6f3;
+  }
+
+  /* Profile card: black in dark mode */
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-profile {
+    background: #000000;
+    background-color: #000000;
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-profile :is(.portal-widget-profile-name, .portal-widget-profile-id, .portal-widget-profile-stat strong, .portal-widget-profile-stat span) {
+    color: #f7f6f3;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-profile .portal-widget-profile-cover {
+    background-image: var(--pw-cover-dark, linear-gradient(135deg, #3a1d26, #12080c));
+  }
+
+  /* Chat widget dark theme */
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat :is(
+    .public-ai-chat-card,
+    .public-ai-chat-messages,
+    .assistant-saved-chats
+  ) {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat .public-ai-chat-reply,
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat .public-ai-chat-reply .public-ai-reply-row,
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat .public-ai-chat-reply .public-ai-reply-row-aligned {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat :is(
+    .public-ai-chat-time,
+    .public-ai-chat-messages,
+    .assistant-saved-chats,
+    .assistant-saved-chats *,
+    .assistant-saved-chats-empty
+  ),
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat .public-ai-chat-bubble.is-assistant {
+    color: #f7f6f3 !important;
+    -webkit-text-fill-color: #f7f6f3 !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat .public-ai-chat-bubble.is-assistant,
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat .public-ai-chat-bubble.is-typing {
+    background: #1c1c1c !important;
+    background-color: #1c1c1c !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat .public-ai-reply-field,
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat .public-ai-reply-field textarea {
+    background: #161616 !important;
+    background-color: #161616 !important;
+    border-color: rgba(255, 255, 255, 0.16) !important;
+    color: #f7f6f3 !important;
+    -webkit-text-fill-color: #f7f6f3 !important;
+    caret-color: #f7f6f3 !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat .public-ai-reply-field textarea::placeholder,
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat .public-ai-reply-field input::placeholder {
+    color: rgba(247, 246, 243, 0.5) !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat :is(.public-ai-send-button, .public-ai-search-icon) {
+    color: #d8798e !important;
+    fill: currentColor !important;
+    stroke: currentColor !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat .assistant-saved-chats {
+    border-color: rgba(255, 255, 255, 0.15) !important;
+  }
+}

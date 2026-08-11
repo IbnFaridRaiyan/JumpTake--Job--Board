@@ -22,6 +22,7 @@ import { clearBrowserAccountState } from '../utils/authStorage';
 import GuidedPortalTour from './GuidedPortalTour';
 import PortalPageSkeleton from './PortalPageSkeleton';
 import Pricing from './Pricing';
+import PortalSideWidgets from './PortalSideWidgets';
 
 const EMPLOYER_SECTION_IDS = new Set([
     'inbox',
@@ -60,6 +61,8 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     const [employer, setEmployer] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeSection, setActiveSection] = useState('talent-stories');
+    const [previousSection, setPreviousSection] = useState(null);
+    const previousSectionRef = useRef(null);
     const [openedSections, setOpenedSections] = useState(() => ['talent-stories']);
     const [titleAnimationReplayKey, setTitleAnimationReplayKey] = useState(0);
     const sectionHistoryRef = useRef([]);
@@ -81,6 +84,11 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                 ? currentSections
                 : [...currentSections, activeSection]
         ));
+    }, [activeSection]);
+
+    useEffect(() => {
+        setPreviousSection(previousSectionRef.current);
+        previousSectionRef.current = activeSection;
     }, [activeSection]);
 
     const updateActiveSection = (section, { push = true } = {}) => {
@@ -901,6 +909,34 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                     ))}
                 </main>
             </div>
+            <PortalSideWidgets
+                mode="employer"
+                renderSection={renderContent}
+                previousSection={previousSection}
+                previousSectionTitle={previousSection ? (sectionTitles[previousSection] || previousSection) : ''}
+                chatStorageKey={`jumptakeAssistantChat:employer:${employer?.companyId || 'guest'}`}
+                chatContext={() => ({
+                    portalMode: 'employer',
+                    activeSection,
+                    user: employer,
+                    company: companyData,
+                    jobs: Array.isArray(jobs) ? jobs : []
+                })}
+                performanceProps={{
+                    jobs: Array.isArray(jobs) ? jobs : [],
+                    employer,
+                    applicationCount
+                }}
+                profile={{
+                    name: companyData?.name || employer?.companyName || employer?.username || 'Company',
+                    profileImage: companyData?.logo || companyData?.profileImage,
+                    coverImage: companyData?.coverImage,
+                    jumptakeId: '',
+                    likes: companyData?.likes || employer?.likes,
+                    rating: companyData?.rating || employer?.rating
+                }}
+                onOpenProfile={() => openSection('company-profile')}
+            />
             <FloatingMessenger
                 mode="employer"
                 companyId={employer?.companyId}

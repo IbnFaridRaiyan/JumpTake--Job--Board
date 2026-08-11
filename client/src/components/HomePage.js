@@ -22,6 +22,7 @@ import JOB_INTEREST_OPTIONS from '../utils/jobInterestOptions';
 import GuidedPortalTour from './GuidedPortalTour';
 import PortalPageSkeleton from './PortalPageSkeleton';
 import Pricing from './Pricing';
+import PortalSideWidgets from './PortalSideWidgets';
 
 const CANDIDATE_SECTION_IDS = new Set([
     'dashboard',
@@ -158,6 +159,8 @@ const normalizeCandidateProfile = (profile) => {
 
 const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const [activeSection, setActiveSection] = useState('work-news');
+    const [previousSection, setPreviousSection] = useState(null);
+    const previousSectionRef = useRef(null);
     const [openedSections, setOpenedSections] = useState(() => ['work-news']);
     const [titleAnimationReplayKey, setTitleAnimationReplayKey] = useState(0);
     const [sectionErrorResetKey, setSectionErrorResetKey] = useState(0);
@@ -192,6 +195,11 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                 ? currentSections
                 : [...currentSections, activeSection]
         ));
+    }, [activeSection]);
+
+    useEffect(() => {
+        setPreviousSection(previousSectionRef.current);
+        previousSectionRef.current = activeSection;
     }, [activeSection]);
 
     useEffect(() => {
@@ -1189,6 +1197,34 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                     )}
                 </main>
             </div>
+            <PortalSideWidgets
+                mode="candidate"
+                renderSection={renderContent}
+                previousSection={previousSection}
+                previousSectionTitle={previousSection ? (sectionTitles[previousSection] || previousSection) : ''}
+                chatStorageKey={`jumptakeAssistantChat:candidate:${user?.id || 'guest'}`}
+                chatContext={() => ({
+                    portalMode: 'candidate',
+                    activeSection,
+                    user,
+                    profile: jobSeekerData,
+                    jobs: safeJobs
+                })}
+                performanceProps={{
+                    jobs: safeJobs,
+                    jobSeekerData,
+                    userId: user?.id
+                }}
+                profile={{
+                    name: jobSeekerData?.name || jobSeekerData?.loginUsername || displayName,
+                    profileImage: jobSeekerData?.profileImage,
+                    coverImage: jobSeekerData?.coverImage,
+                    jumptakeId: user?.jumptakeId,
+                    likes: jobSeekerData?.likes,
+                    rating: jobSeekerData?.rating || jobSeekerData?.averageRating
+                }}
+                onOpenProfile={() => openSection('tailor-profile')}
+            />
             <FloatingMessenger
                 mode="candidate"
                 userId={user?.id}

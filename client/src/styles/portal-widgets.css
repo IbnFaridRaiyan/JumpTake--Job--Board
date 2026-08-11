@@ -1,0 +1,760 @@
+/* JumpTake portal side widgets (desktop only).
+   Base layout only — theme colors live in portal-widgets-light.css and
+   portal-widgets-dark.css so the two themes never collide. */
+
+@media (min-width: 1900px) {
+  .portal-side-widgets {
+    position: fixed;
+    top: 6.5rem;
+    bottom: 1.25rem;
+    z-index: 8000;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .portal-side-widgets-left {
+    left: max(0.5rem, calc((100vw - 1120px) / 2 - 28.5rem));
+    width: 28rem;
+    gap: 0.85rem;
+  }
+
+  .portal-side-widgets-right {
+    right: max(0.5rem, calc((100vw - 1120px) / 2 - 29.5rem));
+    width: 29rem;
+  }
+
+  .portal-widget {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    border-radius: 1.15rem;
+    border: 1px solid transparent;
+    overflow: hidden;
+    animation: pw-widget-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .portal-side-widgets-left .portal-widget:nth-child(2) { animation-delay: 0.08s; }
+  .portal-side-widgets-left .portal-widget:nth-child(3) { animation-delay: 0.16s; }
+  .portal-side-widgets-right .portal-widget { animation-delay: 0.1s; }
+
+  @keyframes pw-widget-in {
+    from { opacity: 0; transform: translateY(14px) scale(0.985); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .portal-side-widgets-left .portal-widget-last-used {
+    flex: 1 1 0;
+    min-height: 0;
+  }
+
+  .portal-side-widgets-left .portal-widget-performance {
+    flex: 0 0 auto;
+    max-height: 30%;
+    min-height: 0;
+  }
+
+  .portal-side-widgets-left .portal-widget-profile {
+    flex: 0 0 auto;
+    min-height: 0;
+  }
+
+  .portal-side-widgets-right .portal-widget-chat {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .portal-widget-header {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.7rem 0.95rem;
+    border-radius: 1.15rem 1.15rem 0 0;
+    font-family: Inter, "Aptos", "Segoe UI", sans-serif;
+  }
+
+  .portal-widget-header > span {
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.78;
+  }
+
+  .portal-widget-header > strong {
+    font-size: 0.82rem;
+    font-weight: 800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .portal-widget-empty {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    width: 100%;
+    padding: 1rem;
+    font-family: Inter, "Aptos", "Segoe UI", sans-serif;
+  }
+
+  .portal-widget-empty strong { font-size: 0.82rem; font-weight: 800; }
+  .portal-widget-empty span { font-size: 0.72rem; line-height: 1.45; opacity: 0.72; }
+
+  /* ---- Last used page: live window, fitted to the card ---- */
+  .portal-widget-last-used-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .portal-widget-last-used-scroll {
+    box-sizing: border-box;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0.35rem;
+  }
+
+  .portal-widget-last-used-zoom {
+    box-sizing: border-box;
+    zoom: 0.82;
+    width: calc(100% / 0.82);
+    min-width: 0;
+    max-width: none;
+    overflow: hidden;
+  }
+
+  .portal-widget-last-used-zoom > :is(section, div, article) {
+    box-sizing: border-box !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .portal-widget-last-used-scroll :is(
+    .portal-section-transition-shell,
+    .portal-home-feed,
+    .portal-home-feed-scroll,
+    .portal-home-tab-panel,
+    .dashboard-container,
+    .main-content,
+    .dashboard-content
+  ) {
+    box-sizing: border-box !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    position: static !important;
+    inset: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    transform: none !important;
+  }
+
+  .portal-widget-last-used-scroll .portal-home-feed > .portal-home-tabs,
+  .portal-widget-last-used-scroll .dashboard-section-title,
+  .portal-widget-last-used-scroll .mobile-section-panel-header,
+  .portal-widget-last-used-scroll .page-footer-actions,
+  .portal-widget-last-used-scroll .portal-feed-section-actions {
+    display: none !important;
+  }
+
+  .portal-widget-last-used-scroll :is(
+    .portal-social-list,
+    .portal-candidate-job-list,
+    .portal-social-post-card,
+    .portal-candidate-job-card
+  ) {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-inline: 0 !important;
+  }
+
+  .portal-widget-last-used-scroll :is(
+    .portal-social-post-card,
+    .portal-candidate-job-card,
+    .portal-job-summary-card,
+    .notification-row,
+    .candidate-list-row,
+    .application-card,
+    .fresh-application-card
+  ) {
+    padding: 0.45rem !important;
+    border-radius: 0.6rem !important;
+    margin-bottom: 0.4rem !important;
+  }
+
+  /* Mobile-view preview: force the pinned page into a compact single-column
+     layout, mirroring how it renders on a phone. Fitted — no horizontal cut. */
+  .portal-widget-last-used-scroll {
+    font-size: 0.9rem !important;
+  }
+
+  .portal-widget-last-used-scroll :is(h1, h2, h3, h4) {
+    font-size: 1.05em !important;
+    line-height: 1.25 !important;
+  }
+
+  .portal-widget-last-used-scroll :is(
+    .portal-social-post-card,
+    .portal-candidate-job-card,
+    .portal-job-summary-card,
+    .notification-row,
+    .candidate-list-row,
+    .application-card,
+    .fresh-application-card,
+    .settings-card,
+    .profile-details-card,
+    .friend-invitation-card,
+    .bookmarked-job-card,
+    .saved-post-card,
+    .stat-card
+  ),
+  .portal-widget-last-used-scroll :is(
+    .candidates-grid,
+    .candidate-list,
+    .dashboard-content,
+    .applications-hub-container,
+    .bookmarks-hub-container,
+    .notifications-page,
+    .talent-pool-container
+  ) > * {
+    box-sizing: border-box !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .portal-widget-last-used-zoom :is(section, div, article, main, form, fieldset, table, thead, tbody, tr) {
+    box-sizing: border-box !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .portal-widget-last-used-zoom :is(img, video, svg) {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  .portal-widget-last-used-zoom :is(button, input, textarea, select) {
+    box-sizing: border-box !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .portal-widget-last-used-scroll :is(
+    .candidates-grid,
+    .candidate-list,
+    .candidate-card-list,
+    .dashboard-stats,
+    .dashboard-cards,
+    .portal-default-stats,
+    .applications-hub-panel,
+    .bookmarks-hub-panel,
+    .notifications-list,
+    .application-list,
+    .progress-summary-grid,
+    .progress-visual-grid,
+    .progress-lower-grid,
+    .friend-invitation-list,
+    .friend-add-results,
+    .candidate-directory-results
+  ) {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+
+  .portal-widget-last-used-scroll :is(
+    .portal-vertical-sidebar,
+    .portal-uiverse-sidebar,
+    .dashboard-header,
+    .candidate-dashboard-header,
+    .employer-dashboard-header,
+    .portal-home-tabs,
+    .job-feed-header,
+    .section-header,
+    .talent-pool-header,
+    .dashboard-section-title,
+    .mobile-section-panel-header,
+    .page-footer-actions,
+    .section-footer-nav,
+    .portal-feed-section-actions,
+    .portal-create-story-action-row
+  ) {
+    display: none !important;
+  }
+
+  .portal-widget-last-used-scroll .dashboard-container {
+    display: block !important;
+  }
+
+  .portal-widget-last-used-scroll .main-content,
+  .portal-widget-last-used-scroll .dashboard-content,
+  .portal-widget-last-used-scroll .portal-section-transition-shell {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* ---- Performance widget ---- */
+  .portal-widget-performance {
+    box-sizing: border-box;
+  }
+
+  .portal-widget-performance-body {
+    box-sizing: border-box;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 0.7rem 0.7rem;
+  }
+
+  .pw-metrics-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.4rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .pw-metric {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.1rem;
+    min-width: 0;
+    padding: 0.55rem 0.5rem 0.5rem;
+    border-radius: 0.7rem;
+    border: 1px solid transparent;
+    border-top: 2px solid var(--pw-tone, var(--progress-accent));
+    animation: pw-pop 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .pw-metrics-row .pw-metric:nth-child(2) { animation-delay: 0.06s; }
+  .pw-metrics-row .pw-metric:nth-child(3) { animation-delay: 0.12s; }
+  .pw-metrics-row .pw-metric:nth-child(4) { animation-delay: 0.18s; }
+
+  @keyframes pw-pop {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .pw-metric strong {
+    font-size: 1.02rem;
+    font-weight: 850;
+    line-height: 1;
+    color: var(--pw-tone, var(--progress-accent));
+  }
+
+  .pw-metric span {
+    font-size: 0.56rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    opacity: 0.72;
+    white-space: nowrap;
+  }
+
+  .pw-donut-card,
+  .pw-trend-card {
+    box-sizing: border-box;
+    padding: 0.7rem 0.75rem;
+    border-radius: 0.85rem;
+    border: 1px solid transparent;
+    margin-bottom: 0.55rem;
+  }
+
+  .pw-panel-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 0.06rem;
+    margin-bottom: 0.55rem;
+    font-family: Inter, "Aptos", "Segoe UI", sans-serif;
+  }
+
+  .pw-panel-heading > span {
+    font-size: 0.56rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.72;
+  }
+
+  .pw-panel-heading > strong {
+    font-size: 0.84rem;
+    font-weight: 800;
+  }
+
+  .pw-donut-layout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7rem;
+  }
+
+  .pw-donut-layout .progress-donut {
+    width: 5.4rem;
+    height: 5.4rem;
+    flex: 0 0 auto;
+    position: relative;
+    animation: pw-donut-shine 6s ease-in-out infinite;
+  }
+
+  @keyframes pw-donut-shine {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.12); }
+  }
+
+  .pw-donut-layout .progress-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.68rem;
+    line-height: 1.2;
+  }
+
+  .pw-legend-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .pw-legend-chip i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.95rem;
+    height: 0.95rem;
+    border-radius: 50%;
+    flex: 0 0 auto;
+  }
+
+  .pw-trend-card .progress-trend-chart {
+    display: block;
+    width: 100%;
+    height: 3.8rem;
+  }
+
+  .pw-overall-card,
+  .pw-extra-card {
+    box-sizing: border-box;
+    padding: 0.7rem 0.75rem;
+    border-radius: 0.85rem;
+    border: 1px solid transparent;
+    margin-bottom: 0.55rem;
+  }
+
+  .pw-overall-layout {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .pw-overall-layout .progress-ring {
+    flex: 0 0 auto;
+    width: 4rem;
+    height: 4rem;
+    animation: pw-ring-pulse 3.4s ease-in-out infinite;
+  }
+
+  @keyframes pw-ring-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+  }
+
+  .pw-overall-layout .progress-ring::before {
+    content: "";
+    position: absolute;
+    inset: -0.2rem;
+    border-radius: 50%;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      color-mix(in srgb, var(--progress-accent) 55%, transparent) 40deg,
+      transparent 90deg
+    );
+    opacity: 0.5;
+    animation: pw-ring-sweep 2.6s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes pw-ring-sweep {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .pw-overall-copy {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 0.72rem;
+    line-height: 1.45;
+    opacity: 0.78;
+  }
+
+  .pw-extra-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.34rem 0.1rem;
+    border-bottom: 1px solid rgba(122, 130, 134, 0.14);
+    font-size: 0.74rem;
+  }
+
+  .pw-extra-row:last-child { border-bottom: 0; }
+  .pw-extra-row span { opacity: 0.78; }
+
+  .pw-extra-row strong {
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  /* ---- Profile card widget (no header, whole card is a button) ---- */
+  .portal-widget-profile {
+    position: relative;
+    box-sizing: border-box;
+    border-radius: 1.15rem;
+    border: 1px solid transparent;
+    overflow: hidden;
+    cursor: pointer;
+    text-align: left;
+    font-family: Inter, "Aptos", "Segoe UI", sans-serif;
+  }
+
+  .portal-widget-profile-cover {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    height: 4.4rem;
+    background-image: var(--pw-cover-light, linear-gradient(135deg, #f0dcc2, #d9a08b));
+    background-size: cover;
+    background-position: center;
+  }
+
+  .portal-widget-profile-body {
+    box-sizing: border-box;
+    padding: 0 0.9rem 0.85rem;
+  }
+
+  .portal-widget-profile-avatar {
+    box-sizing: border-box;
+    display: block;
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-top: -1.75rem;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    background: #d8a0a0;
+    object-fit: cover;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  }
+
+  .portal-widget-profile-name {
+    display: block;
+    margin-top: 0.45rem;
+    font-size: 0.98rem;
+    font-weight: 850;
+    line-height: 1.15;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .portal-widget-profile-id {
+    display: block;
+    margin-top: 0.1rem;
+    font-size: 0.7rem;
+    opacity: 0.68;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .portal-widget-profile-stats {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    margin-top: 0.65rem;
+    padding-top: 0.55rem;
+    border-top: 1px solid rgba(122, 130, 134, 0.2);
+  }
+
+  .portal-widget-profile-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.05rem;
+  }
+
+  .portal-widget-profile-stat strong { font-size: 0.92rem; font-weight: 850; line-height: 1; }
+  .portal-widget-profile-stat span { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; opacity: 0.68; }
+
+  /* ---- JumpTake AI chat widget ---- */
+  .portal-widget-chat-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    box-sizing: border-box;
+    padding: 0 0.65rem 0.7rem;
+  }
+
+  .portal-widget-chat-body .public-ai-chat-card.portal-ai-chat-card {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+  .portal-widget-chat-body .public-ai-chat-messages.portal-ai-chat-messages {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0.2rem 0.15rem 0.5rem;
+  }
+
+  .portal-widget-chat-body .public-ai-chat-reply {
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0.6rem 0 0 !important;
+    background: transparent !important;
+    background-image: none !important;
+    overflow: visible !important;
+  }
+
+  .portal-widget-chat-body .public-ai-chat-reply .public-ai-reply-row,
+  .portal-widget-chat-body .public-ai-reply-field {
+    box-sizing: border-box !important;
+    border-radius: 1.05rem !important;
+    overflow: visible !important;
+  }
+
+  .portal-widget-chat-body .public-ai-reply-field {
+    border: 1px solid transparent;
+  }
+
+  .portal-widget-chat-body .public-ai-reply-field textarea {
+    min-height: 3.05rem !important;
+    max-height: 6.5rem !important;
+    padding: 0.9rem 1rem 0.9rem 2.4rem !important;
+    border-radius: 1.05rem !important;
+    font-size: 0.95rem !important;
+    line-height: 1.35 !important;
+    overflow-y: auto !important;
+  }
+
+  .portal-widget-chat-body .public-ai-chat-reply .public-ai-send-button {
+    flex: 0 0 auto !important;
+    min-width: 2.7rem !important;
+    width: auto !important;
+    height: 2.55rem !important;
+    min-height: 2.55rem !important;
+    padding: 0 0.55rem !important;
+    border-radius: 0.85rem !important;
+    font-size: 0.78rem !important;
+    overflow: visible !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* Desktop: hide scrollbars in the widgets and the centered page scroll
+   containers. Scrolling stays fully functional, just without a visible bar. */
+@media (min-width: 769px) {
+  html[data-theme] body[data-theme] #root :is(
+    .portal-widget-last-used-scroll,
+    .portal-widget-performance-body,
+    .portal-widget-chat-body .public-ai-chat-messages,
+    .portal-home-feed,
+    .portal-home-feed-scroll,
+    .portal-home-tab-panel,
+    .portal-section-transition-shell,
+    .main-content,
+    .dashboard-container
+  ) {
+    scrollbar-width: none !important;
+    scrollbar-color: transparent transparent !important;
+  }
+
+  html[data-theme] body[data-theme] #root :is(
+    .portal-widget-last-used-scroll,
+    .portal-widget-performance-body,
+    .portal-widget-chat-body .public-ai-chat-messages,
+    .portal-home-feed,
+    .portal-home-feed-scroll,
+    .portal-home-tab-panel,
+    .portal-section-transition-shell,
+    .main-content,
+    .dashboard-container
+  )::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+  }
+
+  html[data-theme] body[data-theme] #root :is(
+    .portal-widget-last-used-scroll,
+    .portal-widget-performance-body,
+    .portal-widget-chat-body .public-ai-chat-messages,
+    .portal-home-feed,
+    .portal-home-feed-scroll,
+    .portal-home-tab-panel,
+    .portal-section-transition-shell,
+    .main-content,
+    .dashboard-container
+  )::-webkit-scrollbar-thumb,
+  html[data-theme] body[data-theme] #root :is(
+    .portal-widget-last-used-scroll,
+    .portal-widget-performance-body,
+    .portal-widget-chat-body .public-ai-chat-messages,
+    .portal-home-feed,
+    .portal-home-feed-scroll,
+    .portal-home-tab-panel,
+    .portal-section-transition-shell,
+    .main-content,
+    .dashboard-container
+  )::-webkit-scrollbar-track {
+    background: transparent !important;
+  }
+
+  html[data-theme] body[data-theme] #root .portal-widget-chat-body .public-ai-chat-reply .public-ai-reply-field textarea {
+    scrollbar-width: none !important;
+    scrollbar-color: transparent transparent !important;
+  }
+
+  html[data-theme] body[data-theme] #root .portal-widget-chat-body .public-ai-chat-reply .public-ai-reply-field textarea::-webkit-scrollbar,
+  html[data-theme] body[data-theme] #root .portal-widget-chat-body .public-ai-chat-reply .public-ai-reply-field textarea::-webkit-scrollbar-thumb,
+  html[data-theme] body[data-theme] #root .portal-widget-chat-body .public-ai-chat-reply .public-ai-reply-field textarea::-webkit-scrollbar-track {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+  }
+}

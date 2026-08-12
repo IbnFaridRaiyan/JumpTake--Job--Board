@@ -59,6 +59,7 @@ const PortalSidebar = ({
     const [menuClosing, setMenuClosing] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const [pageQuery, setPageQuery] = useState('');
+    const [headerSearchQuery, setHeaderSearchQuery] = useState('');
     const [portalTarget, setPortalTarget] = useState(null);
     const closeTimerRef = useRef(null);
 
@@ -148,6 +149,16 @@ const PortalSidebar = ({
     const visiblePrimaryItems = primaryItems.filter((item) => item.label.toLowerCase().includes(pageQuery.trim().toLowerCase()));
     const visibleSecondaryItems = secondaryItems.filter((item) => item.label.toLowerCase().includes(pageQuery.trim().toLowerCase()));
 
+    const submitHeaderSearch = (event) => {
+        event?.preventDefault();
+        const query = headerSearchQuery.trim();
+        if (!query) {
+            onSearch?.('');
+            return;
+        }
+        onSearch?.(query);
+    };
+
     const renderItem = (item) => (
         <li key={item.id || item.label} className="portal-public-nav-item">
             <button
@@ -179,6 +190,21 @@ const PortalSidebar = ({
                 <div className="portal-public-brand">
                     <img src={appMode === 'dark' ? portalLogoDark : portalLogoLight} alt="JumpTake" />
                 </div>
+                <form className={`portal-public-header-search ${headerSearchQuery ? 'has-value' : ''}`} onSubmit={submitHeaderSearch} role="search">
+                    <label htmlFor="portal-desktop-search-input">Search JumpTake</label>
+                    <input
+                        id="portal-desktop-search-input"
+                        type="search"
+                        value={headerSearchQuery}
+                        onChange={(event) => setHeaderSearchQuery(event.target.value)}
+                        placeholder="Search..."
+                        aria-label="Search JumpTake"
+                        autoComplete="off"
+                    />
+                    <button type="submit" aria-label="Ask JumpTake AI to search" title="Ask JumpTake AI to search">
+                        <PortalIcon name="search" />
+                    </button>
+                </form>
                 <div className="portal-public-utilities">
                     <button
                         type="button"

@@ -18,6 +18,7 @@ const MessageWorkspaceNav = ({ activeTab, onChange, counts = {}, compact = false
                 role="tab"
                 aria-selected={activeTab === tab.id}
                 className={`message-workspace-tab ${activeTab === tab.id ? 'is-active' : ''}`}
+                title={tab.label}
                 onClick={() => onChange(tab.id)}
             >
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d={tab.icon} /></svg>

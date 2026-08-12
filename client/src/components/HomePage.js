@@ -1149,6 +1149,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                                     className={selectedJobInterests.includes(interest) ? 'selected' : ''}
                                     onClick={() => toggleJobInterest(interest)}
                                 >
+                                    <span className="job-interest-option-box" aria-hidden="true" />
                                     {interest}
                                 </button>
                             ))}
@@ -1175,9 +1176,22 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                         onLogout={handleLogout}
                         appMode={appMode}
                         onAppModeChange={onAppModeChange}
-                        onSearch={() => window.dispatchEvent(new CustomEvent('jumptake-open-candidate-messenger', {
-                            detail: { assistant: true }
-                        }))}
+                        onSearch={(query = '') => {
+                            window.dispatchEvent(new CustomEvent('jumptake-open-candidate-messenger', {
+                                detail: { assistant: true }
+                            }));
+                            if (String(query).trim()) {
+                                const prompt = String(query).trim();
+                                window.setTimeout(() => {
+                                    window.dispatchEvent(new CustomEvent('jumptake-widget-assistant-prompt', {
+                                        detail: { prompt }
+                                    }));
+                                    window.dispatchEvent(new CustomEvent('jumptake-assistant-submit', {
+                                        detail: { prompt }
+                                    }));
+                                }, 80);
+                            }
+                        }}
                         onSettings={() => openSection('settings')}
                         mobileSectionOpen={mobileSectionVisible}
                     />
@@ -1234,6 +1248,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                 chatContext={() => ({
                     portalMode: 'candidate',
                     activeSection,
+                    availablePages: Object.entries(sectionTitles).map(([id, title]) => ({ id, title })),
                     user,
                     profile: jobSeekerData,
                     jobs: safeJobs

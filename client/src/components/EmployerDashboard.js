@@ -905,9 +905,22 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                         onLogout={handleLogout}
                         appMode={appMode}
                         onAppModeChange={onAppModeChange}
-                        onSearch={() => window.dispatchEvent(new CustomEvent('jumptake-open-employer-messenger', {
-                            detail: { assistant: true }
-                        }))}
+                        onSearch={(query = '') => {
+                            window.dispatchEvent(new CustomEvent('jumptake-open-employer-messenger', {
+                                detail: { assistant: true }
+                            }));
+                            if (String(query).trim()) {
+                                const prompt = String(query).trim();
+                                window.setTimeout(() => {
+                                    window.dispatchEvent(new CustomEvent('jumptake-widget-assistant-prompt', {
+                                        detail: { prompt }
+                                    }));
+                                    window.dispatchEvent(new CustomEvent('jumptake-assistant-submit', {
+                                        detail: { prompt }
+                                    }));
+                                }, 80);
+                            }
+                        }}
                         onSettings={() => openSection('settings')}
                         mobileSectionOpen={mobileSectionVisible}
                     />
@@ -946,6 +959,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                 chatContext={() => ({
                     portalMode: 'employer',
                     activeSection,
+                    availablePages: Object.entries(sectionTitles).map(([id, title]) => ({ id, title })),
                     user: employer,
                     company: companyData,
                     jobs: Array.isArray(jobs) ? jobs : []

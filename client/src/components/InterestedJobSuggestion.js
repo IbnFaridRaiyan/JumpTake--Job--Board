@@ -86,6 +86,7 @@ const InterestedJobSuggestion = ({ user, onInterestsSaved }) => {
                             className={selectedInterests.includes(interest) ? 'selected' : ''}
                             onClick={() => toggleInterest(interest)}
                         >
+                            <span className="job-interest-option-box" aria-hidden="true" />
                             {interest}
                         </button>
                     ))}

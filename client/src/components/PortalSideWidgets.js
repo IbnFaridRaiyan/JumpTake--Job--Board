@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import AssistantChat from './AssistantChat';
 import defaultTailorCoverDarkImage from './media/default-tailor-cover-dark.png';
 import defaultTailorCoverLightImage from './media/default-tailor-cover-light.png';
+import portalLogoDark from './media/logo4.png';
+import portalLogoLight from './media/jumptake-logo-9.png';
 import {
     PORTAL_REMINDER_ALERT_EVENT,
     isPortalReminderDueForAlert,
@@ -737,6 +739,9 @@ const PortalSideWidgets = ({
     return (
         <>
             <aside className={`portal-side-widgets portal-side-widgets-left portal-side-widgets-theme-${widgetTheme}`}>
+                <div className="portal-side-logo" aria-label="JumpTake">
+                    <img src={theme === 'dark' ? portalLogoDark : portalLogoLight} alt="JumpTake" />
+                </div>
                 <ProfileWidget profile={profile} onOpenProfile={onOpenProfile} />
                 <section className="portal-widget portal-widget-last-used">
                     <header className="portal-widget-header">

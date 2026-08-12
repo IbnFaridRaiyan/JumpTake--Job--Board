@@ -158,12 +158,20 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
             return undefined;
         }
 
-        const focusWidgetAssistant = () => {
+        const focusWidgetAssistant = (event) => {
+            const prompt = String(event?.detail?.prompt || '').trim();
+            if (prompt) {
+                setAssistantInput(prompt);
+            }
             window.requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
         };
 
         window.addEventListener('jumptake-widget-assistant-focus', focusWidgetAssistant);
-        return () => window.removeEventListener('jumptake-widget-assistant-focus', focusWidgetAssistant);
+        window.addEventListener('jumptake-widget-assistant-prompt', focusWidgetAssistant);
+        return () => {
+            window.removeEventListener('jumptake-widget-assistant-focus', focusWidgetAssistant);
+            window.removeEventListener('jumptake-widget-assistant-prompt', focusWidgetAssistant);
+        };
     }, [className]);
 
     const clearAssistantChat = () => {
@@ -258,6 +266,37 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
             setAssistantLoading(false);
         }
     };
+
+    // Desktop portal header searches are routed straight into the active
+    // JumpTake AI chat.  The small delay lets the floating messenger finish
+    // mounting its assistant panel before requestSubmit runs; the side-widget
+    // assistant is already mounted and submits on the same event immediately.
+    useEffect(() => {
+        if (
+            typeof window === 'undefined'
+            || (!className.includes('portal-widget-assistant-chat')
+                && !className.includes('floating-messenger-assistant-chat'))
+        ) return undefined;
+
+        const submitHeaderSearch = (event) => {
+            const prompt = String(event?.detail?.prompt || '').trim();
+            if (!prompt) return;
+
+            setAssistantInput(prompt);
+            window.setTimeout(() => {
+                const form = inputRef.current?.form;
+                if (!form || assistantLoading) return;
+                if (typeof form.requestSubmit === 'function') {
+                    form.requestSubmit();
+                } else {
+                    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+                }
+            }, 0);
+        };
+
+        window.addEventListener('jumptake-assistant-submit', submitHeaderSearch);
+        return () => window.removeEventListener('jumptake-assistant-submit', submitHeaderSearch);
+    }, [assistantLoading, className]);
 
     const keepAssistantReplyInView = (event) => {
         if (typeof window === 'undefined' || !window.matchMedia('(max-width: 768px)').matches) {

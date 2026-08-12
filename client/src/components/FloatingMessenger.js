@@ -185,6 +185,12 @@ const detectLocalAssistantAction = (message = '', context = {}) => {
         return 'employer-create-post';
     }
 
+    const wantsMessenger = /\b(?:open|go to|show|start|launch)\b.{0,28}\b(?:inbox|messages?|chat)\b/.test(normalized)
+        || /\b(?:inbox|messages?|chat)\b.{0,28}\b(?:open|show|start|launch)\b/.test(normalized);
+    if (wantsMessenger) {
+        return 'open-messenger';
+    }
+
     return '';
 };
 
@@ -839,8 +845,8 @@ const FloatingMessenger = ({
             setError('');
             setAssistantMenuOpen(false);
             assistantDirectOpenRef.current = false;
-        }, 440);
-    }, [closing]);
+        }, isMobileView ? 440 : 680);
+    }, [closing, isMobileView]);
 
     useEffect(() => {
         if (!open || typeof document === 'undefined') {
@@ -980,7 +986,7 @@ const FloatingMessenger = ({
                 <button type="button" className="message-thread-options-trigger" onClick={(event) => {
                     event.stopPropagation();
                     toggleThreadMenu(thread._id);
-                }} aria-expanded={isOpen} aria-label="Conversation options"><span aria-hidden="true">...</span></button>
+                }} aria-expanded={isOpen} aria-label="Conversation options"><span aria-hidden="true">…</span></button>
                 {(isOpen || isClosing) && (
                     <div className={`message-thread-options-menu ${isClosing ? 'is-closing' : 'is-opening'}`} role="menu" onClick={(event) => event.stopPropagation()}>
                         {canTagCandidate && <button type="button" onClick={() => openTaggedPostComposer(thread)}>Tag to post</button>}
@@ -1175,6 +1181,12 @@ const FloatingMessenger = ({
 
         if (actionName.startsWith('open-section:')) {
             const section = actionName.split(':')[1];
+            if (['inbox', 'messages', 'message', 'chat'].includes(section)) {
+                window.dispatchEvent(new CustomEvent(openEventName, {
+                    detail: { assistant: false, source: 'assistant' }
+                }));
+                return;
+            }
             if (section === 'create-story' && !isEmployer) {
                 storeAndOpenSection('talent-stories', 'jumptakeFeedAiDraft', {
                     mode: 'candidate',
@@ -1189,6 +1201,13 @@ const FloatingMessenger = ({
                 storeAndOpenSection(section);
                 minimizeAfterMobileAssistantAction();
             }
+            return;
+        }
+
+        if (['open-messenger', 'open-inbox', 'open-messages', 'open-chat'].includes(actionName)) {
+            window.dispatchEvent(new CustomEvent(openEventName, {
+                detail: { assistant: false, source: 'assistant' }
+            }));
             return;
         }
 

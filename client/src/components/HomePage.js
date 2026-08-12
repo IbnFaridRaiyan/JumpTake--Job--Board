@@ -1193,6 +1193,12 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                             }
                         }}
                         onSettings={() => openSection('settings')}
+                        searchContext={{
+                            mode: 'candidate',
+                            profileName: displayName,
+                            profileSubtitle: displayEmail,
+                            jobs: safeJobs
+                        }}
                         mobileSectionOpen={mobileSectionVisible}
                     />
                     {showSectionTitle && !isMobileViewport() && (

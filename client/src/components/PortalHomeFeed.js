@@ -3848,6 +3848,15 @@ const PortalHomeFeed = ({
                 setActiveTab(requestedTab);
             }
 
+            if (requestedTab === 'job-posts' && request.search) {
+                setHomeJobSearch(String(request.search || '').trim());
+                setHomeJobLocationFilter('');
+                setHomeJobSalarySort('');
+                setHomeJobTypeFilter('');
+                setHomeJobFieldFilter('');
+                setJobPage(1);
+            }
+
             if (requestedTab !== 'job-posts' || !request.jobId || !safeJobs.length) {
                 return;
             }
@@ -6445,6 +6454,7 @@ const PortalHomeFeed = ({
             >
                 <article className={`portal-job-modal portal-job-modal-redesign ${selectedJobMode === 'employer' ? 'is-employer-view' : 'is-candidate-view'}`} role="dialog" aria-modal="true" aria-label={`${selectedJob.title} job details`} onClick={(event) => event.stopPropagation()}>
                     <button
+                        id="portal-job-post-close"
                         type="button"
                         className="portal-job-modal-x-close portal-job-modal-close-button"
                         onClick={closeJobModal}
@@ -6807,6 +6817,7 @@ const PortalHomeFeed = ({
                     onClick={(event) => event.stopPropagation()}
                 >
                     <button
+                        id="tailor-picture-options-close"
                         type="button"
                         className="tailor-media-action-close"
                         onClick={() => setTailorImageMenuOpen('')}
@@ -7681,6 +7692,7 @@ const PortalHomeFeed = ({
                 onScroll={handleFeedScroll}
             >
                 <div key={activeTab} className={`portal-home-tab-panel portal-home-tab-panel-${activeTab}`}>
+                    <div className="portal-desktop-nav-clearance" aria-hidden="true" />
                     {(activeTab === 'create-story' || activeTab === 'my-feed') && (
                         <div
                             className="portal-light-mobile-feed-clearance"

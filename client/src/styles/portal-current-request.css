@@ -1,0 +1,503 @@
+/* Current portal refinements. Keep desktop changes isolated from the mobile UI. */
+
+@media (min-width: 769px) {
+  /* This is a real layout element, so legacy zero-padding rules cannot pull
+     the first heading back underneath the fixed navbar. */
+  html body #root .portal-home-tab-panel > .portal-desktop-nav-clearance {
+    display: block !important;
+    width: 100% !important;
+    height: 5.25rem !important;
+    min-height: 5.25rem !important;
+    flex: 0 0 5.25rem !important;
+    pointer-events: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root .portal-home-tab-panel > .portal-desktop-nav-clearance,
+  body[data-theme="light"] #root .portal-home-tab-panel > .portal-desktop-nav-clearance {
+    height: 5.75rem !important;
+    min-height: 5.75rem !important;
+    flex-basis: 5.75rem !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .portal-home-tab-panel > .portal-desktop-nav-clearance,
+  body[data-theme="dark"] #root .portal-home-tab-panel > .portal-desktop-nav-clearance {
+    height: 6.25rem !important;
+    min-height: 6.25rem !important;
+    flex-basis: 6.25rem !important;
+  }
+
+  html body #root #portal-public-header,
+  html body #root #portal-public-header .portal-public-header-top,
+  html body #root #portal-public-header .portal-public-header-search {
+    overflow: visible !important;
+  }
+
+  html body #root #portal-public-header .portal-public-header-search {
+    z-index: 60 !important;
+  }
+
+  html body #root #portal-public-header .portal-header-search-suggestions {
+    box-sizing: border-box !important;
+    position: absolute !important;
+    top: calc(100% + 0.55rem) !important;
+    right: 0 !important;
+    left: 0 !important;
+    z-index: 2147482501 !important;
+    display: grid !important;
+    gap: 0.32rem !important;
+    width: 100% !important;
+    max-height: min(31rem, calc(100dvh - 6.5rem)) !important;
+    margin: 0 !important;
+    padding: 0.42rem !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    border: 1px solid rgba(71, 40, 48, 0.14) !important;
+    border-radius: 0.78rem !important;
+    background: rgba(255, 250, 243, 0.96) !important;
+    box-shadow: 0 20px 52px rgba(52, 20, 29, 0.2) !important;
+    backdrop-filter: blur(20px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(140%) !important;
+  }
+
+  html body #root #portal-public-header .portal-header-search-suggestion {
+    appearance: none !important;
+    box-sizing: border-box !important;
+    display: grid !important;
+    grid-template-columns: 2.35rem minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 0.66rem !important;
+    width: 100% !important;
+    min-height: 3.15rem !important;
+    margin: 0 !important;
+    padding: 0.5rem 0.58rem !important;
+    border: 0 !important;
+    border-radius: 0.56rem !important;
+    background: transparent !important;
+    color: #34141d !important;
+    text-align: left !important;
+    cursor: pointer !important;
+    box-shadow: none !important;
+  }
+
+  html body #root #portal-public-header .portal-header-search-suggestion:is(:hover, :focus-visible, .is-active),
+  html body #root #portal-public-header .portal-header-search-suggestion[aria-selected="true"] {
+    background: rgba(127, 29, 50, 0.1) !important;
+    outline: none !important;
+  }
+
+  html body #root #portal-public-header .portal-header-search-suggestion-icon,
+  html body #root #portal-public-header .portal-header-search-avatar {
+    box-sizing: border-box !important;
+    display: grid !important;
+    place-items: center !important;
+    width: 2.35rem !important;
+    height: 2.35rem !important;
+    border: 1px solid rgba(127, 29, 50, 0.14) !important;
+    border-radius: 0.62rem !important;
+    background: rgba(255, 255, 255, 0.72) !important;
+    color: #7f1d32 !important;
+    overflow: hidden !important;
+  }
+
+  html body #root #portal-public-header .portal-header-search-suggestion-icon svg {
+    width: 1.08rem !important;
+    height: 1.08rem !important;
+    fill: currentColor !important;
+  }
+
+  html body #root #portal-public-header .portal-header-search-avatar > img {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  html body #root #portal-public-header .portal-header-search-avatar > span {
+    font-size: 0.86rem !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+  }
+
+  html body #root #portal-public-header .portal-header-search-suggestion-copy {
+    display: grid !important;
+    min-width: 0 !important;
+    gap: 0.12rem !important;
+  }
+
+  html body #root #portal-public-header .portal-header-search-suggestion-copy > strong,
+  html body #root #portal-public-header .portal-header-search-suggestion-copy > span {
+    display: block !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  html body #root #portal-public-header .portal-header-search-suggestion-copy > strong {
+    color: inherit !important;
+    -webkit-text-fill-color: currentColor !important;
+    font-size: 0.86rem !important;
+    font-weight: 850 !important;
+    line-height: 1.2 !important;
+  }
+
+  html body #root #portal-public-header .portal-header-search-suggestion-copy > span {
+    color: rgba(52, 20, 29, 0.62) !important;
+    -webkit-text-fill-color: rgba(52, 20, 29, 0.62) !important;
+    font-size: 0.72rem !important;
+    font-weight: 650 !important;
+    line-height: 1.25 !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-header-search-suggestions {
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    background: rgba(10, 10, 12, 0.96) !important;
+    box-shadow: 0 22px 58px rgba(0, 0, 0, 0.48) !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-header-search-suggestion {
+    color: #ffffff !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-header-search-suggestion:is(:hover, :focus-visible, .is-active),
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-header-search-suggestion[aria-selected="true"] {
+    background: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-header-search-suggestion-icon,
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-header-search-avatar {
+    border-color: rgba(255, 255, 255, 0.13) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-header-search-suggestion-copy > span {
+    color: rgba(255, 255, 255, 0.62) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0.62) !important;
+  }
+
+  /* One canonical fixed desktop messenger. The ID is intentional: this
+     portaled singleton must beat the legacy repeated-class selectors. */
+  html body > #jumptake-floating-messenger.is-open.is-desktop-corner,
+  html body > #jumptake-floating-messenger.is-closing.is-desktop-corner {
+    box-sizing: border-box !important;
+    position: fixed !important;
+    inset: auto 1rem 1rem auto !important;
+    z-index: 2147482500 !important;
+    display: block !important;
+    width: min(1120px, calc(100vw - 2rem)) !important;
+    min-width: 0 !important;
+    max-width: calc(100vw - 2rem) !important;
+    height: min(610px, calc(100dvh - 7rem)) !important;
+    min-height: 0 !important;
+    max-height: min(610px, calc(100dvh - 7rem)) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+    transform: none !important;
+    pointer-events: none !important;
+  }
+
+  html body > #jumptake-floating-messenger.is-open.is-desktop-corner > .floating-messenger-backdrop,
+  html body > #jumptake-floating-messenger.is-closing.is-desktop-corner > .floating-messenger-backdrop {
+    display: none !important;
+  }
+
+  html body > #jumptake-floating-messenger.is-open.is-desktop-corner > .floating-messenger-panel,
+  html body > #jumptake-floating-messenger.is-closing.is-desktop-corner > .floating-messenger-panel {
+    box-sizing: border-box !important;
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    pointer-events: auto !important;
+  }
+
+  html body > #jumptake-floating-messenger.is-open.is-desktop-corner:not(.is-closing) > .floating-messenger-panel {
+    animation: jt-current-messenger-open 260ms cubic-bezier(0.2, 0.72, 0.28, 1) both !important;
+    transform-origin: right bottom !important;
+  }
+
+  html body > #jumptake-floating-messenger.is-open.is-closing.is-desktop-corner > .floating-messenger-panel {
+    animation: jt-current-messenger-close 520ms cubic-bezier(0.4, 0, 0.2, 1) both !important;
+    transform-origin: right bottom !important;
+    pointer-events: none !important;
+    will-change: transform, opacity !important;
+  }
+
+  @keyframes jt-current-messenger-open {
+    from { opacity: 0; transform: translate3d(0, 1rem, 0) scale(0.985); }
+    to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+  }
+
+  @keyframes jt-current-messenger-close {
+    from { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+    to { opacity: 0; transform: translate3d(0, 2.25rem, 0) scale(0.985); }
+  }
+
+  /* Keep the contact workspace compact so the conversation pane has room. */
+  html body > #jumptake-floating-messenger.is-open.is-desktop-corner .floating-messenger-shell {
+    grid-template-columns: minmax(0, 0.875fr) minmax(20rem, 1fr) !important;
+  }
+
+  html body > #jumptake-floating-messenger.is-open.is-desktop-corner .floating-messenger-contacts {
+    width: 100% !important;
+    min-width: 0 !important;
+    grid-template-columns: 5rem minmax(0, 1fr) !important;
+  }
+
+  html body > #jumptake-floating-messenger.is-open.is-desktop-corner .floating-messenger-contact-body,
+  html body > #jumptake-floating-messenger.is-open.is-desktop-corner .floating-messenger-contact-list {
+    box-sizing: border-box !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  html body > #jumptake-floating-messenger.is-open.is-desktop-corner .floating-messenger-contact {
+    grid-template-columns: 3rem minmax(0, 1fr) minmax(4.5rem, max-content) 2.35rem !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  html body > #jumptake-floating-messenger.is-open.is-desktop-corner .floating-messenger-contact-copy {
+    display: grid !important;
+    min-width: 0 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  html body > #jumptake-floating-messenger.is-open.is-desktop-corner .floating-messenger-contact-copy > strong {
+    display: block !important;
+    min-width: 0 !important;
+    color: var(--msg-text) !important;
+    -webkit-text-fill-color: var(--msg-text) !important;
+    font-size: 0.88rem !important;
+    font-weight: 800 !important;
+    line-height: 1.25 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  html body > #jumptake-floating-messenger.is-open.is-desktop-corner .floating-messenger-chat {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+}
+
+@media (min-width: 1900px) {
+  /* The brand is a separate row above the profile card, aligned to its right. */
+  html body #root .portal-side-widgets-left {
+    top: 5.2rem !important;
+  }
+
+  html body #root .portal-side-logo {
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex: 0 0 auto !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    width: 100% !important;
+    min-height: 4rem !important;
+    padding: 0.1rem 0.7rem 0.2rem !important;
+    overflow: visible !important;
+    pointer-events: none !important;
+  }
+
+  html body #root .portal-side-logo > img {
+    display: block !important;
+    width: clamp(6.5rem, 6vw, 8rem) !important;
+    max-width: 8rem !important;
+    height: auto !important;
+    max-height: 3.7rem !important;
+    object-fit: contain !important;
+  }
+
+  html body #root .portal-widget-chat-header {
+    position: relative !important;
+    z-index: 12 !important;
+    overflow: visible !important;
+  }
+
+  html body #root .portal-widget-chat-title-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 0.4rem !important;
+    min-width: 0 !important;
+  }
+
+  html body #root .portal-widget-chat-title-actions > strong {
+    min-width: 0 !important;
+    font-size: 0.82rem !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+  }
+
+  html body #root .portal-widget-chat-options {
+    position: relative !important;
+    flex: 0 0 auto !important;
+  }
+
+  html body #root .portal-widget-chat-options-trigger {
+    box-sizing: border-box !important;
+    display: grid !important;
+    place-items: center !important;
+    width: 1.8rem !important;
+    min-width: 1.8rem !important;
+    height: 1.8rem !important;
+    min-height: 1.8rem !important;
+    margin: 0 !important;
+    padding: 0.3rem !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    color: inherit !important;
+    cursor: pointer !important;
+  }
+
+  html body #root .portal-widget-chat-options-trigger:is(:hover, :focus-visible),
+  html body #root .portal-widget-chat-options.is-open .portal-widget-chat-options-trigger {
+    background: rgba(127, 29, 50, 0.12) !important;
+    outline: none !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .portal-widget-chat-options-trigger:is(:hover, :focus-visible),
+  html[data-theme="dark"] body[data-theme="dark"] #root .portal-widget-chat-options.is-open .portal-widget-chat-options-trigger {
+    background: rgba(255, 255, 255, 0.12) !important;
+  }
+
+  html body #root .portal-widget-chat-options-trigger svg {
+    display: block !important;
+    width: 1.15rem !important;
+    height: 1.15rem !important;
+    fill: currentColor !important;
+  }
+
+  html body #root .portal-widget-chat-options-menu {
+    box-sizing: border-box !important;
+    position: absolute !important;
+    top: calc(100% + 0.45rem) !important;
+    right: 0 !important;
+    z-index: 30 !important;
+    display: grid !important;
+    width: 9.5rem !important;
+    min-width: 9.5rem !important;
+    padding: 0.35rem !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(91, 55, 43, 0.18) !important;
+    border-radius: 0.7rem !important;
+    background: #fffaf3 !important;
+    box-shadow: 0 14px 32px rgba(52, 20, 29, 0.18) !important;
+  }
+
+  html body #root .portal-widget-chat-options-menu > button {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-height: 2rem !important;
+    margin: 0 !important;
+    padding: 0.48rem 0.62rem !important;
+    border: 0 !important;
+    border-radius: 0.48rem !important;
+    background: transparent !important;
+    color: #34141d !important;
+    -webkit-text-fill-color: #34141d !important;
+    font: 750 0.72rem/1.2 Inter, "Aptos", "Segoe UI", sans-serif !important;
+    text-align: left !important;
+    cursor: pointer !important;
+  }
+
+  html body #root .portal-widget-chat-options-menu > button:is(:hover, :focus-visible) {
+    background: #eadfce !important;
+    outline: none !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .portal-widget-chat-options-menu {
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    background: #1b1d20 !important;
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.42) !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .portal-widget-chat-options-menu > button {
+    color: #f4f5f6 !important;
+    -webkit-text-fill-color: #f4f5f6 !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .portal-widget-chat-options-menu > button:is(:hover, :focus-visible) {
+    background: rgba(255, 255, 255, 0.1) !important;
+  }
+}
+
+/* These are the only mobile changes in this file: one compact corner X for
+   Job Post details and one for the Tailor Profile picture action sheet. */
+@media (max-width: 768px) {
+  html body .portal-job-modal.portal-job-modal-redesign,
+  html body .tailor-media-action-sheet {
+    position: relative !important;
+  }
+
+  html body #portal-job-post-close,
+  html body #portal-job-post-close:is(:hover, :focus, :focus-visible, :active),
+  html body #tailor-picture-options-close,
+  html body #tailor-picture-options-close:is(:hover, :focus, :focus-visible, :active) {
+    all: unset !important;
+    box-sizing: border-box !important;
+    position: absolute !important;
+    top: 0.55rem !important;
+    right: 0.6rem !important;
+    bottom: auto !important;
+    left: auto !important;
+    z-index: 2147483647 !important;
+    display: grid !important;
+    place-items: center !important;
+    width: 1.55rem !important;
+    min-width: 1.55rem !important;
+    max-width: 1.55rem !important;
+    height: 1.55rem !important;
+    min-height: 1.55rem !important;
+    max-height: 1.55rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #34141d !important;
+    -webkit-text-fill-color: #34141d !important;
+    font-size: 1.4rem !important;
+    font-weight: 850 !important;
+    line-height: 1 !important;
+    cursor: pointer !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+
+  html body #portal-job-post-close::before,
+  html body #portal-job-post-close::after,
+  html body #tailor-picture-options-close::before,
+  html body #tailor-picture-options-close::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #portal-job-post-close,
+  html[data-theme="dark"] body[data-theme="dark"] #tailor-picture-options-close {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+  }
+}

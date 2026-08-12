@@ -845,7 +845,7 @@ const FloatingMessenger = ({
             setError('');
             setAssistantMenuOpen(false);
             assistantDirectOpenRef.current = false;
-        }, isMobileView ? 440 : 680);
+        }, isMobileView ? 440 : 560);
     }, [closing, isMobileView]);
 
     useEffect(() => {
@@ -1321,7 +1321,7 @@ const FloatingMessenger = ({
     assistantActionHandlerRef.current = handleAssistantAction;
 
     const messengerMarkup = (
-        <div className={`floating-messenger ${open ? 'is-open' : ''} ${closing ? 'is-closing' : ''} ${!isMobileView ? 'is-desktop-corner' : ''} is-trigger-${triggerTone}`}>
+        <div id="jumptake-floating-messenger" className={`floating-messenger ${open ? 'is-open' : ''} ${closing ? 'is-closing' : ''} ${!isMobileView ? 'is-desktop-corner' : ''} is-trigger-${triggerTone}`}>
             {open && (
                 <>
                     <div className="floating-messenger-backdrop" onClick={handleClose} aria-hidden="true" />

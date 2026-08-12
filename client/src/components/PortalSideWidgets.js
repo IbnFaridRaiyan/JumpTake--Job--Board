@@ -661,6 +661,8 @@ const PortalSideWidgets = ({
     const resolvedChatStorageKey = chatStorageKey || `jumptakeAssistantChat:${mode || 'candidate'}:guest`;
     const lastUsedPinStorageKey = `jumptakeSideWidgetPinnedPage:${mode || 'candidate'}`;
     const [reminderPopup, setReminderPopup] = useState(null);
+    const [assistantOptionsOpen, setAssistantOptionsOpen] = useState(false);
+    const assistantOptionsRef = useRef(null);
     const [pinnedLastUsedPage, setPinnedLastUsedPage] = useState(() => {
         if (typeof window === 'undefined') return null;
 
@@ -704,6 +706,32 @@ const PortalSideWidgets = ({
         const timeoutId = window.setTimeout(() => setReminderPopup(null), 15000);
         return () => window.clearTimeout(timeoutId);
     }, [reminderPopup]);
+
+    useEffect(() => {
+        if (!assistantOptionsOpen || typeof document === 'undefined') return undefined;
+
+        const closeAssistantOptions = (event) => {
+            if (event.type === 'keydown' && event.key !== 'Escape') return;
+            if (event.type === 'pointerdown' && assistantOptionsRef.current?.contains(event.target)) return;
+            setAssistantOptionsOpen(false);
+        };
+
+        document.addEventListener('pointerdown', closeAssistantOptions);
+        document.addEventListener('keydown', closeAssistantOptions);
+        return () => {
+            document.removeEventListener('pointerdown', closeAssistantOptions);
+            document.removeEventListener('keydown', closeAssistantOptions);
+        };
+    }, [assistantOptionsOpen]);
+
+    const sendAssistantChatCommand = (action) => {
+        if (typeof window === 'undefined') return;
+        window.dispatchEvent(new CustomEvent('jumptake-assistant-chat-command', {
+            detail: { storageKey: resolvedChatStorageKey, action }
+        }));
+        setAssistantOptionsOpen(false);
+    };
+
     const handleWidgetAssistantAction = (action, payload = {}) => {
         if (typeof window === 'undefined') return;
 
@@ -778,11 +806,42 @@ const PortalSideWidgets = ({
             <aside className={`portal-side-widgets portal-side-widgets-right portal-side-widgets-theme-${widgetTheme}`}>
                 <NotepadWidget mode={mode} storageKey={chatStorageKey} />
                 <section className="portal-widget portal-widget-chat">
-                    <header className="portal-widget-header"><span>JumpTake AI</span><strong>Ask anything</strong></header>
+                    <header className="portal-widget-header portal-widget-chat-header">
+                        <span>JumpTake AI</span>
+                        <div className="portal-widget-chat-title-actions">
+                            <strong>Ask anything</strong>
+                            <div
+                                ref={assistantOptionsRef}
+                                className={`portal-widget-chat-options ${assistantOptionsOpen ? 'is-open' : ''}`}
+                            >
+                                <button
+                                    type="button"
+                                    className="portal-widget-chat-options-trigger"
+                                    onClick={() => setAssistantOptionsOpen((current) => !current)}
+                                    aria-label="JumpTake AI chat options"
+                                    aria-haspopup="menu"
+                                    aria-expanded={assistantOptionsOpen}
+                                >
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <circle cx="5" cy="12" r="1.8" />
+                                        <circle cx="12" cy="12" r="1.8" />
+                                        <circle cx="19" cy="12" r="1.8" />
+                                    </svg>
+                                </button>
+                                {assistantOptionsOpen ? (
+                                    <div className="portal-widget-chat-options-menu" role="menu">
+                                        <button type="button" role="menuitem" onClick={() => sendAssistantChatCommand('new')}>New chat</button>
+                                        <button type="button" role="menuitem" onClick={() => sendAssistantChatCommand('chats')}>Saved chats</button>
+                                        <button type="button" role="menuitem" onClick={() => sendAssistantChatCommand('clear')}>Clear chat</button>
+                                    </div>
+                                ) : null}
+                            </div>
+                        </div>
+                    </header>
                     <div className="portal-widget-chat-body">
                         <AssistantChat
                             className="portal-widget-assistant-chat"
-                            storageKey={chatStorageKey}
+                            storageKey={resolvedChatStorageKey}
                             context={resolveChatContext}
                             onAction={handleWidgetAssistantAction}
                         />

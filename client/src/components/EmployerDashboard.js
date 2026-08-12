@@ -922,6 +922,13 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                             }
                         }}
                         onSettings={() => openSection('settings')}
+                        searchContext={{
+                            mode: 'employer',
+                            profileName: companyData?.name || employer?.companyName || employer?.username || 'Company',
+                            profileSubtitle: employer?.username || '',
+                            companyName: companyData?.name || employer?.companyName || '',
+                            jobs: Array.isArray(jobs) ? jobs : []
+                        }}
                         mobileSectionOpen={mobileSectionVisible}
                     />
                     {showSectionTitle && !isMobileViewport() && (

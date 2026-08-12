@@ -906,18 +906,6 @@
     word-break: break-word !important;
   }
 
-  /* Close by sliding down and fading; do not shrink or bounce the panel. */
-  @keyframes jt-messenger-close-slide-down {
-    0% { opacity: 1; transform: translate3d(0, 0, 0); }
-    62% { opacity: 0.92; transform: translate3d(0, 22px, 0); }
-    100% { opacity: 0; transform: translate3d(0, 72px, 0); }
-  }
-
-  html body > .floating-messenger.is-closing.is-desktop-corner > .floating-messenger-panel {
-    transform-origin: center bottom !important;
-    animation: jt-messenger-close-slide-down 720ms cubic-bezier(0.2, 0.72, 0.28, 1) both !important;
-    will-change: transform, opacity !important;
-  }
 }
 
 @media (min-width: 1900px) {
@@ -1629,10 +1617,7 @@ html[data-theme="dark"] body[data-theme="dark"] #root .home-page
 
   html body #root#root > .app-container > .home-page.portal-dock-open
     > .dashboard-container > main.main-content
-    > .portal-section-transition-shell,
-  html body #root#root > .app-container > .home-page.portal-dock-open
-    .portal-home-feed:not(:has(> .portal-home-tabs))
-    > .portal-home-feed-scroll {
+    > .portal-section-transition-shell {
     margin-top: 0 !important;
     padding-top: 0 !important;
   }
@@ -3737,17 +3722,6 @@ html body > .resume-playground-ats-details-backdrop {
     stroke: currentColor !important;
   }
 
-  html body > .floating-messenger.is-open.is-desktop-corner.is-desktop-corner,
-  html body > .floating-messenger.is-open.is-closing.is-desktop-corner.is-desktop-corner {
-    width: min(1120px, calc(100vw - 32px)) !important;
-    max-width: 1120px !important;
-    height: min(760px, calc(100dvh - 16px)) !important;
-    max-height: min(760px, calc(100dvh - 16px)) !important;
-  }
-
-  html body > .floating-messenger.is-open.is-desktop-corner.is-desktop-corner .floating-messenger-shell {
-    grid-template-columns: minmax(16rem, 20rem) minmax(0, 1fr) !important;
-  }
 }
 
 /* Final cascade lock: keep the public-style chrome floating over a live page
@@ -4112,20 +4086,6 @@ html body > .floating-messenger .message-thread-options-menu {
 
   html body > .floating-messenger.is-open.is-desktop-corner .floating-messenger-contacts {
     grid-template-columns: 5rem minmax(0, 1fr) !important;
-  }
-
-  /* Give the open popup a slow, soft bounce while closing. The JS keeps it
-     mounted slightly longer than this animation so it never snaps away. */
-  @keyframes jt-messenger-close-bounce {
-    0% { opacity: 1; transform: scale(1) translateY(0); }
-    52% { opacity: 0.98; transform: scale(0.985) translateY(4px); }
-    76% { opacity: 0.74; transform: scale(1.012) translateY(-2px); }
-    100% { opacity: 0; transform: scale(0.96) translateY(14px); }
-  }
-
-  html body > .floating-messenger.is-closing.is-desktop-corner > .floating-messenger-panel {
-    transform-origin: bottom right !important;
-    animation: jt-messenger-close-bounce 640ms cubic-bezier(0.22, 0.8, 0.28, 1) both !important;
   }
 
   /* Desktop post/profile detail windows use the available canvas instead of
@@ -4891,17 +4851,6 @@ html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public
     word-break: break-word !important;
   }
 
-  @keyframes jt-messenger-close-slide-down-final {
-    0% { opacity: 1; transform: translate3d(0, 0, 0); }
-    62% { opacity: 0.92; transform: translate3d(0, 22px, 0); }
-    100% { opacity: 0; transform: translate3d(0, 72px, 0); }
-  }
-
-  html body > .floating-messenger.is-closing.is-desktop-corner > .floating-messenger-panel {
-    transform-origin: center bottom !important;
-    animation: jt-messenger-close-slide-down-final 720ms cubic-bezier(0.2, 0.72, 0.28, 1) both !important;
-    will-change: transform, opacity !important;
-  }
 }
 
 @media (min-width: 769px) {

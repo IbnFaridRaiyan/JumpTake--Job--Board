@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import portalLogoDark from './media/logo4.png';
 import portalLogoLight from './media/jumptake-logo-9.png';
@@ -46,21 +46,109 @@ const PortalThemeIcon = ({ mode }) => (
     </svg>
 );
 
+const SEARCH_ALIAS_BY_ID = {
+    dashboard: ['home', 'overview', 'start', 'main'],
+    inbox: ['messages', 'message', 'chat', 'conversation', 'dm'],
+    'work-news': ['work', 'news', 'company updates', 'business', 'industry', 'posts'],
+    'job-posts': ['jobs', 'job', 'roles', 'opportunities', 'openings', 'hiring', 'career'],
+    'talent-stories': ['talent', 'stories', 'people', 'story', 'career stories'],
+    'tailor-profile': ['profile', 'user profile', 'username', 'name', 'avatar', 'photo', 'cover', 'tailor'],
+    'my-feed': ['feed', 'my posts', 'my stories', 'posted', 'content'],
+    'view-candidates': ['users', 'user', 'people', 'profiles', 'talent', 'candidates', 'candidate search'],
+    'friend-invitations': ['friends', 'friend requests', 'connections', 'users'],
+    applications: ['applications', 'apply', 'applied jobs', 'application status'],
+    bookmarks: ['bookmarked', 'saved', 'saved jobs', 'saved candidates'],
+    'bookmarked-jobs': ['saved jobs', 'job bookmarks'],
+    'saved-posts': ['saved posts', 'saved content'],
+    'interested-jobs': ['preferences', 'job preferences', 'interests', 'recommended jobs'],
+    'resume-playground': ['create', 'editor', 'converter', 'convertor', 'resume', 'cv', 'cover letter', 'document builder'],
+    blocks: ['blocked', 'blocked contacts', 'block list'],
+    notifications: ['alerts', 'updates', 'bell'],
+    'about-jumptake': ['about', 'help', 'jumptake'],
+    'progress-check': ['analytics', 'progress', 'performance', 'check'],
+    settings: ['settings', 'preferences', 'privacy', 'security', 'account', 'password'],
+    pricing: ['billing', 'subscription', 'plans', 'upgrade'],
+    'create-post': ['create', 'post', 'composer', 'write', 'publish', 'news post'],
+    'my-company-posts': ['my news', 'company posts', 'posted news', 'my posts'],
+    'my-job-posts': ['my jobs', 'job posts', 'posted jobs', 'company jobs'],
+    'post-job': ['create job', 'post job', 'job listing', 'new job', 'hire'],
+    'manage-jobs': ['manage jobs', 'listings', 'edit jobs', 'job management'],
+    'make-assessment': ['assessment', 'test', 'quiz', 'create assessment'],
+    'general-assessment': ['general assessment', 'assessment library', 'tests'],
+    'talent-pool': ['users', 'user', 'people', 'profiles', 'candidates', 'talent', 'candidate search'],
+    'bookmarked-talents': ['saved talent', 'bookmarked candidates', 'saved candidates'],
+    'create-document': ['create', 'editor', 'converter', 'convertor', 'document', 'resume', 'cv', 'cover letter'],
+    'company-profile': ['profile', 'company profile', 'logo', 'cover', 'company name', 'username'],
+    'application-tracking': ['analytics', 'tracking', 'ats', 'applications', 'performance']
+};
+
+const normalizeSearchText = (value = '') => (
+    String(value || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+);
+
+const getSearchScore = (queryText, values = []) => {
+    if (!queryText) return 0;
+    const words = queryText.split(' ').filter(Boolean);
+    let score = 0;
+
+    values.forEach((value) => {
+        const text = normalizeSearchText(value);
+        if (!text) return;
+        if (text === queryText) score = Math.max(score, 120);
+        if (text.startsWith(queryText)) score = Math.max(score, 96);
+        if (text.includes(queryText)) score = Math.max(score, 74);
+        if (words.length && words.every((word) => text.includes(word))) score = Math.max(score, 58);
+    });
+
+    return score;
+};
+
+const getSuggestionDescription = (item = {}) => {
+    const descriptions = {
+        settings: 'Open account, privacy, notification, and security settings.',
+        'resume-playground': 'Open the editor, converter, resume, and document creator.',
+        'create-document': 'Open the editor, converter, and document creator.',
+        'create-post': 'Open the post composer.',
+        'post-job': 'Create a new job listing.',
+        'manage-jobs': 'Find, edit, and manage job listings.',
+        'job-posts': 'Browse and search job posts.',
+        'tailor-profile': 'Open your profile, cover photo, and profile details.',
+        'company-profile': 'Open company profile, logo, and public details.',
+        'talent-pool': 'Find users, candidates, and talent profiles.',
+        'view-candidates': 'Find users, candidates, and talent profiles.',
+        inbox: 'Open messages and conversations.'
+    };
+
+    return descriptions[item.id] || `Open ${item.label || 'this section'}.`;
+};
+
 const PortalSidebar = ({
+    userName = '',
+    userSubtitle = '',
+    userInitial = '',
+    userImage = '',
     primaryItems = [],
     secondaryItems = [],
     onLogout,
     appMode = 'dark',
     onAppModeChange,
     onSearch,
-    onSettings
+    onSettings,
+    searchContext = null
 }) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [menuClosing, setMenuClosing] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const [pageQuery, setPageQuery] = useState('');
     const [headerSearchQuery, setHeaderSearchQuery] = useState('');
+    const [suggestionsOpen, setSuggestionsOpen] = useState(false);
+    const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
     const [portalTarget, setPortalTarget] = useState(null);
+    const searchFormRef = useRef(null);
     const closeTimerRef = useRef(null);
 
     const closePortalMenu = useCallback(() => {
@@ -90,6 +178,23 @@ const PortalSidebar = ({
     useEffect(() => {
         setPortalTarget(document.querySelector('#root > .app-container'));
     }, []);
+
+    useEffect(() => {
+        if (!suggestionsOpen || typeof document === 'undefined') {
+            return undefined;
+        }
+
+        const closeSearchSuggestions = (event) => {
+            if (searchFormRef.current?.contains(event.target)) {
+                return;
+            }
+            setSuggestionsOpen(false);
+            setActiveSuggestionIndex(-1);
+        };
+
+        document.addEventListener('pointerdown', closeSearchSuggestions);
+        return () => document.removeEventListener('pointerdown', closeSearchSuggestions);
+    }, [suggestionsOpen]);
 
     useEffect(() => {
         if (!menuOpen || typeof document === 'undefined') {
@@ -148,6 +253,184 @@ const PortalSidebar = ({
 
     const visiblePrimaryItems = primaryItems.filter((item) => item.label.toLowerCase().includes(pageQuery.trim().toLowerCase()));
     const visibleSecondaryItems = secondaryItems.filter((item) => item.label.toLowerCase().includes(pageQuery.trim().toLowerCase()));
+    const allSearchableItems = useMemo(() => [...primaryItems, ...secondaryItems], [primaryItems, secondaryItems]);
+    const profileTargetItem = useMemo(() => (
+        allSearchableItems.find((item) => ['tailor-profile', 'company-profile'].includes(item.id))
+        || allSearchableItems.find((item) => normalizeSearchText(item.label).includes('profile'))
+    ), [allSearchableItems]);
+    const headerSearchSuggestions = useMemo(() => {
+        const cleanQuery = headerSearchQuery.trim();
+        const queryText = normalizeSearchText(cleanQuery);
+        if (!queryText) return [];
+
+        const pageSuggestions = allSearchableItems
+            .map((item) => {
+                const score = getSearchScore(queryText, [
+                    item.id,
+                    item.label,
+                    ...(SEARCH_ALIAS_BY_ID[item.id] || [])
+                ]);
+                return score > 0
+                    ? {
+                        key: `page-${item.id || item.label}`,
+                        type: 'page',
+                        icon: item.icon || 'dashboard',
+                        title: item.label,
+                        subtitle: getSuggestionDescription(item),
+                        score,
+                        item
+                    }
+                    : null;
+            })
+            .filter(Boolean)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 4);
+
+        const profileValues = [
+            userName,
+            userSubtitle,
+            userInitial,
+            'profile',
+            'user',
+            'username',
+            'name',
+            'account',
+            'logo'
+        ];
+        const profileScore = getSearchScore(queryText, profileValues);
+        const profileSuggestion = profileScore && (userName || userSubtitle)
+            ? [{
+                key: 'profile-current-user',
+                type: 'profile',
+                icon: profileTargetItem?.icon || 'user-face',
+                title: userName || userSubtitle || 'Profile',
+                subtitle: userSubtitle || (profileTargetItem?.label || 'Open profile'),
+                score: profileScore + 6,
+                item: profileTargetItem
+            }]
+            : [];
+
+        const jobs = Array.isArray(searchContext?.jobs) ? searchContext.jobs : [];
+        const jobSuggestions = jobs
+            .map((job) => {
+                const jobId = job?._id || job?.id || job?.jobNumber || job?.title;
+                const title = job?.title || job?.jobTitle || 'Job post';
+                const companyName = job?.companyName || job?.company?.name || searchContext?.companyName || '';
+                const score = getSearchScore(queryText, [
+                    title,
+                    companyName,
+                    job?.location,
+                    job?.jobType,
+                    job?.jobField,
+                    job?.category,
+                    ...(Array.isArray(job?.skills) ? job.skills : []),
+                    ...(Array.isArray(job?.requirements) ? job.requirements : [])
+                ]);
+                return score > 0
+                    ? {
+                        key: `job-${jobId}`,
+                        type: 'job',
+                        icon: 'briefcase',
+                        title,
+                        subtitle: [companyName, job?.location].filter(Boolean).join(' - ') || 'Matched job post',
+                        score: score - 4,
+                        job
+                    }
+                    : null;
+            })
+            .filter(Boolean)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 3);
+
+        const combinedSuggestions = [...profileSuggestion, ...pageSuggestions, ...jobSuggestions]
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 7);
+
+        return [
+            ...combinedSuggestions,
+            {
+                key: 'ask-ai',
+                type: 'ai',
+                icon: 'search',
+                title: `Ask JumpTake AI about "${cleanQuery}"`,
+                subtitle: 'Let AI handle anything that is not a direct page or content match.',
+                score: 0
+            }
+        ];
+    }, [allSearchableItems, headerSearchQuery, profileTargetItem, searchContext, userInitial, userName, userSubtitle]);
+
+    useEffect(() => {
+        setActiveSuggestionIndex(-1);
+        setSuggestionsOpen(Boolean(headerSearchQuery.trim()));
+    }, [headerSearchQuery]);
+
+    const selectHeaderSuggestion = (suggestion) => {
+        if (!suggestion) return;
+        const cleanQuery = headerSearchQuery.trim();
+        setSuggestionsOpen(false);
+        setActiveSuggestionIndex(-1);
+
+        if (suggestion.type === 'ai') {
+            onSearch?.(cleanQuery);
+            return;
+        }
+
+        if (suggestion.type === 'job') {
+            const mode = searchContext?.mode || 'candidate';
+            if (mode === 'employer') {
+                sessionStorage.setItem('jumptakeEmployerJobSearch', cleanQuery);
+                const manageJobsItem = allSearchableItems.find((item) => item.id === 'manage-jobs')
+                    || allSearchableItems.find((item) => item.id === 'my-job-posts');
+                manageJobsItem?.onClick?.();
+            } else {
+                const jobId = suggestion.job?._id || suggestion.job?.id || suggestion.job?.jobNumber || suggestion.job?.title;
+                const request = { mode: 'candidate', tab: 'job-posts', jobId, search: cleanQuery };
+                sessionStorage.setItem('jumptakeHomeFeedRequest', JSON.stringify(request));
+                allSearchableItems.find((item) => item.id === 'job-posts')?.onClick?.();
+                window.setTimeout(() => {
+                    window.dispatchEvent(new CustomEvent('jumptake-home-feed-request', { detail: request }));
+                }, 0);
+            }
+            resetPageScroll();
+            setHeaderSearchQuery('');
+            return;
+        }
+
+        suggestion.item?.onClick?.();
+        resetPageScroll();
+        setHeaderSearchQuery('');
+    };
+
+    const handleHeaderSearchKeyDown = (event) => {
+        if (event.key === 'Escape') {
+            setSuggestionsOpen(false);
+            setActiveSuggestionIndex(-1);
+            return;
+        }
+
+        if (!suggestionsOpen || !headerSearchSuggestions.length) {
+            return;
+        }
+
+        if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            setActiveSuggestionIndex((current) => (current + 1) % headerSearchSuggestions.length);
+            return;
+        }
+
+        if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            setActiveSuggestionIndex((current) => (
+                current <= 0 ? headerSearchSuggestions.length - 1 : current - 1
+            ));
+            return;
+        }
+
+        if (event.key === 'Enter' && activeSuggestionIndex >= 0) {
+            event.preventDefault();
+            selectHeaderSuggestion(headerSearchSuggestions[activeSuggestionIndex]);
+        }
+    };
 
     const submitHeaderSearch = (event) => {
         event?.preventDefault();
@@ -156,6 +439,8 @@ const PortalSidebar = ({
             onSearch?.('');
             return;
         }
+        setSuggestionsOpen(false);
+        setActiveSuggestionIndex(-1);
         onSearch?.(query);
     };
 
@@ -190,20 +475,54 @@ const PortalSidebar = ({
                 <div className="portal-public-brand">
                     <img src={appMode === 'dark' ? portalLogoDark : portalLogoLight} alt="JumpTake" />
                 </div>
-                <form className={`portal-public-header-search ${headerSearchQuery ? 'has-value' : ''}`} onSubmit={submitHeaderSearch} role="search">
+                <form ref={searchFormRef} className={`portal-public-header-search ${headerSearchQuery ? 'has-value' : ''} ${suggestionsOpen ? 'has-suggestions' : ''}`} onSubmit={submitHeaderSearch} role="search">
                     <label htmlFor="portal-desktop-search-input">Search JumpTake</label>
                     <input
                         id="portal-desktop-search-input"
                         type="search"
                         value={headerSearchQuery}
                         onChange={(event) => setHeaderSearchQuery(event.target.value)}
+                        onFocus={() => setSuggestionsOpen(Boolean(headerSearchQuery.trim()))}
+                        onKeyDown={handleHeaderSearchKeyDown}
                         placeholder="Search..."
                         aria-label="Search JumpTake"
+                        aria-autocomplete="list"
+                        aria-controls="portal-desktop-search-suggestions"
                         autoComplete="off"
                     />
                     <button type="submit" aria-label="Ask JumpTake AI to search" title="Ask JumpTake AI to search">
                         <PortalIcon name="search" />
                     </button>
+                    {suggestionsOpen && headerSearchSuggestions.length ? (
+                        <div id="portal-desktop-search-suggestions" className="portal-header-search-suggestions" role="listbox" aria-label="Search suggestions">
+                            {headerSearchSuggestions.map((suggestion, index) => (
+                                <button
+                                    key={suggestion.key}
+                                    type="button"
+                                    role="option"
+                                    aria-selected={index === activeSuggestionIndex}
+                                    className={`portal-header-search-suggestion portal-header-search-suggestion-${suggestion.type} ${index === activeSuggestionIndex ? 'is-active' : ''}`}
+                                    onMouseDown={(event) => event.preventDefault()}
+                                    onMouseEnter={() => setActiveSuggestionIndex(index)}
+                                    onClick={() => selectHeaderSuggestion(suggestion)}
+                                >
+                                    {suggestion.type === 'profile' ? (
+                                        <span className="portal-header-search-avatar" aria-hidden="true">
+                                            {userImage ? <img src={userImage} alt="" /> : <span>{userInitial || String(suggestion.title || 'J').charAt(0).toUpperCase()}</span>}
+                                        </span>
+                                    ) : (
+                                        <span className="portal-header-search-suggestion-icon" aria-hidden="true">
+                                            <PortalIcon name={suggestion.icon} />
+                                        </span>
+                                    )}
+                                    <span className="portal-header-search-suggestion-copy">
+                                        <strong>{suggestion.title}</strong>
+                                        <span>{suggestion.subtitle}</span>
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
+                    ) : null}
                 </form>
                 <div className="portal-public-utilities">
                     <button

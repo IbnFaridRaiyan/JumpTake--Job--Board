@@ -208,7 +208,9 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
     };
 
     useEffect(() => {
-        if (typeof window === 'undefined' || !className.includes('floating-messenger-assistant-chat')) return undefined;
+        const acceptsChatCommands = className.includes('floating-messenger-assistant-chat')
+            || className.includes('portal-widget-assistant-chat');
+        if (typeof window === 'undefined' || !acceptsChatCommands) return undefined;
         const handleCommand = (event) => {
             if (event?.detail?.storageKey !== storageKey) return;
             const action = event?.detail?.action;

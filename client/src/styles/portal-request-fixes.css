@@ -5043,6 +5043,86 @@ html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public
    Stories, My Feed, Tailor Profile, and Job Posts can all reach their true
    top and bottom.  This block is desktop-only by design. */
 @media (min-width: 769px) {
+  /* Keep the first rendered page content visibly below the fixed navbar while
+     preserving normal document scrolling. */
+  html body #root > .app-container > .home-page > .dashboard-container > main.main-content:has(> .portal-section-transition-shell.is-active-portal-section:is(
+    [data-section="work-news"],
+    [data-section="talent-stories"],
+    [data-section="job-posts"],
+    [data-section="tailor-profile"],
+    [data-section="my-feed"]
+  )) {
+    padding-top: 5.4rem !important;
+    scroll-padding-top: 0 !important;
+  }
+
+  /* Use the concrete section classes as a fallback for builds/browsers where
+     :has() does not match the transition shell during the first render. */
+  html body #root > .app-container > .home-page.portal-dock-open > .dashboard-container > main.main-content:is(
+    .mobile-section-work-news,
+    .mobile-section-talent-stories,
+    .mobile-section-my-feed,
+    .mobile-section-tailor-profile,
+    .mobile-section-job-posts
+  ) {
+    padding-top: 0 !important;
+    scroll-padding-top: 0 !important;
+  }
+
+  html body #root > .app-container > .home-page.portal-dock-open > .dashboard-container > main.main-content:is(
+    .mobile-section-work-news,
+    .mobile-section-talent-stories,
+    .mobile-section-my-feed,
+    .mobile-section-tailor-profile,
+    .mobile-section-job-posts
+  ) > .portal-section-transition-shell.is-active-portal-section {
+    box-sizing: border-box !important;
+    margin-top: 0 !important;
+    padding-top: 5.4rem !important;
+  }
+
+  /* Desktop messenger follows the same navbar clearance instead of falling
+     into the old full-screen/top-left modal coordinate space. */
+  html body > .floating-messenger.is-open,
+  html body > .floating-messenger.is-closing {
+    box-sizing: border-box !important;
+    position: fixed !important;
+    inset: 5.5rem 1rem 1rem auto !important;
+    display: block !important;
+    width: min(1120px, calc(100vw - 2rem)) !important;
+    min-width: 0 !important;
+    max-width: calc(100vw - 2rem) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+    transform: none !important;
+    pointer-events: none !important;
+  }
+
+  html body > .floating-messenger.is-open > .floating-messenger-backdrop,
+  html body > .floating-messenger.is-closing > .floating-messenger-backdrop {
+    display: none !important;
+    pointer-events: none !important;
+  }
+
+  html body > .floating-messenger.is-open > .floating-messenger-panel,
+  html body > .floating-messenger.is-closing > .floating-messenger-panel {
+    box-sizing: border-box !important;
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    max-height: none !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    pointer-events: auto !important;
+  }
+
   html body:has(#portal-public-header),
   html body:has(#portal-public-header) #root,
   html body:has(#portal-public-header) #root > .app-container,

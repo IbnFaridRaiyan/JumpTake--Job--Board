@@ -1,18 +1,55 @@
 /* JumpTake portal side widgets — LIGHT theme only (desktop). */
 
+.portal-public-scroll-guard {
+  display: none;
+}
+
+@media (min-width: 1900px) {
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-notepad-body {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-notepad-body textarea {
+    border-color: rgba(91, 55, 43, 0.18) !important;
+    background: #faf5ee !important;
+    background-color: #faf5ee !important;
+    color: #34141d !important;
+    -webkit-text-fill-color: #34141d !important;
+    caret-color: #34141d !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-notepad-body textarea::placeholder,
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-notepad-actions > span {
+    color: #8a7462 !important;
+    -webkit-text-fill-color: #8a7462 !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-notepad-actions > button {
+    background: #7f1d32 !important;
+    background-color: #7f1d32 !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+  }
+}
+
 @media (min-width: 1900px) {
   html[data-theme="light"] body[data-theme="light"] .portal-widget {
-    background: #f4eadc !important;
-    background-color: #f4eadc !important;
-    border-color: rgba(91, 55, 43, 0.18) !important;
-    box-shadow: 0 14px 34px rgba(91, 65, 48, 0.12) !important;
+    background: #f3ede3 !important;
+    background-color: #f3ede3 !important;
+    background-image: none !important;
+    border-color: rgba(91, 65, 48, 0.16) !important;
+    box-shadow: 0 18px 48px rgba(76, 55, 43, 0.13) !important;
   }
 
   html[data-theme="light"] body[data-theme="light"] .portal-widget-header {
-    background: #8a6a4f !important;
-    background-color: #8a6a4f !important;
-    color: #ffffff !important;
-    -webkit-text-fill-color: #ffffff !important;
+    background: #d8c3a8 !important;
+    background-color: #d8c3a8 !important;
+    background-image: none !important;
+    border-bottom: 1px solid rgba(91, 65, 48, 0.15) !important;
+    color: #2f1c22 !important;
+    -webkit-text-fill-color: #2f1c22 !important;
   }
 
   /* Progress-check palette for the performance widget (maroon accent). */
@@ -22,6 +59,7 @@
     --progress-purple: #8c69bf;
     --progress-orange: #e8873a;
     --progress-line: rgba(127, 29, 50, 0.14);
+    --pw-donut-hole: #f8f2e9;
   }
 
   html[data-theme="light"] body[data-theme="light"] .pw-metric,
@@ -29,8 +67,55 @@
   html[data-theme="light"] body[data-theme="light"] .pw-trend-card,
   html[data-theme="light"] body[data-theme="light"] .pw-overall-card,
   html[data-theme="light"] body[data-theme="light"] .pw-extra-card {
-    border-color: rgba(91, 55, 43, 0.14);
-    background: rgba(255, 252, 244, 0.55);
+    border-color: rgba(91, 55, 43, 0.13);
+    background: #f8f2e9;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] :is(
+    .portal-widget-last-used-body,
+    .portal-widget-last-used-scroll,
+    .portal-widget-performance-body,
+    .portal-widget-chat-body
+  ) {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] .portal-widget-last-used-scroll :is(
+    .notifications-page,
+    .talent-pool-container,
+    .candidate-bookmarked-container,
+    .bookmarked-talents-container,
+    .applications-container,
+    .assessments-container,
+    .video-interviews-container,
+    .draft-applications-container,
+    .bookmarked-jobs-container,
+    .interested-job-suggestion-section,
+    .resume-playground-section,
+    .profile-container,
+    .settings-container,
+    .about-jumptake-section,
+    .progress-check-section
+  ) {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] .portal-widget-last-used-scroll :is(
+    .about-guide-grid article,
+    .about-rating-card,
+    .portal-job-filter-bar
+  ) {
+    background: #f8f2e9 !important;
+    background-color: #f8f2e9 !important;
+    background-image: none !important;
+    border-color: rgba(91, 55, 43, 0.13) !important;
+    box-shadow: none !important;
   }
 
   html[data-theme="light"] body[data-theme="light"] .portal-widget-last-used-scroll :is(p, span, small, h1, h2, h3, h4, strong),
@@ -38,12 +123,12 @@
     color: #34141d;
   }
 
-  /* Profile card: white in light mode */
+  /* Profile card uses the portal canvas and floats through outline/shadow. */
   html[data-theme="light"] body[data-theme="light"] .portal-widget-profile {
-    background: #ffffff;
-    background-color: #ffffff;
-    border-color: rgba(91, 55, 43, 0.18);
-    box-shadow: 0 14px 34px rgba(91, 65, 48, 0.14);
+    background: #f3ede3 !important;
+    background-color: #f3ede3 !important;
+    border-color: rgba(91, 55, 43, 0.16) !important;
+    box-shadow: 0 18px 48px rgba(76, 55, 43, 0.13) !important;
   }
 
   html[data-theme="light"] body[data-theme="light"] .portal-widget-profile :is(.portal-widget-profile-name, .portal-widget-profile-id, .portal-widget-profile-stat strong, .portal-widget-profile-stat span) {
@@ -54,10 +139,10 @@
     background-image: var(--pw-cover-light, linear-gradient(135deg, #f0dcc2, #d9a08b));
   }
 
-  /* Chat widget light theme: cream surface, transparent reply area */
+  /* Chat widget light theme: one seamless, borderless inner canvas. */
   html[data-theme="light"] body[data-theme="light"] .portal-widget-chat {
-    background: #f4eadc;
-    background-color: #f4eadc;
+    background: #f3ede3 !important;
+    background-color: #f3ede3 !important;
   }
 
   html[data-theme="light"] body[data-theme="light"] .portal-widget-chat :is(
@@ -92,15 +177,16 @@
 
   html[data-theme="light"] body[data-theme="light"] .portal-widget-chat .public-ai-chat-bubble.is-assistant,
   html[data-theme="light"] body[data-theme="light"] .portal-widget-chat .public-ai-chat-bubble.is-typing {
-    background: #ffffff !important;
-    background-color: #ffffff !important;
-    border: 1px solid rgba(91, 55, 43, 0.14);
+    background: #fbf7f1 !important;
+    background-color: #fbf7f1 !important;
+    border: 1px solid rgba(91, 55, 43, 0.12);
+    box-shadow: none !important;
   }
 
   html[data-theme="light"] body[data-theme="light"] .portal-widget-chat .public-ai-reply-field,
   html[data-theme="light"] body[data-theme="light"] .portal-widget-chat .public-ai-reply-field textarea {
-    background: #f3ece0 !important;
-    background-color: #f3ece0 !important;
+    background: #faf5ee !important;
+    background-color: #faf5ee !important;
     border-color: rgba(91, 55, 43, 0.18) !important;
     color: #34141d !important;
     -webkit-text-fill-color: #34141d !important;
@@ -120,5 +206,462 @@
 
   html[data-theme="light"] body[data-theme="light"] .portal-widget-chat .assistant-saved-chats {
     border-color: rgba(91, 55, 43, 0.16) !important;
+  }
+}
+
+/* The desktop light navigation sits directly on the portal canvas. Scrolling
+   content must not create a blur/shadow strip above or below the bar. */
+@media (min-width: 769px) {
+  html[data-theme="light"]:has(body #portal-public-header),
+  html[data-theme="light"] body[data-theme="light"]:has(#portal-public-header) {
+    background: #f3ede3 !important;
+    background-color: #f3ede3 !important;
+    background-image: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root #portal-public-header.portal-public-header,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header.portal-public-header,
+  html[data-theme="light"] body[data-theme="light"] #root #portal-public-header .portal-public-header-top,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header .portal-public-header-top {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root #portal-public-header.portal-public-header,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header.portal-public-header {
+    z-index: 9000 !important;
+    height: 72px !important;
+    min-height: 72px !important;
+    max-height: 72px !important;
+    background: #f3ede3 !important;
+    background-color: #f3ede3 !important;
+    background-image: none !important;
+    background-clip: padding-box !important;
+    transform: translateX(-50%) !important;
+    transform-origin: center top !important;
+    scale: 1 !important;
+    isolation: isolate !important;
+    animation: none !important;
+    animation-timeline: none !important;
+    transition: none !important;
+    will-change: auto !important;
+  }
+
+  /* Keep the desktop bar at one fixed size while the document scrolls. */
+  html[data-theme="light"] body[data-theme="light"] #root #portal-public-header .portal-public-header-top,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header .portal-public-header-top {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    transform: none !important;
+    scale: 1 !important;
+    animation: none !important;
+    animation-timeline: none !important;
+    transition: none !important;
+    will-change: auto !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root #portal-public-header :is(.portal-public-brand, .portal-public-brand img, .portal-public-utilities),
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header :is(.portal-public-brand, .portal-public-brand img, .portal-public-utilities) {
+    animation: none !important;
+    animation-timeline: none !important;
+    transition: none !important;
+    will-change: auto !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root #portal-public-header.portal-public-header::before,
+  html[data-theme="light"] body[data-theme="light"] #root #portal-public-header.portal-public-header::after,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header.portal-public-header::before,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header.portal-public-header::after,
+  html[data-theme="light"] body[data-theme="light"] #root #portal-public-header .portal-public-header-top::before,
+  html[data-theme="light"] body[data-theme="light"] #root #portal-public-header .portal-public-header-top::after,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header .portal-public-header-top::before,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header .portal-public-header-top::after {
+    content: none !important;
+    display: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+  }
+
+  /* Independent viewport guard: this is deliberately outside the transformed
+     navbar so it can cover the page shadow that scrolls through the top gap. */
+  html[data-theme="light"] body[data-theme="light"] #root .portal-public-scroll-guard,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root .portal-public-scroll-guard {
+    position: fixed !important;
+    z-index: 8999 !important;
+    inset: 0 0 auto 0 !important;
+    display: block !important;
+    width: 100vw !important;
+    max-width: none !important;
+    height: 18px !important;
+    background: #f3ede3 !important;
+    background-color: #f3ede3 !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+    pointer-events: none !important;
+  }
+}
+
+/* Main feed desktop surfaces: remove the off-white bands beneath posts while
+   preserving the existing mobile layout and spacing. */
+@media (min-width: 769px) {
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed :is(
+    .portal-home-feed-scroll,
+    .portal-home-tab-panel,
+    .portal-social-list,
+    .portal-candidate-job-list,
+    .portal-job-posts-summary,
+    .tailor-profile-posts
+  ),
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed :is(
+    .portal-home-feed-scroll,
+    .portal-home-tab-panel,
+    .portal-social-list,
+    .portal-candidate-job-list,
+    .portal-job-posts-summary,
+    .tailor-profile-posts
+  )::before,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed :is(
+    .portal-home-feed-scroll,
+    .portal-home-tab-panel,
+    .portal-social-list,
+    .portal-candidate-job-list,
+    .portal-job-posts-summary,
+    .tailor-profile-posts
+  )::after {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed :is(
+    .portal-social-post-card,
+    .portal-candidate-job-card,
+    .portal-job-summary-card
+  ) {
+    box-shadow: 0 10px 26px rgba(76, 55, 43, 0.09) !important;
+  }
+}
+
+/* Explicit widget-theme lock. The portal has several older high-specificity
+   light/dark layers, so the side rail carries its selected theme directly. */
+@media (min-width: 1900px) {
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget,
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-profile,
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-chat {
+    background: #f3ede3 !important;
+    background-color: #f3ede3 !important;
+    background-image: none !important;
+    border-color: rgba(91, 65, 48, 0.18) !important;
+    box-shadow: 0 18px 44px rgba(76, 55, 43, 0.12) !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-header {
+    border-radius: 0 !important;
+    border-bottom: 1px solid rgba(91, 65, 48, 0.16) !important;
+    background: #d2bb98 !important;
+    background-color: #d2bb98 !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: #2f1c22 !important;
+    -webkit-text-fill-color: #2f1c22 !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-header :is(span, strong) {
+    color: #2f1c22 !important;
+    -webkit-text-fill-color: #2f1c22 !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-performance-body {
+    padding-top: 0.65rem !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light :is(
+    .portal-widget-last-used-body,
+    .portal-widget-last-used-scroll,
+    .portal-widget-last-used-zoom,
+    .portal-widget-performance-body,
+    .portal-widget-profile-body,
+    .portal-widget-chat-body,
+    .public-ai-chat-card,
+    .portal-ai-chat-card,
+    .public-ai-chat-messages,
+    .portal-ai-chat-messages,
+    .public-ai-chat-reply,
+    .public-ai-reply-row,
+    .public-ai-reply-row-aligned,
+    .assistant-saved-chats
+  ) {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-chat :is(
+    .portal-widget-chat-body,
+    .public-ai-chat-card,
+    .public-ai-chat-messages,
+    .public-ai-chat-reply,
+    .public-ai-reply-row,
+    .public-ai-reply-row-aligned
+  ) {
+    border: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-chat :is(
+    .portal-widget-chat-body,
+    .public-ai-chat-card,
+    .public-ai-chat-messages,
+    .public-ai-chat-reply
+  )::before,
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-chat :is(
+    .portal-widget-chat-body,
+    .public-ai-chat-card,
+    .public-ai-chat-messages,
+    .public-ai-chat-reply
+  )::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-chat .public-ai-chat-bubble.is-assistant,
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-chat .public-ai-chat-bubble.is-typing {
+    border: 1px solid rgba(91, 65, 48, 0.12) !important;
+    background: #fbf7f1 !important;
+    background-color: #fbf7f1 !important;
+    background-image: none !important;
+    box-shadow: none !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-chat .public-ai-reply-field,
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-chat .public-ai-reply-field textarea {
+    background: #faf5ee !important;
+    background-color: #faf5ee !important;
+    background-image: none !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-last-used-scroll :is(
+    .portal-home-feed,
+    .portal-home-feed-scroll,
+    .portal-home-tab-panel,
+    .portal-social-list,
+    .portal-candidate-job-list,
+    .notifications-page,
+    .talent-pool-container,
+    .candidate-bookmarked-container,
+    .bookmarked-talents-container,
+    .applications-container,
+    .my-applications-container,
+    .my-assessments-container,
+    .assessments-container,
+    .video-interviews-container,
+    .draft-applications-container,
+    .bookmarked-jobs-container,
+    .saved-posts-container,
+    .interested-job-suggestion-section,
+    .resume-playground-section,
+    .resume-playground-container,
+    .profile-container,
+    .settings-container,
+    .about-jumptake-section,
+    .progress-check-section,
+    .performance-analytics-container,
+    .friend-invitations-container,
+    .inbox-container
+  ) {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light :is(
+    .pw-metric,
+    .pw-donut-card,
+    .pw-trend-card,
+    .pw-overall-card,
+    .pw-extra-card,
+    .about-guide-grid article,
+    .about-rating-card,
+    .portal-job-filter-bar
+  ) {
+    border-color: rgba(91, 55, 43, 0.13) !important;
+    background: #f8f2e9 !important;
+    background-color: #f8f2e9 !important;
+    background-image: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Remove the remaining rectangular page canvases from light desktop widgets.
+   Individual rounded cards keep their surfaces and appear to float directly
+   over the portal background. */
+@media (min-width: 1900px) {
+  html body #root aside.portal-side-widgets.portal-side-widgets-theme-light {
+    background: #f3ede3 !important;
+    background-color: #f3ede3 !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  html body #root aside.portal-side-widgets.portal-side-widgets-theme-light::before,
+  html body #root aside.portal-side-widgets.portal-side-widgets-theme-light::after {
+    content: none !important;
+    display: none !important;
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light :is(
+    .portal-widget-last-used-body,
+    .portal-widget-last-used-scroll,
+    .portal-widget-performance-body,
+    .portal-widget-chat-body
+  ) {
+    background: #f3ede3 !important;
+    background-color: #f3ede3 !important;
+    background-image: none !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light :is(
+    .portal-widget-last-used,
+    .portal-widget-performance,
+    .portal-widget-chat
+  ) {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-last-used-scroll :is(
+    .portal-section-transition-shell,
+    .dashboard-container,
+    .dashboard-content,
+    .main-content,
+    .portal-home-feed,
+    .portal-home-feed-scroll,
+    .portal-home-tab-panel,
+    .portal-social-list,
+    .portal-candidate-job-list,
+    .notifications-page,
+    .notifications-list,
+    .applications-hub-container,
+    .applications-hub-panel,
+    .bookmarks-hub-container,
+    .bookmarks-hub-panel,
+    .talent-pool-container,
+    .candidate-bookmarked-container,
+    .bookmarked-talents-container,
+    .friend-invitations-section,
+    .friend-invitations-shell,
+    .friend-invitation-panel,
+    .settings-container,
+    .tabs-content,
+    .settings-tab,
+    .portal-default-landing,
+    .resume-playground-section,
+    .resume-playground-container,
+    .resume-playground-panel,
+    .about-jumptake-section,
+    .progress-check-section,
+    .performance-analytics-container
+  ),
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-last-used-zoom,
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-last-used-zoom > * {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-last-used-scroll :is(
+    .portal-section-transition-shell,
+    .dashboard-container,
+    .dashboard-content,
+    .main-content,
+    .portal-home-feed,
+    .portal-home-feed-scroll,
+    .portal-home-tab-panel,
+    .notifications-page,
+    .applications-hub-container,
+    .applications-hub-panel,
+    .bookmarks-hub-container,
+    .bookmarks-hub-panel,
+    .talent-pool-container,
+    .friend-invitations-section,
+    .friend-invitations-shell,
+    .friend-invitation-panel,
+    .settings-container,
+    .tabs-content,
+    .settings-tab,
+    .portal-default-landing,
+    .resume-playground-section,
+    .resume-playground-container,
+    .resume-playground-panel,
+    .about-jumptake-section,
+    .progress-check-section,
+    .performance-analytics-container
+  )::before,
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-last-used-scroll :is(
+    .portal-section-transition-shell,
+    .dashboard-container,
+    .dashboard-content,
+    .main-content,
+    .portal-home-feed,
+    .portal-home-feed-scroll,
+    .portal-home-tab-panel,
+    .notifications-page,
+    .applications-hub-container,
+    .applications-hub-panel,
+    .bookmarks-hub-container,
+    .bookmarks-hub-panel,
+    .talent-pool-container,
+    .friend-invitations-section,
+    .friend-invitations-shell,
+    .friend-invitation-panel,
+    .settings-container,
+    .tabs-content,
+    .settings-tab,
+    .portal-default-landing,
+    .resume-playground-section,
+    .resume-playground-container,
+    .resume-playground-panel,
+    .about-jumptake-section,
+    .progress-check-section,
+    .performance-analytics-container
+  )::after {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light .portal-widget-chat :is(
+    .portal-widget-chat-body,
+    .public-ai-chat-card,
+    .public-ai-chat-messages,
+    .public-ai-chat-reply,
+    .public-ai-reply-row,
+    .public-ai-reply-row-aligned
+  ) {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
   }
 }

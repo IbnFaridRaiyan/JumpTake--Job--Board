@@ -1225,6 +1225,10 @@ const PortalHomeFeed = ({
     const [openCommentPostId, setOpenCommentPostId] = useState('');
     const [openSharePostId, setOpenSharePostId] = useState('');
     const [sharePickerAnchor, setSharePickerAnchor] = useState(null);
+    const sharePickerTriggerRef = useRef(null);
+    const [openJobShareId, setOpenJobShareId] = useState('');
+    const [jobSharePickerAnchor, setJobSharePickerAnchor] = useState(null);
+    const jobSharePickerTriggerRef = useRef(null);
     const [openOptionsPostId, setOpenOptionsPostId] = useState('');
     const [postOptionsAnchor, setPostOptionsAnchor] = useState(null);
     const [openJobOptionsId, setOpenJobOptionsId] = useState('');
@@ -1453,7 +1457,7 @@ const PortalHomeFeed = ({
     }, [profileActionMessage]);
 
     useEffect(() => {
-        if (!openReactionPostId && !openCommentPostId && !openSharePostId && !openOptionsPostId && !openJobOptionsId && !openReachInsightPostId) {
+        if (!openReactionPostId && !openCommentPostId && !openSharePostId && !openJobShareId && !openOptionsPostId && !openJobOptionsId && !openReachInsightPostId) {
             return undefined;
         }
 
@@ -1478,6 +1482,9 @@ const PortalHomeFeed = ({
             closeCommentComposer();
             setOpenSharePostId('');
             setSharePickerAnchor(null);
+            setOpenJobShareId('');
+            setJobSharePickerAnchor(null);
+            jobSharePickerTriggerRef.current = null;
             setOpenOptionsPostId('');
             setPostOptionsAnchor(null);
             setOpenJobOptionsId('');
@@ -1492,7 +1499,7 @@ const PortalHomeFeed = ({
             document.removeEventListener('mousedown', closeOpenPostActions);
             document.removeEventListener('touchstart', closeOpenPostActions);
         };
-    }, [openReactionPostId, openCommentPostId, openSharePostId, openOptionsPostId, openJobOptionsId, openReachInsightPostId]);
+    }, [openReactionPostId, openCommentPostId, openSharePostId, openJobShareId, openOptionsPostId, openJobOptionsId, openReachInsightPostId]);
 
     useEffect(() => {
         if (mode !== 'candidate' || !candidateUserId) {
@@ -2715,34 +2722,45 @@ const PortalHomeFeed = ({
         return typeof document !== 'undefined' ? createPortal(menuMarkup, document.body) : menuMarkup;
     };
 
+    const getSharePickerAnchor = (target) => {
+        if (typeof window === 'undefined' || !target?.getBoundingClientRect) {
+            return null;
+        }
+
+        const rect = target.getBoundingClientRect();
+        const viewportPadding = 12;
+        const width = Math.min(288, Math.max(176, window.innerWidth - (viewportPadding * 2)));
+        const maxHeight = Math.min(288, Math.max(148, Math.round(window.innerHeight * 0.46)));
+        const roomAbove = rect.top - viewportPadding;
+        const roomBelow = window.innerHeight - rect.bottom - viewportPadding;
+        const openAbove = roomBelow < Math.min(maxHeight, 184) + 8 && roomAbove > roomBelow;
+        const preferredTop = openAbove
+            ? rect.top - Math.min(maxHeight, roomAbove) - 8
+            : rect.bottom + 8;
+        const top = Math.min(
+            Math.max(viewportPadding, preferredTop),
+            Math.max(viewportPadding, window.innerHeight - maxHeight - viewportPadding)
+        );
+        const left = Math.min(
+            Math.max(viewportPadding, rect.right - width),
+            Math.max(viewportPadding, window.innerWidth - width - viewportPadding)
+        );
+
+        return { top, left, width, maxHeight };
+    };
+
     const toggleSharePicker = (event, postKey) => {
         event.stopPropagation();
 
         if (openSharePostId === postKey) {
             setOpenSharePostId('');
             setSharePickerAnchor(null);
+            sharePickerTriggerRef.current = null;
             return;
         }
 
-        if (typeof window !== 'undefined') {
-            const rect = event.currentTarget.getBoundingClientRect();
-            const viewportPadding = 12;
-            const width = Math.min(288, window.innerWidth - (viewportPadding * 2));
-            const maxHeight = Math.min(288, Math.round(window.innerHeight * 0.46));
-            const left = Math.min(
-                Math.max(viewportPadding, rect.left),
-                Math.max(viewportPadding, window.innerWidth - width - viewportPadding)
-            );
-            const roomAbove = rect.top - viewportPadding;
-            const preferredTop = roomAbove >= maxHeight + 8
-                ? rect.top - maxHeight - 8
-                : rect.bottom + 8;
-            const top = Math.min(
-                Math.max(viewportPadding, preferredTop),
-                Math.max(viewportPadding, window.innerHeight - maxHeight - viewportPadding)
-            );
-            setSharePickerAnchor({ top, left, width, maxHeight });
-        }
+        sharePickerTriggerRef.current = event.currentTarget;
+        setSharePickerAnchor(getSharePickerAnchor(event.currentTarget));
 
         setOpenSharePostId(postKey);
         setOpenReactionPostId('');
@@ -2752,6 +2770,89 @@ const PortalHomeFeed = ({
         closeReachInsight();
         setShareStatus('');
     };
+
+    const toggleJobSharePicker = (event, job) => {
+        event.stopPropagation();
+        const jobKey = getJobKey(job);
+
+        if (openJobShareId === jobKey) {
+            setOpenJobShareId('');
+            setJobSharePickerAnchor(null);
+            jobSharePickerTriggerRef.current = null;
+            return;
+        }
+
+        jobSharePickerTriggerRef.current = event.currentTarget;
+        setJobSharePickerAnchor(getSharePickerAnchor(event.currentTarget));
+        setOpenJobShareId(jobKey);
+        setOpenReactionPostId('');
+        closeCommentComposer();
+        setOpenSharePostId('');
+        setSharePickerAnchor(null);
+        setOpenOptionsPostId('');
+        setPostOptionsAnchor(null);
+        setOpenJobOptionsId('');
+        closeReachInsight();
+        setShareStatus('');
+    };
+
+    useEffect(() => {
+        if (!openSharePostId || !sharePickerTriggerRef.current) {
+            return undefined;
+        }
+
+        const syncSharePickerToTrigger = () => {
+            const nextAnchor = getSharePickerAnchor(sharePickerTriggerRef.current);
+            if (!nextAnchor) {
+                return;
+            }
+            setSharePickerAnchor((currentAnchor) => (
+                currentAnchor
+                && currentAnchor.top === nextAnchor.top
+                && currentAnchor.left === nextAnchor.left
+                && currentAnchor.width === nextAnchor.width
+                && currentAnchor.maxHeight === nextAnchor.maxHeight
+                    ? currentAnchor
+                    : nextAnchor
+            ));
+        };
+
+        syncSharePickerToTrigger();
+        window.addEventListener('resize', syncSharePickerToTrigger);
+        window.addEventListener('scroll', syncSharePickerToTrigger, true);
+        return () => {
+            window.removeEventListener('resize', syncSharePickerToTrigger);
+            window.removeEventListener('scroll', syncSharePickerToTrigger, true);
+        };
+    }, [openSharePostId]);
+
+    useEffect(() => {
+        if (!openJobShareId || !jobSharePickerTriggerRef.current) {
+            return undefined;
+        }
+
+        const syncJobSharePickerToTrigger = () => {
+            const nextAnchor = getSharePickerAnchor(jobSharePickerTriggerRef.current);
+            if (!nextAnchor) return;
+            setJobSharePickerAnchor((currentAnchor) => (
+                currentAnchor
+                && currentAnchor.top === nextAnchor.top
+                && currentAnchor.left === nextAnchor.left
+                && currentAnchor.width === nextAnchor.width
+                && currentAnchor.maxHeight === nextAnchor.maxHeight
+                    ? currentAnchor
+                    : nextAnchor
+            ));
+        };
+
+        syncJobSharePickerToTrigger();
+        window.addEventListener('resize', syncJobSharePickerToTrigger);
+        window.addEventListener('scroll', syncJobSharePickerToTrigger, true);
+        return () => {
+            window.removeEventListener('resize', syncJobSharePickerToTrigger);
+            window.removeEventListener('scroll', syncJobSharePickerToTrigger, true);
+        };
+    }, [openJobShareId]);
 
     const renderSharePicker = (storageKey, post) => {
         if (!sharePickerAnchor) return null;
@@ -2804,6 +2905,41 @@ const PortalHomeFeed = ({
                     </div>
                 ) : mode === 'candidate' ? <p>No friends to share with yet.</p> : null}
                 {shareStatus && <p className="portal-share-status">{shareStatus}</p>}
+            </div>
+        );
+
+        return typeof document !== 'undefined' ? createPortal(pickerMarkup, document.body) : pickerMarkup;
+    };
+
+    const renderJobSharePicker = (job) => {
+        if (!jobSharePickerAnchor || openJobShareId !== getJobKey(job)) return null;
+
+        const pickerMarkup = (
+            <div
+                className="portal-share-picker portal-share-picker-floating"
+                style={{
+                    '--jt-share-top': `${jobSharePickerAnchor.top}px`,
+                    '--jt-share-left': `${jobSharePickerAnchor.left}px`,
+                    '--jt-share-width': `${jobSharePickerAnchor.width}px`,
+                    '--jt-share-max-height': `${jobSharePickerAnchor.maxHeight}px`
+                }}
+                role="dialog"
+                aria-label="Share job post"
+                onPointerDown={(event) => event.stopPropagation()}
+                onClick={(event) => event.stopPropagation()}
+            >
+                <strong>Share job</strong>
+                <button
+                    type="button"
+                    className="portal-share-friend portal-share-copy-button"
+                    onClick={(event) => handleCopyJobShare(job, event)}
+                >
+                    <span className="portal-share-friend-avatar"><SharePostIcon /></span>
+                    <span>
+                        <span className="portal-share-friend-name">Copy or share job</span>
+                        <small>Use your device share tools</small>
+                    </span>
+                </button>
             </div>
         );
 
@@ -3662,6 +3798,9 @@ const PortalHomeFeed = ({
 
             recordJobReach(job);
             setJobActionMessage('Job link copied.');
+            setOpenJobShareId('');
+            setJobSharePickerAnchor(null);
+            jobSharePickerTriggerRef.current = null;
         } catch (error) {
             setJobActionMessage('Could not share this job post.');
         }
@@ -5984,12 +6123,14 @@ const PortalHomeFeed = ({
                                 </button>
                                 <button
                                     type="button"
-                                    onClick={(event) => handleCopyJobShare(job, event)}
+                                    onClick={(event) => toggleJobSharePicker(event, job)}
+                                    aria-expanded={openJobShareId === key}
                                     aria-label="Share job post"
                                 >
                                     <SharePostIcon />
                                     <span>Share</span>
                                 </button>
+                                {renderJobSharePicker(job)}
                         </div>
 
                         <div className="portal-public-job-footer">

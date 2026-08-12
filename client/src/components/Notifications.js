@@ -1,5 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PortalPageSkeleton from './PortalPageSkeleton';
+import {
+    PORTAL_REMINDER_ALERT_EVENT,
+    PORTAL_REMINDERS_UPDATED_EVENT,
+    getPortalReminderNotifications,
+    markAllPortalRemindersRead,
+    markPortalReminderRead
+} from '../utils/portalReminders';
 
 
 const formatNotificationTime = (dateString) => {
@@ -32,7 +39,7 @@ const getNotificationActionIcon = (notification) => {
     const label = String(notification?.actionLabel || '').toLowerCase();
     const section = String(notification?.section || '').toLowerCase();
 
-    if (label.includes('assessment') || section.includes('assessment')) {
+    if (label.includes('assessment') || section.includes('assessment') || label.includes('reminder')) {
         return 'cardText';
     }
 
@@ -47,12 +54,15 @@ const Notifications = ({ mode, recipientId, onOpenNotification, onUnreadCountCha
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [, setReminderVersion] = useState(0);
 
     const isEmployer = mode === 'employer';
-
-    const unreadCount = useMemo(() => (
-        notifications.filter((notification) => !notification.read).length
-    ), [notifications]);
+    const reminderStorageKey = `jumptakeAssistantChat:${isEmployer ? 'employer' : 'candidate'}:${recipientId || 'guest'}`;
+    const reminderNotifications = getPortalReminderNotifications(reminderStorageKey);
+    const visibleNotifications = [...reminderNotifications, ...notifications].sort((first, second) => (
+        new Date(second.createdAt || 0).getTime() - new Date(first.createdAt || 0).getTime()
+    ));
+    const unreadCount = visibleNotifications.filter((notification) => !notification.read).length;
 
     useEffect(() => {
         onUnreadCountChange?.(unreadCount);
@@ -63,7 +73,19 @@ const Notifications = ({ mode, recipientId, onOpenNotification, onUnreadCountCha
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [mode, recipientId]);
 
-    const visibleNotifications = notifications;
+    useEffect(() => {
+        const syncReminders = (event) => {
+            if (event?.detail?.storageKey && event.detail.storageKey !== reminderStorageKey) return;
+            setReminderVersion((version) => version + 1);
+        };
+
+        window.addEventListener(PORTAL_REMINDERS_UPDATED_EVENT, syncReminders);
+        window.addEventListener(PORTAL_REMINDER_ALERT_EVENT, syncReminders);
+        return () => {
+            window.removeEventListener(PORTAL_REMINDERS_UPDATED_EVENT, syncReminders);
+            window.removeEventListener(PORTAL_REMINDER_ALERT_EVENT, syncReminders);
+        };
+    }, [reminderStorageKey]);
 
     const fetchNotifications = async () => {
         if (!recipientId) {
@@ -107,6 +129,12 @@ const Notifications = ({ mode, recipientId, onOpenNotification, onUnreadCountCha
             return;
         }
 
+        if (notification.isLocalReminder) {
+            markPortalReminderRead(reminderStorageKey, notification.reminderId);
+            setReminderVersion((version) => version + 1);
+            return;
+        }
+
         setNotifications((prevNotifications) => prevNotifications.map((item) => (
             item._id === notification._id ? { ...item, read: true } : item
         )));
@@ -125,6 +153,8 @@ const Notifications = ({ mode, recipientId, onOpenNotification, onUnreadCountCha
     };
 
     const markAllRead = async () => {
+        markAllPortalRemindersRead(reminderStorageKey);
+        setReminderVersion((version) => version + 1);
         setNotifications((prevNotifications) => prevNotifications.map((notification) => ({
             ...notification,
             read: true
@@ -150,6 +180,12 @@ const Notifications = ({ mode, recipientId, onOpenNotification, onUnreadCountCha
 
     const handleOpen = async (notification) => {
         await markRead(notification);
+        if (notification.isLocalReminder) {
+            window.dispatchEvent(new CustomEvent('jumptake-widget-notepad-open-reminders', {
+                detail: { storageKey: reminderStorageKey }
+            }));
+            return;
+        }
         onOpenNotification?.(notification);
     };
 
@@ -171,7 +207,7 @@ const Notifications = ({ mode, recipientId, onOpenNotification, onUnreadCountCha
 
             {loading ? (
                 <PortalPageSkeleton compact label="Loading notifications" />
-            ) : notifications.length === 0 ? (
+            ) : visibleNotifications.length === 0 ? (
                 <div className="no-jobs-message notification-empty-state">
                     <h3>No notifications yet</h3>
                     <p>Fresh activity will appear here as soon as it happens.</p>

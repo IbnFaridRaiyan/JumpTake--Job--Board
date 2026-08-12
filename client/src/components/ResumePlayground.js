@@ -202,6 +202,35 @@ const sanitizeEditorHtml = (html = '') => {
     return template.innerHTML;
 };
 
+const enforceAiDraftBlackInk = (editorRoot, { allowUnmarked = false } = {}) => {
+    if (!editorRoot || typeof document === 'undefined') {
+        return;
+    }
+
+    const aiTemplateRoot = editorRoot.querySelector(
+        '[data-resume-template-root="ai-a4"], [data-document-template-root="jumptake-ai"]'
+    );
+    const hasAnotherTemplate = Boolean(editorRoot.querySelector(
+        '[data-resume-template-root]:not([data-resume-template-root="ai-a4"]), '
+        + '[data-document-template-root]:not([data-document-template-root="jumptake-ai"])'
+    ));
+
+    if (!aiTemplateRoot && (!allowUnmarked || hasAnotherTemplate)) {
+        return;
+    }
+
+    const inkRoot = aiTemplateRoot || editorRoot;
+    [inkRoot, ...inkRoot.querySelectorAll('*')].forEach((element) => {
+        element.style.setProperty('color', '#000000', 'important');
+        element.style.setProperty('-webkit-text-fill-color', '#000000', 'important');
+        element.style.setProperty('text-shadow', 'none', 'important');
+    });
+
+    editorRoot.style.setProperty('color', '#000000', 'important');
+    editorRoot.style.setProperty('-webkit-text-fill-color', '#000000', 'important');
+    editorRoot.style.setProperty('caret-color', '#000000', 'important');
+};
+
 const looksLikeHeading = (line = '') => {
     const trimmed = String(line || '').trim();
     if (!trimmed) {
@@ -1153,6 +1182,10 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
     const manualTextInsertRef = useRef(false);
     const aiDraftTypingTimerRef = useRef(null);
     const aiDraftTypingTokenRef = useRef(0);
+    const editorSyncTimerRef = useRef(null);
+    const editorSyncFrameRef = useRef(null);
+    const skipNextEditorHydrationRef = useRef(false);
+    const deferNextEditorPaginationRef = useRef(false);
 
     const [activeTab, setActiveTab] = useState('create');
     const [editorSuspended, setEditorSuspended] = useState(false);
@@ -1785,26 +1818,43 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
             return;
         }
 
+        const skipHydration = skipNextEditorHydrationRef.current;
+        const deferPagination = deferNextEditorPaginationRef.current;
+        skipNextEditorHydrationRef.current = false;
+        deferNextEditorPaginationRef.current = false;
+
+        if (skipHydration) {
+            enforceAiDraftBlackInk(editorRef.current, {
+                allowUnmarked: editorResume.source === 'ai-tailor'
+            });
+            return;
+        }
+
         const sanitizedHtml = sanitizeEditorHtml(editorResume.html);
 
         if (editorRef.current.innerHTML !== sanitizedHtml) {
             editorRef.current.innerHTML = sanitizedHtml;
         }
-
-        window.requestAnimationFrame(() => {
-            repaginateEditorContent();
+        enforceAiDraftBlackInk(editorRef.current, {
+            allowUnmarked: editorResume.source === 'ai-tailor'
         });
+
+        if (!deferPagination) {
+            window.requestAnimationFrame(() => {
+                repaginateEditorContent();
+            });
+        }
     }, [editorResume, repaginateEditorContent]);
 
     useEffect(() => {
-        if (!editorResume || !editorRef.current) {
+        if (!editorRef.current) {
             return;
         }
 
         window.requestAnimationFrame(() => {
             repaginateEditorContent();
         });
-    }, [editorMargins, editorPageMargins, editorResume, repaginateEditorContent]);
+    }, [editorMargins, editorPageMargins, repaginateEditorContent]);
 
     useEffect(() => {
         setEditorPageMargins((current) => createPageMargins(editorPageCount, current));
@@ -1896,8 +1946,23 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         aiDraftTypingTimerRef.current = null;
     }, []);
 
-    const openEditor = (resume, nextTab = 'edit') => {
+    const clearPendingEditorSync = useCallback(() => {
+        if (typeof window === 'undefined') return;
+
+        if (editorSyncTimerRef.current) {
+            window.clearTimeout(editorSyncTimerRef.current);
+            editorSyncTimerRef.current = null;
+        }
+        if (editorSyncFrameRef.current) {
+            window.cancelAnimationFrame(editorSyncFrameRef.current);
+            editorSyncFrameRef.current = null;
+        }
+    }, []);
+
+    const openEditor = (resume, nextTab = 'edit', { deferPagination = false } = {}) => {
         clearAiDraftTyping();
+        clearPendingEditorSync();
+        deferNextEditorPaginationRef.current = deferPagination;
         setEditorResume(resume);
         setEditorSuspended(false);
         const nextTextColor = resume?.textColor || DEFAULT_TEXT_COLOR;
@@ -1917,7 +1982,9 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         window.requestAnimationFrame(() => {
             editorRef.current?.focus();
             window.getSelection()?.removeAllRanges();
-            repaginateEditorContent();
+            if (!deferPagination) {
+                repaginateEditorContent();
+            }
         });
     };
 
@@ -1936,8 +2003,9 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         clearAiDraftTyping();
         const typingToken = aiDraftTypingTokenRef.current;
         const characters = Array.from(String(draftText || '').trim());
-        const chunkSize = Math.max(3, Math.ceil(characters.length / 180));
+        const chunkSize = Math.max(5, Math.ceil(characters.length / 120));
         let cursor = 0;
+        let typingSurface = null;
 
         setStatusMessage(isDocumentMode ? 'JumpTake AI is typing the document...' : 'JumpTake AI is typing the resume...');
 
@@ -1948,44 +2016,46 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
 
             cursor = Math.min(characters.length, cursor + chunkSize);
             const partialText = characters.slice(0, cursor).join('');
-            const nextHtml = plainTextToHtml(partialText);
-
             if (editorRef.current) {
-                editorRef.current.innerHTML = nextHtml;
+                if (!typingSurface || !editorRef.current.contains(typingSurface)) {
+                    editorRef.current.innerHTML = '';
+                    typingSurface = document.createElement('div');
+                    typingSurface.setAttribute('data-ai-draft-typing', 'true');
+                    typingSurface.style.whiteSpace = 'pre-wrap';
+                    typingSurface.style.fontFamily = isDocumentMode ? 'Arial, sans-serif' : 'Times New Roman, Times, serif';
+                    typingSurface.style.fontSize = isDocumentMode ? '13px' : '10.5px';
+                    typingSurface.style.lineHeight = isDocumentMode ? '1.36' : '1.15';
+                    typingSurface.style.color = '#000000';
+                    typingSurface.style.webkitTextFillColor = '#000000';
+                    editorRef.current.appendChild(typingSurface);
+                    enforceAiDraftBlackInk(editorRef.current, { allowUnmarked: true });
+                }
+                typingSurface.textContent = partialText;
             }
 
-            setEditorResume((current) => (
-                current && current.id === draftRecord.id
-                    ? { ...current, html: nextHtml }
-                    : current
-            ));
-
-            window.requestAnimationFrame(() => {
-                repaginateEditorContent();
-            });
-
             if (cursor < characters.length) {
-                aiDraftTypingTimerRef.current = window.setTimeout(typeNextChunk, 20);
+                aiDraftTypingTimerRef.current = window.setTimeout(typeNextChunk, 24);
                 return;
             }
 
-            if (formattedHtml && formattedHtml !== nextHtml) {
+            if (formattedHtml) {
                 if (editorRef.current) {
                     editorRef.current.innerHTML = formattedHtml;
+                    enforceAiDraftBlackInk(editorRef.current, { allowUnmarked: true });
                 }
 
+                skipNextEditorHydrationRef.current = true;
                 setEditorResume((current) => (
                     current && current.id === draftRecord.id
                         ? { ...current, html: formattedHtml }
                         : current
                 ));
                 publishWorkspaceSnapshot(draftRecord, formattedHtml);
-                window.requestAnimationFrame(() => {
-                    repaginateEditorContent();
+                window.setTimeout(() => {
                     window.requestAnimationFrame(() => {
                         repaginateEditorContent();
                     });
-                });
+                }, 32);
             }
 
             aiDraftTypingTimerRef.current = null;
@@ -1997,7 +2067,8 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
 
     useEffect(() => () => {
         clearAiDraftTyping();
-    }, [clearAiDraftTyping]);
+        clearPendingEditorSync();
+    }, [clearAiDraftTyping, clearPendingEditorSync]);
 
     useEffect(() => {
         if (typeof window === 'undefined') {
@@ -2031,7 +2102,7 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
                 source: draft.source || 'ai-tailor'
             });
 
-            openEditor(draftRecord, 'edit');
+            openEditor(draftRecord, 'edit', { deferPagination: true });
             animateAiDraftIntoEditor(draftRecord, cleanedDraftText, formattedHtml);
             return true;
         };
@@ -2196,7 +2267,7 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         selection?.removeAllRanges();
         selection?.addRange(nextRange);
         saveSelection();
-        syncEditorResume();
+        syncEditorResume({ debounce: true });
 
         window.setTimeout(() => {
             manualTextInsertRef.current = false;
@@ -2277,18 +2348,22 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         const nativeEvent = event.nativeEvent || {};
         const inputType = nativeEvent.inputType || '';
         const insertedText = nativeEvent.data || '';
+        const activeTextColor = String(textColorRef.current || textColor || DEFAULT_TEXT_COLOR).toLowerCase();
+        const usesDefaultTextColor = ['#000', '#000000', 'black', 'rgb(0, 0, 0)'].includes(activeTextColor);
 
         if (!editorResume) {
             return;
         }
 
-        if ((inputType === 'insertText' || inputType === 'insertCompositionText') && insertedText) {
+        if (!usesDefaultTextColor && (inputType === 'insertText' || inputType === 'insertCompositionText') && insertedText) {
             event.preventDefault();
             insertColoredText(insertedText);
             return;
         }
 
-        maintainTextColorForTyping(event);
+        if (!usesDefaultTextColor) {
+            maintainTextColorForTyping(event);
+        }
     };
 
     const handleEditorInput = (event) => {
@@ -2297,38 +2372,64 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         const insertedText = nativeEvent.data || '';
 
         if (manualTextInsertRef.current) {
-            syncEditorResume();
+            syncEditorResume({ debounce: true });
             return;
         }
 
-        if (inputType.startsWith('insert') && insertedText) {
+        const activeTextColor = String(textColorRef.current || textColor || DEFAULT_TEXT_COLOR).toLowerCase();
+        const usesDefaultTextColor = ['#000', '#000000', 'black', 'rgb(0, 0, 0)'].includes(activeTextColor);
+
+        if (!usesDefaultTextColor && inputType.startsWith('insert') && insertedText) {
             colorRecentlyInsertedText(insertedText.length);
         }
 
-        syncEditorResume();
+        syncEditorResume({ debounce: true });
     };
 
     const handleEditorKeyDown = () => {
         saveSelection();
     };
 
-    const syncEditorResume = () => {
+    const syncEditorResume = ({ debounce = false } = {}) => {
         if (!editorRef.current || !editorResume) {
             return;
         }
 
         saveSelection();
-        window.requestAnimationFrame(() => {
+
+        if (editorSyncTimerRef.current) {
+            window.clearTimeout(editorSyncTimerRef.current);
+            editorSyncTimerRef.current = null;
+        }
+        if (editorSyncFrameRef.current) {
+            window.cancelAnimationFrame(editorSyncFrameRef.current);
+            editorSyncFrameRef.current = null;
+        }
+
+        const commitEditorUpdate = () => {
+            editorSyncFrameRef.current = null;
+            if (!editorRef.current) return;
+
             const nextHtml = editorRef.current.innerHTML;
             repaginateEditorContent();
+            skipNextEditorHydrationRef.current = true;
             setEditorResume((current) => (
                 current
                     ? { ...current, html: nextHtml }
                     : current
             ));
-            publishWorkspaceSnapshot(editorResume, nextHtml);
             saveSelection();
-        });
+        };
+
+        if (debounce) {
+            editorSyncTimerRef.current = window.setTimeout(() => {
+                editorSyncTimerRef.current = null;
+                editorSyncFrameRef.current = window.requestAnimationFrame(commitEditorUpdate);
+            }, 420);
+            return;
+        }
+
+        editorSyncFrameRef.current = window.requestAnimationFrame(commitEditorUpdate);
     };
 
     const runCommand = (command, value = null) => {
@@ -3341,8 +3442,21 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
                         {!isMobileViewport && (isDocumentMode ? signaturePanel : atsPanel)}
                     </div>
 
-                    {!isDocumentMode && showAtsDetails && atsScanResult && (
-                        <div className="resume-playground-ats-details">
+                    {!isDocumentMode && showAtsDetails && atsScanResult && typeof document !== 'undefined' && createPortal(
+                        <div
+                            className="resume-playground-ats-details-backdrop"
+                            onMouseDown={(event) => {
+                                if (event.target === event.currentTarget) {
+                                    setShowAtsDetails(false);
+                                }
+                            }}
+                        >
+                        <div
+                            className="resume-playground-ats-details"
+                            role="dialog"
+                            aria-modal="true"
+                            aria-label="ATS score summary"
+                        >
                             <div className="resume-playground-ats-details-header">
                                 <h4>ATS score summary</h4>
                                 <button
@@ -3393,6 +3507,8 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
                                 </div>
                             )}
                         </div>
+                        </div>,
+                        document.body
                     )}
 
                     <div

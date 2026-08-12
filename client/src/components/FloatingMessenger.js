@@ -147,6 +147,7 @@ const detectLocalAssistantAction = (message = '', context = {}) => {
     const normalized = normalizeSearchText(message);
     const portalMode = context?.portalMode || '';
     const activeSection = normalizeSearchText(context?.activeSection || '');
+    const wantsReminder = /\b(?:remind me|remember (?:to|that|about)|set (?:me )?(?:a )?reminder|create (?:me )?(?:a )?reminder|add (?:a )?reminder|note (?:down|that|to)|(?:make|take|save|add) (?:a )?note|(?:save|write|put|add) .{1,160} (?:to|in|on) (?:my )?(?:notepad|notes?))\b/.test(normalized);
     const hasActionVerb = /\b(open|go to|show|start|create|make|write|draft|generate|compose|prepare)\b/.test(normalized);
     const wantsResumeDraft = portalMode !== 'employer'
         && /\b(create|make|build|write|draft|generate|compose|prepare)\b.{0,40}\b(res+um[eé]?s?|cv)\b|\b(res+um[eé]?s?|cv)\b.{0,32}\b(create|make|build|write|draft|generate|compose|prepare)\b/.test(normalized);
@@ -164,6 +165,10 @@ const detectLocalAssistantAction = (message = '', context = {}) => {
         && hasActionVerb
         && portalMode === 'employer';
 
+    if (wantsReminder) {
+        return 'widget-set-reminder';
+    }
+
     if (wantsResumeDraft) {
         return 'candidate-create-resume';
     }
@@ -178,6 +183,112 @@ const detectLocalAssistantAction = (message = '', context = {}) => {
 
     if (wantsEmployerPost) {
         return 'employer-create-post';
+    }
+
+    return '';
+};
+
+const buildReminderText = (question = '', answer = '') => {
+    const originalQuestion = String(question || '').trim();
+    let reminder = originalQuestion
+        .replace(/^(?:please\s+)?(?:(?:can|could|would|will)\s+you\s+)?/i, '')
+        .replace(/^(?:set|create|add)\s+(?:me\s+)?(?:a\s+)?reminder(?:\s+(?:for|to|that|about))?\s*/i, '')
+        .replace(/^remind\s+me(?:\s+(?:to|that|about))?\s*/i, '')
+        .replace(/^remember(?:\s+(?:to|that|about))?\s*/i, '')
+        .replace(/^note\s+(?:down\s+)?(?:that\s+|to\s+|about\s+)?/i, '')
+        .replace(/^(?:make|take|save|add)\s+(?:a\s+)?note(?:\s+(?:to|that|about|of))?\s*/i, '')
+        .replace(/^(?:save|write|put|add)\s+(?:this\s+)?/i, '')
+        .replace(/^(?:to|in|on)\s+(?:my\s+)?(?:notepad|notes?)(?:\s*[:-]?\s*)/i, '')
+        .replace(/\s+(?:to|in|on)\s+(?:my\s+)?(?:notepad|notes?)\s*$/i, '')
+        .replace(/\s+please\s*$/i, '')
+        .trim();
+
+    if (!reminder || reminder.length < 3) {
+        reminder = cleanAssistantDraftText(answer) || originalQuestion || 'Reminder';
+    }
+
+    return reminder;
+};
+
+const applyReminderClock = (date, hourValue, minuteValue = '0', meridiem = '') => {
+    let hours = Number(hourValue);
+    const minutes = Math.max(0, Math.min(59, Number(minuteValue) || 0));
+    const period = String(meridiem || '').toLowerCase();
+    if (period === 'pm' && hours < 12) hours += 12;
+    if (period === 'am' && hours === 12) hours = 0;
+    date.setHours(Math.max(0, Math.min(23, hours)), minutes, 0, 0);
+    return date;
+};
+
+const parseReminderDueAt = (question = '') => {
+    const normalized = String(question || '').toLowerCase().replace(/\s+/g, ' ').trim();
+    if (!normalized) return '';
+
+    const now = new Date();
+    const relativeMatch = normalized.match(/\b(?:in(?:\s+the)?(?:\s+next)?|after)\s+(\d+)\s*(minutes?|mins?|hours?|hrs?|days?|weeks?)\b/)
+        || normalized.match(/\b(\d+)\s*(minutes?|mins?|hours?|hrs?|days?|weeks?)\s+from\s+now\b/);
+    if (relativeMatch) {
+        const amount = Math.max(1, Number(relativeMatch[1]) || 1);
+        const unit = relativeMatch[2];
+        const multiplier = unit.startsWith('min')
+            ? 60000
+            : unit.startsWith('hour') || unit.startsWith('hr')
+                ? 3600000
+                : unit.startsWith('week')
+                    ? 604800000
+                    : 86400000;
+        return new Date(now.getTime() + (amount * multiplier)).toISOString();
+    }
+
+    const timeMatch = normalized.match(/\b(?:at|for)\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\b/)
+        || normalized.match(/\b(\d{1,2})(?::(\d{2}))\s*(am|pm)\b/);
+    const isoDateMatch = normalized.match(/\b(20\d{2}-\d{2}-\d{2})\b/);
+    if (isoDateMatch) {
+        const date = new Date(`${isoDateMatch[1]}T00:00:00`);
+        if (timeMatch) applyReminderClock(date, timeMatch[1], timeMatch[2], timeMatch[3]);
+        else date.setHours(9, 0, 0, 0);
+        return Number.isNaN(date.getTime()) ? '' : date.toISOString();
+    }
+
+    const namedDateMatch = normalized.match(/\b(?:on\s+)?((?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+\d{1,2}(?:,?\s+20\d{2})?)/i);
+    if (namedDateMatch) {
+        const date = new Date(namedDateMatch[1]);
+        if (!Number.isNaN(date.getTime())) {
+            if (!/20\d{2}/.test(namedDateMatch[1]) && date.getTime() < now.getTime()) {
+                date.setFullYear(date.getFullYear() + 1);
+            }
+            if (timeMatch) applyReminderClock(date, timeMatch[1], timeMatch[2], timeMatch[3]);
+            else date.setHours(9, 0, 0, 0);
+            return date.toISOString();
+        }
+    }
+
+    const weekdayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const weekdayMatch = normalized.match(/\b(?:next\s+)?(sunday|monday|tuesday|wednesday|thursday|friday|saturday)\b/);
+    if (weekdayMatch) {
+        const targetDay = weekdayNames.indexOf(weekdayMatch[1]);
+        let daysAhead = (targetDay - now.getDay() + 7) % 7;
+        if (daysAhead === 0 || normalized.includes(`next ${weekdayMatch[1]}`)) daysAhead += 7;
+        const date = new Date(now);
+        date.setDate(date.getDate() + daysAhead);
+        if (timeMatch) applyReminderClock(date, timeMatch[1], timeMatch[2], timeMatch[3]);
+        else date.setHours(9, 0, 0, 0);
+        return date.toISOString();
+    }
+
+    if (normalized.includes('tomorrow') || normalized.includes('today')) {
+        const date = new Date(now);
+        if (normalized.includes('tomorrow')) date.setDate(date.getDate() + 1);
+        if (timeMatch) applyReminderClock(date, timeMatch[1], timeMatch[2], timeMatch[3]);
+        else date.setHours(9, 0, 0, 0);
+        if (date.getTime() <= now.getTime() && normalized.includes('today')) return '';
+        return date.toISOString();
+    }
+
+    if (timeMatch) {
+        const date = applyReminderClock(new Date(now), timeMatch[1], timeMatch[2], timeMatch[3]);
+        if (date.getTime() <= now.getTime()) date.setDate(date.getDate() + 1);
+        return date.toISOString();
     }
 
     return '';
@@ -254,12 +365,17 @@ const FloatingMessenger = ({
     const [isMobileView, setIsMobileView] = useState(() => (
         typeof window !== 'undefined' ? window.matchMedia('(max-width: 768px)').matches : false
     ));
+    const [hasDesktopAssistantWidget, setHasDesktopAssistantWidget] = useState(() => (
+        typeof window !== 'undefined' ? window.matchMedia('(min-width: 1900px)').matches : false
+    ));
     const messagesRef = useRef(null);
     const openAssistantOnNextLoadRef = useRef(false);
     const assistantDirectOpenRef = useRef(false);
+    const assistantActionHandlerRef = useRef(null);
     const pendingContactRef = useRef(null);
     const selectedThreadIdRef = useRef(selectedThreadId);
     const isMobileViewRef = useRef(isMobileView);
+    const hasDesktopAssistantWidgetRef = useRef(hasDesktopAssistantWidget);
     const menuCloseTimerRef = useRef(null);
     const messengerCloseTimerRef = useRef(null);
     const triggerRef = useRef(null);
@@ -534,15 +650,23 @@ const FloatingMessenger = ({
             if (!preserveSelection) {
                 if (openAssistantOnNextLoadRef.current) {
                     openAssistantOnNextLoadRef.current = false;
-                    setSelectedThreadId(ASSISTANT_THREAD_ID);
+                    setSelectedThreadId(hasDesktopAssistantWidgetRef.current
+                        ? (nextThreads[0]?._id || '')
+                        : ASSISTANT_THREAD_ID);
                 } else {
-                    setSelectedThreadId(isMobileViewRef.current ? '' : ASSISTANT_THREAD_ID);
+                    setSelectedThreadId(isMobileViewRef.current || hasDesktopAssistantWidgetRef.current
+                        ? ''
+                        : ASSISTANT_THREAD_ID);
                 }
             } else {
                 const currentSelectedThreadId = selectedThreadIdRef.current;
                 const threadStillExists = nextThreads.some((thread) => thread._id === currentSelectedThreadId);
-                if (!threadStillExists && currentSelectedThreadId !== ASSISTANT_THREAD_ID) {
-                    setSelectedThreadId(isMobileViewRef.current ? '' : ASSISTANT_THREAD_ID);
+                const assistantCanStaySelected = currentSelectedThreadId === ASSISTANT_THREAD_ID
+                    && !hasDesktopAssistantWidgetRef.current;
+                if (!threadStillExists && !assistantCanStaySelected) {
+                    setSelectedThreadId(isMobileViewRef.current || hasDesktopAssistantWidgetRef.current
+                        ? ''
+                        : ASSISTANT_THREAD_ID);
                 }
             }
         } catch (fetchError) {
@@ -570,6 +694,45 @@ const FloatingMessenger = ({
         mediaQuery.addListener(handleViewportChange);
         return () => mediaQuery.removeListener(handleViewportChange);
     }, []);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return undefined;
+
+        const mediaQuery = window.matchMedia('(min-width: 1900px)');
+        const handleWidgetViewportChange = (event) => {
+            hasDesktopAssistantWidgetRef.current = event.matches;
+            setHasDesktopAssistantWidget(event.matches);
+        };
+
+        hasDesktopAssistantWidgetRef.current = mediaQuery.matches;
+        setHasDesktopAssistantWidget(mediaQuery.matches);
+        if (typeof mediaQuery.addEventListener === 'function') {
+            mediaQuery.addEventListener('change', handleWidgetViewportChange);
+            return () => mediaQuery.removeEventListener('change', handleWidgetViewportChange);
+        }
+
+        mediaQuery.addListener(handleWidgetViewportChange);
+        return () => mediaQuery.removeListener(handleWidgetViewportChange);
+    }, []);
+
+    useEffect(() => {
+        if (!hasDesktopAssistantWidget || selectedThreadId !== ASSISTANT_THREAD_ID) return;
+        setSelectedThreadId('');
+        setAssistantMenuOpen(false);
+        assistantDirectOpenRef.current = false;
+    }, [hasDesktopAssistantWidget, selectedThreadId]);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return undefined;
+
+        const handleWidgetAssistantAction = (event) => {
+            if (event?.detail?.mode && event.detail.mode !== mode) return;
+            assistantActionHandlerRef.current?.(event?.detail?.action || '', event?.detail?.payload || {});
+        };
+
+        window.addEventListener('jumptake-widget-assistant-action', handleWidgetAssistantAction);
+        return () => window.removeEventListener('jumptake-widget-assistant-action', handleWidgetAssistantAction);
+    }, [mode]);
 
     useEffect(() => {
         if (!open) return undefined;
@@ -608,6 +771,12 @@ const FloatingMessenger = ({
             const nextContact = event?.detail?.contact && typeof event.detail.contact === 'object'
                 ? event.detail.contact
                 : null;
+            if (shouldOpenAssistant && hasDesktopAssistantWidget) {
+                openAssistantOnNextLoadRef.current = false;
+                assistantDirectOpenRef.current = false;
+                window.dispatchEvent(new CustomEvent('jumptake-widget-assistant-focus'));
+                return;
+            }
             openAssistantOnNextLoadRef.current = shouldOpenAssistant;
             assistantDirectOpenRef.current = shouldOpenAssistant;
             window.clearTimeout(messengerCloseTimerRef.current);
@@ -629,7 +798,7 @@ const FloatingMessenger = ({
 
         window.addEventListener(openEventName, handleOpenEvent);
         return () => window.removeEventListener(openEventName, handleOpenEvent);
-    }, [isMobileView, onSeen, openEventName]);
+    }, [hasDesktopAssistantWidget, isMobileView, onSeen, openEventName]);
 
     useEffect(() => () => window.clearTimeout(messengerCloseTimerRef.current), []);
 
@@ -679,17 +848,22 @@ const FloatingMessenger = ({
         }
 
         const previousOverflow = document.body.style.overflow;
+        const shouldLockPageScroll = !window.matchMedia('(min-width: 769px)').matches;
         const handleKeyDown = (event) => {
             if (event.key === 'Escape') {
                 handleClose();
             }
         };
 
-        document.body.style.overflow = 'hidden';
+        if (shouldLockPageScroll) {
+            document.body.style.overflow = 'hidden';
+        }
         document.addEventListener('keydown', handleKeyDown);
 
         return () => {
-            document.body.style.overflow = previousOverflow;
+            if (shouldLockPageScroll) {
+                document.body.style.overflow = previousOverflow;
+            }
             document.removeEventListener('keydown', handleKeyDown);
         };
     }, [handleClose, open]);
@@ -975,12 +1149,29 @@ const FloatingMessenger = ({
         const answer = String(payload.answer || '').trim();
         const question = String(payload.question || '').trim();
         const localAction = detectLocalAssistantAction(question, payload.context || {});
-        const actionName = String(localAction || action || '');
+        const actionName = String(localAction || action || '').trim().toLowerCase();
         const cleanedDraft = cleanAssistantDraftText(answer || question) || answer || question;
         const localDraft = isWeakAssistantActionDraft(cleanedDraft)
             ? buildLocalActionDraft(actionName, payload.context || {}, question)
             : '';
         const draftText = localDraft || cleanedDraft;
+
+        if (
+            hasDesktopAssistantWidgetRef.current
+            && ['widget-set-reminder', 'set-reminder', 'create-reminder', 'add-reminder'].includes(actionName)
+        ) {
+            const isReminderRequest = /\b(?:remind|reminder|remember)\b/.test(normalizeSearchText(question));
+            window.dispatchEvent(new CustomEvent('jumptake-widget-notepad-add', {
+                detail: {
+                    mode,
+                    storageKey: assistantStorageKey,
+                    text: buildReminderText(question, answer),
+                    kind: isReminderRequest ? 'reminder' : 'note',
+                    dueAt: isReminderRequest ? parseReminderDueAt(question) : ''
+                }
+            }));
+            return;
+        }
 
         if (actionName.startsWith('open-section:')) {
             const section = actionName.split(':')[1];
@@ -1108,9 +1299,10 @@ const FloatingMessenger = ({
             minimizeAfterMobileAssistantAction();
         }
     };
+    assistantActionHandlerRef.current = handleAssistantAction;
 
     const messengerMarkup = (
-        <div className={`floating-messenger ${open ? 'is-open' : ''} ${closing ? 'is-closing' : ''} is-trigger-${triggerTone}`}>
+        <div className={`floating-messenger ${open ? 'is-open' : ''} ${closing ? 'is-closing' : ''} ${!isMobileView ? 'is-desktop-corner' : ''} is-trigger-${triggerTone}`}>
             {open && (
                 <>
                     <div className="floating-messenger-backdrop" onClick={handleClose} aria-hidden="true" />
@@ -1151,7 +1343,7 @@ const FloatingMessenger = ({
 
                             <div className="floating-messenger-contact-body">
                             <div className="floating-messenger-contact-list">
-                                {activeTab === 'new' && <button
+                                {activeTab === 'new' && !hasDesktopAssistantWidget && <button
                                     type="button"
                                     className={`floating-messenger-contact portal-ai-floating-contact ${assistantSelected ? 'is-active' : ''}`}
                                     onClick={() => handleSelectThread(ASSISTANT_THREAD_ID)}
@@ -1235,7 +1427,7 @@ const FloatingMessenger = ({
                         </aside>
 
                         <section className="floating-messenger-chat">
-                            {assistantSelected ? (
+                            {assistantSelected && !hasDesktopAssistantWidget ? (
                                 <>
                                     <div className="floating-messenger-chat-bar">
                                         <div className="floating-messenger-chat-head">
@@ -1396,13 +1588,13 @@ const FloatingMessenger = ({
                 </>
             )}
 
-            {!open && (
+            {(!open || !isMobileView) && (
                 <button
                     type="button"
                     className="floating-messenger-trigger"
                     ref={triggerRef}
-                    onClick={handleOpen}
-                    aria-label="Open messages"
+                    onClick={open ? handleClose : handleOpen}
+                    aria-label={open ? 'Close messages' : 'Open messages'}
                 >
                     <svg
                         strokeLinejoin="round"

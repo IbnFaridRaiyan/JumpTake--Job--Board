@@ -95,6 +95,12 @@ const PortalSidebar = ({
             return undefined;
         }
 
+        // The desktop menu is a navbar popover, so it must not freeze or
+        // reposition the document (removing the scrollbar shifted the header).
+        if (window.matchMedia('(min-width: 769px)').matches) {
+            return undefined;
+        }
+
         const html = document.documentElement;
         const body = document.body;
         const scrollY = window.scrollY;
@@ -167,6 +173,7 @@ const PortalSidebar = ({
 
     const navigation = (
         <>
+        <span className="portal-public-scroll-guard" aria-hidden="true" />
         <header id="portal-public-header" className={`portal-public-header ${menuOpen ? 'is-menu-open' : ''} ${menuClosing ? 'is-menu-closing' : ''}`} aria-label="JumpTake portal navigation">
             <div className="portal-public-header-top">
                 <div className="portal-public-brand">

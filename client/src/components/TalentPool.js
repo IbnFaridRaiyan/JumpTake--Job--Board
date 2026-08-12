@@ -1810,26 +1810,27 @@ const TalentPool = ({
                             </svg>
                         </button>
                         {comments.length > 0 && <span className="portal-comment-trigger-count">{comments.length}</span>}
-                        <button
-                            type="button"
-                            className={`portal-share-toggle ${isShareOpen ? 'active' : ''}`}
-                            onClick={(event) => {
-                                event.stopPropagation();
-                                setOpenCandidateSharePostId((openId) => (openId === postKey ? '' : postKey));
-                                setOpenCandidateReactionPostId('');
-                                setOpenCandidateCommentPostId('');
-                                setOpenCandidateOptionsPostId('');
-                                setCandidateShareStatus('');
-                            }}
-                            aria-expanded={isShareOpen}
-                            aria-label="Share post"
-                        >
-                            <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
-                                <path d="M15 2.5A2.5 2.5 0 0 1 10.5 4L5.9 6.3a2.5 2.5 0 0 1 0 3.4l4.6 2.3A2.5 2.5 0 1 1 10 13.5c0-.2.02-.39.07-.57L5.45 10.6a2.5 2.5 0 1 1 0-5.2l4.62-2.33A2.5 2.5 0 1 1 15 2.5z" />
-                            </svg>
-                        </button>
-                        {isShareOpen && (
-                            <div className="portal-share-picker" role="dialog" aria-label="Share post with friend">
+                        <span className="portal-share-anchor">
+                            <button
+                                type="button"
+                                className={`portal-share-toggle ${isShareOpen ? 'active' : ''}`}
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    setOpenCandidateSharePostId((openId) => (openId === postKey ? '' : postKey));
+                                    setOpenCandidateReactionPostId('');
+                                    setOpenCandidateCommentPostId('');
+                                    setOpenCandidateOptionsPostId('');
+                                    setCandidateShareStatus('');
+                                }}
+                                aria-expanded={isShareOpen}
+                                aria-label="Share post"
+                            >
+                                <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+                                    <path d="M15 2.5A2.5 2.5 0 0 1 10.5 4L5.9 6.3a2.5 2.5 0 0 1 0 3.4l4.6 2.3A2.5 2.5 0 1 1 10 13.5c0-.2.02-.39.07-.57L5.45 10.6a2.5 2.5 0 1 1 0-5.2l4.62-2.33A2.5 2.5 0 1 1 15 2.5z" />
+                                </svg>
+                            </button>
+                            {isShareOpen && (
+                                <div className="portal-share-picker" role="dialog" aria-label="Share post with friend">
                                 <strong>Share post</strong>
                                 <button
                                     type="button"
@@ -1878,8 +1879,9 @@ const TalentPool = ({
                                     <p>No friends to share with yet.</p>
                                 ) : null}
                                 {candidateShareStatus && <p className="portal-share-status">{candidateShareStatus}</p>}
-                            </div>
-                        )}
+                                </div>
+                            )}
+                        </span>
                     </div>
                 </div>
                 {isCommentOpen && typeof document !== 'undefined' && createPortal(

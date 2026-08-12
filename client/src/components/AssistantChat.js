@@ -20,6 +20,18 @@ const createInitialAssistantMessages = () => ([
 
 const createConversationId = () => `ai-chat-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 const hasUserMessages = (messages = []) => messages.some((message) => message.role === 'user');
+const getNotepadAction = (question = '', context = {}) => {
+    if (!context?.portalMode) return '';
+    const normalized = String(question || '').toLowerCase().replace(/\s+/g, ' ').trim();
+    const asksReminder = /\b(?:remind me|reminder|remember (?:to|that|about)|set (?:me )?(?:a )?reminder|create (?:me )?(?:a )?reminder|add (?:a )?reminder)\b/.test(normalized);
+    const asksNote = /\b(?:note down|(?:make|take|save|add) (?:a )?note|(?:save|write|put|add) .{1,160} (?:to|in|on) (?:my )?(?:notepad|notes?))\b/.test(normalized);
+    return asksReminder || asksNote ? 'widget-set-reminder' : '';
+};
+const buildNotepadConfirmation = (question = '') => (
+    /\b(?:remind|reminder|remember)\b/i.test(String(question || ''))
+        ? 'Done — I added it to your Notepad reminders. You can change the reminder time in the Reminders section whenever you want.'
+        : 'Done — I added it to your Saved Notes. You can review or delete it from the Notepad whenever you want.'
+);
 const buildConversationTitle = (messages = []) => {
     const firstQuestion = String(messages.find((message) => message.role === 'user')?.text || '')
         .replace(/[^a-z0-9\s'-]/gi, ' ')
@@ -141,6 +153,19 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
         return () => window.removeEventListener('jumptake-assistant-demo-prompt', showTourPrompt);
     }, [className]);
 
+    useEffect(() => {
+        if (typeof window === 'undefined' || !className.includes('portal-widget-assistant-chat')) {
+            return undefined;
+        }
+
+        const focusWidgetAssistant = () => {
+            window.requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
+        };
+
+        window.addEventListener('jumptake-widget-assistant-focus', focusWidgetAssistant);
+        return () => window.removeEventListener('jumptake-widget-assistant-focus', focusWidgetAssistant);
+    }, [className]);
+
     const clearAssistantChat = () => {
         setConversations((current) => current.filter((conversation) => conversation.id !== conversationId));
         setConversationId(createConversationId());
@@ -220,9 +245,12 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
                 }
                 throw new Error(data.error || 'JumpTake assistant is unavailable.');
             }
-            setAssistantMessages((messages) => [...messages, { role: 'assistant', text: data.answer, time: formatAssistantTime() }]);
-            if (String(data.answer || '').trim().toLowerCase() !== 'error connecting') {
-                onAction?.(data.action || '', { answer: data.answer, question, context: resolvedContext });
+            const notepadAction = getNotepadAction(question, resolvedContext);
+            const resolvedAction = notepadAction || data.action || '';
+            const resolvedAnswer = notepadAction ? buildNotepadConfirmation(question) : data.answer;
+            setAssistantMessages((messages) => [...messages, { role: 'assistant', text: resolvedAnswer, time: formatAssistantTime() }]);
+            if (String(resolvedAnswer || '').trim().toLowerCase() !== 'error connecting') {
+                onAction?.(resolvedAction, { answer: resolvedAnswer, question, context: resolvedContext });
             }
         } catch (error) {
             setAssistantMessages((messages) => [...messages, { role: 'assistant', text: error.message, time: formatAssistantTime() }]);

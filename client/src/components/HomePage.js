@@ -23,6 +23,11 @@ import GuidedPortalTour from './GuidedPortalTour';
 import PortalPageSkeleton from './PortalPageSkeleton';
 import Pricing from './Pricing';
 import PortalSideWidgets from './PortalSideWidgets';
+import {
+    PORTAL_REMINDER_ALERT_EVENT,
+    PORTAL_REMINDERS_UPDATED_EVENT,
+    getUnreadPortalReminderCount
+} from '../utils/portalReminders';
 
 const CANDIDATE_SECTION_IDS = new Set([
     'dashboard',
@@ -627,12 +632,34 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             }
 
             const notifications = await response.json();
-            setPendingNotificationCount((Array.isArray(notifications) ? notifications : []).filter((notification) => !notification.read).length);
+            const reminderStorageKey = `jumptakeAssistantChat:candidate:${userId}`;
+            const reminderCount = getUnreadPortalReminderCount(reminderStorageKey);
+            setPendingNotificationCount(
+                (Array.isArray(notifications) ? notifications : []).filter((notification) => !notification.read).length
+                + reminderCount
+            );
         } catch (notificationError) {
             console.error('Error fetching candidate portal notifications:', notificationError);
-            setPendingNotificationCount(0);
+            setPendingNotificationCount(getUnreadPortalReminderCount(`jumptakeAssistantChat:candidate:${userId}`));
         }
     };
+
+    useEffect(() => {
+        if (!user?.id) return undefined;
+        const reminderStorageKey = `jumptakeAssistantChat:candidate:${user.id}`;
+        const refreshReminderNotifications = (event) => {
+            if (event?.detail?.storageKey && event.detail.storageKey !== reminderStorageKey) return;
+            fetchCandidatePortalNotifications(user.id);
+        };
+
+        window.addEventListener(PORTAL_REMINDERS_UPDATED_EVENT, refreshReminderNotifications);
+        window.addEventListener(PORTAL_REMINDER_ALERT_EVENT, refreshReminderNotifications);
+        return () => {
+            window.removeEventListener(PORTAL_REMINDERS_UPDATED_EVENT, refreshReminderNotifications);
+            window.removeEventListener(PORTAL_REMINDER_ALERT_EVENT, refreshReminderNotifications);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user?.id]);
 
     const fetchCandidateFriendNotifications = async (userId) => {
         if (!userId) {
@@ -1199,6 +1226,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
             </div>
             <PortalSideWidgets
                 mode="candidate"
+                theme={appMode}
                 renderSection={renderContent}
                 previousSection={previousSection}
                 previousSectionTitle={previousSection ? (sectionTitles[previousSection] || previousSection) : ''}

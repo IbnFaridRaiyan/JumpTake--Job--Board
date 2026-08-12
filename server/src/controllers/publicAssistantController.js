@@ -501,6 +501,9 @@ const inferAction = (message, context = {}) => {
   const portalMode = context?.portalMode || '';
   const currentSection = String(context?.activeSection || '').toLowerCase();
   const actionVerbPattern = /\b(open|start|create|make|build|generate|write|draft|compose|prepare|set up|setup)\b/;
+  const asksNotepadAction = /\b(?:remind me|reminder|remember (?:to|that|about)|note down|save .{1,160} (?:to|in|on) (?:my )?(?:notepad|notes?))\b/.test(normalized)
+    || /\b(?:set|create|add) (?:me )?(?:a )?reminder\b/.test(normalized)
+    || /\b(?:make|take|save|add) (?:a )?note\b/.test(normalized);
   const asksRegister = /\b(register|registration|sign ?up|join)\b/.test(normalized)
     || /\b(create|make|open|start|set ?up|setup|get)\b.{0,24}\b(account|profile)\b/.test(normalized);
   const asksLogin = /\b(log ?in|login|sign ?in)\b/.test(normalized);
@@ -532,6 +535,7 @@ const inferAction = (message, context = {}) => {
     || /\bassessment\b.{0,36}\b(candidate|general|job)\b/.test(normalized);
   const sectionAction = inferSectionAction(normalized, context);
 
+  if (asksNotepadAction && portalMode) return 'widget-set-reminder';
   if (asksResumeFormat && portalMode !== 'employer') return 'candidate-format-resume';
   if (asksDocumentFormat && portalMode === 'employer') return 'employer-format-document';
   if (asksDocumentFormat && portalMode !== 'employer') return 'candidate-format-document';
@@ -599,6 +603,9 @@ const buildHistoryBlock = (history = []) => (
 
 const buildCompactPortalContext = (context = {}) => {
   const workspace = context.workspace && typeof context.workspace === 'object' ? context.workspace : {};
+  const notepad = context.notepad && typeof context.notepad === 'object'
+    ? context.notepad
+    : { content: context.notepad || '' };
 
   return {
     portalMode: context.portalMode || '',
@@ -627,6 +634,9 @@ const buildCompactPortalContext = (context = {}) => {
       layout: workspace.layout && typeof workspace.layout === 'object'
         ? pickCompactFields(workspace.layout, ['pageWidth', 'pageHeight', 'margin', 'safePageHeight', 'pageCount', 'viewportWidth'], 120)
         : null
+    },
+    notepad: {
+      content: truncateAssistantText(notepad.content, 2500)
     },
     jobs: Array.isArray(context.jobs) ? context.jobs.slice(0, 6).map((job) => ({
       id: job?._id || job?.id || job?.jobNumber || '',
@@ -960,6 +970,13 @@ const fallbackAnswer = (message, action, history = []) => {
   const lastAssistantText = String(getLastHistoryEntry(history, 'assistant')?.text || '').toLowerCase();
   const looksLikeCasualShortMessage = normalized.length <= 12 && /^[a-z0-9\s,'!?-]+$/i.test(normalized);
   const shortClarifier = /\b(what|why|how|huh|no|wait|again|really)\b/.test(normalized);
+
+  if (action === 'widget-set-reminder') {
+    const isReminder = /\b(?:remind|reminder|remember)\b/.test(normalized);
+    return isReminder
+      ? 'Done — I added it to your Notepad reminders. You can change the reminder time in the Reminders section whenever you want.'
+      : 'Done — I added it to your Saved Notes. You can review or delete it from the Notepad whenever you want.';
+  }
 
   if (action === 'choose-login') {
     return pickVariation(message, [
@@ -1679,6 +1696,8 @@ If the visitor asks something unrelated and harmless, do not repeat a stock Jump
 If the visitor asks a logic or riddle question, answer that exact question directly.
 If the visitor asks to create an account, log in, browse jobs, or take a product action, guide them into the correct JumpTake flow.
 For ordinary advice, ask for missing details when they are necessary. For resume or document creation actions, do not ask follow-up questions: produce the best complete draft from known facts, omit unsupported resume sections, and return only editor-ready content.
+When Portal context includes notepad.content, treat it as the user's saved notes and use it only when the user asks about their notes or reminders.
+When the user asks to add, write, save, or remember something in the notepad, briefly confirm the exact reminder or note. The portal saves it automatically; do not claim that an external alarm, notification, email, or calendar event was scheduled.
 
 ${SITE_GUIDE}
 

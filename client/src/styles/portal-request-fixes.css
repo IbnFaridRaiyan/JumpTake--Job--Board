@@ -1,0 +1,2289 @@
+/* Final viewport-specific fixes for portal dialogs, messenger, and editor UI. */
+
+/* Portal desktop navigation uses the public-home header geometry and theme
+   surfaces so every portal section shares one navbar. */
+@media (min-width: 769px) {
+  html body #root #portal-public-header.portal-public-header {
+    box-sizing: border-box !important;
+    position: fixed !important;
+    z-index: 1000000 !important;
+    top: 18px !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: 50% !important;
+    width: min(1180px, calc(100% - 36px)) !important;
+    max-width: 1180px !important;
+    height: auto !important;
+    min-height: 72px !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 10px 12px 10px 18px !important;
+    overflow: visible !important;
+    transform: translateX(-50%) !important;
+    border-width: 1px !important;
+    border-style: solid !important;
+    border-radius: 22px !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  html body #root #portal-public-header .portal-public-header-top {
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 24px !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 50px !important;
+    max-height: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  html body #root #portal-public-header .portal-public-brand {
+    display: inline-flex !important;
+    align-items: center !important;
+    flex: 0 0 142px !important;
+    width: 142px !important;
+    height: 48px !important;
+  }
+
+  html body #root #portal-public-header .portal-public-brand img {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    object-fit: contain !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header.portal-public-header {
+    background: #000000 !important;
+    background-color: #000000 !important;
+    background-image: none !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+    box-shadow: 0 18px 46px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
+    backdrop-filter: blur(24px) saturate(145%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(145%) !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root #portal-public-header.portal-public-header,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root #portal-public-header.portal-public-header {
+    color: #4b1f2e !important;
+    background: rgba(255, 248, 236, 0.97) !important;
+    background-color: rgba(255, 248, 236, 0.97) !important;
+    background-image: none !important;
+    border-color: #d8c5a8 !important;
+    box-shadow: 0 18px 45px rgba(86, 66, 37, 0.13) !important;
+    backdrop-filter: blur(22px) !important;
+    -webkit-backdrop-filter: blur(22px) !important;
+  }
+}
+
+/* Do not move: final desktop portal force rules. */
+@media (min-width: 769px) {
+  html body #root #portal-public-header .portal-public-menu > ul + ul {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    border-top: 0 !important;
+    border-block-start: 0 !important;
+    box-shadow: none !important;
+  }
+
+  html body #root #portal-public-header .portal-public-menu > ul + ul::before,
+  html body #root #portal-public-header .portal-public-menu > ul + ul::after {
+    display: none !important;
+    content: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"]:has(#portal-public-header),
+  html[data-theme="light"] body[data-theme="light"]:has(#portal-public-header) #root,
+  html[data-theme="light"] body[data-theme="light"]:has(#portal-public-header) #root > .app-container,
+  html[data-theme="light"] body[data-theme="light"]:has(#portal-public-header) #root > .app-container > .home-page,
+  html[data-theme="light"] body[data-theme="light"] #root > .app-container > .home-page.portal-dock-open > .dashboard-container,
+  html[data-theme="light"] body[data-theme="light"] #root > .app-container > .home-page.portal-dock-open .main-content {
+    background: #faf5ee !important;
+    background-color: #faf5ee !important;
+    background-image: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root #portal-public-header.portal-public-header,
+  html[data-theme="light"] body[data-theme="light"] #root #portal-public-header.portal-public-header.is-menu-open {
+    background: rgba(255, 248, 236, 0.54) !important;
+    background-color: rgba(255, 248, 236, 0.54) !important;
+    backdrop-filter: blur(18px) saturate(122%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(122%) !important;
+  }
+
+  html body #root > .app-container > .home-page.portal-dock-open > .dashboard-container,
+  html body #root > .app-container > .home-page.portal-dock-open > .dashboard-container.mobile-section-open {
+    height: calc(100dvh - 90px) !important;
+    min-height: calc(100dvh - 90px) !important;
+    max-height: calc(100dvh - 90px) !important;
+    margin-top: 90px !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  html body #root > .app-container > .home-page.portal-dock-open > .dashboard-container > main.main-content.mobile-dashboard-section-panel {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  /* Keep each portal page flush with the lower edge of the fixed navbar. */
+  html body #root > .app-container > .home-page.portal-dock-open
+    > .dashboard-container > main.main-content,
+  html body #root > .app-container > .home-page.portal-dock-open
+    > .dashboard-container > main.main-content
+    > .portal-section-transition-shell {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] .floating-messenger.is-desktop-corner > .floating-messenger-trigger,
+  html[data-theme="dark"] body[data-theme="dark"] .floating-messenger.is-desktop-corner > .floating-messenger-trigger:is(:hover, :focus, :focus-visible, :active) {
+    border: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] .floating-messenger.is-desktop-corner > .floating-messenger-trigger :is(svg, path) {
+    color: #ffffff !important;
+    fill: none !important;
+    stroke: currentColor !important;
+  }
+
+  html body > .floating-messenger.is-open.is-desktop-corner,
+  html body > .floating-messenger.is-open.is-closing.is-desktop-corner {
+    width: min(920px, calc(100vw - 32px)) !important;
+    max-width: 920px !important;
+    height: min(740px, calc(100dvh - 16px)) !important;
+    max-height: min(740px, calc(100dvh - 16px)) !important;
+  }
+
+  html body > .floating-messenger.is-open.is-desktop-corner .floating-messenger-shell {
+    grid-template-columns: minmax(14rem, 17.5rem) minmax(0, 1fr) !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root > .app-container > .home-page > .dashboard-container > main.main-content > .portal-section-transition-shell[data-section="talent-stories"] :is(.portal-home-feed, .portal-home-feed-scroll, .portal-home-tab-panel-talent-stories) {
+    box-sizing: border-box !important;
+    width: calc(100% - 1rem) !important;
+    min-width: 0 !important;
+    max-width: calc(100% - 1rem) !important;
+    margin-right: 1rem !important;
+    padding-right: 0 !important;
+  }
+}
+
+/* Absolute final desktop viewport alignment: page content begins immediately
+   after the fixed navbar instead of being hidden beneath it. */
+@media (min-width: 769px) {
+  html body #root#root > .app-container > .home-page.portal-dock-open
+    > .dashboard-container,
+  html body #root#root > .app-container > .home-page.portal-dock-open
+    > .dashboard-container.mobile-section-open {
+    height: calc(100dvh - 90px) !important;
+    min-height: 0 !important;
+    max-height: calc(100dvh - 90px) !important;
+    margin-top: 90px !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  html body #root#root > .app-container > .home-page.portal-dock-open
+    > .dashboard-container > main.main-content,
+  html body #root#root > .app-container > .home-page.portal-dock-open
+    > .dashboard-container > main.main-content.mobile-dashboard-section-panel {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    margin: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  html body #root#root > .app-container > .home-page.portal-dock-open
+    > .dashboard-container > main.main-content
+    > .portal-section-transition-shell,
+  html body #root#root > .app-container > .home-page.portal-dock-open
+    .portal-home-feed:not(:has(> .portal-home-tabs))
+    > .portal-home-feed-scroll {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+}
+
+/* The light desktop rails are floating content, not cream panel columns.
+   Preserve the individual white cards and title strips while removing the
+   large square holder surface behind each widget. */
+@media (min-width: 1900px) {
+  html[data-theme="light"] body[data-theme="light"] #root
+    .portal-side-widgets.portal-side-widgets-theme-light,
+  html[data-theme="light"] body[data-theme="light"] #root
+    .portal-side-widgets.portal-side-widgets-theme-light::before,
+  html[data-theme="light"] body[data-theme="light"] #root
+    .portal-side-widgets.portal-side-widgets-theme-light::after,
+  html[data-theme="light"] body[data-theme="light"] #root
+    .portal-side-widgets.portal-side-widgets-theme-light :is(.portal-widget, .portal-widget-profile, .portal-widget-profile-body) {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root
+    .portal-side-widgets.portal-side-widgets-theme-light :is(.portal-widget, .portal-widget-profile) {
+    border-color: rgba(91, 65, 48, 0.18) !important;
+    box-shadow: 0 18px 44px rgba(76, 55, 43, 0.12) !important;
+  }
+}
+
+/* Keep desktop portal content below the fixed public navbar. The dashboard
+   itself owns the remaining viewport so initial titles and cards cannot be
+   hidden under the header, while its contents still scroll normally. */
+@media (min-width: 769px) {
+  html body #root > .app-container > .home-page.portal-dock-open
+    > .dashboard-container,
+  html body #root > .app-container > .home-page.portal-dock-open
+    > .dashboard-container.mobile-section-open {
+    height: calc(100dvh - 90px) !important;
+    min-height: 0 !important;
+    max-height: calc(100dvh - 90px) !important;
+    margin-top: 90px !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  html body #root > .app-container > .home-page.portal-dock-open
+    > .dashboard-container > main.main-content,
+  html body #root > .app-container > .home-page.portal-dock-open
+    > .dashboard-container > main.main-content.mobile-dashboard-section-panel {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  html body #root > .app-container > .home-page.portal-dock-open
+    > .dashboard-container > main.main-content
+    > .portal-section-transition-shell,
+  html body #root > .app-container > .home-page.portal-dock-open
+    .portal-home-feed:not(:has(> .portal-home-tabs))
+    > .portal-home-feed-scroll {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+}
+
+/* Final portal surface and popup placement pass. These selectors are last so
+   older global portal rules cannot reserve space or relocate body portals. */
+@media (min-width: 769px) {
+  html body #root #portal-public-header .portal-public-menu > ul + ul,
+  html[data-theme="light"] body[data-theme="light"] #root #portal-public-header .portal-public-menu > ul + ul,
+  html[data-theme="dark"] body[data-theme="dark"] #root #portal-public-header .portal-public-menu > ul + ul {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    border-top: 0 !important;
+    border-block-start: 0 !important;
+    box-shadow: none !important;
+    outline: 0 !important;
+  }
+
+  html body #root #portal-public-header .portal-public-menu > ul + ul::before,
+  html body #root #portal-public-header .portal-public-menu > ul + ul::after {
+    display: none !important;
+    content: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"]:has(#portal-public-header),
+  html[data-theme="light"] body[data-theme="light"]:has(#portal-public-header) #root,
+  html[data-theme="light"] body[data-theme="light"]:has(#portal-public-header) #root > .app-container,
+  html[data-theme="light"] body[data-theme="light"]:has(#portal-public-header) #root > .app-container > .home-page,
+  html[data-theme="light"] body[data-theme="light"] #root > .app-container > .home-page.portal-dock-open > .dashboard-container,
+  html[data-theme="light"] body[data-theme="light"] #root > .app-container > .home-page.portal-dock-open .main-content {
+    background: #e4dbcf !important;
+    background-color: #e4dbcf !important;
+    background-image: none !important;
+  }
+
+  /* A transparent public-style navbar floats above the live page canvas. */
+  html[data-theme="light"] body[data-theme="light"] #root #portal-public-header.portal-public-header,
+  html[data-theme="light"] body[data-theme="light"] #root #portal-public-header.portal-public-header.is-menu-open {
+    background: rgba(255, 248, 236, 0.54) !important;
+    background-color: rgba(255, 248, 236, 0.54) !important;
+    backdrop-filter: blur(18px) saturate(122%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(122%) !important;
+  }
+
+  html body #root > .app-container > .home-page.portal-dock-open > .dashboard-container,
+  html body #root > .app-container > .home-page.portal-dock-open > .dashboard-container.mobile-section-open {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: none !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  html body #root > .app-container > .home-page.portal-dock-open > .dashboard-container
+    > main.main-content.mobile-dashboard-section-panel {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: none !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] .floating-messenger.is-desktop-corner
+    > .floating-messenger-trigger,
+  html[data-theme="dark"] body[data-theme="dark"] .floating-messenger.is-desktop-corner
+    > .floating-messenger-trigger:is(:hover, :focus, :focus-visible, :active) {
+    border: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] .floating-messenger.is-desktop-corner
+    > .floating-messenger-trigger :is(svg, path) {
+    color: #ffffff !important;
+    fill: none !important;
+    stroke: currentColor !important;
+  }
+
+  html body > .floating-messenger.is-open.is-desktop-corner,
+  html body > .floating-messenger.is-open.is-closing.is-desktop-corner {
+    width: min(920px, calc(100vw - 32px)) !important;
+    max-width: 920px !important;
+    height: min(740px, calc(100dvh - 16px)) !important;
+    max-height: min(740px, calc(100dvh - 16px)) !important;
+  }
+
+  html body > .floating-messenger.is-open.is-desktop-corner .floating-messenger-shell {
+    grid-template-columns: minmax(14rem, 17.5rem) minmax(0, 1fr) !important;
+  }
+}
+
+/* Body-portaled feed Share menus follow the clicked action during regular
+   page scrolling, mobile scrolling, and Last Used Page preview scrolling. */
+html body > .portal-share-picker.portal-share-picker-floating {
+  position: fixed !important;
+  top: var(--jt-share-top) !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: var(--jt-share-left) !important;
+  width: var(--jt-share-width) !important;
+  max-width: calc(100vw - 24px) !important;
+  max-height: var(--jt-share-max-height) !important;
+  margin: 0 !important;
+  transform: none !important;
+  transform-origin: right bottom !important;
+  animation: none !important;
+  transition: none !important;
+  z-index: 2147483000 !important;
+}
+
+/* Profile-detail posts keep their inline share menu attached to the Share
+   button itself rather than the full card/action row. */
+html body .portal-share-anchor {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  min-width: 0 !important;
+  overflow: visible !important;
+}
+
+html body .portal-share-anchor > .portal-share-picker {
+  position: absolute !important;
+  z-index: 2147483000 !important;
+  top: auto !important;
+  right: 0 !important;
+  bottom: calc(100% + 0.5rem) !important;
+  left: auto !important;
+  width: min(18rem, calc(100vw - 24px)) !important;
+  max-height: min(18rem, calc(100dvh - 24px)) !important;
+  margin: 0 !important;
+  transform: none !important;
+  animation: none !important;
+}
+
+/* Dark desktop Talent Stories: keep the feed canvas inside the available
+   center column so posts never disappear beyond the right edge. */
+@media (min-width: 769px) {
+  html[data-theme="dark"] body[data-theme="dark"] #root > .app-container
+    > .home-page > .dashboard-container > main.main-content
+    > .portal-section-transition-shell[data-section="talent-stories"]
+    .portal-home-feed,
+  html[data-theme="dark"] body[data-theme="dark"] #root > .app-container
+    > .home-page > .dashboard-container > main.main-content
+    > .portal-section-transition-shell[data-section="talent-stories"]
+    .portal-home-feed-scroll,
+  html[data-theme="dark"] body[data-theme="dark"] #root > .app-container
+    > .home-page > .dashboard-container > main.main-content
+    > .portal-section-transition-shell[data-section="talent-stories"]
+    .portal-home-tab-panel-talent-stories {
+    box-sizing: border-box !important;
+    width: calc(100% - 1rem) !important;
+    min-width: 0 !important;
+    max-width: calc(100% - 1rem) !important;
+    margin-right: 1rem !important;
+    padding-right: 0 !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root > .app-container
+    > .home-page > .dashboard-container > main.main-content
+    > .portal-section-transition-shell[data-section="talent-stories"]
+    :is(.portal-social-list, .portal-social-post-card) {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Desktop Job Posts controls: keep the country list internally scrollable and
+   leave the dark Clear filters action as text instead of a capsule. */
+@media (min-width: 769px) {
+  html body #root .home-page .portal-job-country-picker {
+    position: relative !important;
+    overflow: visible !important;
+  }
+
+  html body #root .home-page .portal-job-country-menu {
+    z-index: 120 !important;
+    display: grid !important;
+    max-height: min(22rem, calc(100dvh - 8rem)) !important;
+    overflow-x: hidden !important;
+    overflow-y: scroll !important;
+    overscroll-behavior: contain !important;
+    scrollbar-gutter: stable !important;
+    scrollbar-width: thin !important;
+    touch-action: pan-y !important;
+  }
+
+  html body #root .home-page .portal-job-country-menu::-webkit-scrollbar {
+    width: 0.48rem !important;
+  }
+
+  html body #root .home-page .portal-job-country-menu::-webkit-scrollbar-track {
+    background: transparent !important;
+  }
+
+  html body #root .home-page .portal-job-country-menu::-webkit-scrollbar-thumb {
+    border: 0.12rem solid transparent !important;
+    border-radius: 999px !important;
+    background: rgba(184, 132, 145, 0.72) !important;
+    background-clip: padding-box !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page
+    .portal-section-transition-shell[data-section="job-posts"]
+    .portal-job-filter-clear,
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page
+    .portal-section-transition-shell[data-section="job-posts"]
+    .portal-job-filter-clear:is(:hover, :focus, :focus-visible, :active) {
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    outline-offset: 0.2rem !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+  }
+}
+
+/* The normal desktop page uses two role cards per row. Inside the narrow
+   Last Used Page window it must return to a fitted, single-column preview. */
+@media (min-width: 1900px) {
+  html body #root .home-page .portal-side-widgets
+    .portal-widget-last-used-body[data-last-used-section="job-posts"]
+    .portal-candidate-job-list {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    align-items: start !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  html body #root .home-page .portal-side-widgets
+    .portal-widget-last-used-body[data-last-used-section="job-posts"]
+    .portal-candidate-job-card {
+    box-sizing: border-box !important;
+    align-self: start !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  html body #root .home-page .portal-side-widgets
+    .portal-widget-last-used-body[data-last-used-section="job-posts"]
+    .portal-job-country-row {
+    box-sizing: border-box !important;
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 0.35rem !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 0 0.38rem !important;
+    padding: 0 0.1rem !important;
+    overflow: visible !important;
+  }
+
+  html body #root .home-page .portal-side-widgets
+    .portal-widget-last-used-body[data-last-used-section="job-posts"]
+    .portal-job-country-actions {
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 7.7rem) !important;
+    justify-content: end !important;
+    align-items: center !important;
+    gap: 0.28rem !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  html body #root .home-page .portal-side-widgets
+    .portal-widget-last-used-body[data-last-used-section="job-posts"]
+    .portal-job-country-picker {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 7.7rem !important;
+    overflow: visible !important;
+  }
+
+  html body #root .home-page .portal-side-widgets
+    .portal-widget-last-used-body[data-last-used-section="job-posts"]
+    .portal-job-country-button {
+    box-sizing: border-box !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    min-height: 1.55rem !important;
+    padding: 0.26rem 0.38rem !important;
+    font-size: 0.64rem !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+  }
+
+  html body #root .home-page .portal-side-widgets
+    .portal-widget-last-used-body[data-last-used-section="job-posts"]
+    .portal-job-country-picker > .portal-job-country-button {
+    width: 100% !important;
+  }
+
+  html body #root .home-page .portal-side-widgets
+    .portal-widget-last-used-body[data-last-used-section="job-posts"]
+    .portal-job-country-menu {
+    right: 0 !important;
+    left: auto !important;
+    width: 100% !important;
+    min-width: 7.7rem !important;
+    max-width: 7.7rem !important;
+    max-height: min(13rem, 42vh) !important;
+  }
+}
+
+/* Final desktop chrome alignment. PortalSidebar is mounted in a separate
+   portal host, so the content selectors target the portal-dock page itself
+   instead of expecting the header inside dashboard-container. */
+@media (min-width: 769px) {
+  /* Match the current public-home glass navbar in both themes. */
+  html[data-theme="dark"] body[data-theme="dark"] #root
+    #portal-public-header.portal-public-header,
+  html[data-theme="dark"] body[data-theme="dark"] #root
+    #portal-public-header.portal-public-header.is-menu-open {
+    box-sizing: border-box !important;
+    position: fixed !important;
+    inset: 18px auto auto 50% !important;
+    width: min(1180px, calc(100% - 36px)) !important;
+    min-width: 0 !important;
+    max-width: 1180px !important;
+    height: 72px !important;
+    min-height: 72px !important;
+    max-height: 72px !important;
+    margin: 0 !important;
+    padding: 10px 12px 10px 18px !important;
+    overflow: visible !important;
+    transform: translateX(-50%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    border-radius: 22px !important;
+    background: linear-gradient(135deg, rgba(4, 9, 15, 0.38), rgba(2, 7, 12, 0.22)) !important;
+    background-color: transparent !important;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+    backdrop-filter: blur(18px) saturate(135%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(135%) !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root
+    #portal-public-header.portal-public-header,
+  html[data-theme="light"] body[data-theme="light"] #root
+    #portal-public-header.portal-public-header.is-menu-open,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root
+    #portal-public-header.portal-public-header,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root
+    #portal-public-header.portal-public-header.is-menu-open {
+    box-sizing: border-box !important;
+    position: fixed !important;
+    inset: 18px auto auto 50% !important;
+    width: min(1180px, calc(100% - 36px)) !important;
+    min-width: 0 !important;
+    max-width: 1180px !important;
+    height: 72px !important;
+    min-height: 72px !important;
+    max-height: 72px !important;
+    margin: 0 !important;
+    padding: 10px 12px 10px 18px !important;
+    overflow: visible !important;
+    transform: translateX(-50%) !important;
+    border: 1px solid rgba(127, 29, 50, 0.14) !important;
+    border-radius: 22px !important;
+    background: linear-gradient(135deg, rgba(255, 248, 236, 0.46), rgba(247, 236, 239, 0.3)) !important;
+    background-color: transparent !important;
+    box-shadow: 0 13px 32px rgba(75, 31, 46, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.48) !important;
+    backdrop-filter: blur(17px) saturate(130%) !important;
+    -webkit-backdrop-filter: blur(17px) saturate(130%) !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  html body #root #portal-public-header .portal-public-header-top,
+  html body #root #portal-public-header.is-menu-open .portal-public-header-top {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 50px !important;
+    min-height: 50px !important;
+    max-height: 50px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+  }
+
+  /* Desktop hamburger is a stable popover; opening it cannot resize the bar. */
+  html body #root #portal-public-header .portal-public-menu > ul + ul {
+    margin-top: 0.45rem !important;
+    padding-top: 0 !important;
+    border-top: 0 !important;
+  }
+
+  html body #root #portal-public-header .portal-public-menu > ul + ul::before,
+  html body #root #portal-public-header .portal-public-menu > ul + ul::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  /* The desktop messenger is a bottom-right popover, not a centered modal. */
+  html body > .floating-messenger.is-open {
+    position: fixed !important;
+    inset: 0 !important;
+    display: block !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+    pointer-events: none !important;
+  }
+
+  html body > .floating-messenger.is-open > .floating-messenger-backdrop {
+    display: none !important;
+    content: none !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    pointer-events: none !important;
+  }
+
+  html body > .floating-messenger.is-open > .floating-messenger-panel,
+  html body > .floating-messenger.is-open.is-closing > .floating-messenger-panel {
+    position: fixed !important;
+    inset: auto 0.85rem 4.15rem auto !important;
+    z-index: 2 !important;
+    width: min(40rem, calc(100vw - 1.7rem)) !important;
+    max-width: 40rem !important;
+    height: min(31rem, calc(100dvh - 5.25rem)) !important;
+    max-height: min(31rem, calc(100dvh - 5.25rem)) !important;
+    margin: 0 !important;
+    transform: none !important;
+    transform-origin: right bottom !important;
+    animation: none !important;
+    pointer-events: auto !important;
+  }
+
+  html body > .floating-messenger.is-open > .floating-messenger-trigger {
+    position: fixed !important;
+    inset: auto 0.85rem 0.45rem auto !important;
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+
+  /* Notification emphasis keeps its animation but uses the portal title face. */
+  html body #root .home-page .notifications-page .notifications-activities-word,
+  html body #root .home-page .notifications-page
+    .notifications-activity-intro .notifications-activities-word {
+    font-family: 'Boogaloo', 'Arial Narrow', Arial, sans-serif !important;
+    font-weight: 400 !important;
+  }
+}
+
+@media (min-width: 1900px) {
+  /* Only the identity card and its likes/rating tiles are white. */
+  html[data-theme="light"] body[data-theme="light"] #root
+    .portal-side-widgets.portal-side-widgets-theme-light
+    .portal-widget-profile-details-card,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root
+    .portal-side-widgets.portal-side-widgets-theme-light
+    .portal-widget-profile-details-card,
+  html[data-theme="light"] body[data-theme="light"] #root
+    .portal-side-widgets.portal-side-widgets-theme-light
+    .portal-widget-profile-stat,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root
+    .portal-side-widgets.portal-side-widgets-theme-light
+    .portal-widget-profile-stat {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+  }
+
+  /* Light desktop notepad selection uses dark cream instead of maroon. */
+  html[data-theme="light"] body[data-theme="light"] #root
+    .portal-side-widgets-theme-light .portal-widget-notepad-tabs > button.is-active,
+  html[data-theme="light"] body[data-theme="light"] #root
+    .portal-side-widgets-theme-light .portal-widget-notepad-tabs > button.is-active:is(:hover, :focus, :focus-visible, :active),
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root
+    .portal-side-widgets-theme-light .portal-widget-notepad-tabs > button.is-active,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root
+    .portal-side-widgets-theme-light .portal-widget-notepad-tabs > button.is-active:is(:hover, :focus, :focus-visible, :active) {
+    border-color: #b99b70 !important;
+    background: #ccb38d !important;
+    background-color: #ccb38d !important;
+    background-image: none !important;
+    color: #34141d !important;
+    -webkit-text-fill-color: #34141d !important;
+  }
+}
+
+/* Structured desktop notepad: three compact sections for composing notes,
+   scheduling reminders, and reviewing saved notes. */
+@media (min-width: 1900px) {
+  html[data-theme="light"] body[data-theme="light"] #root
+    .portal-side-widgets-theme-light .portal-widget-pin-button.is-pinned,
+  html[data-theme="light"] body[data-theme="light"] #root
+    .portal-side-widgets-theme-light .portal-widget-pin-button.is-pinned :is(span, svg, path),
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root
+    .portal-side-widgets-theme-light .portal-widget-pin-button.is-pinned,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root
+    .portal-side-widgets-theme-light .portal-widget-pin-button.is-pinned :is(span, svg, path) {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    fill: none !important;
+    stroke: currentColor !important;
+  }
+
+  html body #root .portal-widget-notepad {
+    --notepad-surface: #fffaf3;
+    --notepad-raised: #ffffff;
+    --notepad-border: rgba(91, 55, 43, 0.2);
+    --notepad-text: #34141d;
+    --notepad-muted: #76656b;
+    --notepad-active: #681421;
+    --notepad-active-text: #ffffff;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .portal-widget-notepad {
+    --notepad-surface: #09090a;
+    --notepad-raised: #141416;
+    --notepad-border: rgba(255, 255, 255, 0.16);
+    --notepad-text: #f7f7f8;
+    --notepad-muted: #aaa3a6;
+    --notepad-active: #c8667b;
+    --notepad-active-text: #ffffff;
+  }
+
+  html body #root .portal-widget-notepad .portal-widget-notepad-body {
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex: 1 1 auto !important;
+    flex-direction: column !important;
+    gap: 0.42rem !important;
+    min-height: 0 !important;
+    padding: 0.58rem !important;
+    color: var(--notepad-text) !important;
+  }
+
+  html body #root .portal-widget-notepad-tabs {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.3rem !important;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    padding: 0.25rem !important;
+    border: 1px solid var(--notepad-border) !important;
+    border-radius: 0.72rem !important;
+    background: var(--notepad-surface) !important;
+    box-shadow: none !important;
+  }
+
+  html body #root .portal-widget-notepad-tabs > button,
+  html body #root .portal-widget-notepad-tabs > button:is(:hover, :focus, :focus-visible, :active) {
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.22rem !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 1.85rem !important;
+    min-height: 1.85rem !important;
+    max-height: 1.85rem !important;
+    margin: 0 !important;
+    padding: 0.25rem 0.28rem !important;
+    border: 1px solid transparent !important;
+    border-radius: 0.55rem !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    color: var(--notepad-text) !important;
+    -webkit-text-fill-color: var(--notepad-text) !important;
+    box-shadow: none !important;
+    font-size: 0.59rem !important;
+    font-weight: 820 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    transform: none !important;
+  }
+
+  html body #root .portal-widget-notepad-tabs > button.is-active,
+  html body #root .portal-widget-notepad-tabs > button.is-active:is(:hover, :focus, :focus-visible, :active) {
+    border-color: var(--notepad-active) !important;
+    background: var(--notepad-active) !important;
+    background-color: var(--notepad-active) !important;
+    color: var(--notepad-active-text) !important;
+    -webkit-text-fill-color: var(--notepad-active-text) !important;
+  }
+
+  html body #root .portal-widget-notepad-tabs > button > strong {
+    display: grid !important;
+    place-items: center !important;
+    min-width: 1rem !important;
+    height: 1rem !important;
+    padding: 0 0.2rem !important;
+    border-radius: 999px !important;
+    background: color-mix(in srgb, currentColor 14%, transparent) !important;
+    color: inherit !important;
+    font-size: 0.52rem !important;
+  }
+
+  html body #root .portal-widget-notepad-panel {
+    box-sizing: border-box !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    border: 1px solid var(--notepad-border) !important;
+    border-radius: 0.72rem !important;
+    background: var(--notepad-surface) !important;
+  }
+
+  html body #root .portal-widget-note-composer,
+  html body #root .portal-widget-reminders-section,
+  html body #root .portal-widget-saved-note-list {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+
+  html body #root .portal-widget-note-composer {
+    display: grid !important;
+    grid-template-rows: minmax(0, 1fr) auto !important;
+    gap: 0.4rem !important;
+    padding: 0.48rem !important;
+  }
+
+  html body #root .portal-widget-note-composer > textarea,
+  html body #root .portal-widget-reminder-composer > input,
+  html body #root .portal-widget-reminder-item > input {
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    border: 1px solid var(--notepad-border) !important;
+    border-radius: 0.55rem !important;
+    outline: 0 !important;
+    background: var(--notepad-raised) !important;
+    background-color: var(--notepad-raised) !important;
+    background-image: none !important;
+    color: var(--notepad-text) !important;
+    -webkit-text-fill-color: var(--notepad-text) !important;
+    box-shadow: none !important;
+    font: inherit !important;
+    font-size: 0.61rem !important;
+  }
+
+  html body #root .portal-widget-note-composer > textarea {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 3.6rem !important;
+    max-height: none !important;
+    padding: 0.55rem !important;
+    resize: none !important;
+  }
+
+  html body #root :is(.portal-widget-note-composer, .portal-widget-reminder-composer) > button,
+  html body #root :is(.portal-widget-note-composer, .portal-widget-reminder-composer) > button:is(:hover, :focus, :focus-visible, :active) {
+    box-sizing: border-box !important;
+    justify-self: end !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: 1.75rem !important;
+    min-height: 1.75rem !important;
+    max-height: 1.75rem !important;
+    margin: 0 !important;
+    padding: 0.28rem 0.62rem !important;
+    border: 1px solid var(--notepad-active) !important;
+    border-radius: 999px !important;
+    background: var(--notepad-active) !important;
+    background-color: var(--notepad-active) !important;
+    background-image: none !important;
+    color: var(--notepad-active-text) !important;
+    -webkit-text-fill-color: var(--notepad-active-text) !important;
+    box-shadow: none !important;
+    font-size: 0.58rem !important;
+    font-weight: 850 !important;
+    line-height: 1 !important;
+    transform: none !important;
+  }
+
+  html body #root .portal-widget-reminders-section {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.42rem !important;
+    padding: 0.45rem !important;
+  }
+
+  html body #root .portal-widget-reminder-composer {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 8.6rem auto !important;
+    align-items: center !important;
+    gap: 0.3rem !important;
+    flex: 0 0 auto !important;
+  }
+
+  html body #root .portal-widget-reminder-composer > input {
+    width: 100% !important;
+    height: 1.75rem !important;
+    min-height: 1.75rem !important;
+    padding: 0.3rem 0.42rem !important;
+  }
+
+  html body #root :is(.portal-widget-reminder-list, .portal-widget-saved-note-list) {
+    min-height: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    scrollbar-width: thin !important;
+  }
+
+  html body #root .portal-widget-reminder-list {
+    display: grid !important;
+    gap: 0.34rem !important;
+  }
+
+  html body #root :is(.portal-widget-reminder-item, .portal-widget-saved-note-item) {
+    box-sizing: border-box !important;
+    border: 1px solid var(--notepad-border) !important;
+    border-radius: 0.62rem !important;
+    background: var(--notepad-raised) !important;
+    color: var(--notepad-text) !important;
+    box-shadow: none !important;
+  }
+
+  html body #root .portal-widget-reminder-item {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 8.2rem 1.45rem !important;
+    align-items: center !important;
+    gap: 0.36rem !important;
+    padding: 0.38rem !important;
+  }
+
+  html body #root .portal-widget-reminder-item > div {
+    min-width: 0 !important;
+  }
+
+  html body #root .portal-widget-reminder-item > div > :is(strong, span) {
+    display: block !important;
+    overflow: hidden !important;
+    color: var(--notepad-text) !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  html body #root .portal-widget-reminder-item > div > strong {
+    font-size: 0.61rem !important;
+  }
+
+  html body #root .portal-widget-reminder-item > div > span {
+    margin-top: 0.15rem !important;
+    color: var(--notepad-muted) !important;
+    font-size: 0.54rem !important;
+  }
+
+  html body #root .portal-widget-reminder-item > input {
+    width: 8.2rem !important;
+    height: 1.55rem !important;
+    min-height: 1.55rem !important;
+    padding: 0.22rem 0.3rem !important;
+    font-size: 0.53rem !important;
+  }
+
+  html body #root :is(.portal-widget-reminder-item, .portal-widget-saved-note-item) > button,
+  html body #root :is(.portal-widget-reminder-item, .portal-widget-saved-note-item) > button:is(:hover, :focus, :focus-visible, :active) {
+    display: grid !important;
+    place-items: center !important;
+    width: 1.45rem !important;
+    min-width: 1.45rem !important;
+    max-width: 1.45rem !important;
+    height: 1.45rem !important;
+    min-height: 1.45rem !important;
+    max-height: 1.45rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 1px solid var(--notepad-border) !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    color: var(--notepad-text) !important;
+    -webkit-text-fill-color: var(--notepad-text) !important;
+    box-shadow: none !important;
+    font-size: 0.86rem !important;
+    line-height: 1 !important;
+    transform: none !important;
+  }
+
+  html body #root .portal-widget-saved-note-list {
+    display: grid !important;
+    align-content: start !important;
+    gap: 0.38rem !important;
+    padding: 0.45rem !important;
+  }
+
+  html body #root .portal-widget-saved-note-item {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: start !important;
+    gap: 0.42rem !important;
+    padding: 0.48rem !important;
+  }
+
+  html body #root .portal-widget-saved-note-item p {
+    display: -webkit-box !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    color: var(--notepad-text) !important;
+    font-size: 0.62rem !important;
+    line-height: 1.35 !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 3 !important;
+  }
+
+  html body #root .portal-widget-saved-note-item time {
+    display: block !important;
+    margin-top: 0.22rem !important;
+    color: var(--notepad-muted) !important;
+    font-size: 0.52rem !important;
+  }
+
+  html body #root :is(.portal-widget-notepad-empty, .portal-widget-notepad-status) {
+    margin: 0 !important;
+    color: var(--notepad-muted) !important;
+    font-size: 0.56rem !important;
+    line-height: 1.3 !important;
+  }
+
+  html body #root .portal-widget-notepad-empty {
+    padding: 0.65rem !important;
+    text-align: center !important;
+  }
+
+  html body #root .portal-widget-notepad-status {
+    flex: 0 0 auto !important;
+    padding-inline: 0.16rem !important;
+  }
+
+  html body #root .portal-widget-notepad :is(input, textarea)::placeholder {
+    color: var(--notepad-muted) !important;
+    -webkit-text-fill-color: var(--notepad-muted) !important;
+    opacity: 1 !important;
+  }
+
+  html body #root .portal-reminder-popup {
+    box-sizing: border-box !important;
+    position: fixed !important;
+    right: 5rem !important;
+    bottom: 1rem !important;
+    z-index: 2147483000 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto auto !important;
+    align-items: center !important;
+    gap: 0.7rem !important;
+    width: min(24rem, calc(100vw - 6rem)) !important;
+    padding: 0.75rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.24) !important;
+    border-radius: 1rem !important;
+    background: #681421 !important;
+    background-color: #681421 !important;
+    background-image: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 20px 55px rgba(55, 18, 28, 0.34) !important;
+    animation: pw-reminder-popup-in 280ms cubic-bezier(0.2, 0.8, 0.2, 1) both !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .portal-reminder-popup {
+    background: #c8667b !important;
+    background-color: #c8667b !important;
+    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.62) !important;
+  }
+
+  html body #root .portal-reminder-popup > div {
+    min-width: 0 !important;
+  }
+
+  html body #root .portal-reminder-popup > div > :is(span, strong, time) {
+    display: block !important;
+    overflow: hidden !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  html body #root .portal-reminder-popup > div > span {
+    font-size: 0.6rem !important;
+    font-weight: 850 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+  }
+
+  html body #root .portal-reminder-popup > div > strong {
+    margin-top: 0.22rem !important;
+    font-size: 0.78rem !important;
+  }
+
+  html body #root .portal-reminder-popup > div > time {
+    margin-top: 0.18rem !important;
+    font-size: 0.58rem !important;
+    opacity: 0.82 !important;
+  }
+
+  html body #root .portal-reminder-popup > button,
+  html body #root .portal-reminder-popup > button:is(:hover, :focus, :focus-visible, :active) {
+    width: auto !important;
+    min-width: 0 !important;
+    height: 1.8rem !important;
+    min-height: 1.8rem !important;
+    max-height: 1.8rem !important;
+    margin: 0 !important;
+    padding: 0.28rem 0.58rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.42) !important;
+    border-radius: 999px !important;
+    background: rgba(255, 255, 255, 0.14) !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    box-shadow: none !important;
+    font-size: 0.58rem !important;
+    font-weight: 850 !important;
+    transform: none !important;
+  }
+
+  html body #root .portal-reminder-popup > button.portal-reminder-popup-close {
+    width: 1.8rem !important;
+    min-width: 1.8rem !important;
+    max-width: 1.8rem !important;
+    padding: 0 !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+@keyframes pw-reminder-popup-in {
+  from { opacity: 0; transform: translateY(0.65rem) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Current desktop request: give the assistant most of the right rail while
+   retaining a compact, useful reminder pad above it. */
+@media (min-width: 1900px) {
+  html body #root .portal-side-widgets-right .portal-widget-notepad {
+    flex: 0 0 31% !important;
+    height: 31% !important;
+    max-height: 31% !important;
+  }
+
+  html body #root .portal-side-widgets-right .portal-widget-chat {
+    flex: 1 1 0 !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  html body #root .portal-widget-last-used-header-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 0.42rem !important;
+    min-width: 0 !important;
+    margin-left: auto !important;
+  }
+
+  html body #root .portal-widget-last-used-header-actions > strong {
+    min-width: 0 !important;
+    overflow: hidden !important;
+    color: currentColor !important;
+    font-size: 0.8rem !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  html body #root .portal-widget-pin-button,
+  html body #root .portal-widget-pin-button:is(:hover, :focus, :focus-visible, :active) {
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.22rem !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 1.55rem !important;
+    min-height: 1.55rem !important;
+    max-height: 1.55rem !important;
+    margin: 0 !important;
+    padding: 0.22rem 0.45rem !important;
+    border: 1px solid color-mix(in srgb, currentColor 22%, transparent) !important;
+    border-radius: 999px !important;
+    background: color-mix(in srgb, currentColor 8%, transparent) !important;
+    background-color: color-mix(in srgb, currentColor 8%, transparent) !important;
+    background-image: none !important;
+    color: currentColor !important;
+    box-shadow: none !important;
+    font: inherit !important;
+    font-size: 0.58rem !important;
+    font-weight: 850 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    transform: none !important;
+    cursor: pointer !important;
+  }
+
+  html body #root .portal-widget-pin-button.is-pinned {
+    border-color: #681421 !important;
+    background: #681421 !important;
+    background-color: #681421 !important;
+    color: #ffffff !important;
+  }
+
+  html body #root .portal-widget-pin-button:disabled {
+    cursor: default !important;
+    opacity: 0.42 !important;
+  }
+
+  html body #root .portal-widget-pin-button svg {
+    display: block !important;
+    width: 0.72rem !important;
+    min-width: 0.72rem !important;
+    height: 0.72rem !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.8 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+  }
+}
+
+/* Portal Job Posts follow the public jobs page on desktop: controls occupy the
+   full row and the role cards form a clean two-column grid underneath. */
+@media (min-width: 1100px) {
+  html body #root .home-page
+    .portal-section-transition-shell[data-section="job-posts"]
+    .portal-candidate-job-list {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    align-items: stretch !important;
+    gap: 1rem 1.1rem !important;
+    width: min(100%, 74rem) !important;
+    max-width: 74rem !important;
+    margin-inline: auto !important;
+  }
+
+  html body #root .home-page
+    .portal-section-transition-shell[data-section="job-posts"]
+    .portal-candidate-job-list > :not(.portal-candidate-job-card) {
+    grid-column: 1 / -1 !important;
+  }
+
+  html body #root .home-page
+    .portal-section-transition-shell[data-section="job-posts"]
+    .portal-candidate-job-card {
+    box-sizing: border-box !important;
+    align-self: stretch !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 100% !important;
+    margin: 0 !important;
+  }
+}
+
+/* On desktop, Tailor Profile identity and profile details share one balanced
+   row. Talent posts continue at full width below both cards. */
+@media (min-width: 1100px) {
+  html body #root .home-page
+    .portal-section-transition-shell[data-section="tailor-profile"]
+    .tailor-profile-section {
+    display: grid !important;
+    grid-template-columns: minmax(19rem, 0.88fr) minmax(0, 1.12fr) !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+    gap: 0.9rem 1rem !important;
+  }
+
+  html body #root .home-page
+    .portal-section-transition-shell[data-section="tailor-profile"]
+    .tailor-profile-card,
+  html body #root .home-page
+    .portal-section-transition-shell[data-section="tailor-profile"]
+    .tailor-profile-details-card {
+    box-sizing: border-box !important;
+    align-self: stretch !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 100% !important;
+    margin: 0 !important;
+  }
+
+  html body #root .home-page
+    .portal-section-transition-shell[data-section="tailor-profile"]
+    .tailor-profile-posts {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin-top: 0.1rem !important;
+  }
+}
+
+/* Role-preview status tiles use one solid maroon surface in each desktop
+   theme, with high-contrast white values and labels. */
+@media (min-width: 769px) {
+  html[data-theme="light"] body[data-theme="light"]
+    .portal-job-modal-redesign .portal-job-modal-stats .portal-candidate-job-stat,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"])
+    .portal-job-modal-redesign .portal-job-modal-stats .portal-candidate-job-stat {
+    border-color: #681421 !important;
+    background: #681421 !important;
+    background-color: #681421 !important;
+    background-image: none !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"]
+    .portal-job-modal-redesign .portal-job-modal-stats .portal-candidate-job-stat {
+    border-color: #c8667b !important;
+    background: #c8667b !important;
+    background-color: #c8667b !important;
+    background-image: none !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+  }
+
+  html body .portal-job-modal-redesign .portal-job-modal-stats .portal-candidate-job-stat::before,
+  html body .portal-job-modal-redesign .portal-job-modal-stats .portal-candidate-job-stat::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  html body .portal-job-modal-redesign .portal-job-modal-stats .portal-candidate-job-stat :is(strong, svg, path) {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    fill: currentColor !important;
+    stroke: currentColor !important;
+  }
+}
+
+/* Profile details become their own floating white card under the cover. */
+@media (min-width: 1900px) {
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light
+    .portal-widget-profile-body {
+    padding: 0 0.55rem 0.55rem !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light
+    .portal-widget-profile-avatar {
+    position: relative !important;
+    z-index: 2 !important;
+    margin-left: 0.35rem !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light
+    .portal-widget-profile-details-card {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    margin-top: 0.45rem !important;
+    padding: 0.72rem 0.78rem !important;
+    border: 1px solid rgba(91, 55, 43, 0.14) !important;
+    border-radius: 1rem !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    box-shadow: 0 10px 24px rgba(76, 55, 43, 0.1) !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light
+    .portal-widget-profile-details-card .portal-widget-profile-name {
+    margin-top: 0 !important;
+  }
+}
+
+/* A normalized SVG ring avoids legacy pseudo-element dimensions that moved
+   the portfolio-health hole and percentage away from the true center. */
+@media (min-width: 1900px) {
+  html body #root .portal-side-widgets .pw-overall-layout .progress-ring {
+    position: relative !important;
+    isolation: isolate !important;
+    display: grid !important;
+    place-items: center !important;
+    flex: 0 0 4.55rem !important;
+    width: 4.55rem !important;
+    min-width: 4.55rem !important;
+    max-width: 4.55rem !important;
+    height: 4.55rem !important;
+    min-height: 4.55rem !important;
+    max-height: 4.55rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    animation: none !important;
+  }
+
+  html body #root .portal-side-widgets .pw-overall-layout .progress-ring::before,
+  html body #root .portal-side-widgets .pw-overall-layout .progress-ring::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  html body #root .portal-side-widgets .pw-overall-layout .progress-ring-svg {
+    position: absolute !important;
+    inset: 0 !important;
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: visible !important;
+    transform: rotate(-90deg) !important;
+    transform-origin: 50% 50% !important;
+  }
+
+  html body #root .portal-side-widgets .pw-overall-layout
+    :is(.progress-ring-track, .progress-ring-value) {
+    fill: none !important;
+    stroke-width: 6 !important;
+    vector-effect: non-scaling-stroke !important;
+  }
+
+  html body #root .portal-side-widgets .pw-overall-layout .progress-ring-track {
+    stroke: var(--progress-line, rgba(126, 92, 102, 0.2)) !important;
+  }
+
+  html body #root .portal-side-widgets .pw-overall-layout .progress-ring-value {
+    stroke: var(--progress-accent, #c96b80) !important;
+    stroke-linecap: round !important;
+    stroke-dasharray: 100 !important;
+    stroke-dashoffset: var(--ring-offset, 100) !important;
+    transition: stroke-dashoffset 650ms cubic-bezier(0.22, 0.8, 0.28, 1) !important;
+    animation: pw-widget-ring-reveal 850ms cubic-bezier(0.22, 0.8, 0.28, 1) both,
+      pw-widget-ring-breathe 2.8s ease-in-out 900ms infinite !important;
+  }
+
+  html body #root .portal-side-widgets .pw-overall-layout .progress-ring-center {
+    position: absolute !important;
+    z-index: 2 !important;
+    inset: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 0.76rem !important;
+    font-weight: 900 !important;
+    font-variant-numeric: tabular-nums !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    transform: none !important;
+  }
+}
+
+@keyframes pw-widget-ring-reveal {
+  from { stroke-dashoffset: 100; }
+}
+
+@keyframes pw-widget-ring-breathe {
+  0%, 100% { opacity: 0.9; filter: drop-shadow(0 0 0 transparent); }
+  50% { opacity: 1; filter: drop-shadow(0 0 3px color-mix(in srgb, var(--progress-accent, #c96b80) 42%, transparent)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal-side-widgets .pw-overall-layout .progress-ring-value {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* The score dialog is portaled to the document so fixed side widgets can never
+   overlap it. */
+html body > .resume-playground-ats-details-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483647 !important;
+  box-sizing: border-box !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 1rem !important;
+  background: rgba(22, 13, 17, 0.48) !important;
+  backdrop-filter: blur(14px) saturate(0.82) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(0.82) !important;
+}
+
+@media (min-width: 769px) {
+  html body > .resume-playground-ats-details-backdrop > .resume-playground-ats-details {
+    position: relative !important;
+    inset: auto !important;
+    display: grid !important;
+    align-content: start !important;
+    gap: 0.9rem !important;
+    box-sizing: border-box !important;
+    width: min(44rem, calc(100vw - 3rem)) !important;
+    max-width: 44rem !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: min(42rem, calc(100dvh - 3rem)) !important;
+    margin: 0 !important;
+    padding: 1.35rem 1.45rem !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 1.2rem !important;
+    background: #09090a !important;
+    background-color: #09090a !important;
+    background-image: none !important;
+    color: #f7f7f8 !important;
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.48) !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] > .resume-playground-ats-details-backdrop {
+    background: rgba(77, 57, 47, 0.24) !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] > .resume-playground-ats-details-backdrop > .resume-playground-ats-details {
+    border-color: rgba(91, 55, 43, 0.17) !important;
+    background: #fffaf3 !important;
+    background-color: #fffaf3 !important;
+    color: #34141d !important;
+    box-shadow: 0 30px 90px rgba(76, 55, 43, 0.26) !important;
+  }
+
+  html body > .resume-playground-ats-details-backdrop .resume-playground-ats-details-header,
+  html body > .resume-playground-ats-details-backdrop .resume-playground-ats-details-section {
+    width: 100% !important;
+    max-width: none !important;
+    margin-inline: 0 !important;
+  }
+
+  html body > .resume-playground-ats-details-backdrop .resume-playground-ats-details-close {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 4rem !important;
+    max-width: none !important;
+  }
+
+  /* Generated AI documents always use dark ink on their white paper, even
+     while the surrounding editor is in dark mode. */
+  html[data-theme="dark"] body[data-theme="dark"] #root
+    .resume-playground-editor-document.is-ai-tailor-mode
+    :is([data-resume-template-root="ai-a4"], [data-document-template-root="jumptake-ai"]),
+  html[data-theme="dark"] body[data-theme="dark"] #root
+    .resume-playground-editor-document.is-ai-tailor-mode
+    :is([data-resume-template-root="ai-a4"], [data-document-template-root="jumptake-ai"]) * {
+    color: #111111 !important;
+    -webkit-text-fill-color: #111111 !important;
+    text-shadow: none !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root
+    .resume-playground-editor-document.is-ai-tailor-mode,
+  html[data-theme="dark"] body[data-theme="dark"] #root
+    .resume-playground-editor-document.is-ai-tailor-mode
+    > :is(p, h1, h2, h3, h4, ul, ol, li) {
+    color: #111111 !important;
+    -webkit-text-fill-color: #111111 !important;
+    text-shadow: none !important;
+  }
+
+  /* Desktop messenger is a compact corner workspace positioned directly over
+     its launcher. It does not tint or blur the page. */
+  html body > .floating-messenger.is-open {
+    position: fixed !important;
+    inset: 0 !important;
+    display: block !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+    pointer-events: none !important;
+  }
+
+  html body > .floating-messenger.is-open > .floating-messenger-backdrop {
+    display: none !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    pointer-events: none !important;
+  }
+
+  html body > .floating-messenger.is-open > .floating-messenger-panel {
+    position: fixed !important;
+    top: auto !important;
+    right: 1rem !important;
+    bottom: 4.45rem !important;
+    left: auto !important;
+    width: min(52rem, calc(100vw - 2rem)) !important;
+    max-width: 52rem !important;
+    height: min(38rem, calc(100dvh - 6rem)) !important;
+    max-height: 38rem !important;
+    border: 1px solid var(--msg-border) !important;
+    border-radius: 1.15rem !important;
+    background: var(--msg-panel) !important;
+    box-shadow: 0 24px 70px rgba(46, 25, 31, 0.3) !important;
+    transform-origin: right bottom !important;
+    pointer-events: auto !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open > .floating-messenger-panel {
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.72) !important;
+  }
+
+  html body > .floating-messenger.is-open .floating-messenger-shell {
+    display: grid !important;
+    grid-template-columns: minmax(16rem, 19rem) minmax(0, 1fr) !important;
+    gap: 0.55rem !important;
+    padding: 0.55rem !important;
+    background: var(--msg-panel) !important;
+  }
+
+  html body > .floating-messenger.is-open :is(.floating-messenger-contacts, .floating-messenger-chat) {
+    overflow: hidden !important;
+    border: 1px solid var(--msg-border) !important;
+    border-radius: 0.9rem !important;
+    background: var(--msg-surface) !important;
+    box-shadow: none !important;
+  }
+
+  html body > .floating-messenger.is-open .floating-messenger-contact-body {
+    margin: 0.5rem !important;
+    border: 1px solid var(--msg-border) !important;
+    border-radius: 0.75rem !important;
+    background: var(--msg-surface) !important;
+  }
+
+  html body > .floating-messenger.is-open .message-workspace-tab,
+  html body > .floating-messenger.is-open .message-workspace-tab:is(:hover, :focus-visible, .is-active),
+  html body > .floating-messenger.is-open .floating-messenger-contact,
+  html body > .floating-messenger.is-open .floating-messenger-contact:is(:hover, :focus-visible, .is-active) {
+    border: 1px solid var(--msg-border) !important;
+    border-radius: 0.7rem !important;
+    background: var(--msg-surface-raised) !important;
+  }
+
+  html body > .floating-messenger.is-open .message-workspace-tab.is-active,
+  html body > .floating-messenger.is-open .floating-messenger-contact.is-active {
+    border-color: var(--msg-border-strong) !important;
+    background: var(--msg-accent-soft) !important;
+  }
+
+  html body > .floating-messenger.is-open .floating-messenger-input
+    :is(.rich-message-editor-messagebox, .messageBox) {
+    border: 1px solid var(--msg-border) !important;
+    border-radius: 0.8rem !important;
+    background: var(--msg-surface) !important;
+  }
+
+  html body > .floating-messenger.is-open > .floating-messenger-trigger {
+    position: fixed !important;
+    right: 1rem !important;
+    bottom: calc(0.45rem + env(safe-area-inset-bottom, 0px)) !important;
+    z-index: 3 !important;
+    display: grid !important;
+    place-items: center !important;
+    width: 3.25rem !important;
+    min-width: 3.25rem !important;
+    max-width: 3.25rem !important;
+    height: 3.25rem !important;
+    min-height: 3.25rem !important;
+    max-height: 3.25rem !important;
+    padding: 0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.32) !important;
+    border-radius: 999px !important;
+    background: #681421 !important;
+    background-color: #681421 !important;
+    background-image: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 12px 30px rgba(104, 20, 33, 0.34) !important;
+    pointer-events: auto !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger:not(.is-open) > .floating-messenger-trigger,
+  html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open > .floating-messenger-trigger {
+    border-color: rgba(255, 255, 255, 0.24) !important;
+    background: #070708 !important;
+    background-color: #070708 !important;
+    background-image: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.54) !important;
+  }
+
+  html body > .floating-messenger.is-open > .floating-messenger-trigger :is(svg, path),
+  html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger:not(.is-open) > .floating-messenger-trigger :is(svg, path) {
+    color: #ffffff !important;
+    stroke: currentColor !important;
+  }
+}
+
+/* Wide desktop side-widget assistant legibility. */
+@media (min-width: 1900px) {
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light
+    .portal-widget-chat .public-ai-chat-bubble.is-user,
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light
+    .portal-widget-chat .public-ai-chat-bubble.is-user * {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-light
+    .portal-widget-chat .public-ai-chat-bubble.is-typing > span {
+    background: #111111 !important;
+    background-color: #111111 !important;
+    opacity: 1 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* The mobile score sheet keeps the established full-screen layout while its
+     dark close control matches the compact light placement. */
+  html body > .resume-playground-ats-details-backdrop {
+    display: block !important;
+    padding: 0 !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  html body > .resume-playground-ats-details-backdrop > .resume-playground-ats-details {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    max-width: none !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] > .resume-playground-ats-details-backdrop
+    .resume-playground-ats-details-header {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: start !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 0 0.65rem !important;
+    padding: 0 !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] > .resume-playground-ats-details-backdrop
+    .resume-playground-ats-details-close,
+  html[data-theme="dark"] body[data-theme="dark"] > .resume-playground-ats-details-backdrop
+    .resume-playground-ats-details-close:is(:hover, :focus, :focus-visible, :active) {
+    position: static !important;
+    inset: auto !important;
+    justify-self: end !important;
+    width: 3.5rem !important;
+    min-width: 3.5rem !important;
+    max-width: 3.5rem !important;
+    height: 1.75rem !important;
+    min-height: 1.75rem !important;
+    max-height: 1.75rem !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 0.5rem !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    font-size: 0.66rem !important;
+    line-height: 1 !important;
+  }
+
+  /* Tailor Profile media sheets: the close icon stays outside the heading at
+     the true top-right corner. */
+  html body .tailor-media-action-sheet {
+    position: relative !important;
+    padding-top: 1.15rem !important;
+  }
+
+  html body .tailor-media-action-sheet > button.tailor-media-action-close,
+  html body .tailor-media-action-sheet > button.tailor-media-action-close:is(:hover, :focus, :focus-visible, :active) {
+    position: absolute !important;
+    top: 0.62rem !important;
+    right: 0.65rem !important;
+    bottom: auto !important;
+    left: auto !important;
+    z-index: 5 !important;
+    display: grid !important;
+    place-items: center !important;
+    width: 1.8rem !important;
+    min-width: 1.8rem !important;
+    max-width: 1.8rem !important;
+    height: 1.8rem !important;
+    min-height: 1.8rem !important;
+    max-height: 1.8rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 999px !important;
+    text-align: center !important;
+    transform: none !important;
+  }
+
+  html body .tailor-media-action-sheet > h3 {
+    margin-right: 2.35rem !important;
+  }
+
+  /* Job-view modal close control is corner-pinned in both themes. */
+  html body .portal-job-modal.portal-job-modal-redesign
+    > .portal-job-modal-x-close.portal-job-modal-close-button,
+  html body .portal-job-modal.portal-job-modal-redesign
+    > .portal-job-modal-x-close.portal-job-modal-close-button:is(:hover, :focus, :focus-visible, :active) {
+    position: absolute !important;
+    top: 0.58rem !important;
+    right: 0.62rem !important;
+    bottom: auto !important;
+    left: auto !important;
+    z-index: 20 !important;
+    display: grid !important;
+    place-items: center !important;
+    width: 2rem !important;
+    min-width: 2rem !important;
+    max-width: 2rem !important;
+    height: 2rem !important;
+    min-height: 2rem !important;
+    max-height: 2rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 999px !important;
+    background: rgba(0, 0, 0, 0.22) !important;
+    background-color: rgba(0, 0, 0, 0.22) !important;
+    background-image: none !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    transform: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] .portal-job-modal.portal-job-modal-redesign
+    > .portal-job-modal-x-close.portal-job-modal-close-button,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) .portal-job-modal.portal-job-modal-redesign
+    > .portal-job-modal-x-close.portal-job-modal-close-button {
+    background: rgba(255, 255, 255, 0.72) !important;
+    background-color: rgba(255, 255, 255, 0.72) !important;
+    color: #34141d !important;
+    -webkit-text-fill-color: #34141d !important;
+  }
+
+  /* Mobile status cards use one solid color rather than two-tone gradients. */
+  html body .portal-job-modal-redesign .portal-candidate-job-stat {
+    --job-stat-solid: #0f766e;
+    background: var(--job-stat-solid) !important;
+    background-color: var(--job-stat-solid) !important;
+    background-image: none !important;
+  }
+
+  html body .portal-job-modal-redesign .portal-candidate-job-stat::before,
+  html body .portal-job-modal-redesign .portal-candidate-job-stat::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  html body .portal-job-modal-redesign .portal-candidate-job-stat-reach { --job-stat-solid: #0f766e; }
+  html body .portal-job-modal-redesign .portal-candidate-job-stat-applicants { --job-stat-solid: #2563eb; }
+  html body .portal-job-modal-redesign .portal-candidate-job-stat-hired { --job-stat-solid: #15803d; }
+  html body .portal-job-modal-redesign .portal-candidate-job-stat-fit { --job-stat-solid: #b45309; }
+
+  html[data-theme="light"] body[data-theme="light"] .portal-job-modal-redesign .portal-candidate-job-stat {
+    --job-stat-text: #ffffff;
+    --job-stat-strong: #ffffff;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+  }
+}
+
+@media (min-width: 769px) {
+  /* The complete light profile widget uses one darker off-white window. */
+  html[data-theme="light"] body[data-theme="light"] #root
+    .portal-side-widgets.portal-side-widgets-theme-light
+    :is(.portal-widget-profile, .portal-widget-profile-body),
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root
+    .portal-side-widgets.portal-side-widgets-theme-light
+    :is(.portal-widget-profile, .portal-widget-profile-body) {
+    background: #e5dfd4 !important;
+    background-color: #e5dfd4 !important;
+    background-image: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root
+    .portal-side-widgets.portal-side-widgets-theme-light
+    .portal-widget-profile-details-card,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root
+    .portal-side-widgets.portal-side-widgets-theme-light
+    .portal-widget-profile-details-card {
+    border-color: rgba(91, 55, 43, 0.18) !important;
+    box-shadow: 0 9px 22px rgba(76, 55, 43, 0.08) !important;
+  }
+
+  /* Messenger opens from the launcher as a compact bottom-right workspace in
+     both themes instead of occupying the upper or middle viewport. */
+  html body > .floating-messenger.is-open > .floating-messenger-panel {
+    position: fixed !important;
+    top: auto !important;
+    right: 16px !important;
+    bottom: 72px !important;
+    left: auto !important;
+    width: min(680px, calc(100vw - 32px)) !important;
+    max-width: 680px !important;
+    height: min(560px, calc(100dvh - 88px)) !important;
+    max-height: min(560px, calc(100dvh - 88px)) !important;
+    margin: 0 !important;
+    transform: none !important;
+    transform-origin: right bottom !important;
+    animation: none !important;
+  }
+
+  html body > .floating-messenger.is-open .floating-messenger-shell {
+    grid-template-columns: minmax(180px, 220px) minmax(0, 1fr) !important;
+  }
+
+  html body > .floating-messenger.is-open > .floating-messenger-trigger {
+    right: 16px !important;
+    bottom: 8px !important;
+  }
+}
+
+/* Final light desktop widget surfaces requested for the profile identity card
+   and every post preview inside Last Used Page. */
+@media (min-width: 1900px) {
+  html[data-theme="light"] body[data-theme="light"] #root
+    .portal-side-widgets.portal-side-widgets-theme-light
+    .portal-widget-profile-details-card,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root
+    .portal-side-widgets.portal-side-widgets-theme-light
+    .portal-widget-profile-details-card,
+  html[data-theme="light"] body[data-theme="light"] #root
+    .portal-side-widgets.portal-side-widgets-theme-light
+    .portal-widget-profile-stat,
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root
+    .portal-side-widgets.portal-side-widgets-theme-light
+    .portal-widget-profile-stat {
+    border-radius: 1rem !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root
+    .portal-side-widgets.portal-side-widgets-theme-light
+    .portal-widget-last-used-scroll :is(
+      .portal-social-post-card,
+      .portal-profile-preview-post-card,
+      .candidate-section-profile-post-card,
+      .portal-candidate-job-card,
+      .portal-public-job-card,
+      .portal-job-summary-card,
+      .saved-post-card
+    ),
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root
+    .portal-side-widgets.portal-side-widgets-theme-light
+    .portal-widget-last-used-scroll :is(
+      .portal-social-post-card,
+      .portal-profile-preview-post-card,
+      .candidate-section-profile-post-card,
+      .portal-candidate-job-card,
+      .portal-public-job-card,
+      .portal-job-summary-card,
+      .saved-post-card
+    ) {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+  }
+}
+
+/* Authoritative desktop viewport geometry. The messenger owns a small corner
+   anchor instead of a full-screen/modal coordinate space, so legacy top/center
+   rules cannot move the panel away from its launcher. */
+@media (min-width: 769px) {
+  html body > .floating-messenger.is-open.is-desktop-corner,
+  html body > .floating-messenger.is-open.is-closing.is-desktop-corner {
+    box-sizing: border-box !important;
+    position: fixed !important;
+    z-index: 2147482000 !important;
+    inset: auto 16px 8px auto !important;
+    display: block !important;
+    width: min(680px, calc(100vw - 32px)) !important;
+    min-width: 0 !important;
+    max-width: 680px !important;
+    height: min(632px, calc(100dvh - 16px)) !important;
+    min-height: 0 !important;
+    max-height: min(632px, calc(100dvh - 16px)) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+    pointer-events: none !important;
+  }
+
+  html body > .floating-messenger.is-open.is-desktop-corner
+    > .floating-messenger-backdrop {
+    display: none !important;
+    content: none !important;
+    pointer-events: none !important;
+  }
+
+  html body > .floating-messenger.is-open.is-desktop-corner
+    > .floating-messenger-panel,
+  html body > .floating-messenger.is-open.is-closing.is-desktop-corner
+    > .floating-messenger-panel {
+    box-sizing: border-box !important;
+    position: absolute !important;
+    z-index: 2 !important;
+    inset: 0 0 64px 0 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    transform: none !important;
+    transform-origin: right bottom !important;
+    animation: none !important;
+    transition: none !important;
+    pointer-events: auto !important;
+  }
+
+  html body > .floating-messenger.is-open.is-desktop-corner
+    > .floating-messenger-trigger {
+    position: absolute !important;
+    z-index: 3 !important;
+    inset: auto 0 0 auto !important;
+    margin: 0 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+    pointer-events: auto !important;
+  }
+
+  /* The fixed public-style navbar ends at 90px (18px top + 72px height).
+     Begin both candidate and employer page shells on that exact pixel. */
+  html body #root > .app-container > .home-page.portal-dock-open {
+    padding-top: 0 !important;
+  }
+
+  html body #root > .app-container > .home-page.portal-dock-open
+    > .dashboard-container,
+  html body #root > .app-container > .home-page.portal-dock-open
+    > .dashboard-container.mobile-section-open {
+    box-sizing: border-box !important;
+    height: calc(100dvh - 90px) !important;
+    min-height: 0 !important;
+    max-height: calc(100dvh - 90px) !important;
+    margin-top: 90px !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  html body #root > .app-container > .home-page.portal-dock-open
+    > .dashboard-container > main.main-content.mobile-dashboard-section-panel {
+    box-sizing: border-box !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  html body #root > .app-container > .home-page.portal-dock-open
+    > .dashboard-container > main.main-content
+    > .portal-section-transition-shell.is-active-portal-section {
+    top: auto !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    transform: none !important;
+  }
+
+  html body #root > .app-container > .home-page.portal-dock-open
+    .portal-home-feed:not(:has(> .portal-home-tabs))
+    > .portal-home-feed-scroll {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  html body #root > .app-container > .home-page.portal-dock-open
+    .portal-home-feed:not(:has(> .portal-home-tabs))
+    > .portal-home-feed-scroll > .portal-home-tab-panel {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+}
+
+/* Final cascade lock: keep the public-style chrome floating over a live page
+   canvas and keep every desktop popup in its requested place. */
+@media (min-width: 769px) {
+  html body #root #portal-public-header .portal-public-menu > ul + ul {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    border-top: 0 !important;
+    border-block-start: 0 !important;
+    box-shadow: none !important;
+  }
+
+  html body #root #portal-public-header .portal-public-menu > ul + ul::before,
+  html body #root #portal-public-header .portal-public-menu > ul + ul::after {
+    display: none !important;
+    content: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"]:has(#portal-public-header),
+  html[data-theme="light"] body[data-theme="light"]:has(#portal-public-header) #root,
+  html[data-theme="light"] body[data-theme="light"]:has(#portal-public-header) #root > .app-container,
+  html[data-theme="light"] body[data-theme="light"]:has(#portal-public-header) #root > .app-container > .home-page,
+  html[data-theme="light"] body[data-theme="light"] #root > .app-container > .home-page.portal-dock-open > .dashboard-container,
+  html[data-theme="light"] body[data-theme="light"] #root > .app-container > .home-page.portal-dock-open .main-content {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root #portal-public-header.portal-public-header,
+  html[data-theme="light"] body[data-theme="light"] #root #portal-public-header.portal-public-header.is-menu-open {
+    background: rgba(255, 248, 236, 0.54) !important;
+    background-color: rgba(255, 248, 236, 0.54) !important;
+    backdrop-filter: blur(18px) saturate(122%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(122%) !important;
+  }
+
+  html body #root > .app-container > .home-page.portal-dock-open > .dashboard-container,
+  html body #root > .app-container > .home-page.portal-dock-open > .dashboard-container.mobile-section-open,
+  html body #root > .app-container > .home-page.portal-dock-open > .dashboard-container > main.main-content.mobile-dashboard-section-panel {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: none !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] .floating-messenger.is-desktop-corner > .floating-messenger-trigger,
+  html[data-theme="dark"] body[data-theme="dark"] .floating-messenger.is-desktop-corner > .floating-messenger-trigger:is(:hover, :focus, :focus-visible, :active) {
+    border: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] .floating-messenger.is-desktop-corner > .floating-messenger-trigger :is(svg, path) {
+    color: #ffffff !important;
+    fill: none !important;
+    stroke: currentColor !important;
+  }
+
+  html body > .floating-messenger.is-open.is-desktop-corner,
+  html body > .floating-messenger.is-open.is-closing.is-desktop-corner {
+    width: min(920px, calc(100vw - 32px)) !important;
+    max-width: 920px !important;
+    height: min(740px, calc(100dvh - 16px)) !important;
+    max-height: min(740px, calc(100dvh - 16px)) !important;
+  }
+
+  html body > .floating-messenger.is-open.is-desktop-corner .floating-messenger-shell {
+    grid-template-columns: minmax(14rem, 17.5rem) minmax(0, 1fr) !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root > .app-container > .home-page > .dashboard-container > main.main-content > .portal-section-transition-shell[data-section="talent-stories"] :is(.portal-home-feed, .portal-home-feed-scroll, .portal-home-tab-panel-talent-stories) {
+    box-sizing: border-box !important;
+    width: calc(100% - 1rem) !important;
+    min-width: 0 !important;
+    max-width: calc(100% - 1rem) !important;
+    margin-right: 1rem !important;
+    padding-right: 0 !important;
+  }
+}

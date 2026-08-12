@@ -2,8 +2,9 @@
 
 @media (min-width: 1900px) {
   html[data-theme="dark"] body[data-theme="dark"] .portal-widget {
-    background: #0b0b0b !important;
-    background-color: #0b0b0b !important;
+    background: #000000 !important;
+    background-color: #000000 !important;
+    background-image: none !important;
     border-color: rgba(255, 255, 255, 0.15) !important;
     box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28) !important;
   }
@@ -22,6 +23,7 @@
     --progress-purple: #ad88ff;
     --progress-orange: #f0a24d;
     --progress-line: rgba(255, 255, 255, 0.13);
+    --pw-donut-hole: #0d0d0d;
   }
 
   html[data-theme="dark"] body[data-theme="dark"] .pw-metric,
@@ -65,6 +67,21 @@
     background-image: none !important;
   }
 
+  html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat :is(
+    .portal-widget-chat-body,
+    .public-ai-chat-card,
+    .public-ai-chat-messages,
+    .public-ai-chat-reply,
+    .public-ai-reply-row,
+    .public-ai-reply-row-aligned
+  ) {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
   html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat .public-ai-chat-reply,
   html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat .public-ai-chat-reply .public-ai-reply-row,
   html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat .public-ai-chat-reply .public-ai-reply-row-aligned {
@@ -87,14 +104,14 @@
 
   html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat .public-ai-chat-bubble.is-assistant,
   html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat .public-ai-chat-bubble.is-typing {
-    background: #1c1c1c !important;
-    background-color: #1c1c1c !important;
+    background: #171717 !important;
+    background-color: #171717 !important;
   }
 
   html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat .public-ai-reply-field,
   html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat .public-ai-reply-field textarea {
-    background: #161616 !important;
-    background-color: #161616 !important;
+    background: #111111 !important;
+    background-color: #111111 !important;
     border-color: rgba(255, 255, 255, 0.16) !important;
     color: #f7f6f3 !important;
     -webkit-text-fill-color: #f7f6f3 !important;
@@ -114,5 +131,105 @@
 
   html[data-theme="dark"] body[data-theme="dark"] .portal-widget-chat .assistant-saved-chats {
     border-color: rgba(255, 255, 255, 0.15) !important;
+  }
+}
+
+@media (min-width: 1900px) {
+  html body #root .portal-side-widgets.portal-side-widgets-theme-dark .portal-widget-notepad-body {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-dark .portal-widget-notepad-body textarea {
+    border-color: rgba(255, 255, 255, 0.16) !important;
+    background: #111111 !important;
+    background-color: #111111 !important;
+    color: #f7f6f3 !important;
+    -webkit-text-fill-color: #f7f6f3 !important;
+    caret-color: #f7f6f3 !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-dark .portal-widget-notepad-body textarea::placeholder,
+  html body #root .portal-side-widgets.portal-side-widgets-theme-dark .portal-widget-notepad-actions > span {
+    color: rgba(247, 246, 243, 0.56) !important;
+    -webkit-text-fill-color: rgba(247, 246, 243, 0.56) !important;
+  }
+
+  html body #root .portal-side-widgets.portal-side-widgets-theme-dark .portal-widget-notepad-actions > button {
+    background: #d66a7d !important;
+    background-color: #d66a7d !important;
+    color: #12080c !important;
+    -webkit-text-fill-color: #12080c !important;
+  }
+}
+
+/* Dark desktop feed geometry. Older shared rules deliberately widened the
+   feed and Tailor Profile past their scroll viewport; that clips both edges
+   once the desktop feed applies overflow containment. */
+@media (min-width: 769px) {
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern
+    .portal-home-feed:has(> .portal-home-feed-scroll > :is(
+      .portal-home-tab-panel-work-news,
+      .portal-home-tab-panel-create-story
+    )),
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern
+    .portal-home-feed:has(> .portal-home-feed-scroll > :is(
+      .portal-home-tab-panel-work-news,
+      .portal-home-tab-panel-create-story
+    )) > .portal-home-feed-scroll,
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern
+    .portal-home-feed-scroll > :is(
+      .portal-home-tab-panel-work-news,
+      .portal-home-tab-panel-create-story
+    ),
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern
+    .portal-home-tab-panel-create-story > .tailor-profile-section {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern
+    :is(
+      .portal-home-tab-panel-work-news,
+      .portal-home-tab-panel-create-story,
+      .portal-home-tab-panel-create-story .tailor-profile-section,
+      .portal-home-tab-panel-create-story .tailor-profile-posts
+    ) :is(.portal-social-list, .portal-social-post-card) {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern
+    .portal-home-feed:has(> .portal-home-feed-scroll > :is(
+      .portal-home-tab-panel-work-news,
+      .portal-home-tab-panel-create-story
+    )) > .portal-home-feed-scroll {
+    padding-right: 0.45rem !important;
+    padding-left: 0.45rem !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .home-page.portal-modern
+    :is(.portal-home-tab-panel-work-news, .portal-home-tab-panel-create-story)
+    .portal-social-post-card :is(
+      .portal-social-post-header,
+      .portal-post-title-block,
+      .portal-post-body-wrap,
+      .portal-post-body,
+      .portal-post-media,
+      .portal-post-action-cluster,
+      .portal-post-comments
+    ) {
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
   }
 }

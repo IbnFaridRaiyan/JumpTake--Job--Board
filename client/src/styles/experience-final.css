@@ -649,6 +649,37 @@ html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal .jt-job
     max-height: calc(var(--jt-mobile-layout-height, 100dvh) - 0.9rem) !important;
   }
 
+  /* Keep one composer layout before, during, and after the keyboard session. */
+  html body > .floating-messenger.is-open .floating-messenger-chat,
+  html body > .floating-messenger.is-open .floating-messenger-assistant-chat {
+    position: relative !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  html body > .floating-messenger.is-open .floating-messenger-input,
+  html body > .floating-messenger.is-open .floating-messenger-assistant-chat .public-ai-chat-reply {
+    position: absolute !important;
+    z-index: 6 !important;
+    right: 0 !important;
+    bottom: var(--jt-mobile-keyboard-inset, 0px) !important;
+    left: 0 !important;
+    width: auto !important;
+    margin: 0 !important;
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+
+  html body > .floating-messenger.is-open :is(
+    .floating-messenger-messages,
+    .floating-messenger-assistant-chat .public-ai-chat-messages
+  ) {
+    box-sizing: border-box !important;
+    padding-bottom: calc(5.4rem + var(--jt-mobile-keyboard-inset, 0px)) !important;
+    scroll-padding-bottom: calc(5.4rem + var(--jt-mobile-keyboard-inset, 0px)) !important;
+  }
+
   /* During keyboard entry, only the composer rises; headers retain fixed tracks. */
   html.jt-mobile-keyboard-open,
   html.jt-mobile-keyboard-open > body.jt-mobile-keyboard-open {

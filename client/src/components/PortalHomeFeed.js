@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import ResumeFilePreview from './ResumeFilePreview';
 import { apiUrl } from '../utils/apiUrl';
@@ -1321,6 +1321,7 @@ const PortalHomeFeed = ({
     const [bookmarkedHomeJobIds, setBookmarkedHomeJobIds] = useState([]);
     const [jobActionMessage, setJobActionMessage] = useState('');
     const [jobPage, setJobPage] = useState(1);
+    const previousJobPageRef = useRef(1);
     const [homeJobSearch, setHomeJobSearch] = useState('');
     const [homeJobCountryFilter, setHomeJobCountryFilter] = useState('');
     const [countryMenuOpen, setCountryMenuOpen] = useState(false);
@@ -5003,6 +5004,39 @@ const PortalHomeFeed = ({
         updateFeedTabsVisibility(nextScrollTop);
         setFeedAtTop(nextScrollTop <= 12);
     }, [activeTab, rememberFeedScrollPosition, updateFeedTabsVisibility]);
+
+    useLayoutEffect(() => {
+        const previousPage = previousJobPageRef.current;
+        previousJobPageRef.current = jobPage;
+
+        if (activeTab !== 'job-posts' || previousPage === jobPage) {
+            return;
+        }
+
+        const scroller = feedScrollerRef.current;
+        if (!scroller) {
+            return;
+        }
+
+        const touchState = feedTouchScrollRef.current;
+        touchState.active = false;
+        touchState.lastY = 0;
+        touchState.targetScrollTop = 0;
+        touchState.scroller = null;
+        touchState.lastDelta = 0;
+        touchState.lastFrameTime = 0;
+        if (touchState.frameId && typeof window !== 'undefined') {
+            window.cancelAnimationFrame(touchState.frameId);
+            touchState.frameId = null;
+        }
+
+        scroller.scrollTop = 0;
+        feedScrollPositionsRef.current[`${mode}:job-posts`] = 0;
+        feedScrollTopRef.current = 0;
+        tabsHiddenRef.current = false;
+        setTabsHidden(false);
+        setFeedAtTop(true);
+    }, [activeTab, jobPage, mode]);
 
     const cancelMobileFeedTouchScroll = useCallback(() => {
         const touchState = feedTouchScrollRef.current;

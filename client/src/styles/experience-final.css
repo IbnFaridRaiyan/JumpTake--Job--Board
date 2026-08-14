@@ -886,7 +886,19 @@ html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal .jt-job
   }
 
   html body > .floating-messenger.is-open > .floating-messenger-panel {
-    overscroll-behavior: contain !important;
+    overscroll-behavior: none !important;
+    touch-action: pan-x pan-y !important;
+  }
+
+  html body > .floating-messenger.is-open > .floating-messenger-panel :is(
+    button,
+    a,
+    input,
+    textarea,
+    [role="button"]
+  ) {
+    pointer-events: auto;
+    touch-action: manipulation !important;
   }
 
   /* During keyboard entry, only the composer rises; headers retain fixed tracks. */

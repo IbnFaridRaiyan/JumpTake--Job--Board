@@ -917,58 +917,15 @@ const FloatingMessenger = ({
             overflow: document.documentElement.style.overflow,
             overscrollBehavior: document.documentElement.style.overscrollBehavior
         };
-        let lastTouchX = 0;
-        let lastTouchY = 0;
         const handleKeyDown = (event) => {
             if (event.key === 'Escape') {
                 handleClose();
             }
         };
-        const handleTouchStart = (event) => {
-            const touch = event.touches?.[0];
-            if (!touch) return;
-            lastTouchX = touch.clientX;
-            lastTouchY = touch.clientY;
-        };
-        const findScrollableParent = (target, panel, axis) => {
-            let node = target instanceof Element ? target : target?.parentElement;
-            while (node && panel.contains(node)) {
-                const style = window.getComputedStyle(node);
-                const overflow = axis === 'x' ? style.overflowX : style.overflowY;
-                const hasScrollableOverflow = /auto|scroll/.test(overflow);
-                const hasRoom = axis === 'x'
-                    ? node.scrollWidth > node.clientWidth + 1
-                    : node.scrollHeight > node.clientHeight + 1;
-                if (hasScrollableOverflow && hasRoom) return node;
-                if (node === panel) break;
-                node = node.parentElement;
-            }
-            return null;
-        };
         const preventBackgroundTouchMove = (event) => {
-            const panel = event.target?.closest?.('.floating-messenger-panel');
-            const touch = event.touches?.[0];
-            if (!panel || !touch) {
-                event.preventDefault();
-                return;
-            }
-
-            const deltaX = touch.clientX - lastTouchX;
-            const deltaY = touch.clientY - lastTouchY;
-            const horizontal = Math.abs(deltaX) > Math.abs(deltaY);
-            const delta = horizontal ? deltaX : deltaY;
-            const scrollable = findScrollableParent(event.target, panel, horizontal ? 'x' : 'y');
-            const atStart = !scrollable || (horizontal ? scrollable.scrollLeft : scrollable.scrollTop) <= 0;
-            const position = scrollable ? (horizontal ? scrollable.scrollLeft : scrollable.scrollTop) : 0;
-            const viewportSize = scrollable ? (horizontal ? scrollable.clientWidth : scrollable.clientHeight) : 0;
-            const contentSize = scrollable ? (horizontal ? scrollable.scrollWidth : scrollable.scrollHeight) : 0;
-            const atEnd = !scrollable || position + viewportSize >= contentSize - 1;
-
-            if (!scrollable || (delta > 0 && atStart) || (delta < 0 && atEnd)) {
+            if (!event.target?.closest?.('.floating-messenger-panel')) {
                 event.preventDefault();
             }
-            lastTouchX = touch.clientX;
-            lastTouchY = touch.clientY;
         };
 
         if (shouldLockPageScroll) {
@@ -983,14 +940,12 @@ const FloatingMessenger = ({
             document.body.style.width = '100%';
             document.documentElement.classList.add('jt-mobile-messenger-open');
             document.body.classList.add('jt-mobile-messenger-open');
-            document.addEventListener('touchstart', handleTouchStart, { passive: true, capture: true });
             document.addEventListener('touchmove', preventBackgroundTouchMove, { passive: false, capture: true });
         }
         document.addEventListener('keydown', handleKeyDown);
 
         return () => {
             if (shouldLockPageScroll) {
-                document.removeEventListener('touchstart', handleTouchStart, true);
                 document.removeEventListener('touchmove', preventBackgroundTouchMove, true);
                 document.documentElement.classList.remove('jt-mobile-messenger-open');
                 document.body.classList.remove('jt-mobile-messenger-open');

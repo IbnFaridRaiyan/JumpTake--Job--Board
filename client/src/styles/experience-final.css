@@ -537,6 +537,24 @@ html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal .jt-job
 }
 
 @media (max-width: 768px) {
+  html.jt-mobile-modal-open,
+  html.jt-mobile-modal-open > body.jt-mobile-modal-open {
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+  }
+
+  html.jt-mobile-modal-open > body.jt-mobile-modal-open {
+    position: fixed !important;
+    top: var(--jt-mobile-modal-scroll-y, 0px) !important;
+    right: 0 !important;
+    bottom: auto !important;
+    left: var(--jt-mobile-modal-scroll-x, 0px) !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    margin: 0 !important;
+  }
+
   .portal-public-job-modal-backdrop {
     padding: 10px !important;
   }
@@ -872,12 +890,6 @@ html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal .jt-job
   html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .mobile-chat-composer-send:is(:hover, :focus, :focus-visible, :active, :disabled) {
     background: #7f1d32 !important;
     box-shadow: 0 8px 18px rgba(127, 29, 50, 0.2) !important;
-  }
-
-  html.jt-mobile-messenger-open,
-  html.jt-mobile-messenger-open > body.jt-mobile-messenger-open {
-    overflow: hidden !important;
-    overscroll-behavior: none !important;
   }
 
   html body > .floating-messenger.is-open > .floating-messenger-backdrop {

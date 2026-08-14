@@ -901,65 +901,14 @@ const FloatingMessenger = ({
             return undefined;
         }
 
-        const shouldLockPageScroll = !window.matchMedia('(min-width: 769px)').matches;
-        const pageScrollX = window.scrollX;
-        const pageScrollY = window.scrollY;
-        const previousBodyStyle = {
-            overflow: document.body.style.overflow,
-            overscrollBehavior: document.body.style.overscrollBehavior,
-            position: document.body.style.position,
-            top: document.body.style.top,
-            left: document.body.style.left,
-            right: document.body.style.right,
-            width: document.body.style.width
-        };
-        const previousRootStyle = {
-            overflow: document.documentElement.style.overflow,
-            overscrollBehavior: document.documentElement.style.overscrollBehavior
-        };
         const handleKeyDown = (event) => {
             if (event.key === 'Escape') {
                 handleClose();
             }
         };
-        const preventBackgroundTouchMove = (event) => {
-            if (!event.target?.closest?.('.floating-messenger-panel')) {
-                event.preventDefault();
-            }
-        };
-
-        if (shouldLockPageScroll) {
-            document.documentElement.style.overflow = 'hidden';
-            document.documentElement.style.overscrollBehavior = 'none';
-            document.body.style.overflow = 'hidden';
-            document.body.style.overscrollBehavior = 'none';
-            document.body.style.position = 'fixed';
-            document.body.style.top = `-${pageScrollY}px`;
-            document.body.style.left = `-${pageScrollX}px`;
-            document.body.style.right = '0';
-            document.body.style.width = '100%';
-            document.documentElement.classList.add('jt-mobile-messenger-open');
-            document.body.classList.add('jt-mobile-messenger-open');
-            document.addEventListener('touchmove', preventBackgroundTouchMove, { passive: false, capture: true });
-        }
         document.addEventListener('keydown', handleKeyDown);
 
         return () => {
-            if (shouldLockPageScroll) {
-                document.removeEventListener('touchmove', preventBackgroundTouchMove, true);
-                document.documentElement.classList.remove('jt-mobile-messenger-open');
-                document.body.classList.remove('jt-mobile-messenger-open');
-                document.documentElement.style.overflow = previousRootStyle.overflow;
-                document.documentElement.style.overscrollBehavior = previousRootStyle.overscrollBehavior;
-                document.body.style.overflow = previousBodyStyle.overflow;
-                document.body.style.overscrollBehavior = previousBodyStyle.overscrollBehavior;
-                document.body.style.position = previousBodyStyle.position;
-                document.body.style.top = previousBodyStyle.top;
-                document.body.style.left = previousBodyStyle.left;
-                document.body.style.right = previousBodyStyle.right;
-                document.body.style.width = previousBodyStyle.width;
-                window.scrollTo(pageScrollX, pageScrollY);
-            }
             document.removeEventListener('keydown', handleKeyDown);
         };
     }, [handleClose, open]);

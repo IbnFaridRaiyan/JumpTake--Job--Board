@@ -680,6 +680,178 @@ html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal .jt-job
     scroll-padding-bottom: calc(5.4rem + var(--jt-mobile-keyboard-inset, 0px)) !important;
   }
 
+  /* Mobile popup chats use a dedicated composer instead of the desktop editors. */
+  html body > .floating-messenger.is-open .mobile-chat-composer,
+  html body > .floating-messenger.is-open .mobile-chat-composer:is(:focus-within) {
+    position: absolute !important;
+    z-index: 8 !important;
+    right: 0 !important;
+    bottom: var(--jt-mobile-keyboard-inset, 0px) !important;
+    left: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 44px !important;
+    align-items: end !important;
+    gap: 9px !important;
+    box-sizing: border-box !important;
+    width: auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+    border: 0 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 0 !important;
+    background: #050505 !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    transition: background-color 320ms ease, border-color 320ms ease !important;
+    animation: jt-mobile-chat-composer-in 580ms cubic-bezier(0.22, 1, 0.36, 1) both !important;
+  }
+
+  html body > .floating-messenger.is-open .mobile-chat-composer-field {
+    display: flex !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+    min-height: 44px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    border-radius: 8px !important;
+    background: #101012 !important;
+    box-shadow: none !important;
+    transition: border-color 360ms ease, background-color 360ms ease, box-shadow 360ms ease !important;
+  }
+
+  html body > .floating-messenger.is-open .mobile-chat-composer-field:focus-within {
+    border-color: rgba(208, 106, 130, 0.72) !important;
+    background: #151216 !important;
+    box-shadow: 0 0 0 3px rgba(208, 106, 130, 0.1) !important;
+  }
+
+  html body > .floating-messenger.is-open .mobile-chat-composer-field textarea,
+  html body > .floating-messenger.is-open .mobile-chat-composer-field textarea:is(:focus, :focus-visible) {
+    field-sizing: content;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 42px !important;
+    max-height: 96px !important;
+    margin: 0 !important;
+    padding: 11px 12px !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    resize: none !important;
+    border: 0 !important;
+    outline: 0 !important;
+    border-radius: 0 !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    caret-color: #d06a82 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    font-family: 'Lexend', 'Segoe UI', sans-serif !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    line-height: 1.3 !important;
+    transition: none !important;
+  }
+
+  html body > .floating-messenger.is-open .mobile-chat-composer-field textarea::placeholder {
+    color: #8f8c93 !important;
+    -webkit-text-fill-color: #8f8c93 !important;
+    opacity: 1 !important;
+  }
+
+  html body > .floating-messenger.is-open .mobile-chat-composer-send,
+  html body > .floating-messenger.is-open .mobile-chat-composer-send:is(:hover, :focus, :focus-visible, :active, :disabled) {
+    display: grid !important;
+    place-items: center !important;
+    box-sizing: border-box !important;
+    width: 44px !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    max-height: 44px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    background: #9f3049 !important;
+    background-image: none !important;
+    box-shadow: 0 8px 18px rgba(104, 20, 33, 0.28) !important;
+    transform: none !important;
+    transition: background-color 320ms ease, opacity 320ms ease, box-shadow 320ms ease !important;
+  }
+
+  html body > .floating-messenger.is-open .mobile-chat-composer-send:disabled {
+    opacity: 0.42 !important;
+    box-shadow: none !important;
+  }
+
+  html body > .floating-messenger.is-open .mobile-chat-composer-send svg {
+    width: 20px !important;
+    height: 20px !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.8 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .mobile-chat-composer,
+  html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .mobile-chat-composer:is(:focus-within) {
+    border-top-color: rgba(67, 37, 28, 0.14) !important;
+    background: #fbf6ee !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .mobile-chat-composer-field {
+    border-color: rgba(67, 37, 28, 0.16) !important;
+    background: #ffffff !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .mobile-chat-composer-field:focus-within {
+    border-color: rgba(127, 29, 50, 0.64) !important;
+    background: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(127, 29, 50, 0.08) !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .mobile-chat-composer-field textarea,
+  html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .mobile-chat-composer-field textarea:is(:focus, :focus-visible) {
+    color: #241713 !important;
+    -webkit-text-fill-color: #241713 !important;
+    caret-color: #7f1d32 !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .mobile-chat-composer-field textarea::placeholder {
+    color: #80736d !important;
+    -webkit-text-fill-color: #80736d !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .mobile-chat-composer-send,
+  html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .mobile-chat-composer-send:is(:hover, :focus, :focus-visible, :active, :disabled) {
+    background: #7f1d32 !important;
+    box-shadow: 0 8px 18px rgba(127, 29, 50, 0.2) !important;
+  }
+
+  html.jt-mobile-messenger-open,
+  html.jt-mobile-messenger-open > body.jt-mobile-messenger-open {
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+  }
+
+  html body > .floating-messenger.is-open > .floating-messenger-backdrop {
+    touch-action: none !important;
+    overscroll-behavior: none !important;
+  }
+
+  html body > .floating-messenger.is-open > .floating-messenger-panel {
+    overscroll-behavior: contain !important;
+  }
+
   /* During keyboard entry, only the composer rises; headers retain fixed tracks. */
   html.jt-mobile-keyboard-open,
   html.jt-mobile-keyboard-open > body.jt-mobile-keyboard-open {
@@ -800,5 +972,22 @@ html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal .jt-job
 
   body.jt-mobile-keyboard-open #root .messenger-inbox .mobile-subpage-return {
     display: none !important;
+  }
+}
+
+@keyframes jt-mobile-chat-composer-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+  html body > .floating-messenger.is-open .mobile-chat-composer {
+    animation-duration: 1ms !important;
   }
 }

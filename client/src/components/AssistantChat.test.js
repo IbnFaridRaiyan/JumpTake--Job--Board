@@ -110,4 +110,14 @@ describe('AssistantChat action approval', () => {
         expect(container.querySelector('.assistant-action-review')).toBeNull();
         expect(onAction).not.toHaveBeenCalled();
     });
+
+    it('replaces the legacy reply form with the dedicated mobile composer when requested', () => {
+        act(() => {
+            ReactDOM.render(<AssistantChat mobileComposer />, container);
+        });
+
+        expect(container.querySelector('[data-mobile-chat-composer="true"]')).not.toBeNull();
+        expect(container.querySelector('.public-ai-chat-reply')).toBeNull();
+        expect(container.querySelector('.mobile-chat-composer textarea').getAttribute('aria-label')).toBe('Ask JumpTake AI');
+    });
 });

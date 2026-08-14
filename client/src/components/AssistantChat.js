@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { apiUrl } from '../utils/apiUrl';
+import MobileChatComposer from './MobileChatComposer';
 
 const formatAssistantTime = () => new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 
@@ -172,7 +173,7 @@ const buildConversationTitle = (messages = []) => {
     return title.length > 46 ? `${title.slice(0, 43).trim()}…` : title;
 };
 
-const AssistantChat = ({ className = '', storageKey = '', context = null, onAction }) => {
+const AssistantChat = ({ className = '', storageKey = '', context = null, onAction, mobileComposer = false }) => {
     const [assistantInput, setAssistantInput] = useState('');
     const [assistantLoading, setAssistantLoading] = useState(false);
     const [assistantMessages, setAssistantMessages] = useState(createInitialAssistantMessages);
@@ -710,7 +711,19 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
                     </li>
                 ) : null}
             </ul>}
-            <form className="public-ai-chat-reply" onSubmit={askAssistant}>
+            {mobileComposer ? (
+                <MobileChatComposer
+                    value={assistantInput}
+                    onChange={setAssistantInput}
+                    onSubmit={askAssistant}
+                    inputRef={inputRef}
+                    placeholder={pendingAction ? 'Review the pending action' : 'Ask JumpTake AI'}
+                    ariaLabel="Ask JumpTake AI"
+                    disabled={Boolean(pendingAction)}
+                    sendDisabled={assistantLoading || Boolean(pendingAction) || !assistantInput.trim()}
+                    className="mobile-chat-composer-ai"
+                />
+            ) : <form className="public-ai-chat-reply" onSubmit={askAssistant}>
                 <div className="public-ai-reply-row portal-ai-reply-row-aligned">
                     <div className="public-ai-reply-field">
                         <AssistantSearchIcon />
@@ -739,7 +752,7 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
                         <span>Send</span>
                     </button>
                 </div>
-            </form>
+            </form>}
         </div>
     );
 };

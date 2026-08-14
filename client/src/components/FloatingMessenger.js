@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom';
 import RichMessageEditor from './RichMessageEditor';
 import AssistantChat from './AssistantChat';
+import MobileChatComposer from './MobileChatComposer';
 import ChatAvatar from './ChatAvatar';
 import MessageWorkspaceNav from './MessageWorkspaceNav';
 import NewMessageFinder from './NewMessageFinder';
@@ -20,6 +21,16 @@ const escapeMessageHtml = (value = '') => String(value || '')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+const messageHtmlToPlainText = (html = '') => {
+    const normalized = String(html || '')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/(?:p|div|li)>/gi, '\n');
+    if (typeof document === 'undefined') return stripHtml(normalized);
+    const decoder = document.createElement('div');
+    decoder.innerHTML = normalized;
+    return String(decoder.textContent || '').replace(/\n{3,}/g, '\n\n').trimStart();
+};
+const plainTextToMessageHtml = (value = '') => escapeMessageHtml(value).replace(/\r?\n/g, '<br />');
 const ASSISTANT_THREAD_ID = '__jumptake_ai__';
 const MESSAGE_MENU_ANIMATION_MS = 180;
 const normalizeSearchText = (value = '') => String(value || '')
@@ -895,31 +906,53 @@ const FloatingMessenger = ({
         const pageScrollY = window.scrollY;
         const previousBodyStyle = {
             overflow: document.body.style.overflow,
+            overscrollBehavior: document.body.style.overscrollBehavior,
             position: document.body.style.position,
             top: document.body.style.top,
             left: document.body.style.left,
             right: document.body.style.right,
             width: document.body.style.width
         };
+        const previousRootStyle = {
+            overflow: document.documentElement.style.overflow,
+            overscrollBehavior: document.documentElement.style.overscrollBehavior
+        };
         const handleKeyDown = (event) => {
             if (event.key === 'Escape') {
                 handleClose();
             }
         };
+        const preventBackgroundTouchMove = (event) => {
+            if (!event.target?.closest?.('.floating-messenger-panel')) {
+                event.preventDefault();
+            }
+        };
 
         if (shouldLockPageScroll) {
+            document.documentElement.style.overflow = 'hidden';
+            document.documentElement.style.overscrollBehavior = 'none';
             document.body.style.overflow = 'hidden';
+            document.body.style.overscrollBehavior = 'none';
             document.body.style.position = 'fixed';
             document.body.style.top = `-${pageScrollY}px`;
             document.body.style.left = `-${pageScrollX}px`;
             document.body.style.right = '0';
             document.body.style.width = '100%';
+            document.documentElement.classList.add('jt-mobile-messenger-open');
+            document.body.classList.add('jt-mobile-messenger-open');
+            document.addEventListener('touchmove', preventBackgroundTouchMove, { passive: false, capture: true });
         }
         document.addEventListener('keydown', handleKeyDown);
 
         return () => {
             if (shouldLockPageScroll) {
+                document.removeEventListener('touchmove', preventBackgroundTouchMove, true);
+                document.documentElement.classList.remove('jt-mobile-messenger-open');
+                document.body.classList.remove('jt-mobile-messenger-open');
+                document.documentElement.style.overflow = previousRootStyle.overflow;
+                document.documentElement.style.overscrollBehavior = previousRootStyle.overscrollBehavior;
                 document.body.style.overflow = previousBodyStyle.overflow;
+                document.body.style.overscrollBehavior = previousBodyStyle.overscrollBehavior;
                 document.body.style.position = previousBodyStyle.position;
                 document.body.style.top = previousBodyStyle.top;
                 document.body.style.left = previousBodyStyle.left;
@@ -1818,6 +1851,7 @@ const FloatingMessenger = ({
                                     <AssistantChat
                                         title="JumpTake AI"
                                         className="floating-messenger-assistant-chat"
+                                        mobileComposer={isMobileView}
                                         storageKey={assistantStorageKey}
                                         context={getAssistantContext}
                                         onAction={handleAssistantAction}
@@ -1888,6 +1922,16 @@ const FloatingMessenger = ({
 
                                     {selectedThread?.viewerState?.chatBlocked ? (
                                         <button type="button" className="message-unblock-chat-button" onClick={() => updateThreadState(selectedThread, 'unblock-chat')}>Unblock to chat</button>
+                                    ) : isMobileView ? (
+                                        <MobileChatComposer
+                                            value={messageHtmlToPlainText(replyHtml)}
+                                            onChange={(value) => setReplyHtml(plainTextToMessageHtml(value))}
+                                            onSubmit={sendReply}
+                                            placeholder="Write a message"
+                                            ariaLabel="Write a message"
+                                            sendDisabled={sending || !hasMessageContent(replyHtml)}
+                                            className="mobile-chat-composer-user"
+                                        />
                                     ) : <div className="floating-messenger-input">
                                         <RichMessageEditor
                                             value={replyHtml}

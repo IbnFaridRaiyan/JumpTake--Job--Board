@@ -590,16 +590,6 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
         return () => window.removeEventListener('jumptake-assistant-submit', submitHeaderSearch);
     }, [assistantLoading, className, pendingAction]);
 
-    const keepAssistantReplyInView = (event) => {
-        if (typeof window === 'undefined' || !window.matchMedia('(max-width: 768px)').matches) {
-            return;
-        }
-        const replyField = event.currentTarget;
-        window.requestAnimationFrame(() => {
-            replyField?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-        });
-    };
-
     return (
         <div className={`public-ai-chat-card portal-ai-chat-card ${className}`}>
             {showSavedChats ? (
@@ -731,7 +721,6 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
                             rows={1}
                             enterKeyHint="enter"
                             placeholder={pendingAction ? 'Review the pending action' : 'Ask JumpTake AI'}
-                            onFocus={keepAssistantReplyInView}
                             disabled={Boolean(pendingAction)}
                         />
                     </div>

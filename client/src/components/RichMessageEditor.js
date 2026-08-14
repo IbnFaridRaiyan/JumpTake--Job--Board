@@ -114,14 +114,8 @@ const RichMessageEditor = ({
         }
     };
 
-    const keepEditorInLocalViewport = () => {
+    const handleEditorFocus = () => {
         syncToolbarState();
-        if (typeof window === 'undefined' || !window.matchMedia('(max-width: 768px)').matches) {
-            return;
-        }
-        window.requestAnimationFrame(() => {
-            editorRef.current?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-        });
     };
 
     return (
@@ -184,7 +178,7 @@ const RichMessageEditor = ({
                         aria-label={placeholder}
                         data-placeholder={placeholder}
                         onInput={() => onChange(editorRef.current?.innerHTML || '')}
-                        onFocus={keepEditorInLocalViewport}
+                        onFocus={handleEditorFocus}
                         onKeyUp={syncToolbarState}
                         onMouseUp={syncToolbarState}
                         suppressContentEditableWarning
@@ -210,7 +204,7 @@ const RichMessageEditor = ({
                     aria-label={placeholder}
                     data-placeholder={placeholder}
                     onInput={() => onChange(editorRef.current?.innerHTML || '')}
-                    onFocus={keepEditorInLocalViewport}
+                    onFocus={handleEditorFocus}
                     onKeyUp={syncToolbarState}
                     onMouseUp={syncToolbarState}
                     suppressContentEditableWarning

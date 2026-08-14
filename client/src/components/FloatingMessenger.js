@@ -890,8 +890,17 @@ const FloatingMessenger = ({
             return undefined;
         }
 
-        const previousOverflow = document.body.style.overflow;
         const shouldLockPageScroll = !window.matchMedia('(min-width: 769px)').matches;
+        const pageScrollX = window.scrollX;
+        const pageScrollY = window.scrollY;
+        const previousBodyStyle = {
+            overflow: document.body.style.overflow,
+            position: document.body.style.position,
+            top: document.body.style.top,
+            left: document.body.style.left,
+            right: document.body.style.right,
+            width: document.body.style.width
+        };
         const handleKeyDown = (event) => {
             if (event.key === 'Escape') {
                 handleClose();
@@ -900,12 +909,23 @@ const FloatingMessenger = ({
 
         if (shouldLockPageScroll) {
             document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.top = `-${pageScrollY}px`;
+            document.body.style.left = `-${pageScrollX}px`;
+            document.body.style.right = '0';
+            document.body.style.width = '100%';
         }
         document.addEventListener('keydown', handleKeyDown);
 
         return () => {
             if (shouldLockPageScroll) {
-                document.body.style.overflow = previousOverflow;
+                document.body.style.overflow = previousBodyStyle.overflow;
+                document.body.style.position = previousBodyStyle.position;
+                document.body.style.top = previousBodyStyle.top;
+                document.body.style.left = previousBodyStyle.left;
+                document.body.style.right = previousBodyStyle.right;
+                document.body.style.width = previousBodyStyle.width;
+                window.scrollTo(pageScrollX, pageScrollY);
             }
             document.removeEventListener('keydown', handleKeyDown);
         };

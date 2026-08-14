@@ -119,5 +119,6 @@ describe('AssistantChat action approval', () => {
         expect(container.querySelector('[data-mobile-chat-composer="true"]')).not.toBeNull();
         expect(container.querySelector('.public-ai-chat-reply')).toBeNull();
         expect(container.querySelector('.mobile-chat-composer textarea').getAttribute('aria-label')).toBe('Ask JumpTake AI');
+        expect(container.querySelector('.mobile-chat-composer-field span')).toBeNull();
     });
 });

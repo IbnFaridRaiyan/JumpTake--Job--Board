@@ -704,7 +704,7 @@ html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal .jt-job
     background-image: none !important;
     box-shadow: none !important;
     transition: background-color 320ms ease, border-color 320ms ease !important;
-    animation: jt-mobile-chat-composer-in 580ms cubic-bezier(0.22, 1, 0.36, 1) both !important;
+    animation: none !important;
   }
 
   html body > .floating-messenger.is-open .mobile-chat-composer-field {
@@ -972,22 +972,5 @@ html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal .jt-job
 
   body.jt-mobile-keyboard-open #root .messenger-inbox .mobile-subpage-return {
     display: none !important;
-  }
-}
-
-@keyframes jt-mobile-chat-composer-in {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
-  html body > .floating-messenger.is-open .mobile-chat-composer {
-    animation-duration: 1ms !important;
   }
 }

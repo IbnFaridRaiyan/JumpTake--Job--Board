@@ -23,7 +23,6 @@ const MobileChatComposer = ({
             data-mobile-chat-composer="true"
         >
             <label className="mobile-chat-composer-field">
-                <span className="sr-only">{ariaLabel}</span>
                 <textarea
                     ref={inputRef}
                     value={value}

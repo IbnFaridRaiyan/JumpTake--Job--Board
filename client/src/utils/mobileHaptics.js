@@ -31,13 +31,24 @@ export const installMobileInteractionFeedback = () => {
   if (typeof document === 'undefined') return () => {};
 
   const visualViewport = window.visualViewport;
+  const virtualKeyboard = navigator.virtualKeyboard;
+  const previousKeyboardOverlay = virtualKeyboard?.overlaysContent;
   let stableViewportHeight = Math.max(window.innerHeight, visualViewport?.height || 0);
   let chatKeyboardSession = false;
   let focusOutTimer = null;
 
+  if (virtualKeyboard) {
+    try {
+      virtualKeyboard.overlaysContent = true;
+    } catch (error) {
+      // Browsers without writable VirtualKeyboard settings use visualViewport below.
+    }
+  }
+
   const syncMobileViewport = () => {
     const visibleHeight = Math.round(visualViewport?.height || window.innerHeight);
-    const visibleBottom = Math.round(visibleHeight + (visualViewport?.offsetTop || 0));
+    const viewportOffsetTop = Math.max(0, Math.round(visualViewport?.offsetTop || 0));
+    const visibleBottom = visibleHeight + viewportOffsetTop;
     const focusedElement = document.activeElement;
     const editingChat = Boolean(
       window.matchMedia('(max-width: 768px)').matches
@@ -50,7 +61,9 @@ export const installMobileInteractionFeedback = () => {
       stableViewportHeight = Math.max(stableViewportHeight, window.innerHeight);
     }
 
-    const keyboardInset = Math.max(0, stableViewportHeight - visibleBottom);
+    const visualKeyboardInset = Math.max(0, stableViewportHeight - visibleHeight);
+    const overlayKeyboardInset = Math.max(0, Math.round(virtualKeyboard?.boundingRect?.height || 0));
+    const keyboardInset = Math.max(visualKeyboardInset, overlayKeyboardInset);
     const viewportObscured = keyboardInset > 120;
     const keyboardOpen = chatKeyboardSession && viewportObscured;
 
@@ -62,6 +75,7 @@ export const installMobileInteractionFeedback = () => {
     document.documentElement.style.setProperty('--jt-mobile-visible-height', `${visibleHeight}px`);
     document.documentElement.style.setProperty('--jt-mobile-layout-height', `${stableViewportHeight}px`);
     document.documentElement.style.setProperty('--jt-mobile-keyboard-inset', `${keyboardOpen ? keyboardInset : 0}px`);
+    document.documentElement.style.setProperty('--jt-mobile-viewport-offset-top', `${keyboardOpen ? viewportOffsetTop : 0}px`);
     document.documentElement.classList.toggle('jt-mobile-keyboard-open', keyboardOpen);
     document.body.classList.toggle('jt-mobile-keyboard-open', keyboardOpen);
   };
@@ -98,6 +112,7 @@ export const installMobileInteractionFeedback = () => {
   window.addEventListener('orientationchange', handleOrientationChange);
   visualViewport?.addEventListener('resize', syncMobileViewport);
   visualViewport?.addEventListener('scroll', syncMobileViewport);
+  virtualKeyboard?.addEventListener?.('geometrychange', syncMobileViewport);
 
   return () => {
     document.removeEventListener('click', handleClick, true);
@@ -107,11 +122,20 @@ export const installMobileInteractionFeedback = () => {
     window.removeEventListener('orientationchange', handleOrientationChange);
     visualViewport?.removeEventListener('resize', syncMobileViewport);
     visualViewport?.removeEventListener('scroll', syncMobileViewport);
+    virtualKeyboard?.removeEventListener?.('geometrychange', syncMobileViewport);
     window.clearTimeout(focusOutTimer);
     document.documentElement.style.removeProperty('--jt-mobile-visible-height');
     document.documentElement.style.removeProperty('--jt-mobile-layout-height');
     document.documentElement.style.removeProperty('--jt-mobile-keyboard-inset');
+    document.documentElement.style.removeProperty('--jt-mobile-viewport-offset-top');
     document.documentElement.classList.remove('jt-mobile-keyboard-open');
     document.body.classList.remove('jt-mobile-keyboard-open');
+    if (virtualKeyboard && typeof previousKeyboardOverlay === 'boolean') {
+      try {
+        virtualKeyboard.overlaysContent = previousKeyboardOverlay;
+      } catch (error) {
+        // No cleanup is required when the browser owns this setting.
+      }
+    }
   };
 };

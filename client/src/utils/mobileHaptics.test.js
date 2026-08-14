@@ -45,17 +45,20 @@ describe('mobile chat keyboard viewport handling', () => {
 
     input.focus();
     visualViewport.height = 524;
+    visualViewport.offsetTop = 36;
     viewportListeners.resize();
 
     expect(document.body.classList.contains('jt-mobile-keyboard-open')).toBe(true);
     expect(document.documentElement.classList.contains('jt-mobile-keyboard-open')).toBe(true);
     expect(document.documentElement.style.getPropertyValue('--jt-mobile-layout-height')).toBe('844px');
     expect(document.documentElement.style.getPropertyValue('--jt-mobile-keyboard-inset')).toBe('320px');
+    expect(document.documentElement.style.getPropertyValue('--jt-mobile-viewport-offset-top')).toBe('36px');
 
     input.blur();
     expect(document.body.classList.contains('jt-mobile-keyboard-open')).toBe(true);
 
     visualViewport.height = 844;
+    visualViewport.offsetTop = 0;
     viewportListeners.resize();
 
     expect(document.body.classList.contains('jt-mobile-keyboard-open')).toBe(false);

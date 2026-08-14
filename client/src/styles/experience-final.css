@@ -635,18 +635,55 @@ html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal .jt-job
 
   /* The messenger always keeps its full layout height; the keyboard overlays it. */
   html body > .floating-messenger.is-open {
-    top: var(--jt-mobile-viewport-offset-top, 0px) !important;
-    bottom: auto !important;
+    inset: 0 !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    display: block !important;
+    width: 100vw !important;
+    min-width: 100vw !important;
+    max-width: 100vw !important;
     height: var(--jt-mobile-layout-height, 100dvh) !important;
+    min-height: var(--jt-mobile-layout-height, 100dvh) !important;
     max-height: var(--jt-mobile-layout-height, 100dvh) !important;
+    padding: 0 !important;
   }
 
   html body > .floating-messenger.is-open > .floating-messenger-panel,
   html body > .floating-messenger.is-open > .floating-messenger-panel.is-mobile,
   html body > .floating-messenger.is-open > .floating-messenger-panel.is-mobile-thread-list,
   html body > .floating-messenger.is-open > .floating-messenger-panel.is-mobile-chat-open {
-    height: calc(var(--jt-mobile-layout-height, 100dvh) - 0.9rem) !important;
-    max-height: calc(var(--jt-mobile-layout-height, 100dvh) - 0.9rem) !important;
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    min-width: 100vw !important;
+    max-width: 100vw !important;
+    height: var(--jt-mobile-layout-height, 100dvh) !important;
+    min-height: var(--jt-mobile-layout-height, 100dvh) !important;
+    max-height: var(--jt-mobile-layout-height, 100dvh) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  html body > .floating-messenger.is-open .floating-messenger-shell,
+  html body > .floating-messenger.is-open .floating-messenger-chat,
+  html body > .floating-messenger.is-open .floating-messenger-chat:has(.floating-messenger-assistant-chat) {
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  html body > .floating-messenger.is-open .floating-messenger-chat > .floating-messenger-assistant-chat {
+    align-self: stretch !important;
+    justify-self: stretch !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
   }
 
   /* Keep one composer layout before, during, and after the keyboard session. */
@@ -860,8 +897,9 @@ html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal .jt-job
   }
 
   body.jt-mobile-keyboard-open > .floating-messenger.is-open {
-    top: var(--jt-mobile-viewport-offset-top, 0px) !important;
-    bottom: auto !important;
+    inset: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
     height: var(--jt-mobile-layout-height, 100vh) !important;
     max-height: var(--jt-mobile-layout-height, 100vh) !important;
   }
@@ -869,8 +907,8 @@ html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal .jt-job
   body.jt-mobile-keyboard-open > .floating-messenger.is-open > .floating-messenger-panel,
   body.jt-mobile-keyboard-open > .floating-messenger.is-open > .floating-messenger-panel.is-mobile,
   body.jt-mobile-keyboard-open > .floating-messenger.is-open > .floating-messenger-panel.is-mobile-chat-open {
-    height: calc(var(--jt-mobile-layout-height, 100vh) - 0.9rem) !important;
-    max-height: calc(var(--jt-mobile-layout-height, 100vh) - 0.9rem) !important;
+    height: var(--jt-mobile-layout-height, 100vh) !important;
+    max-height: var(--jt-mobile-layout-height, 100vh) !important;
   }
 
   body.jt-mobile-keyboard-open > .floating-messenger.is-open .floating-messenger-chat {

@@ -35,7 +35,8 @@ export const installMobileInteractionFeedback = () => {
   const previousKeyboardOverlay = virtualKeyboard?.overlaysContent;
   let stableViewportHeight = Math.max(window.innerHeight, visualViewport?.height || 0);
   let chatKeyboardSession = false;
-  let focusOutTimer = null;
+  let keyboardVisible = false;
+  let suppressKeyboardReopen = false;
 
   if (virtualKeyboard) {
     try {
@@ -61,11 +62,18 @@ export const installMobileInteractionFeedback = () => {
       stableViewportHeight = Math.max(stableViewportHeight, window.innerHeight);
     }
 
-    const visualKeyboardInset = Math.max(0, stableViewportHeight - visibleHeight);
+    const visualKeyboardInset = Math.max(0, stableViewportHeight - visibleBottom);
     const overlayKeyboardInset = Math.max(0, Math.round(virtualKeyboard?.boundingRect?.height || 0));
     const keyboardInset = Math.max(visualKeyboardInset, overlayKeyboardInset);
     const viewportObscured = keyboardInset > 120;
-    const keyboardOpen = chatKeyboardSession && viewportObscured;
+    const wantsKeyboardOpen = chatKeyboardSession && viewportObscured;
+
+    if (keyboardVisible && !wantsKeyboardOpen) {
+      keyboardVisible = false;
+      suppressKeyboardReopen = editingChat;
+    } else if (!keyboardVisible && wantsKeyboardOpen && !suppressKeyboardReopen) {
+      keyboardVisible = true;
+    }
 
     if (!viewportObscured && !editingChat) {
       chatKeyboardSession = false;
@@ -74,16 +82,33 @@ export const installMobileInteractionFeedback = () => {
 
     document.documentElement.style.setProperty('--jt-mobile-visible-height', `${visibleHeight}px`);
     document.documentElement.style.setProperty('--jt-mobile-layout-height', `${stableViewportHeight}px`);
-    document.documentElement.style.setProperty('--jt-mobile-keyboard-inset', `${keyboardOpen ? keyboardInset : 0}px`);
-    document.documentElement.style.setProperty('--jt-mobile-viewport-offset-top', `${keyboardOpen ? viewportOffsetTop : 0}px`);
-    document.documentElement.classList.toggle('jt-mobile-keyboard-open', keyboardOpen);
-    document.body.classList.toggle('jt-mobile-keyboard-open', keyboardOpen);
+    document.documentElement.style.setProperty('--jt-mobile-keyboard-inset', `${keyboardVisible ? keyboardInset : 0}px`);
+    document.documentElement.style.setProperty('--jt-mobile-viewport-offset-top', `${keyboardVisible ? viewportOffsetTop : 0}px`);
+    document.documentElement.classList.toggle('jt-mobile-keyboard-open', keyboardVisible);
+    document.body.classList.toggle('jt-mobile-keyboard-open', keyboardVisible);
   };
 
   const handleFocusOut = () => {
     syncMobileViewport();
-    window.clearTimeout(focusOutTimer);
-    focusOutTimer = window.setTimeout(syncMobileViewport, 320);
+  };
+
+  const isChatEditor = (target) => Boolean(
+    target?.matches?.(MOBILE_CHAT_EDITOR_SELECTOR)
+    && target.closest?.(MOBILE_CHAT_SURFACE_SELECTOR)
+  );
+
+  const handleEditorPointerDown = (event) => {
+    if (!isChatEditor(event.target)) return;
+    suppressKeyboardReopen = false;
+    chatKeyboardSession = true;
+  };
+
+  const handleFocusIn = (event) => {
+    if (isChatEditor(event.target)) {
+      suppressKeyboardReopen = false;
+      chatKeyboardSession = true;
+    }
+    syncMobileViewport();
   };
 
   const handleOrientationChange = () => {
@@ -105,7 +130,8 @@ export const installMobileInteractionFeedback = () => {
   };
 
   document.addEventListener('click', handleClick, true);
-  document.addEventListener('focusin', syncMobileViewport, true);
+  document.addEventListener('pointerdown', handleEditorPointerDown, true);
+  document.addEventListener('focusin', handleFocusIn, true);
   document.addEventListener('focusout', handleFocusOut, true);
   syncMobileViewport();
   window.addEventListener('resize', syncMobileViewport);
@@ -116,14 +142,14 @@ export const installMobileInteractionFeedback = () => {
 
   return () => {
     document.removeEventListener('click', handleClick, true);
-    document.removeEventListener('focusin', syncMobileViewport, true);
+    document.removeEventListener('pointerdown', handleEditorPointerDown, true);
+    document.removeEventListener('focusin', handleFocusIn, true);
     document.removeEventListener('focusout', handleFocusOut, true);
     window.removeEventListener('resize', syncMobileViewport);
     window.removeEventListener('orientationchange', handleOrientationChange);
     visualViewport?.removeEventListener('resize', syncMobileViewport);
     visualViewport?.removeEventListener('scroll', syncMobileViewport);
     virtualKeyboard?.removeEventListener?.('geometrychange', syncMobileViewport);
-    window.clearTimeout(focusOutTimer);
     document.documentElement.style.removeProperty('--jt-mobile-visible-height');
     document.documentElement.style.removeProperty('--jt-mobile-layout-height');
     document.documentElement.style.removeProperty('--jt-mobile-keyboard-inset');

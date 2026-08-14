@@ -529,7 +529,7 @@ const FriendInvitations = ({ userId }) => {
                                     onKeyDown={(event) => {
                                         if (event.key === 'Escape') setSearchOpen(false);
                                     }}
-                                    placeholder="JumpTake ID, e.g. @bob262"
+                                    placeholder="Name or JumpTake ID"
                                     autoComplete="off"
                                 />
                                 <button type="submit" disabled={searching} aria-busy={searching}>Find</button>

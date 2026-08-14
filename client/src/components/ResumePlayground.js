@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { createPortal, unstable_batchedUpdates } from 'react-dom';
 import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from 'mammoth';
 import { createSquareProfileImage } from '../utils/profileImages';
@@ -1175,6 +1175,8 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
     const editorRef = useRef(null);
     const selectionRef = useRef(null);
     const rulerDragRef = useRef(null);
+    const rulerDragFrameRef = useRef(null);
+    const rulerPointerRef = useRef(null);
     const mobilePinchRef = useRef(null);
     const signatureCanvasRef = useRef(null);
     const signatureDrawingRef = useRef(false);
@@ -1184,8 +1186,14 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
     const aiDraftTypingTokenRef = useRef(0);
     const editorSyncTimerRef = useRef(null);
     const editorSyncFrameRef = useRef(null);
+    const editorPaginationTimerRef = useRef(null);
+    const editorPaginationFrameRef = useRef(null);
+    const editorPaginationDeferredRef = useRef(false);
     const skipNextEditorHydrationRef = useRef(false);
     const deferNextEditorPaginationRef = useRef(false);
+    const skipNextMarginPaginationRef = useRef(false);
+    const editorMarginsRef = useRef(DEFAULT_EDITOR_MARGINS);
+    const editorPageMarginsRef = useRef(createPageMargins(1));
 
     const [activeTab, setActiveTab] = useState('create');
     const [editorSuspended, setEditorSuspended] = useState(false);
@@ -1214,6 +1222,12 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
     const [isMobileViewport, setIsMobileViewport] = useState(() => (
         typeof window !== 'undefined' ? window.innerWidth <= 768 : false
     ));
+
+    useEffect(() => {
+        editorMarginsRef.current = editorMargins;
+        editorPageMarginsRef.current = editorPageMargins;
+    }, [editorMargins, editorPageMargins]);
+
     useEffect(() => {
         setTailorProfileData(profileData);
     }, [profileData]);
@@ -1475,39 +1489,24 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
 
         if (dragState.axis === 'horizontal') {
             const scaleX = dragState.rect.width > 0 ? dragState.rect.width / A4_PAGE_WIDTH : 1;
-            const nextLeft = clamp((clientX - dragState.rect.left) / scaleX, MIN_LEFT_MARGIN, MAX_LEFT_MARGIN);
-            setEditorPageMargins((current) => {
-                const nextMargins = createPageMargins(Math.max(editorPageCount, current.length), current);
-                nextMargins[dragState.pageIndex || 0] = {
-                    ...nextMargins[dragState.pageIndex || 0],
-                    left: Math.round(nextLeft)
-                };
-                return nextMargins;
-            });
-
-            if ((dragState.pageIndex || 0) === 0) {
-                setEditorMargins((current) => ({ ...current, left: Math.round(nextLeft) }));
+            const nextLeft = Math.round(clamp((clientX - dragState.rect.left) / scaleX, MIN_LEFT_MARGIN, MAX_LEFT_MARGIN));
+            dragState.pendingValue = nextLeft;
+            if (dragState.indicator) {
+                dragState.indicator.style.left = `${nextLeft}px`;
             }
-            return;
+            return nextLeft;
         }
 
         if (dragState.axis === 'vertical') {
             const scaleY = dragState.rect.height > 0 ? dragState.rect.height / A4_PAGE_HEIGHT : 1;
-            const nextTop = clamp((clientY - dragState.rect.top) / scaleY, MIN_TOP_MARGIN, MAX_TOP_MARGIN);
-            setEditorPageMargins((current) => {
-                const nextMargins = createPageMargins(Math.max(editorPageCount, current.length), current);
-                nextMargins[dragState.pageIndex || 0] = {
-                    ...nextMargins[dragState.pageIndex || 0],
-                    top: Math.round(nextTop)
-                };
-                return nextMargins;
-            });
-
-            if ((dragState.pageIndex || 0) === 0) {
-                setEditorMargins((current) => ({ ...current, top: Math.round(nextTop) }));
+            const nextTop = Math.round(clamp((clientY - dragState.rect.top) / scaleY, MIN_TOP_MARGIN, MAX_TOP_MARGIN));
+            dragState.pendingValue = nextTop;
+            if (dragState.indicator) {
+                dragState.indicator.style.top = `${nextTop}px`;
             }
+            return nextTop;
         }
-    }, [editorPageCount]);
+    }, []);
 
     const startRulerDrag = useCallback((axis, pageIndex, event) => {
         event.preventDefault();
@@ -1515,7 +1514,9 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         rulerDragRef.current = {
             axis,
             pageIndex,
-            rect: event.currentTarget.getBoundingClientRect()
+            rect: event.currentTarget.getBoundingClientRect(),
+            indicator: event.currentTarget.querySelector('.resume-playground-ruler-indicator'),
+            pendingValue: null
         };
         updateMarginFromPointer(rulerDragRef.current, event.clientX, event.clientY);
     }, [updateMarginFromPointer]);
@@ -1527,11 +1528,72 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
             }
 
             event.preventDefault();
-            updateMarginFromPointer(rulerDragRef.current, event.clientX, event.clientY);
+            rulerPointerRef.current = { clientX: event.clientX, clientY: event.clientY };
+            if (rulerDragFrameRef.current) {
+                return;
+            }
+
+            rulerDragFrameRef.current = window.requestAnimationFrame(() => {
+                rulerDragFrameRef.current = null;
+                const pointer = rulerPointerRef.current;
+                if (rulerDragRef.current && pointer) {
+                    updateMarginFromPointer(rulerDragRef.current, pointer.clientX, pointer.clientY);
+                }
+            });
         };
 
-        const stopRulerDrag = () => {
+        const stopRulerDrag = (event) => {
+            if (rulerDragFrameRef.current) {
+                window.cancelAnimationFrame(rulerDragFrameRef.current);
+                rulerDragFrameRef.current = null;
+            }
+
+            const dragState = rulerDragRef.current;
+            if (dragState && Number.isFinite(event?.clientX) && Number.isFinite(event?.clientY)) {
+                updateMarginFromPointer(dragState, event.clientX, event.clientY);
+            }
+
             rulerDragRef.current = null;
+            rulerPointerRef.current = null;
+
+            if (!dragState || !Number.isFinite(dragState.pendingValue)) {
+                return;
+            }
+
+            const pageIndex = dragState.pageIndex || 0;
+            const marginKey = dragState.axis === 'horizontal' ? 'left' : 'top';
+            const nextValue = dragState.pendingValue;
+
+            unstable_batchedUpdates(() => {
+                setEditorPageMargins((current) => {
+                    const existingMargin = current[pageIndex] || current[0] || DEFAULT_EDITOR_MARGINS;
+                    if (existingMargin[marginKey] === nextValue) {
+                        return current;
+                    }
+
+                    const nextMargins = createPageMargins(
+                        Math.max(editorPageCount, current.length, pageIndex + 1),
+                        current
+                    );
+                    nextMargins[pageIndex] = {
+                        ...nextMargins[pageIndex],
+                        [marginKey]: nextValue
+                    };
+                    editorPageMarginsRef.current = nextMargins;
+                    return nextMargins;
+                });
+
+                if (pageIndex === 0) {
+                    setEditorMargins((current) => {
+                        if (current[marginKey] === nextValue) {
+                            return current;
+                        }
+                        const nextMargins = { ...current, [marginKey]: nextValue };
+                        editorMarginsRef.current = nextMargins;
+                        return nextMargins;
+                    });
+                }
+            });
         };
 
         window.addEventListener('pointermove', handlePointerMove);
@@ -1542,8 +1604,12 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
             window.removeEventListener('pointermove', handlePointerMove);
             window.removeEventListener('pointerup', stopRulerDrag);
             window.removeEventListener('pointercancel', stopRulerDrag);
+            if (rulerDragFrameRef.current) {
+                window.cancelAnimationFrame(rulerDragFrameRef.current);
+                rulerDragFrameRef.current = null;
+            }
         };
-    }, [updateMarginFromPointer]);
+    }, [editorPageCount, updateMarginFromPointer]);
 
     const getPaginationHost = useCallback((root = editorRef.current) => {
         if (!root) {
@@ -1602,7 +1668,7 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
     }, [getPaginationHost]);
 
     const createMeasurementContainer = useCallback((pageIndex = 0) => {
-        const pageMargins = editorPageMargins[pageIndex] || editorMargins;
+        const pageMargins = editorPageMarginsRef.current[pageIndex] || editorMarginsRef.current;
         const measurement = document.createElement('div');
         measurement.style.position = 'absolute';
         measurement.style.left = '-100000px';
@@ -1621,7 +1687,7 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         measurement.style.overflowWrap = 'anywhere';
         document.body.appendChild(measurement);
         return measurement;
-    }, [editorMargins, editorPageMargins]);
+    }, []);
 
     const splitTextBlockToFit = useCallback((node, measurement) => {
         if (!node || node.nodeType !== Node.ELEMENT_NODE) {
@@ -1650,18 +1716,23 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         probe.textContent = '';
         measurement.appendChild(probe);
 
-        let fitText = '';
+        let lowerBound = 1;
+        let upperBound = tokens.length - 1;
         let splitIndex = 0;
 
-        for (let index = 0; index < tokens.length; index += 1) {
-            probe.textContent += tokens[index];
+        // Measuring every word forces a full browser layout each time and can
+        // freeze long AI drafts. A binary search finds the same split point in
+        // logarithmic measurements.
+        while (lowerBound <= upperBound) {
+            const candidateIndex = Math.floor((lowerBound + upperBound) / 2);
+            probe.textContent = tokens.slice(0, candidateIndex).join('');
 
-            if (measurement.scrollHeight > A4_PAGE_SAFE_HEIGHT) {
-                break;
+            if (measurement.scrollHeight <= A4_PAGE_SAFE_HEIGHT) {
+                splitIndex = candidateIndex;
+                lowerBound = candidateIndex + 1;
+            } else {
+                upperBound = candidateIndex - 1;
             }
-
-            fitText += tokens[index];
-            splitIndex = index + 1;
         }
 
         measurement.removeChild(probe);
@@ -1669,6 +1740,8 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         if (splitIndex <= 0 || splitIndex >= tokens.length) {
             return null;
         }
+
+        const fitText = tokens.slice(0, splitIndex).join('');
 
         const fittingNode = node.cloneNode(false);
         fittingNode.textContent = fitText.trimEnd();
@@ -1727,9 +1800,12 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         let pages = 1;
         let currentPageIndex = 0;
 
-        const getPageTopMargin = (pageIndex) => (editorPageMargins[pageIndex] || editorMargins).top;
+        const getPageMargins = (pageIndex) => (
+            editorPageMarginsRef.current[pageIndex] || editorMarginsRef.current
+        );
+        const getPageTopMargin = (pageIndex) => getPageMargins(pageIndex).top;
         const applyMeasurementPageMargins = (pageIndex) => {
-            const pageMargins = editorPageMargins[pageIndex] || editorMargins;
+            const pageMargins = getPageMargins(pageIndex);
             measurement.style.padding = `${pageMargins.top}px ${A4_RIGHT_PADDING}px ${A4_BOTTOM_PADDING}px ${pageMargins.left}px`;
         };
         const getFlowHeight = () => Math.max(
@@ -1811,7 +1887,33 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
 
         document.body.removeChild(measurement);
         setEditorPageCount(pages);
-    }, [createMeasurementContainer, editorMargins, editorPageMargins, getPaginationHost, normalizeEditorContent, splitTextBlockToFit]);
+    }, [createMeasurementContainer, getPaginationHost, normalizeEditorContent, splitTextBlockToFit]);
+
+    const cancelScheduledPagination = useCallback(() => {
+        if (typeof window === 'undefined') return;
+
+        if (editorPaginationTimerRef.current) {
+            window.clearTimeout(editorPaginationTimerRef.current);
+            editorPaginationTimerRef.current = null;
+        }
+        if (editorPaginationFrameRef.current) {
+            window.cancelAnimationFrame(editorPaginationFrameRef.current);
+            editorPaginationFrameRef.current = null;
+        }
+    }, []);
+
+    const scheduleEditorPagination = useCallback((delay = 24) => {
+        if (typeof window === 'undefined' || editorPaginationDeferredRef.current) return;
+
+        cancelScheduledPagination();
+        editorPaginationTimerRef.current = window.setTimeout(() => {
+            editorPaginationTimerRef.current = null;
+            editorPaginationFrameRef.current = window.requestAnimationFrame(() => {
+                editorPaginationFrameRef.current = null;
+                repaginateEditorContent();
+            });
+        }, delay);
+    }, [cancelScheduledPagination, repaginateEditorContent]);
 
     useEffect(() => {
         if (!editorRef.current || !editorResume) {
@@ -1824,9 +1926,6 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         deferNextEditorPaginationRef.current = false;
 
         if (skipHydration) {
-            enforceAiDraftBlackInk(editorRef.current, {
-                allowUnmarked: editorResume.source === 'ai-tailor'
-            });
             return;
         }
 
@@ -1840,24 +1939,34 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         });
 
         if (!deferPagination) {
-            window.requestAnimationFrame(() => {
-                repaginateEditorContent();
-            });
+            scheduleEditorPagination();
         }
-    }, [editorResume, repaginateEditorContent]);
+    }, [editorResume, scheduleEditorPagination]);
 
     useEffect(() => {
         if (!editorRef.current) {
             return;
         }
 
-        window.requestAnimationFrame(() => {
-            repaginateEditorContent();
-        });
-    }, [editorMargins, editorPageMargins, repaginateEditorContent]);
+        if (skipNextMarginPaginationRef.current) {
+            skipNextMarginPaginationRef.current = false;
+            return;
+        }
+
+        scheduleEditorPagination(36);
+    }, [editorMargins, editorPageMargins, scheduleEditorPagination]);
 
     useEffect(() => {
-        setEditorPageMargins((current) => createPageMargins(editorPageCount, current));
+        setEditorPageMargins((current) => {
+            const requiredPageCount = Math.max(1, editorPageCount);
+            if (current.length === requiredPageCount) {
+                return current;
+            }
+            const nextMargins = createPageMargins(requiredPageCount, current);
+            editorPageMarginsRef.current = nextMargins;
+            skipNextMarginPaginationRef.current = Boolean(editorRef.current);
+            return nextMargins;
+        });
     }, [editorPageCount]);
 
     useEffect(() => {
@@ -1957,23 +2066,29 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
             window.cancelAnimationFrame(editorSyncFrameRef.current);
             editorSyncFrameRef.current = null;
         }
-    }, []);
+        cancelScheduledPagination();
+    }, [cancelScheduledPagination]);
 
     const openEditor = (resume, nextTab = 'edit', { deferPagination = false } = {}) => {
         clearAiDraftTyping();
         clearPendingEditorSync();
+        editorPaginationDeferredRef.current = deferPagination;
         deferNextEditorPaginationRef.current = deferPagination;
         setEditorResume(resume);
         setEditorSuspended(false);
         const nextTextColor = resume?.textColor || DEFAULT_TEXT_COLOR;
         textColorRef.current = nextTextColor;
         setTextColor(nextTextColor);
-        setEditorMargins(resume?.margins ? { ...DEFAULT_EDITOR_MARGINS, ...resume.margins } : DEFAULT_EDITOR_MARGINS);
-        setEditorPageMargins(
+        const nextMargins = resume?.margins ? { ...DEFAULT_EDITOR_MARGINS, ...resume.margins } : DEFAULT_EDITOR_MARGINS;
+        const nextPageMargins = (
             Array.isArray(resume?.pageMargins) && resume.pageMargins.length
                 ? resume.pageMargins.map((margin) => cloneMargins(margin))
                 : createPageMargins(1, resume?.margins ? [{ ...DEFAULT_EDITOR_MARGINS, ...resume.margins }] : [])
         );
+        editorMarginsRef.current = nextMargins;
+        editorPageMarginsRef.current = nextPageMargins;
+        setEditorMargins(nextMargins);
+        setEditorPageMargins(nextPageMargins);
         setEditorPageCount(1);
         setAtsScanResult(null);
         setShowAtsDetails(false);
@@ -1983,7 +2098,7 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
             editorRef.current?.focus();
             window.getSelection()?.removeAllRanges();
             if (!deferPagination) {
-                repaginateEditorContent();
+                scheduleEditorPagination();
             }
         });
     };
@@ -2003,7 +2118,7 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         clearAiDraftTyping();
         const typingToken = aiDraftTypingTokenRef.current;
         const characters = Array.from(String(draftText || '').trim());
-        const chunkSize = Math.max(5, Math.ceil(characters.length / 120));
+        const chunkSize = Math.max(12, Math.ceil(characters.length / 72));
         let cursor = 0;
         let typingSurface = null;
 
@@ -2014,8 +2129,9 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
                 return;
             }
 
+            const previousCursor = cursor;
             cursor = Math.min(characters.length, cursor + chunkSize);
-            const partialText = characters.slice(0, cursor).join('');
+            const nextTextChunk = characters.slice(previousCursor, cursor).join('');
             if (editorRef.current) {
                 if (!typingSurface || !editorRef.current.contains(typingSurface)) {
                     editorRef.current.innerHTML = '';
@@ -2030,7 +2146,7 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
                     editorRef.current.appendChild(typingSurface);
                     enforceAiDraftBlackInk(editorRef.current, { allowUnmarked: true });
                 }
-                typingSurface.textContent = partialText;
+                typingSurface.appendChild(document.createTextNode(nextTextChunk));
             }
 
             if (cursor < characters.length) {
@@ -2050,12 +2166,8 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
                         ? { ...current, html: formattedHtml }
                         : current
                 ));
-                publishWorkspaceSnapshot(draftRecord, formattedHtml);
-                window.setTimeout(() => {
-                    window.requestAnimationFrame(() => {
-                        repaginateEditorContent();
-                    });
-                }, 32);
+                editorPaginationDeferredRef.current = false;
+                scheduleEditorPagination(48);
             }
 
             aiDraftTypingTimerRef.current = null;
@@ -2411,7 +2523,7 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
             if (!editorRef.current) return;
 
             const nextHtml = editorRef.current.innerHTML;
-            repaginateEditorContent();
+            scheduleEditorPagination();
             skipNextEditorHydrationRef.current = true;
             setEditorResume((current) => (
                 current
@@ -2825,6 +2937,9 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
     };
 
     const closeEditor = () => {
+        clearAiDraftTyping();
+        clearPendingEditorSync();
+        editorPaginationDeferredRef.current = false;
         setEditorResume(null);
         setEditorSuspended(false);
         setAtsScanResult(null);
@@ -2838,6 +2953,8 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         }
 
         clearAiDraftTyping();
+        clearPendingEditorSync();
+        editorPaginationDeferredRef.current = false;
         setWorkspaceMode(nextMode);
         setActiveTab('create');
         setEditorResume(null);
@@ -2855,6 +2972,7 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         clearMessages();
 
         if (editorResume && !isMobileViewport) {
+            clearPendingEditorSync();
             const currentHtml = editorRef.current?.innerHTML;
             if (currentHtml !== undefined) {
                 setEditorResume((current) => current ? { ...current, html: currentHtml } : current);

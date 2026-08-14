@@ -22,6 +22,7 @@ import './styles/portal-widgets-light.css';
 import './styles/portal-widgets-dark.css';
 import './styles/portal-request-fixes.css';
 import './styles/portal-current-request.css';
+import './styles/portal-august-visual-fixes.css';
 import { installMobileInteractionFeedback } from './utils/mobileHaptics';
 
 installMobileInteractionFeedback();

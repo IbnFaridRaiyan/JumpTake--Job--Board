@@ -296,6 +296,34 @@
   }
 }
 
+/* Dark wide-desktop AI widget: keep the orange send surface, but use crisp
+   white ink for both the label and paper-plane icon. */
+@media (min-width: 1900px) {
+  html[data-theme="dark"] body[data-theme="dark"] #root
+    .portal-side-widgets-theme-dark .portal-widget-chat
+    .public-ai-send-button,
+  html[data-theme="dark"] body[data-theme="dark"] #root
+    .portal-side-widgets-theme-dark .portal-widget-chat
+    .public-ai-send-button:is(:hover, :focus, :focus-visible, :active, :disabled),
+  html[data-theme="dark"] body[data-theme="dark"] #root
+    .portal-side-widgets-theme-dark .portal-widget-chat
+    .public-ai-send-button :is(span, div, svg) {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    text-shadow: none !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root
+    .portal-side-widgets-theme-dark .portal-widget-chat
+    .public-ai-send-button svg,
+  html[data-theme="dark"] body[data-theme="dark"] #root
+    .portal-side-widgets-theme-dark .portal-widget-chat
+    .public-ai-send-button svg path:not([fill="none"]) {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+  }
+}
+
 @media (min-width: 1900px) {
   /* The brand is a separate row above the profile card, aligned to its right. */
   html body #root .portal-side-widgets-left {
@@ -499,5 +527,645 @@
   html[data-theme="dark"] body[data-theme="dark"] #tailor-picture-options-close {
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
+  }
+}
+
+/* August 2026 portal polish: wide-desktop branding, compact Settings, and
+   one warm dark-cream language for light-mode utility rails. */
+:root {
+  --jt-portal-dark-cream: #d4bc99;
+  --jt-portal-dark-cream-soft: #f3e6d4;
+  --jt-portal-dark-cream-deep: #c7aa83;
+  --jt-portal-cream-ink: #3b2118;
+}
+
+/* Keep the widget rail at its original bounds so none of its cards gain
+   height. Only the logo is visually lifted and right-aligned; its normal
+   layout slot remains in place, keeping every widget at its default size. */
+@media (min-width: 1900px) {
+  html body #root .portal-side-widgets-left {
+    top: 5.2rem !important;
+    bottom: 1.25rem !important;
+    gap: 0.85rem !important;
+  }
+
+  html body #root .portal-side-logo {
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    flex: 0 0 4rem !important;
+    width: 100% !important;
+    min-height: 4rem !important;
+    height: 4rem !important;
+    margin: 0 !important;
+    padding: 0.1rem 0.7rem 0.2rem !important;
+    transform: translate(-1.5rem, -3.75rem) !important;
+    z-index: 1 !important;
+  }
+
+  html body #root .portal-side-logo > img {
+    display: block !important;
+    width: clamp(7.25rem, 7vw, 9rem) !important;
+    max-width: 9rem !important;
+    height: auto !important;
+    max-height: 3.2rem !important;
+    margin: 0 !important;
+    object-fit: contain !important;
+    object-position: right center !important;
+  }
+}
+
+/* Light-mode job filters and candidate discovery use a clearly darker cream
+   parent surface, with quieter warm fields inside it. */
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-filter-bar,
+body[data-theme="light"] #root .home-page .portal-job-filter-bar {
+  border-color: rgba(91, 55, 43, 0.2) !important;
+  background: var(--jt-portal-dark-cream) !important;
+  background-color: var(--jt-portal-dark-cream) !important;
+  background-image: none !important;
+  box-shadow: 0 0.7rem 1.8rem rgba(84, 56, 35, 0.12) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-job-filter-bar label select,
+body[data-theme="light"] #root .home-page .portal-job-filter-bar label select {
+  border-color: rgba(91, 55, 43, 0.19) !important;
+  background: var(--jt-portal-dark-cream-soft) !important;
+  background-color: var(--jt-portal-dark-cream-soft) !important;
+  color: var(--jt-portal-cream-ink) !important;
+  -webkit-text-fill-color: var(--jt-portal-cream-ink) !important;
+}
+
+/* Clear filters is a text action in light mode on every viewport. */
+html[data-theme="light"] body[data-theme="light"] #root .home-page
+  .portal-home-feed .portal-job-filter-bar button.portal-job-filter-clear,
+html[data-theme="light"] body[data-theme="light"] #root .home-page
+  .portal-home-feed .portal-job-filter-bar button.portal-job-filter-clear:is(:hover, :focus, :focus-visible, :active),
+body[data-theme="light"] #root .home-page
+  .portal-home-feed .portal-job-filter-bar button.portal-job-filter-clear,
+body[data-theme="light"] #root .home-page
+  .portal-home-feed .portal-job-filter-bar button.portal-job-filter-clear:is(:hover, :focus, :focus-visible, :active) {
+  width: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  color: var(--jt-portal-cream-ink) !important;
+  -webkit-text-fill-color: var(--jt-portal-cream-ink) !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .friend-invitations-section .friend-add-search,
+body[data-theme="light"] #root .home-page .friend-invitations-section .friend-add-search {
+  border-color: rgba(91, 55, 43, 0.2) !important;
+  background: var(--jt-portal-dark-cream) !important;
+  background-color: var(--jt-portal-dark-cream) !important;
+  background-image: none !important;
+  box-shadow: 0 0.7rem 1.8rem rgba(84, 56, 35, 0.12) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page .friend-invitations-section .friend-add-search input#friend-search,
+html[data-theme="light"] body[data-theme="light"] #root .home-page .friend-invitations-section .friend-add-search input#friend-search:is(:hover, :focus, :focus-visible, :active),
+body[data-theme="light"] #root .home-page .friend-invitations-section .friend-add-search input#friend-search,
+body[data-theme="light"] #root .home-page .friend-invitations-section .friend-add-search input#friend-search:is(:hover, :focus, :focus-visible, :active) {
+  border-color: rgba(91, 55, 43, 0.2) !important;
+  background: var(--jt-portal-dark-cream-soft) !important;
+  background-color: var(--jt-portal-dark-cream-soft) !important;
+  color: var(--jt-portal-cream-ink) !important;
+  -webkit-text-fill-color: var(--jt-portal-cream-ink) !important;
+}
+
+/* Requested light-mode section rails. Buttons remain slightly lighter than
+   the rail so the active state and keyboard focus are immediately legible. */
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(
+  .friend-invitation-tabs,
+  .applications-hub-nav,
+  .bookmarks-hub-nav,
+  .resume-playground-tabs,
+  .blocks-manager-tabs,
+  .settings-container .tabs-header
+),
+body[data-theme="light"] #root .home-page :is(
+  .friend-invitation-tabs,
+  .applications-hub-nav,
+  .bookmarks-hub-nav,
+  .resume-playground-tabs,
+  .blocks-manager-tabs,
+  .settings-container .tabs-header
+) {
+  border-color: rgba(91, 55, 43, 0.2) !important;
+  background: var(--jt-portal-dark-cream) !important;
+  background-color: var(--jt-portal-dark-cream) !important;
+  background-image: none !important;
+  box-shadow: 0 0.65rem 1.55rem rgba(84, 56, 35, 0.11) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(
+  .friend-invitation-tab,
+  .applications-hub-tab,
+  .bookmarks-hub-tab,
+  .resume-playground-tabs > button,
+  .blocks-manager-tab,
+  .settings-container .tab-button
+),
+body[data-theme="light"] #root .home-page :is(
+  .friend-invitation-tab,
+  .applications-hub-tab,
+  .bookmarks-hub-tab,
+  .resume-playground-tabs > button,
+  .blocks-manager-tab,
+  .settings-container .tab-button
+) {
+  border-color: rgba(91, 55, 43, 0.14) !important;
+  background: rgba(255, 249, 239, 0.7) !important;
+  background-color: rgba(255, 249, 239, 0.7) !important;
+  color: var(--jt-portal-cream-ink) !important;
+  -webkit-text-fill-color: var(--jt-portal-cream-ink) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(
+  .friend-invitation-tab.is-active,
+  .applications-hub-tab.active,
+  .bookmarks-hub-tab.active,
+  .resume-playground-tabs > button.is-active,
+  .blocks-manager-tab.is-active,
+  .settings-container .tab-button.active
+),
+body[data-theme="light"] #root .home-page :is(
+  .friend-invitation-tab.is-active,
+  .applications-hub-tab.active,
+  .bookmarks-hub-tab.active,
+  .resume-playground-tabs > button.is-active,
+  .blocks-manager-tab.is-active,
+  .settings-container .tab-button.active
+) {
+  border-color: rgba(111, 20, 34, 0.34) !important;
+  background: #fff8ee !important;
+  background-color: #fff8ee !important;
+  color: #6f1422 !important;
+  -webkit-text-fill-color: #6f1422 !important;
+  box-shadow: inset 0 0 0 1px rgba(111, 20, 34, 0.08) !important;
+}
+
+/* Shared Settings foundation. */
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) {
+  box-sizing: border-box !important;
+  width: min(100%, 54rem) !important;
+  max-width: 54rem !important;
+  margin-inline: auto !important;
+  padding: 0 0.72rem 1.5rem !important;
+}
+
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) :is(.settings-tabs, .tabs-content) {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) :is(.settings-card, .notification-card) {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0.9rem !important;
+  border-radius: 0.9rem !important;
+  overflow: hidden !important;
+}
+
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) :is(.settings-card, .notification-card) h3 {
+  margin: 0 0 0.28rem !important;
+  font-size: 0.92rem !important;
+  font-weight: 850 !important;
+  line-height: 1.2 !important;
+  letter-spacing: -0.01em !important;
+}
+
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) :is(.settings-card, .notification-card) > p,
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .app-mode-copy > p {
+  margin: 0 0 0.65rem !important;
+  font-size: 0.72rem !important;
+  line-height: 1.42 !important;
+}
+
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) form {
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .form-group {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  margin: 0 0 0.55rem !important;
+}
+
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .form-group > label {
+  display: block !important;
+  margin: 0 0 0.24rem !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+}
+
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .form-control {
+  box-sizing: border-box !important;
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 28rem !important;
+  height: 2.3rem !important;
+  min-height: 2.3rem !important;
+  margin: 0 !important;
+  padding: 0.46rem 0.68rem !important;
+  border-radius: 0.62rem !important;
+  font-size: 0.76rem !important;
+  line-height: 1.2 !important;
+}
+
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .settings-button.primary {
+  width: auto !important;
+  min-width: 0 !important;
+  min-height: 2.2rem !important;
+  margin-top: 0.08rem !important;
+  padding: 0.46rem 0.86rem !important;
+  border-radius: 999px !important;
+  font-size: 0.7rem !important;
+  font-weight: 850 !important;
+}
+
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .app-mode-card {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 0.85rem !important;
+  padding-block: 0.78rem !important;
+}
+
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .app-mode-copy > p {
+  margin-bottom: 0 !important;
+}
+
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .app-mode-switch-track {
+  width: 3.25rem !important;
+  height: 1.75rem !important;
+}
+
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .app-mode-switch-thumb {
+  top: 0.2rem !important;
+  left: 0.2rem !important;
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+}
+
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .app-mode-switch input:checked + .app-mode-switch-track .app-mode-switch-thumb {
+  transform: translateX(1.45rem) !important;
+}
+
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .app-mode-switch-label {
+  min-width: 4.5rem !important;
+  font-size: 0.7rem !important;
+}
+
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .notification-option {
+  margin: 0 !important;
+  padding: 0.68rem 0 !important;
+  border-width: 0 0 1px !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .notification-option:last-of-type {
+  border-bottom: 0 !important;
+}
+
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .checkbox-label {
+  align-items: flex-start !important;
+  gap: 0.65rem !important;
+}
+
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .notification-title {
+  font-size: 0.76rem !important;
+  font-weight: 820 !important;
+}
+
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .notification-description {
+  margin-top: 0.12rem !important;
+  font-size: 0.68rem !important;
+  line-height: 1.38 !important;
+}
+
+html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .notification-actions {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 0.6rem !important;
+  margin-top: 0.72rem !important;
+}
+
+/* Settings light theme. */
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.candidate-settings-container, .employer-settings-container) :is(.settings-card, .notification-card),
+body[data-theme="light"] #root .home-page :is(.candidate-settings-container, .employer-settings-container) :is(.settings-card, .notification-card) {
+  border: 1px solid rgba(91, 55, 43, 0.16) !important;
+  background: #fffaf3 !important;
+  background-color: #fffaf3 !important;
+  background-image: none !important;
+  box-shadow: 0 0.65rem 1.7rem rgba(84, 56, 35, 0.09) !important;
+  color: var(--jt-portal-cream-ink) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.candidate-settings-container, .employer-settings-container) :is(.settings-card, .notification-card) :is(h3, p, label, .notification-title, .notification-description, .app-mode-switch-label),
+body[data-theme="light"] #root .home-page :is(.candidate-settings-container, .employer-settings-container) :is(.settings-card, .notification-card) :is(h3, p, label, .notification-title, .notification-description, .app-mode-switch-label) {
+  color: var(--jt-portal-cream-ink) !important;
+  -webkit-text-fill-color: var(--jt-portal-cream-ink) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.candidate-settings-container, .employer-settings-container) .form-control,
+body[data-theme="light"] #root .home-page :is(.candidate-settings-container, .employer-settings-container) .form-control {
+  border: 1px solid rgba(91, 55, 43, 0.19) !important;
+  background: var(--jt-portal-dark-cream-soft) !important;
+  color: var(--jt-portal-cream-ink) !important;
+  -webkit-text-fill-color: var(--jt-portal-cream-ink) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .home-page :is(.candidate-settings-container, .employer-settings-container) .form-control:focus,
+body[data-theme="light"] #root .home-page :is(.candidate-settings-container, .employer-settings-container) .form-control:focus {
+  border-color: rgba(111, 20, 34, 0.48) !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 3px rgba(111, 20, 34, 0.1) !important;
+}
+
+/* Settings dark theme. */
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .settings-container .tabs-header,
+body[data-theme="dark"] #root .home-page .settings-container .tabs-header {
+  border-color: rgba(128, 202, 191, 0.16) !important;
+  background: #151b1d !important;
+  background-color: #151b1d !important;
+  background-image: none !important;
+  box-shadow: 0 0.75rem 1.9rem rgba(0, 0, 0, 0.24) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .settings-container .tab-button,
+body[data-theme="dark"] #root .home-page .settings-container .tab-button {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.045) !important;
+  color: rgba(244, 251, 249, 0.76) !important;
+  -webkit-text-fill-color: rgba(244, 251, 249, 0.76) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page .settings-container .tab-button:is(.active, :hover, :focus-visible),
+body[data-theme="dark"] #root .home-page .settings-container .tab-button:is(.active, :hover, :focus-visible) {
+  border-color: rgba(125, 211, 198, 0.3) !important;
+  background: rgba(95, 175, 164, 0.14) !important;
+  color: #f4fffd !important;
+  -webkit-text-fill-color: #f4fffd !important;
+  box-shadow: inset 0 0 0 1px rgba(125, 211, 198, 0.08) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(.candidate-settings-container, .employer-settings-container) :is(.settings-card, .notification-card),
+body[data-theme="dark"] #root .home-page :is(.candidate-settings-container, .employer-settings-container) :is(.settings-card, .notification-card) {
+  border: 1px solid rgba(128, 202, 191, 0.14) !important;
+  background: linear-gradient(145deg, rgba(25, 33, 35, 0.98), rgba(12, 17, 18, 0.98)) !important;
+  background-color: #111719 !important;
+  box-shadow: 0 0.8rem 2rem rgba(0, 0, 0, 0.3) !important;
+  color: #f4fbf9 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(.candidate-settings-container, .employer-settings-container) .form-control,
+body[data-theme="dark"] #root .home-page :is(.candidate-settings-container, .employer-settings-container) .form-control {
+  border: 1px solid rgba(128, 202, 191, 0.16) !important;
+  background: #0b1112 !important;
+  color: #f4fbf9 !important;
+  -webkit-text-fill-color: #f4fbf9 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .home-page :is(.candidate-settings-container, .employer-settings-container) .form-control:focus,
+body[data-theme="dark"] #root .home-page :is(.candidate-settings-container, .employer-settings-container) .form-control:focus {
+  border-color: rgba(125, 211, 198, 0.52) !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 3px rgba(95, 175, 164, 0.13) !important;
+}
+
+@media (min-width: 769px) {
+  html body #root .home-page .candidate-settings-container .settings-tab {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    align-items: start !important;
+    gap: 0.75rem !important;
+  }
+
+  html body #root .home-page .candidate-settings-container .account-tab > .app-mode-card,
+  html body #root .home-page .candidate-settings-container .notifications-tab > .notification-card {
+    grid-column: 1 / -1 !important;
+  }
+
+  html body #root .home-page .candidate-settings-container .tabs-header {
+    margin-bottom: 0.75rem !important;
+    padding: 0.42rem !important;
+  }
+
+  html body #root .home-page .candidate-settings-container .tab-button {
+    grid-template-rows: 1.1rem auto !important;
+    min-height: 2.85rem !important;
+    padding: 0.36rem 0.28rem !important;
+  }
+
+  html body #root .home-page .employer-settings-container .employer-settings-stack {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    align-items: start !important;
+    gap: 0.75rem !important;
+  }
+
+  html body #root .home-page .employer-settings-container .employer-settings-stack > :is(.app-mode-card, .settings-card:nth-child(2)) {
+    grid-column: 1 / -1 !important;
+  }
+
+  html body #root .home-page .employer-settings-container .employer-settings-stack > .settings-card:nth-child(2) > form:first-of-type {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.55rem !important;
+  }
+
+  html body #root .home-page .employer-settings-container .employer-settings-stack > .settings-card:nth-child(2) > .employer-settings-form {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.55rem !important;
+    margin-top: 0.75rem !important;
+    padding-top: 0.75rem !important;
+    border-top: 1px solid rgba(128, 202, 191, 0.12) !important;
+  }
+
+  html body #root .home-page .employer-settings-container .employer-settings-stack > .settings-card:nth-child(2) > form > .settings-button {
+    grid-column: 1 / -1 !important;
+    justify-self: start !important;
+  }
+}
+
+@media (max-width: 768px) {
+  html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 0.62rem 1.2rem !important;
+  }
+
+  html body #root .home-page .candidate-settings-container .settings-tabs {
+    margin-top: 0.35rem !important;
+  }
+
+  html body #root .home-page .candidate-settings-container .tabs-header {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.28rem !important;
+    width: 100% !important;
+    margin: 0 0 0.58rem !important;
+    padding: 0.36rem !important;
+    border-radius: 0.78rem !important;
+  }
+
+  html body #root .home-page .candidate-settings-container .tab-button {
+    min-height: 2.75rem !important;
+    padding: 0.34rem 0.12rem !important;
+  }
+
+  html body #root .home-page .candidate-settings-container .settings-tab,
+  html body #root .home-page .employer-settings-container .employer-settings-stack {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0.62rem !important;
+    width: 100% !important;
+  }
+
+  html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) :is(.settings-card, .notification-card) {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0.78rem !important;
+    border-radius: 0.82rem !important;
+  }
+
+  html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) form,
+  html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .form-group {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+
+  html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .form-control {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 2.6rem !important;
+    min-height: 2.6rem !important;
+    padding: 0.58rem 0.7rem !important;
+    font-size: 0.78rem !important;
+  }
+
+  html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .app-mode-card {
+    flex-direction: row !important;
+    align-items: center !important;
+    padding-block: 0.72rem !important;
+  }
+
+  html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .app-mode-switch {
+    gap: 0.42rem !important;
+  }
+
+  html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .settings-button.primary {
+    min-height: 2.28rem !important;
+    padding-inline: 0.84rem !important;
+  }
+
+  html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .notification-option {
+    padding-block: 0.62rem !important;
+  }
+}
+
+@media (max-width: 420px) {
+  html body #root .home-page :is(.candidate-settings-container, .employer-settings-container) .app-mode-card {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+  }
+
+  html body #root .home-page .candidate-settings-container .tab-button > span {
+    font-size: 0.62rem !important;
+  }
+}
+
+/* Match the candidate dashboard greeting typography across themes. */
+html[data-theme="light"] body[data-theme="light"] #root .home-page
+  .portal-default-landing.is-candidate .portal-default-title-animated,
+html[data-theme="light"] body[data-theme="light"] #root .home-page
+  .portal-default-landing.is-candidate .portal-default-title-animated *,
+body[data-theme="light"] #root .home-page
+  .portal-default-landing.is-candidate .portal-default-title-animated,
+body[data-theme="light"] #root .home-page
+  .portal-default-landing.is-candidate .portal-default-title-animated * {
+  font-family: "Chewy", system-ui, sans-serif !important;
+  font-weight: 900 !important;
+  font-variation-settings: normal !important;
+  letter-spacing: 0 !important;
+}
+
+/* In the light desktop editor, history glyphs use black ink while the dark
+   editor keeps its existing white glyphs. */
+@media (min-width: 769px) {
+  html[data-theme="light"] body[data-theme="light"]
+    #root .resume-playground-editor-shell .resume-playground-toolbar
+    button.resume-playground-icon-button:is(
+      .resume-playground-icon-undo,
+      .resume-playground-icon-redo,
+      .resume-playground-undo-button,
+      .resume-playground-redo-button
+    ),
+  body[data-theme="light"]
+    #root .resume-playground-editor-shell .resume-playground-toolbar
+    button.resume-playground-icon-button:is(
+      .resume-playground-icon-undo,
+      .resume-playground-icon-redo,
+      .resume-playground-undo-button,
+      .resume-playground-redo-button
+    ),
+  html[data-theme="light"] body[data-theme="light"]
+    #root .resume-playground-editor-shell .resume-playground-toolbar
+    button.resume-playground-icon-button:is([aria-label="Undo"], [aria-label="Redo"]),
+  body[data-theme="light"]
+    #root .resume-playground-editor-shell .resume-playground-toolbar
+    button.resume-playground-icon-button:is([aria-label="Undo"], [aria-label="Redo"]) {
+    color: #050505 !important;
+    -webkit-text-fill-color: #050505 !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"]
+    #root .resume-playground-editor-shell .resume-playground-toolbar
+    button.resume-playground-icon-button:is(
+      .resume-playground-icon-undo,
+      .resume-playground-icon-redo,
+      .resume-playground-undo-button,
+      .resume-playground-redo-button,
+      [aria-label="Undo"],
+      [aria-label="Redo"]
+    ) > span,
+  body[data-theme="light"]
+    #root .resume-playground-editor-shell .resume-playground-toolbar
+    button.resume-playground-icon-button:is(
+      .resume-playground-icon-undo,
+      .resume-playground-icon-redo,
+      .resume-playground-undo-button,
+      .resume-playground-redo-button,
+      [aria-label="Undo"],
+      [aria-label="Redo"]
+    ) > span {
+    color: #050505 !important;
+    -webkit-text-fill-color: #050505 !important;
+    text-shadow: none !important;
   }
 }

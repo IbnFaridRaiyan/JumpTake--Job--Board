@@ -565,7 +565,7 @@ const UserSettings = ({ user, onLogout, appMode, onAppModeChange }) => {
     );
 
     return (
-        <div className="settings-container">
+        <div className="settings-container candidate-settings-container">
             {message && (
                 <div className={`notification-message ${message.includes('Error') ? 'error' : 'success'}`}>
                     {message}

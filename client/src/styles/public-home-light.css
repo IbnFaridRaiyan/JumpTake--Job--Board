@@ -2938,3 +2938,15 @@ body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-public-r
 body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-public-review-rating button.active {
   color: var(--jt-light-teal) !important;
 }
+
+/* The three animated role, resume, and connection cards stay true white in
+   the light presentation on both desktop and mobile. */
+body[data-public-home-theme="light"] #root .jt-public-home.is-light :is(
+  .jt-floating-card.jt-floating-job,
+  .jt-floating-card.jt-floating-resume,
+  .jt-floating-card.jt-floating-connect
+) {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+}

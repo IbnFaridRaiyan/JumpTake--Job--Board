@@ -468,7 +468,7 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
         }
         const payload = { mode: 'candidate', tab: 'create-story', openComposer: true, text: '', taggedUsers: [tag] };
         sessionStorage.setItem('jumptakeFeedAiDraft', JSON.stringify(payload));
-        window.dispatchEvent(new CustomEvent('jumptake-ai-open-section', { detail: { mode: 'candidate', section: 'job-feed' } }));
+        window.dispatchEvent(new CustomEvent('jumptake-ai-open-section', { detail: { mode: 'candidate', section: 'talent-stories' } }));
         window.setTimeout(() => window.dispatchEvent(new CustomEvent('jumptake-feed-ai-draft', { detail: payload })), 180);
         setOpenThreadMenuId('');
     };

@@ -43,8 +43,11 @@ const DraftApplications = ({ userId, switchSection, embedded = false }) => {
         localStorage.setItem('jumptakeActiveDraftId', draft._id);
         localStorage.setItem('jumptakeActiveJobReturnSection', 'draft-applications');
         if (switchSection) {
-            switchSection('job-feed');
+            switchSection('job-posts');
         }
+        window.dispatchEvent(new CustomEvent('jumptake-home-feed-request', {
+            detail: { mode: 'candidate', tab: 'job-posts', draftId: draft._id }
+        }));
     };
 
     const handleDeleteDraft = async (draftId) => {

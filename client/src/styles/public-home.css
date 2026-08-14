@@ -518,7 +518,7 @@
 
 .jt-floating-job {
   top: 54px;
-  left: -28px;
+  left: 24px;
   width: 330px;
   animation: jt-float 6s ease-in-out infinite;
 }
@@ -2931,6 +2931,236 @@
   .jt-job-modal-actions {
     align-items: stretch;
     flex-direction: column;
+  }
+}
+
+/* Public hero overline: unframed editorial label, replacing the status pill. */
+body[data-public-home-theme] #root .jt-public-home .jt-hero-overline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.72rem;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  color: rgba(255, 255, 255, 0.76);
+  background: transparent;
+  box-shadow: none;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-hero-overline-rule {
+  position: relative;
+  flex: 0 0 2.15rem;
+  width: 2.15rem;
+  height: 0.5rem;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-hero-overline-rule::before,
+body[data-public-home-theme] #root .jt-public-home .jt-hero-overline-rule::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  display: block;
+  background: var(--jt-teal);
+  transform-origin: left center;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-hero-overline-rule::before {
+  top: 0.08rem;
+  width: 2.15rem;
+  height: 2px;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-hero-overline-rule::after {
+  bottom: 0.05rem;
+  width: 1.1rem;
+  height: 1px;
+  opacity: 0.48;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-hero-overline-label {
+  display: block;
+  color: inherit;
+  font-family: 'Roboto Flex', 'Lexend', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 720;
+  letter-spacing: 0.13em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-hero-overline {
+  color: var(--jt-light-teal-dark);
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-hero-overline-rule::before,
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-hero-overline-rule::after {
+  background: var(--jt-light-teal);
+}
+
+@keyframes jt-hero-title-word-jump {
+  0%,
+  70%,
+  80%,
+  88%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  76% {
+    transform: translate3d(0, -0.13em, 0);
+  }
+
+  84% {
+    transform: translate3d(0, -0.055em, 0);
+  }
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-hero h1.jt-hero-scramble-title .jt-hero-title-word.is-title-jump {
+  transform-origin: center bottom;
+  will-change: transform;
+  animation: jt-hero-title-word-jump 3.8s cubic-bezier(0.3, 0.75, 0.25, 1) 1.45s infinite both !important;
+}
+
+@media (max-width: 760px) {
+  body[data-public-home-theme] #root .jt-public-home .jt-hero-overline {
+    gap: 0.55rem;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-hero-overline-rule {
+    flex-basis: 1.65rem;
+    width: 1.65rem;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-hero-overline-rule::before {
+    width: 1.65rem;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-hero-overline-rule::after {
+    width: 0.82rem;
+  }
+
+  body[data-public-home-theme] #root .jt-public-home .jt-hero-overline-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.11em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-public-home-theme] #root .jt-public-home .jt-hero h1.jt-hero-scramble-title .jt-hero-title-word.is-title-jump {
+    transform: none !important;
+    animation: none !important;
+  }
+}
+
+/* Hero title: a restrained version of the reference letter-settle animation. */
+@keyframes jt-hero-title-character-settle {
+  0% {
+    opacity: 0.44;
+    transform: translate3d(0, var(--jt-title-y), var(--jt-title-z));
+  }
+
+  72% {
+    opacity: 1;
+    transform: translate3d(0, var(--jt-title-overshoot), 0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-hero h1.jt-hero-scramble-title {
+  display: grid !important;
+  justify-items: start !important;
+  gap: 0.04em !important;
+  letter-spacing: 0 !important;
+  perspective: 300px !important;
+  transform: none !important;
+  animation: none !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-hero h1.jt-hero-scramble-title .jt-hero-title-line {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: baseline !important;
+  column-gap: 0.2em !important;
+  row-gap: 0 !important;
+  min-width: 0 !important;
+  color: inherit !important;
+  transform-style: preserve-3d !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-hero h1.jt-hero-scramble-title .jt-hero-title-line.is-primary {
+  color: var(--jt-ink) !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-hero h1.jt-hero-scramble-title .jt-hero-title-line.is-accent {
+  color: var(--jt-teal-dark) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-hero h1.jt-hero-scramble-title .jt-hero-title-line.is-primary {
+  color: var(--jt-light-ink) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light .jt-hero h1.jt-hero-scramble-title .jt-hero-title-line.is-accent {
+  color: var(--jt-light-teal-dark) !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-hero h1.jt-hero-scramble-title .jt-hero-title-phrase {
+  display: inline-flex !important;
+  align-items: baseline !important;
+  gap: 0.2em !important;
+  white-space: nowrap !important;
+  color: inherit !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-hero h1.jt-hero-scramble-title .jt-hero-title-word {
+  display: inline-flex !important;
+  align-items: baseline !important;
+  white-space: nowrap !important;
+  color: inherit !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-hero h1.jt-hero-scramble-title .jt-hero-title-word {
+  color: #ffffff !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-hero h1.jt-hero-scramble-title .jt-hero-title-word.is-title-accent {
+  color: var(--jt-teal) !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-hero h1.jt-hero-scramble-title .jt-hero-title-character {
+  display: inline-block !important;
+  position: relative !important;
+  color: inherit !important;
+  -webkit-text-fill-color: currentColor !important;
+  font: inherit !important;
+  letter-spacing: 0 !important;
+  line-height: inherit !important;
+  transform-style: preserve-3d !important;
+  backface-visibility: hidden !important;
+  will-change: transform, opacity !important;
+  animation: jt-hero-title-character-settle 620ms cubic-bezier(0.16, 1, 0.3, 1) var(--jt-title-delay) both !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-hero-copy:not(.is-visible) .jt-hero-title-character {
+  animation-play-state: paused !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home .jt-hero-copy.is-visible .jt-hero-title-character {
+  animation-play-state: running !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-public-home-theme] #root .jt-public-home .jt-hero h1.jt-hero-scramble-title .jt-hero-title-character {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
   }
 }
 

@@ -49,6 +49,53 @@ const PUBLIC_STEP_DRAWINGS = [
     stepDrawingConnect
 ];
 
+const HeroTitleLine = ({ phrases, tone, startIndex = 0 }) => {
+    let lineCharacterIndex = startIndex;
+
+    return (
+        <span className={`jt-hero-title-line is-${tone}`} aria-hidden="true">
+            {phrases.map((phrase, phraseIndex) => (
+                <span className="jt-hero-title-phrase" key={`${phrase}-${phraseIndex}`}>
+                    {phrase.split(' ').map((word, wordIndex) => {
+                        const wordStartIndex = lineCharacterIndex;
+                        const isAccentWord = /^(work|jump[.!?]?)$/i.test(word);
+                        const isJumpWord = /^jump[.!?]?$/i.test(word);
+                        lineCharacterIndex += word.length;
+
+                        return (
+                            <span
+                                className={`jt-hero-title-word${isAccentWord ? ' is-title-accent' : ''}${isJumpWord ? ' is-title-jump' : ''}`}
+                                key={`${word}-${wordIndex}`}
+                            >
+                                {[...word].map((letter, letterIndex) => {
+                                    const characterIndex = wordStartIndex + letterIndex;
+                                    const direction = characterIndex % 2 === 0 ? -1 : 1;
+                                    const distance = 7 + ((characterIndex * 7) % 4) * 3;
+
+                                    return (
+                                        <span
+                                            className="jt-hero-title-character"
+                                            key={`${letter}-${letterIndex}`}
+                                            style={{
+                                                '--jt-title-y': `${direction * distance}px`,
+                                                '--jt-title-z': `${3 + ((characterIndex * 5) % 4) * 2}px`,
+                                                '--jt-title-overshoot': `${direction * -0.75}px`,
+                                                '--jt-title-delay': `${90 + characterIndex * 22}ms`
+                                            }}
+                                        >
+                                            {letter}
+                                        </span>
+                                    );
+                                })}
+                            </span>
+                        );
+                    })}
+                </span>
+            ))}
+        </span>
+    );
+};
+
 const getInitialPublicHomeTheme = () => {
     if (typeof window === 'undefined') {
         return 'dark';
@@ -931,13 +978,13 @@ const Landing = ({ onThemeChange }) => {
                     <div className="jt-hero-grid" aria-hidden="true" />
 
                     <div className="jt-hero-copy jt-reveal">
-                        <div className="jt-eyebrow">
-                            <span className="jt-live-dot" />
-                            The connected career platform
+                        <div className="jt-hero-overline">
+                            <span className="jt-hero-overline-rule" aria-hidden="true" />
+                            <span className="jt-hero-overline-label">The connected career platform</span>
                         </div>
-                        <h1>
-                            Work moves fast.
-                            <span>Take the next jump.</span>
+                        <h1 className="jt-hero-scramble-title" aria-label="Work moves fast. Take the next jump.">
+                            <HeroTitleLine phrases={['Work', 'moves fast.']} tone="primary" />
+                            <HeroTitleLine phrases={['Take the', 'next jump.']} tone="accent" startIndex={14} />
                         </h1>
                         <p>
                             Discover live roles, build stronger applications with AI, follow what companies are doing,

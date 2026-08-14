@@ -10,9 +10,16 @@ import TalentPool from './TalentPool';
 import MessageCompanyProfileModal from './MessageCompanyProfileModal';
 import { apiUrl } from '../utils/apiUrl';
 import confirmAction from '../utils/confirmAction';
+import { readAssistantPageContext } from '../utils/assistantPageContext';
 
 const stripHtml = (html = '') => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 const hasMessageContent = (html = '') => stripHtml(html).length > 0 || /<img\b/i.test(html);
+const escapeMessageHtml = (value = '') => String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 const ASSISTANT_THREAD_ID = '__jumptake_ai__';
 const MESSAGE_MENU_ANIMATION_MS = 180;
 const normalizeSearchText = (value = '') => String(value || '')
@@ -347,6 +354,8 @@ const FloatingMessenger = ({
     companyData = null,
     jobs = [],
     activeSection = '',
+    lastUsedSection = '',
+    availablePages = [],
     unreadCount = 0,
     onSeen
 }) => {
@@ -395,16 +404,6 @@ const FloatingMessenger = ({
     const assistantStorageKey = useMemo(() => (
         `jumptakeAssistantChat:${mode || 'portal'}:${userId || companyId || 'guest'}`
     ), [companyId, mode, userId]);
-    const getAssistantContext = useCallback(() => ({
-        portalMode: mode,
-        activeSection,
-        user: currentUser,
-        profile: profileData,
-        company: companyData,
-        workspace: readWorkspaceSnapshot(),
-        jobs: Array.isArray(jobs) ? jobs : []
-    }), [activeSection, companyData, currentUser, jobs, mode, profileData]);
-
     const assistantSelected = selectedThreadId === ASSISTANT_THREAD_ID;
     const selectedThread = assistantSelected ? null : (threads.find((thread) => thread._id === selectedThreadId) || null);
 
@@ -558,6 +557,38 @@ const FloatingMessenger = ({
             user: candidate.user || participant?._id || participant || '',
             jumptakeId: candidate.jumptakeId || participant?.jumptakeId || ''
         } : null;
+    };
+
+    const getAssistantContext = () => {
+        const contacts = threads.map((thread) => {
+            const profile = getThreadProfile(thread);
+            return {
+                id: thread?._id || '',
+                userId: profile?.user?._id || profile?.user || '',
+                candidateId: profile?._id || '',
+                name: getThreadTitle(thread),
+                jumptakeId: profile?.jumptakeId || ''
+            };
+        });
+        const safeJobs = Array.isArray(jobs) ? jobs : [];
+        return {
+            portalMode: mode,
+            activeSection,
+            lastUsedSection,
+            availablePages,
+            user: currentUser,
+            profile: profileData,
+            company: companyData,
+            workspace: readWorkspaceSnapshot(),
+            jobs: safeJobs,
+            view: readAssistantPageContext({
+                activeSection,
+                lastUsedSection,
+                availablePages,
+                jobs: safeJobs,
+                contacts
+            })
+        };
     };
 
     const getThreadCompanyProfile = (thread) => (
@@ -1151,11 +1182,120 @@ const FloatingMessenger = ({
         }, 450);
     };
 
+    const sendAssistantMessage = async (args = {}, assistantContext = {}) => {
+        const messageText = String(args.message || '').trim();
+        const recipientReference = normalizeSearchText(args.recipientReference || args.targetReference || '');
+        if (!messageText || !recipientReference) {
+            window.dispatchEvent(new CustomEvent(openEventName, {
+                detail: { assistant: false, source: 'assistant' }
+            }));
+            setMessage('Choose a conversation and review the message before sending.');
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem(isEmployer ? 'employerToken' : 'token');
+            let availableThreads = threads;
+            if (!availableThreads.length) {
+                const threadResponse = await fetch(apiUrl(endpoint), {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (threadResponse.ok) {
+                    const threadData = await threadResponse.json();
+                    availableThreads = Array.isArray(threadData) ? threadData : [];
+                    setThreads(availableThreads);
+                }
+            }
+
+            const targetThread = availableThreads.find((thread) => {
+                const profile = getThreadProfile(thread);
+                const haystack = normalizeSearchText([
+                    thread?._id,
+                    getThreadTitle(thread),
+                    profile?._id,
+                    profile?.user?._id || profile?.user,
+                    profile?.jumptakeId
+                ].filter(Boolean).join(' '));
+                return haystack.includes(recipientReference) || recipientReference.includes(normalizeSearchText(getThreadTitle(thread)));
+            });
+            const bodyHtml = `<p>${escapeMessageHtml(messageText)}</p>`;
+            let response;
+
+            if (targetThread?._id) {
+                response = await fetch(apiUrl(`/api/messages/${targetThread._id}/reply`), {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        senderType: isEmployer ? 'employer' : 'candidate',
+                        senderUserId: !isEmployer ? userId : undefined,
+                        bodyHtml
+                    })
+                });
+            } else {
+                const contextContacts = Array.isArray(assistantContext?.view?.contacts)
+                    ? assistantContext.view.contacts
+                    : [];
+                const contact = contextContacts.find((item) => {
+                    const haystack = normalizeSearchText([
+                        item?.id,
+                        item?.candidateId,
+                        item?.userId,
+                        item?.name,
+                        item?.jumptakeId
+                    ].filter(Boolean).join(' '));
+                    return haystack.includes(recipientReference) || recipientReference.includes(normalizeSearchText(item?.name));
+                });
+                if (isEmployer || (!contact?.candidateId && !contact?.userId)) {
+                    window.dispatchEvent(new CustomEvent(openEventName, {
+                        detail: { assistant: false, source: 'assistant' }
+                    }));
+                    setMessage('I opened Messages so you can choose the recipient safely.');
+                    return;
+                }
+                response = await fetch(apiUrl('/api/messages/candidate-direct'), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        senderUserId: userId,
+                        recipientCandidateId: contact.candidateId || undefined,
+                        recipientUserId: contact.userId || undefined,
+                        bodyHtml
+                    })
+                });
+            }
+
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(data.error || 'Could not send the message.');
+            if (data?._id) {
+                setThreads((current) => (
+                    current.some((thread) => thread._id === data._id)
+                        ? current.map((thread) => (thread._id === data._id ? data : thread))
+                        : [data, ...current]
+                ));
+            }
+            setMessage('Message sent.');
+        } catch (sendError) {
+            setError(sendError.message || 'Could not send the message.');
+            window.dispatchEvent(new CustomEvent(openEventName, {
+                detail: { assistant: false, source: 'assistant' }
+            }));
+        }
+    };
+
     const handleAssistantAction = (action, payload = {}) => {
         const answer = String(payload.answer || '').trim();
         const question = String(payload.question || '').trim();
         const localAction = detectLocalAssistantAction(question, payload.context || {});
-        const actionName = String(localAction || action || '').trim().toLowerCase();
+        const actionName = String(action || localAction || '').trim().toLowerCase();
+        const actionArgs = payload.actionPayload && typeof payload.actionPayload === 'object'
+            ? payload.actionPayload
+            : {};
         const cleanedDraft = cleanAssistantDraftText(answer || question) || answer || question;
         const localDraft = isWeakAssistantActionDraft(cleanedDraft)
             ? buildLocalActionDraft(actionName, payload.context || {}, question)
@@ -1176,6 +1316,56 @@ const FloatingMessenger = ({
                     dueAt: isReminderRequest ? parseReminderDueAt(question) : ''
                 }
             }));
+            return;
+        }
+
+        if (actionName === 'theme-set') {
+            const theme = actionArgs.theme === 'dark' ? 'dark' : 'light';
+            window.dispatchEvent(new CustomEvent('jumptake-ai-theme-change', {
+                detail: { mode, theme }
+            }));
+            return;
+        }
+
+        if (actionName === 'account-change-password') {
+            sessionStorage.setItem('jumptakeAiSettingsAction', JSON.stringify({
+                mode,
+                action: 'focus-password',
+                createdAt: Date.now()
+            }));
+            storeAndOpenSection('settings');
+            window.setTimeout(() => {
+                window.dispatchEvent(new CustomEvent('jumptake-ai-settings-action', {
+                    detail: { mode, action: 'focus-password' }
+                }));
+            }, 80);
+            minimizeAfterMobileAssistantAction();
+            return;
+        }
+
+        if ([
+            'feed-react',
+            'feed-comment',
+            'feed-share',
+            'job-like',
+            'job-review',
+            'job-share'
+        ].includes(actionName)) {
+            window.dispatchEvent(new CustomEvent('jumptake-ai-feed-action', {
+                detail: {
+                    mode,
+                    action: actionName,
+                    args: actionArgs,
+                    context: payload.context || {}
+                }
+            }));
+            minimizeAfterMobileAssistantAction();
+            return;
+        }
+
+        if (actionName === 'message-send') {
+            sendAssistantMessage(actionArgs, payload.context || {});
+            minimizeAfterMobileAssistantAction();
             return;
         }
 
@@ -1211,13 +1401,17 @@ const FloatingMessenger = ({
             return;
         }
 
-        if (actionName === 'candidate-create-resume' && !isEmployer) {
+        if (['candidate-create-resume', 'candidate-tailor-resume-to-job'].includes(actionName) && !isEmployer) {
             storeAndOpenSection('resume-playground', 'jumptakeResumePlaygroundAiDraft', {
                 mode: 'resume',
-                name: 'AI Generated Resume',
+                name: actionName === 'candidate-tailor-resume-to-job'
+                    ? `Tailored Resume${actionArgs.targetReference ? ` - ${actionArgs.targetReference}` : ''}`
+                    : 'AI Generated Resume',
                 text: draftText,
                 source: 'ai-tailor',
-                style: 'professional'
+                style: 'professional',
+                targetJobId: actionArgs.targetId || '',
+                targetJobTitle: actionArgs.targetReference || ''
             }, 'jumptake-resume-playground-ai-draft');
             minimizeAfterMobileAssistantAction();
             return;
@@ -1235,13 +1429,23 @@ const FloatingMessenger = ({
             return;
         }
 
-        if ((actionName === 'candidate-create-document' || actionName === 'candidate-format-document') && !isEmployer) {
+        if ([
+            'candidate-create-document',
+            'candidate-format-document',
+            'candidate-tailor-cover-letter-to-job'
+        ].includes(actionName) && !isEmployer) {
             storeAndOpenSection('resume-playground', 'jumptakeResumePlaygroundAiDraft', {
                 mode: 'document',
-                name: actionName === 'candidate-format-document' ? 'AI Formatted Document' : 'AI Generated Document',
+                name: actionName === 'candidate-format-document'
+                    ? 'AI Formatted Document'
+                    : actionName === 'candidate-tailor-cover-letter-to-job'
+                        ? `Cover Letter${actionArgs.targetReference ? ` - ${actionArgs.targetReference}` : ''}`
+                        : 'AI Generated Document',
                 text: draftText,
                 source: 'ai-tailor',
-                style: 'professional'
+                style: 'professional',
+                targetJobId: actionArgs.targetId || '',
+                targetJobTitle: actionArgs.targetReference || ''
             }, 'jumptake-resume-playground-ai-draft');
             minimizeAfterMobileAssistantAction();
             return;
@@ -1302,7 +1506,9 @@ const FloatingMessenger = ({
         }
 
         if (actionName === 'candidate-apply-job' && !isEmployer) {
-            const matchedJob = findRequestedJob(question) || findRequestedJob(answer);
+            const matchedJob = findRequestedJob(actionArgs.targetId || actionArgs.targetReference)
+                || findRequestedJob(question)
+                || findRequestedJob(answer);
             if (!matchedJob) {
                 return;
             }
@@ -1314,7 +1520,7 @@ const FloatingMessenger = ({
                 jobId,
                 action: 'apply'
             };
-            storeAndOpenSection('job-feed', 'jumptakeHomeFeedRequest', request, 'jumptake-home-feed-request');
+            storeAndOpenSection('job-posts', 'jumptakeHomeFeedRequest', request, 'jumptake-home-feed-request');
             minimizeAfterMobileAssistantAction();
         }
     };

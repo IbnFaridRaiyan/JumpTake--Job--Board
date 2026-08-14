@@ -510,6 +510,10 @@ const inferAction = (message, context = {}) => {
   const asksJobs = /\b(job feed|jobs feed|browse jobs|open jobs|show jobs|job posts|find jobs)\b/.test(normalized);
   const asksResume = /\b(make|create|build|generate|write|draft|compose|prepare)\b.{0,36}\b(res+um[eé]?s?|cv)\b/.test(normalized)
     || /\b(res+um[eé]?s?|cv)\b.{0,24}\b(make|create|build|generate|write|draft|compose|prepare)\b/.test(normalized);
+  const asksResumeTailor = /\b(tailor|target|adapt|match|customize|customise|optimize|optimise|boost)\b.{0,52}\b(res+um[eé]?s?|cv)\b/.test(normalized)
+    || /\b(res+um[eé]?s?|cv)\b.{0,52}\b(tailor|target|adapt|match|customize|customise|optimize|optimise|boost)\b/.test(normalized);
+  const asksCoverLetterTailor = /\b(?:cover\s*letter|application\s+letter)\b/.test(normalized)
+    && /\b(?:this|current|open|visible|screen|job|role|position|posting|tailor|target|match|adapt)\b/.test(normalized);
   const asksResumeFormat = /\b(format|style|design|align|fix|polish|make)\b.{0,44}\b(resume|cv)\b/.test(normalized)
     || (currentSection === 'resume-playground' && /\b(format|style|design|align|fix|polish|a4|template)\b/.test(normalized));
   const asksDocument = /\b(make|create|build|generate|write|draft|compose|prepare)\b.{0,36}\b(document|documents|doc|cover letter|offer letter|letter|policy|memo)\b/.test(normalized)
@@ -533,9 +537,29 @@ const inferAction = (message, context = {}) => {
     );
   const asksAssessment = /\b(make|create|write|draft|generate|compose|prepare)\b.{0,36}\b(assessment|test|quiz|screening)\b/.test(normalized)
     || /\bassessment\b.{0,36}\b(candidate|general|job)\b/.test(normalized);
+  const asksTheme = /\b(?:switch|change|set|turn|use)\b.{0,24}\b(?:dark|light)\s+mode\b|\b(?:dark|light)\s+mode\b.{0,24}\b(?:on|please|now)\b/.test(normalized);
+  const asksPasswordChange = /\b(?:change|update|reset)\b.{0,24}\b(?:my\s+)?password\b/.test(normalized);
+  const asksFeedReaction = /\b(?:like|react|reaction|motivate|congratulate|appreciate|love|empower)\b.{0,48}\b(?:post|story|feed|update)\b|\b(?:post|story|feed|update)\b.{0,48}\b(?:like|react|reaction|motivate|congratulate|appreciate|love|empower)\b/.test(normalized);
+  const asksFeedComment = /\b(?:comment|reply)\b.{0,48}\b(?:post|story|feed|update)\b|\b(?:post|story|feed|update)\b.{0,48}\b(?:comment|reply)\b/.test(normalized);
+  const asksFeedShare = /\bshare\b.{0,48}\b(?:post|story|feed|update)\b|\b(?:post|story|feed|update)\b.{0,48}\bshare\b/.test(normalized);
+  const asksJobLike = /\blike\b.{0,40}\b(?:job|role|position)\b|\b(?:job|role|position)\b.{0,40}\blike\b/.test(normalized);
+  const asksJobReview = /\b(?:review|rate)\b.{0,48}\b(?:job|role|position)\b|\b(?:job|role|position)\b.{0,48}\b(?:review|rating|stars?)\b/.test(normalized);
+  const asksJobShare = /\bshare\b.{0,48}\b(?:job|role|position)\b|\b(?:job|role|position)\b.{0,48}\bshare\b/.test(normalized);
+  const asksDirectMessage = /\b(?:send|write|message|text)\b.{0,80}\b(?:friend|message|text|dm|inbox)\b/.test(normalized);
   const sectionAction = inferSectionAction(normalized, context);
 
   if (asksNotepadAction && portalMode) return 'widget-set-reminder';
+  if (asksTheme && portalMode) return 'theme-set';
+  if (asksPasswordChange && portalMode) return 'account-change-password';
+  if (asksJobReview && portalMode !== 'employer') return 'job-review';
+  if (asksJobShare && portalMode !== 'employer') return 'job-share';
+  if (asksJobLike && portalMode !== 'employer') return 'job-like';
+  if (asksFeedComment && portalMode) return 'feed-comment';
+  if (asksFeedShare && portalMode) return 'feed-share';
+  if (asksFeedReaction && portalMode) return 'feed-react';
+  if (asksDirectMessage && portalMode) return 'message-send';
+  if (asksResumeTailor && portalMode !== 'employer') return 'candidate-tailor-resume-to-job';
+  if (asksCoverLetterTailor && portalMode !== 'employer') return 'candidate-tailor-cover-letter-to-job';
   if (asksResumeFormat && portalMode !== 'employer') return 'candidate-format-resume';
   if (asksDocumentFormat && portalMode === 'employer') return 'employer-format-document';
   if (asksDocumentFormat && portalMode !== 'employer') return 'candidate-format-document';
@@ -560,8 +584,10 @@ const inferAction = (message, context = {}) => {
 const PORTAL_ACTIONS = new Set([
   'candidate-create-resume',
   'candidate-format-resume',
+  'candidate-tailor-resume-to-job',
   'candidate-create-document',
   'candidate-format-document',
+  'candidate-tailor-cover-letter-to-job',
   'candidate-apply-job',
   'candidate-create-story',
   'employer-create-post',
@@ -601,15 +627,35 @@ const buildHistoryBlock = (history = []) => (
     .join('\n')
 );
 
+const compactAssistantJob = (job = {}) => ({
+  id: job?._id || job?.id || job?.jobNumber || '',
+  title: truncateAssistantText(job?.title || job?.role, 120),
+  company: truncateAssistantText(job?.company?.name || job?.companyName || job?.company, 120),
+  description: truncateAssistantText(job?.description || job?.summary, 900),
+  requirements: Array.isArray(job?.requirements)
+    ? job.requirements.slice(0, 8).map((item) => truncateAssistantText(item, 180))
+    : truncateAssistantText(job?.requirements, 900),
+  skills: Array.isArray(job?.skills)
+    ? job.skills.slice(0, 12).map((item) => truncateAssistantText(item, 120))
+    : truncateAssistantText(job?.skills, 700),
+  location: truncateAssistantText(job?.location, 120),
+  type: truncateAssistantText(job?.type || job?.jobType, 80)
+});
+
 const buildCompactPortalContext = (context = {}) => {
   const workspace = context.workspace && typeof context.workspace === 'object' ? context.workspace : {};
   const notepad = context.notepad && typeof context.notepad === 'object'
     ? context.notepad
     : { content: context.notepad || '' };
+  const view = context.view && typeof context.view === 'object' ? context.view : {};
 
   return {
     portalMode: context.portalMode || '',
     activeSection: context.activeSection || '',
+    lastUsedSection: context.lastUsedSection || view.lastUsedSection || '',
+    availablePages: (Array.isArray(context.availablePages) ? context.availablePages : view.availablePages || [])
+      .slice(0, 40)
+      .map((page) => ({ id: truncateAssistantText(page?.id, 80), title: truncateAssistantText(page?.title, 120) })),
     user: pickCompactFields(context.user, ['id', 'email', 'name', 'jumptakeId', 'jobInterests'], 500),
     profile: pickCompactFields(context.profile, [
       'name',
@@ -638,17 +684,32 @@ const buildCompactPortalContext = (context = {}) => {
     notepad: {
       content: truncateAssistantText(notepad.content, 2500)
     },
-    jobs: Array.isArray(context.jobs) ? context.jobs.slice(0, 6).map((job) => ({
-      id: job?._id || job?.id || job?.jobNumber || '',
-      title: truncateAssistantText(job?.title, 120),
-      company: truncateAssistantText(job?.company?.name || job?.companyName, 120),
-      description: truncateAssistantText(job?.description || job?.summary, 700),
-      requirements: Array.isArray(job?.requirements)
-        ? job.requirements.slice(0, 5).map((item) => truncateAssistantText(item, 160))
-        : truncateAssistantText(job?.requirements, 700),
-      location: truncateAssistantText(job?.location, 120),
-      type: truncateAssistantText(job?.type || job?.jobType, 80)
-    })) : []
+    jobs: Array.isArray(context.jobs) ? context.jobs.slice(0, 8).map(compactAssistantJob) : [],
+    targetJob: context.targetJob ? compactAssistantJob(context.targetJob) : null,
+    view: {
+      activePageTitle: truncateAssistantText(view.activePageTitle, 160),
+      pageText: truncateAssistantText(view.pageText, 4200),
+      openDialog: view.openDialog && typeof view.openDialog === 'object'
+        ? {
+          label: truncateAssistantText(view.openDialog.label, 160),
+          text: truncateAssistantText(view.openDialog.text, 1800)
+        }
+        : null,
+      visibleJobs: Array.isArray(view.visibleJobs) ? view.visibleJobs.slice(0, 8).map(compactAssistantJob) : [],
+      visiblePosts: Array.isArray(view.visiblePosts) ? view.visiblePosts.slice(0, 8).map((post) => ({
+        id: truncateAssistantText(post?.id, 120),
+        author: truncateAssistantText(post?.author, 120),
+        type: truncateAssistantText(post?.type, 100),
+        body: truncateAssistantText(post?.body, 900)
+      })) : [],
+      contacts: Array.isArray(view.contacts) ? view.contacts.slice(0, 16).map((contact) => ({
+        id: truncateAssistantText(contact?.id, 120),
+        userId: truncateAssistantText(contact?.userId, 120),
+        candidateId: truncateAssistantText(contact?.candidateId, 120),
+        name: truncateAssistantText(contact?.name, 120),
+        jumptakeId: truncateAssistantText(contact?.jumptakeId, 120)
+      })) : []
+    }
   };
 };
 
@@ -696,7 +757,7 @@ const getProfileDisplayName = (context = {}) => {
 const getTargetRole = (message = '', context = {}) => {
   const interests = normalizeDraftList(context.user?.jobInterests || context.profile?.interests);
   const messageMatch = String(message || '').match(/\b(?:for|as|as a|as an)\s+([a-z][a-z\s-]{2,60})/i);
-  return String(messageMatch?.[1] || interests[0] || context.profile?.targetRole || 'Target Role').trim();
+  return String(context.targetJob?.title || messageMatch?.[1] || interests[0] || context.profile?.targetRole || 'Target Role').trim();
 };
 
 const buildResumeActionDraft = (message = '', context = {}) => {
@@ -789,6 +850,31 @@ const buildAssessmentDraft = (message = '', context = {}) => ([
 const buildDocumentDraft = (message = '', context = {}) => {
   const request = String(message || '').trim();
   const authorName = getProfileDisplayName(context);
+  const targetJob = context.targetJob || null;
+
+  if (/\bcover\s*letter\b/i.test(request) && targetJob) {
+    const role = String(targetJob.title || 'the advertised role').trim();
+    const company = String(targetJob.company?.name || targetJob.companyName || targetJob.company || 'your company').trim();
+    const profileSkills = normalizeDraftList(context.profile?.skills);
+    const jobSkills = normalizeDraftList(targetJob.skills || targetJob.requirements).map((skill) => skill.toLowerCase());
+    const matchedSkills = profileSkills.filter((skill) => jobSkills.some((jobSkill) => jobSkill.includes(skill.toLowerCase()) || skill.toLowerCase().includes(jobSkill))).slice(0, 5);
+    return [
+      'COVER LETTER',
+      '',
+      '[Date]',
+      '',
+      `Dear ${company} Hiring Team,`,
+      '',
+      `I am writing to apply for the ${role} position. My background and demonstrated strengths${matchedSkills.length ? ` in ${matchedSkills.join(', ')}` : ''} align with the role's focus, and I would welcome the opportunity to contribute reliable, thoughtful work to ${company}.`,
+      '',
+      'My experience has strengthened my ability to learn quickly, communicate clearly, take ownership, and turn feedback into better results. I would bring that same practical and collaborative approach to the responsibilities described in this opportunity.',
+      '',
+      `Thank you for considering my application. I would value the opportunity to discuss how my verified experience and skills can support ${company} in this ${role} role.`,
+      '',
+      'Sincerely,',
+      authorName
+    ].join('\n');
+  }
 
   if (/\bresign(?:ation|ing)?\b/i.test(request)) {
     return [
@@ -846,9 +932,11 @@ const buildPortalActionFallbackDraft = (action, message = '', context = {}) => {
   switch (action) {
     case 'candidate-create-resume':
     case 'candidate-format-resume':
+    case 'candidate-tailor-resume-to-job':
       return buildResumeActionDraft(message, context);
     case 'candidate-create-document':
     case 'candidate-format-document':
+    case 'candidate-tailor-cover-letter-to-job':
       return buildDocumentDraft(message, context);
     case 'candidate-create-story':
       return buildStoryActionDraft(message, context);
@@ -1284,12 +1372,11 @@ const getOpenAIApiKey = () => (
 
 const getOpenAIModelCandidates = () => {
   const configured = String(process.env.OPENAI_MODEL || '').trim();
-  const configuredLooksUsable = configured && !/^gpt-5\.\d/i.test(configured);
   return [...new Set([
+    configured,
     'gpt-4.1-mini',
     'gpt-4o-mini',
-    'gpt-5',
-    configuredLooksUsable ? configured : ''
+    'gpt-5'
   ].filter(Boolean))];
 };
 
@@ -1462,6 +1549,197 @@ const askOpenAI = async ({ prompt, useWebSearch, maxOutputTokens = 500, timeout 
   return '';
 };
 
+const PORTAL_PLANNER_ACTIONS = new Set([
+  'none',
+  'open-section',
+  'open-messenger',
+  'theme-set',
+  'account-change-password',
+  'widget-set-reminder',
+  'candidate-create-resume',
+  'candidate-format-resume',
+  'candidate-tailor-resume-to-job',
+  'candidate-create-document',
+  'candidate-format-document',
+  'candidate-tailor-cover-letter-to-job',
+  'candidate-apply-job',
+  'candidate-create-story',
+  'employer-create-post',
+  'employer-create-assessment',
+  'employer-create-document',
+  'employer-format-document',
+  'feed-react',
+  'feed-comment',
+  'feed-share',
+  'job-like',
+  'job-review',
+  'job-share',
+  'message-send'
+]);
+
+const shouldPlanPortalAction = (message = '', context = {}) => {
+  if (!context?.portalMode) return false;
+  return /\b(open|show|go to|switch|change|turn on|use|create|make|write|draft|tailor|format|apply|like|react|motivate|congratulate|comment|reply|share|send|message|review|rate|password|remind|note|dark mode|light mode)\b/i.test(message);
+};
+
+const parseAssistantJsonObject = (value = '') => {
+  const clean = String(value || '').replace(/```(?:json)?|```/gi, '').trim();
+  const objectStart = clean.indexOf('{');
+  const objectEnd = clean.lastIndexOf('}');
+  if (objectStart < 0 || objectEnd <= objectStart) return null;
+  try {
+    const parsed = JSON.parse(clean.slice(objectStart, objectEnd + 1));
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : null;
+  } catch (error) {
+    return null;
+  }
+};
+
+const sanitizePlannerArgs = (args = {}) => {
+  const source = args && typeof args === 'object' && !Array.isArray(args) ? args : {};
+  const stringFields = [
+    'section',
+    'theme',
+    'targetId',
+    'targetReference',
+    'jobTitle',
+    'postReference',
+    'reaction',
+    'comment',
+    'friendReference',
+    'recipientReference',
+    'message',
+    'reviewText',
+    'scope',
+    'documentKind'
+  ];
+  const clean = stringFields.reduce((result, field) => {
+    if (source[field] !== undefined && source[field] !== null) {
+      result[field] = truncateAssistantText(source[field], field === 'message' || field === 'comment' || field === 'reviewText' ? 1200 : 180);
+    }
+    return result;
+  }, {});
+  if (source.rating !== undefined) {
+    clean.rating = Math.max(0, Math.min(5, Number(source.rating) || 0));
+  }
+  if (source.allVisible === true || source.scope === 'all-visible') {
+    clean.scope = 'all-visible';
+  }
+  return clean;
+};
+
+const normalizePlannedAction = (plan = {}, context = {}) => {
+  const requestedAction = String(plan.action || 'none').trim().toLowerCase();
+  if (!PORTAL_PLANNER_ACTIONS.has(requestedAction)) return null;
+  const args = sanitizePlannerArgs(plan.args);
+  let action = requestedAction;
+
+  if (requestedAction === 'open-section') {
+    const availableIds = new Set(
+      (Array.isArray(context.availablePages) ? context.availablePages : context.view?.availablePages || [])
+        .map((page) => String(page?.id || '').toLowerCase())
+        .filter(Boolean)
+    );
+    const section = String(args.section || '').toLowerCase();
+    if (!section || (availableIds.size && !availableIds.has(section))) return null;
+    action = `open-section:${section}`;
+  }
+
+  if (requestedAction === 'theme-set' && !['light', 'dark'].includes(args.theme)) return null;
+  if (requestedAction === 'none') action = '';
+
+  return {
+    action,
+    args,
+    answer: truncateAssistantText(plan.answer, 700)
+  };
+};
+
+const resolveContextJob = (context = {}, args = {}, message = '') => {
+  const visibleJobs = Array.isArray(context.view?.visibleJobs) ? context.view.visibleJobs : [];
+  const allJobs = Array.isArray(context.jobs) ? context.jobs : [];
+  const jobs = [...visibleJobs, ...allJobs].filter((job, index, list) => {
+    const id = String(job?._id || job?.id || job?.jobNumber || '');
+    return list.findIndex((item) => String(item?._id || item?.id || item?.jobNumber || '') === id) === index;
+  });
+  const query = normalizeText(args.targetId || args.targetReference || args.jobTitle || message);
+  const exactTargetId = String(args.targetId || '').trim();
+  const matched = jobs.find((job) => {
+    const id = String(job?._id || job?.id || job?.jobNumber || '');
+    if (exactTargetId && id === exactTargetId) return true;
+    const haystack = normalizeText([
+      id,
+      job?.title,
+      job?.role,
+      job?.company?.name,
+      job?.companyName,
+      job?.company,
+      job?.location
+    ].filter(Boolean).join(' '));
+    return query && (haystack.includes(query) || query.includes(normalizeText(job?.title)));
+  });
+  if (matched) return matched;
+  if (visibleJobs.length === 1 || /\b(this|current|open|on screen|visible)\s+(job|role|position)\b/i.test(message)) {
+    return visibleJobs[0] || null;
+  }
+  return null;
+};
+
+const planPortalActionWithOpenAI = async ({ message, history, context }) => {
+  if (!shouldPlanPortalAction(message, context) || !getOpenAIApiKey()) return null;
+  const compactContext = buildCompactPortalContext(context);
+  const prompt = `
+You are the action planner for JumpTake AI. Decide whether the user's latest request asks the app to take an action.
+Return one strict JSON object only: {"action":"...","args":{},"answer":"..."}.
+
+Allowed actions:
+- none
+- open-section with args.section from availablePages
+- open-messenger
+- theme-set with args.theme light or dark
+- account-change-password (opens the secure Settings form only; never request, repeat, infer, or return a password)
+- widget-set-reminder
+- candidate-create-resume, candidate-format-resume, candidate-tailor-resume-to-job
+- candidate-create-document, candidate-format-document, candidate-tailor-cover-letter-to-job
+- candidate-apply-job, candidate-create-story
+- employer-create-post, employer-create-assessment, employer-create-document, employer-format-document
+- feed-react with args.reaction and args.postReference or args.scope="all-visible"
+- feed-comment with args.comment and args.postReference
+- feed-share with args.postReference and args.friendReference
+- job-like with args.targetReference or args.scope="all-visible"
+- job-review with args.targetReference, args.reviewText, and args.rating from 0 to 5
+- job-share with args.targetReference and optional args.friendReference
+- message-send with args.recipientReference and args.message
+
+Rules:
+- Use only jobs, posts, contacts, pages, and dialogs present in Portal context. Never invent an ID.
+- Resolve "this", "open", "visible", "first", role names, post authors, and contact names from the context.
+- If the user asks to tailor a resume or cover letter to an on-screen job, choose the matching tailor action and put its visible id in args.targetId.
+- For a requested post reaction, use one of Like, Appreciate, Love, Empower, Congratulate, Motivate, Angry, Sad, or Bad.
+- If the user requests a comment or review without dictating wording, write a short relevant draft grounded in the visible post or job.
+- Use args.scope="all-visible" only when the user clearly says every/all visible item.
+- For credential or destructive account changes, only choose the safe navigation action described above.
+- answer is a short user-facing statement of what the app is doing. For resume, document, cover-letter, story, post, or assessment generation, leave answer empty because another model step writes the content.
+- If this is advice, a question, or ordinary conversation without an app action, return action none.
+
+Recent conversation:
+${buildHistoryBlock(history) || 'No prior conversation.'}
+
+Portal context:
+${JSON.stringify(compactContext, null, 2)}
+
+Latest user request: ${truncateAssistantText(message, 1800)}
+`;
+
+  try {
+    const response = await askOpenAI({ prompt, useWebSearch: false, maxOutputTokens: 450, timeout: 12000 });
+    return normalizePlannedAction(parseAssistantJsonObject(response) || {}, context);
+  } catch (error) {
+    console.warn('[PUBLIC ASSISTANT] OpenAI action planning failed:', error.response?.data?.error?.message || error.message);
+    return null;
+  }
+};
+
 const parseDocumentSamples = (value = '') => {
   const clean = String(value || '').replace(/```(?:json)?|```/gi, '').trim();
   const arrayStart = clean.indexOf('[');
@@ -1610,6 +1888,43 @@ const getAiUnavailableReply = ({ openAiFailed = false, geminiFailed = false } = 
   return '';
 };
 
+const buildFallbackActionPayload = (action = '', message = '', context = {}) => {
+  const normalized = normalizeText(message);
+  const payload = {};
+  const targetJob = resolveContextJob(context, {}, message);
+  if (targetJob) {
+    payload.targetId = String(targetJob?._id || targetJob?.id || targetJob?.jobNumber || '');
+    payload.targetReference = String(targetJob?.title || targetJob?.role || '');
+  }
+  if (action === 'theme-set') {
+    payload.theme = /\bdark\s+mode\b/.test(normalized) ? 'dark' : 'light';
+  }
+  if (action === 'feed-react') {
+    const reactions = ['Appreciate', 'Love', 'Empower', 'Congratulate', 'Motivate', 'Angry', 'Sad', 'Bad', 'Like'];
+    payload.reaction = reactions.find((reaction) => normalized.includes(reaction.toLowerCase().replace(/e$/, ''))) || 'Like';
+  }
+  if (/\b(all|every|each)\b/.test(normalized) && /\b(visible|open|screen|post|job)\b/.test(normalized)) {
+    payload.scope = 'all-visible';
+  }
+  const ratingMatch = String(message || '').match(/\b([1-5])\s*(?:\/\s*5|stars?)\b/i);
+  if (ratingMatch) payload.rating = Number(ratingMatch[1]);
+  return payload;
+};
+
+const buildPortalActionConfirmation = (action = '', args = {}, context = {}) => {
+  if (action === 'theme-set') return `Switching to ${args.theme === 'dark' ? 'dark' : 'light'} mode.`;
+  if (action === 'account-change-password') return 'Opening the secure password form. Enter your current and new password there so your credentials stay private.';
+  if (action === 'open-messenger' || action === 'message-send') return action === 'message-send' ? 'Sending that message through JumpTake Messages.' : 'Opening Messages.';
+  if (action === 'feed-react') return `Adding the ${args.reaction || 'Like'} reaction to ${args.scope === 'all-visible' ? 'the visible posts' : 'the requested post'}.`;
+  if (action === 'feed-comment') return 'Adding that comment to the requested post.';
+  if (action === 'feed-share') return 'Sharing the requested post through JumpTake Messages.';
+  if (action === 'job-like') return `Liking ${args.scope === 'all-visible' ? 'the visible jobs' : 'the requested job'}.`;
+  if (action === 'job-review') return 'Saving your review on the requested job.';
+  if (action === 'job-share') return 'Sharing the requested job.';
+  if (String(action).startsWith('open-section:')) return fallbackAnswer('', action, []);
+  return '';
+};
+
 const shouldUseDirectAssistantReply = (message, action) => {
   const normalized = String(message || '').toLowerCase();
 
@@ -1644,26 +1959,44 @@ const askPublicAssistant = async (req, res) => {
     }
   }
 
-  let action = inferAction(message, context);
+  const actionPlan = await planPortalActionWithOpenAI({ message, history, context });
+  let action = actionPlan?.action || inferAction(message, context);
+  let actionPayload = actionPlan?.args || buildFallbackActionPayload(action, message, context);
   const lastAssistantText = String(getLastHistoryEntry(history, 'assistant')?.text || '').toLowerCase();
   if (!action && /\bwhich job\b/.test(lastAssistantText) && context?.portalMode === 'candidate') {
     action = 'candidate-apply-job';
+    actionPayload = buildFallbackActionPayload(action, message, context);
   }
+  const targetJob = resolveContextJob(context, actionPayload, message);
+  if (targetJob) {
+    actionPayload = {
+      ...actionPayload,
+      targetId: String(targetJob?._id || targetJob?.id || targetJob?.jobNumber || actionPayload.targetId || ''),
+      targetReference: String(targetJob?.title || targetJob?.role || actionPayload.targetReference || '')
+    };
+  } else if (actionPayload.targetId) {
+    delete actionPayload.targetId;
+  }
+  const resolvedContext = { ...context, targetJob };
   const shouldGeneratePortalDraft = isPortalAction(action) && action !== 'candidate-apply-job';
   const directReply = shouldGeneratePortalDraft
     ? ''
-    : getDirectAssistantReply(message, history, action);
+    : actionPlan?.answer
+      || buildPortalActionConfirmation(action, actionPayload, resolvedContext)
+      || getDirectAssistantReply(message, history, action);
   if (directReply) {
-    return res.json({ answer: directReply, action });
+    return res.json({ answer: directReply, action, actionPayload });
   }
 
   const conversationHistory = buildHistoryBlock(history);
-  const contextBlock = JSON.stringify(buildCompactPortalContext(context), null, 2);
+  const contextBlock = JSON.stringify(buildCompactPortalContext(resolvedContext), null, 2);
   const actionInstructions = isPortalAction(action) ? `
 The current portal action is ${action}.
 - For candidate-create-resume: write a complete resume draft using only facts in the provided user/profile context. The first line must be the person's real profile name, never their email, username, or JumpTake ID. Omit sections with no factual data. Never ask for more details and never write placeholders such as "add your experience". Return only the resume, with no preamble or explanation. Use clear section headings and concise bullet points. Use Portal context workspace.layout when present: fit the draft to the A4 editor size, margins, safe page height, and current viewport. Keep the resume compact, structured, and page-break friendly.
+- For candidate-tailor-resume-to-job: tailor a complete ATS-friendly resume to Portal context targetJob. Emphasize only the profile skills and experience that truthfully match the job skills, requirements, title, and description. Strengthen wording and ordering, but never invent experience, qualifications, metrics, employers, or skills. Return only the editor-ready resume.
 - For candidate-format-resume: rewrite the currently open resume from Portal context workspace.currentText into a polished, A4-ready resume. Use workspace.layout when present to respect the editor A4 width, height, margins, safe page height, and page count. Keep it concise enough for 1-2 pages, use clear section headings, strong alignment cues, ATS-friendly bullets, and do not invent facts.
-- For candidate-create-document: return only a complete, polished document based on the request. Never ask for more information, never add a preamble, and never explain what you created. Use the real profile name where an author or sender name is appropriate; never use an email, username, or JumpTake ID as the person's name.
+- For candidate-create-document: return only a complete, polished document based on the request. When Portal context targetJob is present, ground the requested job-related document in that job's verified title, company, description, skills, and requirements. Never ask for more information, never add a preamble, and never explain what you created. Use the real profile name where an author or sender name is appropriate; never use an email, username, or JumpTake ID as the person's name.
+- For candidate-tailor-cover-letter-to-job: write a concise cover letter tailored to Portal context targetJob. Connect only verified profile facts to the job requirements and company. Never invent experience or qualifications. Return only the finished cover letter.
 - For candidate-format-document: rewrite the currently open document from Portal context workspace.currentText into a polished, editable document. Return only the finished document and do not invent facts.
 - For employer-create-document: write a polished editable document draft based on the user's request and employer/company context.
 - For employer-format-document: rewrite the currently open document from Portal context workspace.currentText into a polished, A4-ready business document. Use the company profile context for company name, industry, headquarters, website, and tone where relevant.
@@ -1722,9 +2055,9 @@ Visitor: ${message}
 
       if (answer) {
         const actionDraft = isWeakPortalActionDraft(action, answer)
-          ? buildPortalActionFallbackDraft(action, message, context)
+          ? buildPortalActionFallbackDraft(action, message, resolvedContext)
           : '';
-        return res.json({ answer: actionDraft || answer, action });
+        return res.json({ answer: actionDraft || answer, action, actionPayload });
       }
 
       if (provider === 'gemini') {
@@ -1742,14 +2075,14 @@ Visitor: ${message}
     }
   }
 
-  const actionDraftFallback = buildPortalActionFallbackDraft(action, message, context);
+  const actionDraftFallback = buildPortalActionFallbackDraft(action, message, resolvedContext);
   if (actionDraftFallback) {
-    return res.json({ answer: actionDraftFallback, action });
+    return res.json({ answer: actionDraftFallback, action, actionPayload });
   }
 
   const actionFallback = fallbackAnswer(message, action, history);
   if (actionFallback && actionFallback !== 'Error connecting') {
-    return res.json({ answer: actionFallback, action });
+    return res.json({ answer: actionFallback, action, actionPayload });
   }
 
   const aiUnavailableReply = getAiUnavailableReply({
@@ -1758,10 +2091,10 @@ Visitor: ${message}
   });
 
   if (aiUnavailableReply) {
-    return res.json({ answer: aiUnavailableReply, action });
+    return res.json({ answer: aiUnavailableReply, action, actionPayload });
   }
 
-  return res.json({ answer: 'Error connecting', action });
+  return res.json({ answer: 'Error connecting', action, actionPayload });
 };
 
 module.exports = {

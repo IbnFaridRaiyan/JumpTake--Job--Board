@@ -308,7 +308,15 @@ const FriendInvitations = ({ userId }) => {
         const matchCopy = getMatchCopy(candidate);
 
         return (
-            <article className="friend-add-candidate-card" key={`${source}:${candidateId || candidate?.jumptakeId}`}>
+            <article
+                className="friend-add-candidate-card"
+                key={`${source}:${candidateId || candidate?.jumptakeId}`}
+                data-assistant-contact-id={candidateId || candidate?.user || candidate?.jumptakeId || ''}
+                data-assistant-candidate-id={candidateId}
+                data-assistant-user-id={candidate?.user?._id || candidate?.user || ''}
+                data-assistant-contact-name={candidate?.name || 'Candidate'}
+                data-assistant-jumptake-id={candidate?.jumptakeId || ''}
+            >
                 <ProfileAvatar
                     imageSrc={candidate?.profileImage || ''}
                     name={candidate?.name || 'Candidate'}
@@ -565,7 +573,15 @@ const FriendInvitations = ({ userId }) => {
                 ? (
                     <div className="friend-invitation-list">
                         {connections.incoming.map((connection) => (
-                            <div className="friend-invitation-card" key={connection._id}>
+                            <div
+                                className="friend-invitation-card"
+                                key={connection._id}
+                                data-assistant-contact-id={connection?.peer?.candidateId || connection?.peer?.userId || connection._id}
+                                data-assistant-candidate-id={connection?.peer?.candidateId || ''}
+                                data-assistant-user-id={connection?.peer?.userId || ''}
+                                data-assistant-contact-name={connection?.peer?.name || 'Candidate'}
+                                data-assistant-jumptake-id={connection?.peer?.jumptakeId || ''}
+                            >
                                 {renderConnectionInfo(connection, 'Candidate connection')}
                                 <div className="friend-invitation-actions">
                                     {renderActionTools(connection)}
@@ -594,7 +610,15 @@ const FriendInvitations = ({ userId }) => {
                 ? (
                     <div className="friend-invitation-list">
                         {connections.outgoing.map((connection) => (
-                            <div className="friend-outgoing-row" key={connection._id}>
+                            <div
+                                className="friend-outgoing-row"
+                                key={connection._id}
+                                data-assistant-contact-id={connection?.peer?.candidateId || connection?.peer?.userId || connection._id}
+                                data-assistant-candidate-id={connection?.peer?.candidateId || ''}
+                                data-assistant-user-id={connection?.peer?.userId || ''}
+                                data-assistant-contact-name={connection?.peer?.name || 'Candidate'}
+                                data-assistant-jumptake-id={connection?.peer?.jumptakeId || ''}
+                            >
                                 {renderConnectionInfo(connection, 'Invitation pending')}
                                 <div className="friend-invitation-actions">
                                     <span className="friend-status-pill"><FriendActionIcon type="pending" />Pending</span>
@@ -620,7 +644,15 @@ const FriendInvitations = ({ userId }) => {
             ? (
                 <div className="friend-invitation-list">
                     {connections.friends.map((connection) => (
-                        <div className="friend-outgoing-row is-friend" key={connection._id}>
+                        <div
+                            className="friend-outgoing-row is-friend"
+                            key={connection._id}
+                            data-assistant-contact-id={connection?.peer?.candidateId || connection?.peer?.userId || connection._id}
+                            data-assistant-candidate-id={connection?.peer?.candidateId || ''}
+                            data-assistant-user-id={connection?.peer?.userId || ''}
+                            data-assistant-contact-name={connection?.peer?.name || 'Candidate'}
+                            data-assistant-jumptake-id={connection?.peer?.jumptakeId || ''}
+                        >
                             {renderConnectionInfo(connection, 'Connected candidate')}
                             <div className="friend-invitation-actions">
                                 <span className="friend-status-pill is-friend"><FriendActionIcon type="connected" />Connected</span>

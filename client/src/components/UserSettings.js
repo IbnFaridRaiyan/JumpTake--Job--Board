@@ -30,6 +30,26 @@ const UserSettings = ({ user, onLogout, appMode, onAppModeChange }) => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
+
+    useEffect(() => {
+        const focusPasswordForm = (event) => {
+            if (event?.detail?.mode && event.detail.mode !== 'candidate') return;
+            setActiveTab('account');
+            window.setTimeout(() => document.getElementById('currentPassword')?.focus({ preventScroll: false }), 80);
+        };
+        let storedAction = null;
+        try {
+            storedAction = JSON.parse(sessionStorage.getItem('jumptakeAiSettingsAction') || 'null');
+        } catch (error) {
+            storedAction = null;
+        }
+        if (storedAction?.mode === 'candidate' && storedAction?.action === 'focus-password') {
+            sessionStorage.removeItem('jumptakeAiSettingsAction');
+            focusPasswordForm({ detail: storedAction });
+        }
+        window.addEventListener('jumptake-ai-settings-action', focusPasswordForm);
+        return () => window.removeEventListener('jumptake-ai-settings-action', focusPasswordForm);
+    }, []);
     
     const fetchUserNotificationPreferences = async () => {
         try {

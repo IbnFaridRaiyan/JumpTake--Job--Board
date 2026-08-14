@@ -23,6 +23,7 @@ import GuidedPortalTour from './GuidedPortalTour';
 import PortalPageSkeleton from './PortalPageSkeleton';
 import Pricing from './Pricing';
 import PortalSideWidgets from './PortalSideWidgets';
+import { readAssistantPageContext } from '../utils/assistantPageContext';
 import {
     PORTAL_REMINDER_ALERT_EVENT,
     PORTAL_REMINDERS_UPDATED_EVENT,
@@ -500,11 +501,18 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         };
 
         const handleOpenPricing = () => openSection('pricing');
+        const handleAiThemeChange = (event) => {
+            const { mode, theme } = event.detail || {};
+            if (mode && mode !== 'employer') return;
+            if (theme === 'light' || theme === 'dark') onAppModeChange?.(theme);
+        };
         window.addEventListener('jumptake-ai-open-section', handleAiOpenSection);
         window.addEventListener('jumptake-open-pricing', handleOpenPricing);
+        window.addEventListener('jumptake-ai-theme-change', handleAiThemeChange);
         return () => {
             window.removeEventListener('jumptake-ai-open-section', handleAiOpenSection);
             window.removeEventListener('jumptake-open-pricing', handleOpenPricing);
+            window.removeEventListener('jumptake-ai-theme-change', handleAiThemeChange);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeSection, mobileSectionVisible, employer?.companyId]);
@@ -966,10 +974,18 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                 chatContext={() => ({
                     portalMode: 'employer',
                     activeSection,
+                    lastUsedSection: previousSection,
                     availablePages: Object.entries(sectionTitles).map(([id, title]) => ({ id, title })),
                     user: employer,
                     company: companyData,
-                    jobs: Array.isArray(jobs) ? jobs : []
+                    jobs: Array.isArray(jobs) ? jobs : [],
+                    view: readAssistantPageContext({
+                        activeSection,
+                        lastUsedSection: previousSection,
+                        lastUsedTitle: previousSection ? (sectionTitles[previousSection] || previousSection) : '',
+                        availablePages: Object.entries(sectionTitles).map(([id, title]) => ({ id, title })),
+                        jobs: Array.isArray(jobs) ? jobs : []
+                    })
                 })}
                 performanceProps={{
                     jobs: Array.isArray(jobs) ? jobs : [],
@@ -993,6 +1009,8 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                 companyData={companyData}
                 jobs={jobs}
                 activeSection={activeSection}
+                lastUsedSection={previousSection}
+                availablePages={Object.entries(sectionTitles).map(([id, title]) => ({ id, title }))}
                 unreadCount={pendingInboxCount}
                 onSeen={() => {
                     setPendingInboxCount(0);

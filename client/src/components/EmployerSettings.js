@@ -21,6 +21,25 @@ const EmployerSettings = ({ employer, switchSection, onEmployerUpdated, onLogout
     const [settingsSaved, setSettingsSaved] = useState(false);
 
     useEffect(() => {
+        const focusPasswordForm = (event) => {
+            if (event?.detail?.mode && event.detail.mode !== 'employer') return;
+            window.setTimeout(() => document.getElementById('employer-current-password')?.focus({ preventScroll: false }), 80);
+        };
+        let storedAction = null;
+        try {
+            storedAction = JSON.parse(sessionStorage.getItem('jumptakeAiSettingsAction') || 'null');
+        } catch (error) {
+            storedAction = null;
+        }
+        if (storedAction?.mode === 'employer' && storedAction?.action === 'focus-password') {
+            sessionStorage.removeItem('jumptakeAiSettingsAction');
+            focusPasswordForm({ detail: storedAction });
+        }
+        window.addEventListener('jumptake-ai-settings-action', focusPasswordForm);
+        return () => window.removeEventListener('jumptake-ai-settings-action', focusPasswordForm);
+    }, []);
+
+    useEffect(() => {
         if (employer?.id) {
             fetchEmployerSettings();
         } else {

@@ -984,6 +984,9 @@ const TalentPool = ({
         const candidateId = String(candidate?._id || '');
         const storiesCount = getCandidateTalentStories(candidate).length;
         const likeCount = candidateLikeCounts[candidateId] || 0;
+        const visibleSkills = spotlightActive && spotlight?.matchedSkills?.length
+            ? spotlight.matchedSkills.slice(0, 3)
+            : getSkillList(candidate.skills).slice(0, 3);
 
         return (
             <button
@@ -1003,9 +1006,9 @@ const TalentPool = ({
                 <span className="candidate-list-main">
                     <span className="candidate-list-name">{candidate.name || 'Unnamed Candidate'}</span>
                     <span className="candidate-list-id">{getCandidateJumpTakeId(candidate) || '@JumpTakeID'}</span>
-                    {spotlightActive && spotlight?.matchedSkills?.length > 0 && (
+                    {visibleSkills.length > 0 && (
                         <span className="candidate-list-skills">
-                            {spotlight.matchedSkills.slice(0, 3).join(', ')}
+                            {visibleSkills.join(' / ')}
                         </span>
                     )}
                 </span>
@@ -1023,6 +1026,7 @@ const TalentPool = ({
                         <small>Rating</small>
                     </span>
                 </span>
+                <span className="candidate-list-open-label" aria-hidden="true">View profile</span>
             </button>
         );
     };

@@ -23,6 +23,7 @@ import GuidedPortalTour from './GuidedPortalTour';
 import PortalPageSkeleton from './PortalPageSkeleton';
 import Pricing from './Pricing';
 import PortalSideWidgets from './PortalSideWidgets';
+import { readAssistantPageContext } from '../utils/assistantPageContext';
 import {
     PORTAL_REMINDER_ALERT_EVENT,
     PORTAL_REMINDERS_UPDATED_EVENT,
@@ -807,11 +808,18 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         };
 
         const handleOpenPricing = () => openSection('pricing');
+        const handleAiThemeChange = (event) => {
+            const { mode, theme } = event.detail || {};
+            if (mode && mode !== 'candidate') return;
+            if (theme === 'light' || theme === 'dark') onAppModeChange?.(theme);
+        };
         window.addEventListener('jumptake-ai-open-section', handleAiOpenSection);
         window.addEventListener('jumptake-open-pricing', handleOpenPricing);
+        window.addEventListener('jumptake-ai-theme-change', handleAiThemeChange);
         return () => {
             window.removeEventListener('jumptake-ai-open-section', handleAiOpenSection);
             window.removeEventListener('jumptake-open-pricing', handleOpenPricing);
+            window.removeEventListener('jumptake-ai-theme-change', handleAiThemeChange);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeSection, mobileSectionVisible, user?.id]);
@@ -1254,10 +1262,18 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                 chatContext={() => ({
                     portalMode: 'candidate',
                     activeSection,
+                    lastUsedSection: previousSection,
                     availablePages: Object.entries(sectionTitles).map(([id, title]) => ({ id, title })),
                     user,
                     profile: jobSeekerData,
-                    jobs: safeJobs
+                    jobs: safeJobs,
+                    view: readAssistantPageContext({
+                        activeSection,
+                        lastUsedSection: previousSection,
+                        lastUsedTitle: previousSection ? (sectionTitles[previousSection] || previousSection) : '',
+                        availablePages: Object.entries(sectionTitles).map(([id, title]) => ({ id, title })),
+                        jobs: safeJobs
+                    })
                 })}
                 performanceProps={{
                     jobs: safeJobs,
@@ -1281,6 +1297,8 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                 profileData={jobSeekerData}
                 jobs={safeJobs}
                 activeSection={activeSection}
+                lastUsedSection={previousSection}
+                availablePages={Object.entries(sectionTitles).map(([id, title]) => ({ id, title }))}
                 unreadCount={pendingInboxCount}
                 onSeen={() => {
                     setPendingInboxCount(0);

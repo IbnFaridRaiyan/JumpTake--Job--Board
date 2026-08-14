@@ -2,30 +2,12 @@ import React, { useEffect, useState } from 'react';
 import confirmAction from '../utils/confirmAction';
 import PortalPageSkeleton from './PortalPageSkeleton';
 
-const BOOKMARKED_JOB_LIKE_STORAGE_KEY = 'jumptakeBookmarkedJobLikeMap';
-
-const readBookmarkedJobLikeMap = () => {
-    if (typeof window === 'undefined') {
-        return {};
-    }
-
-    try {
-        const parsed = JSON.parse(localStorage.getItem(BOOKMARKED_JOB_LIKE_STORAGE_KEY) || '{}');
-        return parsed && typeof parsed === 'object' ? parsed : {};
-    } catch (error) {
-        return {};
-    }
-};
-
-const getBookmarkedJobKey = (job) => String(job?._id || job?.jobNumber || job?.title || 'job');
-
 const BookmarkedJobs = ({ userId, switchSection, onFooterBack, embedded = false }) => {
     const [bookmarks, setBookmarks] = useState([]);
     const [appliedJobIds, setAppliedJobIds] = useState([]);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-    const [jobLikeMap, setJobLikeMap] = useState(readBookmarkedJobLikeMap);
 
     useEffect(() => {
         fetchBookmarks();
@@ -76,7 +58,7 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack, embedded = false 
         localStorage.setItem('jumptakeActiveJobReturnSection', 'bookmarked-jobs');
         sessionStorage.setItem('jumptakeHomeFeedRequest', JSON.stringify(homeFeedRequest));
         if (switchSection) {
-            switchSection('job-feed');
+            switchSection('job-posts');
         }
 
         if (typeof window !== 'undefined') {
@@ -115,50 +97,6 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack, embedded = false 
             console.error('Error removing bookmarked job:', removeError);
             setMessage(`Error: ${removeError.message}`);
         }
-    };
-
-    const viewerLikeId = String(userId || 'candidate-guest');
-
-    const getJobLikeEntry = (job) => {
-        const key = getBookmarkedJobKey(job);
-        const entry = jobLikeMap[key];
-        return entry && typeof entry === 'object' ? entry : { count: 0, likedBy: [] };
-    };
-
-    const isJobLiked = (job) => {
-        const entry = getJobLikeEntry(job);
-        return Array.isArray(entry.likedBy) && entry.likedBy.map(String).includes(viewerLikeId);
-    };
-
-    const getJobLikeCount = (job) => Number(getJobLikeEntry(job).count || 0) || 0;
-
-    const toggleJobLike = (job) => {
-        const key = getBookmarkedJobKey(job);
-        setJobLikeMap((previousMap) => {
-            const previousEntry = previousMap[key] && typeof previousMap[key] === 'object'
-                ? previousMap[key]
-                : { count: 0, likedBy: [] };
-            const previousLikedBy = Array.isArray(previousEntry.likedBy)
-                ? previousEntry.likedBy.map(String)
-                : [];
-            const alreadyLiked = previousLikedBy.includes(viewerLikeId);
-            const nextLikedBy = alreadyLiked
-                ? previousLikedBy.filter((id) => id !== viewerLikeId)
-                : [...previousLikedBy, viewerLikeId];
-            const nextMap = {
-                ...previousMap,
-                [key]: {
-                    count: Math.max(0, Number(previousEntry.count || 0) + (alreadyLiked ? -1 : 1)),
-                    likedBy: nextLikedBy
-                }
-            };
-
-            if (typeof window !== 'undefined') {
-                localStorage.setItem(BOOKMARKED_JOB_LIKE_STORAGE_KEY, JSON.stringify(nextMap));
-            }
-
-            return nextMap;
-        });
     };
 
     const fetchAppliedJobs = async () => {
@@ -225,9 +163,11 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack, embedded = false 
                     {bookmarks.map((bookmark) => {
                         const job = bookmark.job;
                         const hasApplied = appliedJobIds.includes(String(job?._id));
+                        const companyName = job?.company?.name || 'Company unavailable';
+                        const companyInitial = String(companyName).trim().charAt(0).toUpperCase() || 'J';
 
                         return (
-                            <div className="application-card bookmarked-job-card" key={bookmark._id}>
+                            <article className="application-card bookmarked-job-card" key={bookmark._id}>
                                 <button
                                     type="button"
                                     className="bookmark-star-button bookmarked-job-remove-button bookmarked-job-corner-star"
@@ -244,30 +184,20 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack, embedded = false 
                                         aria-hidden="true"
                                     />
                                 </button>
-                                <div className="application-card-header">
-                                    <div>
+                                <header className="application-card-header bookmarked-job-header">
+                                    <span className="bookmarked-job-company-mark" aria-hidden="true">{companyInitial}</span>
+                                    <div className="bookmarked-job-heading-copy">
                                         <h3>{job?.title || 'Saved Job'}</h3>
-                                        <p>{job?.company?.name || 'Company unavailable'}</p>
+                                        <p>{companyName}</p>
                                     </div>
-                                </div>
-                                <div className="application-job-summary">
+                                    <span className={`bookmarked-job-status ${hasApplied ? 'is-applied' : ''}`}>
+                                        {hasApplied ? 'Applied' : 'Saved'}
+                                    </span>
+                                </header>
+                                <div className="application-job-summary bookmarked-job-meta" aria-label="Job details">
                                     <strong>{job?.location || 'Location not specified'}</strong>
                                     <span>{job?.jobType || 'Type not specified'}</span>
                                     {job?.salary && <span>{job.salary}</span>}
-                                </div>
-                                <div className="job-card-reactions bookmarked-job-reactions portal-reaction-rail">
-                                    <button
-                                        type="button"
-                                        className={`job-card-like-button portal-reaction-icon-button reaction-like ${isJobLiked(job) ? 'active' : ''}`}
-                                        onClick={() => toggleJobLike(job)}
-                                        aria-pressed={isJobLiked(job)}
-                                        aria-label="Like bookmarked job"
-                                        title="Like"
-                                    >
-                                        <span aria-hidden="true">👍</span>
-                                        <span className="portal-reaction-tooltip" role="tooltip">Like</span>
-                                        <strong>{getJobLikeCount(job)}</strong>
-                                    </button>
                                 </div>
                                 <div className="application-card-actions">
                                     <button className="view-profile-btn secondary-action" onClick={() => openJob(job?._id, 'preview')}>
@@ -277,7 +207,7 @@ const BookmarkedJobs = ({ userId, switchSection, onFooterBack, embedded = false 
                                         {hasApplied ? 'Applied' : 'Apply Now'}
                                     </button>
                                 </div>
-                            </div>
+                            </article>
                         );
                     })}
                 </div>

@@ -1,30 +1,25 @@
 /* Final ownership for the August 2026 responsive and theme refinements. */
 
-/* Keep every animated portal heading on the same display face. */
-html body #root .home-page :is(
-  .portal-title-jello-text,
-  .portal-default-title-animated,
-  .portal-default-title-animated *,
-  .progress-title-animated
-) {
-  font-family: "Chewy", "Lexend", system-ui, sans-serif !important;
+/* Keep every animated portal heading on the established portal display face. */
+html body #root#root .home-page .portal-title-jello-text,
+html body #root#root .home-page .portal-default-title-animated,
+html body #root#root .home-page .portal-default-title-animated *,
+html body #root#root .home-page .progress-title-animated {
+  font-family: "Boogaloo", "Arial Narrow", Arial, sans-serif !important;
   font-weight: 400 !important;
   font-variation-settings: normal !important;
   letter-spacing: 0 !important;
 }
 
-html body #root .home-page .notifications-page .notifications-activity-copy,
-html body #root .home-page .notifications-page .notifications-activity-copy :is(
-  .notifications-activities-word,
-  .notifications-missing-copy
-) {
-  font-family: "Chewy", "Lexend", system-ui, sans-serif !important;
+html body #root#root .home-page .notifications-page .notifications-activity-intro .notifications-activity-copy,
+html body #root#root .home-page .notifications-page .notifications-activity-intro .notifications-activity-copy * {
+  font-family: "Boogaloo", "Arial Narrow", Arial, sans-serif !important;
   font-weight: 400 !important;
   font-variation-settings: normal !important;
   letter-spacing: 0 !important;
 }
 
-html body #root .home-page .notifications-page .notifications-missing-copy {
+html body #root#root .home-page .notifications-page .notifications-missing-copy {
   font-size: 0.78em !important;
   line-height: 1.2 !important;
 }
@@ -759,25 +754,43 @@ html body #root .home-page .friend-invitations-section .friend-invitation-action
   }
 }
 
+/* Job Posts: slightly lift the light-mode filter rail without changing dark mode. */
+html[data-theme="light"] body[data-theme="light"] #root#root .home-page .portal-job-filter-bar,
+body[data-theme="light"] #root#root .home-page .portal-job-filter-bar {
+  border-color: rgba(91, 55, 43, 0.16) !important;
+  background: #e2ceb1 !important;
+  background-color: #e2ceb1 !important;
+  background-image: none !important;
+  box-shadow: 0 0.62rem 1.5rem rgba(84, 56, 35, 0.09) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root#root .home-page .portal-job-filter-bar label select,
+body[data-theme="light"] #root#root .home-page .portal-job-filter-bar label select {
+  background: #f7ecdd !important;
+  background-color: #f7ecdd !important;
+}
+
 /* Light portal feed and profile-preview post surfaces are true white. */
-html[data-theme="light"] body[data-theme="light"] #root .home-page .portal-home-feed:is(
-  [data-active-tab="work-news"],
-  [data-active-tab="talent-stories"],
-  [data-active-tab="my-feed"],
-  [data-active-tab="create-story"],
-  [data-active-tab="job-posts"],
-  [data-active-tab="my-company-posts"],
-  [data-active-tab="my-job-posts"]
-) :is(.portal-social-post-card, .portal-candidate-job-card),
-body[data-theme="light"] #root .home-page .portal-home-feed:is(
-  [data-active-tab="work-news"],
-  [data-active-tab="talent-stories"],
-  [data-active-tab="my-feed"],
-  [data-active-tab="create-story"],
-  [data-active-tab="job-posts"],
-  [data-active-tab="my-company-posts"],
-  [data-active-tab="my-job-posts"]
-) :is(.portal-social-post-card, .portal-candidate-job-card),
+html[data-theme="light"] body[data-theme="light"] #root#root .home-page .portal-home-feed .portal-home-tab-panel :is(
+  .portal-social-post-card,
+  .portal-candidate-job-card,
+  .portal-public-job-card
+),
+html[data-theme="light"] body[data-theme="light"] #root#root .home-page .portal-home-feed .portal-home-tab-panel :is(
+  .portal-social-post-card,
+  .portal-candidate-job-card,
+  .portal-public-job-card
+):is(:hover, :focus, :focus-visible, :focus-within, :active),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root#root .home-page .portal-home-feed .portal-home-tab-panel :is(
+  .portal-social-post-card,
+  .portal-candidate-job-card,
+  .portal-public-job-card
+),
+html:not([data-theme="dark"]) body:not([data-theme="dark"]) #root#root .home-page .portal-home-feed .portal-home-tab-panel :is(
+  .portal-social-post-card,
+  .portal-candidate-job-card,
+  .portal-public-job-card
+):is(:hover, :focus, :focus-visible, :focus-within, :active),
 html[data-theme="light"] body[data-theme="light"] .portal-profile-detail-backdrop .portal-profile-detail-posts :is(
   .portal-social-post-card,
   .candidate-popup-post-card,
@@ -791,6 +804,32 @@ body[data-theme="light"] .portal-profile-detail-backdrop .portal-profile-detail-
   background: #ffffff !important;
   background-color: #ffffff !important;
   background-image: none !important;
+}
+
+/* Work News uses the shared Reach treatment in both themes. */
+html body #root#root .home-page .portal-section-transition-shell[data-section="work-news"] .portal-home-feed :is(
+  button.portal-post-reach,
+  .portal-post-reach.portal-reach-button
+),
+html body #root#root .home-page .portal-section-transition-shell[data-section="work-news"] .portal-home-feed :is(
+  button.portal-post-reach,
+  .portal-post-reach.portal-reach-button
+):is(:hover, :focus, :focus-visible, :active) {
+  border-color: rgba(79, 29, 42, 0.12) !important;
+  background: #b06b7a !important;
+  background-color: #b06b7a !important;
+  background-image: none !important;
+  box-shadow: 0 0.32rem 0.9rem rgba(79, 29, 42, 0.16) !important;
+  color: #fffaf6 !important;
+  -webkit-text-fill-color: #fffaf6 !important;
+}
+
+html body #root#root .home-page .portal-section-transition-shell[data-section="work-news"] .portal-home-feed :is(
+  button.portal-post-reach,
+  .portal-post-reach.portal-reach-button
+) * {
+  color: #fffaf6 !important;
+  -webkit-text-fill-color: #fffaf6 !important;
 }
 
 /* The dark profile popup uses a black X on its pale close-control surface. */
@@ -816,4 +855,782 @@ body[data-public-home-theme="dark"] #root .jt-public-home.is-dark .jt-hero-visua
   background-color: #101617 !important;
   background-image: none !important;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.52) !important;
+}
+
+/* Each A4 sheet owns its ruler, with visible canvas between consecutive pages. */
+html body #root#root .resume-playground-editor-workbench,
+html body .resume-playground-editor-mobile-overlay .resume-playground-editor-workbench {
+  box-sizing: border-box !important;
+  width: calc(900px + var(--resume-editor-page-inset, 46px)) !important;
+  min-width: calc(900px + var(--resume-editor-page-inset, 46px)) !important;
+  padding: 0 !important;
+}
+
+html body #root#root .resume-playground-ruler-horizontal,
+html body .resume-playground-editor-mobile-overlay .resume-playground-ruler-horizontal {
+  top: var(--resume-ruler-page-top, 0px) !important;
+  left: var(--resume-editor-page-inset, 46px) !important;
+  width: 900px !important;
+  height: var(--resume-editor-ruler-size, 34px) !important;
+}
+
+html body #root#root .resume-playground-ruler-vertical,
+html body .resume-playground-editor-mobile-overlay .resume-playground-ruler-vertical {
+  top: var(--resume-ruler-page-top, 46px) !important;
+  left: 0 !important;
+  width: var(--resume-editor-ruler-size, 34px) !important;
+}
+
+html body #root#root .resume-playground-editor-page-frame,
+html body .resume-playground-editor-mobile-overlay .resume-playground-editor-page-frame {
+  margin-top: var(--resume-editor-page-inset, 46px) !important;
+  margin-left: var(--resume-editor-page-inset, 46px) !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html body #root#root :is(
+  .resume-playground-editor-pages-stack,
+  .resume-playground-editor-document
+),
+html body .resume-playground-editor-mobile-overlay :is(
+  .resume-playground-editor-pages-stack,
+  .resume-playground-editor-document
+) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+html body #root#root .resume-playground-editor-page-layer,
+html body .resume-playground-editor-mobile-overlay .resume-playground-editor-page-layer {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+}
+
+/* Paper content begins with black ink in dark mode until a color is selected. */
+html[data-theme="dark"] body[data-theme="dark"] #root#root .resume-playground-editor-document.uses-default-black-ink,
+html[data-theme="dark"] body[data-theme="dark"] #root#root .resume-playground-editor-document.uses-default-black-ink :is(
+  p,
+  div,
+  span,
+  font,
+  li,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  td,
+  th,
+  a,
+  strong,
+  em,
+  small,
+  label
+),
+html[data-theme="dark"] body[data-theme="dark"] .resume-playground-editor-mobile-overlay .resume-playground-editor-document.uses-default-black-ink,
+html[data-theme="dark"] body[data-theme="dark"] .resume-playground-editor-mobile-overlay .resume-playground-editor-document.uses-default-black-ink :is(
+  p,
+  div,
+  span,
+  font,
+  li,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  td,
+  th,
+  a,
+  strong,
+  em,
+  small,
+  label
+) {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  text-shadow: none !important;
+}
+
+/* Notepad controls stay still on hover and compress only while pressed. */
+html body #root#root .portal-widget-notepad :is(
+  .portal-widget-notepad-tabs > button,
+  .portal-widget-note-composer > button,
+  .portal-widget-reminder-composer > button
+) {
+  scale: 1 !important;
+  transform: none !important;
+  animation: none !important;
+  transition: transform 150ms cubic-bezier(0.2, 0.8, 0.2, 1), filter 150ms ease !important;
+  will-change: transform;
+}
+
+html body #root#root .portal-widget-notepad :is(
+  .portal-widget-notepad-tabs > button,
+  .portal-widget-note-composer > button,
+  .portal-widget-reminder-composer > button
+):is(:hover, :focus, :focus-visible) {
+  scale: 1 !important;
+  transform: none !important;
+}
+
+html body #root#root .portal-widget-notepad :is(
+  .portal-widget-notepad-tabs > button,
+  .portal-widget-note-composer > button,
+  .portal-widget-reminder-composer > button
+):active {
+  scale: 1 !important;
+  transform: scale(0.955) !important;
+}
+
+/* Desktop detail views remain readable without occupying the full canvas. */
+@media (min-width: 769px) {
+  html body :is(
+    .portal-post-detail-backdrop,
+    .portal-profile-detail-backdrop,
+    .portal-job-modal-backdrop,
+    .job-preview-overlay
+  ) {
+    padding: 1.25rem !important;
+  }
+
+  html body .portal-profile-detail-modal {
+    width: min(34rem, calc(100vw - 3rem)) !important;
+    max-width: 34rem !important;
+  }
+
+  html body .portal-post-detail-modal:not(.blocks-post-detail-modal) {
+    width: min(38rem, calc(100vw - 3rem)) !important;
+    max-width: 38rem !important;
+  }
+
+  html body .portal-job-modal.portal-job-modal-redesign {
+    width: min(48rem, calc(100vw - 3rem)) !important;
+    max-width: 48rem !important;
+  }
+
+  html body :is(.job-preview-modal, .candidate-job-preview-modal) {
+    width: min(44rem, calc(100vw - 3rem)) !important;
+    max-width: 44rem !important;
+  }
+
+  html body .job-preview-modal.message-company-profile-modal {
+    width: min(34rem, calc(100vw - 3rem)) !important;
+    max-width: 34rem !important;
+  }
+
+  html body .portal-job-review-modal {
+    width: min(42rem, calc(100vw - 3rem)) !important;
+    max-width: 42rem !important;
+  }
+}
+
+/* Profile close controls remain black on their pale surface in dark mode. */
+html[data-theme="dark"] body[data-theme="dark"] .portal-profile-detail-modal > .portal-profile-detail-close,
+html[data-theme="dark"] body[data-theme="dark"] .portal-profile-detail-modal > .portal-profile-detail-close:is(:hover, :focus, :focus-visible, :active),
+html[data-theme="dark"][data-theme="dark"] body[data-theme="dark"][data-theme="dark"] > .portal-profile-detail-backdrop.portal-profile-detail-backdrop > .portal-profile-detail-modal.portal-profile-detail-modal > .portal-profile-detail-close.portal-profile-detail-close,
+html[data-theme="dark"][data-theme="dark"] body[data-theme="dark"][data-theme="dark"] > .portal-profile-detail-backdrop.portal-profile-detail-backdrop > .portal-profile-detail-modal.portal-profile-detail-modal > .portal-profile-detail-close.portal-profile-detail-close:is(:hover, :focus, :focus-visible, :active) {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+/* Bookmarked jobs use a quiet, structured saved-role card with no like rail. */
+html body #root#root .home-page .bookmarks-hub-panel .applications-list {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)) !important;
+  align-items: stretch !important;
+  gap: 0.8rem !important;
+}
+
+html body #root#root .home-page .bookmarks-hub-panel .bookmarked-job-card {
+  --saved-job-bg: #121416;
+  --saved-job-raised: #1a1d20;
+  --saved-job-border: rgba(255, 255, 255, 0.12);
+  --saved-job-text: #f5f6f7;
+  --saved-job-muted: #a7adb3;
+  box-sizing: border-box !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.78rem !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 13rem !important;
+  margin: 0 !important;
+  padding: 1rem !important;
+  border: 1px solid var(--saved-job-border) !important;
+  border-radius: 8px !important;
+  background: var(--saved-job-bg) !important;
+  background-color: var(--saved-job-bg) !important;
+  background-image: none !important;
+  box-shadow: 0 0.55rem 1.4rem rgba(0, 0, 0, 0.16) !important;
+  color: var(--saved-job-text) !important;
+  overflow: hidden !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root#root .home-page .bookmarks-hub-panel .bookmarked-job-card {
+  --saved-job-bg: #ffffff;
+  --saved-job-raised: #f6f1eb;
+  --saved-job-border: #ded5ca;
+  --saved-job-text: #20272e;
+  --saved-job-muted: #69737a;
+  box-shadow: 0 0.55rem 1.4rem rgba(67, 48, 37, 0.08) !important;
+}
+
+html body #root#root .home-page .bookmarks-hub-panel .bookmarked-job-header {
+  display: grid !important;
+  grid-template-columns: 2.7rem minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 0.72rem !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 4.2rem 0 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+html body #root#root .home-page .bookmarks-hub-panel .bookmarked-job-company-mark {
+  display: grid !important;
+  place-items: center !important;
+  width: 2.7rem !important;
+  height: 2.7rem !important;
+  border: 1px solid var(--saved-job-border) !important;
+  border-radius: 8px !important;
+  background: var(--saved-job-raised) !important;
+  color: #b85f74 !important;
+  -webkit-text-fill-color: #b85f74 !important;
+  font-size: 1rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+}
+
+html body #root#root .home-page .bookmarks-hub-panel .bookmarked-job-heading-copy {
+  min-width: 0 !important;
+}
+
+html body #root#root .home-page .bookmarks-hub-panel .bookmarked-job-heading-copy :is(h3, p) {
+  display: block !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  color: var(--saved-job-text) !important;
+  -webkit-text-fill-color: var(--saved-job-text) !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body #root#root .home-page .bookmarks-hub-panel .bookmarked-job-heading-copy h3 {
+  font-size: 0.92rem !important;
+  font-weight: 850 !important;
+  line-height: 1.25 !important;
+}
+
+html body #root#root .home-page .bookmarks-hub-panel .bookmarked-job-heading-copy p {
+  margin-top: 0.22rem !important;
+  color: var(--saved-job-muted) !important;
+  -webkit-text-fill-color: var(--saved-job-muted) !important;
+  font-size: 0.68rem !important;
+  font-weight: 650 !important;
+}
+
+html body #root#root .home-page .bookmarks-hub-panel .bookmarked-job-status {
+  position: absolute !important;
+  top: 1rem !important;
+  right: 2.9rem !important;
+  padding: 0.24rem 0.46rem !important;
+  border: 1px solid rgba(184, 95, 116, 0.38) !important;
+  border-radius: 999px !important;
+  background: rgba(184, 95, 116, 0.12) !important;
+  color: #d9879a !important;
+  -webkit-text-fill-color: #d9879a !important;
+  font-size: 0.55rem !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root#root .home-page .bookmarks-hub-panel .bookmarked-job-status {
+  color: #7f1d32 !important;
+  -webkit-text-fill-color: #7f1d32 !important;
+}
+
+html body #root#root .home-page .bookmarks-hub-panel .bookmarked-job-status.is-applied {
+  border-color: rgba(61, 139, 113, 0.42) !important;
+  background: rgba(61, 139, 113, 0.13) !important;
+  color: #65c9a8 !important;
+  -webkit-text-fill-color: #65c9a8 !important;
+}
+
+html body #root#root .home-page .bookmarks-hub-panel .bookmarked-job-meta {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+html body #root#root .home-page .bookmarks-hub-panel .bookmarked-job-meta > :is(strong, span) {
+  display: inline-flex !important;
+  align-items: center !important;
+  min-height: 1.65rem !important;
+  margin: 0 !important;
+  padding: 0.3rem 0.55rem !important;
+  border: 1px solid var(--saved-job-border) !important;
+  border-radius: 6px !important;
+  background: var(--saved-job-raised) !important;
+  color: var(--saved-job-muted) !important;
+  -webkit-text-fill-color: var(--saved-job-muted) !important;
+  font-size: 0.61rem !important;
+  font-weight: 750 !important;
+  line-height: 1 !important;
+}
+
+html body #root#root .home-page .bookmarks-hub-panel .bookmarked-job-card > .application-card-actions {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 0.5rem !important;
+  width: 100% !important;
+  margin: auto 0 0 !important;
+  padding: 0.78rem 0 0 !important;
+  border-top: 1px solid var(--saved-job-border) !important;
+}
+
+html body #root#root .home-page .bookmarks-hub-panel .bookmarked-job-card > .application-card-actions > button.view-profile-btn,
+html body #root#root .home-page .bookmarks-hub-panel .bookmarked-job-card > .application-card-actions > button.view-profile-btn:is(:hover, :focus, :focus-visible, :active, :disabled) {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 2.15rem !important;
+  min-height: 2.15rem !important;
+  max-height: 2.15rem !important;
+  margin: 0 !important;
+  padding: 0.42rem 0.65rem !important;
+  border-radius: 6px !important;
+  font-size: 0.66rem !important;
+  font-weight: 850 !important;
+  transform: none !important;
+}
+
+html body #root#root .home-page .bookmarks-hub-panel .bookmarked-job-card > .application-card-actions > .secondary-action {
+  border: 1px solid var(--saved-job-border) !important;
+  background: var(--saved-job-raised) !important;
+  color: var(--saved-job-text) !important;
+  -webkit-text-fill-color: var(--saved-job-text) !important;
+}
+
+html body #root#root .home-page .bookmarks-hub-panel .bookmarked-job-card > .application-card-actions > .sky-apply-button {
+  border: 1px solid #7f1d32 !important;
+  background: #7f1d32 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Candidate directory cards use stable profile, context, stats, and action tracks. */
+html body #root#root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-row {
+  --candidate-row-bg: #121416;
+  --candidate-row-raised: #1a1d20;
+  --candidate-row-border: rgba(255, 255, 255, 0.12);
+  --candidate-row-text: #f5f6f7;
+  --candidate-row-muted: #a7adb3;
+  box-sizing: border-box !important;
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: 3.2rem minmax(0, 1fr) minmax(12rem, 0.72fr) 5.6rem !important;
+  grid-template-areas: "avatar main stats open" !important;
+  align-items: center !important;
+  gap: 0.8rem !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 5.35rem !important;
+  margin: 0 !important;
+  padding: 0.9rem !important;
+  border: 1px solid var(--candidate-row-border) !important;
+  border-radius: 8px !important;
+  background: var(--candidate-row-bg) !important;
+  background-color: var(--candidate-row-bg) !important;
+  background-image: none !important;
+  box-shadow: 0 0.45rem 1.2rem rgba(0, 0, 0, 0.12) !important;
+  color: var(--candidate-row-text) !important;
+  transform: none !important;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root#root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-row {
+  --candidate-row-bg: #ffffff;
+  --candidate-row-raised: #f6f1eb;
+  --candidate-row-border: #ded5ca;
+  --candidate-row-text: #20272e;
+  --candidate-row-muted: #68737a;
+  box-shadow: 0 0.45rem 1.2rem rgba(67, 48, 37, 0.07) !important;
+}
+
+html body #root#root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-row:is(:hover, :focus-visible) {
+  border-color: rgba(184, 95, 116, 0.56) !important;
+  background: var(--candidate-row-bg) !important;
+  box-shadow: 0 0.72rem 1.7rem rgba(0, 0, 0, 0.16) !important;
+  outline: none !important;
+  transform: translateY(-1px) !important;
+}
+
+html body #root#root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-avatar,
+html body #root#root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-avatar :is(img, svg, .profile-avatar-image, .default-profile-image) {
+  grid-area: avatar !important;
+  width: 3.2rem !important;
+  min-width: 3.2rem !important;
+  max-width: 3.2rem !important;
+  height: 3.2rem !important;
+  min-height: 3.2rem !important;
+  max-height: 3.2rem !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+}
+
+html body #root#root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-main {
+  grid-area: main !important;
+  display: grid !important;
+  gap: 0.2rem !important;
+  min-width: 0 !important;
+}
+
+html body #root#root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-name {
+  color: var(--candidate-row-text) !important;
+  -webkit-text-fill-color: var(--candidate-row-text) !important;
+  font-size: 0.88rem !important;
+  font-weight: 850 !important;
+}
+
+html body #root#root .home-page .talent-pool-container.candidate-view-candidates :is(.candidate-list-id, .candidate-list-skills) {
+  color: var(--candidate-row-muted) !important;
+  -webkit-text-fill-color: var(--candidate-row-muted) !important;
+  font-size: 0.62rem !important;
+  font-weight: 700 !important;
+}
+
+html body #root#root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-skills {
+  color: #c47a8c !important;
+  -webkit-text-fill-color: #c47a8c !important;
+}
+
+html body #root#root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-stats {
+  grid-area: stats !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 0.3rem !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0.55rem !important;
+  border: 1px solid var(--candidate-row-border) !important;
+  border-radius: 6px !important;
+  background: var(--candidate-row-raised) !important;
+}
+
+html body #root#root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-stats strong {
+  color: var(--candidate-row-text) !important;
+  -webkit-text-fill-color: var(--candidate-row-text) !important;
+  font-size: 0.72rem !important;
+}
+
+html body #root#root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-stats small {
+  color: var(--candidate-row-muted) !important;
+  -webkit-text-fill-color: var(--candidate-row-muted) !important;
+  font-size: 0.52rem !important;
+}
+
+html body #root#root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-open-label {
+  grid-area: open !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 0.35rem !important;
+  min-width: 0 !important;
+  color: #c47a8c !important;
+  -webkit-text-fill-color: #c47a8c !important;
+  font-size: 0.62rem !important;
+  font-weight: 850 !important;
+  white-space: nowrap !important;
+}
+
+html body #root#root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-open-label::after {
+  content: "\2192" !important;
+  font-size: 0.9rem !important;
+  line-height: 1 !important;
+}
+
+/* Friends uses the same rail colors as Bookmarks and Create. */
+html body #root#root .home-page .friend-invitations-section .friend-invitation-tabs {
+  border: 1px solid rgba(112, 83, 52, 0.16) !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  background-color: rgba(255, 255, 255, 0.72) !important;
+  background-image: none !important;
+  box-shadow: 0 0.65rem 1.8rem rgba(31, 41, 55, 0.06) !important;
+}
+
+html body #root#root .home-page .friend-invitations-section .friend-invitation-tab:is(
+  .is-add,
+  .is-incoming,
+  .is-outgoing,
+  .is-friends
+),
+html[data-theme="dark"] body[data-theme="dark"] #root#root .home-page .friend-invitations-section .friend-invitation-tab:is(
+  .is-add,
+  .is-incoming,
+  .is-outgoing,
+  .is-friends
+) {
+  border: 1px solid rgba(112, 83, 52, 0.14) !important;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+  color: #1f2937 !important;
+  -webkit-text-fill-color: #1f2937 !important;
+  box-shadow: none !important;
+}
+
+html body #root#root .home-page .friend-invitations-section .friend-invitation-tab:is(.is-active, :hover, :focus-visible),
+html[data-theme="dark"] body[data-theme="dark"] #root#root .home-page .friend-invitations-section .friend-invitation-tab:is(.is-active, :hover, :focus-visible) {
+  border-color: rgba(125, 48, 68, 0.3) !important;
+  background: rgba(247, 239, 231, 0.96) !important;
+  background-color: rgba(247, 239, 231, 0.96) !important;
+  color: #6b1428 !important;
+  -webkit-text-fill-color: #6b1428 !important;
+  box-shadow: inset 0 0 0 1px rgba(125, 48, 68, 0.08) !important;
+}
+
+/* Suggested friends use fixed card and action tracks in both themes. */
+html body #root#root .home-page .friend-invitations-section .friend-add-results {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)) !important;
+  align-items: stretch !important;
+  gap: 0.72rem !important;
+}
+
+html body #root#root .home-page .friend-invitations-section .friend-add-results > :is(h3, p, .empty-info) {
+  grid-column: 1 / -1 !important;
+}
+
+html body #root#root .home-page .friend-invitations-section .friend-add-results > .friend-add-candidate-card {
+  --friend-card-bg: #121416;
+  --friend-card-raised: #1a1d20;
+  --friend-card-border: rgba(255, 255, 255, 0.12);
+  --friend-card-text: #f5f6f7;
+  --friend-card-muted: #a7adb3;
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: 3rem minmax(0, 1fr) !important;
+  grid-template-rows: auto 2.15rem !important;
+  align-items: center !important;
+  gap: 0.7rem !important;
+  min-width: 0 !important;
+  min-height: 7.4rem !important;
+  margin: 0 !important;
+  padding: 0.85rem !important;
+  border: 1px solid var(--friend-card-border) !important;
+  border-radius: 8px !important;
+  background: var(--friend-card-bg) !important;
+  background-color: var(--friend-card-bg) !important;
+  background-image: none !important;
+  box-shadow: 0 0.5rem 1.3rem rgba(0, 0, 0, 0.13) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root#root .home-page .friend-invitations-section .friend-add-results > .friend-add-candidate-card {
+  --friend-card-bg: #ffffff;
+  --friend-card-raised: #f6f1eb;
+  --friend-card-border: #ded5ca;
+  --friend-card-text: #20272e;
+  --friend-card-muted: #68737a;
+  box-shadow: 0 0.5rem 1.3rem rgba(67, 48, 37, 0.07) !important;
+}
+
+html body #root#root .home-page .friend-invitations-section .friend-add-results > .friend-add-candidate-card .friend-invitation-avatar {
+  width: 3rem !important;
+  min-width: 3rem !important;
+  max-width: 3rem !important;
+  height: 3rem !important;
+  min-height: 3rem !important;
+  max-height: 3rem !important;
+}
+
+html body #root#root .home-page .friend-invitations-section .friend-add-results > .friend-add-candidate-card .friend-add-candidate-copy :is(h3, p, span) {
+  color: var(--friend-card-text) !important;
+  -webkit-text-fill-color: var(--friend-card-text) !important;
+}
+
+html body #root#root .home-page .friend-invitations-section .friend-add-results > .friend-add-candidate-card .friend-add-candidate-copy h3 {
+  font-size: 0.82rem !important;
+  font-weight: 850 !important;
+}
+
+html body #root#root .home-page .friend-invitations-section .friend-add-results > .friend-add-candidate-card .friend-add-candidate-copy :is(p, span) {
+  margin-top: 0.16rem !important;
+  color: var(--friend-card-muted) !important;
+  -webkit-text-fill-color: var(--friend-card-muted) !important;
+  font-size: 0.6rem !important;
+}
+
+html body #root#root .home-page .friend-invitations-section .friend-add-results > .friend-add-candidate-card .friend-add-candidate-actions {
+  grid-column: 1 / -1 !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 0.45rem !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: 2.15rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body #root#root .home-page .friend-invitations-section .friend-add-results > .friend-add-candidate-card .friend-add-candidate-actions > :is(button, .secondary-button, .friend-add-button),
+html body #root#root .home-page .friend-invitations-section .friend-add-results > .friend-add-candidate-card .friend-add-candidate-actions > :is(button, .secondary-button, .friend-add-button):is(:hover, :focus, :focus-visible, :active, :disabled) {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 2.15rem !important;
+  min-height: 2.15rem !important;
+  max-height: 2.15rem !important;
+  margin: 0 !important;
+  padding: 0.38rem 0.48rem !important;
+  border-radius: 6px !important;
+  font-size: 0.62rem !important;
+  transform: none !important;
+}
+
+html body #root#root .home-page .friend-invitations-section .friend-add-results > .friend-add-candidate-card .friend-add-candidate-actions > .secondary-button {
+  border: 1px solid var(--friend-card-border) !important;
+  background: var(--friend-card-raised) !important;
+  color: var(--friend-card-text) !important;
+  -webkit-text-fill-color: var(--friend-card-text) !important;
+}
+
+/* Suspended desktop editor sessions remain visible until explicitly closed. */
+html body #root#root .home-page .resume-playground-open-session {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 0.8rem !important;
+  min-height: 3.2rem !important;
+  padding: 0.68rem 0.78rem !important;
+  border-radius: 8px !important;
+}
+
+html body #root#root .home-page .resume-playground-open-session-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  flex: 0 0 auto !important;
+}
+
+html body #root#root .home-page .resume-playground-open-session-close,
+html body #root#root .home-page .resume-playground-open-session-close:is(:hover, :focus, :focus-visible, :active) {
+  appearance: none !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 1.75rem !important;
+  min-width: 1.75rem !important;
+  max-width: 1.75rem !important;
+  height: 1.75rem !important;
+  min-height: 1.75rem !important;
+  max-height: 1.75rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  font-size: 1.25rem !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+  transform: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root#root .home-page .resume-playground-open-session-close,
+html[data-theme="dark"] body[data-theme="dark"] #root#root .home-page .resume-playground-open-session-close:is(:hover, :focus, :focus-visible, :active) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Signature ink buttons keep their literal colors across editor themes. */
+html body #root#root .resume-playground-signature-color-button-light,
+html body #root#root .resume-playground-signature-color-button-light:is(:hover, :focus, :focus-visible, :active, .is-active),
+html body #root#root .resume-playground-signature-color-button-light *,
+html body .resume-playground-editor-mobile-overlay .resume-playground-signature-color-button-light,
+html body .resume-playground-editor-mobile-overlay .resume-playground-signature-color-button-light:is(:hover, :focus, :focus-visible, :active, .is-active),
+html body .resume-playground-editor-mobile-overlay .resume-playground-signature-color-button-light * {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+@media (max-width: 768px) {
+  html body .resume-playground-editor-mobile-overlay .resume-playground-signature-color-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 0 !important;
+    width: 1.84rem !important;
+    padding: 0 !important;
+  }
+
+  html body .resume-playground-editor-mobile-overlay .resume-playground-signature-color-button,
+  html body .resume-playground-editor-mobile-overlay .resume-playground-signature-color-button:is(:hover, :focus, :focus-visible, :active, .is-active) {
+    flex: 0 0 0.92rem !important;
+    width: 0.92rem !important;
+    min-width: 0.92rem !important;
+    max-width: 0.92rem !important;
+    margin: 0 !important;
+  }
+
+  html body #root#root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-row {
+    grid-template-columns: 2.7rem minmax(0, 1fr) 1.5rem !important;
+    grid-template-areas:
+      "avatar main open"
+      "stats stats stats" !important;
+    gap: 0.6rem !important;
+    min-height: 0 !important;
+    padding: 0.72rem !important;
+  }
+
+  html body #root#root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-avatar,
+  html body #root#root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-avatar :is(img, svg, .profile-avatar-image, .default-profile-image) {
+    width: 2.7rem !important;
+    min-width: 2.7rem !important;
+    max-width: 2.7rem !important;
+    height: 2.7rem !important;
+    min-height: 2.7rem !important;
+    max-height: 2.7rem !important;
+  }
+
+  html body #root#root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-stats {
+    padding: 0.48rem !important;
+  }
+
+  html body #root#root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-open-label {
+    justify-content: center !important;
+    width: 1.5rem !important;
+    font-size: 0 !important;
+  }
+
+  html body #root#root .home-page .talent-pool-container.candidate-view-candidates .candidate-list-open-label::after {
+    font-size: 0.9rem !important;
+  }
 }

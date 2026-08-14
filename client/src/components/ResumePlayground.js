@@ -12,10 +12,12 @@ const DOCUMENT_STORAGE_PREFIX = 'jumptakeDocumentPlayground:';
 const WORKSPACE_SNAPSHOT_KEY = 'jumptakeResumePlaygroundSnapshot';
 const A4_PAGE_WIDTH = 900;
 const A4_PAGE_HEIGHT = 1123;
-const A4_PAGE_GAP = 56;
+const A4_PAGE_GAP = 96;
 const A4_PAGE_SAFE_HEIGHT = A4_PAGE_HEIGHT - 36;
 const RULER_SIZE = 34;
 const MOBILE_RULER_SIZE = 24;
+const RULER_PAGE_GAP = 12;
+const MOBILE_RULER_PAGE_GAP = 8;
 const A4_TOP_PADDING = 48;
 const A4_RIGHT_PADDING = 56;
 const A4_BOTTOM_PADDING = 48;
@@ -37,7 +39,13 @@ const cloneMargins = (margins = DEFAULT_EDITOR_MARGINS) => ({
 
 const createPageMargins = (pageCount = 1, sourceMargins = []) => Array.from(
     { length: Math.max(1, pageCount) },
-    (_, index) => cloneMargins(sourceMargins[index] || sourceMargins[0] || DEFAULT_EDITOR_MARGINS)
+    (_, index) => cloneMargins(sourceMargins[index] || DEFAULT_EDITOR_MARGINS)
+);
+
+const usesDefaultTextColor = (color = DEFAULT_TEXT_COLOR) => (
+    ['#000', '#000000', 'black', 'rgb(0, 0, 0)'].includes(
+        String(color || DEFAULT_TEXT_COLOR).toLowerCase()
+    )
 );
 
 const FONT_OPTIONS = [
@@ -1199,6 +1207,7 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
     const [editorSuspended, setEditorSuspended] = useState(false);
     const [savedResumes, setSavedResumes] = useState([]);
     const [editorResume, setEditorResume] = useState(null);
+    const [editorSessionMode, setEditorSessionMode] = useState(null);
     const [editorPageCount, setEditorPageCount] = useState(1);
     const [editorPageMargins, setEditorPageMargins] = useState(() => createPageMargins(1));
     const [statusMessage, setStatusMessage] = useState('');
@@ -1566,7 +1575,7 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
 
             unstable_batchedUpdates(() => {
                 setEditorPageMargins((current) => {
-                    const existingMargin = current[pageIndex] || current[0] || DEFAULT_EDITOR_MARGINS;
+                    const existingMargin = current[pageIndex] || DEFAULT_EDITOR_MARGINS;
                     if (existingMargin[marginKey] === nextValue) {
                         return current;
                     }
@@ -1668,7 +1677,8 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
     }, [getPaginationHost]);
 
     const createMeasurementContainer = useCallback((pageIndex = 0) => {
-        const pageMargins = editorPageMarginsRef.current[pageIndex] || editorMarginsRef.current;
+        const pageMargins = editorPageMarginsRef.current[pageIndex]
+            || (pageIndex === 0 ? editorMarginsRef.current : DEFAULT_EDITOR_MARGINS);
         const measurement = document.createElement('div');
         measurement.style.position = 'absolute';
         measurement.style.left = '-100000px';
@@ -1801,7 +1811,8 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         let currentPageIndex = 0;
 
         const getPageMargins = (pageIndex) => (
-            editorPageMarginsRef.current[pageIndex] || editorMarginsRef.current
+            editorPageMarginsRef.current[pageIndex]
+            || (pageIndex === 0 ? editorMarginsRef.current : DEFAULT_EDITOR_MARGINS)
         );
         const getPageTopMargin = (pageIndex) => getPageMargins(pageIndex).top;
         const applyMeasurementPageMargins = (pageIndex) => {
@@ -2075,6 +2086,7 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         editorPaginationDeferredRef.current = deferPagination;
         deferNextEditorPaginationRef.current = deferPagination;
         setEditorResume(resume);
+        setEditorSessionMode(workspaceMode);
         setEditorSuspended(false);
         const nextTextColor = resume?.textColor || DEFAULT_TEXT_COLOR;
         textColorRef.current = nextTextColor;
@@ -2460,20 +2472,19 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         const nativeEvent = event.nativeEvent || {};
         const inputType = nativeEvent.inputType || '';
         const insertedText = nativeEvent.data || '';
-        const activeTextColor = String(textColorRef.current || textColor || DEFAULT_TEXT_COLOR).toLowerCase();
-        const usesDefaultTextColor = ['#000', '#000000', 'black', 'rgb(0, 0, 0)'].includes(activeTextColor);
+        const hasDefaultTextColor = usesDefaultTextColor(textColorRef.current || textColor);
 
         if (!editorResume) {
             return;
         }
 
-        if (!usesDefaultTextColor && (inputType === 'insertText' || inputType === 'insertCompositionText') && insertedText) {
+        if (!hasDefaultTextColor && (inputType === 'insertText' || inputType === 'insertCompositionText') && insertedText) {
             event.preventDefault();
             insertColoredText(insertedText);
             return;
         }
 
-        if (!usesDefaultTextColor) {
+        if (!hasDefaultTextColor) {
             maintainTextColorForTyping(event);
         }
     };
@@ -2488,10 +2499,9 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
             return;
         }
 
-        const activeTextColor = String(textColorRef.current || textColor || DEFAULT_TEXT_COLOR).toLowerCase();
-        const usesDefaultTextColor = ['#000', '#000000', 'black', 'rgb(0, 0, 0)'].includes(activeTextColor);
+        const hasDefaultTextColor = usesDefaultTextColor(textColorRef.current || textColor);
 
-        if (!usesDefaultTextColor && inputType.startsWith('insert') && insertedText) {
+        if (!hasDefaultTextColor && inputType.startsWith('insert') && insertedText) {
             colorRecentlyInsertedText(insertedText.length);
         }
 
@@ -2941,6 +2951,7 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         clearPendingEditorSync();
         editorPaginationDeferredRef.current = false;
         setEditorResume(null);
+        setEditorSessionMode(null);
         setEditorSuspended(false);
         setAtsScanResult(null);
         setShowAtsDetails(false);
@@ -2955,9 +2966,29 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
         clearAiDraftTyping();
         clearPendingEditorSync();
         editorPaginationDeferredRef.current = false;
+
+        if (editorResume && !isMobileViewport) {
+            const currentHtml = editorRef.current?.innerHTML;
+            if (currentHtml !== undefined) {
+                setEditorResume((current) => current ? { ...current, html: currentHtml } : current);
+            }
+            setEditorSessionMode((current) => current || workspaceMode);
+            setWorkspaceMode(nextMode);
+            setActiveTab('create');
+            setEditorSuspended(true);
+            setTailorStep('');
+            setTailorTemplates([]);
+            setDocumentPrompt('');
+            setAtsScanResult(null);
+            setShowAtsDetails(false);
+            clearMessages();
+            return;
+        }
+
         setWorkspaceMode(nextMode);
         setActiveTab('create');
         setEditorResume(null);
+        setEditorSessionMode(null);
         setEditorSuspended(false);
         setTailorStep('');
         setTailorTemplates([]);
@@ -2977,6 +3008,7 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
             if (currentHtml !== undefined) {
                 setEditorResume((current) => current ? { ...current, html: currentHtml } : current);
             }
+            setEditorSessionMode((current) => current || workspaceMode);
             setEditorSuspended(true);
         }
     };
@@ -2984,10 +3016,14 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
     const editorStatusText = spellcheckEnabled
         ? 'Browser spellcheck is on while you edit.'
         : 'Browser spellcheck is off for this editor.';
+    const suspendedResourceLabel = editorSessionMode === 'document' ? 'Document' : 'Resume';
     const editorPageStride = A4_PAGE_HEIGHT + A4_PAGE_GAP;
     const editorDocumentHeight = (editorPageCount * A4_PAGE_HEIGHT) + (Math.max(editorPageCount - 1, 0) * A4_PAGE_GAP);
-    const mobileWorkbenchWidth = (A4_PAGE_WIDTH + (MOBILE_RULER_SIZE * 2)) * mobileEditorZoom;
-    const mobileWorkbenchHeight = (editorDocumentHeight + (MOBILE_RULER_SIZE * 2)) * mobileEditorZoom;
+    const editorRulerSize = isMobileViewport ? MOBILE_RULER_SIZE : RULER_SIZE;
+    const editorRulerPageGap = isMobileViewport ? MOBILE_RULER_PAGE_GAP : RULER_PAGE_GAP;
+    const editorPageInset = editorRulerSize + editorRulerPageGap;
+    const mobileWorkbenchWidth = (A4_PAGE_WIDTH + editorPageInset) * mobileEditorZoom;
+    const mobileWorkbenchHeight = (editorDocumentHeight + editorPageInset) * mobileEditorZoom;
     const mobileWorkbenchScaleStyle = isMobileViewport
         ? {
             width: `${mobileWorkbenchWidth}px`,
@@ -2996,9 +3032,12 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
             minHeight: `${mobileWorkbenchHeight}px`
         }
         : undefined;
-    const mobileWorkbenchStyle = isMobileViewport
-        ? { '--resume-mobile-editor-zoom': mobileEditorZoom }
-        : undefined;
+    const editorWorkbenchStyle = {
+        '--resume-editor-ruler-size': `${editorRulerSize}px`,
+        '--resume-editor-ruler-gap': `${editorRulerPageGap}px`,
+        '--resume-editor-page-inset': `${editorPageInset}px`,
+        ...(isMobileViewport ? { '--resume-mobile-editor-zoom': mobileEditorZoom } : {})
+    };
 
     const handleToolbarWheel = useCallback((event) => {
         const shell = event.currentTarget;
@@ -3643,13 +3682,15 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
                         >
                             <div
                                 className="resume-playground-editor-workbench"
-                                style={mobileWorkbenchStyle}
+                                style={editorWorkbenchStyle}
                             >
                                 {Array.from({ length: editorPageCount }).map((_, index) => (
                                     <React.Fragment key={`page-rulers-${index}`}>
                                         <div
                                             className="resume-playground-ruler resume-playground-ruler-horizontal"
-                                            style={{ top: `${index * editorPageStride}px` }}
+                                            data-page-index={index}
+                                            aria-label={`Page ${index + 1} horizontal margin ruler`}
+                                            style={{ '--resume-ruler-page-top': `${index * editorPageStride}px` }}
                                             onPointerDown={(event) => startRulerDrag('horizontal', index, event)}
                                         >
                                             <div className="resume-playground-ruler-ticks" />
@@ -3660,14 +3701,21 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
                                             </div>
                                             <div
                                                 className="resume-playground-ruler-indicator resume-playground-ruler-indicator-horizontal"
-                                                style={{ left: `${(editorPageMargins[index] || editorMargins).left}px` }}
+                                                style={{
+                                                    left: `${(
+                                                        editorPageMargins[index]
+                                                        || (index === 0 ? editorMargins : DEFAULT_EDITOR_MARGINS)
+                                                    ).left}px`
+                                                }}
                                             />
                                         </div>
 
                                         <div
                                             className="resume-playground-ruler resume-playground-ruler-vertical"
+                                            data-page-index={index}
+                                            aria-label={`Page ${index + 1} vertical margin ruler`}
                                             style={{
-                                                top: `${(index * editorPageStride) + RULER_SIZE}px`,
+                                                '--resume-ruler-page-top': `${(index * editorPageStride) + editorPageInset}px`,
                                                 height: `${A4_PAGE_HEIGHT}px`
                                             }}
                                             onPointerDown={(event) => startRulerDrag('vertical', index, event)}
@@ -3680,7 +3728,12 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
                                             </div>
                                             <div
                                                 className="resume-playground-ruler-indicator resume-playground-ruler-indicator-vertical"
-                                                style={{ top: `${(editorPageMargins[index] || editorMargins).top}px` }}
+                                                style={{
+                                                    top: `${(
+                                                        editorPageMargins[index]
+                                                        || (index === 0 ? editorMargins : DEFAULT_EDITOR_MARGINS)
+                                                    ).top}px`
+                                                }}
                                             />
                                         </div>
                                     </React.Fragment>
@@ -3699,12 +3752,13 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
                                             <div
                                                 key={`page-${index}`}
                                                 className="resume-playground-editor-page-layer"
+                                                data-page-index={index}
                                                 style={{ top: `${index * editorPageStride}px`, height: `${A4_PAGE_HEIGHT}px` }}
                                             />
                                         ))}
                                         <div
                                             ref={editorRef}
-                                            className={`resume-playground-editor-document${editorResume?.source === 'scratch' || editorResume?.source === 'upload' ? ' is-plain-mode' : ''}${editorResume?.source === 'ai-tailor' ? ' is-ai-tailor-mode' : ''}`}
+                                            className={`resume-playground-editor-document${editorResume?.source === 'scratch' || editorResume?.source === 'upload' ? ' is-plain-mode' : ''}${editorResume?.source === 'ai-tailor' ? ' is-ai-tailor-mode' : ''}${usesDefaultTextColor(textColor) ? ' uses-default-black-ink' : ''}`}
                                             contentEditable
                                             suppressContentEditableWarning
                                             spellCheck={spellcheckEnabled}
@@ -3744,17 +3798,29 @@ const ResumePlayground = ({ user, mode = 'resume', allowDocumentMode = false, pr
                 <>
                     {editorResume && editorSuspended && !isMobileViewport && (
                         <div className="resume-playground-open-session">
-                            <span>{`${editorResume.name || resourceLabel} is still open.`}</span>
-                            <button
-                                type="button"
-                                className="settings-button primary"
-                                onClick={() => {
-                                    setEditorSuspended(false);
-                                    clearMessages();
-                                }}
-                            >
-                                {`Return to ${resourceLabel} Editor`}
-                            </button>
+                            <span>{`${editorResume.name || suspendedResourceLabel} is still open.`}</span>
+                            <div className="resume-playground-open-session-actions">
+                                <button
+                                    type="button"
+                                    className="settings-button primary"
+                                    onClick={() => {
+                                        setWorkspaceMode(editorSessionMode || workspaceMode);
+                                        setEditorSuspended(false);
+                                        clearMessages();
+                                    }}
+                                >
+                                    {`Return to ${suspendedResourceLabel} Editor`}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="resume-playground-open-session-close"
+                                    onClick={closeEditor}
+                                    aria-label={`Close open ${suspendedResourceLabel.toLowerCase()} editor`}
+                                    title={`Close ${suspendedResourceLabel} editor`}
+                                >
+                                    &times;
+                                </button>
+                            </div>
                         </div>
                     )}
                     {activeTab === 'create' && (

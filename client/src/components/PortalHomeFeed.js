@@ -247,7 +247,10 @@ const getFeedShareUrl = ({ kind = 'post', id = '', tab = 'work-news', portal = '
         url.searchParams.set('jtTab', tab);
     }
 
-    url.hash = portal === 'employer' ? 'employer:home-feed' : 'candidate:job-feed';
+    const targetSection = kind === 'job'
+        ? (portal === 'employer' ? 'my-job-posts' : 'job-posts')
+        : tab;
+    url.hash = `${portal}:${targetSection}`;
     return url.toString();
 };
 
@@ -1270,6 +1273,7 @@ const PortalHomeFeed = ({
     const [sharingTargetId, setSharingTargetId] = useState('');
     const [visibleReactionTooltip, setVisibleReactionTooltip] = useState('');
     const [animatingReactionKey, setAnimatingReactionKey] = useState('');
+    const [aiPreviewCommentPostId, setAiPreviewCommentPostId] = useState('');
     const [jobReachMap, setJobReachMap] = useState(readJobReachMap);
     const [homeJobLikeMap, setHomeJobLikeMap] = useState(readHomeJobLikeMap);
     const [homeJobReviewMap, setHomeJobReviewMap] = useState(readHomeJobReviewMap);
@@ -1331,6 +1335,8 @@ const PortalHomeFeed = ({
     const pendingDeepLinkRef = useRef(null);
     const feedDraftTypingTimerRef = useRef(null);
     const feedDraftTypingTokenRef = useRef(0);
+    const aiActionPreviewRef = useRef({ id: '', action: '', postId: '' });
+    const aiActionTypingTimerRef = useRef(null);
     const [applicationJob, setApplicationJob] = useState(null);
     const [applicationMessage, setApplicationMessage] = useState('');
     const [coverLetterText, setCoverLetterText] = useState('');
@@ -1375,6 +1381,9 @@ const PortalHomeFeed = ({
                 window.clearTimeout(timerId);
             }
         });
+        if (aiActionTypingTimerRef.current) {
+            window.clearInterval(aiActionTypingTimerRef.current);
+        }
     }, []);
 
     useEffect(() => {
@@ -2948,12 +2957,13 @@ const PortalHomeFeed = ({
 
     const renderCommentComposerOverlay = (storageKey, postKey) => {
         const isClosing = closingCommentPostId === postKey;
+        const isAiPreview = aiPreviewCommentPostId === postKey;
         const overlayMarkup = (
             <div
-                className={`portal-comment-row-backdrop ${isClosing ? 'is-closing' : ''}`}
+                className={`portal-comment-row-backdrop ${isClosing ? 'is-closing' : ''} ${isAiPreview ? 'is-ai-preview' : ''}`}
                 ref={(node) => {
                     if (node) {
-                        node.style.setProperty('z-index', '2147483647', 'important');
+                        node.style.setProperty('z-index', isAiPreview ? '13000' : '2147483647', 'important');
                     }
                 }}
                 role="presentation"
@@ -2972,7 +2982,8 @@ const PortalHomeFeed = ({
                         value={commentDrafts[postKey] || ''}
                         placeholder="Comment or mention with @JumpTakeID..."
                         onChange={(event) => setCommentDrafts((drafts) => ({ ...drafts, [postKey]: event.target.value }))}
-                        autoFocus
+                        autoFocus={!isAiPreview}
+                        readOnly={isAiPreview}
                     />
                     <button
                         type="button"
@@ -2983,6 +2994,7 @@ const PortalHomeFeed = ({
                         }}
                         aria-label="Post comment"
                         title="Post comment"
+                        disabled={isAiPreview}
                     >
                         <ReactionIcon name="Comment" />
                     </button>
@@ -3840,12 +3852,23 @@ const PortalHomeFeed = ({
 
         const openRequestedJob = (request = {}) => {
             if (request.mode && request.mode !== mode) {
-                return;
+                return false;
             }
 
             const requestedTab = request.tab || (request.jobId ? 'job-posts' : defaultTab);
-            if (tabIds.includes(requestedTab)) {
-                setActiveTab(requestedTab);
+            if (!tabIds.includes(requestedTab)) {
+                return false;
+            }
+            if (portalSection && requestedTab !== defaultTab) {
+                return false;
+            }
+            setActiveTab(portalSection ? defaultTab : requestedTab);
+
+            if (requestedTab === 'job-posts' && request.draftId) {
+                localStorage.removeItem('jumptakeActiveDraftId');
+                localStorage.removeItem('jumptakeActiveJobReturnSection');
+                openDraftApplicationWorkspaceRef.current(request.draftId);
+                return true;
             }
 
             if (requestedTab === 'job-posts' && request.search) {
@@ -3858,7 +3881,7 @@ const PortalHomeFeed = ({
             }
 
             if (requestedTab !== 'job-posts' || !request.jobId || !safeJobs.length) {
-                return;
+                return true;
             }
 
             const requestedId = String(request.jobId);
@@ -3870,7 +3893,7 @@ const PortalHomeFeed = ({
             ].filter(Boolean).includes(requestedId));
 
             if (matchIndex < 0) {
-                return;
+                return true;
             }
 
             const matchedJob = safeJobs[matchIndex];
@@ -3888,6 +3911,7 @@ const PortalHomeFeed = ({
                     openJobModalRef.current(matchedJob, 'candidate');
                 }
             });
+            return true;
         };
 
         const typeFeedDraft = (text = '') => {
@@ -3942,7 +3966,7 @@ const PortalHomeFeed = ({
                 return;
             }
 
-            setActiveTab(requestedTab);
+            setActiveTab(portalSection ? defaultTab : requestedTab);
             typeFeedDraft(draft.text || '');
             setComposerMedia(null);
             setComposerTaggedUsers(Array.isArray(draft.taggedUsers) ? draft.taggedUsers : []);
@@ -3962,7 +3986,7 @@ const PortalHomeFeed = ({
 
         const readStoredRequest = () => {
             const storedActiveDraftId = localStorage.getItem('jumptakeActiveDraftId');
-            if (storedActiveDraftId) {
+            if (storedActiveDraftId && (!portalSection || defaultTab === 'job-posts')) {
                 localStorage.removeItem('jumptakeActiveDraftId');
                 localStorage.removeItem('jumptakeActiveJobReturnSection');
                 openDraftApplicationWorkspaceRef.current(storedActiveDraftId);
@@ -3971,9 +3995,8 @@ const PortalHomeFeed = ({
 
             try {
                 const storedRequest = JSON.parse(sessionStorage.getItem('jumptakeHomeFeedRequest') || 'null');
-                if (storedRequest) {
+                if (storedRequest && openRequestedJob(storedRequest)) {
                     sessionStorage.removeItem('jumptakeHomeFeedRequest');
-                    openRequestedJob(storedRequest);
                 }
             } catch (error) {
                 sessionStorage.removeItem('jumptakeHomeFeedRequest');
@@ -4021,21 +4044,26 @@ const PortalHomeFeed = ({
         const linkedTab = params.get('jtTab');
 
         if (linkedPostId) {
-            pendingDeepLinkRef.current = { type: 'post', id: linkedPostId };
             const allowedTabs = mode === 'employer'
                 ? ['talent-stories', 'work-news', 'create-post', 'my-company-posts', 'my-job-posts']
                 : ['work-news', 'job-posts', 'talent-stories', 'create-story', 'my-feed'];
-            if (linkedTab && allowedTabs.includes(linkedTab)) {
-                setActiveTab(linkedTab);
+            const requestedTab = linkedTab && allowedTabs.includes(linkedTab) ? linkedTab : defaultTab;
+            if (portalSection && requestedTab !== defaultTab) {
+                return;
             }
+            pendingDeepLinkRef.current = { type: 'post', id: linkedPostId };
+            setActiveTab(portalSection ? defaultTab : requestedTab);
             return;
         }
 
         if (linkedJobId) {
+            if (portalSection && defaultTab !== 'job-posts') {
+                return;
+            }
             pendingDeepLinkRef.current = { type: 'job', id: linkedJobId };
             setActiveTab('job-posts');
         }
-    }, [mode]);
+    }, [defaultTab, mode, portalSection]);
 
     useEffect(() => {
         if (typeof window === 'undefined' || !pendingDeepLinkRef.current) {
@@ -4066,7 +4094,7 @@ const PortalHomeFeed = ({
         const scheduleFrame = window.requestAnimationFrame || ((callback) => window.setTimeout(callback, 0));
 
         scheduleFrame(() => {
-            const target = document.querySelector(selector);
+            const target = feedScrollerRef.current?.querySelector(selector);
             if (!target) {
                 return;
             }
@@ -4258,7 +4286,7 @@ const PortalHomeFeed = ({
         }
     };
 
-    const handleReact = async (key, postId, reaction) => {
+    const handleReact = async (key, postId, reaction, forceAdd = false) => {
         const tooltipKey = `${postId}:${reaction}`;
         const reactionAnimationKey = `${postId}:${reaction}`;
 
@@ -4313,6 +4341,12 @@ const PortalHomeFeed = ({
             ? !normalizeViewerReactions(getViewerReaction(targetPost, viewerId)).includes(reaction)
             : false;
 
+        if (forceAdd && !isNewReaction) {
+            setOpenReactionPostId('');
+            setAnimatingReactionKey('');
+            return;
+        }
+
         updatePosts(key, (posts) => posts.map((post) => (
             getPostKey(post) === postId
                 ? (() => {
@@ -4347,8 +4381,8 @@ const PortalHomeFeed = ({
         }, 760);
     };
 
-    const handleComment = (key, postId) => {
-        const text = String(commentDrafts[postId] || '').trim();
+    const handleComment = (key, postId, suppliedText = '') => {
+        const text = String(suppliedText || commentDrafts[postId] || '').trim();
         if (!text) {
             return;
         }
@@ -4488,6 +4522,295 @@ const PortalHomeFeed = ({
             setSharingTargetId('');
         }
     };
+
+    const saveAssistantJobReview = async (job, reviewText = '', rating = 0) => {
+        const key = getJobKey(job);
+        const cleanText = String(reviewText || '').trim();
+        const cleanRating = Math.max(0, Math.min(5, Number(rating) || 0));
+        if (!key || (!cleanText && !cleanRating)) {
+            setJobActionMessage('Tell JumpTake AI what you want the review to say or choose a rating.');
+            return;
+        }
+
+        const nextReview = {
+            id: `job-review-${Date.now()}`,
+            viewerId,
+            authorName,
+            rating: cleanRating,
+            text: cleanText,
+            createdAt: new Date().toISOString()
+        };
+        setHomeJobReviewMap((previousMap) => {
+            const previousReviews = Array.isArray(previousMap[key]) ? previousMap[key] : [];
+            const nextMap = {
+                ...previousMap,
+                [key]: [
+                    ...previousReviews.filter((review) => String(review.viewerId || '') !== viewerId),
+                    nextReview
+                ]
+            };
+            localStorage.setItem(HOME_JOB_REVIEW_STORAGE_KEY, JSON.stringify(nextMap));
+            return nextMap;
+        });
+
+        try {
+            const jobId = job?._id || job?.id;
+            if (jobId) {
+                const token = localStorage.getItem('token') || '';
+                const response = await fetch(apiUrl(`/api/jobs/${jobId}/reviews`), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token ? { Authorization: `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({
+                        reviewerId: viewerId,
+                        authorName,
+                        rating: cleanRating,
+                        text: cleanText
+                    })
+                });
+                if (!response.ok) {
+                    throw new Error('The server could not save this review.');
+                }
+            }
+            setJobActionMessage('Job review saved.');
+        } catch (error) {
+            setJobActionMessage('Job review saved on this device.');
+        }
+    };
+
+    useEffect(() => {
+        const stopPreviewTyping = () => {
+            if (aiActionTypingTimerRef.current) {
+                window.clearInterval(aiActionTypingTimerRef.current);
+                aiActionTypingTimerRef.current = null;
+            }
+        };
+
+        const findPreviewPost = (detail, args) => {
+            const normalizeTarget = (value) => asDisplayText(value)
+                .toLowerCase()
+                .replace(/[^a-z0-9\s]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+            const requestedTarget = normalizeTarget(args.targetId || args.postReference || args.targetReference);
+            const visiblePostIds = new Set(
+                (detail.context?.view?.visiblePosts || []).map((post) => String(post?.id || ''))
+            );
+            const sources = [
+                ...workNewsPosts.map((post) => ({ post, key: WORK_NEWS_STORAGE_KEY })),
+                ...talentStories.map((post) => ({ post, key: TALENT_STORIES_STORAGE_KEY }))
+            ];
+            const visibleSources = sources.filter(({ post }) => (
+                !visiblePostIds.size || visiblePostIds.has(getPostKey(post))
+            ));
+            const matches = ({ post }) => {
+                if (!requestedTarget) return true;
+                const postId = String(getPostKey(post));
+                const haystack = normalizeTarget([postId, post?.authorName, post?.body].filter(Boolean).join(' '));
+                return postId === String(args.targetId || '')
+                    || haystack.includes(requestedTarget)
+                    || requestedTarget.includes(normalizeTarget(post?.authorName));
+            };
+            return visibleSources.find(matches) || sources.find(matches) || null;
+        };
+
+        const handleAiActionPreview = (event) => {
+            const detail = event?.detail || {};
+            if (detail.context?.portalMode && detail.context.portalMode !== mode) return;
+            const requestedSection = String(detail.context?.activeSection || '');
+            if (portalSection && requestedSection && portalSection !== requestedSection) return;
+
+            const action = String(detail.action || '').toLowerCase();
+            if (!['feed-comment', 'feed-react'].includes(action)) return;
+            const args = detail.args && typeof detail.args === 'object' ? detail.args : {};
+            const phase = String(detail.phase || 'open').toLowerCase();
+            const activePreview = aiActionPreviewRef.current;
+
+            if (phase === 'cancel') {
+                if (activePreview.id && detail.id && activePreview.id !== detail.id) return;
+                stopPreviewTyping();
+                if (activePreview.action === 'feed-comment' && activePreview.postId) {
+                    setCommentDrafts((drafts) => ({ ...drafts, [activePreview.postId]: '' }));
+                    closeCommentComposer(activePreview.postId);
+                    setAiPreviewCommentPostId('');
+                }
+                if (activePreview.action === 'feed-react') {
+                    setOpenReactionPostId('');
+                    setAnimatingReactionKey('');
+                    setVisibleReactionTooltip('');
+                }
+                aiActionPreviewRef.current = { id: '', action: '', postId: '' };
+                return;
+            }
+
+            if (phase === 'approve') {
+                stopPreviewTyping();
+                setAiPreviewCommentPostId('');
+                aiActionPreviewRef.current = { ...activePreview, id: detail.id || activePreview.id };
+                return;
+            }
+
+            if (phase === 'update' && activePreview.action === 'feed-comment' && activePreview.postId) {
+                setCommentDrafts((drafts) => ({ ...drafts, [activePreview.postId]: String(detail.draft || '') }));
+                return;
+            }
+
+            const target = findPreviewPost(detail, args);
+            if (!target) return;
+            const postId = getPostKey(target.post);
+            aiActionPreviewRef.current = { id: detail.id || '', action, postId };
+            const postCard = [...document.querySelectorAll('.portal-social-post-card[data-post-id]')]
+                .find((card) => String(card.dataset.postId || '') === String(postId));
+            postCard?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            if (action === 'feed-react') {
+                const allowedReactions = reactionLabels.work.filter((reaction) => reaction !== 'Hide');
+                const normalizeReaction = (value) => String(value || '').toLowerCase().replace(/[^a-z]/g, '');
+                const reaction = allowedReactions.find((item) => normalizeReaction(item) === normalizeReaction(args.reaction)) || 'Like';
+                setOpenCommentPostId('');
+                setOpenReactionPostId(postId);
+                setVisibleReactionTooltip(`${postId}:${reaction}`);
+                setAnimatingReactionKey(`${postId}:${reaction}`);
+                return;
+            }
+
+            stopPreviewTyping();
+            const draft = String(detail.draft || args.comment || '');
+            setClosingCommentPostId('');
+            setOpenReactionPostId('');
+            setOpenSharePostId('');
+            setOpenOptionsPostId('');
+            setAiPreviewCommentPostId(postId);
+            setOpenCommentPostId(postId);
+            setCommentDrafts((drafts) => ({ ...drafts, [postId]: '' }));
+            if (!draft) return;
+
+            let cursor = 0;
+            const charactersPerStep = Math.max(1, Math.ceil(draft.length / 70));
+            aiActionTypingTimerRef.current = window.setInterval(() => {
+                cursor = Math.min(draft.length, cursor + charactersPerStep);
+                setCommentDrafts((drafts) => ({ ...drafts, [postId]: draft.slice(0, cursor) }));
+                if (cursor >= draft.length) stopPreviewTyping();
+            }, draft.length > 320 ? 16 : 24);
+        };
+
+        window.addEventListener('jumptake-ai-action-preview', handleAiActionPreview);
+        return () => window.removeEventListener('jumptake-ai-action-preview', handleAiActionPreview);
+    });
+
+    useEffect(() => {
+        const handleAiFeedAction = (event) => {
+            const detail = event?.detail || {};
+            if (detail.mode && detail.mode !== mode) return;
+            const requestedSection = String(detail.context?.activeSection || '');
+            if (portalSection && requestedSection && portalSection !== requestedSection) return;
+
+            const action = String(detail.action || '').toLowerCase();
+            const args = detail.args && typeof detail.args === 'object' ? detail.args : {};
+            const normalizeTarget = (value) => asDisplayText(value).toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+            const requestedTarget = normalizeTarget(args.targetId || args.postReference || args.targetReference);
+            const visiblePostIds = new Set((detail.context?.view?.visiblePosts || []).map((post) => String(post?.id || '')));
+            const visibleJobIds = new Set((detail.context?.view?.visibleJobs || []).map((job) => String(job?.id || '')));
+            const postSources = [
+                ...workNewsPosts.map((post) => ({ post, key: WORK_NEWS_STORAGE_KEY })),
+                ...talentStories.map((post) => ({ post, key: TALENT_STORIES_STORAGE_KEY }))
+            ];
+            const visiblePostSources = postSources.filter(({ post }) => (
+                !visiblePostIds.size || visiblePostIds.has(getPostKey(post))
+            ));
+            const matchesPost = ({ post }) => {
+                if (!requestedTarget) return true;
+                const postId = String(getPostKey(post));
+                const haystack = normalizeTarget([postId, post?.authorName, post?.body].filter(Boolean).join(' '));
+                return postId === String(args.targetId || '') || haystack.includes(requestedTarget) || requestedTarget.includes(normalizeTarget(post?.authorName));
+            };
+            const targetPosts = args.scope === 'all-visible'
+                ? visiblePostSources
+                : [visiblePostSources.find(matchesPost) || postSources.find(matchesPost)].filter(Boolean);
+            const visibleJobs = safeJobs.filter((job) => (
+                !visibleJobIds.size || visibleJobIds.has(String(getJobKey(job)))
+            ));
+            const matchesJob = (job) => {
+                if (!requestedTarget) return true;
+                const jobId = String(getJobKey(job));
+                const haystack = normalizeTarget([jobId, job?.title, job?.companyName, job?.location].filter(Boolean).join(' '));
+                return jobId === String(args.targetId || '') || haystack.includes(requestedTarget) || requestedTarget.includes(normalizeTarget(job?.title));
+            };
+            const targetJobs = args.scope === 'all-visible'
+                ? visibleJobs
+                : [visibleJobs.find(matchesJob) || safeJobs.find(matchesJob)].filter(Boolean);
+
+            if (action === 'feed-react') {
+                const allowedReactions = reactionLabels.work.filter((reaction) => reaction !== 'Hide');
+                const requestedReaction = allowedReactions.find((reaction) => normalizeTarget(reaction) === normalizeTarget(args.reaction)) || 'Like';
+                if (!targetPosts.length) {
+                    setShareStatus('No matching visible post was found.');
+                    return;
+                }
+                targetPosts.forEach(({ post, key }) => handleReact(key, getPostKey(post), requestedReaction, true));
+                setShareStatus(`${requestedReaction} reaction added${targetPosts.length > 1 ? ` to ${targetPosts.length} posts` : ''}.`);
+                return;
+            }
+
+            if (action === 'feed-comment') {
+                const comment = String(args.comment || '').trim();
+                const target = targetPosts[0];
+                if (!target || !comment) {
+                    setShareStatus('I need a matching post and comment text before I can add it.');
+                    return;
+                }
+                handleComment(target.key, getPostKey(target.post), comment);
+                setShareStatus('Comment added.');
+                return;
+            }
+
+            if (action === 'feed-share') {
+                const target = targetPosts[0];
+                const friendReference = normalizeTarget(args.friendReference);
+                const friend = feedFriends.find((item) => {
+                    const haystack = normalizeTarget([item.id, item.name, item.jumptakeId].filter(Boolean).join(' '));
+                    return friendReference && (haystack.includes(friendReference) || friendReference.includes(normalizeTarget(item.name)));
+                });
+                if (target && friend) {
+                    handleShareToFriend(target.key, target.post, friend);
+                } else {
+                    setShareStatus(target ? 'Tell me which visible friend should receive this post.' : 'No matching visible post was found.');
+                }
+                return;
+            }
+
+            if (action === 'job-like') {
+                if (!targetJobs.length) {
+                    setJobActionMessage('No matching visible job was found.');
+                    return;
+                }
+                targetJobs.forEach((job) => {
+                    if (!isHomeJobLiked(job)) handleToggleHomeJobLike(job);
+                });
+                setJobActionMessage(`Job${targetJobs.length > 1 ? 's' : ''} liked.`);
+                return;
+            }
+
+            if (action === 'job-review') {
+                if (!targetJobs[0]) {
+                    setJobActionMessage('No matching visible job was found.');
+                    return;
+                }
+                saveAssistantJobReview(targetJobs[0], args.reviewText, args.rating);
+                return;
+            }
+
+            if (action === 'job-share') {
+                if (targetJobs[0]) handleCopyJobShare(targetJobs[0]);
+                else setJobActionMessage('No matching visible job was found.');
+            }
+        };
+
+        window.addEventListener('jumptake-ai-feed-action', handleAiFeedAction);
+        return () => window.removeEventListener('jumptake-ai-feed-action', handleAiFeedAction);
+    });
 
     const handleHorizontalRailWheel = useCallback((event) => {
         const scroller = event.currentTarget;

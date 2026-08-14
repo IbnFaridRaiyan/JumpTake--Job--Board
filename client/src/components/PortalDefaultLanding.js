@@ -40,7 +40,7 @@ const PortalDefaultLanding = ({
             { label: 'Inbox', value: inboxCount, action: 'messages' }
         ]
         : [
-            { label: 'Available jobs', value: safeJobs.length, section: 'job-feed', tab: 'job-posts' },
+            { label: 'Available jobs', value: safeJobs.length, section: 'job-posts', tab: 'job-posts' },
             { label: 'Assessments', value: assessmentCount, section: 'assessments' },
             { label: 'Video interviews', value: videoInterviewCount, section: 'video-interviews' },
             { label: 'Notifications', value: notificationCount, section: 'notifications' }
@@ -55,7 +55,7 @@ const PortalDefaultLanding = ({
             { label: 'Company Profile', section: 'company-profile', icon: 'company' }
         ]
         : [
-            { label: 'Home', section: 'job-feed', icon: 'home' },
+            { label: 'Home', section: 'work-news', icon: 'home' },
             { label: 'My Applications', section: 'applications', icon: 'applications' },
             { label: 'Resume Playground', section: 'resume-playground', icon: 'resume' },
             { label: 'Settings', section: 'settings', icon: 'settings' }

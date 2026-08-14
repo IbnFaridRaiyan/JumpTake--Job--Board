@@ -29,6 +29,7 @@ import {
     PORTAL_REMINDERS_UPDATED_EVENT,
     getUnreadPortalReminderCount
 } from '../utils/portalReminders';
+import usePortalSectionScrollIsolation from '../utils/portalSectionScroll';
 
 const CANDIDATE_SECTION_IDS = new Set([
     'dashboard',
@@ -189,6 +190,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     const myApplicationsRef = useRef(null);
     const bookmarksHubRef = useRef(null);
     const mobilePanelRef = useRef(null);
+    usePortalSectionScrollIsolation(activeSection, mobilePanelRef);
     const navigate = useNavigate();
     const displayEmail = typeof user?.email === 'string' ? user.email : '';
     const displayName = displayEmail.includes('@') ? displayEmail.split('@')[0] : (displayEmail || 'User');

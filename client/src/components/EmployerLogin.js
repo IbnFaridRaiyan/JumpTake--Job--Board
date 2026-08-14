@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { sendPasswordResetEmail, validateEmailAddress } from '../utils/emailVerification';
 import { persistEmployerSession } from '../utils/authStorage';
 import SocialAuthButtons from './SocialAuthButtons';
+import { getLoginFailureMessage, LOGIN_WARNING_DURATION_MS } from '../utils/loginFeedback';
 
 const EmployerLogin = ({ onClose }) => {
     const [mode, setMode] = useState('login');
@@ -13,6 +14,12 @@ const EmployerLogin = ({ onClose }) => {
     const [message, setMessage] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!message || isSuccess) return undefined;
+        const timer = window.setTimeout(() => setMessage(''), LOGIN_WARNING_DURATION_MS);
+        return () => window.clearTimeout(timer);
+    }, [isSuccess, message]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -38,7 +45,11 @@ const EmployerLogin = ({ onClose }) => {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || 'Login failed');
+                throw new Error(getLoginFailureMessage({
+                    role: 'employer',
+                    status: response.status,
+                    serverMessage: data.error
+                }));
             }
 
             persistEmployerSession({
@@ -60,7 +71,7 @@ const EmployerLogin = ({ onClose }) => {
             }, 1500);
         } catch (error) {
             console.error('Login error:', error);
-            setMessage(`Error: ${error.message}`);
+            setMessage(error.message || 'Login failed. Please check your details and try again.');
             setIsSuccess(false);
         } finally {
             setIsLoading(false);

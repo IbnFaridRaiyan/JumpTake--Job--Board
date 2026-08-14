@@ -927,6 +927,39 @@ const SimpleIcon = ({ path, className = '' }) => (
     </svg>
 );
 
+const PublicJobModalIcon = ({ name }) => {
+    const paths = {
+        hash: <path d="M9 3 7 21M17 3l-2 18M4 9h17M3 15h17" />,
+        pin: (
+            <>
+                <path d="M12 21s6-5.35 6-11a6 6 0 1 0-12 0c0 5.65 6 11 6 11Z" />
+                <circle cx="12" cy="10" r="2" />
+            </>
+        ),
+        briefcase: (
+            <>
+                <rect x="3" y="7" width="18" height="13" rx="3" />
+                <path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3 12h18M10 12v2h4v-2" />
+            </>
+        ),
+        salary: (
+            <>
+                <rect x="3" y="6" width="18" height="12" rx="2" />
+                <circle cx="12" cy="12" r="3" />
+                <path d="M7 9H6v1M17 15h1v-1" />
+            </>
+        ),
+        heart: <path d="M20.8 5.8c-1.9-2-5.2-1.4-6.8.8C12.4 4.4 9.1 3.8 7.2 5.8c-2.2 2.3-1.5 6 1 8.2l5.8 5 5.8-5c2.5-2.2 3.2-5.9 1-8.2Z" />,
+        arrow: <path d="M5 12h14m-5-5 5 5-5 5" />
+    };
+
+    return (
+        <svg className="jt-icon" viewBox="0 0 24 24" aria-hidden="true">
+            {paths[name] || paths.arrow}
+        </svg>
+    );
+};
+
 const getTotalReactionCount = (post) => Object.entries(post.reactions || {}).reduce(
     (total, [reaction, count]) => (reaction === 'Hide' ? total : total + (Number(count) || 0)),
     0
@@ -1274,6 +1307,7 @@ const PortalHomeFeed = ({
     const [visibleReactionTooltip, setVisibleReactionTooltip] = useState('');
     const [animatingReactionKey, setAnimatingReactionKey] = useState('');
     const [aiPreviewCommentPostId, setAiPreviewCommentPostId] = useState('');
+    const [aiPreviewReactionKey, setAiPreviewReactionKey] = useState('');
     const [jobReachMap, setJobReachMap] = useState(readJobReachMap);
     const [homeJobLikeMap, setHomeJobLikeMap] = useState(readHomeJobLikeMap);
     const [homeJobReviewMap, setHomeJobReviewMap] = useState(readHomeJobReviewMap);
@@ -1284,7 +1318,7 @@ const PortalHomeFeed = ({
     const [selectedJobMode, setSelectedJobMode] = useState(mode);
     const [applyingHomeJobId, setApplyingHomeJobId] = useState('');
     const [appliedHomeJobIds, setAppliedHomeJobIds] = useState([]);
-    const [, setBookmarkedHomeJobIds] = useState([]);
+    const [bookmarkedHomeJobIds, setBookmarkedHomeJobIds] = useState([]);
     const [jobActionMessage, setJobActionMessage] = useState('');
     const [jobPage, setJobPage] = useState(1);
     const [homeJobSearch, setHomeJobSearch] = useState('');
@@ -3691,10 +3725,55 @@ const PortalHomeFeed = ({
         });
     };
 
+    const handleToggleHomeJobBookmark = async (job, event) => {
+        event?.stopPropagation();
+        const jobId = String(job?._id || job?.id || '');
+        const userId = currentUser?.id || currentUser?._id || currentUser?.userId;
+
+        if (!jobId || !userId) {
+            setJobActionMessage('Please log in again before saving this role.');
+            return;
+        }
+
+        const isBookmarked = bookmarkedHomeJobIds.includes(jobId);
+        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
+
+        try {
+            const response = await fetch(
+                isBookmarked
+                    ? apiUrl(`/api/job-bookmarks/user/${userId}/job/${jobId}`)
+                    : apiUrl('/api/job-bookmarks'),
+                {
+                    method: isBookmarked ? 'DELETE' : 'POST',
+                    headers: {
+                        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                        ...(!isBookmarked ? { 'Content-Type': 'application/json' } : {})
+                    },
+                    ...(!isBookmarked ? { body: JSON.stringify({ userId, jobId }) } : {})
+                }
+            );
+
+            if (!response.ok) {
+                const data = await response.json().catch(() => ({}));
+                throw new Error(data.error || 'Could not update this saved role.');
+            }
+
+            setBookmarkedHomeJobIds((current) => (
+                isBookmarked
+                    ? current.filter((id) => id !== jobId)
+                    : [...new Set([...current, jobId])]
+            ));
+            setJobActionMessage(isBookmarked ? 'Role removed from saved jobs.' : 'Role saved to Bookmarks.');
+        } catch (error) {
+            console.error('Error updating home job bookmark:', error);
+            setJobActionMessage(error.message || 'Could not update this saved role.');
+        }
+    };
+
     const openApplicationWorkspace = (job, event) => {
         event?.stopPropagation();
 
-        if (!job?._id || hasAppliedToJob(job)) {
+        if (!job?._id) {
             return;
         }
 
@@ -3702,6 +3781,10 @@ const PortalHomeFeed = ({
 
         if (applicationLink && typeof window !== 'undefined') {
             window.open(applicationLink, '_blank', 'noopener,noreferrer');
+            return;
+        }
+
+        if (hasAppliedToJob(job)) {
             return;
         }
 
@@ -4625,7 +4708,7 @@ const PortalHomeFeed = ({
             const action = String(detail.action || '').toLowerCase();
             if (!['feed-comment', 'feed-react'].includes(action)) return;
             const args = detail.args && typeof detail.args === 'object' ? detail.args : {};
-            const phase = String(detail.phase || 'open').toLowerCase();
+            const phase = String(detail.phase || '').toLowerCase();
             const activePreview = aiActionPreviewRef.current;
 
             if (phase === 'cancel') {
@@ -4639,23 +4722,14 @@ const PortalHomeFeed = ({
                 if (activePreview.action === 'feed-react') {
                     setOpenReactionPostId('');
                     setAnimatingReactionKey('');
+                    setAiPreviewReactionKey('');
                     setVisibleReactionTooltip('');
                 }
                 aiActionPreviewRef.current = { id: '', action: '', postId: '' };
                 return;
             }
 
-            if (phase === 'approve') {
-                stopPreviewTyping();
-                setAiPreviewCommentPostId('');
-                aiActionPreviewRef.current = { ...activePreview, id: detail.id || activePreview.id };
-                return;
-            }
-
-            if (phase === 'update' && activePreview.action === 'feed-comment' && activePreview.postId) {
-                setCommentDrafts((drafts) => ({ ...drafts, [activePreview.postId]: String(detail.draft || '') }));
-                return;
-            }
+            if (phase !== 'approve') return;
 
             const target = findPreviewPost(detail, args);
             if (!target) return;
@@ -4672,7 +4746,8 @@ const PortalHomeFeed = ({
                 setOpenCommentPostId('');
                 setOpenReactionPostId(postId);
                 setVisibleReactionTooltip(`${postId}:${reaction}`);
-                setAnimatingReactionKey(`${postId}:${reaction}`);
+                setAnimatingReactionKey('');
+                setAiPreviewReactionKey(`${postId}:${reaction}`);
                 return;
             }
 
@@ -4688,12 +4763,12 @@ const PortalHomeFeed = ({
             if (!draft) return;
 
             let cursor = 0;
-            const charactersPerStep = Math.max(1, Math.ceil(draft.length / 70));
+            const charactersPerStep = Math.max(1, Math.ceil(draft.length / 76));
             aiActionTypingTimerRef.current = window.setInterval(() => {
                 cursor = Math.min(draft.length, cursor + charactersPerStep);
                 setCommentDrafts((drafts) => ({ ...drafts, [postId]: draft.slice(0, cursor) }));
                 if (cursor >= draft.length) stopPreviewTyping();
-            }, draft.length > 320 ? 16 : 24);
+            }, draft.length > 320 ? 24 : 30);
         };
 
         window.addEventListener('jumptake-ai-action-preview', handleAiActionPreview);
@@ -4743,6 +4818,7 @@ const PortalHomeFeed = ({
                 : [visibleJobs.find(matchesJob) || safeJobs.find(matchesJob)].filter(Boolean);
 
             if (action === 'feed-react') {
+                setAiPreviewReactionKey('');
                 const allowedReactions = reactionLabels.work.filter((reaction) => reaction !== 'Hide');
                 const requestedReaction = allowedReactions.find((reaction) => normalizeTarget(reaction) === normalizeTarget(args.reaction)) || 'Like';
                 if (!targetPosts.length) {
@@ -4755,6 +4831,7 @@ const PortalHomeFeed = ({
             }
 
             if (action === 'feed-comment') {
+                setAiPreviewCommentPostId('');
                 const comment = String(args.comment || '').trim();
                 const target = targetPosts[0];
                 if (!target || !comment) {
@@ -4810,6 +4887,59 @@ const PortalHomeFeed = ({
 
         window.addEventListener('jumptake-ai-feed-action', handleAiFeedAction);
         return () => window.removeEventListener('jumptake-ai-feed-action', handleAiFeedAction);
+    });
+
+    useEffect(() => {
+        const handleAiProfileOpen = (event) => {
+            const detail = event?.detail || {};
+            if (detail.mode && detail.mode !== mode) return;
+            const requestedSection = String(detail.context?.activeSection || '');
+            if (portalSection && requestedSection && portalSection !== requestedSection) return;
+
+            const args = detail.args && typeof detail.args === 'object' ? detail.args : {};
+            const normalizeTarget = (value) => asDisplayText(value)
+                .toLowerCase()
+                .replace(/[^a-z0-9\s]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+            const requestedTarget = normalizeTarget(args.targetId || args.targetReference || args.recipientReference);
+            if (!requestedTarget) return;
+
+            const postPeople = [...workNewsPosts, ...talentStories].flatMap((post) => [
+                post,
+                ...(Array.isArray(post.comments) ? post.comments : [])
+            ]);
+            const friendPeople = feedFriends.map((friend) => ({
+                authorId: friend.userId || friend.candidateId || friend.id,
+                candidateId: friend.candidateId,
+                authorName: friend.name,
+                authorAvatar: friend.profileImage,
+                authorGender: friend.gender,
+                authorType: 'candidate',
+                jumptakeId: friend.jumptakeId
+            }));
+            const matchedPerson = [...postPeople, ...friendPeople].find((person) => {
+                const personName = normalizeTarget(person?.authorName || person?.name);
+                const haystack = normalizeTarget([
+                    person?.authorId,
+                    person?.candidateId,
+                    person?.authorName,
+                    person?.name,
+                    person?.jumptakeId
+                ].filter(Boolean).join(' '));
+                return haystack.includes(requestedTarget)
+                    || (personName && requestedTarget.includes(personName));
+            });
+
+            if (matchedPerson) {
+                openProfileDetailModal(matchedPerson);
+            } else {
+                setProfileActionMessage('No matching visible profile was found.');
+            }
+        };
+
+        window.addEventListener('jumptake-ai-profile-open', handleAiProfileOpen);
+        return () => window.removeEventListener('jumptake-ai-profile-open', handleAiProfileOpen);
     });
 
     const handleHorizontalRailWheel = useCallback((event) => {
@@ -5790,11 +5920,12 @@ const PortalHomeFeed = ({
                                     {reactionLabels[kind].map((reaction) => {
                                         const isActiveReaction = selectedReactions.includes(reaction);
                                         const isAnimatingReaction = animatingReactionKey === `${postKey}:${reaction}`;
+                                        const isAiPreviewReaction = aiPreviewReactionKey === `${postKey}:${reaction}`;
                                         return (
                                             <li key={reaction} className="portal-reaction-item icon-content">
                                                 <button
                                                     type="button"
-                                                    className={`portal-reaction-button portal-reaction-icon-button link reaction-${reaction.toLowerCase()} ${isActiveReaction ? 'active' : ''} ${isAnimatingReaction ? 'is-click-animating' : ''} ${visibleReactionTooltip === `${postKey}:${reaction}` ? 'tooltip-visible' : ''}`}
+                                                    className={`portal-reaction-button portal-reaction-icon-button link reaction-${reaction.toLowerCase()} ${isActiveReaction ? 'active' : ''} ${isAnimatingReaction ? 'is-click-animating' : ''} ${isAiPreviewReaction ? 'is-ai-preview' : ''} ${visibleReactionTooltip === `${postKey}:${reaction}` ? 'tooltip-visible' : ''}`}
                                                     onClick={() => handleReact(key, postKey, reaction)}
                                                     aria-pressed={isActiveReaction}
                                                     aria-label={`${reaction} reaction`}
@@ -6743,6 +6874,111 @@ const PortalHomeFeed = ({
     const renderJobDetailsModal = () => {
         if (!selectedJob) {
             return null;
+        }
+
+        if (selectedJobMode !== 'employer') {
+            const candidateJobId = String(selectedJob._id || selectedJob.id || '');
+            const candidateJobResponsibilities = normalizeTextList(selectedJob.responsibilities);
+            const candidateJobRequirements = normalizeTextList(selectedJob.requirements);
+            const candidateJobSkills = normalizeTextList(selectedJob.skills);
+            const hasExternalApplication = Boolean(normalizeExternalUrl(selectedJob.applicationLink));
+            const candidateJobSaved = bookmarkedHomeJobIds.includes(candidateJobId);
+            const candidateJobApplied = !hasExternalApplication && hasAppliedToJob(selectedJob);
+            const candidateModalMarkup = (
+                <div
+                    className={`jt-job-modal-backdrop portal-public-job-modal-backdrop ${closingJobModal ? 'is-closing' : ''}`}
+                    role="presentation"
+                    onPointerDownCapture={absorbBackdropPress}
+                    onTouchStartCapture={absorbBackdropPress}
+                    onClickCapture={(event) => closeFromBackdropClick(event, closeJobModal)}
+                >
+                    <section
+                        className="jt-job-modal portal-public-job-modal"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label={`${selectedJob.title} job details`}
+                        onClick={(event) => event.stopPropagation()}
+                    >
+                        <button id="portal-public-job-modal-close" type="button" className="jt-modal-close" onClick={closeJobModal} aria-label="Close job details">&times;</button>
+                        <div className="jt-job-modal-company">
+                            <div className="jt-company-avatar is-large">
+                                <img
+                                    src={selectedJob.companyLogo || defaultJobPostAvatar}
+                                    className="profile-avatar-image"
+                                    alt={`${selectedJob.companyName || 'Company'} logo`}
+                                />
+                            </div>
+                            <div>
+                                <span>{selectedJob.companyName || 'JumpTake company'}</span>
+                                <h2>{selectedJob.title}</h2>
+                            </div>
+                        </div>
+                        <div className="jt-public-job-meta jt-job-modal-meta" aria-label="Job details">
+                            <span><PublicJobModalIcon name="hash" /><b>Job</b> {selectedJob.jobNumber || 'Pending'}</span>
+                            <span><PublicJobModalIcon name="pin" />{selectedJob.location || 'Location flexible'}</span>
+                            <span><PublicJobModalIcon name="briefcase" />{selectedJob.jobType || 'Job type not set'}</span>
+                            <span><PublicJobModalIcon name="salary" />{formatSalary(selectedJob.salary)}</span>
+                        </div>
+                        {applicationJob ? (
+                            <div className="portal-public-job-application">
+                                {renderApplicationWorkspace()}
+                            </div>
+                        ) : (
+                            <div className="jt-job-modal-body">
+                                <h3>About the role</h3>
+                                <p>{asDisplayText(selectedJob.description, 'No description added.')}</p>
+                                {candidateJobResponsibilities.length > 0 && (
+                                    <>
+                                        <h3>What you will do</h3>
+                                        <ul>{candidateJobResponsibilities.map((item, index) => <li key={`${candidateJobId}-responsibility-${index}`}>{item}</li>)}</ul>
+                                    </>
+                                )}
+                                {candidateJobRequirements.length > 0 && (
+                                    <>
+                                        <h3>What you will bring</h3>
+                                        <ul>{candidateJobRequirements.map((item, index) => <li key={`${candidateJobId}-requirement-${index}`}>{item}</li>)}</ul>
+                                    </>
+                                )}
+                                <div className="jt-job-skills">
+                                    {candidateJobSkills.map((skill, index) => <span key={`${candidateJobId}-skill-${index}`}>{skill}</span>)}
+                                </div>
+                            </div>
+                        )}
+                        {jobActionMessage && <p className="portal-public-job-action-message">{jobActionMessage}</p>}
+                        {!applicationJob && (
+                            <div className="jt-job-modal-actions">
+                                <button
+                                    type="button"
+                                    className={`jt-secondary-button ${candidateJobSaved ? 'is-saved' : ''}`}
+                                    onClick={(event) => handleToggleHomeJobBookmark(selectedJob, event)}
+                                    aria-pressed={candidateJobSaved}
+                                >
+                                    <PublicJobModalIcon name="heart" /> Save role
+                                </button>
+                                <button
+                                    type="button"
+                                    className="jt-primary-button"
+                                    onClick={(event) => openApplicationWorkspace(selectedJob, event)}
+                                    disabled={candidateJobApplied || applyingHomeJobId === candidateJobId}
+                                >
+                                    {candidateJobApplied
+                                        ? 'Applied'
+                                        : applyingHomeJobId === candidateJobId
+                                            ? 'Applying...'
+                                            : hasExternalApplication
+                                                ? 'Apply now'
+                                                : 'Apply with JumpTake'}
+                                    <PublicJobModalIcon name="arrow" />
+                                </button>
+                            </div>
+                        )}
+                    </section>
+                </div>
+            );
+
+            return typeof document !== 'undefined'
+                ? createPortal(candidateModalMarkup, document.body)
+                : candidateModalMarkup;
         }
 
         const key = getJobKey(selectedJob);

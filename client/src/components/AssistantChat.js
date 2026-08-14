@@ -72,6 +72,15 @@ const ACTION_TEXT_FIELDS = {
     'job-review': 'reviewText'
 };
 
+const getActionAnimationDelay = (action = '') => {
+    const actionName = String(action || '').toLowerCase();
+    if (actionName === 'feed-comment') return 2300;
+    if (actionName === 'feed-react') return 1450;
+    if (actionName === 'message-send') return 850;
+    if (actionName === 'profile-open') return 750;
+    return 620;
+};
+
 const humanizeSection = (section = '') => String(section || '')
     .replace(/[-_]+/g, ' ')
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
@@ -106,6 +115,7 @@ const getActionReview = (action = '', payload = {}) => {
     if (actionName === 'job-share') return { title: 'Share job', target, draft: '', draftSource: '' };
     if (actionName === 'theme-set') return { title: `Switch to ${args.theme === 'dark' ? 'dark' : 'light'} mode`, target: '', draft: '', draftSource: '' };
     if (actionName === 'account-change-password') return { title: 'Open password settings', target: '', draft: '', draftSource: '' };
+    if (actionName === 'profile-open') return { title: 'Open user profile', target, draft: '', draftSource: '' };
     if (actionName === 'widget-set-reminder') return { title: 'Save to Notepad', target: '', draft, draftSource };
     if (actionName === 'candidate-apply-job') return { title: 'Open job application', target, draft: '', draftSource: '' };
     if (actionName.startsWith('open-section:')) {
@@ -173,6 +183,8 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
     const messagesRef = useRef(null);
     const inputRef = useRef(null);
     const pendingActionRef = useRef(null);
+    const actionPreviewTimerRef = useRef(null);
+    const actionExecutionTimerRef = useRef(null);
     const conversationsStorageKey = `${storageKey}:conversations`;
     pendingActionRef.current = pendingAction;
     const pendingActionId = pendingAction?.id || '';
@@ -251,7 +263,6 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
 
     useEffect(() => {
         if (!pendingActionId || pendingActionPhase !== 'opening') return undefined;
-        dispatchActionPreview('open', pendingActionRef.current);
         const timer = window.setTimeout(() => {
             setPendingAction((current) => (
                 current?.id === pendingActionId
@@ -296,6 +307,8 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
         if (activeAction && !['approved', 'rejected'].includes(activeAction.phase)) {
             dispatchActionPreview('cancel', activeAction);
         }
+        if (actionPreviewTimerRef.current) window.clearTimeout(actionPreviewTimerRef.current);
+        if (actionExecutionTimerRef.current) window.clearTimeout(actionExecutionTimerRef.current);
     }, []);
 
     useEffect(() => {
@@ -346,7 +359,19 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
         };
     }, [className]);
 
+    const clearScheduledAssistantAction = () => {
+        if (actionPreviewTimerRef.current) {
+            window.clearTimeout(actionPreviewTimerRef.current);
+            actionPreviewTimerRef.current = null;
+        }
+        if (actionExecutionTimerRef.current) {
+            window.clearTimeout(actionExecutionTimerRef.current);
+            actionExecutionTimerRef.current = null;
+        }
+    };
+
     const clearAssistantChat = () => {
+        clearScheduledAssistantAction();
         if (pendingAction) dispatchActionPreview('cancel', pendingAction);
         setPendingAction(null);
         setConversations((current) => current.filter((conversation) => conversation.id !== conversationId));
@@ -357,6 +382,7 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
     };
 
     const startNewChat = () => {
+        clearScheduledAssistantAction();
         if (pendingAction) dispatchActionPreview('cancel', pendingAction);
         setPendingAction(null);
         setConversationId(createConversationId());
@@ -368,6 +394,7 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
 
     const openSavedChat = (conversation) => {
         if (!conversation?.id || !Array.isArray(conversation.messages)) return;
+        clearScheduledAssistantAction();
         if (pendingAction) dispatchActionPreview('cancel', pendingAction);
         setPendingAction(null);
         setConversationId(conversation.id);
@@ -419,22 +446,33 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
         }
         const next = { ...pendingAction, draft, typedDraft: draft, payload: nextPayload };
         setPendingAction(next);
-        dispatchActionPreview('update', next);
     };
 
     const approvePendingAction = () => {
         if (!pendingAction || pendingAction.phase !== 'ready') return;
-        const approvedAction = { ...pendingAction, phase: 'approved' };
-        setPendingAction(approvedAction);
-        dispatchActionPreview('approve', approvedAction);
-        onAction?.(approvedAction.action, approvedAction.payload);
-        window.setTimeout(() => {
-            setPendingAction((current) => (current?.id === approvedAction.id ? null : current));
-            setAssistantMessages((messages) => [
-                ...messages,
-                { role: 'assistant', text: `${approvedAction.title} approved.`, time: formatAssistantTime() }
-            ]);
-        }, 720);
+        const applyingAction = { ...pendingAction, phase: 'applying' };
+        const actionDelay = getActionAnimationDelay(applyingAction.action);
+        setPendingAction(applyingAction);
+
+        actionPreviewTimerRef.current = window.setTimeout(() => {
+            dispatchActionPreview('approve', applyingAction);
+            actionPreviewTimerRef.current = null;
+        }, 320);
+
+        actionExecutionTimerRef.current = window.setTimeout(() => {
+            onAction?.(applyingAction.action, applyingAction.payload);
+            actionExecutionTimerRef.current = null;
+            setPendingAction((current) => (
+                current?.id === applyingAction.id ? { ...current, phase: 'approved' } : current
+            ));
+            window.setTimeout(() => {
+                setPendingAction((current) => (current?.id === applyingAction.id ? null : current));
+                setAssistantMessages((messages) => [
+                    ...messages,
+                    { role: 'assistant', text: `${applyingAction.title} approved.`, time: formatAssistantTime() }
+                ]);
+            }, 760);
+        }, 320 + actionDelay);
     };
 
     const rejectPendingAction = () => {
@@ -624,6 +662,8 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
                                 <span className="assistant-action-review-status">
                                     {pendingAction.phase === 'approved'
                                         ? 'Approved'
+                                        : pendingAction.phase === 'applying'
+                                            ? 'Applying'
                                         : pendingAction.phase === 'rejected'
                                             ? 'Cancelled'
                                             : pendingAction.phase === 'ready'
@@ -658,7 +698,7 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
                                         type="button"
                                         className="assistant-action-review-reject"
                                         onClick={rejectPendingAction}
-                                        disabled={['approved', 'rejected'].includes(pendingAction.phase)}
+                                        disabled={['applying', 'approved', 'rejected'].includes(pendingAction.phase)}
                                         aria-label="Cancel AI action"
                                         title="Cancel action"
                                     >

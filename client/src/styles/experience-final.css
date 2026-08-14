@@ -1,0 +1,715 @@
+/* Final interaction details shared by the public home and both portals. */
+
+/* The tour keeps the current control crisp while softly blurring its context. */
+.guided-portal-tour .guided-tour-full-shade {
+  border: 0 !important;
+  background: rgba(248, 246, 241, 0.08) !important;
+  backdrop-filter: blur(8px) saturate(0.72) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(0.72) !important;
+  animation: guided-tour-context-fade 620ms ease both !important;
+}
+
+.guided-portal-tour .guided-tour-spotlight {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+  width: auto !important;
+  height: auto !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: rgba(248, 246, 241, 0.08) !important;
+  box-shadow: none !important;
+  pointer-events: none !important;
+  backdrop-filter: blur(8px) saturate(0.72) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(0.72) !important;
+  -webkit-mask-image: radial-gradient(
+    circle var(--guided-focus-radius) at var(--guided-focus-x) var(--guided-focus-y),
+    transparent calc(var(--guided-focus-radius) - 3px),
+    #000 calc(var(--guided-focus-radius) + 3px)
+  ) !important;
+  mask-image: radial-gradient(
+    circle var(--guided-focus-radius) at var(--guided-focus-x) var(--guided-focus-y),
+    transparent calc(var(--guided-focus-radius) - 3px),
+    #000 calc(var(--guided-focus-radius) + 3px)
+  ) !important;
+  animation: guided-tour-context-fade 680ms cubic-bezier(0.22, 1, 0.36, 1) both !important;
+  transition: none !important;
+  will-change: opacity !important;
+}
+
+.guided-portal-tour .guided-tour-spotlight::after {
+  content: '';
+  position: fixed;
+  left: var(--guided-focus-x);
+  top: var(--guided-focus-y);
+  width: calc(var(--guided-focus-radius) * 2);
+  height: calc(var(--guided-focus-radius) * 2);
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.035);
+  transform: translate(-50%, -50%);
+  animation: guided-tour-circle-arrive 680ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .guided-portal-tour :is(.guided-tour-full-shade, .guided-tour-spotlight) {
+  background: rgba(8, 10, 10, 0.07) !important;
+}
+
+@keyframes guided-tour-context-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes guided-tour-circle-arrive {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.72); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guided-portal-tour :is(.guided-tour-full-shade, .guided-tour-spotlight, .guided-tour-spotlight::after) {
+    animation-duration: 1ms !important;
+  }
+}
+
+/* The action review must stay light inside the separately themed AI widget. */
+html[data-theme="light"] body[data-theme="light"] #root .portal-widget-chat .assistant-action-review,
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger .assistant-action-review {
+  border-color: #ded7ce !important;
+  color: #2b2021 !important;
+  background: #fffdf9 !important;
+  background-color: #fffdf9 !important;
+  background-image: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .portal-widget-chat .assistant-action-review :is(
+  .assistant-action-review-header,
+  .assistant-action-review-copy,
+  .assistant-action-review-copy small,
+  .assistant-action-review-copy strong,
+  .assistant-action-review-status
+),
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger .assistant-action-review :is(
+  .assistant-action-review-header,
+  .assistant-action-review-copy,
+  .assistant-action-review-copy small,
+  .assistant-action-review-copy strong,
+  .assistant-action-review-status
+) {
+  border: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .portal-widget-chat .assistant-action-review .assistant-action-review-copy strong,
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger .assistant-action-review .assistant-action-review-copy strong {
+  color: #2b2021 !important;
+  -webkit-text-fill-color: #2b2021 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .portal-widget-chat .assistant-action-review .assistant-action-review-copy small,
+html[data-theme="light"] body[data-theme="light"] > .floating-messenger .assistant-action-review .assistant-action-review-copy small {
+  color: #8d491f !important;
+  -webkit-text-fill-color: #8d491f !important;
+}
+
+html body .assistant-action-review .assistant-action-review-icon,
+html body .assistant-action-review .assistant-action-review-icon:is(:hover, :focus, :active) {
+  border: 0 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background: #984015 !important;
+  background-color: #984015 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html body #root .assistant-action-review .assistant-action-review-icon,
+html body #root .assistant-action-review .assistant-action-review-icon :is(svg, path) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  stroke: currentColor !important;
+}
+
+/* Candidate Job Posts uses the same role dialog composition as public home. */
+.portal-public-job-modal-backdrop {
+  position: fixed;
+  z-index: 30050;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  padding: 30px;
+  background: rgba(3, 8, 15, 0.72) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: portal-public-job-backdrop-in 240ms ease both;
+}
+
+.portal-public-job-modal-backdrop.is-closing {
+  pointer-events: none;
+  animation: portal-public-job-backdrop-out 260ms ease both;
+}
+
+.portal-public-job-modal {
+  --jt-ink: #08111f;
+  --jt-line: rgba(8, 17, 31, 0.12);
+  --jt-muted: #647083;
+  --jt-teal-dark: #087d73;
+  --jt-lime: #c7f36b;
+  position: relative;
+  width: min(760px, 100%) !important;
+  max-width: 760px !important;
+  max-height: min(850px, calc(100vh - 60px)) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  border: 0 !important;
+  border-radius: 28px !important;
+  color: var(--jt-ink) !important;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+  box-shadow: 0 35px 100px rgba(0, 0, 0, 0.35) !important;
+  animation: portal-public-job-modal-in 240ms ease both;
+}
+
+.portal-public-job-modal .jt-modal-close,
+.portal-public-job-modal .jt-modal-close:is(:hover, :focus, :focus-visible, :active),
+#portal-public-job-modal-close,
+#portal-public-job-modal-close:is(:hover, :focus, :focus-visible, :active) {
+  position: absolute !important;
+  z-index: 3 !important;
+  inset: 18px 18px auto auto !important;
+  top: 18px !important;
+  right: 18px !important;
+  bottom: auto !important;
+  left: auto !important;
+  display: grid !important;
+  place-items: center !important;
+  flex: 0 0 38px !important;
+  box-sizing: border-box !important;
+  width: 38px !important;
+  min-width: 38px !important;
+  max-width: 38px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  color: var(--jt-ink) !important;
+  -webkit-text-fill-color: var(--jt-ink) !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  font-size: 1.3rem !important;
+  line-height: 1 !important;
+  overflow: visible !important;
+}
+
+.portal-public-job-modal .jt-job-modal-company {
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 17px !important;
+  min-height: 0 !important;
+  padding: 34px 70px 30px 34px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--jt-line) !important;
+  background: #eef6f2 !important;
+}
+
+.portal-public-job-modal .jt-company-avatar.is-large,
+.portal-public-job-modal .jt-company-avatar.is-large .profile-avatar-image {
+  flex: 0 0 64px !important;
+  width: 64px !important;
+  min-width: 64px !important;
+  height: 64px !important;
+  min-height: 64px !important;
+  border-radius: 14px !important;
+  object-fit: cover !important;
+}
+
+.portal-public-job-modal .jt-job-modal-company > div:last-child {
+  min-width: 0 !important;
+}
+
+.portal-public-job-modal .jt-job-modal-company span {
+  color: var(--jt-teal-dark) !important;
+  -webkit-text-fill-color: var(--jt-teal-dark) !important;
+  font-size: 0.67rem !important;
+  font-weight: 800 !important;
+}
+
+.portal-public-job-modal .jt-job-modal-company h2 {
+  margin: 3px 0 5px !important;
+  color: var(--jt-ink) !important;
+  -webkit-text-fill-color: var(--jt-ink) !important;
+  font-size: 1.85rem !important;
+  letter-spacing: 0 !important;
+}
+
+.portal-public-job-modal .jt-public-job-meta {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px 12px !important;
+  margin: 0 !important;
+  padding: 15px 24px !important;
+  border-bottom: 1px solid var(--jt-line) !important;
+  background: transparent !important;
+}
+
+.portal-public-job-modal .jt-public-job-meta > span {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+  color: #5d6877 !important;
+  -webkit-text-fill-color: #5d6877 !important;
+  font-size: 0.68rem !important;
+  line-height: 1.3 !important;
+}
+
+.portal-public-job-modal .jt-icon {
+  flex: 0 0 auto !important;
+  width: 1.1em !important;
+  height: 1.1em !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.8 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+.portal-public-job-modal .jt-job-modal-body {
+  padding: 32px 34px !important;
+  background: transparent !important;
+}
+
+.portal-public-job-modal .jt-job-modal-body h3 {
+  margin: 24px 0 9px !important;
+  color: var(--jt-ink) !important;
+  -webkit-text-fill-color: var(--jt-ink) !important;
+  font-size: 0.9rem !important;
+}
+
+.portal-public-job-modal .jt-job-modal-body h3:first-child {
+  margin-top: 0 !important;
+}
+
+.portal-public-job-modal .jt-job-modal-body :is(p, li) {
+  color: #596679 !important;
+  -webkit-text-fill-color: #596679 !important;
+  font-size: 0.76rem !important;
+  line-height: 1.75 !important;
+}
+
+.portal-public-job-modal .jt-job-modal-body ul {
+  padding-left: 20px !important;
+}
+
+.portal-public-job-modal .jt-job-skills {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  margin-top: 24px !important;
+}
+
+.portal-public-job-modal .jt-job-skills span {
+  padding: 6px 9px !important;
+  border: 1px solid rgba(8, 17, 31, 0.09) !important;
+  border-radius: 9px !important;
+  color: #48566a !important;
+  -webkit-text-fill-color: #48566a !important;
+  background: #f7f8f6 !important;
+  font-size: 0.62rem !important;
+  font-weight: 600 !important;
+}
+
+.portal-public-job-modal .jt-job-modal-actions {
+  position: sticky !important;
+  bottom: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 10px !important;
+  padding: 16px 24px !important;
+  border-top: 1px solid var(--jt-line) !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.portal-public-job-modal .jt-job-modal-actions :is(.jt-primary-button, .jt-secondary-button),
+.portal-public-job-modal .jt-job-modal-actions :is(.jt-primary-button, .jt-secondary-button):is(:hover, :focus, :focus-visible, :active, :disabled) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 9px !important;
+  width: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 14px 19px !important;
+  border-radius: 14px !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.portal-public-job-modal .jt-job-modal-actions .jt-secondary-button,
+.portal-public-job-modal .jt-job-modal-actions .jt-secondary-button:is(:hover, :focus, :focus-visible, :active) {
+  border: 1px solid var(--jt-line) !important;
+  color: var(--jt-ink) !important;
+  -webkit-text-fill-color: var(--jt-ink) !important;
+  background: rgba(255, 255, 255, 0.82) !important;
+}
+
+.portal-public-job-modal .jt-job-modal-actions .jt-secondary-button.is-saved {
+  border-color: rgba(8, 125, 115, 0.42) !important;
+  background: #e9f5f1 !important;
+}
+
+.portal-public-job-modal .jt-job-modal-actions .jt-secondary-button.is-saved .jt-icon {
+  fill: currentColor !important;
+}
+
+.portal-public-job-modal .jt-job-modal-actions .jt-primary-button,
+.portal-public-job-modal .jt-job-modal-actions .jt-primary-button:is(:hover, :focus, :focus-visible, :active) {
+  border: 0 !important;
+  color: var(--jt-ink) !important;
+  -webkit-text-fill-color: var(--jt-ink) !important;
+  background: var(--jt-lime) !important;
+}
+
+.portal-public-job-modal .jt-job-modal-actions button:disabled {
+  cursor: default !important;
+  opacity: 0.55 !important;
+}
+
+.portal-public-job-action-message {
+  margin: 0 !important;
+  padding: 0.65rem 1.5rem !important;
+  color: #087d73 !important;
+  -webkit-text-fill-color: #087d73 !important;
+  background: #f1f8f5 !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+}
+
+.portal-public-job-application {
+  padding: 26px 34px !important;
+}
+
+.portal-public-job-modal .portal-application-workspace {
+  margin: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-public-job-modal-backdrop {
+  background: rgba(242, 234, 220, 0.78) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-public-job-modal {
+  --jt-ink: #34141d;
+  --jt-line: #d8c5a8;
+  --jt-teal-dark: #7f1d32;
+  --jt-lime: #c7f36b;
+  border: 1px solid #d8c5a8 !important;
+  background: #fffaf1 !important;
+  box-shadow: 0 35px 90px rgba(86, 66, 37, 0.22) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-public-job-modal .jt-job-modal-company {
+  background: #fff3e2 !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-public-job-modal .jt-job-modal-body :is(p, li),
+html[data-theme="light"] body[data-theme="light"] .portal-public-job-modal .jt-public-job-meta > span {
+  color: #74666b !important;
+  -webkit-text-fill-color: #74666b !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-public-job-modal .jt-job-modal-actions {
+  background: rgba(255, 250, 241, 0.96) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-public-job-modal .jt-job-modal-actions .jt-primary-button,
+html[data-theme="light"] body[data-theme="light"] .portal-public-job-modal .jt-job-modal-actions .jt-primary-button:is(:focus, :focus-visible, :active) {
+  border: 1px solid #b85a6d !important;
+  color: #fffaf1 !important;
+  -webkit-text-fill-color: #fffaf1 !important;
+  background: #b85a6d !important;
+  box-shadow: 0 12px 25px rgba(127, 29, 50, 0.18) !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] .portal-public-job-modal .jt-job-modal-actions .jt-primary-button:hover {
+  border-color: #7f1d32 !important;
+  background: #7f1d32 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal-backdrop {
+  background: rgba(0, 0, 0, 0.88) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal {
+  --jt-ink: #ffffff;
+  --jt-line: rgba(255, 255, 255, 0.16);
+  --jt-teal-dark: #ffffff;
+  color: #ffffff !important;
+  background: #000000 !important;
+  box-shadow: 0 35px 100px rgba(0, 0, 0, 0.62) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal :is(
+  .jt-job-modal-company,
+  .jt-job-modal-body,
+  .jt-job-modal-actions,
+  .portal-public-job-application
+) {
+  border-color: var(--jt-line) !important;
+  background: #000000 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal :is(
+  .jt-job-modal-company h2,
+  .jt-job-modal-company span,
+  .jt-job-modal-body h3,
+  .jt-job-modal-body p,
+  .jt-job-modal-body li,
+  .jt-public-job-meta > span
+) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal .jt-job-skills span {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background: #101010 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal .jt-modal-close,
+html[data-theme="dark"] body[data-theme="dark"] #portal-public-job-modal-close:is(:hover, :focus, :focus-visible, :active) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal .jt-job-modal-actions .jt-primary-button,
+html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal .jt-job-modal-actions .jt-primary-button:is(:hover, :focus, :focus-visible, :active) {
+  border: 0 !important;
+  color: #08111f !important;
+  -webkit-text-fill-color: #08111f !important;
+  background: #c7f36b !important;
+  box-shadow: 0 14px 28px rgba(120, 166, 44, 0.2) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal .jt-job-modal-actions .jt-secondary-button,
+html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal .jt-job-modal-actions .jt-secondary-button:is(:hover, :focus, :focus-visible, :active, :disabled),
+html[data-theme="dark"] body[data-theme="dark"] .portal-public-job-modal .jt-job-modal-actions .jt-secondary-button.is-saved {
+  color: #08111f !important;
+  -webkit-text-fill-color: #08111f !important;
+}
+
+@keyframes portal-public-job-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes portal-public-job-backdrop-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes portal-public-job-modal-in {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 768px) {
+  .portal-public-job-modal-backdrop {
+    padding: 10px !important;
+  }
+
+  .portal-public-job-modal {
+    max-height: calc(100dvh - 20px) !important;
+    border-radius: 22px !important;
+  }
+
+  .portal-public-job-modal .jt-job-modal-company {
+    align-items: flex-start !important;
+    padding: 28px 55px 24px 22px !important;
+  }
+
+  .portal-public-job-modal .jt-modal-close,
+  .portal-public-job-modal .jt-modal-close:is(:hover, :focus, :focus-visible, :active),
+  #portal-public-job-modal-close,
+  #portal-public-job-modal-close:is(:hover, :focus, :focus-visible, :active) {
+    inset: 10px 10px auto auto !important;
+    top: 10px !important;
+    right: 10px !important;
+    width: 32px !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+  }
+
+  .portal-public-job-modal .jt-job-modal-company h2 {
+    font-size: 1.42rem !important;
+  }
+
+  .portal-public-job-modal .jt-job-modal-body,
+  .portal-public-job-application {
+    padding: 25px 22px !important;
+  }
+
+  .portal-public-job-modal .jt-job-modal-actions {
+    align-items: stretch !important;
+    flex-direction: column !important;
+  }
+
+  .portal-public-job-modal .jt-job-modal-actions :is(.jt-primary-button, .jt-secondary-button) {
+    width: 100% !important;
+  }
+
+  /* AI user messages stay readable on their accent surface in mobile light mode. */
+  html[data-theme="light"] body[data-theme="light"] :is(
+    .floating-messenger-assistant-chat,
+    .portal-inbox-assistant,
+    .portal-widget-chat
+  ) .public-ai-chat-bubble.is-user,
+  html[data-theme="light"] body[data-theme="light"] :is(
+    .floating-messenger-assistant-chat,
+    .portal-inbox-assistant,
+    .portal-widget-chat
+  ) .public-ai-chat-bubble.is-user * {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+  }
+
+  /* Message directories use a single solid card color per theme. */
+  html[data-theme="light"] body[data-theme="light"] #root .messenger-inbox .inbox-thread-card.button-message,
+  html[data-theme="light"] body[data-theme="light"] #root .messenger-inbox .inbox-thread-card.button-message:is(:hover, :focus, :focus-visible, :active, .is-active),
+  html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-contact,
+  html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-contact:is(:hover, :focus, :focus-visible, :active, .is-active) {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+  }
+
+  html[data-theme="dark"] body[data-theme="dark"] #root .messenger-inbox .inbox-thread-card.button-message,
+  html[data-theme="dark"] body[data-theme="dark"] #root .messenger-inbox .inbox-thread-card.button-message:is(:hover, :focus, :focus-visible, :active, .is-active),
+  html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open .floating-messenger-contact,
+  html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open .floating-messenger-contact:is(:hover, :focus, :focus-visible, :active, .is-active) {
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    background: #000000 !important;
+    background-color: #000000 !important;
+    background-image: none !important;
+  }
+
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox > .messenger-chat-header button.message-thread-options-trigger,
+  html[data-theme="light"] body[data-theme="light"] #root .home-page .messenger-inbox > .messenger-chat-header button.message-thread-options-trigger:is(:hover, :focus, :focus-visible, :active),
+  html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-chat-bar .message-thread-options-trigger,
+  html[data-theme="light"] body[data-theme="light"] > .floating-messenger.is-open .floating-messenger-chat-bar .message-thread-options-trigger:is(:hover, :focus, :focus-visible, :active) {
+    color: #111111 !important;
+    -webkit-text-fill-color: #111111 !important;
+  }
+
+  /* During keyboard entry, only the composer rises; headers retain fixed tracks. */
+  body.jt-mobile-keyboard-open > .floating-messenger.is-open,
+  body.jt-mobile-keyboard-open > .floating-messenger.is-open > .floating-messenger-panel,
+  body.jt-mobile-keyboard-open > .floating-messenger.is-open > .floating-messenger-panel.is-mobile,
+  body.jt-mobile-keyboard-open > .floating-messenger.is-open > .floating-messenger-panel.is-mobile-chat-open {
+    height: var(--jt-mobile-layout-height, 100vh) !important;
+    max-height: var(--jt-mobile-layout-height, 100vh) !important;
+  }
+
+  body.jt-mobile-keyboard-open > .floating-messenger.is-open .floating-messenger-chat {
+    position: relative !important;
+    grid-template-rows: auto minmax(0, 1fr) !important;
+    overflow: hidden !important;
+  }
+
+  body.jt-mobile-keyboard-open > .floating-messenger.is-open .floating-messenger-chat-bar {
+    position: relative !important;
+    z-index: 5 !important;
+    min-height: 4rem !important;
+    max-height: 4rem !important;
+    transform: none !important;
+  }
+
+  body.jt-mobile-keyboard-open > .floating-messenger.is-open .floating-messenger-input,
+  body.jt-mobile-keyboard-open > .floating-messenger.is-open .floating-messenger-assistant-chat .public-ai-chat-reply {
+    position: absolute !important;
+    z-index: 6 !important;
+    right: 0 !important;
+    bottom: var(--jt-mobile-keyboard-inset, 0px) !important;
+    left: 0 !important;
+    width: auto !important;
+    transition: bottom 220ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+  }
+
+  body.jt-mobile-keyboard-open > .floating-messenger.is-open .floating-messenger-assistant-chat {
+    position: relative !important;
+    height: 100% !important;
+  }
+
+  body.jt-mobile-keyboard-open > .floating-messenger.is-open :is(
+    .floating-messenger-messages,
+    .floating-messenger-assistant-chat .public-ai-chat-messages
+  ) {
+    padding-bottom: calc(5.4rem + var(--jt-mobile-keyboard-inset, 0px)) !important;
+    scroll-padding-bottom: calc(5.4rem + var(--jt-mobile-keyboard-inset, 0px)) !important;
+  }
+
+  body.jt-mobile-keyboard-open #root .messenger-inbox:has(> .messenger-chat-header) {
+    position: relative !important;
+    display: grid !important;
+    grid-template-rows: auto minmax(0, 1fr) !important;
+    height: calc(var(--jt-mobile-layout-height, 100vh) - 4.35rem) !important;
+    min-height: 0 !important;
+    max-height: calc(var(--jt-mobile-layout-height, 100vh) - 4.35rem) !important;
+    overflow: hidden !important;
+  }
+
+  body.jt-mobile-keyboard-open #root .messenger-inbox > .messenger-chat-header {
+    position: relative !important;
+    z-index: 5 !important;
+    min-height: 4rem !important;
+    max-height: 4rem !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+
+  body.jt-mobile-keyboard-open #root .messenger-inbox .messenger-thread {
+    min-height: 0 !important;
+    padding-bottom: calc(5.6rem + var(--jt-mobile-keyboard-inset, 0px)) !important;
+    overflow-y: auto !important;
+  }
+
+  body.jt-mobile-keyboard-open #root .messenger-inbox .messenger-compose-card {
+    position: absolute !important;
+    z-index: 6 !important;
+    right: 0 !important;
+    bottom: var(--jt-mobile-keyboard-inset, 0px) !important;
+    left: 0 !important;
+    margin: 0 !important;
+    transition: bottom 220ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+  }
+
+  body.jt-mobile-keyboard-open #root .messenger-inbox .mobile-subpage-return {
+    display: none !important;
+  }
+}

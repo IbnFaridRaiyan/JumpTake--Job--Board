@@ -546,6 +546,7 @@ const inferAction = (message, context = {}) => {
   const asksJobReview = /\b(?:review|rate)\b.{0,48}\b(?:job|role|position)\b|\b(?:job|role|position)\b.{0,48}\b(?:review|rating|stars?)\b/.test(normalized);
   const asksJobShare = /\bshare\b.{0,48}\b(?:job|role|position)\b|\b(?:job|role|position)\b.{0,48}\bshare\b/.test(normalized);
   const asksDirectMessage = /\b(?:send|write|message|text)\b.{0,80}\b(?:friend|message|text|dm|inbox)\b/.test(normalized);
+  const asksProfileOpen = /\b(?:open|show|view)\b.{0,80}\b(?:profile|candidate|user|person)\b|\b(?:profile|candidate|user|person)\b.{0,80}\b(?:open|show|view)\b/.test(normalized);
   const sectionAction = inferSectionAction(normalized, context);
 
   if (asksNotepadAction && portalMode) return 'widget-set-reminder';
@@ -557,6 +558,7 @@ const inferAction = (message, context = {}) => {
   if (asksFeedComment && portalMode) return 'feed-comment';
   if (asksFeedShare && portalMode) return 'feed-share';
   if (asksFeedReaction && portalMode) return 'feed-react';
+  if (asksProfileOpen && portalMode) return 'profile-open';
   if (asksDirectMessage && portalMode) return 'message-send';
   if (asksResumeTailor && portalMode !== 'employer') return 'candidate-tailor-resume-to-job';
   if (asksCoverLetterTailor && portalMode !== 'employer') return 'candidate-tailor-cover-letter-to-job';
@@ -1574,12 +1576,13 @@ const PORTAL_PLANNER_ACTIONS = new Set([
   'job-like',
   'job-review',
   'job-share',
+  'profile-open',
   'message-send'
 ]);
 
 const shouldPlanPortalAction = (message = '', context = {}) => {
   if (!context?.portalMode) return false;
-  return /\b(open|show|go to|switch|change|turn on|use|create|make|write|draft|tailor|format|apply|like|react|motivate|congratulate|comment|reply|share|send|message|review|rate|password|remind|note|dark mode|light mode)\b/i.test(message);
+  return /\b(open|show|view|go to|switch|change|turn on|use|create|make|write|draft|tailor|format|apply|like|react|motivate|congratulate|comment|reply|share|send|message|review|rate|password|remind|note|dark mode|light mode)\b/i.test(message);
 };
 
 const parseAssistantJsonObject = (value = '') => {
@@ -1709,6 +1712,7 @@ Allowed actions:
 - job-like with args.targetReference or args.scope="all-visible"
 - job-review with args.targetReference, args.reviewText, and args.rating from 0 to 5
 - job-share with args.targetReference and optional args.friendReference
+- profile-open with args.targetId or args.targetReference for a visible post author or contact
 - message-send with args.recipientReference and args.message
 
 Rules:
@@ -1717,6 +1721,8 @@ Rules:
 - If the user asks to tailor a resume or cover letter to an on-screen job, choose the matching tailor action and put its visible id in args.targetId.
 - For a requested post reaction, use one of Like, Appreciate, Love, Empower, Congratulate, Motivate, Angry, Sad, or Bad.
 - If the user requests a comment or review without dictating wording, write a short relevant draft grounded in the visible post or job.
+- If the user asks to open a named user profile, use profile-open only when that person is present in visible posts or contacts.
+- For message-send, preserve the named recipient. If the message body is missing, leave args.message empty so the assistant can ask what to send.
 - Use args.scope="all-visible" only when the user clearly says every/all visible item.
 - For credential or destructive account changes, only choose the safe navigation action described above.
 - answer is a short user-facing statement of what the app is doing. For resume, document, cover-letter, story, post, or assessment generation, leave answer empty because another model step writes the content.
@@ -1891,7 +1897,33 @@ const getAiUnavailableReply = ({ openAiFailed = false, geminiFailed = false } = 
 const buildFallbackActionPayload = (action = '', message = '', context = {}) => {
   const normalized = normalizeText(message);
   const payload = {};
-  const targetJob = resolveContextJob(context, {}, message);
+  const visiblePeople = [
+    ...(Array.isArray(context.view?.contacts) ? context.view.contacts : []),
+    ...(Array.isArray(context.contacts) ? context.contacts : []),
+    ...(Array.isArray(context.view?.visiblePosts) ? context.view.visiblePosts.map((post) => ({
+      id: post?.authorId || post?.id,
+      name: post?.author,
+      jumptakeId: post?.jumptakeId
+    })) : [])
+  ].filter((person, index, list) => {
+    const key = String(person?.id || person?.userId || person?.candidateId || person?.name || '');
+    return key && list.findIndex((item) => String(item?.id || item?.userId || item?.candidateId || item?.name || '') === key) === index;
+  });
+  const matchedPerson = visiblePeople.find((person) => {
+    const references = [person?.name, person?.jumptakeId, person?.id, person?.userId, person?.candidateId]
+      .map((value) => normalizeText(value))
+      .filter(Boolean);
+    return references.some((reference) => normalized.includes(reference));
+  });
+  const jobTargetActions = new Set([
+    'candidate-tailor-resume-to-job',
+    'candidate-tailor-cover-letter-to-job',
+    'candidate-apply-job',
+    'job-like',
+    'job-review',
+    'job-share'
+  ]);
+  const targetJob = jobTargetActions.has(action) ? resolveContextJob(context, {}, message) : null;
   if (targetJob) {
     payload.targetId = String(targetJob?._id || targetJob?.id || targetJob?.jobNumber || '');
     payload.targetReference = String(targetJob?.title || targetJob?.role || '');
@@ -1902,6 +1934,16 @@ const buildFallbackActionPayload = (action = '', message = '', context = {}) => 
   if (action === 'feed-react') {
     const reactions = ['Appreciate', 'Love', 'Empower', 'Congratulate', 'Motivate', 'Angry', 'Sad', 'Bad', 'Like'];
     payload.reaction = reactions.find((reaction) => normalized.includes(reaction.toLowerCase().replace(/e$/, ''))) || 'Like';
+  }
+  if (action === 'profile-open' && matchedPerson) {
+    payload.targetId = String(matchedPerson.id || matchedPerson.userId || matchedPerson.candidateId || '');
+    payload.targetReference = String(matchedPerson.name || matchedPerson.jumptakeId || '');
+  }
+  if (action === 'message-send' && matchedPerson) {
+    payload.recipientReference = String(matchedPerson.name || matchedPerson.jumptakeId || matchedPerson.id || '');
+    const quotedMessage = String(message || '').match(/"([^"]+)"/);
+    const statedMessage = String(message || '').match(/\b(?:saying|say|that says|message:)\s+(.+)$/i);
+    payload.message = String(quotedMessage?.[1] || statedMessage?.[1] || '').trim();
   }
   if (/\b(all|every|each)\b/.test(normalized) && /\b(visible|open|screen|post|job)\b/.test(normalized)) {
     payload.scope = 'all-visible';
@@ -1921,6 +1963,7 @@ const buildPortalActionConfirmation = (action = '', args = {}, context = {}) => 
   if (action === 'job-like') return `Liking ${args.scope === 'all-visible' ? 'the visible jobs' : 'the requested job'}.`;
   if (action === 'job-review') return 'Saving your review on the requested job.';
   if (action === 'job-share') return 'Sharing the requested job.';
+  if (action === 'profile-open') return `Opening ${args.targetReference ? `${args.targetReference}'s` : 'the requested'} profile.`;
   if (String(action).startsWith('open-section:')) return fallbackAnswer('', action, []);
   return '';
 };
@@ -1962,20 +2005,47 @@ const askPublicAssistant = async (req, res) => {
   const actionPlan = await planPortalActionWithOpenAI({ message, history, context });
   let action = actionPlan?.action || inferAction(message, context);
   let actionPayload = actionPlan?.args || buildFallbackActionPayload(action, message, context);
-  const lastAssistantText = String(getLastHistoryEntry(history, 'assistant')?.text || '').toLowerCase();
+  const lastAssistantRaw = String(getLastHistoryEntry(history, 'assistant')?.text || '').trim();
+  const lastAssistantText = lastAssistantRaw.toLowerCase();
+  const pendingMessageRecipient = lastAssistantRaw.match(/^What would you like me to send to (.+)\?$/i)?.[1]?.trim();
+  if (!action && pendingMessageRecipient && context?.portalMode) {
+    action = 'message-send';
+    actionPayload = {
+      recipientReference: pendingMessageRecipient,
+      message
+    };
+  }
   if (!action && /\bwhich job\b/.test(lastAssistantText) && context?.portalMode === 'candidate') {
     action = 'candidate-apply-job';
     actionPayload = buildFallbackActionPayload(action, message, context);
   }
-  const targetJob = resolveContextJob(context, actionPayload, message);
+  const jobTargetActions = new Set([
+    'candidate-tailor-resume-to-job',
+    'candidate-tailor-cover-letter-to-job',
+    'candidate-apply-job',
+    'job-like',
+    'job-review',
+    'job-share'
+  ]);
+  const targetJob = jobTargetActions.has(action) ? resolveContextJob(context, actionPayload, message) : null;
   if (targetJob) {
     actionPayload = {
       ...actionPayload,
       targetId: String(targetJob?._id || targetJob?.id || targetJob?.jobNumber || actionPayload.targetId || ''),
       targetReference: String(targetJob?.title || targetJob?.role || actionPayload.targetReference || '')
     };
-  } else if (actionPayload.targetId) {
+  } else if (jobTargetActions.has(action) && actionPayload.targetId) {
     delete actionPayload.targetId;
+  }
+  if (action === 'message-send' && !String(actionPayload.recipientReference || '').trim()) {
+    return res.json({ answer: 'Who would you like to message?', action: '', actionPayload: {} });
+  }
+  if (action === 'message-send' && !String(actionPayload.message || '').trim()) {
+    return res.json({
+      answer: `What would you like me to send to ${String(actionPayload.recipientReference).trim()}?`,
+      action: '',
+      actionPayload: {}
+    });
   }
   const resolvedContext = { ...context, targetJob };
   const shouldGeneratePortalDraft = isPortalAction(action) && action !== 'candidate-apply-job';

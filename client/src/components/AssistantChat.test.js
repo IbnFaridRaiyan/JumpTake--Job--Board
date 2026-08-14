@@ -64,18 +64,29 @@ describe('AssistantChat action approval', () => {
 
     it('waits for approval and sends the edited draft to the action handler', async () => {
         const onAction = jest.fn();
+        const previewPhases = [];
+        const recordPreview = (event) => previewPhases.push(event.detail?.phase);
+        window.addEventListener('jumptake-ai-action-preview', recordPreview);
         await renderChatAndAsk(onAction);
 
         expect(onAction).not.toHaveBeenCalled();
+        expect(previewPhases).toEqual([]);
         const reviewEditor = container.querySelector('.assistant-action-review-editor textarea');
         expect(reviewEditor.value).toBe('Congratulations on the new role!');
 
         act(() => Simulate.change(reviewEditor, { target: { value: 'Congratulations, Ashley!' } }));
         act(() => Simulate.click(container.querySelector('.assistant-action-review-approve')));
 
+        expect(onAction).not.toHaveBeenCalled();
+        expect(previewPhases).toEqual([]);
+        act(() => jest.advanceTimersByTime(320));
+        expect(previewPhases).toEqual(['approve']);
+        expect(onAction).not.toHaveBeenCalled();
+        act(() => jest.advanceTimersByTime(2300));
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onAction.mock.calls[0][0]).toBe('feed-comment');
         expect(onAction.mock.calls[0][1].actionPayload.comment).toBe('Congratulations, Ashley!');
+        window.removeEventListener('jumptake-ai-action-preview', recordPreview);
     });
 
     it('cancels without invoking the action handler', async () => {

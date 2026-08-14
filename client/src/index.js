@@ -24,6 +24,7 @@ import './styles/portal-request-fixes.css';
 import './styles/portal-current-request.css';
 import './styles/portal-august-visual-fixes.css';
 import './styles/assistant-action-review.css';
+import './styles/experience-final.css';
 import { installMobileInteractionFeedback } from './utils/mobileHaptics';
 
 installMobileInteractionFeedback();

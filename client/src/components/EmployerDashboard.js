@@ -29,6 +29,7 @@ import {
     PORTAL_REMINDERS_UPDATED_EVENT,
     getUnreadPortalReminderCount
 } from '../utils/portalReminders';
+import usePortalSectionScrollIsolation from '../utils/portalSectionScroll';
 
 const EMPLOYER_SECTION_IDS = new Set([
     'inbox',
@@ -82,6 +83,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     const [mobileSectionVisible, setMobileSectionVisible] = useState(() => isMobileViewport());
     const [isManagingEmployerJob, setIsManagingEmployerJob] = useState(false);
     const mobilePanelRef = useRef(null);
+    usePortalSectionScrollIsolation(activeSection, mobilePanelRef);
     const navigate = useNavigate();
 
     useEffect(() => {

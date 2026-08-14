@@ -287,14 +287,29 @@ const GuidedPortalTour = ({ mode = 'candidate' }) => {
         const updateRect = () => {
             frameId = window.requestAnimationFrame(() => {
                 const rect = currentTarget.getBoundingClientRect();
-                const padding = stage === 'overview' ? 6 : 8;
-                const top = Math.max(8, rect.top - padding);
-                const left = Math.max(8, rect.left - padding);
+                const padding = stage === 'overview' ? 18 : 12;
+                const viewportInset = 12;
+                const maximumDiameter = window.innerWidth <= 768
+                    ? Math.min(232, window.innerWidth - (viewportInset * 2))
+                    : Math.min(360, window.innerWidth - (viewportInset * 2), window.innerHeight - (viewportInset * 2));
+                const diameter = Math.max(64, Math.min(
+                    maximumDiameter,
+                    Math.max(rect.width, rect.height) + (padding * 2)
+                ));
+                const radius = diameter / 2;
+                const centerX = Math.min(
+                    window.innerWidth - radius - viewportInset,
+                    Math.max(radius + viewportInset, rect.left + (rect.width / 2))
+                );
+                const centerY = Math.min(
+                    window.innerHeight - radius - viewportInset,
+                    Math.max(radius + viewportInset, rect.top + (rect.height / 2))
+                );
                 setSpotlightRect({
-                    top,
-                    left,
-                    width: Math.max(24, Math.min(window.innerWidth - left - 8, rect.width + (padding * 2))),
-                    height: Math.max(24, Math.min(window.innerHeight - top - 8, rect.height + (padding * 2)))
+                    top: centerY - radius,
+                    left: centerX - radius,
+                    width: diameter,
+                    height: diameter
                 });
             });
         };
@@ -430,10 +445,23 @@ const GuidedPortalTour = ({ mode = 'candidate' }) => {
         : spotlightRect && spotlightRect.top > window.innerHeight * 0.48
         ? { top: 'max(4.4rem, 5vh)' }
         : { bottom: 'max(1rem, env(safe-area-inset-bottom))' };
+    const spotlightStyle = spotlightRect
+        ? {
+            '--guided-focus-x': `${spotlightRect.left + (spotlightRect.width / 2)}px`,
+            '--guided-focus-y': `${spotlightRect.top + (spotlightRect.height / 2)}px`,
+            '--guided-focus-radius': `${spotlightRect.width / 2}px`
+        }
+        : undefined;
 
     return createPortal(
         <div className="guided-portal-tour" role="dialog" aria-modal="true" aria-label="JumpTake guided portal tour">
-            {!isComplete && spotlightRect ? <div className="guided-tour-spotlight" style={spotlightRect} /> : <div className="guided-tour-full-shade" />}
+            {!isComplete && spotlightRect ? (
+                <div
+                    key={`${sectionIndex}-${stage}-${controlIndex}`}
+                    className="guided-tour-spotlight"
+                    style={spotlightStyle}
+                />
+            ) : <div className="guided-tour-full-shade" />}
             <article className={`guided-tour-card ${isComplete ? 'is-complete' : ''}`} style={cardStyle}>
                 <div className="guided-tour-ai-head" aria-hidden="true"><span>✦</span></div>
                 <div className="guided-tour-copy" key={`${sectionIndex}-${stage}-${controlIndex}`}>

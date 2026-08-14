@@ -23,11 +23,23 @@ export const installMobileInteractionFeedback = () => {
   if (typeof document === 'undefined') return () => {};
 
   const visualViewport = window.visualViewport;
+  let stableViewportHeight = Math.max(window.innerHeight, visualViewport?.height || 0);
   const syncMobileViewport = () => {
     if (!visualViewport) return;
     const visibleHeight = Math.round(visualViewport.height || window.innerHeight);
-    const keyboardOpen = window.innerHeight - visibleHeight > 120;
+    const visibleBottom = Math.round(visibleHeight + (visualViewport.offsetTop || 0));
+    const focusedElement = document.activeElement;
+    const editing = Boolean(focusedElement?.matches?.('input, textarea, [contenteditable="true"]'));
+    if (!editing) {
+      stableViewportHeight = Math.max(window.innerHeight, visibleBottom);
+    } else {
+      stableViewportHeight = Math.max(stableViewportHeight, window.innerHeight);
+    }
+    const keyboardInset = Math.max(0, stableViewportHeight - visibleBottom);
+    const keyboardOpen = editing && keyboardInset > 120;
     document.documentElement.style.setProperty('--jt-mobile-visible-height', `${visibleHeight}px`);
+    document.documentElement.style.setProperty('--jt-mobile-layout-height', `${stableViewportHeight}px`);
+    document.documentElement.style.setProperty('--jt-mobile-keyboard-inset', `${keyboardOpen ? keyboardInset : 0}px`);
     document.body.classList.toggle('jt-mobile-keyboard-open', keyboardOpen);
   };
 
@@ -44,15 +56,21 @@ export const installMobileInteractionFeedback = () => {
   };
 
   document.addEventListener('click', handleClick, true);
+  document.addEventListener('focusin', syncMobileViewport, true);
+  document.addEventListener('focusout', syncMobileViewport, true);
   syncMobileViewport();
   visualViewport?.addEventListener('resize', syncMobileViewport);
   visualViewport?.addEventListener('scroll', syncMobileViewport);
 
   return () => {
     document.removeEventListener('click', handleClick, true);
+    document.removeEventListener('focusin', syncMobileViewport, true);
+    document.removeEventListener('focusout', syncMobileViewport, true);
     visualViewport?.removeEventListener('resize', syncMobileViewport);
     visualViewport?.removeEventListener('scroll', syncMobileViewport);
     document.documentElement.style.removeProperty('--jt-mobile-visible-height');
+    document.documentElement.style.removeProperty('--jt-mobile-layout-height');
+    document.documentElement.style.removeProperty('--jt-mobile-keyboard-inset');
     document.body.classList.remove('jt-mobile-keyboard-open');
   };
 };

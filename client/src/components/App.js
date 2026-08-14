@@ -105,6 +105,7 @@ const AppRoutes = ({ appMode, setAppMode }) => {
     }
 
     const isPortalRoute = PORTAL_THEME_PATHS.some((path) => location.pathname.startsWith(path));
+    document.body.removeAttribute('data-jumptake-desktop-scale');
 
     if (isPortalRoute) {
       document.documentElement.setAttribute('data-theme', activeMode);

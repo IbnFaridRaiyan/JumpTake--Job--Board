@@ -393,6 +393,7 @@ const FloatingMessenger = ({
     const hasDesktopAssistantWidgetRef = useRef(hasDesktopAssistantWidget);
     const menuCloseTimerRef = useRef(null);
     const messengerCloseTimerRef = useRef(null);
+    const assistantMessageTypingTimerRef = useRef(null);
     const triggerRef = useRef(null);
     const openEventName = isEmployer ? 'jumptake-open-employer-messenger' : 'jumptake-open-candidate-messenger';
 
@@ -837,7 +838,12 @@ const FloatingMessenger = ({
         return () => window.removeEventListener(openEventName, handleOpenEvent);
     }, [hasDesktopAssistantWidget, isMobileView, onSeen, openEventName]);
 
-    useEffect(() => () => window.clearTimeout(messengerCloseTimerRef.current), []);
+    useEffect(() => () => {
+        window.clearTimeout(messengerCloseTimerRef.current);
+        if (assistantMessageTypingTimerRef.current) {
+            window.clearInterval(assistantMessageTypingTimerRef.current);
+        }
+    }, []);
 
     useEffect(() => {
         if (!message || /^write a message/i.test(message)) {
@@ -1209,6 +1215,7 @@ const FloatingMessenger = ({
 
             const targetThread = availableThreads.find((thread) => {
                 const profile = getThreadProfile(thread);
+                const threadTitle = normalizeSearchText(getThreadTitle(thread));
                 const haystack = normalizeSearchText([
                     thread?._id,
                     getThreadTitle(thread),
@@ -1216,10 +1223,63 @@ const FloatingMessenger = ({
                     profile?.user?._id || profile?.user,
                     profile?.jumptakeId
                 ].filter(Boolean).join(' '));
-                return haystack.includes(recipientReference) || recipientReference.includes(normalizeSearchText(getThreadTitle(thread)));
+                return haystack.includes(recipientReference) || (threadTitle && recipientReference.includes(threadTitle));
             });
             const bodyHtml = `<p>${escapeMessageHtml(messageText)}</p>`;
             let response;
+            let contact = null;
+
+            if (!targetThread?._id) {
+                const contextContacts = Array.isArray(assistantContext?.view?.contacts)
+                    ? assistantContext.view.contacts
+                    : [];
+                contact = contextContacts.find((item) => {
+                    const contactName = normalizeSearchText(item?.name);
+                    const haystack = normalizeSearchText([
+                        item?.id,
+                        item?.candidateId,
+                        item?.userId,
+                        item?.name,
+                        item?.jumptakeId
+                    ].filter(Boolean).join(' '));
+                    return haystack.includes(recipientReference)
+                        || (contactName && recipientReference.includes(contactName));
+                });
+                if (isEmployer || (!contact?.candidateId && !contact?.userId)) {
+                    window.dispatchEvent(new CustomEvent(openEventName, {
+                        detail: { assistant: false, source: 'assistant' }
+                    }));
+                    setMessage('I opened Messages so you can choose the recipient safely.');
+                    return;
+                }
+            }
+
+            setOpen(true);
+            setClosing(false);
+            setActiveTab('new');
+            setMessage('');
+            setError('');
+            setPendingContact(targetThread ? null : contact);
+            setSelectedThreadId(targetThread?._id || '');
+            setReplyHtml('');
+            setSending(true);
+
+            await new Promise((resolve) => {
+                if (assistantMessageTypingTimerRef.current) {
+                    window.clearInterval(assistantMessageTypingTimerRef.current);
+                }
+                let cursor = 0;
+                const charactersPerStep = Math.max(1, Math.ceil(messageText.length / 28));
+                assistantMessageTypingTimerRef.current = window.setInterval(() => {
+                    cursor = Math.min(messageText.length, cursor + charactersPerStep);
+                    setReplyHtml(`<p>${escapeMessageHtml(messageText.slice(0, cursor))}</p>`);
+                    if (cursor >= messageText.length) {
+                        window.clearInterval(assistantMessageTypingTimerRef.current);
+                        assistantMessageTypingTimerRef.current = null;
+                        window.setTimeout(resolve, 180);
+                    }
+                }, 32);
+            });
 
             if (targetThread?._id) {
                 response = await fetch(apiUrl(`/api/messages/${targetThread._id}/reply`), {
@@ -1235,26 +1295,6 @@ const FloatingMessenger = ({
                     })
                 });
             } else {
-                const contextContacts = Array.isArray(assistantContext?.view?.contacts)
-                    ? assistantContext.view.contacts
-                    : [];
-                const contact = contextContacts.find((item) => {
-                    const haystack = normalizeSearchText([
-                        item?.id,
-                        item?.candidateId,
-                        item?.userId,
-                        item?.name,
-                        item?.jumptakeId
-                    ].filter(Boolean).join(' '));
-                    return haystack.includes(recipientReference) || recipientReference.includes(normalizeSearchText(item?.name));
-                });
-                if (isEmployer || (!contact?.candidateId && !contact?.userId)) {
-                    window.dispatchEvent(new CustomEvent(openEventName, {
-                        detail: { assistant: false, source: 'assistant' }
-                    }));
-                    setMessage('I opened Messages so you can choose the recipient safely.');
-                    return;
-                }
                 response = await fetch(apiUrl('/api/messages/candidate-direct'), {
                     method: 'POST',
                     headers: {
@@ -1279,13 +1319,61 @@ const FloatingMessenger = ({
                         : [data, ...current]
                 ));
             }
+            setReplyHtml('');
             setMessage('Message sent.');
         } catch (sendError) {
             setError(sendError.message || 'Could not send the message.');
             window.dispatchEvent(new CustomEvent(openEventName, {
                 detail: { assistant: false, source: 'assistant' }
             }));
+        } finally {
+            setSending(false);
         }
+    };
+
+    const openAssistantProfile = (args = {}, assistantContext = {}) => {
+        const requestedReference = normalizeSearchText(
+            args.targetId || args.targetReference || args.recipientReference || ''
+        );
+        if (!requestedReference || typeof document === 'undefined') return false;
+
+        const visibleCards = [...document.querySelectorAll('[data-assistant-contact-id]')].filter((card) => {
+            const rect = card.getBoundingClientRect();
+            const style = window.getComputedStyle(card);
+            return rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden';
+        });
+        const matchedCard = visibleCards.find((card) => {
+            const contactName = normalizeSearchText(card.dataset.assistantContactName);
+            const haystack = normalizeSearchText([
+                card.dataset.assistantContactId,
+                card.dataset.assistantUserId,
+                card.dataset.assistantCandidateId,
+                card.dataset.assistantContactName,
+                card.dataset.assistantJumptakeId
+            ].filter(Boolean).join(' '));
+            return haystack.includes(requestedReference)
+                || (contactName && requestedReference.includes(contactName));
+        });
+        const profileTrigger = matchedCard
+            ? [...matchedCard.querySelectorAll('button, [role="button"]')].find((control) => (
+                normalizeSearchText(`${control.getAttribute('aria-label') || ''} ${control.textContent || ''}`).includes('view profile')
+            ))
+            : null;
+
+        if (profileTrigger) {
+            matchedCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            window.setTimeout(() => profileTrigger.click(), 360);
+            return true;
+        }
+
+        window.dispatchEvent(new CustomEvent('jumptake-ai-profile-open', {
+            detail: {
+                mode,
+                args,
+                context: assistantContext
+            }
+        }));
+        return true;
     };
 
     const handleAssistantAction = (action, payload = {}) => {
@@ -1339,6 +1427,12 @@ const FloatingMessenger = ({
                     detail: { mode, action: 'focus-password' }
                 }));
             }, 80);
+            minimizeAfterMobileAssistantAction();
+            return;
+        }
+
+        if (actionName === 'profile-open') {
+            openAssistantProfile(actionArgs, payload.context || {});
             minimizeAfterMobileAssistantAction();
             return;
         }

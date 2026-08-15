@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JumpTake Tutorial Studio</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root { color-scheme: light; font-family: Inter, "Segoe UI", Arial, sans-serif; }
+    body { min-height: 100vh; margin: 0; padding: 20px; display: grid; place-items: center; gap: 12px; background: #e8e4df; }
+    canvas { width: min(100%, 1600px); height: auto; display: block; aspect-ratio: 16 / 9; background: #f3f0ec; box-shadow: 0 22px 70px rgba(35, 25, 24, .18); }
+    .controls { display: flex; align-items: center; gap: 10px; }
+    button, select { min-height: 40px; padding: 0 14px; border: 1px solid #d1c8c2; border-radius: 6px; color: #291b20; background: #fff; font: 700 14px Inter, "Segoe UI", Arial, sans-serif; }
+    button { color: #fff; border-color: #761b30; background: #761b30; cursor: pointer; }
+    body.is-recording { padding: 0; background: #f3f0ec; }
+    body.is-recording .controls { display: none; }
+  </style>
+</head>
+<body>
+  <canvas id="tutorial" width="1600" height="900" aria-label="JumpTake video tutorial"></canvas>
+  <div class="controls">
+    <select id="scenario"></select>
+    <button id="replay" type="button">Replay</button>
+    <button id="export" type="button">Export MP4</button>
+    <span id="status">9 second preview</span>
+  </div>
+  <script>
+    window.addEventListener('error', (event) => { document.title = `STUDIO_ERROR|${event.message}|${event.lineno}`; });
+    window.addEventListener('unhandledrejection', (event) => { document.title = `STUDIO_ERROR|${event.reason?.message || event.reason}`; });
+    const canvas = document.getElementById('tutorial');
+    const ctx = canvas.getContext('2d');
+    const select = document.getElementById('scenario');
+    const status = document.getElementById('status');
+    const W = canvas.width;
+    const H = canvas.height;
+    const DURATION = 9.6;
+    let frameHandle = 0;
+    let exporting = false;
+
+    const C = {
+      canvas: '#eee7de', paper: '#fffdf8', ink: '#21181d', muted: '#716467', faint: '#a29496',
+      line: '#ccbdb6', soft: '#f7f0e8', warmer: '#e9ddd2', burgundy: '#761b30', dark: '#4f1120',
+      burgundySoft: '#f7e4e9', teal: '#237f78', tealSoft: '#e3f1ed', green: '#328157',
+      greenSoft: '#e4f3e9', orange: '#b45128', orangeSoft: '#ffecdf', black: '#151116'
+    };
+
+    const scenarios = {
+      'tailor-resume': {
+        title: 'Tailor a resume to a role', page: 'Create', kind: 'resume', action: 'Tailor resume',
+        prompt: 'Tailor my resume to the product engineer role', draft: 'Strengthen product delivery, React, and API experience.'
+      },
+      'react-work-news': {
+        title: 'React to a Work News post', page: 'Work News', kind: 'react', action: 'React to post',
+        prompt: 'Celebrate the Analog Devices post', draft: 'Reaction: Celebrate'
+      },
+      'comment-work-news': {
+        title: 'Comment on a Work News post', page: 'Work News', kind: 'comment', action: 'Comment on post',
+        prompt: 'Comment on the Analog Devices update', draft: 'Strong progress. Congratulations to the team on this milestone.'
+      },
+      'message-someone': {
+        title: 'Send a message with AI', page: 'Messages', kind: 'message', action: 'Send message',
+        prompt: 'Message Maya about tomorrow morning', draft: 'Hi Maya, are you free to catch up tomorrow morning?'
+      },
+      'create-ai-post': {
+        title: 'Create and publish a post', page: 'Create', kind: 'post', action: 'Create post',
+        prompt: 'Post that I completed my product design course', draft: 'I am excited to share that I completed my product design course today.'
+      },
+      'search-jumptake': {
+        title: 'Use the portal search', page: 'Search', kind: 'search', action: '', prompt: '', draft: ''
+      },
+      'ai-notepad-reminder': {
+        title: 'Create a reminder with AI', page: 'Notepad', kind: 'notepad', action: 'Create reminder',
+        prompt: 'Remind me to review my interview notes at 6 PM', draft: 'Review interview notes - Today at 6:00 PM'
+      },
+      'match-job-posts': {
+        title: 'Match your profile to a job', page: 'Job Posts', kind: 'match', action: '', prompt: '', draft: ''
+      }
+    };
+
+    const query = new URLSearchParams(location.search);
+    let scenarioId = scenarios[query.get('scenario')] ? query.get('scenario') : 'tailor-resume';
+    const logo = new Image();
+    logo.src = 'jumptake-logo-light.png';
+
+    Object.entries(scenarios).forEach(([id, item]) => {
+      const option = document.createElement('option');
+      option.value = id;
+      option.textContent = item.title;
+      option.selected = id === scenarioId;
+      select.appendChild(option);
+    });
+
+    const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+    const ease = (v) => 1 - Math.pow(1 - clamp(v), 3);
+    const smooth = (a, b, t) => { const v = clamp((t - a) / (b - a)); return v * v * (3 - 2 * v); };
+    const show = (start, end, t) => smooth(start, start + .35, t) * (end ? 1 - smooth(end - .25, end, t) : 1);
+    const typeAt = (text, start, end, t) => text.slice(0, Math.floor(text.length * clamp((t - start) / (end - start))));
+
+    function roundRect(x, y, w, h, r, fill, stroke = '', lineWidth = 1) {
+      const substantialPaperPanel = fill === C.paper && w > 250 && h > 70;
+      ctx.save();
+      if (substantialPaperPanel) {
+        ctx.shadowColor = 'rgba(73, 45, 48, .13)';
+        ctx.shadowBlur = 16;
+        ctx.shadowOffsetX = 4;
+        ctx.shadowOffsetY = 7;
+      }
+      ctx.beginPath(); ctx.roundRect(x, y, w, h, r);
+      if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+      ctx.restore();
+      if (stroke) {
+        ctx.beginPath(); ctx.roundRect(x, y, w, h, r);
+        ctx.strokeStyle = stroke; ctx.lineWidth = Math.max(1.25, lineWidth); ctx.stroke();
+        ctx.save();
+        ctx.globalAlpha = .16;
+        ctx.translate(.7, -.45);
+        ctx.beginPath(); ctx.roundRect(x, y, w, h, r);
+        ctx.strokeStyle = '#5d3e47'; ctx.lineWidth = .8; ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    function text(value, x, y, size = 18, color = C.ink, weight = 500, align = 'left', family = 'Inter, Segoe UI, Arial') {
+      ctx.font = `${weight} ${size}px ${family}`; ctx.textBaseline = 'alphabetic'; ctx.textAlign = align; ctx.fillStyle = color; ctx.fillText(value, x, y); ctx.textAlign = 'left';
+    }
+
+    function wrap(value, x, y, width, lineHeight, size = 17, color = C.ink, weight = 500, maxLines = 5) {
+      ctx.font = `${weight} ${size}px Inter, Segoe UI, Arial`; ctx.fillStyle = color; ctx.textBaseline = 'alphabetic';
+      const words = String(value).split(/\s+/); const lines = []; let line = '';
+      words.forEach((word) => {
+        const test = line ? `${line} ${word}` : word;
+        if (ctx.measureText(test).width > width && line) { lines.push(line); line = word; } else line = test;
+      });
+      if (line) lines.push(line);
+      lines.slice(0, maxLines).forEach((item, index) => ctx.fillText(item, x, y + index * lineHeight));
+      return Math.min(lines.length, maxLines);
+    }
+
+    function line(x1, y1, x2, y2, color = C.line, width = 1) {
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.strokeStyle = color; ctx.lineWidth = width; ctx.stroke();
+    }
+
+    function circle(x, y, radius, fill, stroke = '') {
+      ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fillStyle = fill; ctx.fill();
+      if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 1; ctx.stroke(); }
+    }
+
+    function icon(type, x, y, size = 20, color = C.ink) {
+      ctx.save(); ctx.translate(x, y); ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = Math.max(2, size * .1); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      if (type === 'search') { ctx.beginPath(); ctx.arc(size * .42, size * .42, size * .3, 0, Math.PI * 2); ctx.stroke(); line(size * .65, size * .65, size * .95, size * .95, color, 2); }
+      else if (type === 'check') { ctx.beginPath(); ctx.moveTo(size * .15, size * .52); ctx.lineTo(size * .42, size * .78); ctx.lineTo(size * .9, size * .18); ctx.stroke(); }
+      else if (type === 'close') { line(size * .2, size * .2, size * .8, size * .8, color, 2); line(size * .8, size * .2, size * .2, size * .8, color, 2); }
+      else if (type === 'spark') { ctx.beginPath(); ctx.moveTo(size*.5,0);ctx.lineTo(size*.62,size*.38);ctx.lineTo(size,size*.5);ctx.lineTo(size*.62,size*.62);ctx.lineTo(size*.5,size);ctx.lineTo(size*.38,size*.62);ctx.lineTo(0,size*.5);ctx.lineTo(size*.38,size*.38);ctx.closePath();ctx.fill(); }
+      else if (type === 'heart') { ctx.beginPath(); ctx.moveTo(size*.5,size*.86);ctx.bezierCurveTo(size*.1,size*.58,size*.04,size*.3,size*.23,size*.18);ctx.bezierCurveTo(size*.39,size*.08,size*.5,size*.22,size*.5,size*.22);ctx.bezierCurveTo(size*.5,size*.22,size*.61,size*.08,size*.77,size*.18);ctx.bezierCurveTo(size*.96,size*.3,size*.9,size*.58,size*.5,size*.86);ctx.fill(); }
+      else if (type === 'message') { ctx.beginPath();ctx.roundRect(1,2,size-2,size*.68,3);ctx.stroke();ctx.beginPath();ctx.moveTo(size*.28,size*.7);ctx.lineTo(size*.2,size*.96);ctx.lineTo(size*.48,size*.71);ctx.stroke(); }
+      else { roundRect(0, 0, size, size, 5, color); }
+      ctx.restore();
+    }
+
+    function cursor(x, y, pressed = false) {
+      ctx.save(); ctx.translate(x, y); if (pressed) ctx.scale(.86, .86);
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(3, 28); ctx.lineTo(10, 20); ctx.lineTo(17, 34); ctx.lineTo(23, 31); ctx.lineTo(16, 17); ctx.lineTo(28, 16); ctx.closePath();
+      ctx.fillStyle = '#fff'; ctx.strokeStyle = '#171217'; ctx.lineWidth = 2.2; ctx.fill(); ctx.stroke(); ctx.restore();
+    }
+
+    function lerpPoint(a, b, amount) { return { x: a.x + (b.x - a.x) * ease(amount), y: a.y + (b.y - a.y) * ease(amount) }; }
+
+    function drawPaintedPaper() {
+      ctx.save();
+      ctx.globalCompositeOperation = 'multiply';
+      for (let index = 0; index < 46; index += 1) {
+        const x = (index * 173 + 41) % W;
+        const y = (index * 97 + 29) % H;
+        const length = 34 + (index % 5) * 18;
+        ctx.globalAlpha = .018 + (index % 3) * .006;
+        ctx.strokeStyle = index % 4 === 0 ? C.burgundy : '#7f665e';
+        ctx.lineWidth = 2 + (index % 3);
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.quadraticCurveTo(x + length * .42, y + (index % 2 ? 4 : -5), x + length, y + (index % 3 - 1) * 3);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawIllustratedFinish() {
+      ctx.save();
+      ctx.globalCompositeOperation = 'multiply';
+      ctx.globalAlpha = .025;
+      ctx.fillStyle = '#c99b7f';
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalAlpha = .032;
+      ctx.strokeStyle = '#4f2a35';
+      ctx.lineWidth = 1;
+      for (let y = 7; y < H; y += 19) {
+        ctx.beginPath();
+        ctx.moveTo(0, y + ((y / 19) % 2));
+        ctx.lineTo(W, y - 1);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawSidebar(active) {
+      roundRect(22, 20, 206, 860, 8, C.paper, C.line);
+      if (logo.complete && logo.naturalWidth) ctx.drawImage(logo, 56, 34, 136, 57);
+      const items = ['Work News', 'Job Posts', 'Create', 'Messages', 'Tutorials'];
+      items.forEach((item, index) => {
+        const y = 132 + index * 58;
+        if (item === active || (active === 'Search' && item === 'Work News') || (active === 'Notepad' && item === 'Work News')) roundRect(38, y - 27, 174, 44, 6, C.burgundySoft);
+        circle(57, y - 5, 8, item === active ? C.burgundy : '#c7bfc0');
+        text(item, 76, y, 15, item === active ? C.burgundy : C.muted, item === active ? 750 : 600);
+      });
+      line(40, 450, 210, 450);
+      text('YOUR WORKSPACE', 42, 482, 10, C.faint, 800);
+      text('Notepad', 42, 522, 15, active === 'Notepad' ? C.burgundy : C.muted, 650);
+      text('Settings', 42, 562, 15, C.muted, 650);
+      circle(60, 825, 22, C.warmer);
+      text('RB', 60, 831, 12, C.burgundy, 800, 'center');
+      text('Raiyan Farid', 91, 822, 14, C.ink, 750);
+      text('Candidate portal', 91, 843, 11, C.faint, 600);
+    }
+
+    function drawTopbar(config, t) {
+      roundRect(246, 20, 1332, 78, 8, C.paper, C.line);
+      text(config.page, 273, 68, 21, C.ink, 800);
+      const searchActive = config.kind === 'search' && t > .7;
+      roundRect(650, 37, 520, 45, 7, searchActive ? '#fff' : C.soft, searchActive ? C.burgundy : C.line, searchActive ? 2 : 1);
+      icon('search', 670, 50, 18, searchActive ? C.burgundy : C.faint);
+      const searchValue = config.kind === 'search' ? typeAt('resume editor', 1.2, 3.1, t) : '';
+      text(searchValue || 'Search JumpTake', 702, 66, 14, searchValue ? C.ink : C.faint, 550);
+      roundRect(1192, 37, 45, 45, 7, C.soft, C.line); circle(1215, 59, 6, C.burgundy);
+      roundRect(1248, 37, 154, 45, 7, C.soft, C.line); text('Ask JumpTake AI', 1325, 65, 13, C.ink, 750, 'center');
+      roundRect(1414, 37, 144, 45, 7, C.burgundy); text('Create', 1486, 65, 14, '#fff', 750, 'center');
+    }
+
+    function drawPageTitle(config) {
+      text(config.title, 276, 155, 13, C.burgundy, 800);
+      text(config.page, 276, 194, 34, C.ink, 800, 'left', 'Georgia, Times New Roman');
+      line(276, 212, 1058, 212);
+    }
+
+    function drawPostCard(config, t) {
+      drawPageTitle(config);
+      roundRect(276, 238, 778, 510, 8, C.paper, C.line);
+      circle(326, 287, 25, C.black);
+      text('AD', 326, 293, 12, '#fff', 800, 'center');
+      text('Analog Devices', 364, 282, 16, C.ink, 800);
+      text('Technology  |  18 minutes ago', 364, 305, 12, C.faint, 550);
+      text('A new chapter for edge intelligence', 306, 359, 25, C.ink, 800, 'left', 'Georgia, Times New Roman');
+      wrap('Our product and research teams reached an important milestone today, bringing faster on-device AI to the next generation of industrial tools.', 306, 397, 690, 25, 16, C.muted, 500, 3);
+      roundRect(306, 476, 718, 132, 7, '#ebe7e3');
+      line(340, 570, 990, 510, '#c8beb9', 2); line(340, 535, 530, 570, '#a99289', 2);
+      text('Product update', 328, 505, 12, C.burgundy, 800);
+      line(306, 633, 1024, 633);
+      const reacted = config.kind === 'react' && t > 6.2;
+      icon('heart', 326, 659, 19, reacted ? C.burgundy : C.faint);
+      text(reacted ? 'Celebrate  129' : 'React  128', 352, 675, 14, reacted ? C.burgundy : C.muted, reacted ? 800 : 650);
+      icon('message', 490, 658, 19, C.faint); text('Comment  24', 518, 675, 14, C.muted, 650);
+      text('Share', 690, 675, 14, C.muted, 650);
+      if (config.kind === 'comment' && t > 6.2) {
+        const amount = smooth(6.1, 7.2, t);
+        ctx.save(); ctx.globalAlpha = amount;
+        roundRect(306, 692, 718, 72, 7, C.soft, C.line);
+        circle(332, 719, 17, C.burgundySoft); text('RF', 332, 724, 9, C.burgundy, 800, 'center');
+        text('Raiyan Farid', 360, 714, 12, C.ink, 800);
+        text('Strong progress. Congratulations to the team on this milestone.', 360, 738, 13, C.muted, 550);
+        ctx.restore();
+      }
+    }
+
+    function drawMessages(config, t) {
+      drawPageTitle(config);
+      roundRect(276, 238, 260, 522, 8, C.paper, C.line);
+      text('Conversations', 300, 278, 17, C.ink, 800);
+      ['Maya Chen', 'Daniel Brooks', 'Ashley Gill', 'Product Circle'].forEach((name, index) => {
+        const y = 322 + index * 78; if (!index) roundRect(288, y - 28, 236, 64, 6, C.burgundySoft);
+        circle(316, y + 3, 20, index === 0 ? C.orangeSoft : C.warmer);
+        text(name.split(' ').map(v => v[0]).join('').slice(0,2), 316, y + 8, 9, C.burgundy, 800, 'center');
+        text(name, 348, y, 13, C.ink, 750); text(index ? 'View conversation' : 'Sounds good, thank you.', 348, y + 21, 10, C.faint, 500);
+      });
+      roundRect(554, 238, 500, 522, 8, C.paper, C.line);
+      circle(590, 276, 20, C.orangeSoft); text('MC', 590, 281, 9, C.burgundy, 800, 'center');
+      text('Maya Chen', 624, 274, 16, C.ink, 800); text('Product Designer', 624, 295, 11, C.faint, 550); line(574, 316, 1034, 316);
+      roundRect(584, 350, 290, 60, 7, C.soft); text('The research notes are ready.', 604, 386, 14, C.muted, 550);
+      roundRect(744, 430, 280, 60, 7, C.burgundy); text('Perfect. I will review them today.', 764, 466, 14, '#fff', 550);
+      if (t > 6.2) {
+        ctx.save(); ctx.globalAlpha = smooth(6.1, 7.3, t);
+        roundRect(642, 516, 382, 66, 7, C.burgundy); wrap('Hi Maya, are you free to catch up tomorrow morning?', 662, 545, 344, 19, 14, '#fff', 550, 2);
+        text('Sent', 990, 605, 10, C.green, 700, 'right'); ctx.restore();
+      }
+      roundRect(574, 694, 460, 46, 7, C.soft, C.line); text('Write a message', 596, 723, 13, C.faint, 500);
+    }
+
+    function drawCreatePost(config, t) {
+      drawPageTitle(config);
+      roundRect(276, 238, 778, 472, 8, C.paper, C.line);
+      text('Share an update', 308, 281, 21, C.ink, 800);
+      roundRect(308, 306, 714, 228, 7, C.soft, C.line);
+      const content = t > 6 ? config.draft : '';
+      if (content) { ctx.save(); ctx.globalAlpha = smooth(6, 7, t); wrap(content, 330, 347, 650, 27, 17, C.ink, 550, 4); ctx.restore(); }
+      else text('What would you like to share?', 330, 346, 15, C.faint, 500);
+      text('Add media', 330, 570, 13, C.muted, 700); text('Choose audience', 470, 570, 13, C.muted, 700);
+      roundRect(862, 638, 160, 45, 7, t > 6 ? C.burgundy : '#cfc8c5'); text(t > 7.2 ? 'Published' : 'Publish', 942, 666, 14, '#fff', 800, 'center');
+      if (t > 7.1) { circle(1000, 256, 13, C.greenSoft); icon('check', 993, 249, 14, C.green); }
+    }
+
+    function drawResume(config, t) {
+      drawPageTitle(config);
+      roundRect(276, 232, 778, 546, 8, '#dedbd7', C.line);
+      roundRect(364, 250, 600, 510, 3, C.paper, '#cfc8c2');
+      text('RAIYAN FARID', 410, 296, 25, C.ink, 850, 'left', 'Georgia, Times New Roman');
+      text('PRODUCT SOFTWARE ENGINEER', 410, 320, 11, C.burgundy, 850);
+      line(410, 338, 918, 338, C.burgundy, 2);
+      text('PROFILE', 410, 370, 12, C.ink, 850);
+      wrap('Software engineer building thoughtful products across React, Node.js, APIs, and data-rich user experiences.', 410, 394, 490, 20, 13, C.muted, 500, 3);
+      text('EXPERIENCE', 410, 468, 12, C.ink, 850);
+      text('Software Engineer  |  Northstar Labs', 410, 493, 14, C.ink, 750);
+      wrap('Shipped customer-facing workflows and collaborated with design and product teams.', 410, 519, 490, 20, 13, C.muted, 500, 3);
+      text('SKILLS', 410, 602, 12, C.ink, 850);
+      const final = t > 6.1;
+      ['React', 'Node.js', 'REST APIs', 'Product delivery', 'Design systems'].forEach((skill, index) => {
+        const x = 410 + (index % 3) * 155, y = 622 + Math.floor(index / 3) * 42;
+        roundRect(x, y, 136, 28, 5, final && index > 2 ? C.burgundySoft : C.soft, final && index > 2 ? '#d9aab4' : C.line);
+        text(skill, x + 68, y + 19, 11, final && index > 2 ? C.burgundy : C.muted, final && index > 2 ? 800 : 650, 'center');
+      });
+      if (final) { ctx.save(); ctx.globalAlpha = smooth(6.2, 7.1, t); roundRect(784, 268, 158, 32, 5, C.greenSoft); icon('check', 798, 277, 13, C.green); text('Resume updated', 821, 290, 11, C.green, 800); ctx.restore(); }
+    }
+
+    function drawNotepad(config, t) {
+      drawPageTitle(config);
+      roundRect(276, 238, 778, 492, 8, C.paper, C.line);
+      text('Today', 306, 280, 18, C.ink, 800);
+      roundRect(306, 306, 718, 120, 7, C.soft, C.line);
+      text('Application follow-up', 332, 341, 16, C.ink, 750); text('Send a short note to the hiring team', 332, 369, 13, C.muted, 500); text('4:30 PM', 992, 342, 12, C.burgundy, 750, 'right');
+      text('Reminders', 306, 472, 18, C.ink, 800);
+      if (t > 6.1) {
+        ctx.save(); ctx.globalAlpha = smooth(6.1, 7.2, t); roundRect(306, 498, 718, 110, 7, C.greenSoft, '#b8d9c4');
+        circle(336, 533, 12, C.green); icon('check', 330, 527, 12, '#fff');
+        text('Review interview notes', 362, 536, 16, C.ink, 800); text('Today at 6:00 PM', 362, 565, 13, C.green, 700); text('Added by JumpTake AI', 996, 565, 11, C.muted, 600, 'right'); ctx.restore();
+      } else roundRect(306, 498, 718, 92, 7, C.soft, C.line);
+    }
+
+    function drawSearch(config, t) {
+      drawPageTitle(config);
+      roundRect(276, 238, 778, 476, 8, C.paper, C.line);
+      text(t > 6 ? 'Create' : 'Work News', 310, 282, 22, C.ink, 800);
+      if (t < 6) {
+        [0,1,2].forEach((i) => { roundRect(310, 316 + i * 108, 710, 86, 7, C.soft, C.line); circle(344, 348 + i * 108, 18, C.warmer); text(['Company update','A new role is open','Designing better interviews'][i], 378, 344 + i * 108, 14, C.ink, 750); text('Latest from your network', 378, 369 + i * 108, 11, C.faint, 550); });
+      } else {
+        roundRect(310, 318, 710, 168, 7, C.burgundySoft, '#ddb7c0'); text('Resume & document editor', 342, 361, 20, C.burgundy, 800); wrap('Create, format, and tailor resumes, cover letters, and professional documents.', 342, 394, 610, 24, 15, C.muted, 500, 3); roundRect(342, 430, 148, 36, 6, C.burgundy); text('Open editor', 416, 453, 12, '#fff', 800, 'center');
+      }
+      if (t > 3.1 && t < 6.1) {
+        const alpha = show(3.05, 6.15, t); ctx.save(); ctx.globalAlpha = alpha;
+        roundRect(650, 88, 520, 224, 7, C.paper, C.line); text('BEST MATCH', 676, 123, 10, C.burgundy, 850);
+        roundRect(666, 140, 488, 68, 6, C.burgundySoft); icon('spark', 686, 161, 17, C.burgundy); text('Resume & document editor', 720, 169, 14, C.ink, 800); text('Create', 720, 190, 11, C.faint, 600);
+        text('Tailor resume to a job', 720, 247, 13, C.ink, 650); text('Saved resumes', 720, 282, 13, C.ink, 650); ctx.restore();
+      }
+      const p1 = lerpPoint({x: 1140, y: 110}, {x: 840, y: 60}, smooth(.3, 1, t));
+      const p2 = lerpPoint(p1, {x: 925, y: 173}, smooth(4.2, 5.4, t));
+      cursor(p2.x, p2.y, t > 5.2 && t < 5.55);
+    }
+
+    function drawMatch(config, t) {
+      drawPageTitle(config);
+      const roles = [
+        ['Product Software Engineer', 'Northstar Labs', 'London or Remote'],
+        ['Frontend Engineer', 'Linear Works', 'Manchester'],
+        ['Full Stack Developer', 'Signal House', 'Remote']
+      ];
+      roles.forEach((role, index) => {
+        const y = 238 + index * 174; roundRect(276, y, 778, 150, 8, C.paper, C.line); circle(318, y + 41, 22, index ? C.warmer : C.burgundySoft); text(index ? 'LW' : 'NL', 318, y + 46, 10, C.burgundy, 800, 'center');
+        text(role[0], 356, y + 37, 18, C.ink, 800); text(`${role[1]}  |  ${role[2]}`, 356, y + 64, 12, C.muted, 550);
+        ['React', 'APIs', index ? 'TypeScript' : 'Product'].forEach((skill, si) => { roundRect(356 + si*92, y + 88, 80, 28, 5, C.soft, C.line); text(skill, 396 + si*92, y + 107, 10, C.muted, 700, 'center'); });
+        if (!index) {
+          const done = t > 4.1; roundRect(878, y + 88, 148, 39, 6, done ? C.greenSoft : C.burgundy, done ? '#a7d5b8' : C.burgundy);
+          text(done ? '94% match' : 'Match', 952, y + 113, 13, done ? C.green : '#fff', 850, 'center');
+          if (done) { ctx.save(); ctx.globalAlpha = smooth(4.2, 5.4, t); roundRect(760, y + 24, 266, 50, 6, C.greenSoft); icon('check', 779, y + 39, 17, C.green); text('Strong skills alignment', 812, y + 55, 13, C.green, 800); ctx.restore(); }
+        } else { roundRect(878, y + 88, 148, 39, 6, C.soft, C.line); text('Match', 952, y + 113, 13, C.muted, 800, 'center'); }
+      });
+      const p = lerpPoint({x: 1120,y:170},{x:950,y:347},smooth(.7,2.5,t)); cursor(p.x,p.y,t>2.45&&t<2.8);
+    }
+
+    function drawAiPanel(config, t) {
+      const x = 1080, y = 122, w = 478, h = 738;
+      roundRect(x, y, w, h, 8, C.paper, C.line);
+      roundRect(x, y, w, 70, 8, C.burgundy);
+      circle(x + 38, y + 35, 20, C.orangeSoft); icon('spark', x + 29, y + 26, 18, C.orange);
+      text('JUMPTAKE AI', x + 72, y + 31, 10, '#f2c9d2', 850); text('Ask anything', x + 72, y + 51, 15, '#fff', 800);
+      roundRect(x + 24, y + 94, w - 48, 76, 7, C.soft, C.line); wrap('Tell me what you want to do. I will prepare it for your approval.', x + 43, y + 124, w - 86, 22, 14, C.muted, 550, 2);
+      const typed = typeAt(config.prompt, .7, 2.25, t);
+      if (typed) { roundRect(x + 92, y + 190, w - 116, 62, 7, C.burgundy); wrap(typed, x + 112, y + 224, w - 156, 20, 14, '#fff', 650, 2); }
+      if (t > 2.35) { ctx.save(); ctx.globalAlpha = smooth(2.35, 2.8, t); text('I prepared this action for your approval.', x + 28, y + 286, 13, C.muted, 600); ctx.restore(); }
+      if (t > 2.8) {
+        const approved = t > 5.7; const rise = ease(smooth(2.8, 3.45, t)); const cy = y + 320 + (1-rise)*24;
+        ctx.save(); ctx.globalAlpha = smooth(2.8, 3.3, t);
+        roundRect(x + 24, cy, w - 48, 266, 7, approved ? C.greenSoft : '#fffaf7', approved ? '#a9d6b9' : '#d9b7a9');
+        circle(x + 52, cy + 32, 18, C.orangeSoft); icon('spark', x + 44, cy + 24, 16, C.orange);
+        text('AI ACTION', x + 82, cy + 27, 9, C.burgundy, 850); text(config.action, x + 82, cy + 48, 15, C.ink, 800);
+        text(approved ? 'Approved' : 'Ready', x + w - 42, cy + 37, 10, approved ? C.green : C.burgundy, 800, 'right');
+        roundRect(x + 42, cy + 74, w - 84, 102, 6, C.paper, C.line); wrap(config.draft, x + 58, cy + 105, w - 116, 21, 13, C.ink, 550, 4);
+        text(approved ? 'Applying your change...' : 'Review before applying', x + 42, cy + 224, 10, C.muted, 700);
+        circle(x + w - 99, cy + 220, 22, '#fff', C.line); icon('close', x + w - 106, cy + 213, 14, '#a5293f');
+        circle(x + w - 48, cy + 220, 22, approved ? C.green : '#fff', approved ? C.green : '#bad8c5'); icon('check', x + w - 55, cy + 213, 14, approved ? '#fff' : C.green);
+        if (approved) { ctx.save(); ctx.globalAlpha = smooth(5.7, 6.5, t); roundRect(x + 42, cy + 184, 248, 28, 5, C.greenSoft); text('Change approved by you', x + 54, cy + 203, 10, C.green, 800); ctx.restore(); }
+        ctx.restore();
+      }
+      roundRect(x + 24, y + h - 70, w - 48, 46, 7, C.soft, C.line); text('Ask JumpTake AI', x + 47, y + h - 41, 13, C.faint, 500);
+      const inputPoint = lerpPoint({x:x+w-55,y:y+h-48},{x:x+145,y:y+h-48},smooth(.15,.75,t));
+      const checkPoint = lerpPoint(inputPoint,{x:x+w-48,y:y+540},smooth(4.45,5.5,t));
+      cursor(checkPoint.x,checkPoint.y,t>5.45&&t<5.8);
+    }
+
+    function drawTutorial(t, forcedId = scenarioId) {
+      const config = scenarios[forcedId] || scenarios['tailor-resume'];
+      ctx.clearRect(0, 0, W, H); ctx.fillStyle = C.canvas; ctx.fillRect(0, 0, W, H);
+      drawPaintedPaper();
+      drawSidebar(config.page); drawTopbar(config, t);
+      if (config.kind === 'react' || config.kind === 'comment') drawPostCard(config, t);
+      else if (config.kind === 'message') drawMessages(config, t);
+      else if (config.kind === 'post') drawCreatePost(config, t);
+      else if (config.kind === 'resume') drawResume(config, t);
+      else if (config.kind === 'notepad') drawNotepad(config, t);
+      else if (config.kind === 'search') drawSearch(config, t);
+      else if (config.kind === 'match') drawMatch(config, t);
+      if (!['search','match'].includes(config.kind)) drawAiPanel(config, t);
+      drawIllustratedFinish();
+      ctx.save(); ctx.globalAlpha = 1 - smooth(0, .45, t); ctx.fillStyle = C.canvas; ctx.fillRect(0,0,W,H); ctx.restore();
+      if (t > 8.6) {
+        const alpha = smooth(8.6, 9.15, t); ctx.save(); ctx.globalAlpha = alpha;
+        roundRect(1240, 806, 300, 42, 7, C.black); icon('check', 1260, 818, 16, '#fff'); text('Done - you stay in control', 1290, 833, 13, '#fff', 750); ctx.restore();
+      }
+    }
+
+    function play() {
+      cancelAnimationFrame(frameHandle); const start = performance.now();
+      const frame = (now) => { const t = Math.min(DURATION, (now - start) / 1000); drawTutorial(t); if (t < DURATION) frameHandle = requestAnimationFrame(frame); };
+      frameHandle = requestAnimationFrame(frame);
+    }
+
+    async function record() {
+      if (exporting) return; exporting = true; document.body.classList.add('is-recording'); status.textContent = 'Recording...';
+      const stream = canvas.captureStream(30);
+      const mimeCandidates = ['video/mp4;codecs=avc1.42E01E', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm'];
+      const mimeType = mimeCandidates.find((mime) => MediaRecorder.isTypeSupported(mime)) || '';
+      const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 6500000 }); const chunks = [];
+      recorder.ondataavailable = (event) => { if (event.data.size) chunks.push(event.data); };
+      const done = new Promise((resolve) => { recorder.onstop = resolve; });
+      recorder.start(250); const start = performance.now();
+      await new Promise((resolve) => {
+        const frame = (now) => { const t = Math.min(DURATION, (now - start) / 1000); drawTutorial(t); if (t < DURATION) requestAnimationFrame(frame); else resolve(); };
+        requestAnimationFrame(frame);
+      });
+      await new Promise((resolve) => setTimeout(resolve, 180)); recorder.stop(); await done;
+      const blob = new Blob(chunks, { type: recorder.mimeType || mimeType }); window.__recordedVideoBlob = blob;
+      const extension = blob.type.includes('mp4') ? 'mp4' : 'webm'; window.__recordedVideoName = `${scenarioId}.${extension}`;
+      document.title = `RECORDING_DONE|${scenarioId}|${blob.size}|${blob.type}`; status.textContent = `${(blob.size/1048576).toFixed(2)} MB ready`;
+      if (query.get('record') !== '1') { const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = window.__recordedVideoName; link.click(); }
+      exporting = false;
+    }
+
+    window.renderTutorialFrame = (seconds = 8.1, id = scenarioId) => { drawTutorial(Number(seconds) || 0, id); return canvas.toDataURL('image/png'); };
+    select.addEventListener('change', () => { scenarioId = select.value; history.replaceState(null, '', `?scenario=${scenarioId}`); play(); });
+    document.getElementById('replay').addEventListener('click', play);
+    document.getElementById('export').addEventListener('click', record);
+    const startStudio = () => { drawTutorial(0); play(); if (query.get('record') === '1') setTimeout(record, 120); };
+    if (logo.complete) startStudio();
+    else {
+      logo.addEventListener('load', startStudio, { once: true });
+      logo.addEventListener('error', startStudio, { once: true });
+    }
+  </script>
+</body>
+</html>

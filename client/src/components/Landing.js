@@ -1073,7 +1073,10 @@ const Landing = ({ onThemeChange }) => {
                             <span className="jt-kicker">More than a job board</span>
                             <h2>Everything around the opportunity, in one place.</h2>
                         </div>
-                        <p>JumpTake combines discovery, creation, networking, and hiring tools so every next step feels connected.</p>
+                        <button type="button" className="jt-quick-tour-button" onClick={() => window.location.assign('/tutorials')}>
+                            Fancy a quick tour?
+                            <Icon name="arrow" />
+                        </button>
                     </div>
 
                     <div className="jt-feature-grid">

@@ -1,0 +1,819 @@
+.tutorial-public-page,
+.tutorial-library {
+  --tutorial-ink: #17131a;
+  --tutorial-copy: #625d65;
+  --tutorial-line: rgba(57, 36, 48, 0.16);
+  --tutorial-surface: #ffffff;
+  --tutorial-canvas: #f5f1eb;
+  --tutorial-accent: #6f1828;
+  color: var(--tutorial-ink);
+  font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+}
+
+.tutorial-public-page {
+  min-height: 100vh;
+  background: var(--tutorial-canvas);
+}
+
+.tutorial-public-page.is-dark,
+[data-theme="dark"] .tutorial-library.is-portal {
+  --tutorial-ink: #f8f7f4;
+  --tutorial-copy: #b8b5b9;
+  --tutorial-line: rgba(255, 255, 255, 0.15);
+  --tutorial-surface: #111416;
+  --tutorial-canvas: #07090a;
+  --tutorial-accent: #ef9a62;
+}
+
+.tutorial-public-nav {
+  position: sticky;
+  z-index: 20;
+  top: 0;
+  min-height: 76px;
+  padding: 10px clamp(20px, 5vw, 76px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--tutorial-line);
+  background: color-mix(in srgb, var(--tutorial-canvas) 92%, transparent);
+  backdrop-filter: blur(18px);
+}
+
+.tutorial-public-brand {
+  width: 128px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+}
+
+.tutorial-public-brand img {
+  width: 100%;
+  max-height: 52px;
+  object-fit: contain;
+}
+
+.tutorial-public-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tutorial-theme-button,
+.tutorial-back-link,
+.jt-quick-tour-button {
+  min-height: 42px;
+  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 1px solid var(--tutorial-line);
+  border-radius: 7px;
+  color: var(--tutorial-ink);
+  background: var(--tutorial-surface);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 750;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.tutorial-back-link {
+  color: #fff;
+  border-color: var(--tutorial-accent);
+  background: var(--tutorial-accent);
+}
+
+.tutorial-theme-button:hover,
+.tutorial-back-link:hover,
+.jt-quick-tour-button:hover {
+  transform: translateY(-2px);
+}
+
+.tutorial-library {
+  width: 100%;
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: clamp(58px, 8vw, 112px) clamp(20px, 5vw, 76px) 110px;
+  background: var(--tutorial-canvas);
+}
+
+.tutorial-library.is-portal {
+  max-width: none;
+  min-height: 100%;
+  padding: clamp(28px, 4vw, 58px);
+  border-radius: 0;
+}
+
+.tutorial-library.is-portal .tutorial-library-heading h1 {
+  font-size: clamp(2.35rem, 4vw, 4.4rem);
+}
+
+.tutorial-library-heading {
+  max-width: 850px;
+  margin-bottom: clamp(42px, 6vw, 74px);
+}
+
+.tutorial-library-heading > span,
+.tutorial-card-copy > span,
+.tutorial-inline-video span {
+  color: var(--tutorial-accent);
+  font-size: 0.74rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tutorial-library-heading h1 {
+  max-width: 780px;
+  margin: 12px 0 16px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.7rem, 6vw, 6.4rem);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.tutorial-library-heading p {
+  max-width: 620px;
+  margin: 0;
+  color: var(--tutorial-copy);
+  font-size: clamp(1rem, 1.5vw, 1.22rem);
+  line-height: 1.65;
+}
+
+.tutorial-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(30px, 5vw, 70px) clamp(22px, 3vw, 44px);
+}
+
+.tutorial-card {
+  min-width: 0;
+}
+
+.tutorial-card.is-featured {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(300px, 0.75fr);
+  align-items: center;
+  gap: clamp(28px, 5vw, 72px);
+  padding-bottom: clamp(38px, 6vw, 78px);
+  border-bottom: 1px solid var(--tutorial-line);
+}
+
+.tutorial-card-media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid var(--tutorial-line);
+  border-radius: 8px;
+  background: #151215;
+  box-shadow: 0 22px 65px rgba(31, 23, 28, 0.13);
+}
+
+.tutorial-card-media video,
+.tutorial-inline-video video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  background: #151215;
+}
+
+.tutorial-play-button {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 62px;
+  height: 62px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  transform: translate(-50%, -50%);
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(111, 24, 40, 0.94);
+  box-shadow: 0 12px 36px rgba(41, 11, 18, 0.28);
+  cursor: pointer;
+  transition: transform 200ms ease, background 200ms ease;
+}
+
+html body #root .tutorial-play-button {
+  width: 62px !important;
+  min-width: 62px !important;
+  max-width: 62px !important;
+  height: 62px !important;
+  min-height: 62px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+}
+
+.tutorial-play-button:hover {
+  transform: translate(-50%, -50%) scale(1.08);
+  background: #8c2438;
+}
+
+.tutorial-play-button svg {
+  width: 25px;
+  height: 25px;
+  fill: currentColor;
+}
+
+.tutorial-card-copy {
+  padding-top: 22px;
+}
+
+.tutorial-card.is-featured .tutorial-card-copy {
+  padding-top: 0;
+}
+
+.tutorial-card-copy h2 {
+  margin: 9px 0 10px;
+  color: var(--tutorial-ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.55rem, 2.5vw, 2.55rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+.tutorial-card-copy p {
+  max-width: 620px;
+  margin: 0;
+  color: var(--tutorial-copy);
+  font-size: 0.97rem;
+  line-height: 1.65;
+}
+
+.tutorial-inline-video {
+  width: min(100%, 420px);
+  margin-top: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(111, 24, 40, 0.2);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.tutorial-inline-video video {
+  aspect-ratio: 16 / 9;
+}
+
+.tutorial-inline-video > div {
+  padding: 10px 12px 12px;
+  display: grid;
+  gap: 3px;
+  color: #25181d;
+}
+
+.tutorial-inline-video strong {
+  font-size: 0.88rem;
+  line-height: 1.25;
+}
+
+.tutorial-inline-launch {
+  min-height: 34px;
+  margin-top: 7px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  color: #6f1828;
+  background: transparent;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.tutorial-inline-launch svg {
+  width: 17px;
+  height: 17px;
+  fill: currentColor;
+}
+
+.tutorial-chat-modal-backdrop {
+  position: fixed;
+  z-index: 100050;
+  inset: 0;
+  padding: 42px;
+  display: grid;
+  place-items: center;
+  background: rgba(20, 15, 17, 0.38);
+  backdrop-filter: blur(12px);
+  animation: tutorial-modal-fade 300ms ease both;
+}
+
+.tutorial-chat-modal {
+  width: min(940px, calc(100vw - 84px));
+  max-height: calc(100vh - 84px);
+  padding: 22px;
+  overflow: auto;
+  border: 1px solid rgba(73, 38, 48, 0.18);
+  border-radius: 8px;
+  color: #21171b;
+  background: #f8f5f1;
+  box-shadow: 0 30px 90px rgba(29, 14, 20, 0.26);
+  animation: tutorial-modal-enter 420ms cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.tutorial-chat-modal > header {
+  margin-bottom: 18px;
+  padding: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+html body .tutorial-chat-modal > header {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tutorial-chat-modal > header span {
+  color: #6f1828;
+  font-size: 0.69rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tutorial-chat-modal h2 {
+  margin: 5px 0 0;
+  color: #21171b;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.6rem, 3vw, 2.55rem);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+.tutorial-chat-modal > header button {
+  width: 38px;
+  min-width: 38px;
+  height: 38px;
+  min-height: 38px;
+  padding: 8px;
+  border: 0;
+  border-radius: 50%;
+  color: #6f1828;
+  background: transparent;
+  cursor: pointer;
+}
+
+.tutorial-chat-modal > header button:hover {
+  background: rgba(111, 24, 40, 0.08);
+}
+
+.tutorial-chat-modal > header svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.tutorial-chat-modal > video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: block;
+  border: 1px solid rgba(73, 38, 48, 0.16);
+  border-radius: 7px;
+  background: #171317;
+}
+
+.tutorial-chat-modal > p {
+  max-width: 720px;
+  margin: 16px 2px 2px;
+  color: #655d61;
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+
+[data-theme="dark"] .tutorial-chat-modal {
+  color: #f8f7f4;
+  border-color: rgba(255, 255, 255, 0.14);
+  background: #111416;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.52);
+}
+
+[data-theme="dark"] .tutorial-chat-modal h2 {
+  color: #f8f7f4;
+}
+
+[data-theme="dark"] .tutorial-chat-modal > header span,
+[data-theme="dark"] .tutorial-chat-modal > header button {
+  color: #ef9a62;
+}
+
+[data-theme="dark"] .tutorial-chat-modal > p {
+  color: #b8b5b9;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .tutorial-library.is-portal {
+  color: #17131a !important;
+  background: #f5f1eb !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .tutorial-library.is-portal {
+  color: #f8f7f4 !important;
+  background: #07090a !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .tutorial-library.is-portal :is(
+  .tutorial-library-heading h1,
+  .tutorial-card-copy h2
+) {
+  color: #17131a !important;
+}
+
+html[data-theme="light"] body[data-theme="light"] #root .tutorial-library.is-portal :is(
+  .tutorial-library-heading p,
+  .tutorial-card-copy p
+) {
+  color: #625d65 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .tutorial-library.is-portal :is(
+  .tutorial-library-heading h1,
+  .tutorial-card-copy h2
+) {
+  color: #f8f7f4 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .tutorial-library.is-portal :is(
+  .tutorial-library-heading p,
+  .tutorial-card-copy p
+) {
+  color: #b8b5b9 !important;
+}
+
+html body #root .tutorial-library.is-portal :is(
+  .tutorial-library-heading,
+  .tutorial-grid,
+  .tutorial-card,
+  .tutorial-card-copy
+) {
+  background: transparent !important;
+}
+
+@media (min-width: 769px) {
+  .tutorial-inline-video.has-launch-action > video {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .tutorial-inline-launch,
+  .tutorial-chat-modal-backdrop {
+    display: none;
+  }
+}
+
+@keyframes tutorial-modal-fade {
+  from { opacity: 0; }
+}
+
+@keyframes tutorial-modal-enter {
+  from { opacity: 0; transform: translateY(20px) scale(0.985); }
+}
+
+[data-theme="dark"] .tutorial-inline-video {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: #111416;
+}
+
+[data-theme="dark"] .tutorial-inline-video > div {
+  color: #f8f7f4;
+}
+
+.jt-quick-tour-button {
+  align-self: center;
+  min-width: 205px;
+  color: var(--jt-ink);
+  border-color: rgba(113, 23, 41, 0.28);
+  background: transparent;
+}
+
+.jt-quick-tour-button .jt-icon {
+  width: 17px;
+  height: 17px;
+}
+
+.jt-public-home .jt-platform-section .jt-feature-icon,
+.jt-public-home .jt-platform-section .jt-feature-icon.is-blue,
+.jt-public-home .jt-platform-section .jt-feature-icon.is-orange,
+.jt-public-home .jt-platform-section .jt-feature-icon.is-purple {
+  width: 76px;
+  height: 68px;
+  margin-bottom: 24px;
+  color: #fff;
+  background: transparent;
+}
+
+.jt-public-home .jt-platform-section .jt-feature-icon .jt-icon {
+  width: 43px;
+  height: 43px;
+}
+
+.jt-public-home.is-light .jt-platform-section .jt-feature-icon,
+.jt-public-home.is-light .jt-platform-section .jt-feature-icon.is-blue,
+.jt-public-home.is-light .jt-platform-section .jt-feature-icon.is-orange,
+.jt-public-home.is-light .jt-platform-section .jt-feature-icon.is-purple {
+  color: #6f1828;
+  background: transparent;
+}
+
+.jt-public-home:not(.is-light) .jt-quick-tour-button {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.35);
+  background: transparent;
+}
+
+html body #root .jt-public-home .jt-platform-section .jt-quick-tour-button {
+  width: auto !important;
+  min-width: 220px !important;
+  max-width: 100% !important;
+  min-height: 46px !important;
+  padding: 0 20px !important;
+  border: 1px solid #6f1828 !important;
+  border-radius: 7px !important;
+  color: #ffffff !important;
+  background: #6f1828 !important;
+  box-shadow: none !important;
+  font-family: Georgia, "Times New Roman", serif !important;
+  font-size: 1.04rem !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  white-space: nowrap !important;
+}
+
+html body #root .jt-public-home:not(.is-light) .jt-platform-section .jt-quick-tour-button {
+  color: #21171b !important;
+  border-color: #ef9a62 !important;
+  background: #ef9a62 !important;
+}
+
+html body #root .jt-public-home .jt-platform-section .jt-quick-tour-button:hover {
+  transform: translateY(-2px) !important;
+}
+
+html body[data-public-home-theme="light"] #root#root .jt-public-home.is-light .jt-platform-section .jt-section-heading .jt-quick-tour-button {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html body[data-public-home-theme="dark"] #root#root .jt-public-home.is-dark .jt-platform-section .jt-section-heading .jt-quick-tour-button {
+  color: #21171b !important;
+  -webkit-text-fill-color: #21171b !important;
+}
+
+html body #root .jt-public-home .jt-platform-section .jt-quick-tour-button :is(.jt-icon, svg, path) {
+  color: currentColor !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html body #root .tutorial-public-page.is-light,
+html body #root .tutorial-public-page.is-light .tutorial-public-nav,
+html body #root .tutorial-public-page.is-light .tutorial-library {
+  color: #17131a !important;
+  background: #f5f1eb !important;
+}
+
+html body #root .tutorial-public-page :is(
+  .tutorial-library-heading,
+  .tutorial-grid,
+  .tutorial-card,
+  .tutorial-card-copy
+) {
+  background: transparent !important;
+}
+
+html body #root .tutorial-public-page .tutorial-library-heading {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html body #root .tutorial-public-page.is-light :is(
+  .tutorial-library-heading > span,
+  .tutorial-card-copy > span
+) {
+  color: #6f1828 !important;
+}
+
+html body #root .tutorial-public-page.is-dark :is(
+  .tutorial-library-heading > span,
+  .tutorial-card-copy > span
+) {
+  color: #ef9a62 !important;
+}
+
+html body #root .tutorial-public-page.is-light :is(
+  .tutorial-library-heading h1,
+  .tutorial-card-copy h2
+) {
+  color: #17131a !important;
+}
+
+html body #root .tutorial-public-page.is-light :is(
+  .tutorial-library-heading p,
+  .tutorial-card-copy p
+) {
+  color: #625d65 !important;
+}
+
+html body #root .tutorial-public-page.is-dark,
+html body #root .tutorial-public-page.is-dark .tutorial-public-nav,
+html body #root .tutorial-public-page.is-dark .tutorial-library {
+  color: #f8f7f4 !important;
+  background: #07090a !important;
+}
+
+html body #root .tutorial-public-page.is-dark :is(
+  .tutorial-library-heading h1,
+  .tutorial-card-copy h2
+) {
+  color: #f8f7f4 !important;
+}
+
+html body #root .tutorial-public-page.is-dark :is(
+  .tutorial-library-heading p,
+  .tutorial-card-copy p
+) {
+  color: #b8b5b9 !important;
+}
+
+@media (max-width: 900px) {
+  .tutorial-card.is-featured {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .tutorial-card.is-featured .tutorial-card-copy {
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 680px) {
+  .tutorial-public-nav {
+    min-height: 64px;
+    padding: 7px 14px;
+  }
+
+  .tutorial-public-brand {
+    width: 96px;
+    height: 46px;
+  }
+
+  .tutorial-public-actions {
+    gap: 6px;
+  }
+
+  .tutorial-theme-button,
+  .tutorial-back-link {
+    min-height: 38px;
+    padding: 0 11px;
+    font-size: 0.76rem;
+  }
+
+  .tutorial-library,
+  .tutorial-library.is-portal {
+    padding: 40px 15px 74px;
+  }
+
+  .tutorial-library-heading {
+    margin-bottom: 34px;
+  }
+
+  .tutorial-library-heading h1 {
+    font-size: 2.75rem;
+  }
+
+  .tutorial-grid {
+    grid-template-columns: 1fr;
+    gap: 38px;
+  }
+
+  .tutorial-card.is-featured {
+    grid-column: auto;
+    padding-bottom: 38px;
+  }
+
+  .tutorial-card-copy {
+    padding-top: 16px;
+  }
+
+  .tutorial-play-button {
+    width: 52px;
+    height: 52px;
+  }
+
+  html body #root .tutorial-play-button {
+    width: 52px !important;
+    min-width: 52px !important;
+    max-width: 52px !important;
+    height: 52px !important;
+    min-height: 52px !important;
+  }
+
+  .tutorial-inline-video {
+    width: 100%;
+  }
+
+  .tutorial-inline-launch {
+    display: none;
+  }
+
+  .tutorial-chat-modal-backdrop {
+    display: none;
+  }
+
+  .jt-quick-tour-button {
+    justify-self: start;
+  }
+}
+
+@media (max-width: 768px) {
+  html body #root .tutorial-public-nav {
+    width: 100% !important;
+    min-height: 62px !important;
+    padding: 7px 10px !important;
+    display: flex !important;
+    flex-flow: row nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+  }
+
+  html body #root .tutorial-public-brand {
+    width: 82px !important;
+    min-width: 82px !important;
+    max-width: 82px !important;
+    height: 46px !important;
+    flex: 0 0 82px !important;
+  }
+
+  html body #root .tutorial-public-actions {
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    display: flex !important;
+    flex: 0 0 auto !important;
+    flex-flow: row nowrap !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 6px !important;
+  }
+
+  html body #root .tutorial-public-actions .tutorial-theme-button,
+  html body #root .tutorial-public-actions .tutorial-back-link {
+    width: auto !important;
+    max-width: none !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    padding: 0 10px !important;
+    flex: 0 0 auto !important;
+    border-radius: 6px !important;
+    font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif !important;
+    font-size: 0.72rem !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  html body #root .tutorial-public-actions .tutorial-theme-button {
+    min-width: 58px !important;
+  }
+
+  html body #root .tutorial-public-actions .tutorial-back-link {
+    min-width: 94px !important;
+  }
+
+  html body #root .jt-public-home .jt-platform-section .jt-quick-tour-button {
+    min-width: 196px !important;
+    min-height: 43px !important;
+    padding: 0 16px !important;
+    font-size: 0.96rem !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tutorial-theme-button,
+  .tutorial-back-link,
+  .tutorial-play-button,
+  .jt-quick-tour-button {
+    transition: none;
+  }
+}

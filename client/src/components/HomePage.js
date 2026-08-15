@@ -30,6 +30,7 @@ import {
     getUnreadPortalReminderCount
 } from '../utils/portalReminders';
 import usePortalSectionScrollIsolation from '../utils/portalSectionScroll';
+import TutorialLibrary from './TutorialLibrary';
 
 const CANDIDATE_SECTION_IDS = new Set([
     'dashboard',
@@ -56,7 +57,8 @@ const CANDIDATE_SECTION_IDS = new Set([
     'progress-check',
     'blocks',
     'settings',
-    'pricing'
+    'pricing',
+    'tutorials'
 ]);
 
 const CANDIDATE_SECTION_STORAGE_KEY = 'jumptakeCandidateSection';
@@ -303,7 +305,8 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         'progress-check': 'Progress Check',
         blocks: 'Blocks',
         settings: 'Settings',
-        pricing: 'Pricing'
+        pricing: 'Pricing',
+        tutorials: 'Tutorials'
     };
 
     useEffect(() => {
@@ -853,6 +856,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
     }));
 
     const candidateSecondaryNavItems = [
+        { id: 'tutorials', label: 'Tutorials', icon: 'tutorial' },
         { id: 'about-jumptake', label: 'About JumpTake', icon: 'info' },
         { id: 'progress-check', label: 'Progress Check', icon: 'chart' },
         { id: 'settings', label: 'Settings', icon: 'settings' }
@@ -1086,6 +1090,8 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                 />;
             case 'about-jumptake':
                 return <AboutJumpTake mode="candidate" />;
+            case 'tutorials':
+                return <TutorialLibrary portal />;
             case 'progress-check':
                 return <PerformanceAnalytics
                     mode="candidate"
@@ -1128,7 +1134,8 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
         'tailor-profile',
         'my-feed',
         'dashboard',
-        'progress-check'
+        'progress-check',
+        'tutorials'
     ].includes(activeSection);
 
     if (loading && !jobSeekerData) {

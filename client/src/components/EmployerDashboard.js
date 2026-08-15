@@ -30,6 +30,7 @@ import {
     getUnreadPortalReminderCount
 } from '../utils/portalReminders';
 import usePortalSectionScrollIsolation from '../utils/portalSectionScroll';
+import TutorialLibrary from './TutorialLibrary';
 
 const EMPLOYER_SECTION_IDS = new Set([
     'inbox',
@@ -52,7 +53,8 @@ const EMPLOYER_SECTION_IDS = new Set([
     'about-jumptake',
     'application-tracking',
     'settings',
-    'pricing'
+    'pricing',
+    'tutorials'
 ]);
 
 const EMPLOYER_SECTION_STORAGE_KEY = 'jumptakeEmployerSection';
@@ -146,7 +148,8 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
         'about-jumptake': 'About JumpTake',
         'application-tracking': 'Application Tracking System',
         settings: 'Settings',
-        pricing: 'Pricing'
+        pricing: 'Pricing',
+        tutorials: 'Tutorials'
     };
 
     useEffect(() => {
@@ -543,6 +546,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     }));
 
     const employerSecondaryNavItems = [
+        { id: 'tutorials', label: 'Tutorials', icon: 'tutorial' },
         { id: 'company-profile', label: 'Company Profile', icon: 'profile' },
         { id: 'about-jumptake', label: 'About JumpTake', icon: 'info' },
         { id: 'application-tracking', label: 'Application Tracking System', icon: 'chart' },
@@ -744,6 +748,8 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                 />;
             case 'about-jumptake':
                 return <AboutJumpTake mode="employer" />;
+            case 'tutorials':
+                return <TutorialLibrary portal />;
             case 'application-tracking':
                 return <PerformanceAnalytics
                     mode="employer"
@@ -891,7 +897,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
     };
 
     // The analytics dashboard renders its own animated title inside the panel.
-    const showSectionTitle = !['talent-stories', 'work-news', 'create-post', 'my-company-posts', 'my-job-posts', 'dashboard', 'application-tracking'].includes(activeSection);
+    const showSectionTitle = !['talent-stories', 'work-news', 'create-post', 'my-company-posts', 'my-job-posts', 'dashboard', 'application-tracking', 'tutorials'].includes(activeSection);
 
     if (loading) {
         return (

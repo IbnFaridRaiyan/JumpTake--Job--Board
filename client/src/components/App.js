@@ -9,13 +9,14 @@ const JobSeeker = lazy(() => import('./JobSeeker'));
 const ResetPasswordPage = lazy(() => import('./ResetPasswordPage'));
 const AdminPanel = lazy(() => import('./AdminPanel'));
 const SocialAuthComplete = lazy(() => import('./SocialAuthComplete'));
+const TutorialPage = lazy(() => import('./TutorialPage'));
 
 const APP_MODE_STORAGE_KEY = 'jumptakeAppMode';
 const PUBLIC_HOME_THEME_KEY = 'jumptakePublicHomeTheme';
 const COOKIE_CONSENT_STORAGE_KEY = 'jumptakeCookieConsent';
 const ADMIN_PANEL_PATH = process.env.REACT_APP_ADMIN_PANEL_PATH || '/jt-owner-console-9x4k2-admin';
 const PORTAL_THEME_PATHS = ['/home', '/employer-dashboard'];
-const PUBLIC_THEME_PATHS = ['/', '/job-seeker', '/company', '/reset-password', '/social-auth-complete'];
+const PUBLIC_THEME_PATHS = ['/', '/job-seeker', '/company', '/reset-password', '/social-auth-complete', '/tutorials'];
 
 const getInitialAppMode = () => {
   if (typeof window === 'undefined') {
@@ -137,6 +138,7 @@ const AppRoutes = ({ appMode, setAppMode }) => {
           <Route path="/employer-dashboard" element={<EmployerDashboard appMode={appMode} onAppModeChange={setAppMode} />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/social-auth-complete" element={<SocialAuthComplete />} />
+          <Route path="/tutorials" element={<TutorialPage theme={appMode} onThemeChange={setAppMode} />} />
           <Route path={ADMIN_PANEL_PATH} element={<AdminPanel />} />
         </Routes>
       </Suspense>

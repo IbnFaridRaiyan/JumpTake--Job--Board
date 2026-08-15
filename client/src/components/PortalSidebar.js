@@ -24,7 +24,8 @@ const ICON_PATHS = {
     sun: 'M12 4V1h2v3h-2Zm0 19v-3h2v3h-2ZM4 13H1v-2h3v2Zm19 0h-3v-2h3v2ZM13 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Z',
     moon: 'M20.7 15.1A8.3 8.3 0 0 1 8.9 3.3 9 9 0 1 0 20.7 15.1Z',
     search: 'M10.5 3a7.5 7.5 0 1 0 4.68 13.36L20.82 22 22 20.82l-5.64-5.64A7.5 7.5 0 0 0 10.5 3Zm0 2a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11Z',
-    pricing: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 4v1.1c1.7.3 3 1.3 3 2.9h-2c0-.7-.8-1.2-2-1.2s-2 .5-2 1.2c0 .8.8 1.1 2.4 1.5 2 .5 3.8 1.3 3.8 3.5 0 1.7-1.3 2.8-3.2 3.1V19h-2v-.9c-2-.3-3.4-1.5-3.4-3.1h2c0 .8.9 1.4 2.4 1.4 1.3 0 2.2-.5 2.2-1.3 0-.8-.8-1.2-2.5-1.6C9.8 13 8 12.2 8 10c0-1.6 1.2-2.7 3-3V6h2Z'
+    pricing: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 4v1.1c1.7.3 3 1.3 3 2.9h-2c0-.7-.8-1.2-2-1.2s-2 .5-2 1.2c0 .8.8 1.1 2.4 1.5 2 .5 3.8 1.3 3.8 3.5 0 1.7-1.3 2.8-3.2 3.1V19h-2v-.9c-2-.3-3.4-1.5-3.4-3.1h2c0 .8.9 1.4 2.4 1.4 1.3 0 2.2-.5 2.2-1.3 0-.8-.8-1.2-2.5-1.6C9.8 13 8 12.2 8 10c0-1.6 1.2-2.7 3-3V6h2Z',
+    tutorial: 'M4 3h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-6l2 2v1H8v-1l2-2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm0 2v11h16V5H4Zm6 2.5 6 3.5-6 3.5v-7Z'
 };
 
 const PortalIcon = ({ name = 'dashboard' }) => (
@@ -68,6 +69,7 @@ const SEARCH_ALIAS_BY_ID = {
     'progress-check': ['analytics', 'progress', 'performance', 'check'],
     settings: ['settings', 'preferences', 'privacy', 'security', 'account', 'password'],
     pricing: ['billing', 'subscription', 'plans', 'upgrade'],
+    tutorials: ['tutorial', 'tutorials', 'guide', 'how to', 'video', 'walkthrough', 'learn jumptake'],
     'create-post': ['create', 'post', 'composer', 'write', 'publish', 'news post'],
     'my-company-posts': ['my news', 'company posts', 'posted news', 'my posts'],
     'my-job-posts': ['my jobs', 'job posts', 'posted jobs', 'company jobs'],
@@ -120,7 +122,8 @@ const getSuggestionDescription = (item = {}) => {
         'company-profile': 'Open company profile, logo, and public details.',
         'talent-pool': 'Find users, candidates, and talent profiles.',
         'view-candidates': 'Find users, candidates, and talent profiles.',
-        inbox: 'Open messages and conversations.'
+        inbox: 'Open messages and conversations.',
+        tutorials: 'Watch short guides for JumpTake tools and AI actions.'
     };
 
     return descriptions[item.id] || `Open ${item.label || 'this section'}.`;

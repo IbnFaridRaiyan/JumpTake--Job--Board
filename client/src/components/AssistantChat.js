@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
 import { apiUrl } from '../utils/apiUrl';
 import MobileChatComposer from './MobileChatComposer';
+import { findTutorialForPrompt, getTutorialById } from '../data/tutorials';
+import { TutorialInlineVideo } from './TutorialLibrary';
 
 const formatAssistantTime = () => new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 
@@ -177,6 +180,7 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
     const [assistantInput, setAssistantInput] = useState('');
     const [assistantLoading, setAssistantLoading] = useState(false);
     const [assistantMessages, setAssistantMessages] = useState(createInitialAssistantMessages);
+    const [activeTutorial, setActiveTutorial] = useState(null);
     const [conversationId, setConversationId] = useState(createConversationId);
     const [conversations, setConversations] = useState([]);
     const [showSavedChats, setShowSavedChats] = useState(false);
@@ -517,6 +521,24 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
         setAssistantLoading(true);
 
         try {
+            const tutorial = findTutorialForPrompt(question);
+            if (tutorial) {
+                await new Promise((resolve) => window.setTimeout(resolve, 520));
+                setAssistantMessages((messages) => [
+                    ...messages,
+                    {
+                        role: 'assistant',
+                        text: `Here is the ${tutorial.title.toLowerCase()} walkthrough.`,
+                        tutorialId: tutorial.id,
+                        time: formatAssistantTime()
+                    }
+                ]);
+                if (window.matchMedia('(min-width: 769px)').matches) {
+                    setActiveTutorial(tutorial);
+                }
+                return;
+            }
+
             const resolvedContext = typeof context === 'function' ? context() : context;
             const token = localStorage.getItem('token') || localStorage.getItem('employerToken');
             const response = await fetch(apiUrl('/api/public-assistant'), {
@@ -592,6 +614,7 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
     }, [assistantLoading, className, pendingAction]);
 
     return (
+        <>
         <div className={`public-ai-chat-card portal-ai-chat-card ${className}`}>
             {showSavedChats ? (
                 <section className="assistant-saved-chats" aria-label="Saved AI chats">
@@ -624,7 +647,13 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
                     <li key={`${message.role}-${index}`} className={`public-ai-chat-row is-${message.role}`}>
                         <div className="public-ai-chat-time">{message.time}</div>
                         <div className={`public-ai-chat-bubble is-${message.role}${message.role === 'assistant' && index === assistantMessages.length - 1 ? ' is-latest' : ''}`}>
-                            {message.text}
+                            <span>{message.text}</span>
+                            {message.tutorialId ? (
+                                <TutorialInlineVideo
+                                    tutorial={getTutorialById(message.tutorialId)}
+                                    onOpen={() => setActiveTutorial(getTutorialById(message.tutorialId))}
+                                />
+                            ) : null}
                         </div>
                     </li>
                 ))}
@@ -754,6 +783,29 @@ const AssistantChat = ({ className = '', storageKey = '', context = null, onActi
                 </div>
             </form>}
         </div>
+        {activeTutorial && typeof document !== 'undefined' ? ReactDOM.createPortal(
+            <div className="tutorial-chat-modal-backdrop" role="presentation" onMouseDown={(event) => {
+                if (event.target === event.currentTarget) setActiveTutorial(null);
+            }}>
+                <section className="tutorial-chat-modal" role="dialog" aria-modal="true" aria-label={activeTutorial.title}>
+                    <header>
+                        <div>
+                            <span>{activeTutorial.eyebrow}</span>
+                            <h2>{activeTutorial.title}</h2>
+                        </div>
+                        <button type="button" onClick={() => setActiveTutorial(null)} aria-label="Close tutorial">
+                            <AssistantRejectIcon />
+                        </button>
+                    </header>
+                    <video autoPlay muted controls playsInline poster={activeTutorial.poster} src={activeTutorial.video}>
+                        Your browser does not support the tutorial video.
+                    </video>
+                    <p>{activeTutorial.description}</p>
+                </section>
+            </div>,
+            document.body
+        ) : null}
+        </>
     );
 };
 

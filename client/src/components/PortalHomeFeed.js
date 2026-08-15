@@ -4818,6 +4818,20 @@ const PortalHomeFeed = ({
                 ? visibleJobs
                 : [visibleJobs.find(matchesJob) || safeJobs.find(matchesJob)].filter(Boolean);
 
+            if (action === 'post-open') {
+                const target = targetPosts[0];
+                if (!target) {
+                    setShareStatus('No matching visible post was found.');
+                    return;
+                }
+                openPostDetailModal({
+                    postKey: getPostKey(target.post),
+                    storageKey: target.key,
+                    kind: target.key === WORK_NEWS_STORAGE_KEY ? 'work' : 'talent'
+                });
+                return;
+            }
+
             if (action === 'feed-react') {
                 setAiPreviewReactionKey('');
                 const allowedReactions = reactionLabels.work.filter((reaction) => reaction !== 'Hide');
@@ -4903,8 +4917,10 @@ const PortalHomeFeed = ({
                 .replace(/[^a-z0-9\s]/g, ' ')
                 .replace(/\s+/g, ' ')
                 .trim();
-            const requestedTarget = normalizeTarget(args.targetId || args.targetReference || args.recipientReference);
-            if (!requestedTarget) return;
+            const requestedTargets = [args.targetId, args.targetReference, args.recipientReference]
+                .map(normalizeTarget)
+                .filter(Boolean);
+            if (!requestedTargets.length) return;
 
             const postPeople = [...workNewsPosts, ...talentStories].flatMap((post) => [
                 post,
@@ -4928,8 +4944,10 @@ const PortalHomeFeed = ({
                     person?.name,
                     person?.jumptakeId
                 ].filter(Boolean).join(' '));
-                return haystack.includes(requestedTarget)
-                    || (personName && requestedTarget.includes(personName));
+                return requestedTargets.some((requestedTarget) => (
+                    haystack.includes(requestedTarget)
+                    || (personName && requestedTarget.includes(personName))
+                ));
             });
 
             if (matchedPerson) {

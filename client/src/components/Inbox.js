@@ -297,17 +297,18 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
         return item.senderType === (isEmployer ? 'employer' : 'candidate');
     };
 
-    const getMessageSenderLabel = (thread, item) => {
-        if (isOwnMessage(thread, item)) {
-            return 'You';
-        }
-
+    const getOwnMessageAvatar = (thread) => {
+        if (isEmployer) return thread?.company?.logo || '';
         if (isDirectCandidateThread(thread)) {
-            return getThreadTitle(thread);
+            const profiles = Array.isArray(thread?.candidateProfiles) ? thread.candidateProfiles : [];
+            return profiles.find((profile) => String(profile?.user || '') === String(userId || ''))?.profileImage || '';
         }
-
-        return item.senderType === 'employer' ? 'Employer' : 'Candidate';
+        return thread?.candidate?.profileImage || '';
     };
+
+    const getMessageAvatar = (thread, item) => (
+        isOwnMessage(thread, item) ? getOwnMessageAvatar(thread) : getThreadAvatar(thread)
+    );
 
     const getThreadProfile = (thread) => {
         if (!thread) return null;
@@ -594,19 +595,30 @@ const Inbox = ({ mode, companyId, userId, onBack, onFooterBack }) => {
                             <p>Start a message with {chatTitle}.</p>
                         </div>
                     )}
-                    {chatMessages.map((item) => (
-                        <div
-                            key={item._id}
-                            className={`message-bubble ${isOwnMessage(selectedThread, item) ? 'sent' : 'received'}`}
-                        >
-                            <div className="message-meta">
-                                <strong>{getMessageSenderLabel(selectedThread, item)}</strong>
-                                <span>{formatDateTime(item.createdAt)}</span>
-                                {isOwnMessage(selectedThread, item) && item.readReceipt ? <span className="message-read-receipt">Read</span> : null}
+                    {chatMessages.map((item) => {
+                        const ownMessage = isOwnMessage(selectedThread, item);
+                        return (
+                            <div
+                                key={item._id}
+                                className={`message-chat-row ${ownMessage ? 'is-own' : 'is-peer'}`}
+                            >
+                                <ChatAvatar
+                                    imageSrc={getMessageAvatar(selectedThread, item)}
+                                    className="message-inline-avatar"
+                                    label={ownMessage ? 'Your profile' : chatTitle}
+                                />
+                                <div className="message-chat-content">
+                                    <div className={`message-bubble ${ownMessage ? 'sent' : 'received'}`}>
+                                        <div className="message-body" dangerouslySetInnerHTML={{ __html: item.bodyHtml }} />
+                                    </div>
+                                    <div className="message-meta">
+                                        <time>{formatDateTime(item.createdAt)}</time>
+                                        {ownMessage && item.readReceipt ? <span className="message-read-receipt">Read</span> : null}
+                                    </div>
+                                </div>
                             </div>
-                            <div className="message-body" dangerouslySetInnerHTML={{ __html: item.bodyHtml }} />
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 {selectedThread?.viewerState?.chatBlocked ? (

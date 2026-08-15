@@ -1,0 +1,209 @@
+/* Keep the public site and tutorial library in one editorial design system. */
+body[data-public-home-theme] #root .jt-public-home {
+  --jt-editorial-ink: #17131a;
+  --jt-editorial-copy: #625d65;
+  --jt-editorial-line: rgba(57, 36, 48, 0.16);
+  --jt-editorial-surface: #ffffff;
+  --jt-editorial-canvas: #f5f1eb;
+  --jt-editorial-accent: #6f1828;
+  color: var(--jt-editorial-ink);
+  background: var(--jt-editorial-canvas);
+  font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark {
+  --jt-editorial-ink: #f8f7f4;
+  --jt-editorial-copy: #b8b5b9;
+  --jt-editorial-line: rgba(255, 255, 255, 0.15);
+  --jt-editorial-surface: #111416;
+  --jt-editorial-canvas: #07090a;
+  --jt-editorial-accent: #ef9a62;
+}
+
+body[data-public-home-theme] #root .jt-public-home :is(
+  button,
+  input,
+  select,
+  textarea,
+  label,
+  p,
+  span,
+  strong,
+  small,
+  a
+) {
+  font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home :is(
+  h1,
+  h2,
+  h3,
+  .jt-public-price-card h3,
+  .jt-public-document-header h1,
+  .jt-public-document-body h2
+) {
+  font-family: Georgia, "Times New Roman", serif !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home :is(
+  .jt-hero h1,
+  .jt-section-heading h2,
+  .jt-ai-copy h2,
+  .jt-feature-card h3,
+  .jt-news-intro-card h3,
+  .jt-step-card h3,
+  .jt-public-pricing-copy h2,
+  .jt-final-cta h2
+) :is(span, strong, em) {
+  font-family: Georgia, "Times New Roman", serif !important;
+  letter-spacing: 0 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home :is(
+  .jt-kicker,
+  .jt-feature-card > span,
+  .jt-feature-card > div > span,
+  .jt-news-intro-card > span,
+  .jt-public-pricing-copy > span
+) {
+  color: var(--jt-editorial-accent) !important;
+  -webkit-text-fill-color: var(--jt-editorial-accent) !important;
+  letter-spacing: 0 !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home :is(
+  .jt-section-heading > p,
+  .jt-heading-side > p,
+  .jt-hero-copy > p,
+  .jt-ai-copy > p,
+  .jt-feature-card > p,
+  .jt-feature-card > div > p,
+  .jt-step-card > p,
+  .jt-public-pricing-copy > p,
+  .jt-footer-brand > p
+) {
+  color: var(--jt-editorial-copy) !important;
+  -webkit-text-fill-color: var(--jt-editorial-copy) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light :is(
+  .jt-hero,
+  .jt-platform-section,
+  .jt-news-section,
+  .jt-document-section,
+  .jt-public-pricing,
+  .jt-home-footer
+) {
+  background-color: var(--jt-editorial-canvas) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light :is(
+  .jt-jobs-section,
+  .jt-ai-section,
+  .jt-steps-section
+) {
+  background-color: var(--jt-editorial-surface) !important;
+}
+
+body[data-public-home-theme="light"] #root .jt-public-home.is-light :is(
+  .jt-feature-card,
+  .jt-job-card,
+  .jt-news-intro-card,
+  .jt-news-card,
+  .jt-step-card,
+  .jt-public-price-card
+) {
+  border-color: var(--jt-editorial-line) !important;
+  background-color: var(--jt-editorial-surface) !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark :is(
+  .jt-hero,
+  .jt-platform-section,
+  .jt-jobs-section,
+  .jt-news-section,
+  .jt-ai-section,
+  .jt-document-section,
+  .jt-steps-section,
+  .jt-public-pricing,
+  .jt-home-footer
+) {
+  background-color: var(--jt-editorial-canvas) !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark :is(
+  .jt-feature-card,
+  .jt-job-card,
+  .jt-news-intro-card,
+  .jt-news-card,
+  .jt-step-card,
+  .jt-public-price-card
+) {
+  border-color: var(--jt-editorial-line) !important;
+  background-color: var(--jt-editorial-surface) !important;
+}
+
+body[data-public-home-theme] #root .jt-public-home :is(
+  .jt-section-heading h2,
+  .jt-ai-copy h2,
+  .jt-feature-card h3,
+  .jt-job-card h3,
+  .jt-news-intro-card h3,
+  .jt-step-card h3,
+  .jt-public-pricing-copy h2
+) {
+  color: var(--jt-editorial-ink) !important;
+  -webkit-text-fill-color: var(--jt-editorial-ink) !important;
+}
+
+/* Preserve the animated hero's accent words while adopting the editorial face. */
+body[data-public-home-theme="light"] #root .jt-public-home.is-light
+  .jt-hero-scramble-title .jt-hero-title-word.is-title-accent,
+body[data-public-home-theme="light"] #root .jt-public-home.is-light
+  .jt-hero-scramble-title .jt-hero-title-word.is-title-jump {
+  color: #2f9f94 !important;
+  -webkit-text-fill-color: #2f9f94 !important;
+}
+
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark
+  .jt-hero-scramble-title .jt-hero-title-word.is-title-accent,
+body[data-public-home-theme="dark"] #root .jt-public-home.is-dark
+  .jt-hero-scramble-title .jt-hero-title-word.is-title-jump {
+  color: #42b9ad !important;
+  -webkit-text-fill-color: #42b9ad !important;
+}
+
+/* The mobile portal menu owns its scrolling and always leaves room for Logout. */
+@media (max-width: 768px) {
+  html body #root #portal-public-header .portal-public-menu {
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.48rem !important;
+    max-height: calc(100dvh - 5.65rem - env(safe-area-inset-bottom, 0px)) !important;
+    padding: 0.65rem 0.65rem calc(0.9rem + env(safe-area-inset-bottom, 0px)) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    scroll-padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px)) !important;
+    scrollbar-gutter: stable !important;
+    touch-action: pan-y !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  html body #root #portal-public-header .portal-public-menu > ul {
+    flex: 0 0 auto !important;
+  }
+
+  html body #root #portal-public-header .portal-public-menu > ul:last-child {
+    padding-bottom: 0.2rem !important;
+  }
+
+  html body #root #portal-public-header .portal-public-menu
+    .portal-public-nav-link.is-danger {
+    margin-bottom: 0.15rem !important;
+  }
+}

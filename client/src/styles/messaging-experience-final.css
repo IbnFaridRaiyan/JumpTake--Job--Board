@@ -1,0 +1,213 @@
+/* Shared conversation rows: identity stays beside the bubble and metadata sits below it. */
+html body #root .messenger-inbox .message-chat-row,
+html body > .floating-messenger.is-open .floating-messenger-message-row {
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 0.52rem !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+html body #root .messenger-inbox .message-chat-row.is-own,
+html body > .floating-messenger.is-open .floating-messenger-message-row.is-own {
+  flex-direction: row-reverse !important;
+}
+
+html body #root .messenger-inbox .message-inline-avatar,
+html body > .floating-messenger.is-open .floating-messenger-message-avatar {
+  box-sizing: border-box !important;
+  flex: 0 0 1.9rem !important;
+  width: 1.9rem !important;
+  min-width: 1.9rem !important;
+  max-width: 1.9rem !important;
+  height: 1.9rem !important;
+  min-height: 1.9rem !important;
+  max-height: 1.9rem !important;
+  margin-bottom: 1.3rem !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(104, 20, 33, 0.2) !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  color: #20171b !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .messenger-inbox .message-inline-avatar,
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open .floating-messenger-message-avatar {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  background: #111 !important;
+  color: #fff !important;
+}
+
+html body #root .messenger-inbox .message-inline-avatar :is(img, svg),
+html body > .floating-messenger.is-open .floating-messenger-message-avatar :is(img, svg) {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+html body #root .messenger-inbox .message-inline-avatar svg,
+html body > .floating-messenger.is-open .floating-messenger-message-avatar svg {
+  padding: 0.32rem !important;
+  fill: currentColor !important;
+}
+
+html body #root .messenger-inbox .message-chat-content,
+html body > .floating-messenger.is-open .floating-messenger-message-content {
+  display: flex !important;
+  flex: 0 1 auto !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+  max-width: min(78%, 38rem) !important;
+}
+
+html body #root .messenger-inbox .message-chat-row.is-own .message-chat-content,
+html body > .floating-messenger.is-open .floating-messenger-message-row.is-own .floating-messenger-message-content {
+  align-items: flex-end !important;
+}
+
+html body #root .messenger-inbox .message-chat-row.is-peer .message-chat-content,
+html body > .floating-messenger.is-open .floating-messenger-message-row.is-peer .floating-messenger-message-content {
+  align-items: flex-start !important;
+}
+
+html body #root .messenger-inbox .message-chat-content > .message-bubble,
+html body > .floating-messenger.is-open .floating-messenger-message-content > .floating-messenger-message {
+  box-sizing: border-box !important;
+  width: auto !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+}
+
+html body #root .messenger-inbox .message-meta,
+html body > .floating-messenger.is-open .floating-messenger-message-meta {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 0.45rem !important;
+  width: auto !important;
+  margin: 0.28rem 0.18rem 0 !important;
+  color: rgba(53, 38, 44, 0.62) !important;
+  font-size: 0.66rem !important;
+  line-height: 1.2 !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] #root .messenger-inbox .message-meta,
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open .floating-messenger-message-meta {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+html body #root .messenger-inbox .message-meta :is(time, span),
+html body > .floating-messenger.is-open .floating-messenger-message-meta :is(time, span) {
+  color: inherit !important;
+  -webkit-text-fill-color: currentColor !important;
+  font: inherit !important;
+}
+
+/* A crisp divider anchors both assistant-chat headers. */
+html body > .floating-messenger.is-open .floating-messenger-chat:has(.floating-messenger-assistant-chat)
+  > .floating-messenger-chat-bar,
+html body #root .messenger-inbox.portal-inbox-ai > .messenger-chat-header {
+  border-bottom: 1px solid rgba(82, 55, 65, 0.18) !important;
+}
+
+html[data-theme="dark"] body[data-theme="dark"] > .floating-messenger.is-open
+  .floating-messenger-chat:has(.floating-messenger-assistant-chat) > .floating-messenger-chat-bar,
+html[data-theme="dark"] body[data-theme="dark"] #root
+  .messenger-inbox.portal-inbox-ai > .messenger-chat-header {
+  border-bottom-color: rgba(255, 255, 255, 0.16) !important;
+}
+
+@media (max-width: 768px) {
+  html body > .floating-messenger.is-open {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+  }
+
+  html body > .floating-messenger.is-open > .floating-messenger-panel,
+  html body > .floating-messenger.is-open > .floating-messenger-panel.is-mobile,
+  html body > .floating-messenger.is-open > .floating-messenger-panel.is-mobile-chat-open {
+    right: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    min-width: 100vw !important;
+    max-width: 100vw !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+
+  html body > .floating-messenger.is-open .floating-messenger-shell,
+  html body > .floating-messenger.is-open .floating-messenger-chat {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+  }
+
+  html body > .floating-messenger.is-open .floating-messenger-chat > .floating-messenger-assistant-chat {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  html[data-theme] body[data-theme] > .floating-messenger.is-open
+    .floating-messenger-chat > .floating-messenger-assistant-chat {
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  html body #root .messenger-inbox .portal-inbox-assistant {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+  }
+
+  html body > .floating-messenger.is-open .floating-messenger-assistant-chat .public-ai-chat-messages,
+  html body #root .messenger-inbox .portal-inbox-assistant .public-ai-chat-messages {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    padding-right: 0.48rem !important;
+    padding-left: 0.48rem !important;
+  }
+
+  html body > .floating-messenger.is-open .floating-messenger-assistant-chat .public-ai-chat-row,
+  html body #root .messenger-inbox .portal-inbox-assistant .public-ai-chat-row {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  html body > .floating-messenger.is-open .floating-messenger-assistant-chat .public-ai-chat-bubble,
+  html body #root .messenger-inbox .portal-inbox-assistant .public-ai-chat-bubble {
+    max-width: 94% !important;
+  }
+
+  html body > .floating-messenger.is-open .floating-messenger-assistant-chat .public-ai-chat-row.is-assistant .public-ai-chat-bubble:not(.is-typing),
+  html body #root .messenger-inbox .portal-inbox-assistant .public-ai-chat-row.is-assistant .public-ai-chat-bubble:not(.is-typing),
+  html body > .floating-messenger.is-open .floating-messenger-assistant-chat .assistant-action-review,
+  html body #root .messenger-inbox .portal-inbox-assistant .assistant-action-review {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  html body #root .messenger-inbox .message-chat-content,
+  html body > .floating-messenger.is-open .floating-messenger-message-content {
+    max-width: calc(100% - 2.45rem) !important;
+  }
+
+  html body #root .messenger-inbox .message-thread,
+  html body > .floating-messenger.is-open .floating-messenger-messages {
+    padding-right: 0.58rem !important;
+    padding-left: 0.58rem !important;
+  }
+}

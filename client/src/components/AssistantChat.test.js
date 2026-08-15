@@ -98,6 +98,30 @@ describe('AssistantChat action approval', () => {
         expect(onAction).not.toHaveBeenCalled();
     });
 
+    it('opens a targeted post only after the user approves it', async () => {
+        const onAction = jest.fn();
+        global.fetch.mockResolvedValue({
+            ok: true,
+            json: async () => ({
+                answer: 'Opening the requested post.',
+                action: 'post-open',
+                actionPayload: { targetId: 'post-42', postReference: 'Analog Devices' }
+            })
+        });
+
+        await renderChatAndAsk(onAction);
+
+        expect(container.querySelector('.assistant-action-review-copy strong').textContent).toBe('Open post');
+        expect(onAction).not.toHaveBeenCalled();
+        act(() => Simulate.click(container.querySelector('.assistant-action-review-approve')));
+        act(() => jest.advanceTimersByTime(1069));
+        expect(onAction).not.toHaveBeenCalled();
+        act(() => jest.advanceTimersByTime(1));
+        expect(onAction).toHaveBeenCalledWith('post-open', expect.objectContaining({
+            actionPayload: expect.objectContaining({ targetId: 'post-42', postReference: 'Analog Devices' })
+        }));
+    });
+
     it('never forwards an implicit command when the server returns no action', async () => {
         const onAction = jest.fn();
         global.fetch.mockResolvedValue({

@@ -546,6 +546,7 @@ const inferAction = (message, context = {}) => {
   const asksJobReview = /\b(?:review|rate)\b.{0,48}\b(?:job|role|position)\b|\b(?:job|role|position)\b.{0,48}\b(?:review|rating|stars?)\b/.test(normalized);
   const asksJobShare = /\bshare\b.{0,48}\b(?:job|role|position)\b|\b(?:job|role|position)\b.{0,48}\bshare\b/.test(normalized);
   const asksDirectMessage = /\b(?:send|write|message|text)\b.{0,80}\b(?:friend|message|text|dm|inbox)\b/.test(normalized);
+  const asksPostOpen = /\b(?:open|show|view)\b.{0,80}\b(?:post|story|update)\b|\b(?:post|story|update)\b.{0,80}\b(?:open|show|view)\b/.test(normalized);
   const asksProfileOpen = /\b(?:open|show|view)\b.{0,80}\b(?:profile|candidate|user|person)\b|\b(?:profile|candidate|user|person)\b.{0,80}\b(?:open|show|view)\b/.test(normalized);
   const sectionAction = inferSectionAction(normalized, context);
 
@@ -558,6 +559,7 @@ const inferAction = (message, context = {}) => {
   if (asksFeedComment && portalMode) return 'feed-comment';
   if (asksFeedShare && portalMode) return 'feed-share';
   if (asksFeedReaction && portalMode) return 'feed-react';
+  if (asksPostOpen && portalMode) return 'post-open';
   if (asksProfileOpen && portalMode) return 'profile-open';
   if (asksDirectMessage && portalMode) return 'message-send';
   if (asksResumeTailor && portalMode !== 'employer') return 'candidate-tailor-resume-to-job';
@@ -1576,6 +1578,7 @@ const PORTAL_PLANNER_ACTIONS = new Set([
   'job-like',
   'job-review',
   'job-share',
+  'post-open',
   'profile-open',
   'message-send'
 ]);
@@ -1688,6 +1691,54 @@ const resolveContextJob = (context = {}, args = {}, message = '') => {
   return null;
 };
 
+const resolveContextPost = (context = {}, args = {}, message = '') => {
+  const posts = Array.isArray(context.view?.visiblePosts) ? context.view.visiblePosts : [];
+  if (!posts.length) return null;
+  const exactTargetId = String(args.targetId || '').trim();
+  const requestedReference = normalizeText(args.postReference || args.targetReference || '');
+  const normalizedMessage = normalizeText(message);
+  const directMatch = posts.find((post) => {
+    const id = String(post?.id || '').trim();
+    if (exactTargetId && id === exactTargetId) return true;
+    const author = normalizeText(post?.author);
+    const haystack = normalizeText([id, post?.author, post?.type, post?.body].filter(Boolean).join(' '));
+    if (requestedReference && (haystack.includes(requestedReference) || requestedReference.includes(author))) return true;
+    return Boolean(author && author.length > 2 && normalizedMessage.includes(author));
+  });
+  if (directMatch) return directMatch;
+  if (/\b(?:first|top)\s+(?:visible\s+)?(?:post|story|update)\b/i.test(message)) return posts[0];
+  if (posts.length === 1 || /\b(?:this|current|open|visible)\s+(?:post|story|update)\b/i.test(message)) return posts[0];
+  return null;
+};
+
+const resolveContextPerson = (context = {}, args = {}, message = '') => {
+  const contacts = [
+    ...(Array.isArray(context.view?.contacts) ? context.view.contacts : []),
+    ...(Array.isArray(context.contacts) ? context.contacts : [])
+  ];
+  const postAuthors = (Array.isArray(context.view?.visiblePosts) ? context.view.visiblePosts : [])
+    .map((post) => ({ name: post?.author }))
+    .filter((person) => person.name);
+  const people = [...contacts, ...postAuthors].filter((person, index, list) => {
+    const key = String(person?.id || person?.userId || person?.candidateId || person?.jumptakeId || person?.name || '');
+    return key && list.findIndex((item) => String(item?.id || item?.userId || item?.candidateId || item?.jumptakeId || item?.name || '') === key) === index;
+  });
+  const references = [args.targetId, args.targetReference, args.recipientReference]
+    .map(normalizeText)
+    .filter(Boolean);
+  const normalizedMessage = normalizeText(message);
+  const match = people.find((person) => {
+    const values = [person?.id, person?.userId, person?.candidateId, person?.jumptakeId, person?.name]
+      .map(normalizeText)
+      .filter(Boolean);
+    return values.some((value) => references.some((reference) => value === reference || value.includes(reference) || reference.includes(value)))
+      || values.some((value) => value.length > 2 && normalizedMessage.includes(value));
+  });
+  if (match) return match;
+  if (people.length === 1 && /\b(?:this|current|open|visible)\s+(?:profile|person|user|candidate)\b/i.test(message)) return people[0];
+  return null;
+};
+
 const planPortalActionWithOpenAI = async ({ message, history, context }) => {
   if (!shouldPlanPortalAction(message, context) || !getOpenAIApiKey()) return null;
   const compactContext = buildCompactPortalContext(context);
@@ -1712,6 +1763,7 @@ Allowed actions:
 - job-like with args.targetReference or args.scope="all-visible"
 - job-review with args.targetReference, args.reviewText, and args.rating from 0 to 5
 - job-share with args.targetReference and optional args.friendReference
+- post-open with args.targetId or args.postReference for a visible post
 - profile-open with args.targetId or args.targetReference for a visible post author or contact
 - message-send with args.recipientReference and args.message
 
@@ -1722,6 +1774,7 @@ Rules:
 - For a requested post reaction, use one of Like, Appreciate, Love, Empower, Congratulate, Motivate, Angry, Sad, or Bad.
 - If the user requests a comment or review without dictating wording, write a short relevant draft grounded in the visible post or job.
 - If the user asks to open a named user profile, use profile-open only when that person is present in visible posts or contacts.
+- If the user asks to open a post, use post-open only for a post present in visiblePosts and preserve its id and author/company reference.
 - For message-send, preserve the named recipient. If the message body is missing, leave args.message empty so the assistant can ask what to send.
 - Use args.scope="all-visible" only when the user clearly says every/all visible item.
 - For credential or destructive account changes, only choose the safe navigation action described above.
@@ -1901,7 +1954,7 @@ const buildFallbackActionPayload = (action = '', message = '', context = {}) => 
     ...(Array.isArray(context.view?.contacts) ? context.view.contacts : []),
     ...(Array.isArray(context.contacts) ? context.contacts : []),
     ...(Array.isArray(context.view?.visiblePosts) ? context.view.visiblePosts.map((post) => ({
-      id: post?.authorId || post?.id,
+      id: post?.authorId || '',
       name: post?.author,
       jumptakeId: post?.jumptakeId
     })) : [])
@@ -1924,6 +1977,7 @@ const buildFallbackActionPayload = (action = '', message = '', context = {}) => 
     'job-share'
   ]);
   const targetJob = jobTargetActions.has(action) ? resolveContextJob(context, {}, message) : null;
+  const targetPost = action === 'post-open' ? resolveContextPost(context, {}, message) : null;
   if (targetJob) {
     payload.targetId = String(targetJob?._id || targetJob?.id || targetJob?.jobNumber || '');
     payload.targetReference = String(targetJob?.title || targetJob?.role || '');
@@ -1938,6 +1992,10 @@ const buildFallbackActionPayload = (action = '', message = '', context = {}) => 
   if (action === 'profile-open' && matchedPerson) {
     payload.targetId = String(matchedPerson.id || matchedPerson.userId || matchedPerson.candidateId || '');
     payload.targetReference = String(matchedPerson.name || matchedPerson.jumptakeId || '');
+  }
+  if (action === 'post-open' && targetPost) {
+    payload.targetId = String(targetPost.id || '');
+    payload.postReference = String(targetPost.author || targetPost.type || '');
   }
   if (action === 'message-send' && matchedPerson) {
     payload.recipientReference = String(matchedPerson.name || matchedPerson.jumptakeId || matchedPerson.id || '');
@@ -1963,6 +2021,7 @@ const buildPortalActionConfirmation = (action = '', args = {}, context = {}) => 
   if (action === 'job-like') return `Liking ${args.scope === 'all-visible' ? 'the visible jobs' : 'the requested job'}.`;
   if (action === 'job-review') return 'Saving your review on the requested job.';
   if (action === 'job-share') return 'Sharing the requested job.';
+  if (action === 'post-open') return `Opening ${args.postReference ? `${args.postReference}'s post` : 'the requested post'}.`;
   if (action === 'profile-open') return `Opening ${args.targetReference ? `${args.targetReference}'s` : 'the requested'} profile.`;
   if (String(action).startsWith('open-section:')) return fallbackAnswer('', action, []);
   return '';
@@ -2015,6 +2074,14 @@ const askPublicAssistant = async (req, res) => {
       message
     };
   }
+  if (!action && /whose profile|name or username.*profile|which (?:user|person|candidate).*profile/.test(lastAssistantText) && context?.portalMode) {
+    action = 'profile-open';
+    actionPayload = buildFallbackActionPayload(action, message, context);
+  }
+  if (!action && /which (?:post|story|update)|post name|company name/.test(lastAssistantText) && context?.portalMode) {
+    action = 'post-open';
+    actionPayload = buildFallbackActionPayload(action, message, context);
+  }
   if (!action && /\bwhich job\b/.test(lastAssistantText) && context?.portalMode === 'candidate') {
     action = 'candidate-apply-job';
     actionPayload = buildFallbackActionPayload(action, message, context);
@@ -2036,6 +2103,36 @@ const askPublicAssistant = async (req, res) => {
     };
   } else if (jobTargetActions.has(action) && actionPayload.targetId) {
     delete actionPayload.targetId;
+  }
+  if (action === 'profile-open') {
+    const targetPerson = resolveContextPerson(context, actionPayload, message);
+    if (!targetPerson) {
+      return res.json({
+        answer: 'Whose profile should I open? Tell me their name or JumpTake username.',
+        action: '',
+        actionPayload: {}
+      });
+    }
+    actionPayload = {
+      ...actionPayload,
+      targetId: String(targetPerson.id || targetPerson.userId || targetPerson.candidateId || ''),
+      targetReference: String(targetPerson.name || targetPerson.jumptakeId || actionPayload.targetReference || '')
+    };
+  }
+  if (action === 'post-open') {
+    const targetPost = resolveContextPost(context, actionPayload, message);
+    if (!targetPost) {
+      return res.json({
+        answer: 'Which post should I open? Tell me the post name, author, or company name.',
+        action: '',
+        actionPayload: {}
+      });
+    }
+    actionPayload = {
+      ...actionPayload,
+      targetId: String(targetPost.id || actionPayload.targetId || ''),
+      postReference: String(targetPost.author || targetPost.type || actionPayload.postReference || '')
+    };
   }
   if (action === 'message-send' && !String(actionPayload.recipientReference || '').trim()) {
     return res.json({ answer: 'Who would you like to message?', action: '', actionPayload: {} });

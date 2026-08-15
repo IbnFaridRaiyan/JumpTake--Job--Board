@@ -82,6 +82,7 @@ const getActionAnimationDelay = (action = '') => {
     if (actionName === 'feed-react') return 1450;
     if (actionName === 'message-send') return 850;
     if (actionName === 'profile-open') return 750;
+    if (actionName === 'post-open') return 750;
     return 620;
 };
 
@@ -120,6 +121,7 @@ const getActionReview = (action = '', payload = {}) => {
     if (actionName === 'theme-set') return { title: `Switch to ${args.theme === 'dark' ? 'dark' : 'light'} mode`, target: '', draft: '', draftSource: '' };
     if (actionName === 'account-change-password') return { title: 'Open password settings', target: '', draft: '', draftSource: '' };
     if (actionName === 'profile-open') return { title: 'Open user profile', target, draft: '', draftSource: '' };
+    if (actionName === 'post-open') return { title: 'Open post', target, draft: '', draftSource: '' };
     if (actionName === 'widget-set-reminder') return { title: 'Save to Notepad', target: '', draft, draftSource };
     if (actionName === 'candidate-apply-job') return { title: 'Open job application', target, draft: '', draftSource: '' };
     if (actionName.startsWith('open-section:')) {

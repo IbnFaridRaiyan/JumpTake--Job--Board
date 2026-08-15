@@ -639,11 +639,21 @@ const FloatingMessenger = ({
         return item?.senderType === (isEmployer ? 'employer' : 'candidate');
     };
 
-    const getMessageSenderLabel = (thread, item) => {
-        if (isOwnMessage(thread, item)) return 'You';
-        if (isDirectCandidateThread(thread)) return getThreadTitle(thread);
-        return item?.senderType === 'employer' ? 'Employer' : 'Candidate';
+    const getOwnMessageAvatar = (thread) => {
+        if (isEmployer) {
+            return companyData?.logo || thread?.company?.logo || currentUser?.profileImage || currentUser?.avatar || '';
+        }
+        if (isDirectCandidateThread(thread)) {
+            const profiles = Array.isArray(thread?.candidateProfiles) ? thread.candidateProfiles : [];
+            const ownProfile = profiles.find((profile) => String(profile?.user || '') === String(userId || ''));
+            return ownProfile?.profileImage || profileData?.profileImage || currentUser?.profileImage || currentUser?.avatar || '';
+        }
+        return profileData?.profileImage || thread?.candidate?.profileImage || currentUser?.profileImage || currentUser?.avatar || '';
     };
+
+    const getMessageAvatar = (thread, item) => (
+        isOwnMessage(thread, item) ? getOwnMessageAvatar(thread) : getThreadAvatar(thread)
+    );
 
     const fetchThreads = async (preserveSelection = true) => {
         if ((isEmployer && !companyId) || (!isEmployer && !userId)) {
@@ -1334,10 +1344,10 @@ const FloatingMessenger = ({
     };
 
     const openAssistantProfile = (args = {}, assistantContext = {}) => {
-        const requestedReference = normalizeSearchText(
-            args.targetId || args.targetReference || args.recipientReference || ''
-        );
-        if (!requestedReference || typeof document === 'undefined') return false;
+        const requestedReferences = [args.targetId, args.targetReference, args.recipientReference]
+            .map(normalizeSearchText)
+            .filter(Boolean);
+        if (!requestedReferences.length || typeof document === 'undefined') return false;
 
         const visibleCards = [...document.querySelectorAll('[data-assistant-contact-id]')].filter((card) => {
             const rect = card.getBoundingClientRect();
@@ -1353,8 +1363,10 @@ const FloatingMessenger = ({
                 card.dataset.assistantContactName,
                 card.dataset.assistantJumptakeId
             ].filter(Boolean).join(' '));
-            return haystack.includes(requestedReference)
-                || (contactName && requestedReference.includes(contactName));
+            return requestedReferences.some((requestedReference) => (
+                haystack.includes(requestedReference)
+                || (contactName && requestedReference.includes(contactName))
+            ));
         });
         const profileTrigger = matchedCard
             ? [...matchedCard.querySelectorAll('button, [role="button"]')].find((control) => (
@@ -1443,6 +1455,7 @@ const FloatingMessenger = ({
             'feed-react',
             'feed-comment',
             'feed-share',
+            'post-open',
             'job-like',
             'job-review',
             'job-share'
@@ -1852,21 +1865,30 @@ const FloatingMessenger = ({
                                                 <p>Start a message with {pendingContact.name || 'this user'}.</p>
                                             </div>
                                         )}
-                                        {(selectedThread?.messages || []).map((item) => (
-                                            <div
-                                                key={item._id}
-                                                className={`floating-messenger-message ${isOwnMessage(selectedThread, item) ? 'is-own' : ''}`}
-                                            >
-                                                <strong className="floating-messenger-message-sender">
-                                                    {getMessageSenderLabel(selectedThread, item)}
-                                                </strong>
-                                                <div className="floating-messenger-message-body" dangerouslySetInnerHTML={{ __html: item.bodyHtml }} />
-                                                <div className="floating-messenger-message-meta">
-                                                    <span>{formatDateTime(item.createdAt)}</span>
-                                                    {isOwnMessage(selectedThread, item) && item.readReceipt ? <span className="message-read-receipt">Read</span> : null}
+                                        {(selectedThread?.messages || []).map((item) => {
+                                            const ownMessage = isOwnMessage(selectedThread, item);
+                                            return (
+                                                <div
+                                                    key={item._id}
+                                                    className={`floating-messenger-message-row ${ownMessage ? 'is-own' : 'is-peer'}`}
+                                                >
+                                                    <ChatAvatar
+                                                        imageSrc={getMessageAvatar(selectedThread, item)}
+                                                        className="floating-messenger-message-avatar"
+                                                        label={ownMessage ? 'Your profile' : getThreadTitle(selectedThread)}
+                                                    />
+                                                    <div className="floating-messenger-message-content">
+                                                        <div className={`floating-messenger-message ${ownMessage ? 'is-own' : ''}`}>
+                                                            <div className="floating-messenger-message-body" dangerouslySetInnerHTML={{ __html: item.bodyHtml }} />
+                                                        </div>
+                                                        <div className="floating-messenger-message-meta">
+                                                            <time>{formatDateTime(item.createdAt)}</time>
+                                                            {ownMessage && item.readReceipt ? <span className="message-read-receipt">Read</span> : null}
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                     </div>
 
                                     {selectedThread?.viewerState?.chatBlocked ? (

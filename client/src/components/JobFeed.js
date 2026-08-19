@@ -1539,6 +1539,9 @@ const JobFeed = ({ jobs = [], error, userId, onRefresh, jobSeekerData, currentUs
                                 <span className="preview-company-name">
                                     {selectedCompany.industry || 'Industry not specified'}
                                 </span>
+                                {selectedCompany.jumptakeId ? (
+                                    <span className="company-jumptake-id">@{String(selectedCompany.jumptakeId).replace(/^@/, '')}</span>
+                                ) : null}
                             </div>
                         </div>
 

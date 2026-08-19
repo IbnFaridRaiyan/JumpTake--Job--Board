@@ -1,4 +1,5 @@
 const Company = require('../models/Company');
+const { generateCompanyJumpTakeId } = require('../utils/jumptakeId');
 
 const handleCompanyInfo = async (req, res) => {
     try {
@@ -10,7 +11,10 @@ const handleCompanyInfo = async (req, res) => {
         
         console.log('Received company data:', companyData);
        
-        const company = new Company(companyData);
+        const company = new Company({
+            ...companyData,
+            jumptakeId: companyData.jumptakeId || await generateCompanyJumpTakeId(companyData.name)
+        });
         await company.save();
         
         return res.status(200).json({

@@ -369,8 +369,13 @@ const getResumeAnalysisByUserId = async (req, res) => {
             return res.status(404).json({ error: 'No resume analysis found for this user' });
         }
         
+        const account = await User.findById(userId).select('_id jumptakeId');
         console.log('Found jobSeeker data:', jobSeeker._id);
-        return res.status(200).json(jobSeeker);
+        return res.status(200).json({
+            ...jobSeeker.toObject(),
+            user: account?._id || jobSeeker.user,
+            jumptakeId: account?.jumptakeId || null
+        });
     } catch (error) {
         console.error('Error retrieving resume analysis:', error.message);
         return res.status(500).json({ 

@@ -15,6 +15,40 @@ const APPLICATION_HUB_TABS = [
     { id: 'draft-applications', label: 'Drafts', title: 'Draft Applications', icon: 'drafts' }
 ];
 
+const APPLICATION_DETAIL_KEYS = [
+    'institution', 'school', 'university', 'degree', 'qualification', 'field',
+    'title', 'role', 'position', 'company', 'employer', 'name', 'description',
+    'summary', 'value', 'location', 'date', 'year', 'startDate', 'endDate'
+];
+
+const toApplicationText = (value) => {
+    if (value === null || value === undefined) return '';
+    if (value instanceof Date) return value.toISOString();
+    if (['string', 'number', 'boolean'].includes(typeof value)) return String(value).trim();
+    if (Array.isArray(value)) {
+        return value.map(toApplicationText).filter(Boolean).join(' - ');
+    }
+    if (typeof value === 'object') {
+        const details = APPLICATION_DETAIL_KEYS
+            .map((key) => toApplicationText(value[key]))
+            .filter(Boolean);
+        if (details.length) return [...new Set(details)].join(' - ');
+        return Object.values(value)
+            .filter((item) => ['string', 'number', 'boolean'].includes(typeof item))
+            .map(String)
+            .map((item) => item.trim())
+            .filter(Boolean)
+            .join(' - ');
+    }
+    return '';
+};
+
+const formatApplicationDate = (value) => {
+    const normalized = toApplicationText(value);
+    const date = new Date(normalized);
+    return normalized && !Number.isNaN(date.getTime()) ? date.toLocaleDateString() : 'Not specified';
+};
+
 const MyApplications = forwardRef(({
     userId,
     onRefresh,
@@ -57,7 +91,8 @@ const MyApplications = forwardRef(({
             }
             
             const data = await response.json();
-            setApplications(data);
+            setApplications(Array.isArray(data) ? data : []);
+            setError(null);
         } catch (err) {
             console.error('Error fetching applications:', err);
             setError('Failed to load your applications. Please try again later.');
@@ -197,15 +232,15 @@ const MyApplications = forwardRef(({
     );
 
     const getJobTitle = (application) => {
-        return application?.job?.title || 'Job no longer available';
+        return toApplicationText(application?.job?.title) || 'Job no longer available';
     };
 
     const getCompanyName = (application) => {
-        return application?.job?.company?.name || 'Company unavailable';
+        return toApplicationText(application?.job?.company?.name) || 'Company unavailable';
     };
 
     const getJobNumber = (application) => {
-        return application?.job?.jobNumber || 'Generating...';
+        return toApplicationText(application?.job?.jobNumber) || 'Generating...';
     };
 
     const getSubmittedProfile = (application) => {
@@ -213,15 +248,16 @@ const MyApplications = forwardRef(({
     };
 
     const formatFoundedDate = (founded) => {
-        if (!founded) {
+        const foundedText = toApplicationText(founded);
+        if (!foundedText) {
             return 'Not specified';
         }
 
-        if (/^\d{4}$/.test(founded)) {
-            return `Founded in ${founded}`;
+        if (/^\d{4}$/.test(foundedText)) {
+            return `Founded in ${foundedText}`;
         }
 
-        return founded;
+        return foundedText;
     };
 
     const renderList = (items, emptyMessage) => {
@@ -230,24 +266,30 @@ const MyApplications = forwardRef(({
         }
 
         if (Array.isArray(items)) {
+            const displayItems = items.map(toApplicationText).filter(Boolean);
+            if (!displayItems.length) return <p>{emptyMessage}</p>;
             return (
                 <ul className="profile-list">
-                    {items.map((item, index) => (
+                    {displayItems.map((item, index) => (
                         <li key={index}>{item}</li>
                     ))}
                 </ul>
             );
         }
 
-        return <p>{items}</p>;
+        const displayText = toApplicationText(items);
+        return <p>{displayText || emptyMessage}</p>;
     };
 
     const renderRichTextPreview = (html, emptyMessage) => {
-        if (!html) {
+        const normalizedHtml = typeof html === 'string' ? html.trim() : '';
+        if (!normalizedHtml) {
+            const fallbackText = toApplicationText(html);
+            if (fallbackText) return <p className="cover-letter-preview">{fallbackText}</p>;
             return <p>{emptyMessage}</p>;
         }
 
-        return <div className="cover-letter-preview" dangerouslySetInnerHTML={{ __html: html }} />;
+        return <div className="cover-letter-preview" dangerouslySetInnerHTML={{ __html: normalizedHtml }} />;
     };
     
     const getStatusBadgeClass = (status) => {
@@ -361,21 +403,24 @@ const MyApplications = forwardRef(({
 
                 <div className="application-detail-view">
                     <div className="profile-section company-profile-summary">
-                        <ProfileAvatar imageSrc={selectedCompany.logo} name={selectedCompany.name} className="application-company-logo" imageClassName="profile-avatar-image" />
-                        <h3>{selectedCompany.name}</h3>
-                        <p>{selectedCompany.industry || 'Industry not specified'}</p>
+                        <ProfileAvatar imageSrc={toApplicationText(selectedCompany.logo)} name={toApplicationText(selectedCompany.name)} className="application-company-logo" imageClassName="profile-avatar-image" />
+                        <h3>{toApplicationText(selectedCompany.name) || 'Company unavailable'}</h3>
+                        <p>{toApplicationText(selectedCompany.industry) || 'Industry not specified'}</p>
+                        {selectedCompany.jumptakeId ? (
+                            <span className="company-jumptake-id">@{String(selectedCompany.jumptakeId).replace(/^@/, '')}</span>
+                        ) : null}
                     </div>
 
                     <div className="profile-section">
                         <h3>Company Details</h3>
                         <p><strong>Founded:</strong> {formatFoundedDate(selectedCompany.founded)}</p>
-                        <p><strong>Headquarters:</strong> {selectedCompany.headquarters || 'Not specified'}</p>
-                        <p><strong>Website:</strong> {selectedCompany.website || 'Not specified'}</p>
+                        <p><strong>Headquarters:</strong> {toApplicationText(selectedCompany.headquarters) || 'Not specified'}</p>
+                        <p><strong>Website:</strong> {toApplicationText(selectedCompany.website) || 'Not specified'}</p>
                     </div>
 
                     <div className="profile-section">
                         <h3>About</h3>
-                        <p>{selectedCompany.description || 'No company description available.'}</p>
+                        <p>{toApplicationText(selectedCompany.description) || 'No company description available.'}</p>
                     </div>
 
                     <div className="section-footer-nav">
@@ -391,9 +436,13 @@ const MyApplications = forwardRef(({
     if (selectedApplication) {
         const submittedProfile = getSubmittedProfile(selectedApplication);
         const uploadedResume = selectedApplication.uploadedResume;
-        const canWithdrawSelectedApplication = selectedApplication.status !== 'Withdrawn'
-            && selectedApplication.status !== 'Rejected'
-            && selectedApplication.status !== 'Unsuccessful';
+        const selectedStatus = toApplicationText(selectedApplication.status) || 'Submitted';
+        const externalApplicationLink = typeof selectedApplication.externalApplicationLink === 'string'
+            ? selectedApplication.externalApplicationLink.trim()
+            : '';
+        const canWithdrawSelectedApplication = selectedStatus !== 'Withdrawn'
+            && selectedStatus !== 'Rejected'
+            && selectedStatus !== 'Unsuccessful';
 
         return (
             <div className="applications-container">
@@ -410,8 +459,8 @@ const MyApplications = forwardRef(({
                     <div className="profile-section">
                         <h3>Status</h3>
                         <div className="status-detail-row">
-                            <span className={`status-badge ${getStatusBadgeClass(selectedApplication.status)}`}>
-                                {selectedApplication.status}
+                            <span className={`status-badge ${getStatusBadgeClass(selectedStatus)}`}>
+                                {selectedStatus}
                             </span>
                             <button
                                 className="view-button"
@@ -429,22 +478,22 @@ const MyApplications = forwardRef(({
                         <p><strong>Job Title:</strong> {getJobTitle(selectedApplication)}</p>
                         <p><strong>Job Number:</strong> {getJobNumber(selectedApplication)}</p>
                         <p><strong>Company:</strong> {getCompanyName(selectedApplication)}</p>
-                        <p><strong>Applied On:</strong> {new Date(selectedApplication.createdAt).toLocaleDateString()}</p>
+                        <p><strong>Applied On:</strong> {formatApplicationDate(selectedApplication.createdAt)}</p>
                     </div>
 
-                    {selectedApplication.applicationMethod === 'external' && selectedApplication.externalApplicationLink ? (
+                    {selectedApplication.applicationMethod === 'external' && externalApplicationLink ? (
                         <div className="profile-section external-application-tracking-section">
                             <h3>External Application Tracking</h3>
                             <p>
                                 To keep your application live tracked, visit this link:
                             </p>
                             <a
-                                href={selectedApplication.externalApplicationLink}
+                                href={externalApplicationLink}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="external-application-tracking-link"
                             >
-                                {selectedApplication.externalApplicationLink}
+                                {externalApplicationLink}
                             </a>
                         </div>
                     ) : null}
@@ -452,7 +501,7 @@ const MyApplications = forwardRef(({
                     <div className="profile-section">
                         <h3>Application Message</h3>
                         <div className="application-message-preview">
-                            <p>{selectedApplication.message || 'No message included.'}</p>
+                            <p>{toApplicationText(selectedApplication.message) || 'No message included.'}</p>
                         </div>
                     </div>
 
@@ -471,8 +520,8 @@ const MyApplications = forwardRef(({
                     ) : submittedProfile && (
                         <div className="profile-section">
                             <h3>Submitted Profile Snapshot</h3>
-                            <p><strong>Full Name:</strong> {submittedProfile.name || 'Not specified'}</p>
-                            <p><strong>Email:</strong> {submittedProfile.email || 'Not specified'}</p>
+                            <p><strong>Full Name:</strong> {toApplicationText(submittedProfile.name) || 'Not specified'}</p>
+                            <p><strong>Email:</strong> {toApplicationText(submittedProfile.email) || 'Not specified'}</p>
                             <div className="profile-subsection">
                                 <h4>Skills</h4>
                                 {renderList(submittedProfile.skills, 'No skills included.')}
@@ -561,8 +610,8 @@ const MyApplications = forwardRef(({
                                         <span>Job Title</span>
                                         <h3>{getJobTitle(app)}</h3>
                                     </div>
-                                    <span className={`status-badge ${getStatusBadgeClass(app.status)}`}>
-                                        {app.status}
+                                    <span className={`status-badge ${getStatusBadgeClass(toApplicationText(app.status))}`}>
+                                        {toApplicationText(app.status) || 'Submitted'}
                                     </span>
                                 </div>
 
@@ -577,7 +626,7 @@ const MyApplications = forwardRef(({
                                     </div>
                                     <div>
                                         <span>Applied On</span>
-                                        <strong>{new Date(app.createdAt).toLocaleDateString()}</strong>
+                                        <strong>{formatApplicationDate(app.createdAt)}</strong>
                                     </div>
                                 </div>
                             </article>

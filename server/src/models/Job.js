@@ -31,6 +31,11 @@ const JobSchema = new mongoose.Schema({
     required: [true, 'Job location is required'],
     trim: true
   },
+  sector: {
+    type: String,
+    trim: true,
+    default: 'General'
+  },
   salary: {
     type: String,
     trim: true
@@ -40,6 +45,19 @@ const JobSchema = new mongoose.Schema({
     trim: true
   },
   applicationDeadline: {
+    type: Date,
+    default: null
+  },
+  sourceUrl: {
+    type: String,
+    trim: true
+  },
+  sourceStatus: {
+    type: String,
+    enum: ['', 'verified'],
+    default: ''
+  },
+  sourceVerifiedAt: {
     type: Date,
     default: null
   },

@@ -12,6 +12,13 @@ const CompanySchema = new mongoose.Schema({
     index: true,
     sparse: true
   },
+  jumptakeId: {
+    type: String,
+    unique: true,
+    sparse: true,
+    trim: true,
+    lowercase: true
+  },
   industry: {
     type: String,
     trim: true

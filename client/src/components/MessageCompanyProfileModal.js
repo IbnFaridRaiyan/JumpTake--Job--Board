@@ -24,6 +24,7 @@ const MessageCompanyProfileModal = ({ company, onClose }) => {
                     <h2>{company.name || 'Company'}</h2>
                     <div className="preview-company-info">
                         <span className="preview-company-name">{company.industry || 'Industry not specified'}</span>
+                        {company.jumptakeId ? <span className="company-jumptake-id">@{String(company.jumptakeId).replace(/^@/, '')}</span> : null}
                     </div>
                 </header>
                 <div className="job-preview-content">

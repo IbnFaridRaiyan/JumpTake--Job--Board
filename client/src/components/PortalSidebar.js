@@ -162,10 +162,11 @@ const PortalSidebar = ({
         document.documentElement.classList.remove('portal-menu-scroll-locked');
         document.body.classList.remove('portal-menu-scroll-locked');
         window.clearTimeout(closeTimerRef.current);
+        const closeDelay = window.matchMedia('(max-width: 768px)').matches ? 380 : 180;
         closeTimerRef.current = window.setTimeout(() => {
             setMenuOpen(false);
             setMenuClosing(false);
-        }, 180);
+        }, closeDelay);
     }, [menuOpen, menuClosing]);
 
     useEffect(() => {
@@ -324,6 +325,7 @@ const PortalSidebar = ({
                     companyName,
                     job?.location,
                     job?.jobType,
+                    job?.sector,
                     job?.jobField,
                     job?.category,
                     ...(Array.isArray(job?.skills) ? job.skills : []),

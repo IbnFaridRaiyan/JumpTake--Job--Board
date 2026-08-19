@@ -6,11 +6,14 @@ import confirmAction from '../utils/confirmAction';
 
 const API_BASE = process.env.REACT_APP_API_URL || '';
 const ADMIN_KEY_STORAGE = 'jumptakeAdminKey';
-const ADMIN_ASSISTANT_MAX_IMAGES = 12;
+const ADMIN_ASSISTANT_MAX_IMAGES = 20;
+const ADMIN_COLLECTION_PAGE_SIZE = 100;
+const ADMIN_POST_MEDIA_MAX_BYTES = 8 * 1024 * 1024;
 const FEED_POST_COLLECTIONS = new Set(['feedPosts', 'workNewsPosts', 'talentStoryPosts']);
 
 const emptyCompanyForm = {
   name: '',
+  jumptakeId: '',
   adminCompanyId: '',
   industry: '',
   headquarters: '',
@@ -25,17 +28,26 @@ const emptyJobForm = {
   companyName: '',
   title: '',
   location: '',
+  sector: '',
   salary: '',
   applicationLink: '',
+  applicationDeadline: '',
   jobType: 'Full-time',
   description: '',
   requirements: '',
   responsibilities: '',
   skills: '',
-  source: ''
+  source: '',
+  liveVerifiedAt: '',
+  liveVerificationSourceUrl: '',
+  liveVerificationUrl: '',
+  liveVerificationNote: '',
+  liveVerificationToken: ''
 };
 
 const emptyWorkNewsDraft = {
+  companyId: '',
+  companyJumpTakeId: '',
   companyName: '',
   companyLogoUrl: '',
   body: '',
@@ -46,6 +58,8 @@ const emptyWorkNewsDraft = {
 };
 
 const emptyWorkNewsPostForm = {
+  companyId: '',
+  companyJumpTakeId: '',
   companyName: '',
   companyLogoUrl: '',
   body: '',
@@ -58,6 +72,7 @@ const emptyWorkNewsPostForm = {
 const emptyCandidateForm = {
   name: '',
   email: '',
+  jumptakeId: '',
   password: '',
   profileImage: '',
   coverImage: '',
@@ -68,7 +83,9 @@ const emptyCandidateForm = {
 const emptyTalentStoryForm = {
   authorName: '',
   authorAvatar: '',
-  body: ''
+  body: '',
+  mediaUrl: '',
+  mediaType: 'image'
 };
 
 const getLogoFallbackFromSource = (source = '') => {
@@ -125,6 +142,18 @@ const normalizeWorkNewsDraft = (draft = {}, index = 0) => ({
   id: draft.id || `work-news-draft-${Date.now()}-${index}`
 });
 
+const normalizeCompanyDraft = (draft = {}, index = 0) => ({
+  ...emptyCompanyForm,
+  ...Object.fromEntries(
+    Object.keys(emptyCompanyForm).map((key) => [
+      key,
+      draft[key] === undefined || draft[key] === null ? emptyCompanyForm[key] : String(draft[key])
+    ])
+  ),
+  id: draft.id || `company-draft-${Date.now()}-${index}`,
+  createdCompanyId: draft.createdCompanyId || ''
+});
+
 const normalizeCandidateListText = (value) => {
   const values = Array.isArray(value) ? value : [value];
   return values
@@ -143,6 +172,7 @@ const normalizeCandidateDraft = (draft = {}, index = 0) => ({
   id: draft.id || `candidate-draft-${Date.now()}-${index}`,
   name: String(draft.name || ''),
   email: String(draft.email || ''),
+  jumptakeId: String(draft.jumptakeId || ''),
   password: String(draft.password || ''),
   jobTitle: String(draft.jobTitle || ''),
   skills: String(draft.skills || ''),
@@ -154,11 +184,17 @@ const normalizeCandidateDraft = (draft = {}, index = 0) => ({
   profileImage: String(draft.profileImage || ''),
   coverImage: String(draft.coverImage || ''),
   storyBody: String(draft.talentStory?.body || draft.storyBody || ''),
+  storyMediaUrl: String(draft.talentStory?.mediaUrl || draft.talentStory?.media?.dataUrl || draft.storyMediaUrl || ''),
+  storyMediaType: draft.talentStory?.mediaType === 'video' || draft.talentStory?.media?.type === 'video' || draft.storyMediaType === 'video' ? 'video' : 'image',
   createdUserId: draft.createdUserId || '',
   createdJobSeekerId: draft.createdJobSeekerId || ''
 });
 
 const readAdminFileAsDataUrl = (file) => new Promise((resolve, reject) => {
+  if (file?.size > ADMIN_POST_MEDIA_MAX_BYTES) {
+    reject(new Error('Choose a post image or video smaller than 8 MB.'));
+    return;
+  }
   const reader = new FileReader();
   reader.onerror = () => reject(new Error('Could not read that file.'));
   reader.onload = (event) => resolve(String(event.target.result || ''));
@@ -198,6 +234,7 @@ const AdminPanel = () => {
   const companyLogoInputRef = useRef(null);
   const [isProcessingCompanyLogo, setIsProcessingCompanyLogo] = useState(false);
   const [companyForm, setCompanyForm] = useState({ ...emptyCompanyForm });
+  const [adminCompanyDrafts, setAdminCompanyDrafts] = useState([]);
   const [adminAssistantOpen, setAdminAssistantOpen] = useState(false);
   const [adminAssistantInput, setAdminAssistantInput] = useState('');
   const [adminAssistantImages, setAdminAssistantImages] = useState([]);
@@ -210,6 +247,8 @@ const AdminPanel = () => {
   ]);
   const [jobForm, setJobForm] = useState({ ...emptyJobForm });
   const [adminJobDrafts, setAdminJobDrafts] = useState([]);
+  const [jobDraftPreferences, setJobDraftPreferences] = useState({ location: '', sectors: '' });
+  const [isPostingAllJobs, setIsPostingAllJobs] = useState(false);
   const [adminWorkNewsDrafts, setAdminWorkNewsDrafts] = useState([]);
   const [workNewsPostForm, setWorkNewsPostForm] = useState({ ...emptyWorkNewsPostForm });
   const [candidateForm, setCandidateForm] = useState({ ...emptyCandidateForm });
@@ -252,23 +291,27 @@ const AdminPanel = () => {
     }
   }, [adminFetch, selectedCollection]);
 
-  const loadCollection = useCallback(async () => {
-    if (!selectedCollection || !isAuthed) {
+  const loadCollection = useCallback(async (options = {}) => {
+    const targetCollection = options.collection || selectedCollection;
+    const targetPage = Number(options.page || page);
+    const targetSearch = options.search === undefined ? search : String(options.search || '');
+
+    if (!targetCollection || !isAuthed) {
       return;
     }
 
     setIsLoading(true);
     try {
       const params = new URLSearchParams({
-        page: String(page),
-        limit: '5000'
+        page: String(targetPage),
+        limit: String(ADMIN_COLLECTION_PAGE_SIZE)
       });
 
-      if (search.trim()) {
-        params.set('q', search.trim());
+      if (targetSearch.trim()) {
+        params.set('q', targetSearch.trim());
       }
 
-      const data = await adminFetch(`/collections/${selectedCollection}?${params.toString()}`);
+      const data = await adminFetch(`/collections/${targetCollection}?${params.toString()}`);
       setItems(data.items || []);
       setSelectedItemIds([]);
       setPagination({
@@ -371,7 +414,7 @@ const AdminPanel = () => {
       setJobForm({ ...emptyJobForm });
       setSelectedCollection('jobs');
       setPage(1);
-      await Promise.all([loadSummary(), loadCollection()]);
+      await Promise.all([loadSummary(), loadCollection({ collection: 'jobs', page: 1 })]);
       setMessage('Job post created.');
     } catch (error) {
       setMessage(error.message);
@@ -424,6 +467,8 @@ const AdminPanel = () => {
       await adminFetch('/feed-posts', {
         method: 'POST',
         body: JSON.stringify({
+          companyId: workNewsPostForm.companyId,
+          companyJumpTakeId: workNewsPostForm.companyJumpTakeId,
           companyName: workNewsPostForm.companyName,
           authorName: workNewsPostForm.companyName,
           companyLogoUrl: workNewsPostForm.companyLogoUrl,
@@ -438,7 +483,7 @@ const AdminPanel = () => {
       setWorkNewsPostForm({ ...emptyWorkNewsPostForm });
       setSelectedCollection('workNewsPosts');
       setPage(1);
-      await Promise.all([loadSummary(), loadCollection()]);
+      await Promise.all([loadSummary(), loadCollection({ collection: 'workNewsPosts', page: 1 })]);
       setMessage('Work News post created.');
     } catch (error) {
       setMessage(error.message);
@@ -491,7 +536,7 @@ const AdminPanel = () => {
       setCandidateForm({ ...emptyCandidateForm });
       setSelectedCollection('users');
       setPage(1);
-      await Promise.all([loadSummary(), loadCollection()]);
+      await Promise.all([loadSummary(), loadCollection({ collection: 'users', page: 1 })]);
       setMessage(data.generatedPassword
         ? `Candidate user created. Temporary login: ${data.user.email} / ${data.generatedPassword}`
         : `Candidate user created: ${data.user.email || data.user.jumptakeId}`);
@@ -517,6 +562,24 @@ const AdminPanel = () => {
     }
   };
 
+  const handleTalentStoryMediaUpload = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    try {
+      setMessage('');
+      const mediaUrl = await readAdminFileAsDataUrl(file);
+      setTalentStoryForm((current) => ({
+        ...current,
+        mediaUrl,
+        mediaType: file.type.startsWith('video/') ? 'video' : 'image'
+      }));
+    } catch (error) {
+      setMessage(error.message || 'Could not prepare that Talent Story media.');
+    }
+  };
+
   const handleCreateTalentStory = async (event) => {
     event.preventDefault();
 
@@ -527,13 +590,18 @@ const AdminPanel = () => {
         body: JSON.stringify({
           authorName: talentStoryForm.authorName,
           authorAvatar: talentStoryForm.authorAvatar,
-          body: talentStoryForm.body
+          body: talentStoryForm.body,
+          media: talentStoryForm.mediaUrl ? {
+            dataUrl: talentStoryForm.mediaUrl,
+            type: talentStoryForm.mediaType,
+            name: `${talentStoryForm.authorName || 'Candidate'} Talent Story media`
+          } : null
         })
       });
       setTalentStoryForm({ ...emptyTalentStoryForm });
       setSelectedCollection('talentStoryPosts');
       setPage(1);
-      await Promise.all([loadSummary(), loadCollection()]);
+      await Promise.all([loadSummary(), loadCollection({ collection: 'talentStoryPosts', page: 1 })]);
       setMessage('Talent Story post created.');
     } catch (error) {
       setMessage(error.message);
@@ -644,7 +712,7 @@ const AdminPanel = () => {
       }
       await loadSummary();
       setMessage(createdCompanyId
-        ? `Company created. Company ID: ${createdCompanyId}`
+        ? `Company created. JumpTake ID: @${data.item?.jumptakeId || 'assigned'} - Company ID: ${createdCompanyId}`
         : 'Company created.');
     } catch (error) {
       setMessage(error.message);
@@ -682,6 +750,40 @@ const AdminPanel = () => {
     }
   };
 
+  const updateAdminCompanyDraft = (draftId, field, value) => {
+    setAdminCompanyDrafts((current) => current.map((draft) => (
+      draft.id === draftId ? { ...draft, [field]: value } : draft
+    )));
+  };
+
+  const removeAdminCompanyDraft = async (draftId, skipConfirmation = false) => {
+    if (!skipConfirmation) {
+      const confirmed = await confirmAction({
+        title: 'Delete company draft?',
+        message: 'Delete this unpublished company profile draft?'
+      });
+      if (!confirmed) return;
+    }
+    setAdminCompanyDrafts((current) => current.filter((draft) => draft.id !== draftId));
+  };
+
+  const createAdminCompanyFromDraft = async (draft) => {
+    try {
+      setMessage('');
+      const data = await adminFetch('/companies', {
+        method: 'POST',
+        body: JSON.stringify(draft)
+      });
+      removeAdminCompanyDraft(draft.id, true);
+      setSelectedCollection('companies');
+      setPage(1);
+      await Promise.all([loadSummary(), loadCollection({ collection: 'companies', page: 1 })]);
+      setMessage(`Company created: ${data.item?.name || draft.name} (@${data.item?.jumptakeId || draft.jumptakeId})`);
+    } catch (error) {
+      setMessage(error.message);
+    }
+  };
+
   const handleAdminAssistantSubmit = async (event) => {
     event.preventDefault();
     const submittedImages = adminAssistantImages;
@@ -709,6 +811,7 @@ const AdminPanel = () => {
           message: prompt,
           companyForm,
           jobForm,
+          jobDraftPreferences,
           profileImages: submittedImages.map(({ name, dataUrl }) => ({ name, dataUrl }))
         })
       });
@@ -742,6 +845,13 @@ const AdminPanel = () => {
         ]);
       }
 
+      if (Array.isArray(data.companyDrafts) && data.companyDrafts.length) {
+        setAdminCompanyDrafts((current) => [
+          ...current,
+          ...data.companyDrafts.map((draft, index) => normalizeCompanyDraft(draft, current.length + index))
+        ]);
+      }
+
       setAdminAssistantMessages((current) => [
         ...current,
         {
@@ -762,7 +872,17 @@ const AdminPanel = () => {
 
   const updateAdminJobDraft = (draftId, field, value) => {
     setAdminJobDrafts((current) => current.map((draft) => (
-      draft.id === draftId ? { ...draft, [field]: value } : draft
+      draft.id === draftId ? {
+        ...draft,
+        [field]: value,
+        ...(['applicationLink', 'applicationDeadline', 'source'].includes(field) ? {
+          liveVerifiedAt: '',
+          liveVerificationSourceUrl: '',
+          liveVerificationUrl: '',
+          liveVerificationNote: '',
+          liveVerificationToken: ''
+        } : {})
+      } : draft
     )));
   };
 
@@ -867,7 +987,7 @@ const AdminPanel = () => {
       removeAdminJobDraft(draft.id, true);
       setSelectedCollection('jobs');
       setPage(1);
-      await Promise.all([loadSummary(), loadCollection()]);
+      await Promise.all([loadSummary(), loadCollection({ collection: 'jobs', page: 1 })]);
       setMessage(`Job posted: ${draft.title || 'Untitled job'}`);
     } catch (error) {
       setMessage(error.message);
@@ -880,6 +1000,8 @@ const AdminPanel = () => {
       await adminFetch('/feed-posts', {
         method: 'POST',
         body: JSON.stringify({
+          companyId: draft.companyId,
+          companyJumpTakeId: draft.companyJumpTakeId,
           companyName: draft.companyName,
           authorName: draft.companyName,
           companyLogoUrl: draft.companyLogoUrl,
@@ -894,7 +1016,7 @@ const AdminPanel = () => {
       removeAdminWorkNewsDraft(draft.id, true);
       setSelectedCollection('workNewsPosts');
       setPage(1);
-      await Promise.all([loadSummary(), loadCollection()]);
+      await Promise.all([loadSummary(), loadCollection({ collection: 'workNewsPosts', page: 1 })]);
       setMessage(`Work News posted: ${draft.companyName || 'Company update'}`);
     } catch (error) {
       setMessage(error.message);
@@ -999,6 +1121,57 @@ const AdminPanel = () => {
     }
   };
 
+  const handleDraftTalentStoryMediaUpload = async (draftId, event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    try {
+      setMessage('');
+      const storyMediaUrl = await readAdminFileAsDataUrl(file);
+      updateAdminCandidateDraft(draftId, 'storyMediaUrl', storyMediaUrl);
+      updateAdminCandidateDraft(draftId, 'storyMediaType', file.type.startsWith('video/') ? 'video' : 'image');
+    } catch (error) {
+      setMessage(error.message || 'Could not prepare that Talent Story media.');
+    }
+  };
+
+  const postAllAdminJobDrafts = async () => {
+    if (!adminJobDrafts.length || isPostingAllJobs) return;
+    const confirmed = await confirmAction({
+      title: `Post all ${adminJobDrafts.length} job drafts?`,
+      message: 'Each draft will be validated before it is published. Drafts that fail validation will remain here for review.'
+    });
+    if (!confirmed) return;
+
+    setIsPostingAllJobs(true);
+    setMessage('');
+    try {
+      const data = await adminFetch('/jobs/bulk', {
+        method: 'POST',
+        body: JSON.stringify({
+          drafts: adminJobDrafts.map((draft) => ({
+            ...draft,
+            applicationLink: draft.applicationLink || draft.source || ''
+          }))
+        })
+      });
+      const postedIds = new Set((data.items || []).map((entry) => String(entry.draftId || '')).filter(Boolean));
+      setAdminJobDrafts((current) => current.filter((draft) => !postedIds.has(String(draft.id))));
+      setSelectedCollection('jobs');
+      setPage(1);
+      await Promise.all([loadSummary(), loadCollection({ collection: 'jobs', page: 1 })]);
+      const failureNote = data.failedCount
+        ? ` ${data.failedCount} draft${data.failedCount === 1 ? '' : 's'} stayed in review: ${data.failures?.[0]?.error || 'validation failed'}`
+        : '';
+      setMessage(`${data.postedCount || 0} job${data.postedCount === 1 ? '' : 's'} posted.${failureNote}`);
+    } catch (error) {
+      setMessage(error.message);
+    } finally {
+      setIsPostingAllJobs(false);
+    }
+  };
+
   const createAdminCandidateFromDraft = async (draft) => {
     try {
       setMessage('');
@@ -1007,6 +1180,7 @@ const AdminPanel = () => {
         body: JSON.stringify({
           name: draft.name,
           email: draft.email,
+          jumptakeId: draft.jumptakeId,
           password: draft.password,
           profileImage: draft.profileImage,
           coverImage: draft.coverImage,
@@ -1021,9 +1195,10 @@ const AdminPanel = () => {
       });
       updateAdminCandidateDraft(draft.id, 'createdUserId', data.user?.id || '');
       updateAdminCandidateDraft(draft.id, 'createdJobSeekerId', data.jobSeeker?.id || '');
+      updateAdminCandidateDraft(draft.id, 'jumptakeId', data.user?.jumptakeId || draft.jumptakeId);
       setSelectedCollection('users');
       setPage(1);
-      await Promise.all([loadSummary(), loadCollection()]);
+      await Promise.all([loadSummary(), loadCollection({ collection: 'users', page: 1 })]);
       setMessage(data.generatedPassword
         ? `Profile created: ${data.user.email} / ${data.generatedPassword}`
         : `Profile created: ${data.user.email || data.user.jumptakeId}`);
@@ -1041,13 +1216,18 @@ const AdminPanel = () => {
           authorName: draft.name,
           authorAvatar: draft.profileImage || draft.coverImage,
           body: draft.storyBody,
-          authorId: draft.createdUserId || ''
+          authorId: draft.createdUserId || '',
+          media: draft.storyMediaUrl ? {
+            dataUrl: draft.storyMediaUrl,
+            type: draft.storyMediaType,
+            name: `${draft.name || 'Candidate'} Talent Story media`
+          } : null
         })
       });
       removeAdminCandidateDraft(draft.id, true);
       setSelectedCollection('talentStoryPosts');
       setPage(1);
-      await Promise.all([loadSummary(), loadCollection()]);
+      await Promise.all([loadSummary(), loadCollection({ collection: 'talentStoryPosts', page: 1 })]);
       setMessage(`Talent Story posted: ${draft.name || 'Candidate story'}`);
     } catch (error) {
       setMessage(error.message);
@@ -1160,7 +1340,7 @@ const AdminPanel = () => {
               onSubmit={(event) => {
                 event.preventDefault();
                 setPage(1);
-                loadCollection();
+                loadCollection({ page: 1 });
               }}
             >
               <input
@@ -1230,6 +1410,11 @@ const AdminPanel = () => {
                     placeholder="Custom company ID"
                   />
                   <input
+                    value={companyForm.jumptakeId}
+                    onChange={(event) => setCompanyForm((current) => ({ ...current, jumptakeId: event.target.value.toLowerCase().replace(/^@+/, '') }))}
+                    placeholder="Company JumpTake ID (generated if empty)"
+                  />
+                  <input
                     value={companyForm.industry}
                     onChange={(event) => setCompanyForm((current) => ({ ...current, industry: event.target.value }))}
                     placeholder="Industry"
@@ -1259,6 +1444,51 @@ const AdminPanel = () => {
               </div>
             </div>
           </form>
+
+          {adminCompanyDrafts.length && selectedCollection === 'companies' ? (
+            <section className="admin-ai-job-drafts admin-ai-company-drafts">
+              <div className="admin-form-heading-row">
+                <div>
+                  <h3>AI Company Profile Drafts</h3>
+                  <p>Review each company profile and its assigned JumpTake ID before creation.</p>
+                </div>
+                <button type="button" className="admin-ghost-button" onClick={() => setAdminCompanyDrafts([])}>
+                  Clear Drafts
+                </button>
+              </div>
+              <div className="admin-ai-job-draft-list">
+                {adminCompanyDrafts.map((draft, index) => (
+                  <article className="admin-ai-job-draft-card admin-ai-company-draft-card" key={draft.id}>
+                    <div className="admin-record-card-header">
+                      <div>
+                        <h3>Draft {index + 1}: {draft.name || 'Unnamed company'}</h3>
+                        <p>{draft.jumptakeId ? `@${draft.jumptakeId}` : 'JumpTake ID not set'}</p>
+                      </div>
+                      <div className="admin-draft-actions">
+                        <button type="button" onClick={() => createAdminCompanyFromDraft(draft)} disabled={!draft.name || !draft.jumptakeId}>
+                          Create Company
+                        </button>
+                        <button type="button" className="admin-danger-button" onClick={() => removeAdminCompanyDraft(draft.id)}>
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                    <div className="admin-form-grid">
+                      <input value={draft.name} onChange={(event) => updateAdminCompanyDraft(draft.id, 'name', event.target.value)} placeholder="Company name" />
+                      <input value={draft.jumptakeId} onChange={(event) => updateAdminCompanyDraft(draft.id, 'jumptakeId', event.target.value.toLowerCase().replace(/^@+/, ''))} placeholder="Company JumpTake ID" />
+                      <input value={draft.adminCompanyId} onChange={(event) => updateAdminCompanyDraft(draft.id, 'adminCompanyId', event.target.value)} placeholder="Admin company ID" />
+                      <input value={draft.industry} onChange={(event) => updateAdminCompanyDraft(draft.id, 'industry', event.target.value)} placeholder="Industry" />
+                      <input value={draft.headquarters} onChange={(event) => updateAdminCompanyDraft(draft.id, 'headquarters', event.target.value)} placeholder="Headquarters" />
+                      <input value={draft.website} onChange={(event) => updateAdminCompanyDraft(draft.id, 'website', event.target.value)} placeholder="Website" />
+                      <input value={draft.founded} onChange={(event) => updateAdminCompanyDraft(draft.id, 'founded', event.target.value)} placeholder="Founded" />
+                      <input value={draft.logo} onChange={(event) => updateAdminCompanyDraft(draft.id, 'logo', event.target.value)} placeholder="Logo URL" />
+                    </div>
+                    <textarea value={draft.description} onChange={(event) => updateAdminCompanyDraft(draft.id, 'description', event.target.value)} placeholder="Company description" />
+                  </article>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
           <form className="admin-create-work-news" onSubmit={handleCreateWorkNewsPost} hidden={!['feedPosts', 'workNewsPosts'].includes(selectedCollection)}>
             <div className="admin-form-heading-row">
@@ -1304,6 +1534,16 @@ const AdminPanel = () => {
                     onChange={(event) => setWorkNewsPostForm((current) => ({ ...current, companyName: event.target.value }))}
                     placeholder="Company name"
                     required
+                  />
+                  <input
+                    value={workNewsPostForm.companyId}
+                    onChange={(event) => setWorkNewsPostForm((current) => ({ ...current, companyId: event.target.value }))}
+                    placeholder="Existing company database ID"
+                  />
+                  <input
+                    value={workNewsPostForm.companyJumpTakeId}
+                    onChange={(event) => setWorkNewsPostForm((current) => ({ ...current, companyJumpTakeId: event.target.value.toLowerCase().replace(/^@+/, '') }))}
+                    placeholder="Company JumpTake ID"
                   />
                   <input
                     value={workNewsPostForm.sourceTitle}
@@ -1463,6 +1703,11 @@ const AdminPanel = () => {
                     placeholder="Email (generated if empty)"
                   />
                   <input
+                    value={candidateForm.jumptakeId}
+                    onChange={(event) => setCandidateForm((current) => ({ ...current, jumptakeId: event.target.value.toLowerCase().replace(/^@+/, '') }))}
+                    placeholder="JumpTake ID (generated if empty)"
+                  />
+                  <input
                     value={candidateForm.password}
                     onChange={(event) => setCandidateForm((current) => ({ ...current, password: event.target.value }))}
                     placeholder="Password (generated if empty)"
@@ -1538,6 +1783,48 @@ const AdminPanel = () => {
                   placeholder="Talent Story text / about description"
                   required
                 />
+                <div className="admin-work-news-upload-row">
+                  <label className="admin-work-news-file-button">
+                    Upload story picture or video
+                    <input
+                      type="file"
+                      accept="image/*,video/*"
+                      onChange={handleTalentStoryMediaUpload}
+                    />
+                  </label>
+                  <input
+                    type="url"
+                    value={talentStoryForm.mediaUrl.startsWith('data:') ? '' : talentStoryForm.mediaUrl}
+                    onChange={(event) => setTalentStoryForm((current) => ({ ...current, mediaUrl: event.target.value }))}
+                    placeholder="Or paste story image/video URL"
+                  />
+                  <select
+                    value={talentStoryForm.mediaType}
+                    onChange={(event) => setTalentStoryForm((current) => ({ ...current, mediaType: event.target.value }))}
+                    aria-label="Talent Story media type"
+                  >
+                    <option value="image">Image</option>
+                    <option value="video">Video</option>
+                  </select>
+                  {talentStoryForm.mediaUrl ? (
+                    <button
+                      type="button"
+                      className="admin-ghost-button"
+                      onClick={() => setTalentStoryForm((current) => ({ ...current, mediaUrl: '' }))}
+                    >
+                      Remove Story Media
+                    </button>
+                  ) : null}
+                </div>
+                {talentStoryForm.mediaUrl ? (
+                  <div className="admin-work-news-media-preview">
+                    {talentStoryForm.mediaType === 'video' ? (
+                      <video src={talentStoryForm.mediaUrl} controls muted />
+                    ) : (
+                      <img src={talentStoryForm.mediaUrl} alt="" />
+                    )}
+                  </div>
+                ) : null}
                 <button type="submit">Post Talent Story</button>
               </div>
             </div>
@@ -1570,6 +1857,12 @@ const AdminPanel = () => {
                 required
               />
               <input
+                value={jobForm.sector}
+                onChange={(event) => setJobForm((current) => ({ ...current, sector: event.target.value }))}
+                placeholder="Sector or occupation"
+                list="admin-job-sector-options"
+              />
+              <input
                 value={jobForm.salary}
                 onChange={(event) => setJobForm((current) => ({ ...current, salary: event.target.value }))}
                 placeholder="Salary"
@@ -1579,6 +1872,13 @@ const AdminPanel = () => {
                 value={jobForm.applicationLink}
                 onChange={(event) => setJobForm((current) => ({ ...current, applicationLink: event.target.value }))}
                 placeholder="Application link"
+              />
+              <input
+                type="date"
+                value={jobForm.applicationDeadline}
+                min={new Date().toISOString().slice(0, 10)}
+                onChange={(event) => setJobForm((current) => ({ ...current, applicationDeadline: event.target.value }))}
+                aria-label="Application deadline"
               />
               <select
                 value={jobForm.jobType}
@@ -1622,9 +1922,14 @@ const AdminPanel = () => {
                   <h3>AI Job Drafts</h3>
                   <p>Review each web-sourced job before posting it to JumpTake.</p>
                 </div>
-                <button type="button" className="admin-ghost-button" onClick={() => setAdminJobDrafts([])}>
-                  Clear Drafts
-                </button>
+                <div className="admin-draft-actions">
+                  <button type="button" onClick={postAllAdminJobDrafts} disabled={isPostingAllJobs}>
+                    {isPostingAllJobs ? 'Posting...' : `Post All (${adminJobDrafts.length})`}
+                  </button>
+                  <button type="button" className="admin-ghost-button" onClick={() => setAdminJobDrafts([])} disabled={isPostingAllJobs}>
+                    Clear Drafts
+                  </button>
+                </div>
               </div>
               <div className="admin-ai-job-draft-list">
                 {adminJobDrafts.map((draft, index) => (
@@ -1635,10 +1940,10 @@ const AdminPanel = () => {
                         <p>{draft.companyName || draft.company || 'Company not set'}</p>
                       </div>
                       <div className="admin-draft-actions">
-                        <button type="button" onClick={() => postAdminJobDraft(draft)}>
+                        <button type="button" onClick={() => postAdminJobDraft(draft)} disabled={isPostingAllJobs}>
                           Post Job
                         </button>
-                        <button type="button" className="admin-danger-button" onClick={() => removeAdminJobDraft(draft.id)}>
+                        <button type="button" className="admin-danger-button" onClick={() => removeAdminJobDraft(draft.id)} disabled={isPostingAllJobs}>
                           Remove
                         </button>
                       </div>
@@ -1648,8 +1953,10 @@ const AdminPanel = () => {
                       <input value={draft.companyName} onChange={(event) => updateAdminJobDraft(draft.id, 'companyName', event.target.value)} placeholder="Company name" />
                       <input value={draft.title} onChange={(event) => updateAdminJobDraft(draft.id, 'title', event.target.value)} placeholder="Job title" />
                       <input value={draft.location} onChange={(event) => updateAdminJobDraft(draft.id, 'location', event.target.value)} placeholder="Location" />
+                      <input value={draft.sector} onChange={(event) => updateAdminJobDraft(draft.id, 'sector', event.target.value)} placeholder="Sector or occupation" list="admin-job-sector-options" />
                       <input value={draft.salary} onChange={(event) => updateAdminJobDraft(draft.id, 'salary', event.target.value)} placeholder="Salary" />
-                      <input type="url" value={draft.applicationLink} onChange={(event) => updateAdminJobDraft(draft.id, 'applicationLink', event.target.value)} placeholder="Application link" />
+                      <input type="url" value={draft.applicationLink} onChange={(event) => updateAdminJobDraft(draft.id, 'applicationLink', event.target.value)} placeholder="Exact Apply button link" />
+                      <input type="date" value={draft.applicationDeadline} min={new Date().toISOString().slice(0, 10)} onChange={(event) => updateAdminJobDraft(draft.id, 'applicationDeadline', event.target.value)} aria-label="Application deadline" />
                       <select value={draft.jobType} onChange={(event) => updateAdminJobDraft(draft.id, 'jobType', event.target.value)}>
                         <option>Full-time</option>
                         <option>Part-time</option>
@@ -1658,8 +1965,13 @@ const AdminPanel = () => {
                         <option>Remote</option>
                       </select>
                       <input value={draft.skills} onChange={(event) => updateAdminJobDraft(draft.id, 'skills', event.target.value)} placeholder="Skills, comma separated" />
-                      <input type="url" value={draft.source} onChange={(event) => updateAdminJobDraft(draft.id, 'source', event.target.value)} placeholder="Source URL" />
+                      <input type="url" value={draft.source} onChange={(event) => updateAdminJobDraft(draft.id, 'source', event.target.value)} placeholder="Exact role page URL" />
                     </div>
+                    {draft.liveVerifiedAt ? (
+                      <p className="admin-candidate-draft-created">
+                        Exact role and Apply link verified {new Date(draft.liveVerifiedAt).toLocaleString()}{draft.applicationDeadline ? ` - Deadline ${draft.applicationDeadline}` : ' - No deadline published'}
+                      </p>
+                    ) : null}
                     <textarea value={draft.description} onChange={(event) => updateAdminJobDraft(draft.id, 'description', event.target.value)} placeholder="Description" />
                     <textarea value={draft.requirements} onChange={(event) => updateAdminJobDraft(draft.id, 'requirements', event.target.value)} placeholder="Requirements, one per line" />
                     <textarea value={draft.responsibilities} onChange={(event) => updateAdminJobDraft(draft.id, 'responsibilities', event.target.value)} placeholder="Responsibilities, one per line" />
@@ -1674,7 +1986,7 @@ const AdminPanel = () => {
               <div className="admin-form-heading-row">
                 <div>
                   <h3>AI Work News Drafts</h3>
-                  <p>Review each live-web company update before posting it to Work News.</p>
+                  <p>Review each linked company update before posting it to Work News.</p>
                 </div>
                 <button type="button" className="admin-ghost-button" onClick={() => setAdminWorkNewsDrafts([])}>
                   Clear Drafts
@@ -1707,6 +2019,8 @@ const AdminPanel = () => {
                       </div>
                     </div>
                     <div className="admin-form-grid">
+                      <input value={draft.companyId} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'companyId', event.target.value)} placeholder="Company database ID" />
+                      <input value={draft.companyJumpTakeId} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'companyJumpTakeId', event.target.value.toLowerCase().replace(/^@+/, ''))} placeholder="Company JumpTake ID" />
                       <input value={draft.companyName} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'companyName', event.target.value)} placeholder="Company name" />
                       <input type="url" value={draft.companyLogoUrl} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'companyLogoUrl', event.target.value)} placeholder="Company logo/profile picture URL" />
                       <input type="url" value={draft.mediaUrl} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'mediaUrl', event.target.value)} placeholder="Post image or video URL" />
@@ -1800,7 +2114,8 @@ const AdminPanel = () => {
                         <button
                           type="button"
                           onClick={() => postAdminCandidateStory(draft)}
-                          disabled={!draft.storyBody}
+                          disabled={!draft.storyBody || !draft.createdUserId}
+                          title={!draft.createdUserId ? 'Create the profile before posting its linked Talent Story' : 'Post Talent Story'}
                         >
                           Post Talent Story
                         </button>
@@ -1812,6 +2127,7 @@ const AdminPanel = () => {
                     <div className="admin-form-grid">
                       <input value={draft.name} onChange={(event) => updateAdminCandidateDraft(draft.id, 'name', event.target.value)} placeholder="Full name" />
                       <input value={draft.email} onChange={(event) => updateAdminCandidateDraft(draft.id, 'email', event.target.value)} placeholder="Email" />
+                      <input value={draft.jumptakeId} onChange={(event) => updateAdminCandidateDraft(draft.id, 'jumptakeId', event.target.value.toLowerCase().replace(/^@+/, ''))} placeholder="JumpTake ID" />
                       <input value={draft.jobTitle} onChange={(event) => updateAdminCandidateDraft(draft.id, 'jobTitle', event.target.value)} placeholder="Job title" />
                       <input value={draft.skills} onChange={(event) => updateAdminCandidateDraft(draft.id, 'skills', event.target.value)} placeholder="Skills, comma separated" />
                       <input
@@ -1826,6 +2142,16 @@ const AdminPanel = () => {
                         onChange={(event) => updateAdminCandidateDraft(draft.id, 'coverImage', event.target.value)}
                         placeholder="Or paste cover photo URL"
                       />
+                      <input
+                        type="url"
+                        value={draft.storyMediaUrl.startsWith('data:') ? '' : draft.storyMediaUrl}
+                        onChange={(event) => updateAdminCandidateDraft(draft.id, 'storyMediaUrl', event.target.value)}
+                        placeholder="Story image or video URL"
+                      />
+                      <select value={draft.storyMediaType} onChange={(event) => updateAdminCandidateDraft(draft.id, 'storyMediaType', event.target.value)} aria-label="Draft story media type">
+                        <option value="image">Story image</option>
+                        <option value="video">Story video</option>
+                      </select>
                     </div>
                     <div className="admin-candidate-background-grid">
                       <textarea value={draft.education} onChange={(event) => updateAdminCandidateDraft(draft.id, 'education', event.target.value)} placeholder="Education, one item per line" />
@@ -1850,6 +2176,14 @@ const AdminPanel = () => {
                           onChange={(event) => handleDraftCoverUpload(draft.id, event)}
                         />
                       </label>
+                      <label className="admin-work-news-file-button">
+                        Upload story picture or video
+                        <input
+                          type="file"
+                          accept="image/*,video/*"
+                          onChange={(event) => handleDraftTalentStoryMediaUpload(draft.id, event)}
+                        />
+                      </label>
                       {draft.profileImage ? (
                         <button
                           type="button"
@@ -1868,9 +2202,27 @@ const AdminPanel = () => {
                           Remove Cover Photo
                         </button>
                       ) : null}
+                      {draft.storyMediaUrl ? (
+                        <button
+                          type="button"
+                          className="admin-ghost-button"
+                          onClick={() => updateAdminCandidateDraft(draft.id, 'storyMediaUrl', '')}
+                        >
+                          Remove Story Media
+                        </button>
+                      ) : null}
                     </div>
                     <textarea value={draft.about} onChange={(event) => updateAdminCandidateDraft(draft.id, 'about', event.target.value)} placeholder="About description" />
                     <textarea value={draft.storyBody} onChange={(event) => updateAdminCandidateDraft(draft.id, 'storyBody', event.target.value)} placeholder="Talent Story post text" />
+                    {draft.storyMediaUrl ? (
+                      <div className="admin-work-news-media-preview">
+                        {draft.storyMediaType === 'video' ? (
+                          <video src={draft.storyMediaUrl} controls muted />
+                        ) : (
+                          <img src={draft.storyMediaUrl} alt="" />
+                        )}
+                      </div>
+                    ) : null}
                     {draft.profileImage ? (
                       <div className="admin-work-news-media-preview">
                         <img src={draft.profileImage} alt="" />
@@ -2004,6 +2356,26 @@ const AdminPanel = () => {
             ))}
           </div>
 
+          {pagination.totalPages > 1 ? (
+            <nav className="admin-pagination" aria-label="Admin records pagination">
+              <button
+                type="button"
+                onClick={() => setPage((current) => Math.max(1, current - 1))}
+                disabled={page <= 1 || isLoading}
+              >
+                Previous
+              </button>
+              <span>Page {page} of {pagination.totalPages}</span>
+              <button
+                type="button"
+                onClick={() => setPage((current) => Math.min(pagination.totalPages, current + 1))}
+                disabled={page >= pagination.totalPages || isLoading}
+              >
+                Next
+              </button>
+            </nav>
+          ) : null}
+
         </section>
       </section>
 
@@ -2037,6 +2409,25 @@ const AdminPanel = () => {
               ) : null}
             </div>
             <form className="admin-assistant-form" onSubmit={handleAdminAssistantSubmit}>
+              <div className="admin-assistant-job-preferences">
+                <label>
+                  <span>Job location</span>
+                  <input
+                    value={jobDraftPreferences.location}
+                    onChange={(event) => setJobDraftPreferences((current) => ({ ...current, location: event.target.value }))}
+                    placeholder="Any location, city, country, or remote"
+                  />
+                </label>
+                <label>
+                  <span>Job sectors or roles</span>
+                  <input
+                    value={jobDraftPreferences.sectors}
+                    onChange={(event) => setJobDraftPreferences((current) => ({ ...current, sectors: event.target.value }))}
+                    placeholder="All, or tech, health, barista..."
+                    list="admin-job-sector-options"
+                  />
+                </label>
+              </div>
               {adminAssistantImages.length ? (
                 <div className="admin-assistant-pending-images" aria-label="Attached profile pictures">
                   {adminAssistantImages.map((image) => (
@@ -2083,6 +2474,17 @@ const AdminPanel = () => {
                 </button>
               </div>
             </form>
+            <datalist id="admin-job-sector-options">
+              <option value="All sectors" />
+              <option value="Technology" />
+              <option value="Health and Medical" />
+              <option value="Business and Economics" />
+              <option value="Supply Chain and Logistics" />
+              <option value="Hospitality and Restaurant Work" />
+              <option value="Barista and Coffee Making" />
+              <option value="Pharmacy" />
+              <option value="Computer Science" />
+            </datalist>
           </section>
         ) : (
           <button type="button" className="admin-assistant-launcher" onClick={() => setAdminAssistantOpen(true)}>

@@ -1004,7 +1004,7 @@ const EmployerDashboard = ({ appMode = 'dark', onAppModeChange }) => {
                     name: companyData?.name || employer?.companyName || employer?.username || 'Company',
                     profileImage: companyData?.logo || companyData?.profileImage,
                     coverImage: companyData?.coverImage,
-                    jumptakeId: '',
+                    jumptakeId: companyData?.jumptakeId || employer?.jumptakeId || '',
                     likes: companyData?.likes || employer?.likes,
                     rating: companyData?.rating || employer?.rating
                 }}

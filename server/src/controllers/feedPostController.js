@@ -2,11 +2,17 @@ const FeedPost = require('../models/FeedPost');
 const { createNotification } = require('./notificationController');
 const { getAuthenticatedPayload } = require('../utils/candidateAuth');
 const User = require('../models/User');
+const JobSeeker = require('../models/JobSeeker');
+const Company = require('../models/Company');
+const Employer = require('../models/Employer');
+const mongoose = require('mongoose');
+const { ensureCompanyJumpTakeId } = require('../utils/jumptakeId');
 
 const VALID_TYPES = new Set(['work-news', 'talent-story']);
 const VALID_AUDIENCES = new Set(['everyone', 'friends', 'only-me']);
 const VALID_AUTHOR_TYPES = new Set(['candidate', 'employer']);
 const VALID_MEDIA_TYPES = new Set(['image', 'video', 'document', 'file']);
+const PREMIUM_TALENT_BOOST_MS = 2 * 60 * 60 * 1000;
 
 const serializePost = (post) => {
     const plain = post?.toObject ? post.toObject() : post;
@@ -93,23 +99,104 @@ const getFeedPosts = async (req, res) => {
         }
 
         const posts = await FeedPost.find(query).sort({ createdAt: -1 }).limit(200);
+        const candidateIds = [...new Set(posts
+            .filter((post) => post.authorType === 'candidate' && mongoose.isValidObjectId(post.authorId))
+            .map((post) => String(post.authorId)))];
+        const employerAuthorIds = [...new Set(posts
+            .filter((post) => post.authorType === 'employer' && mongoose.isValidObjectId(post.authorId))
+            .map((post) => String(post.authorId)))];
+        const [candidateUsers, candidateProfiles, employerAccounts] = await Promise.all([
+            candidateIds.length
+                ? User.find({ _id: { $in: candidateIds } }).select('_id jumptakeId membership')
+                : [],
+            candidateIds.length
+                ? JobSeeker.find({ user: { $in: candidateIds } }).select('user profileImage coverImage about')
+                : [],
+            employerAuthorIds.length
+                ? Employer.find({ _id: { $in: employerAuthorIds } }).select('_id companyId')
+                : []
+        ]);
+        const companyIds = [...new Set([
+            ...employerAuthorIds,
+            ...employerAccounts.map((employer) => String(employer.companyId || '')).filter(mongoose.isValidObjectId)
+        ])];
+        const companies = companyIds.length ? await Company.find({ _id: { $in: companyIds } }) : [];
+
+        await Promise.all(companies.map(async (company) => {
+            try {
+                await ensureCompanyJumpTakeId(company);
+            } catch (error) {
+                console.warn(`[FEED] Could not assign a JumpTake ID to company ${company._id}:`, error.message);
+            }
+        }));
+
+        const now = Date.now();
+        const userById = new Map(candidateUsers.map((user) => [String(user._id), user]));
+        const profileByUserId = new Map(candidateProfiles.map((profile) => [String(profile.user), profile]));
+        const companyIdByEmployerId = new Map(employerAccounts.map((employer) => [String(employer._id), String(employer.companyId || '')]));
+        const companyById = new Map(companies.map((company) => [String(company._id), company]));
+        const isFeaturedUser = (user) => {
+            if (!user || !['active', 'trialing'].includes(user.membership?.status) || user.membership?.standOutEnabled !== true) return false;
+            if (['premium', 'extreme'].includes(user.membership?.plan)) return true;
+            return user.membership?.plan === 'demo-premium'
+                && user.membership?.currentPeriodEnd
+                && new Date(user.membership.currentPeriodEnd).getTime() > now;
+        };
+        const isTemporarilyBoosted = (post) => {
+            const createdAt = new Date(post.createdAt).getTime();
+            return isFeaturedUser(userById.get(String(post.authorId)))
+                && Number.isFinite(createdAt)
+                && createdAt <= now
+                && now - createdAt <= PREMIUM_TALENT_BOOST_MS;
+        };
+
         if (query.type === 'talent-story') {
-            const candidateIds = [...new Set(posts.filter((post) => post.authorType === 'candidate').map((post) => String(post.authorId)))];
-            const featuredUsers = await User.find({
-                _id: { $in: candidateIds },
-                'membership.plan': { $in: ['demo-premium', 'premium', 'extreme'] },
-                'membership.status': { $in: ['active', 'trialing'] },
-                'membership.standOutEnabled': true,
-                $or: [
-                    { 'membership.plan': { $in: ['premium', 'extreme'] } },
-                    { 'membership.currentPeriodEnd': { $gt: new Date() } }
-                ]
-            }).select('_id');
-            const featuredIds = new Set(featuredUsers.map((user) => String(user._id)));
-            posts.sort((a, b) => Number(featuredIds.has(String(b.authorId))) - Number(featuredIds.has(String(a.authorId))) || new Date(b.createdAt) - new Date(a.createdAt));
-            return res.status(200).json(posts.map((post) => ({ ...serializePost(post), standOut: featuredIds.has(String(post.authorId)) })));
+            posts.sort((first, second) => (
+                Number(isTemporarilyBoosted(second)) - Number(isTemporarilyBoosted(first))
+                || new Date(second.createdAt) - new Date(first.createdAt)
+            ));
         }
-        return res.status(200).json(posts.map(serializePost));
+
+        const serializedPosts = posts.map((post) => {
+            const serialized = serializePost(post);
+            if (post.authorType === 'candidate') {
+                const account = userById.get(String(post.authorId));
+                const profile = profileByUserId.get(String(post.authorId));
+                return {
+                    ...serialized,
+                    jumptakeId: account?.jumptakeId || serialized.jumptakeId || '',
+                    authorAvatar: serialized.authorAvatar || profile?.profileImage || '',
+                    authorProfile: profile ? {
+                        coverImage: profile.coverImage || '',
+                        about: profile.about || ''
+                    } : null,
+                    standOut: isFeaturedUser(account),
+                    standOutBoosted: query.type === 'talent-story' && isTemporarilyBoosted(post)
+                };
+            }
+
+            const company = companyById.get(String(post.authorId))
+                || companyById.get(companyIdByEmployerId.get(String(post.authorId)));
+            return {
+                ...serialized,
+                authorName: company?.name || serialized.authorName,
+                authorAvatar: serialized.authorAvatar || company?.logo || '',
+                jumptakeId: company?.jumptakeId || serialized.jumptakeId || '',
+                companyProfile: company ? {
+                    _id: company._id,
+                    name: company.name || '',
+                    jumptakeId: company.jumptakeId || '',
+                    logo: company.logo || '',
+                    industry: company.industry || '',
+                    headquarters: company.headquarters || '',
+                    website: company.website || '',
+                    founded: company.founded || '',
+                    description: company.description || ''
+                } : null
+            };
+        });
+
+        return res.status(200).json(serializedPosts);
     } catch (error) {
         return res.status(500).json({
             error: 'Failed to fetch feed posts',

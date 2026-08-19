@@ -10,10 +10,14 @@ const ResumeFilePreview = ({ resume, className = '' }) => {
         return null;
     }
 
-    const fileName = resume.fileName || 'Uploaded resume';
-    const mimeType = resume.mimeType || '';
-    const dataUrl = resume.dataUrl || '';
-    const legacyText = resume.text || '';
+    const fileName = typeof resume.fileName === 'string' && resume.fileName.trim() ? resume.fileName : 'Uploaded resume';
+    const mimeType = typeof resume.mimeType === 'string' ? resume.mimeType : '';
+    const dataUrl = typeof resume.dataUrl === 'string' ? resume.dataUrl : '';
+    const legacyText = typeof resume.text === 'string'
+        ? resume.text
+        : Array.isArray(resume.text)
+            ? resume.text.map((item) => String(item || '')).filter(Boolean).join('\n')
+            : '';
 
     const isImage = mimeType.startsWith('image/');
     const isPdf = mimeType.includes('pdf');

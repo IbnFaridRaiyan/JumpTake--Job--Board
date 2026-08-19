@@ -24,6 +24,7 @@ const socialAuthController = require('../controllers/socialAuthController');
 const adminRoutes = require('./admin');
 const User = require('../models/User');
 const { getAuthenticatedPayload } = require('../utils/candidateAuth');
+const { ensureCompanyJumpTakeId } = require('../utils/jumptakeId');
 
 
 
@@ -100,7 +101,8 @@ router.get('/session/employer', async (req, res) => {
             return res.status(401).json({ error: 'Employer account no longer exists' });
         }
 
-        const company = await Company.findById(employer.companyId).select('name');
+        const company = await Company.findById(employer.companyId);
+        if (company) await ensureCompanyJumpTakeId(company);
 
         res.json({
             employer: {
@@ -108,6 +110,7 @@ router.get('/session/employer', async (req, res) => {
                 username: employer.username,
                 companyId: employer.companyId,
                 companyName: company?.name || 'Unknown Company',
+                jumptakeId: company?.jumptakeId || '',
                 email: employer.email || '',
                 phone: employer.phone || ''
             }
@@ -121,6 +124,7 @@ router.get('/session/employer', async (req, res) => {
 router.get('/companies', async (req, res) => {
     try {
         const companies = await Company.find().sort({ createdAt: -1 });
+        await Promise.all(companies.map(ensureCompanyJumpTakeId));
         res.json(companies);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -134,6 +138,7 @@ router.get('/companies/:id', async (req, res) => {
         if (!company) {
             return res.status(404).json({ error: 'Company not found' });
         }
+        await ensureCompanyJumpTakeId(company);
         res.json(company);
     } catch (error) {
         res.status(500).json({ error: error.message });

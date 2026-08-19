@@ -186,6 +186,9 @@ const CompanyProfile = ({ company, jobStats, onBack, onCompanyUpdated, onFooterB
                             <span className="company-industry">
                                 {currentCompany.industry || 'Industry not specified'}
                             </span>
+                            {(company.jumptakeId || currentCompany.jumptakeId) ? (
+                                <span className="company-jumptake-id">@{String(company.jumptakeId || currentCompany.jumptakeId).replace(/^@/, '')}</span>
+                            ) : null}
                             {isEditing && (
                                 <div className="company-logo-upload-row">
                                     <input

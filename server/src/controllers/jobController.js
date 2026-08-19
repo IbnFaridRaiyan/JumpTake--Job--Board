@@ -9,10 +9,24 @@ const {
 } = require('../utils/referenceNumbers');
 const { createNotification } = require('./notificationController');
 
+const getLiveJobQuery = (additionalQuery = {}) => {
+    const now = new Date();
+    const startOfTodayUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+    return {
+        ...additionalQuery,
+        active: true,
+        $or: [
+            { applicationDeadline: null },
+            { applicationDeadline: { $exists: false } },
+            { applicationDeadline: { $gte: startOfTodayUtc } }
+        ]
+    };
+};
+
 const getAllJobs = async (req, res) => {
     try {
        
-        const jobs = await Job.find({ active: true })
+        const jobs = await Job.find(getLiveJobQuery())
             .populate('company', 'name industry headquarters logo')
             .sort({ createdAt: -1 });
 
@@ -58,6 +72,7 @@ const createJob = async (req, res) => {
             description,
             companyId,
             location,
+            sector,
             salary,
             applicationLink,
             applicationDeadline,
@@ -88,6 +103,7 @@ const createJob = async (req, res) => {
             description,
             company: companyId,
             location,
+            sector: String(sector || company.industry || 'General').trim(),
             salary,
             applicationLink,
             applicationDeadline: applicationDeadline || null,
@@ -142,6 +158,7 @@ const updateJob = async (req, res) => {
             title,
             description,
             location,
+            sector,
             salary,
             applicationLink,
             applicationDeadline,
@@ -162,6 +179,7 @@ const updateJob = async (req, res) => {
         job.title = title || job.title;
         job.description = description || job.description;
         job.location = location || job.location;
+        job.sector = sector !== undefined ? String(sector || 'General').trim() : job.sector;
         job.salary = salary !== undefined ? salary : job.salary;
         job.applicationLink = applicationLink !== undefined ? applicationLink : job.applicationLink;
         job.applicationDeadline = applicationDeadline !== undefined ? (applicationDeadline || null) : job.applicationDeadline;
@@ -322,7 +340,7 @@ const getRecommendedJobs = async (req, res) => {
         }
         
         // Find active jobs with matching skills
-        const jobs = await Job.find({ active: true })
+        const jobs = await Job.find(getLiveJobQuery())
             .populate('company', 'name industry headquarters logo')
             .sort({ createdAt: -1 });
 

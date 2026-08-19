@@ -699,7 +699,7 @@ const Landing = ({ onThemeChange }) => {
 
     const jobFields = useMemo(() => (
         [...new Set(jobs.map((job) => (
-            job.jobField || job.field || job.category || job.industry || job.company?.industry || ''
+            job.sector || job.jobField || job.field || job.category || job.industry || job.company?.industry || ''
         )).filter(Boolean))].sort((a, b) => a.localeCompare(b))
     ), [jobs]);
 
@@ -708,7 +708,7 @@ const Landing = ({ onThemeChange }) => {
         const filteredJobs = jobs.filter((job) => {
             const matchesType = !jobType || job.jobType === jobType;
             const matchesCountry = !jobCountry || getPublicJobCountry(job.location) === jobCountry;
-            const resolvedField = job.jobField || job.field || job.category || job.industry || job.company?.industry || '';
+            const resolvedField = job.sector || job.jobField || job.field || job.category || job.industry || job.company?.industry || '';
             const matchesField = !jobField || resolvedField === jobField;
             const haystack = [
                 job.title,

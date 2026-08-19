@@ -549,7 +549,8 @@ const JOB_FIELD_KEYWORDS = [
 
 const getJobField = (job) => {
     const explicitField = asDisplayText(
-        job?.field
+        job?.sector
+        || job?.field
         || job?.jobField
         || job?.category
         || job?.industry
@@ -1760,8 +1761,16 @@ const PortalHomeFeed = ({
                         _id: data._id || '',
                         user: data.user || authorId,
                         name: data.name || openProfileDetail.authorName || '',
+                        jumptakeId: data.jumptakeId || '',
                         profileImage: data.profileImage || openProfileDetail.authorAvatar || '',
-                        coverImage: data.coverImage || ''
+                        coverImage: data.coverImage || '',
+                        about: data.about || '',
+                        education: data.education || [],
+                        experience: data.experience || [],
+                        skills: data.skills || [],
+                        achievements: data.achievements || [],
+                        interests: data.interests || [],
+                        hobbies: data.hobbies || []
                     }
                 }));
             } catch (error) {
@@ -5451,7 +5460,8 @@ const PortalHomeFeed = ({
             authorGender: asDisplayText(author.authorGender || author.gender || author.profile?.gender),
             authorType: author.authorType === 'employer' ? 'employer' : 'candidate',
             jumptakeId: asDisplayText(author.jumptakeId || author.jumpTakeId || author.username || author.handle),
-            candidateId: asDisplayText(author.candidateId || author.authorCandidateId || author.profileCandidateId)
+            candidateId: asDisplayText(author.candidateId || author.authorCandidateId || author.profileCandidateId),
+            companyProfile: author.companyProfile && typeof author.companyProfile === 'object' ? author.companyProfile : null
         });
         setOpenReactionPostId('');
         closeCommentComposer();
@@ -5508,6 +5518,7 @@ const PortalHomeFeed = ({
             && [friend.id, friend.userId, friend.candidateId].map((value) => String(value || '')).includes(authorId)
         ));
         const resolvedCandidate = profileCandidateLookup[authorId];
+        const resolvedCompany = openProfileDetail.companyProfile || {};
         const storedTailorProfile = (isCurrentViewer ? tailorProfile : readTailorProfileDraft(authorId)) || {};
         const authorWorkPosts = workNewsPosts.filter((post) => String(post?.authorId || '') === authorId);
         const authorTalentPosts = talentStories.filter((post) => String(post?.authorId || '') === authorId);
@@ -5524,6 +5535,8 @@ const PortalHomeFeed = ({
             || openProfileDetail.jumpTakeId
             || openProfileDetail.username
             || openProfileDetail.handle
+            || resolvedCandidate?.jumptakeId
+            || resolvedCompany.jumptakeId
             || friendMatch?.jumptakeId
             || friendMatch?.jumpTakeId
             || friendMatch?.username
@@ -5538,7 +5551,7 @@ const PortalHomeFeed = ({
             : '@JumpTakeID';
         const avatar = isCurrentViewer
             ? getLiveProfileAvatar(authorId, openProfileDetail.authorType, openProfileDetail.authorAvatar)
-            : resolvedCandidate?.profileImage || friendMatch?.profileImage || openProfileDetail.authorAvatar || '';
+            : resolvedCandidate?.profileImage || resolvedCompany.logo || friendMatch?.profileImage || openProfileDetail.authorAvatar || '';
         const gender = asDisplayText(
             openProfileDetail.authorGender
             || friendMatch?.gender
@@ -5547,7 +5560,7 @@ const PortalHomeFeed = ({
             || (isCurrentViewer ? authorGender : '')
         );
         const bio = asDisplayText(
-            storedTailorProfile.bio || (isCurrentViewer ? profileData?.bio : ''),
+            resolvedCompany.description || resolvedCandidate?.about || storedTailorProfile.bio || (isCurrentViewer ? profileData?.bio : ''),
             'No bio yet.'
         ).slice(0, 150);
         const detailsSource = isCurrentViewer
@@ -6023,7 +6036,7 @@ const PortalHomeFeed = ({
                                         {asDisplayText(post.authorName, 'Unknown author')}
                                     </span>
                                 </h3>
-                                <p>{post.authorType === 'employer' ? 'Company update' : 'Talent story'} - {safeDateLabel(post.createdAt)}</p>
+                                <p>{post.authorType === 'employer' ? 'Company update' : 'Talent story'} - {safeDateLabel(post.createdAt)}{post.jumptakeId ? ` - @${String(post.jumptakeId).replace(/^@/, '')}` : ''}</p>
                                 {post.audience && post.audience !== 'everyone' && (
                                     <small className="portal-audience-pill">{post.audience === 'only-me' ? 'Only me' : 'Friends only'}</small>
                                 )}
@@ -7924,7 +7937,7 @@ const PortalHomeFeed = ({
                                     {asDisplayText(post.authorName, 'Unknown author')}
                                 </span>
                             </h3>
-                            <p>{postTypeLabel} - {safeDateLabel(post.createdAt)}</p>
+                            <p>{postTypeLabel} - {safeDateLabel(post.createdAt)}{post.jumptakeId ? ` - @${String(post.jumptakeId).replace(/^@/, '')}` : ''}</p>
                             {post.audience && post.audience !== 'everyone' && (
                                 <small className="portal-audience-pill">{post.audience === 'only-me' ? 'Only me' : 'Friends only'}</small>
                             )}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { JUMPTAKE_TUTORIALS } from '../data/tutorials';
 
 const PlayIcon = () => (
@@ -6,34 +6,21 @@ const PlayIcon = () => (
 );
 
 const TutorialCard = ({ tutorial, featured = false }) => {
-    const [started, setStarted] = useState(false);
-
     return (
         <article className={`tutorial-card${featured ? ' is-featured' : ''}`}>
             <div className="tutorial-card-media">
                 <video
-                    controls={started}
+                    autoPlay
+                    muted
+                    loop
                     playsInline
-                    preload="metadata"
+                    preload="auto"
                     poster={tutorial.poster}
                     src={tutorial.video}
-                    onPlay={() => setStarted(true)}
+                    disablePictureInPicture
+                    disableRemotePlayback
                     aria-label={`${tutorial.title} video tutorial`}
                 />
-                {!started ? (
-                    <button
-                        type="button"
-                        className="tutorial-play-button"
-                        onClick={(event) => {
-                            const video = event.currentTarget.parentElement?.querySelector('video');
-                            setStarted(true);
-                            video?.play();
-                        }}
-                        aria-label={`Play ${tutorial.title}`}
-                    >
-                        <PlayIcon />
-                    </button>
-                ) : null}
             </div>
             <div className="tutorial-card-copy">
                 <span>{tutorial.eyebrow}</span>

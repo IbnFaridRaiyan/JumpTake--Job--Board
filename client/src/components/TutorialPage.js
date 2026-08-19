@@ -27,6 +27,9 @@ const TutorialPage = ({ theme = 'dark', onThemeChange }) => {
                 </div>
             </header>
             <TutorialLibrary />
+            <footer className="tutorial-public-footer-actions">
+                <Link to="/" className="tutorial-back-link">Back to home</Link>
+            </footer>
         </div>
     );
 };

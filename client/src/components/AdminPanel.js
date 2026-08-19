@@ -6,6 +6,7 @@ import confirmAction from '../utils/confirmAction';
 
 const API_BASE = process.env.REACT_APP_API_URL || '';
 const ADMIN_KEY_STORAGE = 'jumptakeAdminKey';
+const ADMIN_ASSISTANT_MAX_IMAGES = 12;
 const FEED_POST_COLLECTIONS = new Set(['feedPosts', 'workNewsPosts', 'talentStoryPosts']);
 
 const emptyCompanyForm = {
@@ -52,6 +53,22 @@ const emptyWorkNewsPostForm = {
   mediaType: 'image',
   source: '',
   sourceTitle: ''
+};
+
+const emptyCandidateForm = {
+  name: '',
+  email: '',
+  password: '',
+  profileImage: '',
+  coverImage: '',
+  about: '',
+  skills: ''
+};
+
+const emptyTalentStoryForm = {
+  authorName: '',
+  authorAvatar: '',
+  body: ''
 };
 
 const getLogoFallbackFromSource = (source = '') => {
@@ -108,6 +125,39 @@ const normalizeWorkNewsDraft = (draft = {}, index = 0) => ({
   id: draft.id || `work-news-draft-${Date.now()}-${index}`
 });
 
+const normalizeCandidateListText = (value) => {
+  const values = Array.isArray(value) ? value : [value];
+  return values
+    .map((item) => {
+      if (!item || typeof item !== 'object') return String(item || '').trim();
+      return [item.institution, item.degree, item.field, item.title, item.company, item.description, item.date]
+        .map((part) => String(part || '').trim())
+        .filter(Boolean)
+        .join(' - ');
+    })
+    .filter(Boolean)
+    .join('\n');
+};
+
+const normalizeCandidateDraft = (draft = {}, index = 0) => ({
+  id: draft.id || `candidate-draft-${Date.now()}-${index}`,
+  name: String(draft.name || ''),
+  email: String(draft.email || ''),
+  password: String(draft.password || ''),
+  jobTitle: String(draft.jobTitle || ''),
+  skills: String(draft.skills || ''),
+  education: normalizeCandidateListText(draft.education),
+  studies: normalizeCandidateListText(draft.studies || draft.degrees || draft.fieldOfStudy),
+  experience: normalizeCandidateListText(draft.experience),
+  achievements: normalizeCandidateListText(draft.achievements),
+  about: String(draft.about || ''),
+  profileImage: String(draft.profileImage || ''),
+  coverImage: String(draft.coverImage || ''),
+  storyBody: String(draft.talentStory?.body || draft.storyBody || ''),
+  createdUserId: draft.createdUserId || '',
+  createdJobSeekerId: draft.createdJobSeekerId || ''
+});
+
 const readAdminFileAsDataUrl = (file) => new Promise((resolve, reject) => {
   const reader = new FileReader();
   reader.onerror = () => reject(new Error('Could not read that file.'));
@@ -142,6 +192,7 @@ const AdminPanel = () => {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ total: 0, totalPages: 1 });
+  const [selectedItemIds, setSelectedItemIds] = useState([]);
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const companyLogoInputRef = useRef(null);
@@ -149,17 +200,25 @@ const AdminPanel = () => {
   const [companyForm, setCompanyForm] = useState({ ...emptyCompanyForm });
   const [adminAssistantOpen, setAdminAssistantOpen] = useState(false);
   const [adminAssistantInput, setAdminAssistantInput] = useState('');
+  const [adminAssistantImages, setAdminAssistantImages] = useState([]);
   const [adminAssistantBusy, setAdminAssistantBusy] = useState(false);
   const [adminAssistantMessages, setAdminAssistantMessages] = useState([
     {
       role: 'assistant',
-      text: 'Tell me what company, job, or Work News drafts to create and I will fill the admin forms.'
+      text: 'Tell me what company, job, Work News, candidate profile, or talent story drafts to create and I will fill the admin forms.'
     }
   ]);
   const [jobForm, setJobForm] = useState({ ...emptyJobForm });
   const [adminJobDrafts, setAdminJobDrafts] = useState([]);
   const [adminWorkNewsDrafts, setAdminWorkNewsDrafts] = useState([]);
   const [workNewsPostForm, setWorkNewsPostForm] = useState({ ...emptyWorkNewsPostForm });
+  const [candidateForm, setCandidateForm] = useState({ ...emptyCandidateForm });
+  const [talentStoryForm, setTalentStoryForm] = useState({ ...emptyTalentStoryForm });
+  const [adminCandidateDrafts, setAdminCandidateDrafts] = useState([]);
+  const candidateProfileInputRef = useRef(null);
+  const candidateCoverInputRef = useRef(null);
+  const talentStoryCoverInputRef = useRef(null);
+  const adminAssistantImageInputRef = useRef(null);
 
   const headers = useMemo(() => ({
     'Content-Type': 'application/json',
@@ -211,6 +270,7 @@ const AdminPanel = () => {
 
       const data = await adminFetch(`/collections/${selectedCollection}?${params.toString()}`);
       setItems(data.items || []);
+      setSelectedItemIds([]);
       setPagination({
         total: data.total || 0,
         totalPages: data.totalPages || 1
@@ -271,6 +331,7 @@ const AdminPanel = () => {
     setSelectedCollection(collectionKey);
     setPage(1);
     setSearch('');
+    setSelectedItemIds([]);
   };
 
   const handleDelete = async (id) => {
@@ -384,6 +445,149 @@ const AdminPanel = () => {
     }
   };
 
+  const handleCandidateCoverUpload = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      setMessage('');
+      const coverImage = await createSquareProfileImage(file);
+      setCandidateForm((current) => ({ ...current, coverImage }));
+    } catch (error) {
+      setMessage(error.message || 'Could not prepare that candidate cover photo.');
+    }
+  };
+
+  const handleCandidateProfileUpload = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      setMessage('');
+      const profileImage = await createSquareProfileImage(file);
+      setCandidateForm((current) => ({ ...current, profileImage }));
+    } catch (error) {
+      setMessage(error.message || 'Could not prepare that candidate profile picture.');
+    }
+  };
+
+  const handleCreateCandidate = async (event) => {
+    event.preventDefault();
+
+    try {
+      setMessage('');
+      const data = await adminFetch('/candidates', {
+        method: 'POST',
+        body: JSON.stringify(candidateForm)
+      });
+      setCandidateForm({ ...emptyCandidateForm });
+      setSelectedCollection('users');
+      setPage(1);
+      await Promise.all([loadSummary(), loadCollection()]);
+      setMessage(data.generatedPassword
+        ? `Candidate user created. Temporary login: ${data.user.email} / ${data.generatedPassword}`
+        : `Candidate user created: ${data.user.email || data.user.jumptakeId}`);
+    } catch (error) {
+      setMessage(error.message);
+    }
+  };
+
+  const handleTalentStoryCoverUpload = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      setMessage('');
+      const avatar = await createSquareProfileImage(file);
+      setTalentStoryForm((current) => ({ ...current, authorAvatar: avatar }));
+    } catch (error) {
+      setMessage(error.message || 'Could not prepare that cover photo.');
+    }
+  };
+
+  const handleCreateTalentStory = async (event) => {
+    event.preventDefault();
+
+    try {
+      setMessage('');
+      await adminFetch('/talent-stories', {
+        method: 'POST',
+        body: JSON.stringify({
+          authorName: talentStoryForm.authorName,
+          authorAvatar: talentStoryForm.authorAvatar,
+          body: talentStoryForm.body
+        })
+      });
+      setTalentStoryForm({ ...emptyTalentStoryForm });
+      setSelectedCollection('talentStoryPosts');
+      setPage(1);
+      await Promise.all([loadSummary(), loadCollection()]);
+      setMessage('Talent Story post created.');
+    } catch (error) {
+      setMessage(error.message);
+    }
+  };
+
+  const handleBulkDelete = async (deleteAll = false) => {
+    const permanentlyDelete = selectedCollection === 'deletedItems';
+    const selectedCount = selectedItemIds.length;
+    if (!deleteAll && !selectedCount) {
+      setMessage('Select at least one record first.');
+      return;
+    }
+
+    const confirmed = await confirmAction({
+      title: permanentlyDelete
+        ? (deleteAll ? 'Delete all forever?' : `Delete ${selectedCount} selected forever?`)
+        : (deleteAll ? 'Delete all records?' : `Delete ${selectedCount} selected records?`),
+      message: permanentlyDelete
+        ? 'This permanently removes the selected deleted data. It cannot be restored.'
+        : 'The records will move to Deleted Items so they can still be restored.',
+      confirmLabel: permanentlyDelete ? 'Delete Forever' : 'Delete'
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setMessage('');
+      const data = await adminFetch(
+        permanentlyDelete ? '/deleted-items/bulk-permanent' : `/collections/${selectedCollection}/bulk-delete`,
+        {
+          method: 'POST',
+          body: JSON.stringify({ deleteAll, ids: deleteAll ? [] : selectedItemIds })
+        }
+      );
+      setSelectedItemIds([]);
+      await Promise.all([loadSummary(), loadCollection()]);
+      const affectedCount = data.deletedCount ?? data.permanentlyDeletedCount ?? selectedCount;
+      setMessage(`${affectedCount} record${affectedCount === 1 ? '' : 's'} ${permanentlyDelete ? 'deleted forever' : 'moved to Deleted Items'}.`);
+    } catch (error) {
+      setMessage(error.message);
+    }
+  };
+
+  const toggleSelectedItem = (itemId) => {
+    setSelectedItemIds((current) => (
+      current.includes(itemId)
+        ? current.filter((id) => id !== itemId)
+        : [...current, itemId]
+    ));
+  };
+
   const handleRandomizeCompany = () => {
     const randomName = pickRandom(randomCompanyNames);
     setCompanyForm((current) => ({
@@ -447,17 +651,56 @@ const AdminPanel = () => {
     }
   };
 
+  const handleAdminAssistantImageUpload = async (event) => {
+    const files = Array.from(event.target.files || []);
+    event.target.value = '';
+    if (!files.length) return;
+
+    const availableSlots = Math.max(0, ADMIN_ASSISTANT_MAX_IMAGES - adminAssistantImages.length);
+    if (!availableSlots) {
+      setMessage(`Admin AI accepts up to ${ADMIN_ASSISTANT_MAX_IMAGES} profile pictures at once.`);
+      return;
+    }
+
+    const selectedFiles = files.slice(0, availableSlots);
+    const results = await Promise.allSettled(selectedFiles.map(async (file, index) => ({
+      id: `admin-ai-image-${Date.now()}-${index}`,
+      name: file.name || `Profile picture ${index + 1}`,
+      dataUrl: await createSquareProfileImage(file)
+    })));
+    const preparedImages = results
+      .filter((result) => result.status === 'fulfilled')
+      .map((result) => result.value);
+
+    if (preparedImages.length) {
+      setAdminAssistantImages((current) => [...current, ...preparedImages].slice(0, ADMIN_ASSISTANT_MAX_IMAGES));
+    }
+
+    const rejectedCount = results.length - preparedImages.length;
+    if (rejectedCount || files.length > selectedFiles.length) {
+      setMessage(`${preparedImages.length} picture${preparedImages.length === 1 ? '' : 's'} attached. ${rejectedCount + (files.length - selectedFiles.length)} could not be added.`);
+    }
+  };
+
   const handleAdminAssistantSubmit = async (event) => {
     event.preventDefault();
-    const prompt = adminAssistantInput.trim();
+    const submittedImages = adminAssistantImages;
+    const prompt = adminAssistantInput.trim() || (submittedImages.length
+      ? 'Create one candidate user draft for each attached profile picture, with a matching realistic profile and an achievement-based talent story.'
+      : '');
 
-    if (!prompt || adminAssistantBusy) {
+    if ((!prompt && !submittedImages.length) || adminAssistantBusy) {
       return;
     }
 
     setAdminAssistantInput('');
+    setAdminAssistantImages([]);
     setAdminAssistantBusy(true);
-    setAdminAssistantMessages((current) => [...current, { role: 'user', text: prompt }]);
+    setAdminAssistantMessages((current) => [...current, {
+      role: 'user',
+      text: prompt,
+      attachments: submittedImages.map(({ id, name, dataUrl }) => ({ id, name, dataUrl }))
+    }]);
 
     try {
       const data = await adminFetch('/assistant', {
@@ -465,7 +708,8 @@ const AdminPanel = () => {
         body: JSON.stringify({
           message: prompt,
           companyForm,
-          jobForm
+          jobForm,
+          profileImages: submittedImages.map(({ name, dataUrl }) => ({ name, dataUrl }))
         })
       });
 
@@ -481,13 +725,20 @@ const AdminPanel = () => {
         setAdminJobDrafts((current) => [
           ...current,
           ...data.jobDrafts.map((draft, index) => normalizeJobDraft(draft, current.length + index))
-        ]);
+]);
       }
 
       if (Array.isArray(data.workNewsDrafts) && data.workNewsDrafts.length) {
         setAdminWorkNewsDrafts((current) => [
           ...current,
           ...data.workNewsDrafts.map((draft, index) => normalizeWorkNewsDraft(draft, current.length + index))
+        ]);
+      }
+
+      if (Array.isArray(data.userDrafts) && data.userDrafts.length) {
+        setAdminCandidateDrafts((current) => [
+          ...current,
+          ...data.userDrafts.map((draft, index) => normalizeCandidateDraft(draft, current.length + index))
         ]);
       }
 
@@ -499,6 +750,7 @@ const AdminPanel = () => {
         }
       ]);
     } catch (error) {
+      setAdminAssistantImages((current) => current.length ? current : submittedImages);
       setAdminAssistantMessages((current) => [
         ...current,
         { role: 'assistant', text: error.message || 'Admin assistant failed.' }
@@ -671,6 +923,137 @@ const AdminPanel = () => {
     }
   };
 
+  const handlePermanentlyDeleteItem = async (id) => {
+    const confirmed = await confirmAction({
+      title: 'Delete forever?',
+      message: 'Permanently delete this removed item? It can never be restored.',
+      confirmLabel: 'Delete Forever'
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setMessage('');
+      await adminFetch(`/deleted-items/${id}/permanent`, {
+        method: 'DELETE'
+      });
+      await Promise.all([loadSummary(), loadCollection()]);
+      setMessage('Item permanently deleted and can no longer be restored.');
+    } catch (error) {
+      setMessage(error.message);
+    }
+  };
+
+  const updateAdminCandidateDraft = (draftId, field, value) => {
+    setAdminCandidateDrafts((current) => current.map((draft) => (
+      draft.id === draftId ? { ...draft, [field]: value } : draft
+    )));
+  };
+
+  const removeAdminCandidateDraft = async (draftId, skipConfirmation = false) => {
+    if (!skipConfirmation) {
+      const confirmed = await confirmAction({
+        title: 'Remove draft?',
+        message: 'Remove this candidate profile and talent story draft?'
+      });
+      if (!confirmed) {
+        return;
+      }
+    }
+    setAdminCandidateDrafts((current) => current.filter((draft) => draft.id !== draftId));
+  };
+
+  const handleDraftCoverUpload = async (draftId, event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      setMessage('');
+      const coverImage = await createSquareProfileImage(file);
+      updateAdminCandidateDraft(draftId, 'coverImage', coverImage);
+    } catch (error) {
+      setMessage(error.message || 'Could not prepare that profile picture.');
+    }
+  };
+
+  const handleDraftProfileUpload = async (draftId, event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      setMessage('');
+      const profileImage = await createSquareProfileImage(file);
+      updateAdminCandidateDraft(draftId, 'profileImage', profileImage);
+    } catch (error) {
+      setMessage(error.message || 'Could not prepare that profile picture.');
+    }
+  };
+
+  const createAdminCandidateFromDraft = async (draft) => {
+    try {
+      setMessage('');
+      const data = await adminFetch('/candidates', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: draft.name,
+          email: draft.email,
+          password: draft.password,
+          profileImage: draft.profileImage,
+          coverImage: draft.coverImage,
+          about: draft.about,
+          skills: draft.skills,
+          education: draft.education,
+          studies: draft.studies,
+          experience: draft.experience,
+          achievements: draft.achievements,
+          jobInterests: draft.jobTitle
+        })
+      });
+      updateAdminCandidateDraft(draft.id, 'createdUserId', data.user?.id || '');
+      updateAdminCandidateDraft(draft.id, 'createdJobSeekerId', data.jobSeeker?.id || '');
+      setSelectedCollection('users');
+      setPage(1);
+      await Promise.all([loadSummary(), loadCollection()]);
+      setMessage(data.generatedPassword
+        ? `Profile created: ${data.user.email} / ${data.generatedPassword}`
+        : `Profile created: ${data.user.email || data.user.jumptakeId}`);
+    } catch (error) {
+      setMessage(error.message);
+    }
+  };
+
+  const postAdminCandidateStory = async (draft) => {
+    try {
+      setMessage('');
+      await adminFetch('/talent-stories', {
+        method: 'POST',
+        body: JSON.stringify({
+          authorName: draft.name,
+          authorAvatar: draft.profileImage || draft.coverImage,
+          body: draft.storyBody,
+          authorId: draft.createdUserId || ''
+        })
+      });
+      removeAdminCandidateDraft(draft.id, true);
+      setSelectedCollection('talentStoryPosts');
+      setPage(1);
+      await Promise.all([loadSummary(), loadCollection()]);
+      setMessage(`Talent Story posted: ${draft.name || 'Candidate story'}`);
+    } catch (error) {
+      setMessage(error.message);
+    }
+  };
+
   const handleUpdateJobApplicationLink = async (jobId, currentLink = '') => {
     const nextLink = window.prompt('Add or update the external application link:', currentLink || '');
 
@@ -790,7 +1173,7 @@ const AdminPanel = () => {
             </form>
           </div>
 
-          <form className="admin-create-company" onSubmit={handleCreateCompany}>
+          <form className="admin-create-company" onSubmit={handleCreateCompany} hidden={selectedCollection !== 'companies'}>
             <div className="admin-form-heading-row">
               <div>
                 <h3>Create Company</h3>
@@ -877,7 +1260,7 @@ const AdminPanel = () => {
             </div>
           </form>
 
-          <form className="admin-create-work-news" onSubmit={handleCreateWorkNewsPost}>
+          <form className="admin-create-work-news" onSubmit={handleCreateWorkNewsPost} hidden={!['feedPosts', 'workNewsPosts'].includes(selectedCollection)}>
             <div className="admin-form-heading-row">
               <div>
                 <h3>Create Work News Post</h3>
@@ -992,7 +1375,175 @@ const AdminPanel = () => {
             </div>
           </form>
 
-          <form className="admin-create-job" onSubmit={handleCreateJob}>
+          <form className="admin-create-company admin-create-candidate" onSubmit={handleCreateCandidate} hidden={!['users', 'jobSeekers'].includes(selectedCollection)}>
+            <div className="admin-form-heading-row">
+              <div>
+                <h3>Create Candidate User</h3>
+                <p>Creates a candidate login and profile with a profile picture, cover photo, and about description. Leave email or password empty to generate them.</p>
+              </div>
+              <button type="submit">Create Candidate User</button>
+            </div>
+            <div className="admin-company-create-layout">
+              <div className="admin-candidate-photos">
+                <div className="admin-company-logo-field">
+                  <ProfileAvatar
+                    imageSrc={candidateForm.profileImage}
+                    name={candidateForm.name || 'Candidate'}
+                    className="admin-company-avatar"
+                    imageClassName="admin-company-avatar-image"
+                    useProfileIconFallback
+                  />
+                  <input
+                    ref={candidateProfileInputRef}
+                    type="file"
+                    className="profile-resume-input"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    onChange={handleCandidateProfileUpload}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => candidateProfileInputRef.current?.click()}
+                  >
+                    Set Profile Picture
+                  </button>
+                  {candidateForm.profileImage ? (
+                    <button
+                      type="button"
+                      className="admin-ghost-button"
+                      onClick={() => setCandidateForm((current) => ({ ...current, profileImage: '' }))}
+                    >
+                      Remove Profile Picture
+                    </button>
+                  ) : null}
+                </div>
+                <div className="admin-company-logo-field">
+                  <ProfileAvatar
+                    imageSrc={candidateForm.coverImage}
+                    name={candidateForm.name || 'Candidate'}
+                    className="admin-company-avatar"
+                    imageClassName="admin-company-avatar-image"
+                    useProfileIconFallback
+                  />
+                  <input
+                    ref={candidateCoverInputRef}
+                    type="file"
+                    className="profile-resume-input"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    onChange={handleCandidateCoverUpload}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => candidateCoverInputRef.current?.click()}
+                  >
+                    Set Cover Photo
+                  </button>
+                  {candidateForm.coverImage ? (
+                    <button
+                      type="button"
+                      className="admin-ghost-button"
+                      onClick={() => setCandidateForm((current) => ({ ...current, coverImage: '' }))}
+                    >
+                      Remove Cover Photo
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+              <div className="admin-company-fields">
+                <div className="admin-form-grid">
+                  <input
+                    value={candidateForm.name}
+                    onChange={(event) => setCandidateForm((current) => ({ ...current, name: event.target.value }))}
+                    placeholder="Full name"
+                    required
+                  />
+                  <input
+                    type="email"
+                    value={candidateForm.email}
+                    onChange={(event) => setCandidateForm((current) => ({ ...current, email: event.target.value }))}
+                    placeholder="Email (generated if empty)"
+                  />
+                  <input
+                    value={candidateForm.password}
+                    onChange={(event) => setCandidateForm((current) => ({ ...current, password: event.target.value }))}
+                    placeholder="Password (generated if empty)"
+                  />
+                  <input
+                    value={candidateForm.skills}
+                    onChange={(event) => setCandidateForm((current) => ({ ...current, skills: event.target.value }))}
+                    placeholder="Skills, comma separated"
+                  />
+                </div>
+                <textarea
+                  value={candidateForm.about}
+                  onChange={(event) => setCandidateForm((current) => ({ ...current, about: event.target.value }))}
+                  placeholder="About description"
+                />
+                <button type="submit">Create Candidate User</button>
+              </div>
+            </div>
+          </form>
+
+          <form className="admin-create-work-news admin-create-talent-story" onSubmit={handleCreateTalentStory} hidden={selectedCollection !== 'talentStoryPosts'}>
+            <div className="admin-form-heading-row">
+              <div>
+                <h3>Create Talent Story Post</h3>
+                <p>Post a candidate talent story with their name and cover photo. Best used after creating the candidate user.</p>
+              </div>
+              <button type="submit">Post Talent Story</button>
+            </div>
+            <div className="admin-work-news-create-layout">
+              <div className="admin-company-logo-field">
+                <ProfileAvatar
+                  imageSrc={talentStoryForm.authorAvatar}
+                  name={talentStoryForm.authorName || 'Candidate'}
+                  className="admin-company-avatar"
+                  imageClassName="admin-company-avatar-image"
+                  useProfileIconFallback
+                />
+                <input
+                  ref={talentStoryCoverInputRef}
+                  type="file"
+                  className="profile-resume-input"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  onChange={handleTalentStoryCoverUpload}
+                />
+                <button
+                  type="button"
+                  onClick={() => talentStoryCoverInputRef.current?.click()}
+                >
+                  Set Cover Photo
+                </button>
+                {talentStoryForm.authorAvatar ? (
+                  <button
+                    type="button"
+                    className="admin-ghost-button"
+                    onClick={() => setTalentStoryForm((current) => ({ ...current, authorAvatar: '' }))}
+                  >
+                    Remove Cover Photo
+                  </button>
+                ) : null}
+              </div>
+              <div className="admin-company-fields">
+                <div className="admin-form-grid">
+                  <input
+                    value={talentStoryForm.authorName}
+                    onChange={(event) => setTalentStoryForm((current) => ({ ...current, authorName: event.target.value }))}
+                    placeholder="Candidate name"
+                    required
+                  />
+                </div>
+                <textarea
+                  value={talentStoryForm.body}
+                  onChange={(event) => setTalentStoryForm((current) => ({ ...current, body: event.target.value }))}
+                  placeholder="Talent Story text / about description"
+                  required
+                />
+                <button type="submit">Post Talent Story</button>
+              </div>
+            </div>
+          </form>
+
+          <form className="admin-create-job" onSubmit={handleCreateJob} hidden={selectedCollection !== 'jobs'}>
             <h3>Create Job Post As Company</h3>
             <div className="admin-form-grid">
               <input
@@ -1064,7 +1615,7 @@ const AdminPanel = () => {
             <button type="submit">Create Job</button>
           </form>
 
-          {adminJobDrafts.length ? (
+          {adminJobDrafts.length && selectedCollection === 'jobs' ? (
             <section className="admin-ai-job-drafts">
               <div className="admin-form-heading-row">
                 <div>
@@ -1118,7 +1669,7 @@ const AdminPanel = () => {
             </section>
           ) : null}
 
-          {adminWorkNewsDrafts.length ? (
+          {adminWorkNewsDrafts.length && ['feedPosts', 'workNewsPosts'].includes(selectedCollection) ? (
             <section className="admin-ai-job-drafts admin-ai-work-news-drafts">
               <div className="admin-form-heading-row">
                 <div>
@@ -1210,20 +1761,196 @@ const AdminPanel = () => {
             </section>
           ) : null}
 
+          {adminCandidateDrafts.length && ['users', 'jobSeekers', 'talentStoryPosts'].includes(selectedCollection) ? (
+            <section className="admin-ai-job-drafts admin-ai-candidate-drafts">
+              <div className="admin-form-heading-row">
+                <div>
+                  <h3>AI Candidate &amp; Talent Story Drafts</h3>
+                  <p>Review each candidate profile and its talent story before creating them on JumpTake.</p>
+                </div>
+                <button type="button" className="admin-ghost-button" onClick={() => setAdminCandidateDrafts([])}>
+                  Clear Drafts
+                </button>
+              </div>
+              <div className="admin-ai-job-draft-list">
+                {adminCandidateDrafts.map((draft, index) => (
+                  <article className="admin-ai-job-draft-card admin-ai-candidate-draft-card" key={draft.id}>
+                    <div className="admin-record-card-header">
+                      <div className="admin-work-news-draft-title">
+                        <ProfileAvatar
+                          imageSrc={draft.profileImage || draft.coverImage}
+                          name={draft.name || 'Candidate'}
+                          className="admin-work-news-draft-logo"
+                          imageClassName="admin-work-news-draft-logo-image"
+                          useProfileIconFallback
+                        />
+                        <div>
+                          <h3>Draft {index + 1}: {draft.name || 'Candidate profile'}</h3>
+                          <p>{draft.jobTitle || draft.email || 'Profile not set'}</p>
+                        </div>
+                      </div>
+                      <div className="admin-draft-actions">
+                        <button
+                          type="button"
+                          onClick={() => createAdminCandidateFromDraft(draft)}
+                          disabled={Boolean(draft.createdUserId)}
+                        >
+                          {draft.createdUserId ? 'Profile Created' : 'Create Profile'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => postAdminCandidateStory(draft)}
+                          disabled={!draft.storyBody}
+                        >
+                          Post Talent Story
+                        </button>
+                        <button type="button" className="admin-danger-button" onClick={() => removeAdminCandidateDraft(draft.id)}>
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                    <div className="admin-form-grid">
+                      <input value={draft.name} onChange={(event) => updateAdminCandidateDraft(draft.id, 'name', event.target.value)} placeholder="Full name" />
+                      <input value={draft.email} onChange={(event) => updateAdminCandidateDraft(draft.id, 'email', event.target.value)} placeholder="Email" />
+                      <input value={draft.jobTitle} onChange={(event) => updateAdminCandidateDraft(draft.id, 'jobTitle', event.target.value)} placeholder="Job title" />
+                      <input value={draft.skills} onChange={(event) => updateAdminCandidateDraft(draft.id, 'skills', event.target.value)} placeholder="Skills, comma separated" />
+                      <input
+                        type="url"
+                        value={draft.profileImage.startsWith('data:') ? '' : draft.profileImage}
+                        onChange={(event) => updateAdminCandidateDraft(draft.id, 'profileImage', event.target.value)}
+                        placeholder="Or paste profile picture URL"
+                      />
+                      <input
+                        type="url"
+                        value={draft.coverImage.startsWith('data:') ? '' : draft.coverImage}
+                        onChange={(event) => updateAdminCandidateDraft(draft.id, 'coverImage', event.target.value)}
+                        placeholder="Or paste cover photo URL"
+                      />
+                    </div>
+                    <div className="admin-candidate-background-grid">
+                      <textarea value={draft.education} onChange={(event) => updateAdminCandidateDraft(draft.id, 'education', event.target.value)} placeholder="Education, one item per line" />
+                      <textarea value={draft.studies} onChange={(event) => updateAdminCandidateDraft(draft.id, 'studies', event.target.value)} placeholder="Degrees and fields of study" />
+                      <textarea value={draft.experience} onChange={(event) => updateAdminCandidateDraft(draft.id, 'experience', event.target.value)} placeholder="Experience and completed work" />
+                      <textarea value={draft.achievements} onChange={(event) => updateAdminCandidateDraft(draft.id, 'achievements', event.target.value)} placeholder="Achievements and results" />
+                    </div>
+                    <div className="admin-work-news-upload-row">
+                      <label className="admin-work-news-file-button">
+                        Upload profile picture
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp,image/gif"
+                          onChange={(event) => handleDraftProfileUpload(draft.id, event)}
+                        />
+                      </label>
+                      <label className="admin-work-news-file-button">
+                        Upload cover photo
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp,image/gif"
+                          onChange={(event) => handleDraftCoverUpload(draft.id, event)}
+                        />
+                      </label>
+                      {draft.profileImage ? (
+                        <button
+                          type="button"
+                          className="admin-ghost-button"
+                          onClick={() => updateAdminCandidateDraft(draft.id, 'profileImage', '')}
+                        >
+                          Remove Profile Picture
+                        </button>
+                      ) : null}
+                      {draft.coverImage ? (
+                        <button
+                          type="button"
+                          className="admin-ghost-button"
+                          onClick={() => updateAdminCandidateDraft(draft.id, 'coverImage', '')}
+                        >
+                          Remove Cover Photo
+                        </button>
+                      ) : null}
+                    </div>
+                    <textarea value={draft.about} onChange={(event) => updateAdminCandidateDraft(draft.id, 'about', event.target.value)} placeholder="About description" />
+                    <textarea value={draft.storyBody} onChange={(event) => updateAdminCandidateDraft(draft.id, 'storyBody', event.target.value)} placeholder="Talent Story post text" />
+                    {draft.profileImage ? (
+                      <div className="admin-work-news-media-preview">
+                        <img src={draft.profileImage} alt="" />
+                      </div>
+                    ) : null}
+                    {draft.coverImage ? (
+                      <div className="admin-work-news-media-preview">
+                        <img src={draft.coverImage} alt="" />
+                      </div>
+                    ) : null}
+                    {draft.createdUserId ? (
+                      <p className="admin-candidate-draft-created">Profile created. Post the talent story to link it to this profile.</p>
+                    ) : null}
+                  </article>
+                ))}
+              </div>
+            </section>
+          ) : null}
+
+          <div className="admin-bulk-actions" aria-label="Bulk record actions">
+            <label className="admin-select-all-control">
+              <input
+                type="checkbox"
+                checked={Boolean(items.length) && items.every((item) => selectedItemIds.includes(item._id))}
+                onChange={(event) => setSelectedItemIds(event.target.checked ? items.map((item) => item._id) : [])}
+                disabled={!items.length}
+              />
+              <span>Select this page</span>
+            </label>
+            <span>{selectedItemIds.length} selected</span>
+            <button
+              type="button"
+              className="admin-danger-button"
+              onClick={() => handleBulkDelete(false)}
+              disabled={!selectedItemIds.length}
+            >
+              {selectedCollection === 'deletedItems' ? 'Delete Selected Forever' : 'Delete Selected'}
+            </button>
+            <button
+              type="button"
+              className="admin-danger-button"
+              onClick={() => handleBulkDelete(true)}
+              disabled={!pagination.total}
+            >
+              {selectedCollection === 'deletedItems' ? 'Delete All Forever' : 'Delete All'}
+            </button>
+          </div>
+
           <div className="admin-records">
             {isLoading ? <p className="admin-empty">Loading records...</p> : null}
             {!isLoading && !items.length ? <p className="admin-empty">No records found.</p> : null}
             {items.map((item) => (
               <article className="admin-record-card" key={item._id}>
                 <div className="admin-record-card-header">
-                  <div>
+                  <div className="admin-record-identity">
+                    <label className="admin-record-select" aria-label={`Select ${item.label || item.title || item.name || item._id}`}>
+                      <input
+                        type="checkbox"
+                        checked={selectedItemIds.includes(item._id)}
+                        onChange={() => toggleSelectedItem(item._id)}
+                      />
+                    </label>
+                    <div>
                     <h3>{item.label || item.title || item.name || item.email || item.username || item.authorName || item.sourceTitle || item._id}</h3>
                     <p>{selectedCollection === 'deletedItems' ? `${item.collection} · ${item.itemType}` : item._id}</p>
+                    </div>
                   </div>
-                  {selectedCollection === 'deletedItems' ? (
-                    <button type="button" onClick={() => handleRestoreDeletedItem(item._id)}>
-                      Undo Delete
-                    </button>
+{selectedCollection === 'deletedItems' ? (
+                    <div className="admin-draft-actions">
+                      <button type="button" onClick={() => handleRestoreDeletedItem(item._id)}>
+                        Undo Delete
+                      </button>
+                      <button
+                        type="button"
+                        className="admin-danger-button"
+                        onClick={() => handlePermanentlyDeleteItem(item._id)}
+                      >
+                        Delete Forever
+                      </button>
+                    </div>
                   ) : (
                     <button
                       type="button"
@@ -1286,7 +2013,7 @@ const AdminPanel = () => {
             <div className="admin-assistant-header">
               <div>
                 <h3>Admin AI</h3>
-                <p>Fill company, job, and Work News drafts with action commands.</p>
+                <p>Fill company, job, Work News, candidate profile, and talent story drafts with action commands.</p>
               </div>
               <button type="button" onClick={() => setAdminAssistantOpen(false)} aria-label="Close admin AI">
                 Close
@@ -1295,7 +2022,14 @@ const AdminPanel = () => {
             <div className="admin-assistant-messages">
               {adminAssistantMessages.map((chatMessage, index) => (
                 <div className={`admin-assistant-message is-${chatMessage.role}`} key={`${chatMessage.role}-${index}`}>
-                  {chatMessage.text}
+                  <span>{chatMessage.text}</span>
+                  {chatMessage.attachments?.length ? (
+                    <div className="admin-assistant-message-images">
+                      {chatMessage.attachments.map((attachment) => (
+                        <img key={attachment.id} src={attachment.dataUrl} alt={attachment.name} />
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
               ))}
               {adminAssistantBusy ? (
@@ -1303,14 +2037,51 @@ const AdminPanel = () => {
               ) : null}
             </div>
             <form className="admin-assistant-form" onSubmit={handleAdminAssistantSubmit}>
-              <textarea
-                value={adminAssistantInput}
-                onChange={(event) => setAdminAssistantInput(event.target.value)}
-                placeholder="Example: make 10 Work News drafts from live web company updates"
-              />
-              <button type="submit" disabled={adminAssistantBusy || !adminAssistantInput.trim()}>
-                Send
-              </button>
+              {adminAssistantImages.length ? (
+                <div className="admin-assistant-pending-images" aria-label="Attached profile pictures">
+                  {adminAssistantImages.map((image) => (
+                    <div key={image.id} className="admin-assistant-pending-image">
+                      <img src={image.dataUrl} alt={image.name} />
+                      <button
+                        type="button"
+                        onClick={() => setAdminAssistantImages((current) => current.filter((item) => item.id !== image.id))}
+                        aria-label={`Remove ${image.name}`}
+                        title="Remove picture"
+                      >
+                        &times;
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+              <div className="admin-assistant-composer">
+                <input
+                  ref={adminAssistantImageInputRef}
+                  type="file"
+                  className="admin-assistant-image-input"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  multiple
+                  onChange={handleAdminAssistantImageUpload}
+                />
+                <button
+                  type="button"
+                  className="admin-assistant-add-image"
+                  onClick={() => adminAssistantImageInputRef.current?.click()}
+                  disabled={adminAssistantBusy || adminAssistantImages.length >= ADMIN_ASSISTANT_MAX_IMAGES}
+                  aria-label="Attach profile pictures"
+                  title="Attach profile pictures"
+                >
+                  +
+                </button>
+                <textarea
+                  value={adminAssistantInput}
+                  onChange={(event) => setAdminAssistantInput(event.target.value)}
+                  placeholder="Ask Admin AI to create candidate drafts, stories, jobs, or Work News"
+                />
+                <button type="submit" disabled={adminAssistantBusy || (!adminAssistantInput.trim() && !adminAssistantImages.length)}>
+                  Send
+                </button>
+              </div>
             </form>
           </section>
         ) : (

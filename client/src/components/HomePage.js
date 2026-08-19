@@ -1292,6 +1292,7 @@ const HomePage = ({ appMode = 'dark', onAppModeChange }) => {
                 profile={{
                     name: jobSeekerData?.name || jobSeekerData?.loginUsername || displayName,
                     profileImage: jobSeekerData?.profileImage,
+                    gender: jobSeekerData?.gender || jobSeekerData?.sex || user?.gender || user?.sex,
                     coverImage: jobSeekerData?.coverImage,
                     jumptakeId: user?.jumptakeId,
                     likes: jobSeekerData?.likes,

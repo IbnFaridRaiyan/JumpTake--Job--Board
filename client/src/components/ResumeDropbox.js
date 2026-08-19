@@ -4,6 +4,8 @@ import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from 'mammoth';
 import SimplifiedRegisterForm from './SimplifiedRegisterForm';
 import SocialAuthButtons from './SocialAuthButtons';
+import logoDark from './media/logo4.png';
+import logoLight from './media/jumptake-logo-9.png';
 
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -299,7 +301,7 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
     };
 
     useEffect(() => {
-        if (!processedData || typeof document === 'undefined') {
+        if ((!processedData && !manualMode) || typeof document === 'undefined') {
             return undefined;
         }
 
@@ -313,7 +315,7 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
             document.body.style.overflow = previousBodyOverflow;
             document.documentElement.style.overflow = previousDocumentOverflow;
         };
-    }, [processedData]);
+    }, [manualMode, processedData]);
 
     const renderAccountRegistrationModal = () => {
         if (!processedData) {
@@ -337,12 +339,22 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
                     >
                         &times;
                     </button>
-                    <h3>Create Your Account</h3>
-                    <p className="registration-info">
-                        {manualMode
-                            ? 'Create an account using the information you entered. You only need to set a password.'
-                            : 'Create an account using the information extracted from your resume. You only need to set a password.'}
-                    </p>
+                    <div className="public-auth-brand-row account-create-brand-row">
+                        <span className="public-auth-brand-mark" aria-label="JumpTake">
+                            <img src={logoDark} className="is-dark-logo" alt="JumpTake" />
+                            <img src={logoLight} className="is-light-logo" alt="JumpTake" />
+                        </span>
+                        <span className="public-auth-brand-status"><i /> Candidate account</span>
+                    </div>
+                    <div className="public-auth-title-block account-create-title-block">
+                        <span className="public-auth-eyebrow">Join JumpTake</span>
+                        <h3 className="public-auth-heading">Create your account</h3>
+                        <p className="registration-info">
+                            {manualMode
+                                ? 'Create an account using the information you entered. You only need to set a password.'
+                                : 'Create an account using the information extracted from your resume. You only need to set a password.'}
+                        </p>
+                    </div>
 
                     <SimplifiedRegisterForm
                         jobSeekerId={jobSeekerId}
@@ -444,7 +456,39 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
             {/* Message displayed below buttons */}
             {!isLoading && message && <p className="message">{message}</p>}
 
-            {manualMode && !processedData && (
+            {manualMode && !processedData && typeof document !== 'undefined' ? createPortal(
+                <div
+                    className="resume-account-modal-backdrop resume-manual-modal-backdrop"
+                    role="presentation"
+                    onMouseDown={() => setManualMode(false)}
+                >
+                    <section
+                        className="resume-account-modal resume-manual-profile-modal"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label="Continue without a resume"
+                        onMouseDown={(event) => event.stopPropagation()}
+                    >
+                        <button
+                            type="button"
+                            className="resume-account-modal-close manual-profile-top-close"
+                            onClick={() => setManualMode(false)}
+                            aria-label="Close manual profile form"
+                        >
+                            &times;
+                        </button>
+                        <div className="public-auth-brand-row account-create-brand-row">
+                            <span className="public-auth-brand-mark" aria-label="JumpTake">
+                                <img src={logoDark} className="is-dark-logo" alt="JumpTake" />
+                                <img src={logoLight} className="is-light-logo" alt="JumpTake" />
+                            </span>
+                            <span className="public-auth-brand-status"><i /> Candidate account</span>
+                        </div>
+                        <div className="resume-manual-profile-heading">
+                            <span>Candidate profile</span>
+                            <h2>Continue without a resume</h2>
+                            <p>Add your details now. You can upload or build a resume later.</p>
+                        </div>
                 <form className="manual-profile-form" onSubmit={handleManualProfileSubmit}>
                     <h3>Personal Information</h3>
                     <p className="registration-info">
@@ -587,8 +631,19 @@ const ResumeDropbox = ({ onLoginClick, goBack }) => {
                     <button type="submit" className="submit-button" disabled={isLoading}>
                         Continue to Account Setup
                     </button>
+                    <button
+                        type="button"
+                        className="manual-profile-back-button"
+                        onClick={() => setManualMode(false)}
+                        aria-label="Back to resume options"
+                    >
+                        <span aria-hidden="true">&lt;</span> Back
+                    </button>
                 </form>
-            )}
+                    </section>
+                </div>,
+                document.body
+            ) : null}
 
             {/* Resume preview */}
             {resumeProcessingNotice && (

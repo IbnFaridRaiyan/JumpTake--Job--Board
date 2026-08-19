@@ -27,6 +27,10 @@ const JobSeekerSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  about: {
+    type: String,
+    default: ''
+  },
   education: {
     type: mongoose.Schema.Types.Mixed
   },

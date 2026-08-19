@@ -28,6 +28,7 @@ import './styles/experience-final.css';
 import './styles/tutorials.css';
 import './styles/public-home-editorial.css';
 import './styles/messaging-experience-final.css';
+import './styles/current-request-fixes.css';
 import { installMobileInteractionFeedback } from './utils/mobileHaptics';
 import { installMobileModalScrollLock } from './utils/mobileModalScrollLock';
 

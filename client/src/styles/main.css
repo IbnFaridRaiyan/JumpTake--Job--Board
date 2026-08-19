@@ -37269,6 +37269,47 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
   overflow-wrap: anywhere;
 }
 
+.admin-candidate-draft-created {
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  border-radius: 0.65rem;
+  background: rgba(22, 101, 52, 0.24);
+  color: #bbf7d0;
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 0.6rem 0.75rem;
+  margin: 0;
+}
+
+.admin-candidate-background-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.admin-candidate-background-grid textarea {
+  min-height: 6.5rem;
+}
+
+.admin-create-candidate .admin-company-avatar,
+.admin-create-talent-story .admin-company-avatar {
+  width: 7.5rem;
+  height: 7.5rem;
+  border-radius: 50%;
+}
+
+.admin-candidate-photos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+  align-items: start;
+}
+
+@media (max-width: 720px) {
+  .admin-candidate-photos {
+    grid-template-columns: 1fr;
+  }
+}
+
 .admin-message,
 .admin-empty {
   border: 1px solid rgba(125, 239, 229, 0.2);
@@ -37338,6 +37379,8 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
 }
 
 .admin-assistant-message {
+  display: grid;
+  gap: 0.5rem;
   max-width: 88%;
   padding: 0.58rem 0.7rem;
   border: 1px solid rgba(125, 239, 229, 0.18);
@@ -37355,16 +37398,85 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
 
 .admin-assistant-form {
   display: grid;
-  grid-template-columns: 1fr auto;
   gap: 0.55rem;
   padding: 0.85rem;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.admin-assistant-form textarea {
+.admin-assistant-composer {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 0.55rem;
+}
+
+.admin-assistant-composer textarea {
   min-height: 3rem;
   max-height: 7rem;
   resize: vertical;
+}
+
+.admin-assistant-image-input {
+  display: none;
+}
+
+.admin-panel .admin-assistant-add-image {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  min-width: 2.75rem;
+  height: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 1.55rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.admin-assistant-pending-images,
+.admin-assistant-message-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(3.2rem, 1fr));
+  gap: 0.45rem;
+}
+
+.admin-assistant-pending-image {
+  position: relative;
+  min-width: 0;
+  aspect-ratio: 1;
+}
+
+.admin-assistant-pending-image img,
+.admin-assistant-message-images img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(125, 239, 229, 0.28);
+  border-radius: 0.55rem;
+  object-fit: cover;
+}
+
+.admin-panel .admin-assistant-pending-image button {
+  position: absolute;
+  top: 0.2rem;
+  right: 0.2rem;
+  display: grid;
+  place-items: center;
+  width: 1.35rem;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  min-height: 1.35rem;
+  padding: 0;
+  border-color: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.82);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.admin-assistant-message-images {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 @media (max-width: 820px) {
@@ -37384,6 +37496,10 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
   }
 
   .admin-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-candidate-background-grid {
     grid-template-columns: 1fr;
   }
 
@@ -37410,8 +37526,12 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
     bottom: 0.7rem;
   }
 
-  .admin-assistant-form {
-    grid-template-columns: 1fr;
+  .admin-assistant-composer {
+    grid-template-columns: 2.6rem minmax(0, 1fr);
+  }
+
+  .admin-assistant-composer > button[type="submit"] {
+    grid-column: 1 / -1;
   }
 }
 

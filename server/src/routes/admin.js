@@ -13,16 +13,17 @@ const CandidateLike = require('../models/CandidateLike');
 const Company = require('../models/Company');
 const DraftApplication = require('../models/DraftApplication');
 const DeletedItem = require('../models/DeletedItem');
+const JobSeeker = require('../models/JobSeeker');
+const User = require('../models/User');
+const { generateJumpTakeId } = require('../utils/jumptakeId');
 const Employer = require('../models/Employer');
 const FeedPost = require('../models/FeedPost');
 const Job = require('../models/Job');
 const JobBookmark = require('../models/JobBookmark');
 const JobInvitation = require('../models/JobInvitation');
-const JobSeeker = require('../models/JobSeeker');
 const MessageThread = require('../models/MessageThread');
 const Notification = require('../models/Notification');
 const TalentBookmark = require('../models/TalentBookmark');
-const User = require('../models/User');
 
 const router = express.Router();
 
@@ -128,12 +129,6 @@ const COLLECTIONS = {
     model: MessageThread,
     searchFields: ['conversationType', 'directKey'],
     summaryFields: ['conversationType', 'company', 'candidate', 'candidateUser', 'lastMessageAt']
-  },
-  notifications: {
-    label: 'Notifications',
-    model: Notification,
-    searchFields: ['recipientType', 'recipientId', 'title', 'message', 'section'],
-    summaryFields: ['recipientType', 'recipientId', 'title', 'section', 'read', 'createdAt']
   },
   feedPosts: {
     label: 'All Feed Posts',
@@ -373,11 +368,39 @@ const extractOpenAIText = (data) => {
     .trim();
 };
 
-const askAdminOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = false }) => {
+const normalizeOpenAIImageSources = (images = []) => (Array.isArray(images) ? images : [])
+  .map((image) => String(image?.dataUrl || image?.imageUrl || image?.url || image || '').trim())
+  .filter((source) => /^data:image\/(?:jpeg|jpg|png|webp|gif);base64,/i.test(source) || /^https:\/\//i.test(source))
+  .slice(0, 20);
+
+const createResponsesInput = (prompt, images = []) => {
+  const imageSources = normalizeOpenAIImageSources(images);
+  if (!imageSources.length) return prompt;
+
+  return [{
+    role: 'user',
+    content: [
+      { type: 'input_text', text: prompt },
+      ...imageSources.map((imageUrl) => ({ type: 'input_image', image_url: imageUrl, detail: 'low' }))
+    ]
+  }];
+};
+
+const createChatInput = (prompt, images = []) => {
+  const imageSources = normalizeOpenAIImageSources(images);
+  if (!imageSources.length) return prompt;
+
+  return [
+    { type: 'text', text: prompt },
+    ...imageSources.map((imageUrl) => ({ type: 'image_url', image_url: { url: imageUrl, detail: 'low' } }))
+  ];
+};
+
+const askAdminOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = false, images = [] }) => {
   try {
     const payload = {
       model,
-      input: prompt,
+      input: createResponsesInput(prompt, images),
       max_output_tokens: 5500
     };
 
@@ -409,7 +432,7 @@ const askAdminOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = f
     if (shouldRetryWithLegacySearch) {
       const legacyPayload = {
         model,
-        input: prompt,
+        input: createResponsesInput(prompt, images),
         max_output_tokens: 5500,
         tools: [{ type: 'web_search_preview' }],
         tool_choice: 'required',
@@ -458,7 +481,7 @@ const askAdminOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = f
       model,
       temperature: 0.25,
       max_tokens: 5500,
-      messages: [{ role: 'user', content: prompt }]
+      messages: [{ role: 'user', content: createChatInput(prompt, images) }]
     },
     {
       timeout: 25000,
@@ -514,7 +537,7 @@ const askAdminOpenAIChatSearch = async ({ apiKey, prompt }) => {
   return '';
 };
 
-const askAdminOpenAI = async (prompt, { useWebSearch = false } = {}) => {
+const askAdminOpenAI = async (prompt, { useWebSearch = false, images = [] } = {}) => {
   const apiKey = getOpenAIApiKey();
   if (!apiKey) {
     return '';
@@ -524,7 +547,7 @@ const askAdminOpenAI = async (prompt, { useWebSearch = false } = {}) => {
   const modelCandidates = useWebSearch ? getOpenAISearchModelCandidates() : getOpenAIModelCandidates();
   for (const model of modelCandidates) {
     try {
-      const text = await askAdminOpenAIWithModel({ apiKey, model, prompt, useWebSearch });
+      const text = await askAdminOpenAIWithModel({ apiKey, model, prompt, useWebSearch, images });
       if (text) {
         return text;
       }
@@ -646,7 +669,7 @@ const getRequestedDraftCount = (message, isDraftRequest) => {
   if (explicit?.[1]) {
     return Math.min(ADMIN_ASSISTANT_MAX_DRAFTS, Math.max(1, Number(explicit[1])));
   }
-  return /\b(?:drafts|jobs|posts|updates|roles)\b/i.test(text) ? 5 : 1;
+  return /\b(?:drafts|jobs|posts|updates|roles|profiles|candidates|users|pictures|photos|images)\b/i.test(text) ? 5 : 1;
 };
 
 const createDraftBatchPrompt = ({ basePrompt, kind, count, batchNumber, totalBatches }) => `${basePrompt}
@@ -713,6 +736,224 @@ const generateAdminDraftBatches = async ({ prompt, kind, requestedCount, useWebS
           return Array.isArray(rows) ? rows.slice(0, count) : [];
         } catch (error) {
           console.warn(`[ADMIN ASSISTANT] ${kind} retry batch ${index + 1} failed:`, error.message);
+          return [];
+        }
+}
+    ));
+    drafts.push(...retryResults.flat());
+  }
+
+  return drafts.slice(0, requestedCount);
+};
+
+const ADMIN_CANDIDATE_DRAFT_BATCH_SIZE = 5;
+
+const normalizeAdminProfileImages = (images = []) => (Array.isArray(images) ? images : [])
+  .slice(0, 20)
+  .map((image, index) => {
+    const dataUrl = String(image?.dataUrl || image?.imageUrl || image?.url || '').trim();
+    const isSupportedDataUrl = /^data:image\/(?:jpeg|jpg|png|webp|gif);base64,/i.test(dataUrl)
+      && dataUrl.length <= 3000000;
+    const isSupportedRemoteUrl = /^https:\/\//i.test(dataUrl) && dataUrl.length <= 2048;
+    if (!isSupportedDataUrl && !isSupportedRemoteUrl) return null;
+
+    return {
+      id: String(image?.id || `profile-image-${index + 1}`),
+      name: String(image?.name || `Profile picture ${index + 1}`).slice(0, 180),
+      dataUrl
+    };
+  })
+  .filter(Boolean);
+
+const createRandomAdminProfileImages = (count) => {
+  const used = new Set();
+  return Array.from({ length: Math.max(0, count) }, (_, index) => {
+    const presentation = crypto.randomInt(0, 2) === 0 ? 'men' : 'women';
+    let portraitIndex = crypto.randomInt(0, 100);
+    let key = `${presentation}-${portraitIndex}`;
+    for (let attempt = 0; attempt < 100 && used.has(key); attempt += 1) {
+      portraitIndex = (portraitIndex + 1) % 100;
+      key = `${presentation}-${portraitIndex}`;
+    }
+    used.add(key);
+    return {
+      id: `random-profile-image-${index + 1}`,
+      name: `Random profile picture ${index + 1}`,
+      dataUrl: `https://randomuser.me/api/portraits/${presentation}/${portraitIndex}.jpg`
+    };
+  });
+};
+
+const candidateFieldText = (value, separator = ', ') => {
+  if (Array.isArray(value)) {
+    return value.map((item) => {
+      if (!item || typeof item !== 'object') return String(item || '').trim();
+      return [item.institution, item.degree, item.field, item.title, item.company, item.description, item.date]
+        .map((part) => String(part || '').trim())
+        .filter(Boolean)
+        .join(' - ');
+    }).filter(Boolean).join(separator);
+  }
+  return String(value || '').trim();
+};
+
+const createActionBasedTalentStory = (draft = {}) => {
+  const role = String(draft.jobTitle || 'professional').trim();
+  const skills = candidateFieldText(draft.skills).split(',').map((item) => item.trim()).filter(Boolean).slice(0, 2);
+  const achievement = candidateFieldText(draft.achievements, ' ').split(/\n|\.(?:\s|$)/).map((item) => item.trim()).find(Boolean);
+  const skillText = skills.length ? ` using ${skills.join(' and ')}` : '';
+  const resultText = achievement ? ` The result: ${achievement.replace(/[.!?]+$/, '')}.` : ' The result was a clearer, more reliable workflow for the people using it.';
+  return `Today I completed a practical ${role} project${skillText}, working through the main problem from diagnosis to delivery.${resultText}`;
+};
+
+const ensureActionBasedTalentStory = (draft = {}) => {
+  const body = String(draft.talentStory?.body || draft.storyBody || '').trim();
+  const hasConcreteAction = /\b(today|this week|recently|completed|built|created|designed|implemented|launched|solved|fixed|improved|delivered|led|reduced|increased|automated|shipped|earned|achieved|finished|tested|resolved)\b/i.test(body);
+  const soundsGeneric = /\b(i love|i enjoy|passionate about|the best (?:campaigns|projects|work)|i believe|always excited|committed to helping)\b/i.test(body);
+  return body && hasConcreteAction && !soundsGeneric ? body : createActionBasedTalentStory(draft);
+};
+
+const normalizeGeneratedCandidateDraft = (draft = {}, profileImage = null) => ({
+  ...draft,
+  name: String(draft.name || '').trim(),
+  email: String(draft.email || '').trim().toLowerCase(),
+  jobTitle: String(draft.jobTitle || '').trim(),
+  skills: candidateFieldText(draft.skills),
+  education: candidateFieldText(draft.education, '\n'),
+  studies: candidateFieldText(draft.studies || draft.degrees || draft.fieldOfStudy, '\n'),
+  experience: candidateFieldText(draft.experience, '\n'),
+  achievements: candidateFieldText(draft.achievements, '\n'),
+  about: String(draft.about || '').trim(),
+  profileImage: profileImage?.dataUrl || String(draft.profileImage || '').trim(),
+  sourceImageId: profileImage?.id || String(draft.sourceImageId || '').trim(),
+  talentStory: {
+    ...(draft.talentStory && typeof draft.talentStory === 'object' ? draft.talentStory : {}),
+    body: ensureActionBasedTalentStory(draft)
+  }
+});
+
+const createAdminCandidatePrompt = (message, { includePictures = false, profileImages = [] } = {}) => `You are JumpTake Admin AI. Convert the admin request into JSON that drafts candidate user profiles and their talent story posts.
+
+Return only valid JSON with this shape:
+{
+  "reply": "short admin-facing reply",
+  "userDrafts": [
+    {
+      "name": "Full name",
+      "email": "firstname.lastname@example.com",
+      "jobTitle": "Current or target job title",
+      "skills": "Comma separated skills",
+      "education": ["Institution and qualification"],
+      "studies": ["Degree, subject, certification, or focused study"],
+      "experience": ["Role, project, or practical experience"],
+      "achievements": ["A specific completed result or achievement"],
+      "about": "2-3 sentence professional about description for the candidate profile",
+      "sourceImageId": "profile-image-1",
+      "talentStory": {
+        "body": "A specific recent action, solved problem, completed project, or achievement written in the candidate's voice"
+      }
+    }
+  ]
+}
+
+Rules:
+- Fill only fields that can be inferred from the request.
+- If the admin requests a number of profiles, return exactly that many distinct userDrafts.
+- Use realistic, varied, believable names and roles across different industries.
+- Emails must be lowercase with a plausible unique domain and unique per draft.
+- skills is a comma-separated list relevant to the role.
+- Generate believable education, studies, experience, skills, and achievements that form one coherent career background.
+- about is a concise first-person or third-person professional introduction (2-3 sentences), suitable for a profile "About" section.
+- talentStory.body must be a short first-person update about something the candidate did: a project completed today or recently, a problem solved, an improvement delivered, a milestone reached, or an achievement earned.
+- Include a concrete action, the method or skill used, and the outcome. Never write a generic passion statement such as "I love helping ideas reach the right audience" or "the best campaigns tell a strong story".${includePictures ? `
+- ${profileImages.length} profile picture${profileImages.length === 1 ? ' is' : 's are'} attached to this request in this exact order: ${profileImages.map((image) => image.id).join(', ')}.
+- Return one userDraft per attached picture and preserve the matching sourceImageId exactly.
+- Inspect each picture to choose a realistic name that fits its apparent masculine or feminine presentation. Treat that visual impression as uncertain, do not state or store a gender classification, and use a gender-neutral name when presentation is unclear.
+- The server will retain the exact attached picture as profileImage, so do not invent, replace, or describe the image URL.` : ''}
+- Do not include markdown.
+- Do not say the profiles or posts were created. Tell the admin the drafts are ready and they should review each card and click Create Profile and Post Talent Story.
+
+Today is ${new Date().toISOString().slice(0, 10)}.
+Admin request: ${message}`;
+
+const createCandidateBatchPrompt = ({ basePrompt, count, batchNumber, totalBatches }) => `${basePrompt}
+
+Draft batch instruction (mandatory):
+- This is batch ${batchNumber} of ${totalBatches}.
+- Return exactly ${count} distinct userDrafts in the JSON array.
+- Every userDraft must include its talentStory with a body.
+- Do not collapse the drafts into a summary or a single example.
+- Every array item must be a complete, separately editable draft using the schema above.
+- Keep descriptions concise enough to return all ${count} items.
+- The admin will review, edit, and manually create the profiles and posts; do not create anything.`;
+
+const generateAdminCandidateDraftBatches = async ({ message, requestedCount, useWebSearch, includePictures = false, profileImages = [], seedDrafts = [] }) => {
+  const drafts = Array.isArray(seedDrafts) ? seedDrafts.slice(0, requestedCount) : [];
+  const remaining = requestedCount - drafts.length;
+  if (remaining <= 0) {
+    return drafts;
+  }
+
+  const batchSizes = [];
+  for (let left = remaining; left > 0; left -= ADMIN_CANDIDATE_DRAFT_BATCH_SIZE) {
+    batchSizes.push(Math.min(ADMIN_CANDIDATE_DRAFT_BATCH_SIZE, left));
+  }
+
+  let nextStartIndex = drafts.length;
+  const batches = batchSizes.map((count, index) => {
+    const startIndex = nextStartIndex;
+    nextStartIndex += count;
+    return { count, index, startIndex };
+  });
+
+  const results = await Promise.all(batches.map(async ({ count, index, startIndex }) => {
+    try {
+      const batchImages = profileImages.slice(startIndex, startIndex + count);
+      const batchPrompt = createCandidateBatchPrompt({
+        basePrompt: createAdminCandidatePrompt(message, { includePictures, profileImages: batchImages }),
+        count,
+        batchNumber: index + 1,
+        totalBatches: batchSizes.length
+      });
+      const text = await askAdminOpenAI(batchPrompt, { useWebSearch, images: batchImages });
+      const parsed = parseJsonObjectFromText(text) || {};
+      const rows = Array.isArray(parsed.userDrafts) ? parsed.userDrafts : [];
+      return rows.slice(0, count).map((draft, rowIndex) => {
+        const matchedImage = batchImages.find((image) => image.id === draft?.sourceImageId) || batchImages[rowIndex];
+        return normalizeGeneratedCandidateDraft(draft, matchedImage);
+      });
+    } catch (error) {
+      console.warn(`[ADMIN ASSISTANT] candidate draft batch ${index + 1} failed:`, error.message);
+      return [];
+    }
+  }));
+
+  drafts.push(...results.flat());
+
+  for (let retryRound = 1; retryRound <= 3 && drafts.length < requestedCount; retryRound += 1) {
+    const stillMissing = requestedCount - drafts.length;
+    const retryResults = await Promise.all(Array.from(
+      { length: Math.ceil(stillMissing / ADMIN_CANDIDATE_DRAFT_BATCH_SIZE) },
+      async (_, index) => {
+        const count = Math.min(ADMIN_CANDIDATE_DRAFT_BATCH_SIZE, stillMissing - (index * ADMIN_CANDIDATE_DRAFT_BATCH_SIZE));
+        const startIndex = drafts.length + (index * ADMIN_CANDIDATE_DRAFT_BATCH_SIZE);
+        const batchImages = profileImages.slice(startIndex, startIndex + count);
+        const retryPrompt = createCandidateBatchPrompt({
+          basePrompt: createAdminCandidatePrompt(message, { includePictures, profileImages: batchImages }),
+          count,
+          batchNumber: index + 1,
+          totalBatches: Math.ceil(stillMissing / ADMIN_CANDIDATE_DRAFT_BATCH_SIZE)
+        });
+        try {
+          const text = await askAdminOpenAI(`${retryPrompt}\nThis is retry round ${retryRound} for missing drafts. Return the full exact array now.`, { useWebSearch, images: batchImages });
+          const parsed = parseJsonObjectFromText(text) || {};
+          const rows = Array.isArray(parsed.userDrafts) ? parsed.userDrafts : [];
+          return rows.slice(0, count).map((draft, rowIndex) => {
+            const matchedImage = batchImages.find((image) => image.id === draft?.sourceImageId) || batchImages[rowIndex];
+            return normalizeGeneratedCandidateDraft(draft, matchedImage);
+          });
+        } catch (error) {
+          console.warn(`[ADMIN ASSISTANT] candidate retry batch ${index + 1} failed:`, error.message);
           return [];
         }
       }
@@ -1047,6 +1288,43 @@ router.delete('/collections/:collection/:id', async (req, res) => {
   }
 });
 
+router.post('/collections/:collection/bulk-delete', async (req, res) => {
+  try {
+    const { collection } = req.params;
+    const config = getCollectionConfig(collection);
+    const deleteAll = req.body?.deleteAll === true;
+    const requestedIds = Array.isArray(req.body?.ids)
+      ? [...new Set(req.body.ids.map((id) => String(id || '').trim()).filter(mongoose.isValidObjectId))]
+      : [];
+
+    if (!deleteAll && !requestedIds.length) {
+      return res.status(400).json({ error: 'Select at least one record to delete' });
+    }
+
+    const query = {
+      ...(config.baseQuery || {}),
+      ...(!deleteAll ? { _id: { $in: requestedIds } } : {})
+    };
+    const records = await config.model.find(query);
+    if (!records.length) {
+      return res.json({ ok: true, deletedCount: 0, recoverable: true });
+    }
+
+    await DeletedItem.insertMany(records.map((record) => ({
+      itemType: 'record',
+      collection,
+      originalId: String(record._id),
+      label: getDeletedItemLabel(record),
+      data: record.toObject({ depopulate: true })
+    })));
+    const result = await config.model.deleteMany({ _id: { $in: records.map((record) => record._id) } });
+
+    res.json({ ok: true, deletedCount: result.deletedCount || records.length, recoverable: true });
+  } catch (error) {
+    res.status(error.status || 500).json({ error: error.message });
+  }
+});
+
 router.post('/deleted-items/:id/restore', async (req, res) => {
   try {
     const deletedItem = await DeletedItem.findById(req.params.id);
@@ -1185,6 +1463,195 @@ router.post('/feed-posts', async (req, res) => {
   }
 });
 
+const normalizeListField = (value) => {
+  if (Array.isArray(value)) {
+    return value.flatMap((item) => {
+      if (item && typeof item === 'object') {
+        return [candidateFieldText([item], '')];
+      }
+      return String(item || '').split(/[\n,;]+/);
+    }).map((item) => item.trim()).filter(Boolean);
+  }
+  return String(value || '')
+    .split(/[\n,;]+/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+};
+
+const createTemporaryPassword = () => {
+  const chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  return Array.from({ length: 12 }, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
+};
+
+const createUniqueCandidateEmail = async (name, requestedEmail = '') => {
+  let email = String(requestedEmail || '').trim().toLowerCase();
+  if (!email) {
+    const base = String(name)
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '.')
+      .replace(/^[^a-z0-9]+|[^a-z0-9]+$/g, '')
+      || 'candidate';
+    email = `${base}${Math.floor(100 + Math.random() * 900)}@jumptake-demo.com`;
+  }
+
+  for (let attempt = 0; attempt < 30; attempt += 1) {
+    const existing = await User.exists({ email });
+    if (!existing) {
+      return email;
+    }
+    if (/(\d+)@/.test(email)) {
+      email = email.replace(/(\d+)@/, `${Math.floor(100 + Math.random() * 900)}@`);
+    } else {
+      const [localPart, ...domainParts] = email.split('@');
+      email = `${localPart}${Math.floor(100 + Math.random() * 900)}@${domainParts.join('@')}`;
+    }
+  }
+
+  return email;
+};
+
+router.post('/candidates', async (req, res) => {
+  try {
+    const name = String(req.body?.name || '').trim();
+    if (!name) {
+      return res.status(400).json({ error: 'Candidate name is required' });
+    }
+
+    const email = await createUniqueCandidateEmail(name, req.body?.email);
+    const requestedPassword = String(req.body?.password || '').trim();
+    const generatedPassword = requestedPassword ? '' : createTemporaryPassword();
+    const password = requestedPassword || generatedPassword;
+
+    const about = String(req.body?.about || '').trim().slice(0, 5000);
+    const coverImage = String(req.body?.coverImage || '').trim();
+    const profileImage = String(req.body?.profileImage || '').trim();
+    const skills = normalizeListField(req.body?.skills);
+    const jobInterests = normalizeListField(req.body?.jobInterests);
+    const education = normalizeListField(req.body?.education);
+    const degrees = normalizeListField(req.body?.studies || req.body?.degrees);
+    const experience = normalizeListField(req.body?.experience);
+    const achievements = normalizeListField(req.body?.achievements);
+
+    const jumptakeId = await generateJumpTakeId(name);
+    const user = await User.create({ email, password, jumptakeId, jobInterests });
+
+    const jobSeeker = await JobSeeker.create({
+      user: user._id,
+      name,
+      email,
+      coverImage,
+      profileImage,
+      about,
+      resumeText: about,
+      skills,
+      education,
+      degrees,
+      experience,
+      achievements,
+      loginUsername: name.toLowerCase().trim().replace(/\s+/g, '-') || `candidate-${user._id}`
+    });
+
+    user.jobSeekerId = jobSeeker._id;
+    await user.save();
+
+    res.status(201).json({
+      message: 'Candidate user created successfully',
+      generatedPassword: generatedPassword || undefined,
+      user: {
+        id: user._id,
+        email: user.email,
+        jumptakeId: user.jumptakeId,
+        jobSeekerId: user.jobSeekerId
+      },
+      jobSeeker: {
+        id: jobSeeker._id,
+        name: jobSeeker.name,
+        email: jobSeeker.email,
+        coverImage: jobSeeker.coverImage,
+        profileImage: jobSeeker.profileImage,
+        about: jobSeeker.about,
+        education: jobSeeker.education,
+        degrees: jobSeeker.degrees,
+        experience: jobSeeker.experience,
+        skills: jobSeeker.skills,
+        achievements: jobSeeker.achievements
+      }
+    });
+  } catch (error) {
+    res.status(error.status || 500).json({ error: error.message });
+  }
+});
+
+router.post('/talent-stories', async (req, res) => {
+  try {
+    const authorName = String(req.body?.authorName || req.body?.name || '').trim();
+    const body = String(req.body?.body || req.body?.about || '').trim();
+    const authorAvatar = String(req.body?.authorAvatar || req.body?.profileImage || req.body?.coverImage || req.body?.coverPhoto || '').trim();
+    const authorId = String(req.body?.authorId || '').trim();
+
+    if (!authorName && !body && !authorAvatar) {
+      return res.status(400).json({ error: 'Candidate name, story text, or cover photo is required' });
+    }
+
+    const media = req.body?.media && typeof req.body.media === 'object' && String(req.body.media.dataUrl || '').trim()
+      ? {
+          dataUrl: String(req.body.media.dataUrl).trim(),
+          type: req.body.media.type === 'video' ? 'video' : 'image',
+          name: String(req.body.media.name || 'Candidate story attachment').slice(0, 180)
+        }
+      : null;
+
+    const post = await FeedPost.create({
+      type: 'talent-story',
+      body: body.slice(0, 5000),
+      authorId: authorId || `admin-talent-story-${Date.now()}`,
+      authorType: 'candidate',
+      authorName: authorName || 'JumpTake User',
+      authorAvatar,
+      audience: 'everyone',
+      media
+    });
+
+    res.status(201).json({ item: serializeDocument(post) });
+  } catch (error) {
+    res.status(error.status || 400).json({ error: error.message });
+  }
+});
+
+router.delete('/deleted-items/:id/permanent', async (req, res) => {
+  try {
+    const existing = await DeletedItem.findById(req.params.id);
+    if (!existing) {
+      return res.status(404).json({ error: 'Deleted item not found' });
+    }
+
+    await DeletedItem.findByIdAndDelete(req.params.id);
+
+    res.json({ ok: true, permanentlyDeleted: req.params.id });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/deleted-items/bulk-permanent', async (req, res) => {
+  try {
+    const deleteAll = req.body?.deleteAll === true;
+    const requestedIds = Array.isArray(req.body?.ids)
+      ? [...new Set(req.body.ids.map((id) => String(id || '').trim()).filter(mongoose.isValidObjectId))]
+      : [];
+
+    if (!deleteAll && !requestedIds.length) {
+      return res.status(400).json({ error: 'Select at least one deleted item' });
+    }
+
+    const result = await DeletedItem.deleteMany(deleteAll ? {} : { _id: { $in: requestedIds } });
+    res.json({ ok: true, permanentlyDeletedCount: result.deletedCount || 0 });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.post('/assistant', async (req, res) => {
   try {
     const message = String(req.body?.message || '').trim();
@@ -1198,36 +1665,79 @@ router.post('/assistant', async (req, res) => {
       jobForm: req.body?.jobForm || {}
     });
     const companyForm = req.body?.companyForm || {};
+    const uploadedProfileImages = normalizeAdminProfileImages(req.body?.profileImages);
     const lowerMessage = message.toLowerCase();
     const wantsCompanyInfo = /\b(company|business|employer|website|industry|founded|address|headquarters|details|profile)\b/.test(lowerMessage);
     const wantsWebJobs = /\b(latest|recent|web|online|search|find|collect|gradcracker|rate\s*my\s*placement|ratemyplacement|linkedin)\b/.test(lowerMessage)
       && /\b(job|jobs|role|roles|placement|graduate|internship)\b/.test(lowerMessage);
     const wantsJobDrafts = /\b(job|jobs|role|roles|position|positions|vacancy|vacancies|placement|graduate|internship)\b/.test(lowerMessage)
       && /\b(draft|drafts|post|posts|create|creates|creation|creations|make|generate|generation|prepare|fill|collect|find)\b/.test(lowerMessage);
-    const wantsGenericPostDrafts = !wantsJobDrafts
+    const wantsCandidateDrafts = !wantsJobDrafts
+      && (uploadedProfileImages.length > 0 || /\b(candidate|candidates|users?|user profiles?|job seekers?|talent profiles?|talent stories?|people|profiles? of users?|draft profiles?|talent members?)\b/.test(lowerMessage))
+      && /\b(draft|drafts|create|creates|creation|creations|make|generate|generation|prepare|collect)\b/.test(lowerMessage)
+      && /\b(profile|profiles|user|users|candidate|candidates|talent story|talent stories|story|stories|post|posts)\b/.test(lowerMessage);
+    const wantsCandidateProfilePictures = wantsCandidateDrafts
+      && (uploadedProfileImages.length > 0 || !/\b(without|no)\s+(?:profile\s+)?(?:pictures?|photos?|images?|headshots?)\b/.test(lowerMessage));
+    const wantsGenericPostDrafts = !wantsJobDrafts && !wantsCandidateDrafts
       && /\b(post drafts?|post creations?|social posts?|feed posts?|posts?|stories?)\b/.test(lowerMessage)
       && /\b(draft|drafts|create|creates|creation|creations|make|generate|generation|prepare|fill)\b/.test(lowerMessage);
     const wantsWorkNewsDrafts = (wantsGenericPostDrafts || /\b(work\s*news|company updates?|linkedin updates?|feed posts?|company posts?|news posts?)\b/.test(lowerMessage))
       && /\b(draft|drafts|post|posts|create|make|generate|from web|live web|latest|recent|search|find|collect|linkedin|companies?)\b/.test(lowerMessage);
     const requestedJobDraftCount = getRequestedDraftCount(message, wantsJobDrafts || wantsWebJobs);
     const requestedWorkNewsDraftCount = getRequestedDraftCount(message, wantsWorkNewsDrafts);
-    const hasMissingCompanyDetails = !companyForm.industry || !companyForm.headquarters || !companyForm.website || !companyForm.founded || !companyForm.description;
-    const useWebSearch = process.env.OPENAI_ENABLE_WEB_SEARCH !== 'false' && (wantsWebJobs || wantsWorkNewsDrafts || (wantsCompanyInfo && hasMissingCompanyDetails));
-    const initialDraftKind = requestedJobDraftCount ? 'job' : requestedWorkNewsDraftCount ? 'work-news' : '';
-    const initialDraftCount = requestedJobDraftCount || requestedWorkNewsDraftCount;
-    const initialPrompt = initialDraftKind
-      ? createDraftBatchPrompt({
-        basePrompt: prompt,
-        kind: initialDraftKind,
-        count: Math.min(ADMIN_ASSISTANT_DRAFT_BATCH_SIZE, initialDraftCount),
-        batchNumber: 1,
-        totalBatches: Math.ceil(initialDraftCount / ADMIN_ASSISTANT_DRAFT_BATCH_SIZE)
+    const requestedCandidateDraftCount = wantsCandidateDrafts
+      ? Math.max(getRequestedDraftCount(message, true), uploadedProfileImages.length)
+      : 0;
+    const randomProfileImageCount = wantsCandidateProfilePictures
+      ? Math.max(0, requestedCandidateDraftCount - uploadedProfileImages.length)
+      : 0;
+    const candidateProfileImages = [
+      ...uploadedProfileImages,
+      ...createRandomAdminProfileImages(randomProfileImageCount)
+    ];
+    const initialCandidateImages = candidateProfileImages.slice(0, Math.min(ADMIN_CANDIDATE_DRAFT_BATCH_SIZE, requestedCandidateDraftCount));
+    const candidatePrompt = wantsCandidateDrafts
+      ? createAdminCandidatePrompt(message, {
+        includePictures: wantsCandidateProfilePictures,
+        profileImages: initialCandidateImages
       })
       : prompt;
-    let aiText = await askAdminOpenAI(initialPrompt, { useWebSearch });
+    const hasMissingCompanyDetails = !companyForm.industry || !companyForm.headquarters || !companyForm.website || !companyForm.founded || !companyForm.description;
+    const useWebSearch = process.env.OPENAI_ENABLE_WEB_SEARCH !== 'false'
+      && (wantsWebJobs || wantsWorkNewsDrafts || (!wantsCandidateDrafts && wantsCompanyInfo && hasMissingCompanyDetails));
+    const initialDraftKind = requestedCandidateDraftCount ? 'candidate' : requestedJobDraftCount ? 'job' : requestedWorkNewsDraftCount ? 'work-news' : '';
+    const initialDraftCount = requestedCandidateDraftCount || requestedJobDraftCount || requestedWorkNewsDraftCount;
+    const initialPrompt = initialDraftKind === 'candidate'
+      ? createCandidateBatchPrompt({
+        basePrompt: candidatePrompt,
+        count: Math.min(ADMIN_CANDIDATE_DRAFT_BATCH_SIZE, requestedCandidateDraftCount),
+        batchNumber: 1,
+        totalBatches: Math.ceil(requestedCandidateDraftCount / ADMIN_CANDIDATE_DRAFT_BATCH_SIZE)
+      })
+      : initialDraftKind
+        ? createDraftBatchPrompt({
+          basePrompt: prompt,
+          kind: initialDraftKind,
+          count: Math.min(ADMIN_ASSISTANT_DRAFT_BATCH_SIZE, initialDraftCount),
+          batchNumber: 1,
+          totalBatches: Math.ceil(initialDraftCount / ADMIN_ASSISTANT_DRAFT_BATCH_SIZE)
+        })
+        : prompt;
+    let aiText = await askAdminOpenAI(initialPrompt, {
+      useWebSearch,
+      images: initialDraftKind === 'candidate' ? initialCandidateImages : []
+    });
     let parsed = parseJsonObjectFromText(aiText) || createFallbackAdminAssistantPlan(message);
     let jobDrafts = Array.isArray(parsed.jobDrafts) ? parsed.jobDrafts.slice(0, requestedJobDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS) : [];
     let workNewsDrafts = Array.isArray(parsed.workNewsDrafts) ? parsed.workNewsDrafts.slice(0, requestedWorkNewsDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS) : [];
+    let userDrafts = Array.isArray(parsed.userDrafts)
+      ? parsed.userDrafts
+        .slice(0, requestedCandidateDraftCount || ADMIN_CANDIDATE_DRAFT_BATCH_SIZE)
+        .map((draft, index) => {
+          const matchedImage = initialCandidateImages.find((image) => image.id === draft?.sourceImageId) || initialCandidateImages[index];
+          return normalizeGeneratedCandidateDraft(draft, matchedImage);
+        })
+      : [];
 
     if (requestedJobDraftCount > 1 && !jobDrafts.length && parsed.jobForm && Object.keys(parsed.jobForm).length) {
       jobDrafts = [parsed.jobForm];
@@ -1284,6 +1794,17 @@ Strict retry:
       });
     }
 
+    if (requestedCandidateDraftCount > userDrafts.length) {
+      userDrafts = await generateAdminCandidateDraftBatches({
+        message,
+        requestedCount: requestedCandidateDraftCount,
+        useWebSearch,
+        includePictures: wantsCandidateProfilePictures,
+        profileImages: candidateProfileImages,
+        seedDrafts: userDrafts
+      });
+    }
+
     if (wantsWebJobs && !jobDrafts.length && looksLikeWebJobRefusal(`${parsed.reply || ''} ${aiText || ''}`)) {
       parsed.reply = 'Web search did not return usable job drafts. Check that the OpenAI account has web search access, then try the request again.';
     }
@@ -1293,16 +1814,19 @@ Strict retry:
     }
 
     res.json({
-      reply: requestedJobDraftCount
-        ? `${jobDrafts.length} job draft${jobDrafts.length === 1 ? '' : 's'} ready. Review, edit, and post each one when approved.`
-        : requestedWorkNewsDraftCount
-          ? `${workNewsDrafts.length} post draft${workNewsDrafts.length === 1 ? '' : 's'} ready. Review, edit, and post each one when approved.`
-          : String(parsed.reply || 'I filled what I could. Review the form before creating the record.'),
-      action: parsed.action || 'reply',
+      reply: requestedCandidateDraftCount
+        ? `${userDrafts.length} candidate profile draft${userDrafts.length === 1 ? '' : 's'} ready, each with a talent story post. Review, edit, and create each one when approved.`
+        : requestedJobDraftCount
+          ? `${jobDrafts.length} job draft${jobDrafts.length === 1 ? '' : 's'} ready. Review, edit, and post each one when approved.`
+          : requestedWorkNewsDraftCount
+            ? `${workNewsDrafts.length} post draft${workNewsDrafts.length === 1 ? '' : 's'} ready. Review, edit, and post each one when approved.`
+            : String(parsed.reply || 'I filled what I could. Review the form before creating the record.'),
+      action: requestedCandidateDraftCount ? 'draftTalentProfiles' : (parsed.action || 'reply'),
       companyForm: parsed.companyForm && typeof parsed.companyForm === 'object' ? parsed.companyForm : {},
       jobForm: parsed.jobForm && typeof parsed.jobForm === 'object' ? parsed.jobForm : {},
       jobDrafts,
       workNewsDrafts,
+      userDrafts,
       provider: aiText ? (useWebSearch ? 'openai-web' : 'openai') : 'fallback'
     });
   } catch (error) {

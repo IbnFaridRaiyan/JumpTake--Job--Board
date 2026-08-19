@@ -21,6 +21,7 @@ const JOB_REACH_STORAGE_KEY = 'jumptakeJobReachMap';
 const JOB_REACH_VIEWED_STORAGE_PREFIX = 'jumptakeJobReachViewed:';
 const HOME_JOB_LIKE_STORAGE_KEY = 'jumptakeHomeJobLikeMap';
 const HOME_JOB_REVIEW_STORAGE_KEY = 'jumptakeHomeJobReviewMap';
+const EXTERNAL_APPLICATION_PENDING_KEY = 'jumptakePendingExternalApplication';
 const TAILOR_PROFILE_STORAGE_PREFIX = 'jumptakeTailorProfile:';
 const CANDIDATE_PROFILE_RATING_PREFIX = 'jumptakeCandidateProfileRatings:';
 const PROFILE_IMAGE_UPDATED_EVENT = 'jumptake-profile-image-updated';
@@ -1325,6 +1326,12 @@ const PortalHomeFeed = ({
     const [homeJobSearch, setHomeJobSearch] = useState('');
     const [homeJobCountryFilter, setHomeJobCountryFilter] = useState('');
     const [countryMenuOpen, setCountryMenuOpen] = useState(false);
+    const [jobDetailsOpen, setJobDetailsOpen] = useState(false);
+    const [externalApplicationReview, setExternalApplicationReview] = useState(null);
+    const [externalTrackingLink, setExternalTrackingLink] = useState('');
+    const [externalApplicationSaving, setExternalApplicationSaving] = useState(false);
+    const [externalApplicationError, setExternalApplicationError] = useState('');
+    const externalApplicationWasAwayRef = useRef(false);
     const [jobLocationPromptOpen, setJobLocationPromptOpen] = useState(false);
     const [homeJobLocationFilter, setHomeJobLocationFilter] = useState('');
     const [homeJobSalarySort, setHomeJobSalarySort] = useState('');
@@ -3485,6 +3492,7 @@ const PortalHomeFeed = ({
         recordJobReach(job);
         setSelectedJob(job);
         setSelectedJobMode(modalMode);
+        setJobDetailsOpen(false);
         setJobActionMessage('');
     };
 
@@ -3501,6 +3509,7 @@ const PortalHomeFeed = ({
         jobModalCloseTimerRef.current = window.setTimeout(() => {
             setSelectedJob(null);
             setApplicationJob(null);
+            setJobDetailsOpen(false);
             setApplicationMessage('');
             setCoverLetterText('');
             setApplicationCoverLetterUpload(null);
@@ -3781,6 +3790,21 @@ const PortalHomeFeed = ({
         const applicationLink = normalizeExternalUrl(job.applicationLink);
 
         if (applicationLink && typeof window !== 'undefined') {
+            if (hasAppliedToJob(job)) {
+                setJobActionMessage('This role is already saved in My Applications.');
+                return;
+            }
+
+            const pendingApplication = {
+                jobId: String(job._id || job.id || ''),
+                jobNumber: String(job.jobNumber || ''),
+                title: asDisplayText(job.title, 'this role'),
+                companyName: asDisplayText(job.companyName || job.company?.name, 'this company'),
+                applicationLink,
+                clickedAt: Date.now()
+            };
+            sessionStorage.setItem(EXTERNAL_APPLICATION_PENDING_KEY, JSON.stringify(pendingApplication));
+            externalApplicationWasAwayRef.current = false;
             window.open(applicationLink, '_blank', 'noopener,noreferrer');
             return;
         }
@@ -3809,6 +3833,125 @@ const PortalHomeFeed = ({
         setApplicationProfile(createApplicationProfileDraft(profileData, currentUser));
         setApplicationResumeUpload(null);
         setJobActionMessage('');
+    };
+
+    useEffect(() => {
+        if (typeof window === 'undefined' || mode !== 'candidate') {
+            return undefined;
+        }
+
+        const markAway = () => {
+            externalApplicationWasAwayRef.current = true;
+        };
+        const showReturnPrompt = () => {
+            if (document.visibilityState === 'hidden' || externalApplicationReview) {
+                return;
+            }
+
+            const storedValue = sessionStorage.getItem(EXTERNAL_APPLICATION_PENDING_KEY);
+            if (!storedValue) {
+                return;
+            }
+
+            try {
+                const pendingApplication = JSON.parse(storedValue);
+                const hasBeenAway = externalApplicationWasAwayRef.current
+                    || Date.now() - Number(pendingApplication.clickedAt || 0) > 1500;
+                if (!hasBeenAway) {
+                    return;
+                }
+
+                sessionStorage.removeItem(EXTERNAL_APPLICATION_PENDING_KEY);
+                setExternalTrackingLink('');
+                setExternalApplicationError('');
+                setExternalApplicationReview({ ...pendingApplication, step: 'confirm' });
+            } catch (error) {
+                sessionStorage.removeItem(EXTERNAL_APPLICATION_PENDING_KEY);
+            }
+        };
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'hidden') {
+                markAway();
+            } else {
+                window.setTimeout(showReturnPrompt, 220);
+            }
+        };
+
+        window.addEventListener('blur', markAway);
+        window.addEventListener('focus', showReturnPrompt);
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        const initialPromptTimer = window.setTimeout(showReturnPrompt, 250);
+
+        return () => {
+            window.clearTimeout(initialPromptTimer);
+            window.removeEventListener('blur', markAway);
+            window.removeEventListener('focus', showReturnPrompt);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, [externalApplicationReview, mode]);
+
+    const closeExternalApplicationReview = () => {
+        setExternalApplicationReview(null);
+        setExternalTrackingLink('');
+        setExternalApplicationError('');
+        setExternalApplicationSaving(false);
+        externalApplicationWasAwayRef.current = false;
+    };
+
+    const saveExternalApplication = async () => {
+        if (!externalApplicationReview?.jobId || externalApplicationSaving) {
+            return;
+        }
+
+        const trackingLink = normalizeExternalUrl(externalTrackingLink);
+        if (!trackingLink) {
+            setExternalApplicationError('Paste a valid http or https application portal link.');
+            return;
+        }
+
+        const userId = currentUser?.id || currentUser?._id || currentUser?.userId;
+        if (!userId) {
+            setExternalApplicationError('Please log in again before saving this application.');
+            return;
+        }
+
+        setExternalApplicationSaving(true);
+        setExternalApplicationError('');
+        try {
+            const token = localStorage.getItem('token') || '';
+            const response = await fetch(apiUrl('/api/applications'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { Authorization: `Bearer ${token}` } : {})
+                },
+                body: JSON.stringify({
+                    jobId: externalApplicationReview.jobId,
+                    userId,
+                    message: 'Application recorded after applying through an external portal.',
+                    applicationMethod: 'external',
+                    externalApplicationLink: trackingLink,
+                    sourceApplicationLink: externalApplicationReview.applicationLink
+                })
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(data.error || data.message || 'Could not save this external application.');
+            }
+
+            setAppliedHomeJobIds((current) => [...new Set([
+                ...current,
+                externalApplicationReview.jobId,
+                externalApplicationReview.jobNumber
+            ].filter(Boolean))]);
+            setJobActionMessage('External application saved to My Applications.');
+            closeExternalApplicationReview();
+            onRefresh?.();
+        } catch (error) {
+            setExternalApplicationError(error.message || 'Could not save this external application.');
+        } finally {
+            setExternalApplicationSaving(false);
+        }
     };
 
     const openDraftApplicationWorkspace = async (draftId) => {
@@ -6509,7 +6652,13 @@ const PortalHomeFeed = ({
                                     {homeJobCountryFilter ? 'change country' : 'select country'}
                                 </button>
                                 {countryMenuOpen && (
-                                    <div className="portal-job-country-menu" role="menu">
+                                    <div
+                                        className="portal-job-country-menu"
+                                        role="menu"
+                                        onWheel={(event) => event.stopPropagation()}
+                                        onTouchStart={(event) => event.stopPropagation()}
+                                        onTouchMove={(event) => event.stopPropagation()}
+                                    >
                                         {availableHomeJobCountries.length ? availableHomeJobCountries.map((country) => (
                                             <button
                                                 key={country}
@@ -6935,7 +7084,7 @@ const PortalHomeFeed = ({
             const candidateJobSkills = normalizeTextList(selectedJob.skills);
             const hasExternalApplication = Boolean(normalizeExternalUrl(selectedJob.applicationLink));
             const candidateJobSaved = bookmarkedHomeJobIds.includes(candidateJobId);
-            const candidateJobApplied = !hasExternalApplication && hasAppliedToJob(selectedJob);
+            const candidateJobApplied = hasAppliedToJob(selectedJob);
             const candidateModalMarkup = (
                 <div
                     className={`jt-job-modal-backdrop portal-public-job-modal-backdrop ${closingJobModal ? 'is-closing' : ''}`}
@@ -6971,6 +7120,17 @@ const PortalHomeFeed = ({
                             <span><PublicJobModalIcon name="briefcase" />{selectedJob.jobType || 'Job type not set'}</span>
                             <span><PublicJobModalIcon name="salary" />{formatSalary(selectedJob.salary)}</span>
                         </div>
+                        {applicationJob ? (
+                            <div className="portal-job-view-details-row">
+                                <button
+                                    type="button"
+                                    className="portal-job-view-details-button"
+                                    onClick={() => setJobDetailsOpen(true)}
+                                >
+                                    View details
+                                </button>
+                            </div>
+                        ) : null}
                         {applicationJob ? (
                             <div className="portal-public-job-application">
                                 {renderApplicationWorkspace()}
@@ -7024,6 +7184,49 @@ const PortalHomeFeed = ({
                                 </button>
                             </div>
                         )}
+                        {jobDetailsOpen ? (
+                            <div
+                                className="portal-job-details-window-backdrop"
+                                role="presentation"
+                                onClick={() => setJobDetailsOpen(false)}
+                            >
+                                <section
+                                    className="portal-job-details-window"
+                                    role="dialog"
+                                    aria-modal="true"
+                                    aria-label={`${selectedJob.title} requirements`}
+                                    onClick={(event) => event.stopPropagation()}
+                                >
+                                    <button
+                                        type="button"
+                                        className="portal-job-details-window-close"
+                                        onClick={() => setJobDetailsOpen(false)}
+                                        aria-label="Close job requirements"
+                                    >
+                                        &times;
+                                    </button>
+                                    <h3>About the role</h3>
+                                    <p>{asDisplayText(selectedJob.description, 'No description added.')}</p>
+                                    <h3>What you will do</h3>
+                                    {candidateJobResponsibilities.length ? (
+                                        <ul>{candidateJobResponsibilities.map((item, index) => <li key={`${candidateJobId}-detail-responsibility-${index}`}>{item}</li>)}</ul>
+                                    ) : (
+                                        <p>Responsibilities will be shared by the employer.</p>
+                                    )}
+                                    <h3>What you will bring</h3>
+                                    {candidateJobRequirements.length ? (
+                                        <ul>{candidateJobRequirements.map((item, index) => <li key={`${candidateJobId}-detail-requirement-${index}`}>{item}</li>)}</ul>
+                                    ) : (
+                                        <p>Requirements will be shared by the employer.</p>
+                                    )}
+                                    {candidateJobSkills.length ? (
+                                        <div className="jt-job-skills">
+                                            {candidateJobSkills.map((skill, index) => <span key={`${candidateJobId}-detail-skill-${index}`}>{skill}</span>)}
+                                        </div>
+                                    ) : null}
+                                </section>
+                            </div>
+                        ) : null}
                     </section>
                 </div>
             );
@@ -8355,6 +8558,63 @@ const PortalHomeFeed = ({
                 </div>
             </div>
             {renderJobDetailsModal()}
+            {externalApplicationReview && typeof document !== 'undefined' ? createPortal(
+                <div className="external-application-review-backdrop" role="presentation">
+                    <section className="external-application-review" role="dialog" aria-modal="true" aria-label="Confirm external application">
+                        <button
+                            type="button"
+                            className="external-application-review-close"
+                            onClick={closeExternalApplicationReview}
+                            aria-label="Close application confirmation"
+                        >
+                            &times;
+                        </button>
+                        <span className="external-application-review-kicker">Application tracker</span>
+                        {externalApplicationReview.step === 'confirm' ? (
+                            <>
+                                <h2>Have you applied?</h2>
+                                <p>
+                                    Did you apply for <strong>{externalApplicationReview.companyName}</strong>,{' '}
+                                    <strong>{externalApplicationReview.title}</strong>?
+                                </p>
+                                <div className="external-application-review-actions">
+                                    <button type="button" className="secondary" onClick={closeExternalApplicationReview}>No, not yet</button>
+                                    <button
+                                        type="button"
+                                        className="primary"
+                                        onClick={() => setExternalApplicationReview((current) => ({ ...current, step: 'link' }))}
+                                    >
+                                        Yes, I applied
+                                    </button>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <h2>Keep it tracked</h2>
+                                <p>Paste the application or portal link below. JumpTake will save it with this role in My Applications.</p>
+                                <label className="external-application-link-field">
+                                    <span>Application portal link</span>
+                                    <input
+                                        type="url"
+                                        value={externalTrackingLink}
+                                        onChange={(event) => setExternalTrackingLink(event.target.value)}
+                                        placeholder="https://company.example/applications/..."
+                                        autoFocus
+                                    />
+                                </label>
+                                {externalApplicationError ? <p className="external-application-review-error">{externalApplicationError}</p> : null}
+                                <div className="external-application-review-actions">
+                                    <button type="button" className="secondary" onClick={closeExternalApplicationReview} disabled={externalApplicationSaving}>Cancel</button>
+                                    <button type="button" className="primary" onClick={saveExternalApplication} disabled={externalApplicationSaving}>
+                                        {externalApplicationSaving ? 'Saving...' : 'Save application'}
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                    </section>
+                </div>,
+                document.body
+            ) : null}
             {renderJobReviewModal()}
             {renderCreateStoryModal()}
             {renderPostDetailModal()}

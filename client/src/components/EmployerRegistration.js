@@ -9,7 +9,7 @@ import {
 } from '../utils/emailVerification';
 import TermsAgreement from './TermsAgreement';
 
-const EmployerRegistration = ({ companyId, companyName, onComplete }) => {
+const EmployerRegistration = ({ companyId, companyName, onComplete, showHeading = true }) => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -183,7 +183,7 @@ const EmployerRegistration = ({ companyId, companyName, onComplete }) => {
 
     return (
         <div className="registration-form-container">
-            <h3>Create Employer Account for {companyName}</h3>
+            {showHeading ? <h3>Create Employer Account for {companyName}</h3> : null}
             <SocialAuthButtons role="employer" onError={setMessage} />
             
             {!registrationComplete ? (

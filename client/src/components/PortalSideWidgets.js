@@ -1,5 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import AssistantChat from './AssistantChat';
+import defaultJobPostAvatar from './media/default-job-post-avatar.png';
+import defaultProfileFemaleImage from './media/default-profile-female.png';
+import defaultProfileMaleImage from './media/default-profile-male.png';
 import defaultTailorCoverDarkImage from './media/default-tailor-cover-dark.png';
 import defaultTailorCoverLightImage from './media/default-tailor-cover-light.png';
 import portalLogoDark from './media/logo4.png';
@@ -292,11 +295,22 @@ const LastUsedPageWidget = ({ renderSection, previousSection, previousSectionTit
     );
 };
 
-const ProfileWidget = ({ profile = {}, onOpenProfile }) => {
+const getWidgetDefaultProfileImage = (profile = {}, mode = 'candidate') => {
+    if (mode === 'employer') return defaultJobPostAvatar;
+
+    const gender = String(profile.gender || profile.sex || '').trim().toLowerCase();
+    return ['female', 'woman', 'women', 'girl', 'f'].includes(gender)
+        ? defaultProfileFemaleImage
+        : defaultProfileMaleImage;
+};
+
+const ProfileWidget = ({ profile = {}, mode = 'candidate', onOpenProfile }) => {
     const name = profile.name || 'JumpTake User';
     const likes = numberFrom(profile.likes, profile.likesCount, profile.reactionsCount);
     const rating = profile.rating || profile.averageRating || 0;
     const jumptakeId = profile.jumptakeId || '';
+    const defaultProfileImage = getWidgetDefaultProfileImage(profile, mode);
+    const profileImage = String(profile.profileImage || '').trim() || defaultProfileImage;
 
     return (
         <button
@@ -317,11 +331,16 @@ const ProfileWidget = ({ profile = {}, onOpenProfile }) => {
                 />
             )}
             <div className="portal-widget-profile-body">
-                {profile.profileImage ? (
-                    <img className="portal-widget-profile-avatar" src={profile.profileImage} alt="" />
-                ) : (
-                    <span className="portal-widget-profile-avatar">{name.charAt(0).toUpperCase()}</span>
-                )}
+                <img
+                    className="portal-widget-profile-avatar"
+                    src={profileImage}
+                    alt={`${name} profile`}
+                    onError={(event) => {
+                        if (event.currentTarget.getAttribute('src') !== defaultProfileImage) {
+                            event.currentTarget.src = defaultProfileImage;
+                        }
+                    }}
+                />
                 <div className="portal-widget-profile-details-card">
                     <strong className="portal-widget-profile-name">{name}</strong>
                     <span className="portal-widget-profile-id">{jumptakeId ? `@${jumptakeId}` : 'JumpTake member'}</span>
@@ -770,7 +789,7 @@ const PortalSideWidgets = ({
                 <div className="portal-side-logo" aria-label="JumpTake">
                     <img src={theme === 'dark' ? portalLogoDark : portalLogoLight} alt="JumpTake" />
                 </div>
-                <ProfileWidget profile={profile} onOpenProfile={onOpenProfile} />
+                <ProfileWidget profile={profile} mode={mode} onOpenProfile={onOpenProfile} />
                 <section className="portal-widget portal-widget-last-used">
                     <header className="portal-widget-header">
                         <span>Last used page</span>

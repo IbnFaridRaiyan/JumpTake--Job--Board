@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import EmployerRegistration from './EmployerRegistration';
+import logoDark from './media/logo4.png';
+import logoLight from './media/jumptake-logo-9.png';
 
 const Company = () => {
     const [companyName, setCompanyName] = useState('');
@@ -390,9 +392,22 @@ const Company = () => {
                     >
                         &times;
                     </button>
+                    <div className="public-auth-brand-row account-create-brand-row">
+                        <span className="public-auth-brand-mark" aria-label="JumpTake">
+                            <img src={logoDark} className="is-dark-logo" alt="JumpTake" />
+                            <img src={logoLight} className="is-light-logo" alt="JumpTake" />
+                        </span>
+                        <span className="public-auth-brand-status"><i /> Employer account</span>
+                    </div>
+                    <div className="public-auth-title-block account-create-title-block">
+                        <span className="public-auth-eyebrow">Join JumpTake</span>
+                        <h3 className="public-auth-heading">Create your account</h3>
+                        <p>Set up employer access for {companyName || 'your company'}.</p>
+                    </div>
                     <EmployerRegistration
                         companyId={companyId}
                         companyName={companyName}
+                        showHeading={false}
                         onComplete={() => {
                             setShowRegistration(false);
                             navigate('/#login');
@@ -411,6 +426,10 @@ const Company = () => {
         <div className="company-page">
             <div className="company-container">
                 <div className="container-header">
+                    <div className="candidate-entry-brand portal-entry-brand" aria-label="JumpTake">
+                        <img src={logoDark} className="is-dark-logo" alt="JumpTake" />
+                        <img src={logoLight} className="is-light-logo" alt="JumpTake" />
+                    </div>
                     <h1 className="container-title">Employer Portal</h1>
                     <p className="container-subtitle">
                         Employer access to posting jobs and managing applications

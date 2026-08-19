@@ -432,6 +432,23 @@ const MyApplications = forwardRef(({
                         <p><strong>Applied On:</strong> {new Date(selectedApplication.createdAt).toLocaleDateString()}</p>
                     </div>
 
+                    {selectedApplication.applicationMethod === 'external' && selectedApplication.externalApplicationLink ? (
+                        <div className="profile-section external-application-tracking-section">
+                            <h3>External Application Tracking</h3>
+                            <p>
+                                To keep your application live tracked, visit this link:
+                            </p>
+                            <a
+                                href={selectedApplication.externalApplicationLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="external-application-tracking-link"
+                            >
+                                {selectedApplication.externalApplicationLink}
+                            </a>
+                        </div>
+                    ) : null}
+
                     <div className="profile-section">
                         <h3>Application Message</h3>
                         <div className="application-message-preview">

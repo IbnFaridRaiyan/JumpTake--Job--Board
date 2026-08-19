@@ -37,6 +37,21 @@ const ApplicationSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  applicationMethod: {
+    type: String,
+    enum: ['jumptake', 'external'],
+    default: 'jumptake'
+  },
+  externalApplicationLink: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  sourceApplicationLink: {
+    type: String,
+    trim: true,
+    default: ''
+  },
   coverLetterHtml: {
     type: String,
     default: ''

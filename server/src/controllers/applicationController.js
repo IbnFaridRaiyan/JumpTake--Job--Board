@@ -17,6 +17,20 @@ const normalizeString = (value) => {
     return value.trim();
 };
 
+const normalizeHttpUrl = (value) => {
+    const rawValue = normalizeString(value);
+    if (!rawValue) {
+        return '';
+    }
+
+    try {
+        const parsedUrl = new URL(rawValue);
+        return ['http:', 'https:'].includes(parsedUrl.protocol) ? parsedUrl.toString() : '';
+    } catch (error) {
+        return '';
+    }
+};
+
 const normalizeListValue = (value) => {
     if (Array.isArray(value)) {
         return value
@@ -177,7 +191,19 @@ const buildUploadedResume = (resumeInput = null) => {
 
 const createApplication = async (req, res) => {
     try {
-        const { jobId, userId, message, coverLetterHtml, uploadedCoverLetter, profileSnapshot, uploadedResume, draftId } = req.body;
+        const {
+            jobId,
+            userId,
+            message,
+            coverLetterHtml,
+            uploadedCoverLetter,
+            profileSnapshot,
+            uploadedResume,
+            draftId,
+            applicationMethod,
+            externalApplicationLink,
+            sourceApplicationLink
+        } = req.body;
         
         
         if (!jobId || !userId) {
@@ -211,6 +237,12 @@ const createApplication = async (req, res) => {
         }
         
       
+        const isExternalApplication = applicationMethod === 'external';
+        const normalizedExternalLink = normalizeHttpUrl(externalApplicationLink);
+        if (isExternalApplication && !normalizedExternalLink) {
+            return res.status(400).json({ error: 'A valid external application tracking link is required' });
+        }
+
         const application = new Application({
             candidateNumber: await generateUniqueReferenceNumber(Application, 'candidateNumber', 'CAN'),
             job: jobId,
@@ -221,25 +253,30 @@ const createApplication = async (req, res) => {
             uploadedCoverLetter: buildUploadedResume(uploadedCoverLetter),
             profileSnapshot: uploadedResume ? null : buildProfileSnapshot(profileSnapshot, user, baseProfile),
             uploadedResume: buildUploadedResume(uploadedResume),
+            applicationMethod: isExternalApplication ? 'external' : 'jumptake',
+            externalApplicationLink: isExternalApplication ? normalizedExternalLink : '',
+            sourceApplicationLink: isExternalApplication ? normalizeHttpUrl(sourceApplicationLink) : '',
             status: 'Submitted'
         });
         
         await application.save();
 
-        await createNotification({
-            recipientType: 'employer',
-            recipientId: job.company,
-            title: 'New job application',
-            message: `${application.profileSnapshot?.name || user.email} applied for ${job.title}. Open now?`,
-            section: 'manage-jobs',
-            actionLabel: 'Open applicants',
-            payload: {
-                jobId: String(job._id),
-                jobTitle: job.title,
-                applicationId: String(application._id),
-                subSection: 'applicants'
-            }
-        });
+        if (!isExternalApplication) {
+            await createNotification({
+                recipientType: 'employer',
+                recipientId: job.company,
+                title: 'New job application',
+                message: `${application.profileSnapshot?.name || user.email} applied for ${job.title}. Open now?`,
+                section: 'manage-jobs',
+                actionLabel: 'Open applicants',
+                payload: {
+                    jobId: String(job._id),
+                    jobTitle: job.title,
+                    applicationId: String(application._id),
+                    subSection: 'applicants'
+                }
+            });
+        }
 
         if (draftId) {
             await DraftApplication.findOneAndDelete({ _id: draftId, user: userId });

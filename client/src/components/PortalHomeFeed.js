@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { createPortal, flushSync } from 'react-dom';
 import ResumeFilePreview from './ResumeFilePreview';
 import { apiUrl } from '../utils/apiUrl';
 import { loadSavedPosts, savePostToAccount } from '../utils/savedPostsApi';
@@ -46,6 +46,7 @@ const MOBILE_FEED_RELEASE_DRIFT_RATIO = 0.42;
 const MOBILE_FEED_RELEASE_DRIFT_MAX = 54;
 const POST_BODY_PREVIEW_LENGTH = 430;
 const POPUP_CLOSE_ANIMATION_MS = 260;
+const REACTION_PICKER_CLOSE_ANIMATION_MS = 380;
 const OPTION_POINTER_GUARD_MS = 420;
 const COMMENT_ROTATION_INTERVAL_MS = 5000;
 
@@ -1260,6 +1261,7 @@ const PortalHomeFeed = ({
     const [expandedPostBodies, setExpandedPostBodies] = useState({});
     const [expandedPostTags, setExpandedPostTags] = useState({});
     const [openReactionPostId, setOpenReactionPostId] = useState('');
+    const [closingReactionPostId, setClosingReactionPostId] = useState('');
     const [openCommentPostId, setOpenCommentPostId] = useState('');
     const [openSharePostId, setOpenSharePostId] = useState('');
     const [sharePickerAnchor, setSharePickerAnchor] = useState(null);
@@ -1351,6 +1353,7 @@ const PortalHomeFeed = ({
     const tailorProfileImageInputRef = useRef(null);
     const reactionTooltipTimerRef = useRef(null);
     const reactionCloseTimerRef = useRef(null);
+    const reactionPickerCloseTimerRef = useRef(null);
     const reachInsightCloseTimerRef = useRef(null);
     const reactionStatsCloseTimerRef = useRef(null);
     const commentCloseTimerRef = useRef(null);
@@ -1361,9 +1364,28 @@ const PortalHomeFeed = ({
     const postDetailCloseTimerRef = useRef(null);
     const profileDetailCloseTimerRef = useRef(null);
     const optionPointerOpenRef = useRef({ id: '', source: '', at: 0 });
+
+    const closeReactionPicker = useCallback((postKey) => {
+        const targetPostKey = postKey || openReactionPostId;
+        if (!targetPostKey || closingReactionPostId === targetPostKey) {
+            return;
+        }
+
+        if (reactionPickerCloseTimerRef.current) {
+            window.clearTimeout(reactionPickerCloseTimerRef.current);
+        }
+
+        setClosingReactionPostId(targetPostKey);
+        reactionPickerCloseTimerRef.current = window.setTimeout(() => {
+            setOpenReactionPostId((openId) => (openId === targetPostKey ? '' : openId));
+            setClosingReactionPostId((closingId) => (closingId === targetPostKey ? '' : closingId));
+            reactionPickerCloseTimerRef.current = null;
+        }, REACTION_PICKER_CLOSE_ANIMATION_MS);
+    }, [closingReactionPostId, openReactionPostId]);
     const feedScrollTopRef = useRef(0);
     const feedScrollPositionsRef = useRef({});
-    const feedScrollRestoreFrameRef = useRef(null);
+    const feedScrollRestoreFramesRef = useRef([]);
+    const feedScrollRestoringRef = useRef(false);
     const tabsHiddenRef = useRef(false);
     const feedScrollerRef = useRef(null);
     const feedTouchScrollRef = useRef({
@@ -1530,7 +1552,7 @@ const PortalHomeFeed = ({
                 reactionCloseTimerRef.current = null;
             }
 
-            setOpenReactionPostId('');
+            closeReactionPicker(openReactionPostId);
             closeCommentComposer();
             setOpenSharePostId('');
             setSharePickerAnchor(null);
@@ -1551,7 +1573,7 @@ const PortalHomeFeed = ({
             document.removeEventListener('mousedown', closeOpenPostActions);
             document.removeEventListener('touchstart', closeOpenPostActions);
         };
-    }, [openReactionPostId, openCommentPostId, openSharePostId, openJobShareId, openOptionsPostId, openJobOptionsId, openReachInsightPostId]);
+    }, [closeReactionPicker, openReactionPostId, openCommentPostId, openSharePostId, openJobShareId, openOptionsPostId, openJobOptionsId, openReachInsightPostId]);
 
     useEffect(() => {
         if (mode !== 'candidate' || !candidateUserId) {
@@ -2158,7 +2180,7 @@ const PortalHomeFeed = ({
         return true;
     };
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const touchState = feedTouchScrollRef.current;
         touchState.active = false;
         touchState.lastY = 0;
@@ -2176,14 +2198,13 @@ const PortalHomeFeed = ({
             return undefined;
         }
 
-        if (feedScrollRestoreFrameRef.current) {
-            window.cancelAnimationFrame(feedScrollRestoreFrameRef.current);
-        }
+        feedScrollRestoreFramesRef.current.forEach((frameId) => window.cancelAnimationFrame(frameId));
+        feedScrollRestoreFramesRef.current = [];
 
         const scrollKey = `${mode}:${activeTab}`;
         const rememberedTop = feedScrollPositionsRef.current[scrollKey] || 0;
-
-        feedScrollRestoreFrameRef.current = window.requestAnimationFrame(() => {
+        feedScrollRestoringRef.current = true;
+        const applyRememberedPosition = () => {
             const maxScrollTop = Math.max(0, scroller.scrollHeight - scroller.clientHeight);
             const nextScrollTop = Math.max(0, Math.min(maxScrollTop, rememberedTop));
             scroller.scrollTop = nextScrollTop;
@@ -2193,13 +2214,24 @@ const PortalHomeFeed = ({
             tabsHiddenRef.current = shouldHideTabs;
             setTabsHidden(shouldHideTabs);
             setFeedAtTop(nextScrollTop <= 12);
-            feedScrollRestoreFrameRef.current = null;
+        };
+
+        applyRememberedPosition();
+        const firstFrame = window.requestAnimationFrame(() => {
+            applyRememberedPosition();
+            const secondFrame = window.requestAnimationFrame(() => {
+                applyRememberedPosition();
+                feedScrollRestoringRef.current = false;
+                feedScrollRestoreFramesRef.current = [];
+            });
+            feedScrollRestoreFramesRef.current = [secondFrame];
         });
+        feedScrollRestoreFramesRef.current = [firstFrame];
 
         return () => {
-            if (feedScrollRestoreFrameRef.current && typeof window !== 'undefined') {
-                window.cancelAnimationFrame(feedScrollRestoreFrameRef.current);
-                feedScrollRestoreFrameRef.current = null;
+            if (typeof window !== 'undefined') {
+                feedScrollRestoreFramesRef.current.forEach((frameId) => window.cancelAnimationFrame(frameId));
+                feedScrollRestoreFramesRef.current = [];
             }
         };
     }, [activeTab, mode]);
@@ -3810,10 +3842,19 @@ const PortalHomeFeed = ({
                 title: asDisplayText(job.title, 'this role'),
                 companyName: asDisplayText(job.companyName || job.company?.name, 'this company'),
                 applicationLink,
+                promptImmediately: typeof window.matchMedia === 'function'
+                    && window.matchMedia('(max-width: 768px)').matches,
                 clickedAt: Date.now()
             };
             sessionStorage.setItem(EXTERNAL_APPLICATION_PENDING_KEY, JSON.stringify(pendingApplication));
             externalApplicationWasAwayRef.current = false;
+            if (pendingApplication.promptImmediately) {
+                flushSync(() => {
+                    setExternalTrackingLink('');
+                    setExternalApplicationError('');
+                    setExternalApplicationReview({ ...pendingApplication, step: 'confirm' });
+                });
+            }
             window.open(applicationLink, '_blank', 'noopener,noreferrer');
             return;
         }
@@ -3864,7 +3905,8 @@ const PortalHomeFeed = ({
 
             try {
                 const pendingApplication = JSON.parse(storedValue);
-                const hasBeenAway = externalApplicationWasAwayRef.current
+                const hasBeenAway = pendingApplication.promptImmediately === true
+                    || externalApplicationWasAwayRef.current
                     || Date.now() - Number(pendingApplication.clickedAt || 0) > 1500;
                 if (!hasBeenAway) {
                     return;
@@ -3900,6 +3942,9 @@ const PortalHomeFeed = ({
     }, [externalApplicationReview, mode]);
 
     const closeExternalApplicationReview = () => {
+        if (typeof window !== 'undefined') {
+            sessionStorage.removeItem(EXTERNAL_APPLICATION_PENDING_KEY);
+        }
         setExternalApplicationReview(null);
         setExternalTrackingLink('');
         setExternalApplicationError('');
@@ -4070,6 +4115,9 @@ const PortalHomeFeed = ({
         }
         if (reactionCloseTimerRef.current) {
             window.clearTimeout(reactionCloseTimerRef.current);
+        }
+        if (reactionPickerCloseTimerRef.current) {
+            window.clearTimeout(reactionPickerCloseTimerRef.current);
         }
         if (feedDraftTypingTimerRef.current) {
             window.clearTimeout(feedDraftTypingTimerRef.current);
@@ -4566,7 +4614,7 @@ const PortalHomeFeed = ({
                 )));
             }
 
-            setOpenReactionPostId('');
+            closeReactionPicker(postId);
             setAnimatingReactionKey('');
             return;
         }
@@ -4578,7 +4626,7 @@ const PortalHomeFeed = ({
             : false;
 
         if (forceAdd && !isNewReaction) {
-            setOpenReactionPostId('');
+            closeReactionPicker(postId);
             setAnimatingReactionKey('');
             return;
         }
@@ -4611,10 +4659,10 @@ const PortalHomeFeed = ({
             notifyPostActivity(targetPost, 'reaction', { reaction });
         }
         reactionCloseTimerRef.current = window.setTimeout(() => {
-            setOpenReactionPostId('');
+            closeReactionPicker(postId);
             setAnimatingReactionKey('');
             reactionCloseTimerRef.current = null;
-        }, 760);
+        }, 320);
     };
 
     const handleComment = (key, postId, suppliedText = '') => {
@@ -5170,6 +5218,10 @@ const PortalHomeFeed = ({
 
     const handleFeedScroll = useCallback((event) => {
         const nextScrollTop = event.currentTarget.scrollTop;
+        if (feedScrollRestoringRef.current) {
+            feedScrollTopRef.current = nextScrollTop;
+            return;
+        }
         rememberFeedScrollPosition(activeTab, nextScrollTop);
         updateFeedTabsVisibility(nextScrollTop);
         setFeedAtTop(nextScrollTop <= 12);
@@ -5964,6 +6016,7 @@ const PortalHomeFeed = ({
                     const selectedReactions = normalizeViewerReactions(getViewerReaction(post, viewerId));
                     const selectedReaction = selectedReactions[selectedReactions.length - 1] || '';
                     const isReactionMenuOpen = openReactionPostId === postKey;
+                    const isReactionMenuClosing = closingReactionPostId === postKey;
                     const isCommentOpen = openCommentPostId === postKey;
                     const isShareOpen = openSharePostId === postKey;
                     const isOptionsOpen = openOptionsPostId === postKey;
@@ -6124,7 +6177,7 @@ const PortalHomeFeed = ({
                         ) : null}
                         <div className="portal-post-action-cluster">
                             {isReactionMenuOpen && (
-                                <ul className="portal-post-reactions portal-reaction-rail example-1 is-popover" aria-label="Post reactions" onWheelCapture={handleHorizontalRailWheel}>
+                                <ul className={`portal-post-reactions portal-reaction-rail example-1 is-popover ${isReactionMenuClosing ? 'is-closing' : 'is-opening'}`} aria-label="Post reactions" onWheelCapture={handleHorizontalRailWheel}>
                                     {reactionLabels[kind].map((reaction) => {
                                         const isActiveReaction = selectedReactions.includes(reaction);
                                         const isAnimatingReaction = animatingReactionKey === `${postKey}:${reaction}`;
@@ -6152,7 +6205,16 @@ const PortalHomeFeed = ({
                                         type="button"
                                         className={`portal-reaction-trigger ${selectedReaction ? `has-reaction reaction-${selectedReaction.toLowerCase()}` : ''}`}
                                         onClick={() => {
-                                            setOpenReactionPostId((openId) => (openId === postKey ? '' : postKey));
+                                            if (isReactionMenuOpen && !isReactionMenuClosing) {
+                                                closeReactionPicker(postKey);
+                                                return;
+                                            }
+                                            if (reactionPickerCloseTimerRef.current) {
+                                                window.clearTimeout(reactionPickerCloseTimerRef.current);
+                                                reactionPickerCloseTimerRef.current = null;
+                                            }
+                                            setClosingReactionPostId('');
+                                            setOpenReactionPostId(postKey);
                                             closeCommentComposer();
                                             setOpenSharePostId('');
                                             setOpenOptionsPostId('');

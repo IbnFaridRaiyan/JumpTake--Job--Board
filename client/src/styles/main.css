@@ -37269,6 +37269,42 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
   overflow-wrap: anywhere;
 }
 
+.admin-existing-company-logo-editor {
+  display: grid;
+  grid-template-columns: 5.3rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 0.8rem;
+  padding: 0.8rem;
+  border: 1px solid rgba(125, 239, 229, 0.2);
+  border-radius: 0.75rem;
+  background: rgba(7, 34, 31, 0.42);
+}
+
+.admin-existing-company-logo-fields,
+.admin-existing-company-logo-fields label {
+  display: grid;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.admin-existing-company-logo-fields label > span {
+  color: #7df1e8;
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.admin-existing-company-logo-fields input[type="url"] {
+  width: 100%;
+}
+
+.admin-existing-company-logo-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
 .admin-candidate-draft-created {
   border: 1px solid rgba(74, 222, 128, 0.35);
   border-radius: 0.65rem;
@@ -37290,6 +37326,57 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
   min-height: 6.5rem;
 }
 
+.admin-candidate-story-draft {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.9rem;
+  border: 1px solid rgba(125, 239, 229, 0.28);
+  border-radius: 0.75rem;
+  background: rgba(7, 34, 31, 0.58);
+}
+
+.admin-candidate-story-heading,
+.admin-candidate-story-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.admin-candidate-story-heading h4,
+.admin-candidate-story-heading p,
+.admin-candidate-story-actions p {
+  margin: 0;
+}
+
+.admin-candidate-story-heading h4 {
+  margin-top: 0.2rem;
+  font-size: 1rem;
+}
+
+.admin-candidate-story-heading > span {
+  flex: 0 0 auto;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid rgba(125, 239, 229, 0.28);
+  border-radius: 0.5rem;
+  color: #9ff3eb;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.admin-candidate-story-draft textarea {
+  min-height: 8rem;
+}
+
+.admin-candidate-story-actions p {
+  color: rgba(248, 250, 252, 0.68);
+  font-size: 0.8rem;
+}
+
+.admin-candidate-story-actions button {
+  min-width: 10rem;
+}
+
 .admin-create-candidate .admin-company-avatar,
 .admin-create-talent-story .admin-company-avatar {
   width: 7.5rem;
@@ -37307,6 +37394,17 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
 @media (max-width: 720px) {
   .admin-candidate-photos {
     grid-template-columns: 1fr;
+  }
+
+  .admin-candidate-story-heading,
+  .admin-candidate-story-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-candidate-story-heading > span,
+  .admin-candidate-story-actions button {
+    width: 100%;
   }
 }
 
@@ -37542,6 +37640,11 @@ html[data-theme="light"] .home-page .portal-uiverse-sidebar .sidebar__link.is-ac
 
   .admin-record-card dl {
     grid-template-columns: 1fr;
+  }
+
+  .admin-existing-company-logo-editor {
+    grid-template-columns: 1fr;
+    align-items: start;
   }
 
   .admin-floating-assistant {

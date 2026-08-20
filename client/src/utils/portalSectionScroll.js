@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 
 const readDocumentScrollTop = () => {
     if (typeof window === 'undefined' || typeof document === 'undefined') return 0;
@@ -29,6 +29,33 @@ const writeDocumentScrollTop = (scrollTop) => {
 const usePortalSectionScrollIsolation = (activeSection, panelRef) => {
     const sectionPositionsRef = useRef(new Map());
     const restoreFramesRef = useRef([]);
+    const activeSectionRef = useRef(activeSection);
+    const restoringRef = useRef(false);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return undefined;
+
+        const panel = panelRef?.current;
+        const saveActiveSectionPosition = () => {
+            const section = activeSectionRef.current;
+            if (!section || restoringRef.current) return;
+            sectionPositionsRef.current.set(section, {
+                documentTop: readDocumentScrollTop(),
+                panelTop: Number(panel?.scrollTop || 0)
+            });
+        };
+
+        panel?.addEventListener('scroll', saveActiveSectionPosition, { passive: true, capture: true });
+        window.addEventListener('scroll', saveActiveSectionPosition, { passive: true });
+        window.addEventListener('pagehide', saveActiveSectionPosition);
+
+        return () => {
+            saveActiveSectionPosition();
+            panel?.removeEventListener('scroll', saveActiveSectionPosition, true);
+            window.removeEventListener('scroll', saveActiveSectionPosition);
+            window.removeEventListener('pagehide', saveActiveSectionPosition);
+        };
+    }, [panelRef]);
 
     useLayoutEffect(() => {
         if (typeof window === 'undefined' || !activeSection) return undefined;
@@ -37,12 +64,8 @@ const usePortalSectionScrollIsolation = (activeSection, panelRef) => {
             restoreFramesRef.current.forEach((frameId) => window.cancelAnimationFrame(frameId));
             restoreFramesRef.current = [];
         };
-        const saveSectionPosition = () => {
-            sectionPositionsRef.current.set(activeSection, {
-                documentTop: readDocumentScrollTop(),
-                panelTop: Number(panelRef?.current?.scrollTop || 0)
-            });
-        };
+        activeSectionRef.current = activeSection;
+        restoringRef.current = true;
         const restorePosition = sectionPositionsRef.current.get(activeSection) || {
             documentTop: 0,
             panelTop: 0
@@ -57,16 +80,17 @@ const usePortalSectionScrollIsolation = (activeSection, panelRef) => {
         clearRestoreFrames();
         applyPosition();
         const firstFrame = window.requestAnimationFrame(() => {
-            const secondFrame = window.requestAnimationFrame(applyPosition);
+            applyPosition();
+            const secondFrame = window.requestAnimationFrame(() => {
+                applyPosition();
+                restoringRef.current = false;
+            });
             restoreFramesRef.current = [secondFrame];
         });
         restoreFramesRef.current = [firstFrame];
-        window.addEventListener('pagehide', saveSectionPosition);
 
         return () => {
-            saveSectionPosition();
             clearRestoreFrames();
-            window.removeEventListener('pagehide', saveSectionPosition);
         };
     }, [activeSection, panelRef]);
 };

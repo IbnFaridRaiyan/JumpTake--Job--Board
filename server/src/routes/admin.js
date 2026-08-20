@@ -24,6 +24,28 @@ const JobInvitation = require('../models/JobInvitation');
 const MessageThread = require('../models/MessageThread');
 const Notification = require('../models/Notification');
 const TalentBookmark = require('../models/TalentBookmark');
+const {
+  fetchGreenhouseCandidates,
+  fetchJSearchCandidates,
+  isLikelyGenericJobLandingUrl: isVerifiedGenericJobUrl,
+  isRecognizedRoleDetailUrl,
+  isRoleSpecificApplicationUrl,
+  normalizeHttpUrl: normalizeVerifiedJobUrl,
+  verifyLiveJobDrafts: verifyLiveJobDraftsAtSource
+} = require('../services/liveJobVerifier');
+const { resolveCompanyLogo, resolvePostMedia } = require('../services/webMediaResolver');
+const {
+  addIdentityKeys,
+  candidateIdentityKeys,
+  companyIdentityKeys,
+  feedPostIdentityKeys,
+  filterUniqueDrafts,
+  jobIdentityKeys,
+  profileImageIdentity
+} = require('../services/adminDraftDedup');
+const { detectAdminAssistantIntent } = require('../services/adminAssistantIntent');
+const { getRequestedDraftCount } = require('../services/adminDraftCount');
+const { isSpecificWorkNewsSourceUrl } = require('../services/adminWorkNewsSource');
 
 const router = express.Router();
 
@@ -50,7 +72,7 @@ const COLLECTIONS = {
     label: 'Companies',
     model: Company,
     searchFields: ['name', 'jumptakeId', 'adminCompanyId', 'industry', 'headquarters', 'description', 'website'],
-    summaryFields: ['name', 'jumptakeId', 'adminCompanyId', 'industry', 'headquarters', 'website', 'createdAt']
+    summaryFields: ['name', 'jumptakeId', 'adminCompanyId', 'industry', 'headquarters', 'website', 'logo', 'createdAt']
   },
   jobs: {
     label: 'Job Posts',
@@ -254,6 +276,15 @@ const getSort = (model) => {
 };
 
 const normalizeAdminCompanyId = (value) => String(value || '').trim();
+const escapeRegularExpression = (value = '') => String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const findIdentityCollision = (rows, draft, identityKeyFactory) => {
+  const incomingKeys = new Set(identityKeyFactory(draft));
+  if (!incomingKeys.size) return null;
+  return (Array.isArray(rows) ? rows : []).find((row) => (
+    identityKeyFactory(row).some((key) => incomingKeys.has(key))
+  )) || null;
+};
 
 const createCompanyNameFromAdminId = (adminCompanyId) => {
   const cleaned = normalizeAdminCompanyId(adminCompanyId);
@@ -271,6 +302,20 @@ const resolveAdminJobCompany = async (companyValue, fallbackName = '') => {
     const error = new Error('Company ID is required');
     error.status = 400;
     throw error;
+  }
+
+  const requestedCompanyName = String(fallbackName || '').trim();
+  if (requestedCompanyName) {
+    const existingByName = await Company.findOne({
+      name: new RegExp(`^${escapeRegularExpression(requestedCompanyName)}$`, 'i')
+    });
+    if (existingByName) {
+      await ensureCompanyJumpTakeId(existingByName);
+      return {
+        company: existingByName,
+        adminCompanyId: existingByName.adminCompanyId || requestedCompanyId
+      };
+    }
   }
 
   if (mongoose.Types.ObjectId.isValid(requestedCompanyId)) {
@@ -326,6 +371,44 @@ const getOpenAIApiKey = () => (
   || process.env.OPENAI_KEY
   || ''
 ).trim();
+
+let adminOpenAIBackoffUntil = 0;
+let adminOpenAILastError = null;
+const OPENAI_PROVIDER_BACKOFF_MS = Math.max(
+  10000,
+  Number(process.env.OPENAI_PROVIDER_BACKOFF_MS) || 30000
+);
+const getOpenAIErrorMessage = (error) => String(
+  error?.response?.data?.error?.message || error?.message || ''
+);
+const isOpenAIQuotaError = (error) => (
+  /insufficient_quota|no credits remaining|add credits|billing quota|billing limit/i.test(getOpenAIErrorMessage(error))
+  || String(error?.response?.data?.error?.code || '').toLowerCase() === 'insufficient_quota'
+);
+
+const createAdminOpenAIProviderError = (cause = adminOpenAILastError) => {
+  const quotaError = isOpenAIQuotaError(cause);
+  const error = new Error(quotaError
+    ? 'OpenAI could not generate these drafts because this API project has no credits remaining. Add credits in OpenAI billing, then retry. No drafts were created.'
+    : 'OpenAI could not generate these drafts right now. Check the server API key and OpenAI service access, then retry. No drafts were created.');
+  error.status = quotaError ? 402 : 503;
+  error.code = quotaError ? 'OPENAI_CREDITS_REQUIRED' : 'OPENAI_UNAVAILABLE';
+  return error;
+};
+
+const assertExactAdminDraftCounts = (groups = []) => {
+  const incomplete = groups.filter(({ requested, actual }) => (
+    Number(requested) > 0 && Number(actual) !== Number(requested)
+  ));
+  if (!incomplete.length) return;
+
+  const error = new Error(`The exact draft request could not be completed: ${incomplete
+    .map(({ label, actual, requested }) => `${label} ${actual}/${requested}`)
+    .join(', ')}. No partial draft set was returned. Try again or broaden strict source filters.`);
+  error.status = 422;
+  error.code = 'EXACT_DRAFT_COUNT_INCOMPLETE';
+  throw error;
+};
 
 const getOpenAIModelCandidates = () => {
   const configured = String(process.env.OPENAI_MODEL || '').trim();
@@ -400,13 +483,24 @@ const createChatInput = (prompt, images = []) => {
   ];
 };
 
-const askAdminOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = false, images = [] }) => {
+const askAdminOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = false, images = [], responseSchema = null }) => {
   try {
     const payload = {
       model,
       input: createResponsesInput(prompt, images),
       max_output_tokens: 5500
     };
+
+    if (responseSchema?.name && responseSchema?.schema) {
+      payload.text = {
+        format: {
+          type: 'json_schema',
+          name: responseSchema.name,
+          strict: true,
+          schema: responseSchema.schema
+        }
+      };
+    }
 
     if (useWebSearch) {
       payload.tools = [{ type: 'web_search', external_web_access: true }];
@@ -442,6 +536,16 @@ const askAdminOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = f
         tool_choice: 'required',
         include: ['web_search_call.action.sources']
       };
+      if (responseSchema?.name && responseSchema?.schema) {
+        legacyPayload.text = {
+          format: {
+            type: 'json_schema',
+            name: responseSchema.name,
+            strict: true,
+            schema: responseSchema.schema
+          }
+        };
+      }
 
       try {
         const legacyResponse = await axios.post(
@@ -470,7 +574,7 @@ const askAdminOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = f
 
     const shouldRetryWithoutSearch = useWebSearch && /web_search|tool|unsupported|invalid/i.test(message);
     if (shouldRetryWithoutSearch) {
-      return askAdminOpenAIChatSearch({ apiKey, prompt });
+      return askAdminOpenAIChatSearch({ apiKey, prompt, responseSchema });
     }
 
     const shouldTryChat = /responses|output_text|max_output_tokens|unknown|not found|unsupported|model/i.test(message);
@@ -479,14 +583,25 @@ const askAdminOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = f
     }
   }
 
+  const chatPayload = {
+    model,
+    temperature: 0.25,
+    max_tokens: 5500,
+    messages: [{ role: 'user', content: createChatInput(prompt, images) }]
+  };
+  if (responseSchema?.name && responseSchema?.schema) {
+    chatPayload.response_format = {
+      type: 'json_schema',
+      json_schema: {
+        name: responseSchema.name,
+        strict: true,
+        schema: responseSchema.schema
+      }
+    };
+  }
   const chatResponse = await axios.post(
     'https://api.openai.com/v1/chat/completions',
-    {
-      model,
-      temperature: 0.25,
-      max_tokens: 5500,
-      messages: [{ role: 'user', content: createChatInput(prompt, images) }]
-    },
+    chatPayload,
     {
       timeout: 25000,
       headers: {
@@ -499,19 +614,30 @@ const askAdminOpenAIWithModel = async ({ apiKey, model, prompt, useWebSearch = f
   return String(chatResponse.data?.choices?.[0]?.message?.content || '').trim();
 };
 
-const askAdminOpenAIChatSearch = async ({ apiKey, prompt }) => {
+const askAdminOpenAIChatSearch = async ({ apiKey, prompt, responseSchema = null }) => {
   let lastError = null;
 
   for (const model of ['gpt-5-search-api', 'gpt-4o-search-preview', 'gpt-4o-mini-search-preview']) {
     try {
+      const chatPayload = {
+        model,
+        max_tokens: 5500,
+        web_search_options: {},
+        messages: [{ role: 'user', content: prompt }]
+      };
+      if (responseSchema?.name && responseSchema?.schema) {
+        chatPayload.response_format = {
+          type: 'json_schema',
+          json_schema: {
+            name: responseSchema.name,
+            strict: true,
+            schema: responseSchema.schema
+          }
+        };
+      }
       const chatResponse = await axios.post(
         'https://api.openai.com/v1/chat/completions',
-        {
-          model,
-          max_tokens: 5500,
-          web_search_options: {},
-          messages: [{ role: 'user', content: prompt }]
-        },
+        chatPayload,
         {
           timeout: 25000,
           headers: {
@@ -541,23 +667,35 @@ const askAdminOpenAIChatSearch = async ({ apiKey, prompt }) => {
   return '';
 };
 
-const askAdminOpenAI = async (prompt, { useWebSearch = false, images = [] } = {}) => {
+const askAdminOpenAI = async (prompt, { useWebSearch = false, images = [], responseSchema = null } = {}) => {
   const apiKey = getOpenAIApiKey();
   if (!apiKey) {
-    return '';
+    const missingKeyError = new Error('OPENAI_API_KEY is not configured');
+    adminOpenAILastError = missingKeyError;
+    throw createAdminOpenAIProviderError(missingKeyError);
+  }
+  if (Date.now() < adminOpenAIBackoffUntil && adminOpenAILastError) {
+    throw createAdminOpenAIProviderError(adminOpenAILastError);
   }
 
   let lastError = null;
   const modelCandidates = useWebSearch ? getOpenAISearchModelCandidates() : getOpenAIModelCandidates();
   for (const model of modelCandidates) {
     try {
-      const text = await askAdminOpenAIWithModel({ apiKey, model, prompt, useWebSearch, images });
+      const text = await askAdminOpenAIWithModel({ apiKey, model, prompt, useWebSearch, images, responseSchema });
       if (text) {
+        adminOpenAIBackoffUntil = 0;
+        adminOpenAILastError = null;
         return text;
       }
     } catch (error) {
       lastError = error;
+      adminOpenAILastError = error;
       console.warn(`[ADMIN ASSISTANT] OpenAI model ${model} failed:`, error.response?.data?.error?.message || error.message);
+      if (isOpenAIQuotaError(error)) {
+        adminOpenAIBackoffUntil = Date.now() + OPENAI_PROVIDER_BACKOFF_MS;
+        break;
+      }
     }
   }
 
@@ -663,24 +801,305 @@ const ADMIN_ASSISTANT_MAX_DRAFTS = Math.max(
   Math.min(Number(process.env.ADMIN_ASSISTANT_MAX_DRAFTS) || 1000, 5000)
 );
 const ADMIN_ASSISTANT_DRAFT_BATCH_SIZE = 10;
+const ADMIN_ASSISTANT_DRAFT_RETRY_ROUNDS = Math.max(
+  4,
+  Math.min(Number(process.env.ADMIN_ASSISTANT_DRAFT_RETRY_ROUNDS) || 8, 16)
+);
+const ADMIN_DEDUPE_PROMPT_LIMIT = 400;
 
-const getRequestedDraftCount = (message, isDraftRequest) => {
-  if (!isDraftRequest) return 0;
-  const text = String(message || '');
-  const quantityNouns = '(?:job\\s+posts?|jobs?|posts?|drafts?|updates?|roles?|stories?|companies|businesses|employers|candidates?|users?|profiles?|items?|creations?)';
-  const explicitPatterns = [
-    /\b(\d{1,5})\s+(?:new\s+|latest\s+|recent\s+)?(?:work\s*news\s+|company\s+|social\s+|feed\s+|job\s+|candidate\s+|user\s+|profile\s+|talent\s+)?(?:post\s+)?(?:drafts?|creations?|items?|posts?|updates?|stories?|jobs?|companies|businesses|employers|candidates?|users?|profiles?)\b/i,
-    /\b(?:make|create|creation|generate|generation|prepare|fill|draft|collect|find)\s+(\d{1,5})\b/i,
-    /\b(\d{1,5})\s+(?:jobs?|posts?|updates?|roles?|stories?|companies|businesses|employers|candidates?|users?|profiles?)\b/i,
-    new RegExp(`\\b(?:make|create|generate|prepare|draft|collect|find)\\b[^\\d]{0,70}\\b(\\d{1,5})\\b`, 'i'),
-    new RegExp(`\\b${quantityNouns}\\b[^\\d]{0,48}\\b(\\d{1,5})\\b`, 'i'),
-    new RegExp(`\\b(\\d{1,5})\\b[^\\d]{0,48}\\b${quantityNouns}\\b`, 'i')
-  ];
-  const explicit = explicitPatterns.map((pattern) => text.match(pattern)).find(Boolean);
-  if (explicit?.[1]) {
-    return Math.min(ADMIN_ASSISTANT_MAX_DRAFTS, Math.max(1, Number(explicit[1])));
+const workNewsDraftIdentityKeys = (draft = {}) => feedPostIdentityKeys({
+  ...draft,
+  type: 'work-news',
+  authorName: draft.authorName || draft.companyName
+});
+
+const talentStoryDraftIdentityKeys = (draft = {}) => candidateIdentityKeys({
+  ...draft,
+  talentStory: draft.talentStory || { body: draft.body }
+});
+
+const createStoredRecordSummary = (kind, row = {}) => {
+  if (kind === 'job') {
+    return {
+      company: row.company?.name || row.companyName || '',
+      title: row.title || '',
+      location: row.location || '',
+      source: row.sourceUrl || row.source || '',
+      applicationLink: row.applicationLink || ''
+    };
   }
-  return /\b(?:drafts|jobs|posts|updates|roles|profiles|companies|businesses|employers|candidates|users|pictures|photos|images)\b/i.test(text) ? 5 : 1;
+  if (kind === 'company') {
+    return {
+      name: row.name || '',
+      jumptakeId: row.jumptakeId || '',
+      website: row.website || '',
+      logo: /^https?:\/\//i.test(String(row.logo || '')) ? row.logo : (row.logo ? '[stored-image]' : '')
+    };
+  }
+  if (kind === 'candidate') {
+    return {
+      name: row.name || row.authorName || '',
+      email: row.email || '',
+      jumptakeId: row.jumptakeId || '',
+      profileImage: /^https?:\/\//i.test(String(row.profileImage || row.authorAvatar || ''))
+        ? (row.profileImage || row.authorAvatar)
+        : ((row.profileImage || row.authorAvatar) ? '[stored-image]' : ''),
+      talentStory: String(row.talentStory?.body || row.body || '').slice(0, 180)
+    };
+  }
+  return {
+    company: row.authorName || row.companyName || '',
+    source: row.source || '',
+    body: String(row.body || '').slice(0, 180)
+  };
+};
+
+const loadAdminDraftExclusions = async ({ jobs = false, companies = false, candidates = false, workNews = false } = {}) => {
+  const [storedJobs, storedCompanies, storedProfiles, storedUsers, storedWorkNews, storedTalentStories] = await Promise.all([
+    jobs
+      ? Job.find({}).select('title company location sourceUrl applicationLink').populate('company', 'name').lean()
+      : [],
+    companies
+      ? Company.find({}).select('name jumptakeId adminCompanyId website logo').lean()
+      : [],
+    candidates
+      ? JobSeeker.find({}).select('user name email profileImage').lean()
+      : [],
+    candidates
+      ? User.find({}).select('email jumptakeId jobSeekerId').lean()
+      : [],
+    workNews
+      ? FeedPost.find({ type: 'work-news' }).select('type body authorName authorId source').lean()
+      : [],
+    candidates
+      ? FeedPost.find({ type: 'talent-story' }).select('type body authorName authorId authorAvatar').lean()
+      : []
+  ]);
+
+  const userByProfileId = new Map(storedUsers.map((user) => [String(user.jobSeekerId || ''), user]));
+  const userById = new Map(storedUsers.map((user) => [String(user._id || ''), user]));
+  const candidateRows = storedProfiles.map((profile) => ({
+    ...profile,
+    ...(userByProfileId.get(String(profile._id || '')) || userById.get(String(profile.user || '')) || {})
+  }));
+  const candidateStoryRows = storedTalentStories.map((post) => ({
+    name: post.authorName,
+    profileImage: post.authorAvatar,
+    talentStory: { body: post.body }
+  }));
+
+  const jobKeys = new Set();
+  const companyKeys = new Set();
+  const candidateKeys = new Set();
+  const workNewsKeys = new Set();
+  storedJobs.forEach((row) => addIdentityKeys(jobKeys, jobIdentityKeys(row)));
+  storedCompanies.forEach((row) => addIdentityKeys(companyKeys, companyIdentityKeys(row)));
+  candidateRows.forEach((row) => addIdentityKeys(candidateKeys, candidateIdentityKeys(row)));
+  candidateStoryRows.forEach((row) => addIdentityKeys(candidateKeys, candidateIdentityKeys(row)));
+  storedWorkNews.forEach((row) => addIdentityKeys(workNewsKeys, feedPostIdentityKeys(row)));
+
+  return {
+    jobKeys,
+    companyKeys,
+    candidateKeys,
+    workNewsKeys,
+    profileImageKeys: new Set(candidateRows.map((row) => profileImageIdentity(row.profileImage)).filter(Boolean)),
+    promptRecords: [
+      ...storedJobs.slice(-ADMIN_DEDUPE_PROMPT_LIMIT).map((row) => createStoredRecordSummary('job', row)),
+      ...storedCompanies.slice(-ADMIN_DEDUPE_PROMPT_LIMIT).map((row) => createStoredRecordSummary('company', row)),
+      ...candidateRows.slice(-ADMIN_DEDUPE_PROMPT_LIMIT).map((row) => createStoredRecordSummary('candidate', row)),
+      ...storedTalentStories.slice(-ADMIN_DEDUPE_PROMPT_LIMIT).map((row) => createStoredRecordSummary('candidate', row)),
+      ...storedWorkNews.slice(-ADMIN_DEDUPE_PROMPT_LIMIT).map((row) => createStoredRecordSummary('work-news', row))
+    ]
+  };
+};
+
+const addPendingAdminDraftExclusions = (state, pendingDrafts = {}) => {
+  const groups = [
+    { rows: pendingDrafts.jobs, keys: state.jobKeys, factory: jobIdentityKeys, kind: 'job' },
+    { rows: pendingDrafts.companies, keys: state.companyKeys, factory: companyIdentityKeys, kind: 'company' },
+    { rows: pendingDrafts.candidates, keys: state.candidateKeys, factory: talentStoryDraftIdentityKeys, kind: 'candidate' },
+    { rows: pendingDrafts.workNews, keys: state.workNewsKeys, factory: workNewsDraftIdentityKeys, kind: 'work-news' }
+  ];
+
+  groups.forEach(({ rows, keys, factory, kind }) => {
+    (Array.isArray(rows) ? rows : []).slice(0, ADMIN_ASSISTANT_MAX_DRAFTS).forEach((row) => {
+      addIdentityKeys(keys, factory(row));
+      state.promptRecords.push(createStoredRecordSummary(kind, row));
+      if (kind === 'candidate') {
+        const imageKey = profileImageIdentity(row.profileImage);
+        if (imageKey) state.profileImageKeys.add(imageKey);
+      }
+    });
+  });
+
+  state.promptRecords = state.promptRecords.slice(-ADMIN_DEDUPE_PROMPT_LIMIT);
+  return state;
+};
+
+const appendAdminDuplicateExclusions = (prompt, records = []) => `${prompt}
+
+Database uniqueness instruction (mandatory):
+- The records below already exist in JumpTake. Do not return any of them again.
+- For candidate/company profile creation, do not reuse an exact name, profile/company picture, email, website, or JumpTake ID.
+- For posts, an existing author may post again, but do not reuse the same source URL or post body.
+- For jobs, do not reuse an Apply/source URL or the same company/title/location combination.
+- Tracking parameters, punctuation, capitalization, and whitespace do not make a record unique.
+- Generate genuinely different replacements until the requested number of drafts is filled.
+Existing JumpTake records: ${JSON.stringify((Array.isArray(records) ? records : []).slice(-ADMIN_DEDUPE_PROMPT_LIMIT))}`;
+
+const JOB_DRAFTS_RESPONSE_SCHEMA = {
+  name: 'jumptake_job_drafts',
+  schema: {
+    type: 'object',
+    additionalProperties: false,
+    properties: {
+      jobDrafts: {
+        type: 'array',
+        items: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            company: { type: 'string' },
+            companyName: { type: 'string' },
+            title: { type: 'string' },
+            location: { type: 'string' },
+            sector: { type: 'string' },
+            salary: { type: 'string' },
+            applicationLink: { type: 'string' },
+            applicationDeadline: { type: 'string' },
+            jobType: { type: 'string', enum: ['Full-time', 'Part-time', 'Contract', 'Internship', 'Remote'] },
+            skills: { type: 'string' },
+            description: { type: 'string' },
+            requirements: { type: 'string' },
+            responsibilities: { type: 'string' },
+            source: { type: 'string' }
+          },
+          required: [
+            'company', 'companyName', 'title', 'location', 'sector', 'salary',
+            'applicationLink', 'applicationDeadline', 'jobType', 'skills',
+            'description', 'requirements', 'responsibilities', 'source'
+          ]
+        }
+      }
+    },
+    required: ['jobDrafts']
+  }
+};
+
+const discoverOpenAIJobCandidates = async ({
+  message,
+  preferences = {},
+  count = 12,
+  excludedUrls = []
+} = {}) => {
+  if (process.env.OPENAI_JOB_WEB_DISCOVERY === 'false' || !getOpenAIApiKey()) return [];
+  const targetCount = Math.min(20, Math.max(1, Number(count) || 12));
+  const location = String(preferences.location || '').trim() || 'any requested location';
+  const sectors = String(preferences.sectors || '').trim() || 'a varied set of occupations';
+  const prompt = `You are JumpTake's live-job source researcher. Today is ${getTodayIsoDate()}.
+
+Find up to ${targetCount} distinct, currently open jobs for ${sectors} in ${location}. The admin request is: ${JSON.stringify(String(message || '').slice(0, 800))}
+
+Open each result and its Apply/Apply now action before returning it. Return only exact single-role pages with a stable role or requisition ID, never a careers home, search results, category, company-jobs page, or invented URL. Prefer the final employer ATS/application page. applicationLink may equal source only when that exact role page contains an embedded application flow.
+
+Search across a diverse set of live sources, including employer ATS pages and exact roles on Forces Families Jobs, Harri, SaluteMyJob, Yorkshire.com jobs, LinkedIn, Synack/Greenhouse, BlackRock or other tal.net sites, Gradcracker, SuccessFactors, Workday, Greenhouse, Lever, Ashby, Workable, SmartRecruiters, iCIMS, Teamtailor, Recruitee, Indeed, RateMyPlacement, and other reputable role-specific sources.
+
+Recognized examples are shapes only, not jobs to copy:
+- /jobs/<role-slug>/<job-id>
+- /<employer>/job/<job-id>-<role>
+- /jobs/view/<role>-<job-id>
+- /careers/?gh_jid=<job-id>
+- /opp/<requisition-id>-<role>/...
+- /hub/<company-id>/<company>/graduate-job/<job-id>/<role>
+- /career?...career_job_req_id=<requisition-id>&career_ns=job_listing
+- /details/<role>_<requisition-id>, /jobs/<uuid>/apply, or /viewjob?jk=<job-id>
+
+Mandatory checks:
+- The page must return the exact title and company requested in the result.
+- The role must still accept applications now. Reject HTTP 404/410, challenge-only evidence, removed roles, closed applications, expired deadlines, and ambiguous pages.
+- Use a published YYYY-MM-DD deadline only. Leave applicationDeadline empty when the active exact role publishes no closing date; never invent one.
+- source is the canonical exact role page. applicationLink is the final role-specific Apply destination.
+- Do not return these already used URLs: ${JSON.stringify((Array.isArray(excludedUrls) ? excludedUrls : []).slice(-400))}`;
+
+  const responseText = await askAdminOpenAI(prompt, {
+    useWebSearch: true,
+    responseSchema: JOB_DRAFTS_RESPONSE_SCHEMA
+  });
+  const parsed = parseJsonObjectFromText(responseText) || {};
+  return (Array.isArray(parsed.jobDrafts) ? parsed.jobDrafts : [])
+    .map((draft) => ({ ...draft, sourceProvider: 'openai-web' }))
+    .filter((draft) => {
+      const source = normalizeHttpUrl(draft?.source);
+      const applicationLink = normalizeHttpUrl(draft?.applicationLink || source);
+      return source
+        && applicationLink
+        && !isLikelyGenericJobLandingUrl(source)
+        && !isLikelyGenericJobLandingUrl(applicationLink);
+    })
+    .slice(0, targetCount);
+};
+
+const LIVE_JOB_RESOLUTION_RESPONSE_SCHEMA = {
+  name: 'jumptake_live_job_resolution',
+  schema: {
+    type: 'object',
+    additionalProperties: false,
+    properties: {
+      resolvedJobs: {
+        type: 'array',
+        items: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            verificationId: { type: 'string' },
+            pageExists: { type: 'boolean' },
+            exactRolePage: { type: 'boolean' },
+            titleMatches: { type: 'boolean' },
+            companyMatches: { type: 'boolean' },
+            acceptingApplications: { type: 'boolean' },
+            applyActionAvailable: { type: 'boolean' },
+            applyBelongsToRole: { type: 'boolean' },
+            rolePageUrl: { type: 'string' },
+            applyUrl: { type: 'string' },
+            deadlineStatus: { type: 'string', enum: ['future', 'today', 'ongoing', 'past', 'unknown'] },
+            applicationDeadline: { type: 'string' },
+            evidence: { type: 'string' }
+          },
+          required: [
+            'verificationId', 'pageExists', 'exactRolePage', 'titleMatches',
+            'companyMatches', 'acceptingApplications', 'applyActionAvailable',
+            'applyBelongsToRole', 'rolePageUrl', 'applyUrl', 'deadlineStatus',
+            'applicationDeadline', 'evidence'
+          ]
+        }
+      }
+    },
+    required: ['resolvedJobs']
+  }
+};
+
+const TALENT_STORY_MEDIA_RESPONSE_SCHEMA = {
+  name: 'jumptake_talent_story_media',
+  schema: {
+    type: 'object',
+    additionalProperties: false,
+    properties: {
+      mediaMatches: {
+        type: 'array',
+        items: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            draftId: { type: 'string' },
+            mediaPageUrl: { type: 'string' }
+          },
+          required: ['draftId', 'mediaPageUrl']
+        }
+      }
+    },
+    required: ['mediaMatches']
+  }
 };
 
 const hasVagueWorkNewsLead = (draft = {}) => {
@@ -697,11 +1116,13 @@ const normalizeWorkNewsDraftRows = (rows, count, { requireSource = true } = {}) 
     companyId: String(draft?.companyId || '').trim(),
     companyJumpTakeId: String(draft?.companyJumpTakeId || draft?.jumptakeId || '').trim().replace(/^@/, '').toLowerCase(),
     companyName: String(draft?.companyName || '').trim(),
+    companyWebsite: String(draft?.companyWebsite || '').trim(),
     body: String(draft?.body || '').trim(),
     source: String(draft?.source || '').trim(),
-    sourceTitle: String(draft?.sourceTitle || '').trim()
+    sourceTitle: String(draft?.sourceTitle || '').trim(),
+    publishedAt: String(draft?.publishedAt || '').trim()
   }))
-  .filter((draft) => !hasVagueWorkNewsLead(draft) && (!requireSource || /^https?:\/\//i.test(draft.source)))
+  .filter((draft) => !hasVagueWorkNewsLead(draft) && (!requireSource || isSpecificWorkNewsSourceUrl(draft.source)))
   .slice(0, count);
 
 const normalizeCompanyDraftJumpTakeId = (value = '', name = 'company') => {
@@ -814,68 +1235,106 @@ const attachWorkNewsDraftCompanies = async (drafts) => {
       companyId: String(company._id),
       companyJumpTakeId: company.jumptakeId || '',
       companyName: company.name || draft.companyName,
-      companyLogoUrl: company.logo || draft.companyLogoUrl || ''
+      companyLogoUrl: company.logo || draft.companyLogoUrl || '',
+      companyWebsite: company.website || ''
     };
   });
+};
+
+const mapWithConcurrency = async (rows, concurrency, mapper) => {
+  const values = Array.isArray(rows) ? rows : [];
+  const output = new Array(values.length);
+  let cursor = 0;
+  const workers = Array.from(
+    { length: Math.min(Math.max(1, Number(concurrency) || 1), values.length || 1) },
+    async () => {
+      while (cursor < values.length) {
+        const index = cursor;
+        cursor += 1;
+        output[index] = await mapper(values[index], index);
+      }
+    }
+  );
+  await Promise.all(workers);
+  return output;
+};
+
+const enrichCompanyDraftLogos = async (drafts = []) => mapWithConcurrency(drafts, 5, async (draft) => {
+  const resolved = await resolveCompanyLogo({
+    websiteUrl: draft.website,
+    logoUrl: draft.logo
+  });
+  return {
+    ...draft,
+    website: resolved.resolvedWebsiteUrl || draft.website,
+    logo: resolved.logoUrl || '',
+    logoVerified: Boolean(resolved.logoUrl)
+  };
+});
+
+const WORK_NEWS_MAX_SOURCE_AGE_DAYS = Math.max(
+  30,
+  Math.min(730, Number(process.env.WORK_NEWS_MAX_SOURCE_AGE_DAYS) || 365)
+);
+
+const isCurrentWorkNewsPublication = (value = '') => {
+  if (!value) return true;
+  const publishedTime = Date.parse(value);
+  if (!Number.isFinite(publishedTime)) return false;
+  const now = Date.now();
+  const oneDayMs = 24 * 60 * 60 * 1000;
+  return publishedTime <= now + oneDayMs
+    && publishedTime >= now - WORK_NEWS_MAX_SOURCE_AGE_DAYS * oneDayMs;
+};
+
+const enrichWorkNewsDraftMedia = async (drafts = [], companyDrafts = []) => {
+  const pendingCompaniesByName = new Map(companyDrafts.map((company) => [
+    String(company.name || '').trim().toLowerCase(),
+    company
+  ]));
+  const pendingCompaniesByJumpTakeId = new Map(companyDrafts.map((company) => [
+    String(company.jumptakeId || '').trim().toLowerCase(),
+    company
+  ]));
+
+  return mapWithConcurrency(drafts, 5, async (draft) => {
+    const pendingCompany = pendingCompaniesByJumpTakeId.get(String(draft.companyJumpTakeId || '').trim().toLowerCase())
+      || pendingCompaniesByName.get(String(draft.companyName || '').trim().toLowerCase());
+    const media = await resolvePostMedia({
+      sourceUrl: draft.source,
+      mediaUrl: draft.mediaUrl
+    });
+    if (draft.source && !media.sourceVerified) return null;
+    if (!isCurrentWorkNewsPublication(media.publishedAt)) return null;
+
+    let companyLogoUrl = pendingCompany?.logo || draft.companyLogoUrl || '';
+    const alreadyVerified = Boolean(pendingCompany?.logoVerified && pendingCompany.logo === companyLogoUrl);
+    if (!alreadyVerified) {
+      const companyLogo = await resolveCompanyLogo({
+        websiteUrl: pendingCompany?.website || draft.companyWebsite || '',
+        logoUrl: companyLogoUrl
+      });
+      companyLogoUrl = companyLogo.logoUrl || '';
+    }
+
+    return {
+      ...draft,
+      companyLogoUrl,
+      source: media.resolvedSourceUrl || draft.source,
+      sourceTitle: media.sourceTitle || draft.sourceTitle || '',
+      publishedAt: media.publishedAt || '',
+      sourceVerifiedAt: media.sourceVerified ? new Date().toISOString() : '',
+      mediaUrl: media.mediaUrl || '',
+      mediaType: media.mediaType || 'image'
+    };
+  }).then((rows) => rows.filter(Boolean));
 };
 
 const LIVE_JOB_VERIFICATION_BATCH_SIZE = 8;
 const LIVE_JOB_VERIFICATION_MAX_AGE_MS = 12 * 60 * 60 * 1000;
 
-const normalizeHttpUrl = (value = '') => {
-  try {
-    const url = new URL(String(value || '').trim());
-    if (!['http:', 'https:'].includes(url.protocol)) return '';
-    url.hash = '';
-    return url.toString();
-  } catch (error) {
-    return '';
-  }
-};
-
-const ROLE_SPECIFIC_QUERY_KEYS = new Set([
-  'gh_jid', 'jobid', 'job_id', 'job', 'jid', 'jk', 'postingid',
-  'posting_id', 'requisitionid', 'requisition_id', 'reqid', 'req_id', 'vacancyid'
-]);
-
-const isLikelyGenericJobLandingUrl = (value = '') => {
-  const normalized = normalizeHttpUrl(value);
-  if (!normalized) return true;
-
-  const url = new URL(normalized);
-  const hasRoleSpecificQuery = [...url.searchParams.keys()]
-    .some((key) => ROLE_SPECIFIC_QUERY_KEYS.has(String(key).toLowerCase()));
-  if (hasRoleSpecificQuery) return false;
-
-  let decodedPath = url.pathname || '/';
-  try {
-    decodedPath = decodeURIComponent(decodedPath);
-  } catch (error) {
-    // Keep the encoded path; malformed escapes should not crash a draft batch.
-  }
-  const path = decodedPath.replace(/\/+$/, '').toLowerCase();
-  const segments = path.split('/').filter(Boolean);
-  const withoutLocale = segments.filter((segment, index) => !(
-    index === 0 && /^[a-z]{2}(?:-[a-z]{2})?$/.test(segment)
-  ));
-  const genericPath = withoutLocale.join('/');
-
-  if (!genericPath) return true;
-  if (/^(?:careers?|jobs?|vacancies|opportunities|open-roles?|positions|join-us|work-with-us|job-search|search)(?:\/(?:search|all|openings|jobs|roles|positions))?$/.test(genericPath)) {
-    return true;
-  }
-  if (/(?:^|\/)(?:job-search|jobs-search|search-jobs|search|all-jobs|job-listings|open-positions|open-roles)$/.test(genericPath)) {
-    return true;
-  }
-
-  const host = url.hostname.toLowerCase();
-  if (host === 'jobs.lever.co' && withoutLocale.length < 2) return true;
-  if (host === 'boards.greenhouse.io' && withoutLocale.length < 3) return true;
-  if (host === 'jobs.smartrecruiters.com' && withoutLocale.length < 2) return true;
-  if (host === 'apply.workable.com' && !withoutLocale.includes('j')) return true;
-
-  return false;
-};
+const normalizeHttpUrl = (value = '') => normalizeVerifiedJobUrl(value);
+const isLikelyGenericJobLandingUrl = (value = '') => isVerifiedGenericJobUrl(value);
 
 const normalizeApplicationDeadline = (value = '') => {
   const raw = String(value || '').trim();
@@ -949,123 +1408,168 @@ const normalizeLiveJobDraftRows = (rows, count) => {
     .slice(0, count);
 };
 
-const createLiveJobVerificationPrompt = (drafts) => `You are JumpTake's live-job verifier. Independently verify every candidate job below using web search, its claimed role page, and its claimed application URL.
+const isProtectedJobBoardDraft = (draft = {}) => {
+  try {
+    const host = new URL(normalizeHttpUrl(draft.source || draft.applicationLink)).hostname
+      .toLowerCase()
+      .replace(/^www\./, '');
+    return [
+      'linkedin.com',
+      'gradcracker.com',
+      'tal.net',
+      'successfactors.com',
+      'successfactors.eu'
+    ].some((domain) => host === domain || host.endsWith(`.${domain}`));
+  } catch (error) {
+    return false;
+  }
+};
 
-Today is ${getTodayIsoDate()}.
+const isWebResolutionEligibleFailure = (reason = '', draft = {}) => {
+  const message = String(reason || '');
+  if (/closed|removed|expired|deadline has passed|different role|generic careers|generic job page|multiple jobs|listings\/search page/i.test(message)) {
+    return false;
+  }
+  if (/does not match the requested|title mismatch|company mismatch/i.test(message)) {
+    return isProtectedJobBoardDraft(draft);
+  }
+  return true;
+};
 
-Return only valid JSON in this exact shape:
-{
-  "verifiedJobs": [
-    {
-      "verificationId": "job-1",
-      "pageExists": true,
-      "titleAndCompanyMatch": true,
-      "acceptingApplications": true,
-      "exactRolePage": true,
-      "applyActionAvailable": true,
-      "applyUrlBelongsToRole": true,
-      "rolePageUrl": "https://exact-role-detail-page",
-      "applyUrl": "https://exact-application-or-apply-button-destination",
-      "deadlineStatus": "future" | "today" | "not-published" | "past" | "unknown",
-      "applicationDeadline": "YYYY-MM-DD or empty",
-      "reason": "short factual reason"
-    }
-  ]
-}
-
-Mandatory verification rules:
-- Open and inspect each claimedRolePage and applicationLink. Do not rely only on a search-result snippet.
-- Follow redirects and inspect the final page. pageExists is false for 404/410 pages, removed or deleted listings, "job not found", "no longer available", generic careers home pages, job search/list pages, and redirects that do not show the exact role.
-- titleAndCompanyMatch is true only when the page is for the supplied title and company.
-- exactRolePage is true only when rolePageUrl is the canonical detail page for this one supplied role. A company careers home page, department page, all-jobs page, search page, or filtered results page is never an exact role page.
-- Inspect the exact role page's Apply, Apply now, Submit application, or equivalent action. Return its final navigable destination in applyUrl after following redirects. Do not return a general careers or all-jobs URL.
-- applyActionAvailable and applyUrlBelongsToRole are true only when that Apply action is currently enabled and its destination is specifically tied to the supplied title and company.
-- applyUrl may equal rolePageUrl only if the application form is embedded on that exact role page or the Apply action has no separate navigable URL.
-- acceptingApplications is true only when the page currently presents the role as open and accepting applications. Closed, filled, archived, expired, or unverifiable roles are false.
-- Read the closing/deadline date from the source. Convert a published date to YYYY-MM-DD. Never infer or invent one.
-- Use deadlineStatus not-published when the source has no closing date; that candidate will be excluded because JumpTake requires a published, ongoing deadline for AI-imported jobs.
-- Any deadline before today is past and acceptingApplications must be false.
-- A passing job must have deadlineStatus future or today and a real published applicationDeadline. Never infer or invent a deadline to make a role pass.
-- When access or status is ambiguous, use unknown and acceptingApplications false.
-- Return one result for every supplied verificationId. Never introduce a different job to make a candidate pass.
-
-Candidate jobs:
-${JSON.stringify(drafts.map((draft) => ({
-  verificationId: draft.verificationId,
-  title: draft.title,
-  companyName: draft.companyName,
-  claimedRolePage: draft.source,
-  applicationLink: draft.applicationLink,
-  claimedDeadline: draft.applicationDeadline
-})))}`;
-
-const verifyAdminLiveJobDrafts = async (rows, count) => {
-  const drafts = normalizeLiveJobDraftRows(rows, count);
-  if (!drafts.length || !getOpenAIApiKey() || !getLiveJobVerificationSecret()) return [];
+const resolveProtectedJobBoardDrafts = async (drafts = []) => {
+  const candidates = (Array.isArray(drafts) ? drafts : []).filter((draft) => (
+    draft?.verificationId && isRecognizedRoleDetailUrl(draft.source || draft.applicationLink)
+  ));
+  if (!candidates.length || !getOpenAIApiKey()) return [];
 
   const batches = [];
-  for (let index = 0; index < drafts.length; index += LIVE_JOB_VERIFICATION_BATCH_SIZE) {
-    batches.push(drafts.slice(index, index + LIVE_JOB_VERIFICATION_BATCH_SIZE));
+  for (let index = 0; index < candidates.length; index += LIVE_JOB_VERIFICATION_BATCH_SIZE) {
+    batches.push(candidates.slice(index, index + LIVE_JOB_VERIFICATION_BATCH_SIZE));
   }
 
-  const verifiedBatches = await Promise.all(batches.map(async (batch, batchIndex) => {
+  const resolvedBatches = await Promise.all(batches.map(async (batch) => {
+    const verificationPrompt = `You are JumpTake's protected job-board resolver. Use web search and open every supplied exact role URL. Today is ${getTodayIsoDate()}.
+
+For each candidate, open the individual role page, confirm the exact title and company, and activate or inspect its Apply/Apply now action. Return the canonical URL for this one role and the final role-specific application destination. Prefer the employer's exact ATS/requisition page when the aggregator sends applicants externally.
+
+Strict rules:
+- Search, keyword results, careers home, company jobs, department, category, and all-jobs URLs are invalid.
+- Exact role identity may be an Indeed jk, LinkedIn job ID, Workday details/requisition ID, Amazon job ID, employer vacancy code, UUID, numeric job ID, or other stable role-specific identifier in the URL.
+- Examples of valid shapes include /viewjob?jk=<job-id>, /jobs/view/<role>-<job-id>, /details/<role>_<requisition-id>, /jobs/<job-id>/<role>, /job-detail/<role>/<vacancy-code>, /vacancy/<vacancy-code>, /jobs/<uuid>/apply, /opp/<id>-<role>, /careers/?gh_jid=<id>, and /career?...career_job_req_id=<id>&career_ns=job_listing.
+- applicationLink must be the destination of this role's Apply action. It may equal rolePageUrl only for an embedded application or platform apply flow.
+- Do not turn an inaccessible Apply link into a company careers/search URL.
+- Mark every boolean false when the evidence is ambiguous. Never substitute a different role.
+- Use a published YYYY-MM-DD deadline only. When no closing date is published but the exact role is visibly active and its Apply action works, mark deadlineStatus ongoing and leave applicationDeadline empty. Never invent a deadline.
+
+Candidates:
+${JSON.stringify(batch.map((draft) => ({
+    verificationId: draft.verificationId,
+    title: draft.title,
+    companyName: draft.companyName,
+    rolePageUrl: draft.source,
+    claimedApplyUrl: draft.applicationLink,
+    claimedDeadline: draft.applicationDeadline
+  })))}`;
+
     try {
-      const responseText = await askAdminOpenAI(createLiveJobVerificationPrompt(batch), { useWebSearch: true });
+      const responseText = await askAdminOpenAI(verificationPrompt, {
+        useWebSearch: true,
+        responseSchema: LIVE_JOB_RESOLUTION_RESPONSE_SCHEMA
+      });
       const parsed = parseJsonObjectFromText(responseText) || {};
-      const verificationRows = Array.isArray(parsed.verifiedJobs) ? parsed.verifiedJobs : [];
-      const verificationById = new Map(verificationRows.map((row) => [String(row?.verificationId || ''), row]));
+      const results = Array.isArray(parsed.resolvedJobs) ? parsed.resolvedJobs : [];
+      const byId = new Map(results.map((item) => [String(item?.verificationId || ''), item]));
 
       return batch.map((draft) => {
-        const verification = verificationById.get(draft.verificationId);
-        if (!verification
-          || verification.pageExists !== true
-          || verification.titleAndCompanyMatch !== true
-          || verification.acceptingApplications !== true
-          || verification.exactRolePage !== true
-          || verification.applyActionAvailable !== true
-          || verification.applyUrlBelongsToRole !== true
-          || !['future', 'today'].includes(verification.deadlineStatus)) {
-          return null;
-        }
+        const result = byId.get(String(draft.verificationId));
+        if (!result
+          || result.pageExists !== true
+          || result.exactRolePage !== true
+          || result.titleMatches !== true
+          || result.companyMatches !== true
+          || result.acceptingApplications !== true
+          || result.applyActionAvailable !== true
+          || result.applyBelongsToRole !== true
+          || !['future', 'today', 'ongoing'].includes(result.deadlineStatus)) return null;
 
-        const rolePageUrl = normalizeHttpUrl(verification.rolePageUrl);
-        const applyUrl = normalizeHttpUrl(verification.applyUrl);
+        const rolePageUrl = normalizeHttpUrl(result.rolePageUrl);
+        const applyUrl = normalizeHttpUrl(result.applyUrl);
+        const applicationDeadline = result.deadlineStatus === 'ongoing'
+          ? ''
+          : normalizeApplicationDeadline(result.applicationDeadline);
+        const deadlineIsValid = result.deadlineStatus === 'ongoing'
+          ? !applicationDeadline
+          : Boolean(applicationDeadline && isCurrentApplicationDeadline(applicationDeadline));
         if (!rolePageUrl
           || !applyUrl
           || isLikelyGenericJobLandingUrl(rolePageUrl)
-          || isLikelyGenericJobLandingUrl(applyUrl)) {
-          return null;
-        }
+          || isLikelyGenericJobLandingUrl(applyUrl)
+          || !isRecognizedRoleDetailUrl(rolePageUrl)
+          || !(applyUrl === rolePageUrl || isRoleSpecificApplicationUrl(applyUrl))
+          || !deadlineIsValid) return null;
 
-        const applicationDeadline = normalizeApplicationDeadline(verification.applicationDeadline);
-        if (!applicationDeadline) return null;
-        if (!isCurrentApplicationDeadline(applicationDeadline)) return null;
-
-        const liveVerifiedAt = new Date().toISOString();
         return {
           ...draft,
           source: rolePageUrl,
           applicationLink: applyUrl,
           applicationDeadline,
-          liveVerifiedAt,
-          liveVerificationSourceUrl: rolePageUrl,
-          liveVerificationUrl: applyUrl,
-          liveVerificationNote: String(verification.reason || 'Exact role page and application link are active.').trim(),
-          liveVerificationToken: createLiveJobVerificationToken({
-            url: applyUrl,
-            sourceUrl: rolePageUrl,
-            applicationDeadline,
-            verifiedAt: liveVerifiedAt
-          })
+          verificationNote: String(result.evidence || 'OpenAI web search verified the protected exact role and its Apply destination.').trim()
         };
       }).filter(Boolean);
     } catch (error) {
-      console.warn(`[ADMIN ASSISTANT] Live job verification batch ${batchIndex + 1} failed:`, error.message);
+      console.warn('[ADMIN ASSISTANT] Protected job-board resolution failed:', error.message);
       return [];
     }
   }));
 
-  return verifiedBatches.flat().slice(0, count);
+  return resolvedBatches.flat();
+};
+
+const verifyAdminLiveJobDrafts = async (rows, count) => {
+  const drafts = normalizeLiveJobDraftRows(rows, count);
+  if (!drafts.length || !getLiveJobVerificationSecret()) return [];
+
+  const verification = await verifyLiveJobDraftsAtSource(drafts, {
+    concurrency: LIVE_JOB_VERIFICATION_BATCH_SIZE / 2
+  });
+  verification.rejected.forEach(({ draft, reason }) => {
+    console.warn(`[ADMIN ASSISTANT] Rejected ${draft?.companyName || 'unknown company'} / ${draft?.title || 'unknown role'}: ${reason}`);
+  });
+
+  const protectedFallbackDrafts = await resolveProtectedJobBoardDrafts(
+    verification.rejected
+      .filter(({ reason, draft }) => isWebResolutionEligibleFailure(reason, draft))
+      .map(({ draft }) => draft)
+  );
+  const acceptedDrafts = [...verification.accepted, ...protectedFallbackDrafts]
+    .sort((left, right) => {
+      const leftIndex = Number(String(left.verificationId || '').replace(/\D/g, '')) || 0;
+      const rightIndex = Number(String(right.verificationId || '').replace(/\D/g, '')) || 0;
+      return leftIndex - rightIndex;
+    });
+
+  return acceptedDrafts.map((draft) => {
+    const rolePageUrl = normalizeHttpUrl(draft.source);
+    const applyUrl = normalizeHttpUrl(draft.applicationLink);
+    const applicationDeadline = normalizeApplicationDeadline(draft.applicationDeadline);
+    const liveVerifiedAt = new Date().toISOString();
+    return {
+      ...draft,
+      source: rolePageUrl,
+      applicationLink: applyUrl,
+      applicationDeadline,
+      liveVerifiedAt,
+      liveVerificationSourceUrl: rolePageUrl,
+      liveVerificationUrl: applyUrl,
+      liveVerificationNote: String(draft.verificationNote || 'The server opened the exact role page and its Apply destination.').trim(),
+      liveVerificationToken: createLiveJobVerificationToken({
+        url: applyUrl,
+        sourceUrl: rolePageUrl,
+        applicationDeadline,
+        verifiedAt: liveVerifiedAt
+      })
+    };
+  }).slice(0, count);
 };
 
 const getAdminDraftArrayName = (kind) => (
@@ -1077,17 +1581,38 @@ const createDraftBatchPrompt = ({ basePrompt, kind, count, batchNumber, totalBat
 Draft batch instruction (mandatory):
 - This is batch ${batchNumber} of ${totalBatches}.
 - Return exactly ${count} distinct ${getAdminDraftArrayName(kind)} in the JSON array.
-- Return every other draft array empty.
+- ${kind === 'job' ? 'Return only one top-level property named jobDrafts; Structured Outputs will enforce its fields.' : 'Return every other draft array empty.'}
 - Do not collapse the drafts into jobForm, companyForm, a summary, or a single example.
 - Every array item must be a complete, separately editable draft using the schema above.
 - Keep descriptions concise enough to return all ${count} items.
-- For jobs, honor the requested location and sector/occupation preferences. Include a specific sector in every job draft and keep sector separate from employment type. Open the exact role page and its Apply button; source must be that one role's canonical detail page and applicationLink must be the final role-specific Apply destination, never a careers home, search, department, or all-jobs page.
+- For jobs, honor the requested location and sector/occupation preferences. Include a specific sector in every job draft and keep sector separate from employment type. Open the exact role page and its Apply button; source must be that one role's canonical detail page and applicationLink must be the final role-specific Apply destination, never a careers home, search, department, company-jobs, or all-jobs page. Prefer the employer's exact ATS/application URL over an aggregator whenever the external Apply button exposes it.
+- Valid employer destinations normally contain a stable requisition identity, such as Workday /details/<role>_<id>, Amazon /jobs/<id>/<role>, /job-detail/<role>/<code>, /vacancy/<code>, /job/<numeric-id>/<role>, /jobs/<uuid>/apply, or an application endpoint with a unique job/posting ID.
 - For Work News, describe the concrete event, product, result, programme, milestone, or change reported by the source itself. Never write meta-copy such as "published an update about", "shared a post about", or "ongoing work across".
+- For Work News, open the cited source and return its direct preview image/video URL in mediaUrl when possible. The server will independently inspect the source page and keep only media that resolves as a real image or video.
 - For companies, include a distinct lowercase jumptakeId, profile details, industry, headquarters, website when known, founded year, and a substantive description.
 - The admin will review, edit, and manually publish them; do not publish anything.`;
 
-const generateAdminDraftBatches = async ({ prompt, kind, requestedCount, useWebSearch, seedDrafts = [], workNewsRequireSource = true }) => {
-  const drafts = Array.isArray(seedDrafts) ? seedDrafts.slice(0, requestedCount) : [];
+const generateAdminDraftBatches = async ({
+  prompt,
+  kind,
+  requestedCount,
+  useWebSearch,
+  seedDrafts = [],
+  workNewsRequireSource = true,
+  existingIdentityKeys = new Set()
+}) => {
+  const identityKeyFactory = kind === 'job'
+    ? jobIdentityKeys
+    : kind === 'company'
+      ? companyIdentityKeys
+      : workNewsDraftIdentityKeys;
+  const uniquenessKeys = new Set(existingIdentityKeys || []);
+  const drafts = filterUniqueDrafts(
+    Array.isArray(seedDrafts) ? seedDrafts : [],
+    uniquenessKeys,
+    identityKeyFactory,
+    requestedCount
+  ).rows;
   const remaining = requestedCount - drafts.length;
   if (remaining <= 0) return drafts;
 
@@ -1105,7 +1630,10 @@ const generateAdminDraftBatches = async ({ prompt, kind, requestedCount, useWebS
         batchNumber: index + 1,
         totalBatches: batchSizes.length
       });
-      const text = await askAdminOpenAI(batchPrompt, { useWebSearch });
+      const text = await askAdminOpenAI(batchPrompt, {
+        useWebSearch,
+        responseSchema: kind === 'job' ? JOB_DRAFTS_RESPONSE_SCHEMA : null
+      });
       const parsed = parseJsonObjectFromText(text) || {};
       const rows = parsed[getAdminDraftArrayName(kind)];
       return kind === 'work-news'
@@ -1119,25 +1647,34 @@ const generateAdminDraftBatches = async ({ prompt, kind, requestedCount, useWebS
     }
   }));
 
-  drafts.push(...results.flat());
+  drafts.push(...filterUniqueDrafts(
+    results.flat(),
+    uniquenessKeys,
+    identityKeyFactory,
+    requestedCount - drafts.length
+  ).rows);
 
   // Models occasionally under-fill large JSON arrays. Retry only the missing
   // portion in small batches so an explicit quantity remains authoritative.
-  for (let retryRound = 1; retryRound <= 3 && drafts.length < requestedCount; retryRound += 1) {
+  for (let retryRound = 1; retryRound <= ADMIN_ASSISTANT_DRAFT_RETRY_ROUNDS && drafts.length < requestedCount; retryRound += 1) {
     const stillMissing = requestedCount - drafts.length;
     const retryResults = await Promise.all(Array.from(
       { length: Math.ceil(stillMissing / ADMIN_ASSISTANT_DRAFT_BATCH_SIZE) },
       async (_, index) => {
         const count = Math.min(ADMIN_ASSISTANT_DRAFT_BATCH_SIZE, stillMissing - (index * ADMIN_ASSISTANT_DRAFT_BATCH_SIZE));
         const retryPrompt = createDraftBatchPrompt({
-          basePrompt: prompt,
+          basePrompt: `${prompt}
+Already accepted in this request; do not repeat these either: ${JSON.stringify(drafts.slice(-ADMIN_DEDUPE_PROMPT_LIMIT).map((draft) => createStoredRecordSummary(kind, draft)))}`,
           kind,
           count,
           batchNumber: index + 1,
           totalBatches: Math.ceil(stillMissing / ADMIN_ASSISTANT_DRAFT_BATCH_SIZE)
         });
         try {
-          const text = await askAdminOpenAI(`${retryPrompt}\nThis is retry round ${retryRound} for missing drafts. Return the full exact array now.`, { useWebSearch });
+          const text = await askAdminOpenAI(`${retryPrompt}\nThis is retry round ${retryRound} for missing drafts. Return the full exact array now.`, {
+            useWebSearch,
+            responseSchema: kind === 'job' ? JOB_DRAFTS_RESPONSE_SCHEMA : null
+          });
           const parsed = parseJsonObjectFromText(text) || {};
           const rows = parsed[getAdminDraftArrayName(kind)];
           return kind === 'work-news'
@@ -1149,9 +1686,14 @@ const generateAdminDraftBatches = async ({ prompt, kind, requestedCount, useWebS
           console.warn(`[ADMIN ASSISTANT] ${kind} retry batch ${index + 1} failed:`, error.message);
           return [];
         }
-}
+      }
     ));
-    drafts.push(...retryResults.flat());
+    drafts.push(...filterUniqueDrafts(
+      retryResults.flat(),
+      uniquenessKeys,
+      identityKeyFactory,
+      requestedCount - drafts.length
+    ).rows);
   }
 
   return drafts.slice(0, requestedCount);
@@ -1176,23 +1718,25 @@ const normalizeAdminProfileImages = (images = []) => (Array.isArray(images) ? im
   })
   .filter(Boolean);
 
-const createRandomAdminProfileImages = (count) => {
-  const used = new Set();
-  return Array.from({ length: Math.max(0, count) }, (_, index) => {
-    const presentation = crypto.randomInt(0, 2) === 0 ? 'men' : 'women';
-    let portraitIndex = crypto.randomInt(0, 100);
-    let key = `${presentation}-${portraitIndex}`;
-    for (let attempt = 0; attempt < 100 && used.has(key); attempt += 1) {
-      portraitIndex = (portraitIndex + 1) % 100;
-      key = `${presentation}-${portraitIndex}`;
+const createRandomAdminProfileImages = (count, excludedImageKeys = new Set()) => {
+  const available = [];
+  ['men', 'women'].forEach((presentation) => {
+    for (let portraitIndex = 0; portraitIndex < 100; portraitIndex += 1) {
+      const dataUrl = `https://randomuser.me/api/portraits/${presentation}/${portraitIndex}.jpg`;
+      if (!excludedImageKeys.has(profileImageIdentity(dataUrl))) available.push({ dataUrl });
     }
-    used.add(key);
-    return {
-      id: `random-profile-image-${index + 1}`,
-      name: `Random profile picture ${index + 1}`,
-      dataUrl: `https://randomuser.me/api/portraits/${presentation}/${portraitIndex}.jpg`
-    };
   });
+
+  for (let index = available.length - 1; index > 0; index -= 1) {
+    const swapIndex = crypto.randomInt(0, index + 1);
+    [available[index], available[swapIndex]] = [available[swapIndex], available[index]];
+  }
+
+  return available.slice(0, Math.max(0, count)).map(({ dataUrl }, index) => ({
+    id: `random-profile-image-${Date.now()}-${index + 1}`,
+    name: `Random profile picture ${index + 1}`,
+    dataUrl
+  }));
 };
 
 const candidateFieldText = (value, separator = ', ') => {
@@ -1304,6 +1848,17 @@ const FALLBACK_FEMININE_NAMES = [
   'Niamh Price', 'Aisha Shah', 'Charlotte Evans', 'Ruby Young', 'Ella Ward'
 ];
 
+const createAlphabeticNameMarker = (value) => {
+  let number = Math.max(1, Number(value) || 1);
+  let marker = '';
+  while (number > 0) {
+    number -= 1;
+    marker = String.fromCharCode(65 + (number % 26)) + marker;
+    number = Math.floor(number / 26);
+  }
+  return marker;
+};
+
 const createFallbackCandidateDraft = (index, profileImage = null) => {
   const template = FALLBACK_CANDIDATE_PROFILES[index % FALLBACK_CANDIDATE_PROFILES.length];
   const imageUrl = String(profileImage?.dataUrl || '');
@@ -1313,7 +1868,7 @@ const createFallbackCandidateDraft = (index, profileImage = null) => {
   const names = apparentPresentation === 'feminine' ? FALLBACK_FEMININE_NAMES : FALLBACK_MASCULINE_NAMES;
   const baseName = names[index % names.length] || template[apparentPresentation];
   const cycle = Math.floor(index / names.length);
-  const name = cycle ? `${baseName.split(' ')[0]} ${String.fromCharCode(65 + (cycle % 26))}. ${baseName.split(' ').slice(1).join(' ')}` : baseName;
+  const name = cycle ? `${baseName.split(' ')[0]} ${createAlphabeticNameMarker(cycle)}. ${baseName.split(' ').slice(1).join(' ')}` : baseName;
   const emailName = name.toLowerCase().replace(/[^a-z0-9]+/g, '.').replace(/^\.|\.$/g, '');
 
   return normalizeGeneratedCandidateDraft({
@@ -1329,12 +1884,12 @@ const createFallbackCandidateDraft = (index, profileImage = null) => {
     about: `${name} is a ${template.role.toLowerCase()} focused on practical, measurable improvements. Their background combines ${template.skills.split(',').slice(0, 2).join(' and ')} with clear cross-team communication.`,
     sourceImageId: profileImage?.id || '',
     talentStory: {
-      body: `This week I ${template.project}. I used ${template.skills.split(',').slice(0, 2).join(' and ')} to validate the change and share the result with the wider team.`
+      body: `This week I completed delivery milestone ${index + 1}: I ${template.project}. I used ${template.skills.split(',').slice(0, 2).join(' and ')} to validate the change and share the result with the wider team.`
     }
   }, profileImage);
 };
 
-const createAdminCandidatePrompt = (message, { includePictures = false, profileImages = [] } = {}) => `You are JumpTake Admin AI. Convert the admin request into JSON that drafts candidate user profiles and their talent story posts.
+const createAdminCandidatePrompt = (message, { includePictures = false, profileImages = [], excludedRecords = [] } = {}) => `You are JumpTake Admin AI. Convert the admin request into JSON that drafts candidate user profiles and their talent story posts.
 
 Return only valid JSON with this shape:
 {
@@ -1354,7 +1909,7 @@ Return only valid JSON with this shape:
       "sourceImageId": "profile-image-1",
       "talentStory": {
         "body": "A specific recent action, solved problem, completed project, or achievement written in the candidate's voice",
-        "mediaUrl": "Optional direct image or video URL, otherwise empty",
+        "mediaUrl": "A direct public image/video URL or a public image page that visually matches the achievement, otherwise empty",
         "mediaType": "image or video"
       }
     }
@@ -1371,13 +1926,21 @@ Rules:
 - Generate believable education, studies, experience, skills, and achievements that form one coherent career background.
 - about is a concise first-person or third-person professional introduction (2-3 sentences), suitable for a profile "About" section.
 - talentStory.body must be a short first-person update about something the candidate did: a project completed today or recently, a problem solved, an improvement delivered, a milestone reached, or an achievement earned.
-- Include a concrete action, the method or skill used, and the outcome. Never write a generic passion statement such as "I love helping ideas reach the right audience" or "the best campaigns tell a strong story".${includePictures ? `
+- Include a concrete action, the method or skill used, and the outcome. Never write a generic passion statement such as "I love helping ideas reach the right audience" or "the best campaigns tell a strong story".
+- Use web search to find a professional, visually relevant image for each talentStory. Prefer a royalty-free Unsplash, Pexels, or Pixabay image page, or an official product/project image that clearly matches the work described. Do not reuse the candidate profile portrait, do not use an unrelated company logo, and do not imply that a real person shown in a stock photo is the fictional candidate.
+- Put the direct image URL in talentStory.mediaUrl when available. If search exposes only a public image page, put that page URL there so the server can extract its verified preview image. Never invent an image URL.${includePictures ? `
 - ${profileImages.length} profile picture${profileImages.length === 1 ? ' is' : 's are'} attached to this request in this exact order: ${profileImages.map((image) => image.id).join(', ')}.
 - Return one userDraft per attached picture and preserve the matching sourceImageId exactly.
 - Inspect each picture to choose a realistic name that fits its apparent masculine or feminine presentation. Treat that visual impression as uncertain, do not state or store a gender classification, and use a gender-neutral name when presentation is unclear.
 - The server will retain the exact attached picture as profileImage, so do not invent, replace, or describe the image URL.` : ''}
 - Do not include markdown.
 - Do not say the profiles or posts were created. Tell the admin the drafts are ready and they should review each card and click Create Profile and Post Talent Story.
+
+Database uniqueness instruction (mandatory):
+- Never reuse an exact candidate name, email, JumpTake ID, profile picture, or Talent Story body already in JumpTake.
+- Punctuation, capitalization, whitespace, and image query parameters do not make an item different.
+- Replace every collision with a genuinely new candidate and a genuinely new completed-work story.
+Existing candidate and Talent Story records: ${JSON.stringify((Array.isArray(excludedRecords) ? excludedRecords : []).slice(-ADMIN_DEDUPE_PROMPT_LIMIT))}
 
 Today is ${new Date().toISOString().slice(0, 10)}.
 Admin request: ${message}`;
@@ -1394,138 +1957,231 @@ Draft batch instruction (mandatory):
 - Keep descriptions concise enough to return all ${count} items.
 - The admin will review, edit, and manually create the profiles and posts; do not create anything.`;
 
-const generateAdminCandidateDraftBatches = async ({ message, requestedCount, useWebSearch, includePictures = false, profileImages = [], seedDrafts = [] }) => {
-  const drafts = Array.isArray(seedDrafts) ? seedDrafts.slice(0, requestedCount) : [];
+const generateAdminCandidateDraftBatches = async ({
+  message,
+  requestedCount,
+  useWebSearch,
+  includePictures = false,
+  profileImages = [],
+  seedDrafts = [],
+  existingIdentityKeys = new Set(),
+  excludedRecords = []
+}) => {
+  const uniquenessKeys = new Set(existingIdentityKeys || []);
+  const drafts = filterUniqueDrafts(
+    Array.isArray(seedDrafts) ? seedDrafts : [],
+    uniquenessKeys,
+    talentStoryDraftIdentityKeys,
+    requestedCount
+  ).rows;
   const remaining = requestedCount - drafts.length;
-  if (remaining <= 0) {
-    return drafts;
-  }
+  if (remaining <= 0) return drafts;
 
-  const batchSizes = [];
-  for (let left = remaining; left > 0; left -= ADMIN_CANDIDATE_DRAFT_BATCH_SIZE) {
-    batchSizes.push(Math.min(ADMIN_CANDIDATE_DRAFT_BATCH_SIZE, left));
-  }
-
-  let nextStartIndex = drafts.length;
-  const batches = batchSizes.map((count, index) => {
-    const startIndex = nextStartIndex;
-    nextStartIndex += count;
-    return { count, index, startIndex };
-  });
-
-  const results = await Promise.all(batches.map(async ({ count, index, startIndex }) => {
-    try {
-      const batchImages = profileImages.slice(startIndex, startIndex + count);
-      const batchPrompt = createCandidateBatchPrompt({
-        basePrompt: createAdminCandidatePrompt(message, { includePictures, profileImages: batchImages }),
-        count,
-        batchNumber: index + 1,
-        totalBatches: batchSizes.length
+  const createBatches = (count, availableImages) => {
+    const batches = [];
+    for (let startIndex = 0; startIndex < count; startIndex += ADMIN_CANDIDATE_DRAFT_BATCH_SIZE) {
+      const batchCount = Math.min(ADMIN_CANDIDATE_DRAFT_BATCH_SIZE, count - startIndex);
+      batches.push({
+        count: batchCount,
+        batchImages: availableImages.slice(startIndex, startIndex + batchCount)
       });
-      const text = await askAdminOpenAI(batchPrompt, { useWebSearch, images: batchImages });
-      const parsed = parseJsonObjectFromText(text) || {};
-      const rows = Array.isArray(parsed.userDrafts) ? parsed.userDrafts : [];
-      return rows.slice(0, count).map((draft, rowIndex) => {
-        const matchedImage = batchImages.find((image) => image.id === draft?.sourceImageId) || batchImages[rowIndex];
-        return normalizeGeneratedCandidateDraft(draft, matchedImage);
-      });
-    } catch (error) {
-      console.warn(`[ADMIN ASSISTANT] candidate draft batch ${index + 1} failed:`, error.message);
-      return [];
     }
-  }));
+    return batches;
+  };
 
-  drafts.push(...results.flat());
-
-  for (let retryRound = 1; retryRound <= 3 && drafts.length < requestedCount; retryRound += 1) {
-    const stillMissing = requestedCount - drafts.length;
-    const retryResults = await Promise.all(Array.from(
-      { length: Math.ceil(stillMissing / ADMIN_CANDIDATE_DRAFT_BATCH_SIZE) },
-      async (_, index) => {
-        const count = Math.min(ADMIN_CANDIDATE_DRAFT_BATCH_SIZE, stillMissing - (index * ADMIN_CANDIDATE_DRAFT_BATCH_SIZE));
-        const startIndex = drafts.length + (index * ADMIN_CANDIDATE_DRAFT_BATCH_SIZE);
-        const batchImages = profileImages.slice(startIndex, startIndex + count);
-        const retryPrompt = createCandidateBatchPrompt({
-          basePrompt: createAdminCandidatePrompt(message, { includePictures, profileImages: batchImages }),
-          count,
+  const requestBatches = async (count, retryRound = 0) => {
+    const usedImageIds = new Set(drafts.map((draft) => String(draft.sourceImageId || '')).filter(Boolean));
+    const availableImages = profileImages.filter((image) => !usedImageIds.has(String(image.id || '')));
+    const batches = createBatches(count, availableImages);
+    const results = await Promise.all(batches.map(async ({ count: batchCount, batchImages }, index) => {
+      try {
+        const batchPrompt = createCandidateBatchPrompt({
+          basePrompt: createAdminCandidatePrompt(message, {
+            includePictures,
+            profileImages: batchImages,
+            excludedRecords: [
+              ...excludedRecords,
+              ...drafts.map((draft) => createStoredRecordSummary('candidate', draft))
+            ]
+          }),
+          count: batchCount,
           batchNumber: index + 1,
-          totalBatches: Math.ceil(stillMissing / ADMIN_CANDIDATE_DRAFT_BATCH_SIZE)
+          totalBatches: batches.length
         });
-        try {
-          const text = await askAdminOpenAI(`${retryPrompt}\nThis is retry round ${retryRound} for missing drafts. Return the full exact array now.`, { useWebSearch, images: batchImages });
-          const parsed = parseJsonObjectFromText(text) || {};
-          const rows = Array.isArray(parsed.userDrafts) ? parsed.userDrafts : [];
-          return rows.slice(0, count).map((draft, rowIndex) => {
-            const matchedImage = batchImages.find((image) => image.id === draft?.sourceImageId) || batchImages[rowIndex];
-            return normalizeGeneratedCandidateDraft(draft, matchedImage);
-          });
-        } catch (error) {
-          console.warn(`[ADMIN ASSISTANT] candidate retry batch ${index + 1} failed:`, error.message);
-          return [];
-        }
+        const retryInstruction = retryRound
+          ? `\nThis is retry round ${retryRound}. Earlier collisions were removed, so return genuinely different candidates and stories.`
+          : '';
+        const text = await askAdminOpenAI(`${batchPrompt}${retryInstruction}`, {
+          useWebSearch,
+          images: batchImages
+        });
+        const parsed = parseJsonObjectFromText(text) || {};
+        const rows = Array.isArray(parsed.userDrafts) ? parsed.userDrafts : [];
+        return rows.slice(0, batchCount).map((draft, rowIndex) => {
+          const matchedImage = batchImages.find((image) => image.id === draft?.sourceImageId) || batchImages[rowIndex];
+          return normalizeGeneratedCandidateDraft(draft, matchedImage);
+        });
+      } catch (error) {
+        console.warn(`[ADMIN ASSISTANT] candidate draft batch ${index + 1} failed:`, error.message);
+        return [];
       }
-    ));
-    drafts.push(...retryResults.flat());
+    }));
+    drafts.push(...filterUniqueDrafts(
+      results.flat(),
+      uniquenessKeys,
+      talentStoryDraftIdentityKeys,
+      requestedCount - drafts.length
+    ).rows);
+  };
+
+  await requestBatches(remaining);
+  for (let retryRound = 1; retryRound <= ADMIN_ASSISTANT_DRAFT_RETRY_ROUNDS && drafts.length < requestedCount; retryRound += 1) {
+    await requestBatches(requestedCount - drafts.length, retryRound);
   }
 
-  // Keep the admin's explicit quantity authoritative even if the model
-  // under-fills one of the JSON batches after retries.
-  while (drafts.length < requestedCount) {
-    const index = drafts.length;
-    drafts.push(createFallbackCandidateDraft(index, profileImages[index]));
+  let fallbackIndex = 0;
+  while (drafts.length < requestedCount && fallbackIndex < requestedCount * 100 + 1000) {
+    const usedImageIds = new Set(drafts.map((draft) => String(draft.sourceImageId || '')).filter(Boolean));
+    const profileImage = profileImages.find((image) => !usedImageIds.has(String(image.id || '')));
+    const candidate = createFallbackCandidateDraft(fallbackIndex, profileImage);
+    const uniqueCandidate = filterUniqueDrafts(
+      [candidate],
+      uniquenessKeys,
+      talentStoryDraftIdentityKeys,
+      1
+    ).rows[0];
+    if (uniqueCandidate) drafts.push(uniqueCandidate);
+    fallbackIndex += 1;
   }
 
   return drafts.slice(0, requestedCount);
 };
 
-const LIVE_JOB_REPLENISH_ROUNDS = 3;
+const enrichCandidateTalentStoryMedia = async (drafts = [], { useWebSearch = false } = {}) => {
+  let enriched = await mapWithConcurrency(drafts, 6, async (draft) => {
+    const requestedMediaUrl = String(draft?.talentStory?.mediaUrl || '').trim();
+    if (!requestedMediaUrl) return draft;
+    const media = await resolvePostMedia({ mediaUrl: requestedMediaUrl });
+    return {
+      ...draft,
+      talentStory: {
+        ...draft.talentStory,
+        mediaUrl: media.mediaUrl || '',
+        mediaType: media.mediaType || 'image'
+      }
+    };
+  });
 
-const getLiveJobDraftKey = (draft = {}) => {
-  const sourceUrl = normalizeHttpUrl(draft.applicationLink || draft.source).toLowerCase();
-  if (sourceUrl) return `url:${sourceUrl}`;
-  return `role:${[
-    draft.companyName,
-    draft.title,
-    draft.location
-  ].map((value) => String(value || '').trim().toLowerCase()).join('|')}`;
+  if (!useWebSearch || !getOpenAIApiKey()) return enriched;
+  const missing = enriched
+    .map((draft, index) => ({ draft, index, draftId: `talent-media-${index + 1}` }))
+    .filter(({ draft }) => !draft?.talentStory?.mediaUrl);
+
+  for (let start = 0; start < missing.length; start += 8) {
+    const batch = missing.slice(start, start + 8);
+    const prompt = `You are JumpTake Admin AI's talent-story media researcher. Use web search to find one professional image that visually matches each fictional candidate's completed work or achievement.
+
+Rules:
+- Prefer royalty-free Unsplash, Pexels, or Pixabay image pages, or a public official product/project image.
+- Match the actual activity in the story, such as software testing, dashboard analysis, campaign work, design prototyping, healthcare, hospitality, or logistics.
+- Do not return candidate portraits, headshots, company logos, search-result pages, private URLs, data URLs, or invented URLs.
+- A direct image URL is ideal. A public photo/article page with a valid Open Graph preview image is acceptable.
+- Return an empty mediaPageUrl when no trustworthy match can be found.
+
+Talent stories:
+${JSON.stringify(batch.map(({ draft, draftId }) => ({
+    draftId,
+    role: draft.jobTitle,
+    skills: draft.skills,
+    story: draft.talentStory?.body
+  })))}`;
+
+    try {
+      const responseText = await askAdminOpenAI(prompt, {
+        useWebSearch: true,
+        responseSchema: TALENT_STORY_MEDIA_RESPONSE_SCHEMA
+      });
+      const parsed = parseJsonObjectFromText(responseText) || {};
+      const matches = new Map((Array.isArray(parsed.mediaMatches) ? parsed.mediaMatches : [])
+        .map((item) => [String(item?.draftId || ''), String(item?.mediaPageUrl || '').trim()]));
+      const resolvedBatch = await mapWithConcurrency(batch, 4, async ({ draftId, index }) => {
+        const mediaPageUrl = matches.get(draftId);
+        if (!mediaPageUrl) return null;
+        const media = await resolvePostMedia({ mediaUrl: mediaPageUrl });
+        return media.mediaUrl ? { index, media } : null;
+      });
+      resolvedBatch.filter(Boolean).forEach(({ index, media }) => {
+        enriched[index] = {
+          ...enriched[index],
+          talentStory: {
+            ...enriched[index].talentStory,
+            mediaUrl: media.mediaUrl,
+            mediaType: media.mediaType
+          }
+        };
+      });
+    } catch (error) {
+      console.warn('[ADMIN ASSISTANT] Talent Story media search failed:', error.message);
+    }
+  }
+
+  return enriched;
 };
 
-const collectRequestedVerifiedLiveJobs = async ({ prompt, initialDrafts, requestedCount }) => {
+const getLiveJobReplenishRounds = (targetCount) => Math.min(
+  ADMIN_ASSISTANT_DRAFT_RETRY_ROUNDS,
+  Math.max(4, Math.ceil(Math.max(1, Number(targetCount) || 1) / 20) + 2)
+);
+
+const collectRequestedVerifiedLiveJobs = async ({
+  prompt,
+  initialDrafts,
+  requestedCount,
+  existingIdentityKeys = new Set(),
+  publicJobPreferences = null
+}) => {
   const targetCount = Math.min(ADMIN_ASSISTANT_MAX_DRAFTS, Math.max(1, Number(requestedCount) || 1));
-  const checkedKeys = new Set();
-  const verifiedKeys = new Set();
+  const checkedKeys = new Set(existingIdentityKeys || []);
+  const verifiedKeys = new Set(existingIdentityKeys || []);
   const verifiedDrafts = [];
   let checkedCount = 0;
 
   const verifyCandidates = async (rows) => {
-    const uniqueRows = (Array.isArray(rows) ? rows : []).filter((draft) => {
-      const key = getLiveJobDraftKey(draft);
-      if (!key || checkedKeys.has(key)) return false;
-      checkedKeys.add(key);
-      return true;
-    });
+    const uniqueRows = filterUniqueDrafts(
+      rows,
+      checkedKeys,
+      jobIdentityKeys,
+      Math.min(1000, targetCount * 8)
+    ).rows;
     if (!uniqueRows.length) return 0;
 
-    checkedCount += uniqueRows.length;
-    const verifiedRows = await verifyAdminLiveJobDrafts(uniqueRows, uniqueRows.length);
-    verifiedRows.forEach((draft) => {
-      const key = getLiveJobDraftKey(draft);
-      if (!key || verifiedKeys.has(key) || verifiedDrafts.length >= targetCount) return;
-      verifiedKeys.add(key);
-      verifiedDrafts.push(draft);
-    });
-    return uniqueRows.length;
+    let processedCount = 0;
+    for (let start = 0; start < uniqueRows.length && verifiedDrafts.length < targetCount; start += 12) {
+      const chunk = uniqueRows.slice(start, start + 12);
+      processedCount += chunk.length;
+      checkedCount += chunk.length;
+      const verifiedRows = await verifyAdminLiveJobDrafts(chunk, chunk.length);
+      verifiedRows.forEach((draft) => {
+        const keys = jobIdentityKeys(draft);
+        if (keys.some((key) => verifiedKeys.has(key)) || verifiedDrafts.length >= targetCount) return;
+        addIdentityKeys(verifiedKeys, keys);
+        verifiedDrafts.push(draft);
+      });
+    }
+    return processedCount;
   };
 
   await verifyCandidates(initialDrafts);
 
-  for (let round = 1; round <= LIVE_JOB_REPLENISH_ROUNDS && verifiedDrafts.length < targetCount; round += 1) {
+  const preferences = publicJobPreferences || {};
+  const replenishRounds = getLiveJobReplenishRounds(targetCount);
+  for (let round = 1; round <= replenishRounds && verifiedDrafts.length < targetCount; round += 1) {
     const missingCount = targetCount - verifiedDrafts.length;
-    const searchCount = Math.min(targetCount, Math.max(10, missingCount + Math.ceil(missingCount / 2)));
+    const searchCount = Math.min(targetCount, Math.max(20, missingCount * 2));
     const excludedUrls = [...checkedKeys]
-      .filter((key) => key.startsWith('url:'))
-      .map((key) => key.slice(4))
-      .slice(-200);
+      .filter((key) => key.startsWith('job-url:'))
+      .map((key) => key.slice('job-url:'.length))
+      .slice(-400);
     const supplementPrompt = `${prompt}
 
 Additional verified-job search round ${round}:
@@ -1535,11 +2191,36 @@ Additional verified-job search round ${round}:
 - Open each role, follow its Apply button, and return that final role-specific destination in applicationLink.
 - Do not return any source URL already checked below.
 Already checked URLs: ${JSON.stringify(excludedUrls)}`;
-    const additionalDrafts = await generateAdminDraftBatches({
-      prompt: supplementPrompt,
-      kind: 'job',
-      requestedCount: searchCount,
-      useWebSearch: true
+    const sourceTarget = Math.min(1000, Math.max(100, searchCount * 8));
+    const sourceResults = await Promise.allSettled([
+      fetchGreenhouseCandidates({
+        query: String(preferences.sectors || '').trim(),
+        location: String(preferences.location || '').trim(),
+        count: sourceTarget,
+        excludedUrls
+      }),
+      process.env.RAPIDAPI_KEY
+        ? fetchJSearchCandidates({
+          query: String(preferences.sectors || prompt || 'jobs').trim(),
+          location: String(preferences.location || '').trim(),
+          count: Math.min(100, sourceTarget)
+        })
+        : Promise.resolve([]),
+      discoverOpenAIJobCandidates({
+        message: supplementPrompt,
+        preferences,
+        count: Math.min(20, searchCount),
+        excludedUrls
+      })
+    ]);
+    const additionalDrafts = sourceResults.flatMap((result) => (
+      result.status === 'fulfilled' && Array.isArray(result.value) ? result.value : []
+    ));
+    sourceResults.forEach((result, index) => {
+      if (result.status === 'rejected') {
+        const sourceName = ['Greenhouse', 'JSearch', 'OpenAI web search'][index];
+        console.warn(`[ADMIN ASSISTANT] ${sourceName} replenish round ${round} failed:`, result.reason?.message || result.reason);
+      }
     });
     const checkedThisRound = await verifyCandidates(additionalDrafts);
     if (!checkedThisRound) break;
@@ -1556,7 +2237,7 @@ const createAdminAssistantPrompt = ({ message, companyForm, jobForm, jobDraftPre
 Return only valid JSON with this shape:
 {
   "reply": "short admin-facing reply",
-  "action": "fillCompany" | "fillJob" | "fillBoth" | "draftCompanies" | "draftWorkNews" | "reply",
+  "action": "fillCompany" | "fillJob" | "fillBoth" | "draftCompanies" | "draftWorkNews" | "draftCompaniesAndWorkNews" | "reply",
   "companyForm": {
     "name": "",
     "jumptakeId": "",
@@ -1618,12 +2299,14 @@ Return only valid JSON with this shape:
       "companyId": "existing Mongo company ID when supplied below",
       "companyJumpTakeId": "existing company JumpTake ID",
       "companyName": "",
+      "companyWebsite": "official company website",
       "companyLogoUrl": "",
       "body": "",
       "mediaUrl": "",
       "mediaType": "image",
       "source": "",
-      "sourceTitle": ""
+      "sourceTitle": "",
+      "publishedAt": "YYYY-MM-DD when the source publishes a date"
     }
   ]
 }
@@ -1631,21 +2314,27 @@ Return only valid JSON with this shape:
 Rules:
 - Fill only fields that can be inferred from the request.
 - If the admin asks for multiple company profiles/users/drafts, return companyDrafts instead of one companyForm. Return exactly the requested number when possible.
+- A request can ask for companyDrafts and workNewsDrafts together. In that case return both arrays with the requested quantity in each; never reinterpret company users as candidate users.
+- When Work News belongs to companies created in the same request, use the exact company name and company JumpTake ID from companyDrafts in the matching workNewsDraft. Create one sourced update per company before creating a second update for any company.
 - Every companyDraft requires a distinct readable lowercase jumptakeId made from its company name plus four digits, for example northstar-labs-4821. Do not use @, spaces, or underscores.
 - Give every company a complete, specific profile with industry, headquarters, founded year, description, and website when it is a real company. Do not copy one generic description across the drafts.
+- For every real companyDraft, use the company's official public website and put its official logo image URL in logo when one is discoverable. Never use an unrelated stock image, generated avatar, or another company's mark. The server will independently verify and replace this value from the official site.
 - If the admin asks to post/create a job, fill jobForm. If they provide a company ID such as ez1231231, put it in jobForm.company.
 - If the admin asks for multiple/latest/web jobs, return jobDrafts instead of one jobForm.
 - For requests like "post 10 latest jobs from the web", use web search and collect exactly the requested number when possible, otherwise as many reliable current jobs as you can find.
-- Only draft jobs whose exact source page is live today, currently accepting applications, and publishes a closing deadline that is today or in the future. Exclude roles with no published deadline as well as expired, closed, filled, archived, removed, missing, or unverifiable listings.
+- Only draft jobs whose exact source page is live today and currently accepting applications. A published closing deadline must be today or later; an active role with no published closing date is allowed only when its Apply action is visibly available and verified. Exclude expired, closed, filled, archived, removed, missing, or unverifiable listings.
 - When web/latest jobs are requested, you have access to web search through the API tool. Do not claim you cannot browse, cannot access live web jobs, or need a browsing-enabled feed.
-- Search sources such as Gradcracker, RateMyPlacement, LinkedIn, company career systems, and other reliable job sites, but open the individual role result before returning it.
+- Search sources such as Indeed, Gradcracker, RateMyPlacement, LinkedIn, company career systems, and other reliable job sites, but open the individual role result before returning it.
 - source must be the canonical detail page for exactly that title and company. Never use a careers homepage, employer job board, department page, all-jobs page, search page, filtered results URL, or bare domain.
 - On the exact role page, inspect and follow the Apply, Apply now, Submit application, or equivalent button. applicationLink must be that final role-specific destination after redirects. It may equal source only when the application form is embedded on the exact role page or the Apply action has no separate URL.
+- Recognise exact aggregator detail URLs by their role identity: Indeed /viewjob?jk=<job-id>, LinkedIn /jobs/view/<role-slug>-<job-id>, Gradcracker /hub/<employer-id>/<employer>/<job-type>/<job-id>/<role>, and RateMyPlacement/Higherin /jobs/<job-id>/<company>/<role>. Their search, company jobs, and listing URLs are invalid.
+- Recognise exact employer/ATS URLs by a stable requisition identity: Workday /details/<role>_<id>, Amazon /jobs/<id>/<role>, /job-detail/<role>/<code>, /vacancy/<code>, /job/<numeric-id>/<role>, /jobs/<uuid>/apply, or an application endpoint containing a unique job/posting ID. Discover and verify equivalent exact-role patterns from other employers rather than limiting searches to these examples.
+- When an aggregator's Apply action leaves that site, use the final employer ATS page for this exact requisition. Do not shorten it to the ATS home, employer careers page, or keyword search URL.
 - Reject any result when the exact role page or its Apply action cannot be opened and verified. Never substitute the company's general careers page.
 - For every jobDraft include title, companyName, location, sector, applicationLink/source URL, applicationDeadline, jobType, description, requirements, responsibilities, skills, and salary if available.
 - Treat sector as a free-form occupation or industry category, not an employment arrangement. It may be Technology, Health, Medical, Business, Economics, Supply Chain, Hospitality, Barista, Coffee Maker, Restaurant Work, Pharmacy, Computer Science, or any other role/sector requested by the admin.
 - Apply Job draft preferences to every generated job unless the admin message gives a more specific instruction. When sectors says "all", create a genuinely varied set across the widest practical range of occupations rather than mostly technology roles.
-- Read applicationDeadline from the exact role source and return it as YYYY-MM-DD. Only include roles with a published deadline that is today or later. Never estimate or invent a deadline.
+- Read applicationDeadline from the exact role source and return it as YYYY-MM-DD. If the active role genuinely publishes no closing date, leave applicationDeadline blank. Never estimate or invent a deadline.
 - jobDraft.company should be a stable admin company ID based on the company name, lowercase words joined with hyphens, unless the prompt provides a specific company ID.
 - Put the exact canonical role-detail URL in source and the final URL behind that role's Apply action in applicationLink.
 - Do not say the jobs were posted. Tell the admin the drafts are ready and they can review individual cards, use Post Job, or use Post All.
@@ -1655,12 +2344,16 @@ Rules:
 - For requests like "post on work news make 10 drafts from the live web", use web search and collect exactly the requested number when possible, otherwise as many reliable current company updates as you can find.
 - Search LinkedIn public results, company newsrooms, company blogs, official social posts, and reliable business news pages. Prefer original company pages when LinkedIn is unavailable.
 - Live-web workNewsDrafts must include companyName, source URL, sourceTitle when available, and a concise JumpTake Work News body. Paraphrase the update; do not copy long text verbatim.
+- Put the company's official public homepage in companyWebsite. It is used to verify and recover the correct company profile picture when a direct logo URL is unavailable.
+- source must be the exact live article, press release, newsroom item, or official post that contains the reported update. Never cite a company homepage, newsroom index, news search, topic listing, or bare domain.
+- Only use currently relevant news. Read the source's published date into publishedAt as YYYY-MM-DD when it is shown; never invent a date, and exclude archived or stale updates.
 - Original posts for existing Available JumpTake companies may leave source and sourceTitle blank, but must include that company's exact companyId and companyJumpTakeId.
 - The body must report the substance of the source: the specific launch, result, product change, programme, partnership, investment, achievement, or workplace development, including concrete names, figures, dates, or outcomes when the source provides them.
 - Write the body as the actual news update itself. Never introduce it with meta-language such as "published a company update about", "shared a post about", "released a report about", "ongoing work across", or "in its reporting materials".
 - Open the source and use details from its content. A body that merely says who posted or published something is not a usable Work News draft.
 - Actively search for the company's official logo/profile image using the company website, newsroom, public social profile, or reliable brand/profile pages. Put a direct company logo or profile image URL in companyLogoUrl only when a reliable direct image URL is available. Otherwise leave it blank so JumpTake can use its default icon.
 - Put a direct image URL from the update in mediaUrl only when a reliable direct image URL is available. mediaType must be image or video. If no media exists or the URL is not direct, leave mediaUrl blank.
+- For every live Work News draft, inspect the cited source's Open Graph image/video, embedded video sources, structured article media, and main article imagery. Prefer media belonging to that exact update over generic company artwork. The server will verify and extract the final displayable URL from source.
 - Do not say the Work News posts were posted. Tell the admin the drafts are ready and they should review each card and click Post Work News.
 - If they ask to create a company, fill companyForm. If they provide a custom company ID/code, put it in companyForm.adminCompanyId.
 - For company creation or company enrichment, extract and fill company name, headquarters/address, website, industry, founded year, and description/company details from the admin text.
@@ -1863,6 +2556,39 @@ router.get('/collections/:collection', async (req, res) => {
   }
 });
 
+router.patch('/companies/:id/logo', async (req, res) => {
+  try {
+    const logo = String(req.body?.logo || '').trim();
+    const isImageDataUrl = /^data:image\/(?:avif|gif|jpe?g|png|webp);base64,/i.test(logo);
+    const isRemoteImage = /^https?:\/\/\S+$/i.test(logo);
+
+    if (logo && !isImageDataUrl && !isRemoteImage) {
+      return res.status(400).json({ error: 'Use an image upload or a valid image URL' });
+    }
+
+    if (logo.length > 3 * 1024 * 1024) {
+      return res.status(413).json({ error: 'Company profile picture is too large' });
+    }
+
+    const company = await Company.findByIdAndUpdate(
+      req.params.id,
+      { $set: { logo } },
+      { new: true, runValidators: true }
+    );
+
+    if (!company) {
+      return res.status(404).json({ error: 'Company not found' });
+    }
+
+    return res.json({ item: serializeDocument(company) });
+  } catch (error) {
+    if (error?.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid company ID' });
+    }
+    return res.status(error.status || 500).json({ error: error.message });
+  }
+});
+
 router.patch('/collections/:collection/:id', async (req, res) => {
   try {
     const config = getCollectionConfig(req.params.collection);
@@ -2011,6 +2737,7 @@ const createAdminJob = async (payload = {}) => {
     error.status = 400;
     throw error;
   }
+
   if (!isCurrentApplicationDeadline(normalizedDeadline)) {
     const error = new Error('Expired jobs cannot be posted to the live feed.');
     error.status = 400;
@@ -2019,11 +2746,6 @@ const createAdminJob = async (payload = {}) => {
 
   const sourceUrl = normalizeHttpUrl(source);
   if (sourceUrl) {
-    if (!normalizedDeadline) {
-      const error = new Error('AI-imported jobs require a published application deadline that is today or later.');
-      error.status = 409;
-      throw error;
-    }
     const applicationUrl = normalizeHttpUrl(applicationLink);
     const verificationSourceUrl = normalizeHttpUrl(liveVerificationSourceUrl || sourceUrl);
     const verificationUrl = normalizeHttpUrl(liveVerificationUrl || applicationUrl);
@@ -2039,14 +2761,31 @@ const createAdminJob = async (payload = {}) => {
         token: liveVerificationToken
       });
     if (!verificationIsValid) {
-      const error = new Error('This exact role page, Apply link, or deadline is no longer verified. Ask Admin AI to check the job again.');
+      const error = new Error('This exact role page or Apply link is no longer verified. Ask Admin AI to check the job again.');
       error.status = 409;
       throw error;
     }
   }
 
   const resolvedCompany = await resolveAdminJobCompany(company, companyName);
-  return Job.create({
+  const normalizedApplicationUrl = sourceUrl ? normalizeHttpUrl(applicationLink) : applicationLink;
+  const sourceFingerprint = sourceUrl
+    ? crypto.createHash('sha256').update(sourceUrl).digest('hex')
+    : '';
+  const existingCompanyJobs = await Job.find({ company: resolvedCompany.company._id })
+    .select('title location sourceUrl applicationLink')
+    .lean();
+  const duplicateJob = findIdentityCollision(
+    existingCompanyJobs.map((job) => ({ ...job, companyName: resolvedCompany.company.name })),
+    { title, location, source: sourceUrl, applicationLink: normalizedApplicationUrl, companyName: resolvedCompany.company.name },
+    jobIdentityKeys
+  );
+  if (duplicateJob) {
+    const error = new Error('This job already exists in JumpTake. Ask Admin AI for a different live role.');
+    error.status = 409;
+    throw error;
+  }
+  const jobValues = {
     title,
     description,
     company: resolvedCompany.company._id,
@@ -2054,16 +2793,21 @@ const createAdminJob = async (payload = {}) => {
     location,
     sector: String(sector || resolvedCompany.company.industry || 'General').trim(),
     salary,
-    applicationLink: sourceUrl ? normalizeHttpUrl(applicationLink) : applicationLink,
+    applicationLink: normalizedApplicationUrl,
     applicationDeadline: normalizedDeadline || null,
     sourceUrl: sourceUrl || '',
+    ...(sourceFingerprint ? { sourceFingerprint } : {}),
     sourceStatus: sourceUrl ? 'verified' : '',
     sourceVerifiedAt: sourceUrl ? new Date(liveVerifiedAt) : null,
     jobType,
     requirements: Array.isArray(requirements) ? requirements : String(requirements || '').split('\n').map((item) => item.trim()).filter(Boolean),
     responsibilities: Array.isArray(responsibilities) ? responsibilities : String(responsibilities || '').split('\n').map((item) => item.trim()).filter(Boolean),
-    skills: Array.isArray(skills) ? skills : String(skills || '').split(',').map((skill) => skill.trim()).filter(Boolean)
-  });
+    skills: Array.isArray(skills) ? skills : String(skills || '').split(',').map((skill) => skill.trim()).filter(Boolean),
+    active: true,
+    updatedAt: new Date()
+  };
+
+  return Job.create(jobValues);
 };
 
 router.post('/jobs', async (req, res) => {
@@ -2140,6 +2884,11 @@ router.post('/companies', async (req, res) => {
       return res.status(400).json({ error: 'Company name is required' });
     }
 
+    const storedCompanies = await Company.find({}).select('name jumptakeId website logo').lean();
+    if (findIdentityCollision(storedCompanies, { name, jumptakeId, website, logo }, companyIdentityKeys)) {
+      return res.status(409).json({ error: 'This company name, website, JumpTake ID, or profile picture already exists.' });
+    }
+
     const resolvedJumpTakeId = await resolveAdminCompanyJumpTakeId(name, jumptakeId);
 
     const company = await Company.create({
@@ -2205,11 +2954,27 @@ router.post('/feed-posts', async (req, res) => {
     const authorAvatar = String(linkedCompany?.logo || req.body?.authorAvatar || req.body?.companyLogoUrl || '');
     const source = String(req.body?.source || '').trim().slice(0, 1000);
     const sourceTitle = String(req.body?.sourceTitle || '').trim().slice(0, 240);
+    const sourcePublishedAt = req.body?.publishedAt && Number.isFinite(Date.parse(req.body.publishedAt))
+      ? new Date(req.body.publishedAt)
+      : null;
     const mediaUrl = validateAdminPostMediaUrl(req.body?.mediaUrl);
     const mediaType = req.body?.mediaType === 'video' ? 'video' : 'image';
 
     if (!body && !mediaUrl) {
       return res.status(400).json({ error: 'Write something or attach media before posting' });
+    }
+
+    const storedWorkNews = await FeedPost.find({ type: 'work-news' })
+      .select('type body authorName authorId source')
+      .lean();
+    if (findIdentityCollision(storedWorkNews, {
+      type: 'work-news',
+      body,
+      authorName,
+      authorId: String(linkedCompany?._id || requestedAuthorId),
+      source
+    }, feedPostIdentityKeys)) {
+      return res.status(409).json({ error: 'This Work News source or company post already exists.' });
     }
 
     const post = await FeedPost.create({
@@ -2226,7 +2991,8 @@ router.post('/feed-posts', async (req, res) => {
         name: sourceTitle || `${authorName || 'Company'} update media`
       } : null,
       source,
-      sourceTitle
+      sourceTitle,
+      sourcePublishedAt
     });
 
     res.status(201).json({ item: serializeDocument(post) });
@@ -2347,6 +3113,15 @@ router.post('/candidates', async (req, res) => {
     const experience = normalizeListField(req.body?.experience);
     const achievements = normalizeListField(req.body?.achievements);
 
+    const storedProfiles = await JobSeeker.find({}).select('name email profileImage').lean();
+    if (findIdentityCollision(storedProfiles, {
+      name,
+      email: req.body?.email,
+      profileImage
+    }, candidateIdentityKeys)) {
+      return res.status(409).json({ error: 'This candidate name, email, or profile picture already exists.' });
+    }
+
     const jumptakeId = await resolveAdminJumpTakeId(name, req.body?.jumptakeId);
     user = await User.create({ email, password, jumptakeId, jobInterests });
 
@@ -2427,6 +3202,18 @@ router.post('/talent-stories', async (req, res) => {
         }
       : null;
 
+    const storedTalentStories = await FeedPost.find({ type: 'talent-story' })
+      .select('type body authorName authorId')
+      .lean();
+    if (findIdentityCollision(storedTalentStories, {
+      type: 'talent-story',
+      body,
+      authorName,
+      authorId
+    }, feedPostIdentityKeys)) {
+      return res.status(409).json({ error: 'This candidate Talent Story already exists.' });
+    }
+
     const post = await FeedPost.create({
       type: 'talent-story',
       body: body.slice(0, 5000),
@@ -2487,30 +3274,19 @@ router.post('/assistant', async (req, res) => {
     }
 
     const companyForm = req.body?.companyForm || {};
-    const uploadedProfileImages = normalizeAdminProfileImages(req.body?.profileImages);
-    const lowerMessage = message.toLowerCase();
-    const wantsCompanyInfo = /\b(company|business|employer|website|industry|founded|address|headquarters|details|profile)\b/.test(lowerMessage);
-    const wantsWebJobs = /\b(latest|recent|live|active|current|web|online|search|find|collect|career\s*page|source\s*link|gradcracker|rate\s*my\s*placement|ratemyplacement|linkedin)\b/.test(lowerMessage)
-      && /\b(job|jobs|role|roles|placement|graduate|internship)\b/.test(lowerMessage);
-    const wantsJobDrafts = /\b(job|jobs|role|roles|position|positions|vacancy|vacancies|placement|graduate|internship)\b/.test(lowerMessage)
-      && /\b(draft|drafts|post|posts|create|creates|creation|creations|make|generate|generation|prepare|fill|collect|find)\b/.test(lowerMessage);
-    const wantsCompanyProfileDrafts = !wantsJobDrafts
-      && /\b(companies|company\s+profiles?|company\s+users?|employer\s+profiles?|business\s+profiles?)\b/.test(lowerMessage)
-      && /\b(draft|drafts|create|creates|creation|creations|make|generate|generation|prepare|collect)\b/.test(lowerMessage)
-      && !/\b(posts?|work\s*news|updates?|stories?)\b/.test(lowerMessage);
-    const wantsCandidateDrafts = !wantsJobDrafts && !wantsCompanyProfileDrafts
-      && (uploadedProfileImages.length > 0 || /\b(candidate|candidates|users?|user profiles?|job seekers?|talent profiles?|talent stories?|people|profiles? of users?|draft profiles?|talent members?)\b/.test(lowerMessage))
-      && /\b(draft|drafts|create|creates|creation|creations|make|generate|generation|prepare|collect)\b/.test(lowerMessage)
-      && /\b(profile|profiles|user|users|candidate|candidates|talent story|talent stories|story|stories|post|posts)\b/.test(lowerMessage);
+    let uploadedProfileImages = normalizeAdminProfileImages(req.body?.profileImages);
+    const {
+      wantsCandidateDrafts,
+      wantsCompanyInfo,
+      wantsCompanyProfileDrafts,
+      wantsJobDrafts,
+      wantsLiveCompanyProfiles,
+      wantsLiveWorkNews,
+      wantsWebJobs,
+      wantsWorkNewsDrafts
+    } = detectAdminAssistantIntent(message, { hasProfileImages: uploadedProfileImages.length > 0 });
     const wantsCandidateProfilePictures = wantsCandidateDrafts
-      && (uploadedProfileImages.length > 0 || !/\b(without|no)\s+(?:profile\s+)?(?:pictures?|photos?|images?|headshots?)\b/.test(lowerMessage));
-    const wantsGenericPostDrafts = !wantsJobDrafts && !wantsCandidateDrafts
-      && /\b(post drafts?|post creations?|social posts?|feed posts?|posts?|stories?)\b/.test(lowerMessage)
-      && /\b(draft|drafts|create|creates|creation|creations|make|generate|generation|prepare|fill)\b/.test(lowerMessage);
-    const wantsWorkNewsDrafts = (wantsGenericPostDrafts || /\b(work\s*news|company updates?|linkedin updates?|feed posts?|company posts?|news posts?)\b/.test(lowerMessage))
-      && /\b(draft|drafts|post|posts|create|make|generate|from web|live web|latest|recent|search|find|collect|linkedin|companies?)\b/.test(lowerMessage);
-    const wantsLiveWorkNews = wantsWorkNewsDrafts
-      && /\b(live|latest|recent|web|online|search|find|collect|linkedin|newsroom|official\s+site|company\s+site|website)\b/.test(lowerMessage);
+      && (uploadedProfileImages.length > 0 || !/\b(without|no)\s+(?:profile\s+)?(?:pictures?|photos?|images?|headshots?)\b/i.test(message));
     const availableCompanyDocuments = wantsWorkNewsDrafts
       ? await Company.find({}).sort({ createdAt: -1 }).limit(100)
       : [];
@@ -2530,36 +3306,71 @@ router.post('/assistant', async (req, res) => {
       description: company.description || '',
       logo: company.logo || ''
     }));
-    const prompt = createAdminAssistantPrompt({
+    const pendingDrafts = req.body?.existingDrafts || {};
+    const draftExclusions = addPendingAdminDraftExclusions(await loadAdminDraftExclusions({
+      jobs: wantsJobDrafts || wantsWebJobs,
+      companies: wantsCompanyProfileDrafts,
+      candidates: wantsCandidateDrafts,
+      workNews: wantsWorkNewsDrafts
+    }), {
+      jobs: (wantsJobDrafts || wantsWebJobs) ? pendingDrafts.jobs : [],
+      companies: wantsCompanyProfileDrafts ? pendingDrafts.companies : [],
+      candidates: wantsCandidateDrafts ? pendingDrafts.candidates : [],
+      workNews: wantsWorkNewsDrafts ? pendingDrafts.workNews : []
+    });
+    const uploadedImageKeys = new Set(draftExclusions.profileImageKeys);
+    uploadedProfileImages = uploadedProfileImages.filter((image) => {
+      const key = profileImageIdentity(image.dataUrl);
+      if (key && uploadedImageKeys.has(key)) return false;
+      if (key) uploadedImageKeys.add(key);
+      return true;
+    });
+    const prompt = appendAdminDuplicateExclusions(createAdminAssistantPrompt({
       message,
       companyForm,
       jobForm: req.body?.jobForm || {},
       jobDraftPreferences: req.body?.jobDraftPreferences || {},
       availableCompanies
+    }), draftExclusions.promptRecords);
+    const requestedJobDraftCount = getRequestedDraftCount(message, {
+      enabled: wantsJobDrafts || wantsWebJobs,
+      kind: 'job',
+      max: ADMIN_ASSISTANT_MAX_DRAFTS
     });
-    const requestedJobDraftCount = getRequestedDraftCount(message, wantsJobDrafts || wantsWebJobs);
-    const requestedCompanyDraftCount = getRequestedDraftCount(message, wantsCompanyProfileDrafts);
-    const requestedWorkNewsDraftCount = getRequestedDraftCount(message, wantsWorkNewsDrafts);
+    const requestedCompanyDraftCount = getRequestedDraftCount(message, {
+      enabled: wantsCompanyProfileDrafts,
+      kind: 'company',
+      max: ADMIN_ASSISTANT_MAX_DRAFTS
+    });
+    const requestedWorkNewsDraftCount = getRequestedDraftCount(message, {
+      enabled: wantsWorkNewsDrafts,
+      kind: 'work-news',
+      max: ADMIN_ASSISTANT_MAX_DRAFTS
+    });
     const requestedCandidateDraftCount = wantsCandidateDrafts
-      ? Math.max(getRequestedDraftCount(message, true), uploadedProfileImages.length)
+      ? Math.max(getRequestedDraftCount(message, {
+        kind: 'candidate',
+        max: ADMIN_ASSISTANT_MAX_DRAFTS
+      }), uploadedProfileImages.length)
       : 0;
     const randomProfileImageCount = wantsCandidateProfilePictures
       ? Math.max(0, requestedCandidateDraftCount - uploadedProfileImages.length)
       : 0;
     const candidateProfileImages = [
       ...uploadedProfileImages,
-      ...createRandomAdminProfileImages(randomProfileImageCount)
+      ...createRandomAdminProfileImages(randomProfileImageCount, uploadedImageKeys)
     ];
     const initialCandidateImages = candidateProfileImages.slice(0, Math.min(ADMIN_CANDIDATE_DRAFT_BATCH_SIZE, requestedCandidateDraftCount));
     const candidatePrompt = wantsCandidateDrafts
       ? createAdminCandidatePrompt(message, {
         includePictures: wantsCandidateProfilePictures,
-        profileImages: initialCandidateImages
+        profileImages: initialCandidateImages,
+        excludedRecords: draftExclusions.promptRecords
       })
       : prompt;
     const hasMissingCompanyDetails = !companyForm.industry || !companyForm.headquarters || !companyForm.website || !companyForm.founded || !companyForm.description;
     const useWebSearch = process.env.OPENAI_ENABLE_WEB_SEARCH !== 'false'
-      && (wantsWebJobs || wantsLiveWorkNews || (!wantsCandidateDrafts && !wantsCompanyProfileDrafts && wantsCompanyInfo && hasMissingCompanyDetails));
+      && (wantsWebJobs || wantsLiveWorkNews || wantsLiveCompanyProfiles || wantsCandidateDrafts || (!wantsCompanyProfileDrafts && wantsCompanyInfo && hasMissingCompanyDetails));
     const initialDraftKind = requestedCandidateDraftCount
       ? 'candidate'
       : requestedCompanyDraftCount
@@ -2586,39 +3397,127 @@ router.post('/assistant', async (req, res) => {
           totalBatches: Math.ceil(initialDraftCount / ADMIN_ASSISTANT_DRAFT_BATCH_SIZE)
         })
         : prompt;
-    let aiText = await askAdminOpenAI(initialPrompt, {
-      useWebSearch,
-      images: initialDraftKind === 'candidate' ? initialCandidateImages : []
-    });
+    let aiText = '';
+    let openAIProviderError = '';
+    if (!(initialDraftKind === 'job' && wantsWebJobs)) {
+      try {
+        aiText = await askAdminOpenAI(initialPrompt, {
+          useWebSearch,
+          images: initialDraftKind === 'candidate' ? initialCandidateImages : [],
+          responseSchema: initialDraftKind === 'job' ? JOB_DRAFTS_RESPONSE_SCHEMA : null
+        });
+      } catch (error) {
+        openAIProviderError = String(error.response?.data?.error?.message || error.message || 'OpenAI request failed');
+        console.warn('[ADMIN ASSISTANT] Initial OpenAI request failed:', openAIProviderError);
+        throw createAdminOpenAIProviderError(error);
+      }
+    }
     let parsed = parseJsonObjectFromText(aiText) || createFallbackAdminAssistantPlan(message);
-    let jobDrafts = Array.isArray(parsed.jobDrafts) ? parsed.jobDrafts.slice(0, requestedJobDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS) : [];
-    let companyDrafts = normalizeCompanyDraftRows(
-      parsed.companyDrafts,
+    let jobDrafts = filterUniqueDrafts(
+      Array.isArray(parsed.jobDrafts) ? parsed.jobDrafts : [],
+      new Set(draftExclusions.jobKeys),
+      jobIdentityKeys,
+      requestedJobDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS
+    ).rows;
+    let companyDrafts = filterUniqueDrafts(
+      normalizeCompanyDraftRows(parsed.companyDrafts, requestedCompanyDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS),
+      new Set(draftExclusions.companyKeys),
+      companyIdentityKeys,
       requestedCompanyDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS
-    );
-    let workNewsDrafts = normalizeWorkNewsDraftRows(
-      parsed.workNewsDrafts,
-      requestedWorkNewsDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS,
-      { requireSource: wantsLiveWorkNews }
-    );
-    let userDrafts = Array.isArray(parsed.userDrafts)
+    ).rows;
+    let workNewsDrafts = filterUniqueDrafts(
+      normalizeWorkNewsDraftRows(
+        parsed.workNewsDrafts,
+        requestedWorkNewsDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS,
+        { requireSource: wantsLiveWorkNews }
+      ),
+      new Set(draftExclusions.workNewsKeys),
+      workNewsDraftIdentityKeys,
+      requestedWorkNewsDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS
+    ).rows;
+    let userDrafts = filterUniqueDrafts(Array.isArray(parsed.userDrafts)
       ? parsed.userDrafts
         .slice(0, requestedCandidateDraftCount || ADMIN_CANDIDATE_DRAFT_BATCH_SIZE)
         .map((draft, index) => {
           const matchedImage = initialCandidateImages.find((image) => image.id === draft?.sourceImageId) || initialCandidateImages[index];
           return normalizeGeneratedCandidateDraft(draft, matchedImage);
         })
-      : [];
+      : [], new Set(draftExclusions.candidateKeys), talentStoryDraftIdentityKeys, requestedCandidateDraftCount || ADMIN_CANDIDATE_DRAFT_BATCH_SIZE).rows;
+
+    let usedPublicJobSource = false;
+    if (wantsWebJobs) {
+      const preferences = req.body?.jobDraftPreferences || {};
+      const sourceCandidateTarget = Math.min(
+        1000,
+        Math.max(100, (requestedJobDraftCount || ADMIN_ASSISTANT_DRAFT_BATCH_SIZE) * 6)
+      );
+      const excludedSourceUrls = [...draftExclusions.jobKeys]
+        .filter((key) => key.startsWith('job-url:'))
+        .map((key) => key.slice('job-url:'.length))
+        .slice(-400);
+      const [greenhouseResult, jSearchResult, openAIWebResult] = await Promise.allSettled([
+        fetchGreenhouseCandidates({
+          query: String(preferences.sectors || '').trim(),
+          location: String(preferences.location || '').trim(),
+          count: sourceCandidateTarget,
+          excludedUrls: excludedSourceUrls
+        }),
+        process.env.RAPIDAPI_KEY
+          ? fetchJSearchCandidates({
+            query: String(preferences.sectors || message || 'jobs').trim(),
+            location: String(preferences.location || '').trim(),
+            count: Math.min(100, sourceCandidateTarget)
+          })
+          : Promise.resolve([]),
+        useWebSearch
+          ? discoverOpenAIJobCandidates({
+            message,
+            preferences,
+            count: Math.min(20, Math.max(8, requestedJobDraftCount || 8)),
+            excludedUrls: excludedSourceUrls
+          })
+          : Promise.resolve([])
+      ]);
+      const greenhouseDrafts = greenhouseResult.status === 'fulfilled' ? greenhouseResult.value : [];
+      const aggregatorDrafts = jSearchResult.status === 'fulfilled' ? jSearchResult.value : [];
+      const openAIWebDrafts = openAIWebResult.status === 'fulfilled' ? openAIWebResult.value : [];
+      if (greenhouseResult.status === 'rejected') {
+        console.warn('[ADMIN ASSISTANT] Greenhouse source fetch failed:', greenhouseResult.reason?.message || greenhouseResult.reason);
+      }
+      if (jSearchResult.status === 'rejected') {
+        console.warn('[ADMIN ASSISTANT] JSearch candidate fetch failed:', jSearchResult.reason?.message || jSearchResult.reason);
+      }
+      if (openAIWebResult.status === 'rejected') {
+        console.warn('[ADMIN ASSISTANT] OpenAI job source discovery failed; continuing with direct providers:', openAIWebResult.reason?.message || openAIWebResult.reason);
+      }
+      usedPublicJobSource = greenhouseDrafts.length > 0 || aggregatorDrafts.length > 0 || openAIWebDrafts.length > 0;
+      jobDrafts = filterUniqueDrafts(
+        [...openAIWebDrafts, ...aggregatorDrafts, ...greenhouseDrafts, ...jobDrafts],
+        new Set(draftExclusions.jobKeys),
+        jobIdentityKeys,
+        sourceCandidateTarget
+      ).rows;
+    }
 
     if (requestedJobDraftCount > 1 && !jobDrafts.length && parsed.jobForm && Object.keys(parsed.jobForm).length) {
-      jobDrafts = [parsed.jobForm];
+      jobDrafts = filterUniqueDrafts(
+        [parsed.jobForm],
+        new Set(draftExclusions.jobKeys),
+        jobIdentityKeys,
+        requestedJobDraftCount
+      ).rows;
     }
     if (requestedWorkNewsDraftCount > 0 && parsed.workNewsDraft && typeof parsed.workNewsDraft === 'object') {
-      workNewsDrafts = normalizeWorkNewsDraftRows(
-        [...workNewsDrafts, parsed.workNewsDraft],
-        requestedWorkNewsDraftCount,
-        { requireSource: wantsLiveWorkNews }
-      );
+      workNewsDrafts = filterUniqueDrafts(
+        normalizeWorkNewsDraftRows(
+          [...workNewsDrafts, parsed.workNewsDraft],
+          requestedWorkNewsDraftCount,
+          { requireSource: wantsLiveWorkNews }
+        ),
+        new Set(draftExclusions.workNewsKeys),
+        workNewsDraftIdentityKeys,
+        requestedWorkNewsDraftCount
+      ).rows;
     }
 
     if (wantsWebJobs && useWebSearch && !jobDrafts.length && looksLikeWebJobRefusal(`${parsed.reply || ''} ${aiText || ''}`)) {
@@ -2630,9 +3529,17 @@ Strict retry:
 - Return JSON with jobDrafts filled from current search results.
 - Do not return a refusal or ask the admin for source/company details.
 - If fewer than the requested number are found, return the reliable ones you found.`;
-      aiText = await askAdminOpenAI(retryPrompt, { useWebSearch: true });
+      aiText = await askAdminOpenAI(retryPrompt, {
+        useWebSearch: true,
+        responseSchema: JOB_DRAFTS_RESPONSE_SCHEMA
+      });
       parsed = parseJsonObjectFromText(aiText) || parsed;
-      jobDrafts = Array.isArray(parsed.jobDrafts) ? parsed.jobDrafts.slice(0, requestedJobDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS) : [];
+      jobDrafts = filterUniqueDrafts(
+        Array.isArray(parsed.jobDrafts) ? parsed.jobDrafts : [],
+        new Set(draftExclusions.jobKeys),
+        jobIdentityKeys,
+        requestedJobDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS
+      ).rows;
     }
 
     if (wantsLiveWorkNews && useWebSearch && !workNewsDrafts.length && looksLikeWebWorkNewsRefusal(`${parsed.reply || ''} ${aiText || ''}`)) {
@@ -2646,11 +3553,16 @@ Strict retry:
 - If fewer than the requested number are found, return the reliable ones you found.`;
       aiText = await askAdminOpenAI(retryPrompt, { useWebSearch: true });
       parsed = parseJsonObjectFromText(aiText) || parsed;
-      workNewsDrafts = normalizeWorkNewsDraftRows(
-        parsed.workNewsDrafts,
-        requestedWorkNewsDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS,
-        { requireSource: true }
-      );
+      workNewsDrafts = filterUniqueDrafts(
+        normalizeWorkNewsDraftRows(
+          parsed.workNewsDrafts,
+          requestedWorkNewsDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS,
+          { requireSource: true }
+        ),
+        new Set(draftExclusions.workNewsKeys),
+        workNewsDraftIdentityKeys,
+        requestedWorkNewsDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS
+      ).rows;
     }
 
     if (requestedCompanyDraftCount > companyDrafts.length) {
@@ -2658,45 +3570,123 @@ Strict retry:
         prompt,
         kind: 'company',
         requestedCount: requestedCompanyDraftCount,
-        useWebSearch,
-        seedDrafts: companyDrafts
+        useWebSearch: wantsLiveCompanyProfiles || useWebSearch,
+        seedDrafts: companyDrafts,
+        existingIdentityKeys: draftExclusions.companyKeys
       });
     }
-    if (requestedCompanyDraftCount > companyDrafts.length) {
-      const missingCount = requestedCompanyDraftCount - companyDrafts.length;
-      companyDrafts.push(...Array.from(
-        { length: missingCount },
-        (_, index) => createFallbackCompanyDraft(companyDrafts.length + index)
-      ));
+    if (!wantsLiveCompanyProfiles && requestedCompanyDraftCount > companyDrafts.length) {
+      const companyKeys = new Set(draftExclusions.companyKeys);
+      companyDrafts = filterUniqueDrafts(companyDrafts, companyKeys, companyIdentityKeys, requestedCompanyDraftCount).rows;
+      let fallbackIndex = 0;
+      while (companyDrafts.length < requestedCompanyDraftCount && fallbackIndex < requestedCompanyDraftCount * 100 + 1000) {
+        const fallback = createFallbackCompanyDraft(fallbackIndex);
+        const uniqueFallback = filterUniqueDrafts([fallback], companyKeys, companyIdentityKeys, 1).rows[0];
+        if (uniqueFallback) companyDrafts.push(uniqueFallback);
+        fallbackIndex += 1;
+      }
     }
     companyDrafts = normalizeCompanyDraftRows(
       companyDrafts,
       requestedCompanyDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS
     );
+    companyDrafts = await enrichCompanyDraftLogos(companyDrafts);
 
-    if (requestedJobDraftCount > jobDrafts.length) {
+    const workNewsPrompt = requestedCompanyDraftCount && requestedWorkNewsDraftCount && companyDrafts.length
+      ? `${prompt}
+
+Companies created by this same request (mandatory Work News targets):
+${JSON.stringify(companyDrafts.map(({ name, jumptakeId, website }) => ({ name, jumptakeId, website })))}
+- Create the Work News drafts only for these companies, using each exact name and jumptakeId.
+- Return one current, concrete update per listed company, sourced from that company's official website, newsroom, or official publication.
+- Do not substitute candidate profiles, talent stories, unrelated companies, generic home pages, or unsourced promotional copy.`
+      : prompt;
+
+    if (!wantsWebJobs && requestedJobDraftCount > jobDrafts.length) {
       jobDrafts = await generateAdminDraftBatches({
         prompt,
         kind: 'job',
         requestedCount: requestedJobDraftCount,
         useWebSearch,
-        seedDrafts: jobDrafts
+        seedDrafts: jobDrafts,
+        existingIdentityKeys: draftExclusions.jobKeys
       });
     }
 
     if (requestedWorkNewsDraftCount > workNewsDrafts.length) {
       workNewsDrafts = await generateAdminDraftBatches({
-        prompt,
+        prompt: workNewsPrompt,
         kind: 'work-news',
         requestedCount: requestedWorkNewsDraftCount,
         useWebSearch,
         seedDrafts: workNewsDrafts,
-        workNewsRequireSource: wantsLiveWorkNews
+        workNewsRequireSource: wantsLiveWorkNews,
+        existingIdentityKeys: draftExclusions.workNewsKeys
       });
     }
 
     if (wantsWorkNewsDrafts) {
-      workNewsDrafts = await attachWorkNewsDraftCompanies(workNewsDrafts);
+      const acceptedWorkNewsDrafts = [];
+      const checkedWorkNewsKeys = new Set(draftExclusions.workNewsKeys);
+      const pendingCompaniesByName = requestedCompanyDraftCount && companyDrafts.length
+        ? new Map(companyDrafts.map((company) => [company.name.trim().toLowerCase(), company]))
+        : null;
+      const prepareWorkNewsCandidates = async (rows) => {
+        let candidates = await attachWorkNewsDraftCompanies(rows);
+        if (pendingCompaniesByName) {
+          candidates = candidates
+            .filter((draft) => pendingCompaniesByName.has(String(draft.companyName || '').trim().toLowerCase()))
+            .map((draft) => {
+              const company = pendingCompaniesByName.get(String(draft.companyName || '').trim().toLowerCase());
+              return {
+                ...draft,
+                companyJumpTakeId: company.jumptakeId,
+                companyName: company.name,
+                companyLogoUrl: company.logo || draft.companyLogoUrl || '',
+                companyLogoVerified: company.logoVerified || false,
+                companyWebsite: company.website || ''
+              };
+            });
+        }
+        candidates = filterUniqueDrafts(
+          candidates,
+          checkedWorkNewsKeys,
+          workNewsDraftIdentityKeys,
+          Math.max(0, requestedWorkNewsDraftCount - acceptedWorkNewsDrafts.length)
+        ).rows;
+        return enrichWorkNewsDraftMedia(candidates, companyDrafts);
+      };
+
+      acceptedWorkNewsDrafts.push(...await prepareWorkNewsCandidates(workNewsDrafts));
+      for (
+        let retryRound = 1;
+        retryRound <= ADMIN_ASSISTANT_DRAFT_RETRY_ROUNDS && acceptedWorkNewsDrafts.length < requestedWorkNewsDraftCount;
+        retryRound += 1
+      ) {
+        const missingCount = requestedWorkNewsDraftCount - acceptedWorkNewsDrafts.length;
+        const candidateCount = Math.min(
+          ADMIN_ASSISTANT_MAX_DRAFTS,
+          Math.max(missingCount, missingCount * 2)
+        );
+        const replacementPrompt = `${workNewsPrompt}
+
+Verified Work News refill round ${retryRound}:
+- ${acceptedWorkNewsDrafts.length} of ${requestedWorkNewsDraftCount} requested drafts passed source validation.
+- Return ${candidateCount} different candidates so invalid, duplicate, inaccessible, or stale sources can be replaced.
+- Every source must be a direct, live article or company update page. Do not return homepages, newsroom indexes, or invented links.`;
+        const replacementDrafts = await generateAdminDraftBatches({
+          prompt: replacementPrompt,
+          kind: 'work-news',
+          requestedCount: candidateCount,
+          useWebSearch,
+          workNewsRequireSource: wantsLiveWorkNews,
+          existingIdentityKeys: checkedWorkNewsKeys
+        });
+        const replacements = await prepareWorkNewsCandidates(replacementDrafts);
+        acceptedWorkNewsDrafts.push(...replacements);
+        if (!replacementDrafts.length) break;
+      }
+      workNewsDrafts = acceptedWorkNewsDrafts.slice(0, requestedWorkNewsDraftCount);
     }
 
     if (requestedCandidateDraftCount > userDrafts.length) {
@@ -2706,8 +3696,14 @@ Strict retry:
         useWebSearch,
         includePictures: wantsCandidateProfilePictures,
         profileImages: candidateProfileImages,
-        seedDrafts: userDrafts
+        seedDrafts: userDrafts,
+        existingIdentityKeys: draftExclusions.candidateKeys,
+        excludedRecords: draftExclusions.promptRecords
       });
+    }
+
+    if (wantsCandidateDrafts) {
+      userDrafts = await enrichCandidateTalentStoryMedia(userDrafts, { useWebSearch });
     }
 
     const generatedJobDraftCount = jobDrafts.length;
@@ -2717,10 +3713,17 @@ Strict retry:
         const liveJobResult = await collectRequestedVerifiedLiveJobs({
           prompt,
           initialDrafts: jobDrafts,
-          requestedCount: requestedJobDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS
+          requestedCount: requestedJobDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS,
+          existingIdentityKeys: draftExclusions.jobKeys,
+          publicJobPreferences: req.body?.jobDraftPreferences || {}
         });
         jobDrafts = liveJobResult.drafts;
         checkedJobDraftCount = liveJobResult.checkedCount;
+      } else if (jobDrafts.length) {
+        jobDrafts = await verifyAdminLiveJobDrafts(
+          jobDrafts,
+          requestedJobDraftCount || ADMIN_ASSISTANT_MAX_DRAFTS
+        );
       } else {
         jobDrafts = [];
       }
@@ -2737,24 +3740,47 @@ Strict retry:
       parsed.reply = 'Web search did not return usable Work News drafts. Check that the OpenAI account has web search access, then try the request again.';
     }
 
+    const providerFailedDuringDrafting = adminOpenAILastError && (
+      (requestedCompanyDraftCount > companyDrafts.length)
+      || (requestedWorkNewsDraftCount > workNewsDrafts.length)
+      || (requestedCandidateDraftCount > userDrafts.length)
+      || (!wantsWebJobs && requestedJobDraftCount > jobDrafts.length)
+    );
+    if (providerFailedDuringDrafting) {
+      throw createAdminOpenAIProviderError(adminOpenAILastError);
+    }
+
+    assertExactAdminDraftCounts([
+      { label: 'job drafts', requested: requestedJobDraftCount, actual: jobDrafts.length },
+      { label: 'company drafts', requested: requestedCompanyDraftCount, actual: companyDrafts.length },
+      { label: 'Work News drafts', requested: requestedWorkNewsDraftCount, actual: workNewsDrafts.length },
+      { label: 'candidate drafts', requested: requestedCandidateDraftCount, actual: userDrafts.length }
+    ]);
+
+    const companyReply = requestedCompanyDraftCount
+      ? `${companyDrafts.length} company profile draft${companyDrafts.length === 1 ? '' : 's'} ready with assigned JumpTake IDs.`
+      : '';
+    const workNewsReply = requestedWorkNewsDraftCount
+      ? `${workNewsDrafts.length} sourced Work News draft${workNewsDrafts.length === 1 ? '' : 's'} ready for review.`
+      : '';
+    const combinedCompanyNewsReply = [companyReply, workNewsReply].filter(Boolean).join(' ');
+
     res.json({
       reply: requestedCandidateDraftCount
         ? `${userDrafts.length} candidate profile draft${userDrafts.length === 1 ? '' : 's'} ready, each with a talent story post. Review, edit, and create each one when approved.`
-        : requestedCompanyDraftCount
-          ? `${companyDrafts.length} company profile draft${companyDrafts.length === 1 ? '' : 's'} ready with assigned JumpTake IDs. Review and create each company when approved.`
-        : requestedJobDraftCount
+        : combinedCompanyNewsReply
+          ? `${combinedCompanyNewsReply} Review each draft before creating or posting it.`
+          : requestedJobDraftCount
           ? wantsWebJobs
-            ? jobDrafts.length
-              ? `${jobDrafts.length} verified active job draft${jobDrafts.length === 1 ? '' : 's'} ready with exact Apply links. ${rejectedJobDraftCount ? `${rejectedJobDraftCount} generic, expired, missing, closed, deadline-free, or unverifiable source${rejectedJobDraftCount === 1 ? ' was' : 's were'} excluded. ` : ''}Review them, then post individually or use Post All.`
-              : 'No jobs passed exact-role verification. Generic careers pages, missing Apply links, unpublished or expired deadlines, closed roles, and unverifiable listings were not added.'
+            ? `${jobDrafts.length} verified active job draft${jobDrafts.length === 1 ? '' : 's'} ready with exact Apply links. ${rejectedJobDraftCount ? `${rejectedJobDraftCount} generic, expired, missing, closed, 404, or unverifiable source${rejectedJobDraftCount === 1 ? ' was' : 's were'} excluded and replaced. ` : ''}Review them, then post individually or use Post All.`
             : `${jobDrafts.length} job draft${jobDrafts.length === 1 ? '' : 's'} ready. Review them, then post individually or use Post All.`
-          : requestedWorkNewsDraftCount
-            ? `${workNewsDrafts.length} post draft${workNewsDrafts.length === 1 ? '' : 's'} ready. Review, edit, and post each one when approved.`
-            : String(parsed.reply || 'I filled what I could. Review the form before creating the record.'),
+          : String(parsed.reply || 'I filled what I could. Review the form before creating the record.'),
       action: requestedCandidateDraftCount
         ? 'draftTalentProfiles'
-        : requestedCompanyDraftCount
-          ? 'draftCompanies'
+        : requestedCompanyDraftCount && requestedWorkNewsDraftCount
+          ? 'draftCompaniesAndWorkNews'
+          : requestedCompanyDraftCount
+            ? 'draftCompanies'
           : (parsed.action || 'reply'),
       companyForm: parsed.companyForm && typeof parsed.companyForm === 'object' ? parsed.companyForm : {},
       companyDrafts,
@@ -2763,10 +3789,24 @@ Strict retry:
       rejectedJobDraftCount,
       workNewsDrafts,
       userDrafts,
-      provider: aiText ? (useWebSearch ? 'openai-web' : 'openai') : 'fallback'
+      requestedDraftCounts: {
+        jobs: requestedJobDraftCount,
+        companies: requestedCompanyDraftCount,
+        workNews: requestedWorkNewsDraftCount,
+        candidates: requestedCandidateDraftCount
+      },
+      provider: wantsWebJobs && usedPublicJobSource
+        ? 'verified-public-job-boards'
+        : aiText
+          ? (useWebSearch ? 'openai-web' : 'openai')
+          : (openAIProviderError ? 'provider-unavailable' : 'fallback')
     });
   } catch (error) {
-    res.status(500).json({ error: error.message || 'Admin assistant failed' });
+    const status = Number(error.status) || (isOpenAIQuotaError(error) ? 402 : 500);
+    res.status(status).json({
+      error: error.message || 'Admin assistant failed',
+      code: error.code || (status === 402 ? 'OPENAI_CREDITS_REQUIRED' : 'ADMIN_ASSISTANT_FAILED')
+    });
   }
 });
 

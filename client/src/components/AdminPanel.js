@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import ProfileAvatar from './ProfileAvatar';
 import { createSquareProfileImage } from '../utils/profileImages';
 import confirmAction from '../utils/confirmAction';
+import getAdminDraftDestination from '../utils/adminDraftDestination';
 
 const API_BASE = process.env.REACT_APP_API_URL || '';
 const ADMIN_KEY_STORAGE = 'jumptakeAdminKey';
@@ -49,24 +50,29 @@ const emptyWorkNewsDraft = {
   companyId: '',
   companyJumpTakeId: '',
   companyName: '',
+  companyWebsite: '',
   companyLogoUrl: '',
   body: '',
   mediaUrl: '',
   mediaType: 'image',
   source: '',
-  sourceTitle: ''
+  sourceTitle: '',
+  publishedAt: '',
+  sourceVerifiedAt: ''
 };
 
 const emptyWorkNewsPostForm = {
   companyId: '',
   companyJumpTakeId: '',
   companyName: '',
+  companyWebsite: '',
   companyLogoUrl: '',
   body: '',
   mediaUrl: '',
   mediaType: 'image',
   source: '',
-  sourceTitle: ''
+  sourceTitle: '',
+  publishedAt: ''
 };
 
 const emptyCandidateForm = {
@@ -88,10 +94,10 @@ const emptyTalentStoryForm = {
   mediaType: 'image'
 };
 
-const getLogoFallbackFromSource = (source = '') => {
+const getLogoFallbackFromWebsite = (website = '') => {
   try {
-    const url = new URL(source);
-    return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(url.hostname)}&sz=128`;
+    const url = new URL(website);
+    return `https://www.google.com/s2/favicons?domain_url=${encodeURIComponent(url.origin)}&sz=256`;
   } catch (error) {
     return '';
   }
@@ -137,7 +143,7 @@ const normalizeWorkNewsDraft = (draft = {}, index = 0) => ({
       draft[key] === undefined || draft[key] === null ? emptyWorkNewsDraft[key] : String(draft[key])
     ])
   ),
-  companyLogoUrl: draft.companyLogoUrl || getLogoFallbackFromSource(draft.source),
+  companyLogoUrl: draft.companyLogoUrl || getLogoFallbackFromWebsite(draft.companyWebsite),
   mediaType: draft.mediaType === 'video' ? 'video' : 'image',
   id: draft.id || `work-news-draft-${Date.now()}-${index}`
 });
@@ -153,6 +159,16 @@ const normalizeCompanyDraft = (draft = {}, index = 0) => ({
   id: draft.id || `company-draft-${Date.now()}-${index}`,
   createdCompanyId: draft.createdCompanyId || ''
 });
+
+const draftsReferToSameCompany = (companyDraft = {}, workNewsDraft = {}) => {
+  const companyJumpTakeId = String(companyDraft.jumptakeId || '').trim().toLowerCase();
+  const postJumpTakeId = String(workNewsDraft.companyJumpTakeId || '').trim().toLowerCase();
+  if (companyJumpTakeId && postJumpTakeId && companyJumpTakeId === postJumpTakeId) return true;
+
+  const companyName = String(companyDraft.name || '').trim().toLowerCase();
+  const postCompanyName = String(workNewsDraft.companyName || '').trim().toLowerCase();
+  return Boolean(companyName && postCompanyName && companyName === postCompanyName);
+};
 
 const normalizeCandidateListText = (value) => {
   const values = Array.isArray(value) ? value : [value];
@@ -231,6 +247,8 @@ const AdminPanel = () => {
   const [selectedItemIds, setSelectedItemIds] = useState([]);
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [companyLogoEdits, setCompanyLogoEdits] = useState({});
+  const [updatingCompanyLogoId, setUpdatingCompanyLogoId] = useState('');
   const companyLogoInputRef = useRef(null);
   const [isProcessingCompanyLogo, setIsProcessingCompanyLogo] = useState(false);
   const [companyForm, setCompanyForm] = useState({ ...emptyCompanyForm });
@@ -470,6 +488,7 @@ const AdminPanel = () => {
           companyId: workNewsPostForm.companyId,
           companyJumpTakeId: workNewsPostForm.companyJumpTakeId,
           companyName: workNewsPostForm.companyName,
+          companyWebsite: workNewsPostForm.companyWebsite,
           authorName: workNewsPostForm.companyName,
           companyLogoUrl: workNewsPostForm.companyLogoUrl,
           authorAvatar: workNewsPostForm.companyLogoUrl,
@@ -477,7 +496,8 @@ const AdminPanel = () => {
           mediaUrl: workNewsPostForm.mediaUrl,
           mediaType: workNewsPostForm.mediaType,
           source: workNewsPostForm.source,
-          sourceTitle: workNewsPostForm.sourceTitle
+          sourceTitle: workNewsPostForm.sourceTitle,
+          publishedAt: workNewsPostForm.publishedAt
         })
       });
       setWorkNewsPostForm({ ...emptyWorkNewsPostForm });
@@ -750,11 +770,95 @@ const AdminPanel = () => {
     }
   };
 
+  const getExistingCompanyLogo = (company) => (
+    Object.prototype.hasOwnProperty.call(companyLogoEdits, company._id)
+      ? companyLogoEdits[company._id]
+      : company.logo || ''
+  );
+
+  const updateExistingCompanyLogoEdit = (companyId, logo) => {
+    setCompanyLogoEdits((current) => ({ ...current, [companyId]: logo }));
+  };
+
+  const saveExistingCompanyLogo = async (companyId, logo) => {
+    try {
+      setMessage('');
+      setUpdatingCompanyLogoId(companyId);
+      await adminFetch(`/companies/${companyId}/logo`, {
+        method: 'PATCH',
+        body: JSON.stringify({ logo: String(logo || '').trim() })
+      });
+      setCompanyLogoEdits((current) => {
+        const next = { ...current };
+        delete next[companyId];
+        return next;
+      });
+      await loadCollection({ collection: 'companies', page });
+      setMessage(logo ? 'Company profile picture updated.' : 'Company profile picture removed.');
+    } catch (error) {
+      setMessage(error.message || 'Could not update that company profile picture.');
+    } finally {
+      setUpdatingCompanyLogoId('');
+    }
+  };
+
+  const handleExistingCompanyLogoUpload = async (companyId, event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      setMessage('');
+      setUpdatingCompanyLogoId(companyId);
+      const logo = await createSquareProfileImage(file);
+      updateExistingCompanyLogoEdit(companyId, logo);
+      await saveExistingCompanyLogo(companyId, logo);
+    } catch (error) {
+      setMessage(error.message || 'Could not prepare that company profile picture.');
+      setUpdatingCompanyLogoId('');
+    }
+  };
+
   const updateAdminCompanyDraft = (draftId, field, value) => {
+    const previousDraft = adminCompanyDrafts.find((draft) => draft.id === draftId);
     setAdminCompanyDrafts((current) => current.map((draft) => (
       draft.id === draftId ? { ...draft, [field]: value } : draft
     )));
+
+    const linkedField = {
+      name: 'companyName',
+      jumptakeId: 'companyJumpTakeId',
+      logo: 'companyLogoUrl',
+      website: 'companyWebsite'
+    }[field];
+    if (previousDraft && linkedField) {
+      setAdminWorkNewsDrafts((current) => current.map((draft) => {
+        const matchesCompany = draftsReferToSameCompany(previousDraft, draft);
+        return matchesCompany ? { ...draft, [linkedField]: value } : draft;
+      }));
+    }
   };
+
+  const handleAdminCompanyDraftLogoUpload = async (draftId, event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    try {
+      setMessage('');
+      const logo = await createSquareProfileImage(file);
+      updateAdminCompanyDraft(draftId, 'logo', logo);
+    } catch (error) {
+      setMessage(error.message || 'Could not prepare that company profile picture.');
+    }
+  };
+
+  const hasPendingCompanyDraftForWorkNews = (workNewsDraft) => adminCompanyDrafts.some((companyDraft) => (
+    draftsReferToSameCompany(companyDraft, workNewsDraft)
+  ));
 
   const removeAdminCompanyDraft = async (draftId, skipConfirmation = false) => {
     if (!skipConfirmation) {
@@ -774,10 +878,26 @@ const AdminPanel = () => {
         method: 'POST',
         body: JSON.stringify(draft)
       });
+      const createdCompany = data.item || {};
+      setAdminWorkNewsDrafts((current) => current.map((postDraft) => {
+        const matchesCompany = draftsReferToSameCompany(draft, postDraft);
+        return matchesCompany ? {
+          ...postDraft,
+          companyId: createdCompany._id || createdCompany.id || postDraft.companyId,
+          companyJumpTakeId: createdCompany.jumptakeId || draft.jumptakeId || postDraft.companyJumpTakeId,
+          companyName: createdCompany.name || draft.name || postDraft.companyName,
+          companyLogoUrl: createdCompany.logo || draft.logo || postDraft.companyLogoUrl,
+          companyWebsite: createdCompany.website || draft.website || postDraft.companyWebsite
+        } : postDraft;
+      }));
       removeAdminCompanyDraft(draft.id, true);
-      setSelectedCollection('companies');
+      const stayInWorkNews = ['feedPosts', 'workNewsPosts'].includes(selectedCollection);
+      setSelectedCollection(stayInWorkNews ? 'workNewsPosts' : 'companies');
       setPage(1);
-      await Promise.all([loadSummary(), loadCollection({ collection: 'companies', page: 1 })]);
+      await Promise.all([
+        loadSummary(),
+        loadCollection({ collection: stayInWorkNews ? 'workNewsPosts' : 'companies', page: 1 })
+      ]);
       setMessage(`Company created: ${data.item?.name || draft.name} (@${data.item?.jumptakeId || draft.jumptakeId})`);
     } catch (error) {
       setMessage(error.message);
@@ -812,7 +932,35 @@ const AdminPanel = () => {
           companyForm,
           jobForm,
           jobDraftPreferences,
-          profileImages: submittedImages.map(({ name, dataUrl }) => ({ name, dataUrl }))
+          profileImages: submittedImages.map(({ name, dataUrl }) => ({ name, dataUrl })),
+          existingDrafts: {
+            jobs: adminJobDrafts.map(({ company, companyName, title, location, source, applicationLink }) => ({
+              company,
+              companyName,
+              title,
+              location,
+              source,
+              applicationLink
+            })),
+            companies: adminCompanyDrafts.map(({ name, jumptakeId, website, logo }) => ({
+              name,
+              jumptakeId,
+              website,
+              logo: /^https?:\/\//i.test(String(logo || '')) ? logo : ''
+            })),
+            workNews: adminWorkNewsDrafts.map(({ companyName, body, source }) => ({
+              companyName,
+              body,
+              source
+            })),
+            candidates: adminCandidateDrafts.map(({ name, email, jumptakeId, profileImage, talentStory }) => ({
+              name,
+              email,
+              jumptakeId,
+              profileImage: /^https?:\/\//i.test(String(profileImage || '')) ? profileImage : '',
+              talentStory: { body: talentStory?.body || '' }
+            }))
+          }
         })
       });
 
@@ -850,6 +998,14 @@ const AdminPanel = () => {
           ...current,
           ...data.companyDrafts.map((draft, index) => normalizeCompanyDraft(draft, current.length + index))
         ]);
+      }
+
+      const draftDestination = getAdminDraftDestination(data);
+      if (draftDestination) {
+        setSelectedCollection(draftDestination);
+        setPage(1);
+        setSearch('');
+        setSelectedItemIds([]);
       }
 
       setAdminAssistantMessages((current) => [
@@ -921,7 +1077,9 @@ const AdminPanel = () => {
       draft.id === draftId ? {
         ...draft,
         [field]: value,
-        ...(field === 'source' && !draft.companyLogoUrl ? { companyLogoUrl: getLogoFallbackFromSource(value) } : {})
+        ...(field === 'companyWebsite' && !draft.companyLogoUrl
+          ? { companyLogoUrl: getLogoFallbackFromWebsite(value) }
+          : {})
       } : draft
     )));
   };
@@ -1003,6 +1161,7 @@ const AdminPanel = () => {
           companyId: draft.companyId,
           companyJumpTakeId: draft.companyJumpTakeId,
           companyName: draft.companyName,
+          companyWebsite: draft.companyWebsite,
           authorName: draft.companyName,
           companyLogoUrl: draft.companyLogoUrl,
           authorAvatar: draft.companyLogoUrl,
@@ -1010,7 +1169,8 @@ const AdminPanel = () => {
           mediaUrl: draft.mediaUrl,
           mediaType: draft.mediaType,
           source: draft.source,
-          sourceTitle: draft.sourceTitle
+          sourceTitle: draft.sourceTitle,
+          publishedAt: draft.publishedAt
         })
       });
       removeAdminWorkNewsDraft(draft.id, true);
@@ -1193,15 +1353,25 @@ const AdminPanel = () => {
           jobInterests: draft.jobTitle
         })
       });
-      updateAdminCandidateDraft(draft.id, 'createdUserId', data.user?.id || '');
-      updateAdminCandidateDraft(draft.id, 'createdJobSeekerId', data.jobSeeker?.id || '');
-      updateAdminCandidateDraft(draft.id, 'jumptakeId', data.user?.jumptakeId || draft.jumptakeId);
-      setSelectedCollection('users');
+      const createdUserId = String(data.user?.id || data.user?._id || '');
+      const createdJobSeekerId = String(data.jobSeeker?.id || data.jobSeeker?._id || '');
+      if (!createdUserId) {
+        throw new Error('The profile was created, but its user ID was not returned. Refresh the admin panel before posting the story.');
+      }
+      setAdminCandidateDrafts((current) => current.map((candidateDraft) => (
+        candidateDraft.id === draft.id ? {
+          ...candidateDraft,
+          createdUserId,
+          createdJobSeekerId,
+          jumptakeId: data.user?.jumptakeId || candidateDraft.jumptakeId
+        } : candidateDraft
+      )));
+      setSelectedCollection('talentStoryPosts');
       setPage(1);
-      await Promise.all([loadSummary(), loadCollection({ collection: 'users', page: 1 })]);
+      await Promise.all([loadSummary(), loadCollection({ collection: 'talentStoryPosts', page: 1 })]);
       setMessage(data.generatedPassword
-        ? `Profile created: ${data.user.email} / ${data.generatedPassword}`
-        : `Profile created: ${data.user.email || data.user.jumptakeId}`);
+        ? `Profile created: ${data.user.email} / ${data.generatedPassword}. Review and post the Talent Story below.`
+        : `Profile created: ${data.user.email || data.user.jumptakeId}. Review and post the Talent Story below.`);
     } catch (error) {
       setMessage(error.message);
     }
@@ -1445,12 +1615,14 @@ const AdminPanel = () => {
             </div>
           </form>
 
-          {adminCompanyDrafts.length && selectedCollection === 'companies' ? (
+          {adminCompanyDrafts.length && ['companies', 'workNewsPosts'].includes(selectedCollection) ? (
             <section className="admin-ai-job-drafts admin-ai-company-drafts">
               <div className="admin-form-heading-row">
                 <div>
-                  <h3>AI Company Profile Drafts</h3>
-                  <p>Review each company profile and its assigned JumpTake ID before creation.</p>
+                  <h3>{selectedCollection === 'workNewsPosts' ? 'AI Company & Work News Profile Drafts' : 'AI Company Profile Drafts'}</h3>
+                  <p>{selectedCollection === 'workNewsPosts'
+                    ? 'Create each company profile first; its logo, JumpTake ID, and database ID stay linked to the Work News draft below.'
+                    : 'Review each company profile and its assigned JumpTake ID before creation.'}</p>
                 </div>
                 <button type="button" className="admin-ghost-button" onClick={() => setAdminCompanyDrafts([])}>
                   Clear Drafts
@@ -1460,9 +1632,18 @@ const AdminPanel = () => {
                 {adminCompanyDrafts.map((draft, index) => (
                   <article className="admin-ai-job-draft-card admin-ai-company-draft-card" key={draft.id}>
                     <div className="admin-record-card-header">
-                      <div>
-                        <h3>Draft {index + 1}: {draft.name || 'Unnamed company'}</h3>
-                        <p>{draft.jumptakeId ? `@${draft.jumptakeId}` : 'JumpTake ID not set'}</p>
+                      <div className="admin-work-news-draft-title">
+                        <ProfileAvatar
+                          imageSrc={draft.logo}
+                          name={draft.name || 'Company'}
+                          className="admin-work-news-draft-logo"
+                          imageClassName="admin-work-news-draft-logo-image"
+                          useProfileIconFallback
+                        />
+                        <div>
+                          <h3>Draft {index + 1}: {draft.name || 'Unnamed company'}</h3>
+                          <p>{draft.jumptakeId ? `@${draft.jumptakeId}` : 'JumpTake ID not set'}</p>
+                        </div>
                       </div>
                       <div className="admin-draft-actions">
                         <button type="button" onClick={() => createAdminCompanyFromDraft(draft)} disabled={!draft.name || !draft.jumptakeId}>
@@ -1482,6 +1663,21 @@ const AdminPanel = () => {
                       <input value={draft.website} onChange={(event) => updateAdminCompanyDraft(draft.id, 'website', event.target.value)} placeholder="Website" />
                       <input value={draft.founded} onChange={(event) => updateAdminCompanyDraft(draft.id, 'founded', event.target.value)} placeholder="Founded" />
                       <input value={draft.logo} onChange={(event) => updateAdminCompanyDraft(draft.id, 'logo', event.target.value)} placeholder="Logo URL" />
+                    </div>
+                    <div className="admin-work-news-upload-row">
+                      <label className="admin-work-news-file-button">
+                        Upload company profile picture
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp,image/gif"
+                          onChange={(event) => handleAdminCompanyDraftLogoUpload(draft.id, event)}
+                        />
+                      </label>
+                      {draft.logo ? (
+                        <button type="button" className="admin-ghost-button" onClick={() => updateAdminCompanyDraft(draft.id, 'logo', '')}>
+                          Use Default Profile Icon
+                        </button>
+                      ) : null}
                     </div>
                     <textarea value={draft.description} onChange={(event) => updateAdminCompanyDraft(draft.id, 'description', event.target.value)} placeholder="Company description" />
                   </article>
@@ -1552,15 +1748,21 @@ const AdminPanel = () => {
                   />
                   <input
                     type="url"
-                    value={workNewsPostForm.source}
+                    value={workNewsPostForm.companyWebsite}
                     onChange={(event) => {
-                      const source = event.target.value;
+                      const companyWebsite = event.target.value;
                       setWorkNewsPostForm((current) => ({
                         ...current,
-                        source,
-                        companyLogoUrl: current.companyLogoUrl || getLogoFallbackFromSource(source)
+                        companyWebsite,
+                        companyLogoUrl: current.companyLogoUrl || getLogoFallbackFromWebsite(companyWebsite)
                       }));
                     }}
+                    placeholder="Official company website"
+                  />
+                  <input
+                    type="url"
+                    value={workNewsPostForm.source}
+                    onChange={(event) => setWorkNewsPostForm((current) => ({ ...current, source: event.target.value }))}
                     placeholder="Source URL"
                   />
                   <select
@@ -2010,7 +2212,12 @@ const AdminPanel = () => {
                         </div>
                       </div>
                       <div className="admin-draft-actions">
-                        <button type="button" onClick={() => postAdminWorkNewsDraft(draft)}>
+                        <button
+                          type="button"
+                          onClick={() => postAdminWorkNewsDraft(draft)}
+                          disabled={hasPendingCompanyDraftForWorkNews(draft)}
+                          title={hasPendingCompanyDraftForWorkNews(draft) ? 'Create the linked company profile above before posting its Work News update' : 'Post Work News'}
+                        >
                           Post Work News
                         </button>
                         <button type="button" className="admin-danger-button" onClick={() => removeAdminWorkNewsDraft(draft.id)}>
@@ -2022,6 +2229,7 @@ const AdminPanel = () => {
                       <input value={draft.companyId} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'companyId', event.target.value)} placeholder="Company database ID" />
                       <input value={draft.companyJumpTakeId} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'companyJumpTakeId', event.target.value.toLowerCase().replace(/^@+/, ''))} placeholder="Company JumpTake ID" />
                       <input value={draft.companyName} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'companyName', event.target.value)} placeholder="Company name" />
+                      <input type="url" value={draft.companyWebsite} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'companyWebsite', event.target.value)} placeholder="Official company website" />
                       <input type="url" value={draft.companyLogoUrl} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'companyLogoUrl', event.target.value)} placeholder="Company logo/profile picture URL" />
                       <input type="url" value={draft.mediaUrl} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'mediaUrl', event.target.value)} placeholder="Post image or video URL" />
                       <select value={draft.mediaType} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'mediaType', event.target.value)}>
@@ -2029,6 +2237,7 @@ const AdminPanel = () => {
                         <option value="video">Video</option>
                       </select>
                       <input value={draft.sourceTitle} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'sourceTitle', event.target.value)} placeholder="Source title" />
+                      <input type="date" value={draft.publishedAt ? draft.publishedAt.slice(0, 10) : ''} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'publishedAt', event.target.value)} aria-label="Source publication date" />
                       <input type="url" value={draft.source} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'source', event.target.value)} placeholder="Source URL" />
                     </div>
                     <div className="admin-work-news-upload-row">
@@ -2060,6 +2269,16 @@ const AdminPanel = () => {
                       ) : null}
                     </div>
                     <textarea value={draft.body} onChange={(event) => updateAdminWorkNewsDraft(draft.id, 'body', event.target.value)} placeholder="Work News post text" />
+                    {draft.sourceVerifiedAt ? (
+                      <p className="admin-candidate-draft-created">
+                        Live source verified {new Date(draft.sourceVerifiedAt).toLocaleString()}{draft.publishedAt ? ` - Published ${new Date(draft.publishedAt).toLocaleDateString()}` : ''}
+                      </p>
+                    ) : null}
+                    {hasPendingCompanyDraftForWorkNews(draft) ? (
+                      <p className="admin-candidate-draft-created">Create the linked company profile above before posting this Work News update.</p>
+                    ) : draft.companyId ? (
+                      <p className="admin-candidate-draft-created">Company profile linked. This update is ready to post.</p>
+                    ) : null}
                     {draft.mediaUrl ? (
                       <div className="admin-work-news-media-preview">
                         {draft.mediaType === 'video' ? (
@@ -2110,14 +2329,6 @@ const AdminPanel = () => {
                           disabled={Boolean(draft.createdUserId)}
                         >
                           {draft.createdUserId ? 'Profile Created' : 'Create Profile'}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => postAdminCandidateStory(draft)}
-                          disabled={!draft.storyBody || !draft.createdUserId}
-                          title={!draft.createdUserId ? 'Create the profile before posting its linked Talent Story' : 'Post Talent Story'}
-                        >
-                          Post Talent Story
                         </button>
                         <button type="button" className="admin-danger-button" onClick={() => removeAdminCandidateDraft(draft.id)}>
                           Remove
@@ -2213,16 +2424,6 @@ const AdminPanel = () => {
                       ) : null}
                     </div>
                     <textarea value={draft.about} onChange={(event) => updateAdminCandidateDraft(draft.id, 'about', event.target.value)} placeholder="About description" />
-                    <textarea value={draft.storyBody} onChange={(event) => updateAdminCandidateDraft(draft.id, 'storyBody', event.target.value)} placeholder="Talent Story post text" />
-                    {draft.storyMediaUrl ? (
-                      <div className="admin-work-news-media-preview">
-                        {draft.storyMediaType === 'video' ? (
-                          <video src={draft.storyMediaUrl} controls muted />
-                        ) : (
-                          <img src={draft.storyMediaUrl} alt="" />
-                        )}
-                      </div>
-                    ) : null}
                     {draft.profileImage ? (
                       <div className="admin-work-news-media-preview">
                         <img src={draft.profileImage} alt="" />
@@ -2233,9 +2434,42 @@ const AdminPanel = () => {
                         <img src={draft.coverImage} alt="" />
                       </div>
                     ) : null}
-                    {draft.createdUserId ? (
-                      <p className="admin-candidate-draft-created">Profile created. Post the talent story to link it to this profile.</p>
-                    ) : null}
+                    <section className="admin-candidate-story-draft" aria-label={`Talent Story draft for ${draft.name || 'candidate'}`}>
+                      <div className="admin-candidate-story-heading">
+                        <div>
+                          <p className="admin-kicker">Talent Story draft</p>
+                          <h4>{draft.name ? `${draft.name}'s post` : 'Candidate post'}</h4>
+                        </div>
+                        <span>{draft.createdUserId ? 'Profile linked' : 'Create profile first'}</span>
+                      </div>
+                      <textarea
+                        value={draft.storyBody}
+                        onChange={(event) => updateAdminCandidateDraft(draft.id, 'storyBody', event.target.value)}
+                        placeholder="Write the candidate's completed work, achievement, project, or progress update"
+                      />
+                      {draft.storyMediaUrl ? (
+                        <div className="admin-work-news-media-preview">
+                          {draft.storyMediaType === 'video' ? (
+                            <video src={draft.storyMediaUrl} controls muted />
+                          ) : (
+                            <img src={draft.storyMediaUrl} alt="" />
+                          )}
+                        </div>
+                      ) : null}
+                      <div className="admin-candidate-story-actions">
+                        <p>{draft.createdUserId
+                          ? 'Review the story, then post it as this candidate.'
+                          : 'Create the candidate profile above to enable posting.'}</p>
+                        <button
+                          type="button"
+                          onClick={() => postAdminCandidateStory(draft)}
+                          disabled={!draft.storyBody.trim() || !draft.createdUserId}
+                          title={!draft.createdUserId ? 'Create the profile before posting its linked Talent Story' : 'Post Talent Story'}
+                        >
+                          Post Talent Story
+                        </button>
+                      </div>
+                    </section>
                   </article>
                 ))}
               </div>
@@ -2321,9 +2555,60 @@ const AdminPanel = () => {
                     </button>
                   ) : null}
                 </div>
+                {selectedCollection === 'companies' ? (
+                  <section className="admin-existing-company-logo-editor" aria-label={`Profile picture for ${item.name || 'company'}`}>
+                    <ProfileAvatar
+                      imageSrc={getExistingCompanyLogo(item)}
+                      name={item.name || 'Company'}
+                      className="admin-company-avatar"
+                      imageClassName="admin-company-avatar-image"
+                      useProfileIconFallback
+                    />
+                    <div className="admin-existing-company-logo-fields">
+                      <label>
+                        <span>Company profile picture URL</span>
+                        <input
+                          type="url"
+                          value={getExistingCompanyLogo(item).startsWith('data:') ? '' : getExistingCompanyLogo(item)}
+                          placeholder="https://company.com/logo.png"
+                          onChange={(event) => updateExistingCompanyLogoEdit(item._id, event.target.value)}
+                          disabled={updatingCompanyLogoId === item._id}
+                        />
+                      </label>
+                      <div className="admin-existing-company-logo-actions">
+                        <label className="admin-work-news-file-button">
+                          Upload Picture
+                          <input
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp,image/gif"
+                            onChange={(event) => handleExistingCompanyLogoUpload(item._id, event)}
+                            disabled={updatingCompanyLogoId === item._id}
+                          />
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => saveExistingCompanyLogo(item._id, getExistingCompanyLogo(item))}
+                          disabled={updatingCompanyLogoId === item._id || getExistingCompanyLogo(item).startsWith('data:')}
+                        >
+                          {updatingCompanyLogoId === item._id ? 'Saving...' : 'Save URL'}
+                        </button>
+                        {getExistingCompanyLogo(item) ? (
+                          <button
+                            type="button"
+                            className="admin-ghost-button"
+                            onClick={() => saveExistingCompanyLogo(item._id, '')}
+                            disabled={updatingCompanyLogoId === item._id}
+                          >
+                            Remove Picture
+                          </button>
+                        ) : null}
+                      </div>
+                    </div>
+                  </section>
+                ) : null}
                 <dl>
                   {Object.entries(item)
-                    .filter(([key]) => key !== '_id')
+                    .filter(([key]) => key !== '_id' && key !== 'logo')
                     .slice(0, 12)
                     .map(([key, value]) => (
                       <React.Fragment key={key}>

@@ -15,6 +15,7 @@ const WORK_NEWS_STORAGE_KEY = 'jumptakeWorkNewsPosts';
 const TALENT_STORIES_STORAGE_KEY = 'jumptakeTalentStoriesPosts';
 const CANDIDATE_REACH_VIEWED_STORAGE_PREFIX = 'jumptakeCandidateProfileReachViewed:';
 const POPUP_CLOSE_ANIMATION_MS = 260;
+const REACTION_PICKER_CLOSE_ANIMATION_MS = 380;
 const DEFAULT_TAILOR_COVER_STYLE = {
     '--tailor-cover-image-dark': `url("${defaultTailorCoverDarkImage}")`,
     '--tailor-cover-image-light': `url("${defaultTailorCoverLightImage}")`
@@ -257,6 +258,7 @@ const TalentPool = ({
     const [candidateTalentPosts, setCandidateTalentPosts] = useState([]);
     const [expandedCandidateProfilePosts, setExpandedCandidateProfilePosts] = useState({});
     const [openCandidateReactionPostId, setOpenCandidateReactionPostId] = useState('');
+    const [closingCandidateReactionPostId, setClosingCandidateReactionPostId] = useState('');
     const [openCandidateCommentPostId, setOpenCandidateCommentPostId] = useState('');
     const [openCandidateSharePostId, setOpenCandidateSharePostId] = useState('');
     const [openCandidateOptionsPostId, setOpenCandidateOptionsPostId] = useState('');
@@ -278,6 +280,7 @@ const TalentPool = ({
     const [profileActionsOpen, setProfileActionsOpen] = useState(false);
     const candidateProfileRef = useRef(null);
     const profileDetailCloseTimerRef = useRef(null);
+    const candidateReactionCloseTimerRef = useRef(null);
     const talentPoolRef = useRef(null);
 
     useEffect(() => {
@@ -715,6 +718,9 @@ const TalentPool = ({
     useEffect(() => () => {
         if (profileDetailCloseTimerRef.current) {
             window.clearTimeout(profileDetailCloseTimerRef.current);
+        }
+        if (candidateReactionCloseTimerRef.current) {
+            window.clearTimeout(candidateReactionCloseTimerRef.current);
         }
     }, []);
 
@@ -1311,7 +1317,25 @@ const TalentPool = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [mode, selectedCandidate, currentUserId, candidateWorkPosts, candidateTalentPosts]);
 
+    const closeCandidateReactionPicker = (postKey = openCandidateReactionPostId) => {
+        if (!postKey || closingCandidateReactionPostId === postKey) {
+            return;
+        }
+
+        if (candidateReactionCloseTimerRef.current) {
+            window.clearTimeout(candidateReactionCloseTimerRef.current);
+        }
+
+        setClosingCandidateReactionPostId(postKey);
+        candidateReactionCloseTimerRef.current = window.setTimeout(() => {
+            setOpenCandidateReactionPostId((openId) => (openId === postKey ? '' : openId));
+            setClosingCandidateReactionPostId((closingId) => (closingId === postKey ? '' : closingId));
+            candidateReactionCloseTimerRef.current = null;
+        }, REACTION_PICKER_CLOSE_ANIMATION_MS);
+    };
+
     const handleCandidateReaction = (post, reaction) => {
+        const postKey = getCandidatePostKey(post);
         const viewerKey = String(currentUserId || 'candidate-viewer');
         updateCandidatePost(post, (currentPost) => {
             const reactions = { ...(currentPost.reactions || {}) };
@@ -1331,7 +1355,7 @@ const TalentPool = ({
 
             return { reactions, reactionsByUser };
         });
-        setOpenCandidateReactionPostId('');
+        closeCandidateReactionPicker(postKey);
     };
 
     const handleCandidateCommentSubmit = (post) => {
@@ -1457,7 +1481,7 @@ const TalentPool = ({
 
     const toggleCandidateReachInsight = (event, postKey, post) => {
         event.stopPropagation();
-        setOpenCandidateReactionPostId('');
+        closeCandidateReactionPicker();
         setOpenCandidateCommentPostId('');
         setOpenCandidateSharePostId('');
 
@@ -1621,6 +1645,7 @@ const TalentPool = ({
         const isPostBodyExpanded = Boolean(expandedCandidateProfilePosts[postKey]);
         const dateLabel = post.createdAt ? new Date(post.createdAt).toLocaleDateString() : 'Recent';
         const isReactionMenuOpen = openCandidateReactionPostId === postKey;
+        const isReactionMenuClosing = closingCandidateReactionPostId === postKey;
         const isCommentOpen = openCandidateCommentPostId === postKey;
         const isShareOpen = openCandidateSharePostId === postKey;
         const isOptionsOpen = openCandidateOptionsPostId === postKey;
@@ -1679,7 +1704,7 @@ const TalentPool = ({
                                 onClick={(event) => {
                                     event.stopPropagation();
                                     setOpenCandidateOptionsPostId((openId) => (openId === postKey ? '' : postKey));
-                                    setOpenCandidateReactionPostId('');
+                                    closeCandidateReactionPicker();
                                     setOpenCandidateCommentPostId('');
                                     setOpenCandidateSharePostId('');
                                 }}
@@ -1759,7 +1784,7 @@ const TalentPool = ({
                 )}
                 <div className="portal-post-action-cluster">
                     {isReactionMenuOpen && (
-                        <ul className="portal-post-reactions portal-reaction-rail example-1 is-popover" aria-label="Post reactions">
+                        <ul className={`portal-post-reactions portal-reaction-rail example-1 is-popover ${isReactionMenuClosing ? 'is-closing' : 'is-opening'}`} aria-label="Post reactions">
                             {candidateReactionLabels.map((reaction) => (
                                 <li key={reaction} className="portal-reaction-item icon-content">
                                     <button
@@ -1785,7 +1810,16 @@ const TalentPool = ({
                             className={`portal-reaction-trigger ${selectedReaction ? `has-reaction reaction-${selectedReaction.toLowerCase()}` : ''}`}
                             onClick={(event) => {
                                 event.stopPropagation();
-                                setOpenCandidateReactionPostId((openId) => (openId === postKey ? '' : postKey));
+                                if (isReactionMenuOpen && !isReactionMenuClosing) {
+                                    closeCandidateReactionPicker(postKey);
+                                    return;
+                                }
+                                if (candidateReactionCloseTimerRef.current) {
+                                    window.clearTimeout(candidateReactionCloseTimerRef.current);
+                                    candidateReactionCloseTimerRef.current = null;
+                                }
+                                setClosingCandidateReactionPostId('');
+                                setOpenCandidateReactionPostId(postKey);
                                 setOpenCandidateCommentPostId('');
                                 setOpenCandidateSharePostId('');
                                 setOpenCandidateOptionsPostId('');
@@ -1802,7 +1836,7 @@ const TalentPool = ({
                             onClick={(event) => {
                                 event.stopPropagation();
                                 setOpenCandidateCommentPostId((openId) => (openId === postKey ? '' : postKey));
-                                setOpenCandidateReactionPostId('');
+                                closeCandidateReactionPicker();
                                 setOpenCandidateSharePostId('');
                                 setOpenCandidateOptionsPostId('');
                             }}
@@ -1821,7 +1855,7 @@ const TalentPool = ({
                                 onClick={(event) => {
                                     event.stopPropagation();
                                     setOpenCandidateSharePostId((openId) => (openId === postKey ? '' : postKey));
-                                    setOpenCandidateReactionPostId('');
+                                    closeCandidateReactionPicker();
                                     setOpenCandidateCommentPostId('');
                                     setOpenCandidateOptionsPostId('');
                                     setCandidateShareStatus('');

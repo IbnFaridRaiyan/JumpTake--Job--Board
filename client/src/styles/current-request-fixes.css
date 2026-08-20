@@ -1782,65 +1782,126 @@ html body[data-public-home-theme="light"] .job-seeker-page .resume-preview .prev
   color-scheme: light !important;
 }
 
-/* Work News and Talent Stories: show the complete attachment in a stable,
-   compact stage instead of cropping it into the old shallow cover frame. */
+/* Work News and Talent Stories media keeps its own aspect ratio. Portrait
+   uploads shrink to their natural width while large landscape media is capped. */
 html body #root :is(
   .portal-home-feed,
-  .portal-profile-detail-posts
-) .portal-social-post-card > .portal-post-media,
-html body #root .portal-post-detail-modal .portal-post-detail-media {
-  display: grid !important;
-  place-items: center !important;
-  width: min(100%, 46rem) !important;
-  max-width: 46rem !important;
+  .portal-profile-detail-posts,
+  .talent-pool-container
+) .portal-social-post-card > .portal-post-media {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: fit-content !important;
+  max-width: min(100%, 42rem) !important;
   height: auto !important;
   max-height: none !important;
-  aspect-ratio: 16 / 9 !important;
-  margin: 0.75rem auto 0.65rem !important;
+  aspect-ratio: auto !important;
+  margin: 0.72rem auto 0.62rem !important;
   padding: 0 !important;
   overflow: hidden !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 0.75rem !important;
+  border-radius: 0.72rem !important;
   background: #090c10 !important;
   box-sizing: border-box !important;
 }
 
 html[data-theme="light"] body[data-theme="light"] #root :is(
   .portal-home-feed,
-  .portal-profile-detail-posts
+  .portal-profile-detail-posts,
+  .talent-pool-container
 ) .portal-social-post-card > .portal-post-media,
-html[data-theme="light"] body[data-theme="light"] #root .portal-post-detail-modal .portal-post-detail-media {
+html[data-theme="light"] body[data-theme="light"] .portal-post-detail-modal .portal-post-detail-media {
   border-color: rgba(52, 20, 29, 0.13) !important;
   background: #eee9df !important;
 }
 
 html body #root :is(
   .portal-home-feed,
-  .portal-profile-detail-posts
-) .portal-social-post-card > .portal-post-media > .portal-post-image-preview-button,
-html body #root .portal-post-detail-modal .portal-post-detail-media > .portal-post-image-preview-button {
-  display: grid !important;
-  place-items: center !important;
-  width: 100% !important;
+  .portal-profile-detail-posts,
+  .talent-pool-container
+) .portal-social-post-card > .portal-post-media > .portal-post-image-preview-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
   max-width: 100% !important;
-  height: 100% !important;
-  max-height: 100% !important;
+  height: auto !important;
+  max-height: min(30rem, 62vh) !important;
   margin: 0 !important;
+  padding: 0 !important;
   overflow: hidden !important;
   border-radius: inherit !important;
 }
 
 html body #root :is(
   .portal-home-feed,
-  .portal-profile-detail-posts
-) .portal-social-post-card > .portal-post-media :is(img, video),
-html body #root .portal-post-detail-modal .portal-post-detail-media :is(img, video),
-html body #root .portal-post-detail-modal .portal-post-detail-media > .portal-post-image-preview-button img {
+  .portal-profile-detail-posts,
+  .talent-pool-container
+) .portal-social-post-card > .portal-post-media :is(img, video) {
+  display: block !important;
+  width: auto !important;
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: min(30rem, 62vh) !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+}
+
+/* The opened-post attachment is deliberately smaller and remains after the
+   author and post text instead of expanding into their layout space. */
+html body .portal-post-detail-backdrop .portal-post-detail-modal > .portal-post-detail-body {
+  position: relative !important;
+  z-index: 1 !important;
   display: block !important;
   width: 100% !important;
+  margin-bottom: 0.45rem !important;
+  overflow-wrap: anywhere !important;
+}
+
+html body .portal-post-detail-backdrop .portal-post-detail-modal > .portal-post-detail-media {
+  position: relative !important;
+  inset: auto !important;
+  z-index: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: fit-content !important;
+  max-width: min(100%, 32rem) !important;
+  height: auto !important;
+  max-height: 22rem !important;
+  aspect-ratio: auto !important;
+  margin: 0.68rem auto 0.58rem !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 0.72rem !important;
+  background: #090c10 !important;
+  box-sizing: border-box !important;
+}
+
+html body .portal-post-detail-backdrop .portal-post-detail-modal > .portal-post-detail-media > .portal-post-image-preview-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
   max-width: 100% !important;
-  height: 100% !important;
-  max-height: 100% !important;
+  height: auto !important;
+  max-height: 20rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: inherit !important;
+}
+
+html body .portal-post-detail-backdrop .portal-post-detail-modal > .portal-post-detail-media :is(img, video) {
+  display: block !important;
+  width: auto !important;
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: 20rem !important;
   margin: 0 !important;
   border-radius: 0 !important;
   object-fit: contain !important;
@@ -1850,13 +1911,113 @@ html body #root .portal-post-detail-modal .portal-post-detail-media > .portal-po
 @media (max-width: 768px) {
   html body #root :is(
     .portal-home-feed,
-    .portal-profile-detail-posts
-  ) .portal-social-post-card > .portal-post-media,
-  html body #root .portal-post-detail-modal .portal-post-detail-media {
-    width: 100% !important;
+    .portal-profile-detail-posts,
+    .talent-pool-container
+  ) .portal-social-post-card > .portal-post-media {
     max-width: 100% !important;
-    aspect-ratio: 16 / 9 !important;
     margin: 0.62rem auto 0.55rem !important;
     border-radius: 0.68rem !important;
+  }
+
+  html body #root :is(
+    .portal-home-feed,
+    .portal-profile-detail-posts,
+    .talent-pool-container
+  ) .portal-social-post-card > .portal-post-media > .portal-post-image-preview-button,
+  html body #root :is(
+    .portal-home-feed,
+    .portal-profile-detail-posts,
+    .talent-pool-container
+  ) .portal-social-post-card > .portal-post-media :is(img, video) {
+    max-height: min(24rem, 56svh) !important;
+  }
+
+  html body .portal-post-detail-backdrop .portal-post-detail-modal > .portal-post-detail-media {
+    position: relative !important;
+    inset: auto !important;
+    float: none !important;
+    clear: both !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: fit-content !important;
+    max-width: min(100%, 16rem) !important;
+    height: auto !important;
+    max-height: min(11.5rem, 24dvh) !important;
+    aspect-ratio: auto !important;
+    margin: 0.48rem auto 0.52rem !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border-radius: 0.65rem !important;
+    flex: 0 0 auto !important;
+    transform: none !important;
+  }
+
+  html body .portal-post-detail-backdrop .portal-post-detail-modal > .portal-post-detail-media > .portal-post-image-preview-button,
+  html body .portal-post-detail-backdrop .portal-post-detail-modal > .portal-post-detail-media :is(img, video) {
+    position: static !important;
+    inset: auto !important;
+    display: block !important;
+    width: auto !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: min(11rem, 23dvh) !important;
+    margin: 0 auto !important;
+    transform: none !important;
+    object-fit: contain !important;
+    object-position: center !important;
+  }
+}
+
+/* Reaction rails stay mounted for their exit state, so opening and closing
+   share the same calm motion in every theme and at every viewport size. */
+html body #root .portal-post-reactions.portal-reaction-rail.is-popover {
+  transform-origin: right bottom !important;
+  will-change: opacity, translate, scale, filter;
+}
+
+html body #root .portal-post-reactions.portal-reaction-rail.is-popover.is-opening {
+  animation: jt-reaction-picker-open 420ms cubic-bezier(0.22, 1, 0.36, 1) both !important;
+}
+
+html body #root .portal-post-reactions.portal-reaction-rail.is-popover.is-closing {
+  pointer-events: none !important;
+  animation: jt-reaction-picker-close 380ms cubic-bezier(0.4, 0, 0.2, 1) both !important;
+}
+
+@keyframes jt-reaction-picker-open {
+  from {
+    opacity: 0;
+    translate: 0 0.5rem;
+    scale: 0.96;
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes jt-reaction-picker-close {
+  from {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    translate: 0 0.42rem;
+    scale: 0.96;
+    filter: blur(2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body #root .portal-post-reactions.portal-reaction-rail.is-popover.is-opening,
+  html body #root .portal-post-reactions.portal-reaction-rail.is-popover.is-closing {
+    animation-duration: 1ms !important;
   }
 }

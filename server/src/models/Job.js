@@ -52,6 +52,12 @@ const JobSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  sourceFingerprint: {
+    type: String,
+    trim: true,
+    unique: true,
+    sparse: true
+  },
   sourceStatus: {
     type: String,
     enum: ['', 'verified'],

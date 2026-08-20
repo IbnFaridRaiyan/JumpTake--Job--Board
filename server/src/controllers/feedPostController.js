@@ -180,7 +180,7 @@ const getFeedPosts = async (req, res) => {
             return {
                 ...serialized,
                 authorName: company?.name || serialized.authorName,
-                authorAvatar: serialized.authorAvatar || company?.logo || '',
+                authorAvatar: company?.logo || serialized.authorAvatar || '',
                 jumptakeId: company?.jumptakeId || serialized.jumptakeId || '',
                 companyProfile: company ? {
                     _id: company._id,

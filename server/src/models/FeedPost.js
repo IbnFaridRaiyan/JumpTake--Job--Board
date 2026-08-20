@@ -68,6 +68,10 @@ const FeedPostSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  sourcePublishedAt: {
+    type: Date,
+    default: null
+  },
   comments: {
     type: [mongoose.Schema.Types.Mixed],
     default: []
